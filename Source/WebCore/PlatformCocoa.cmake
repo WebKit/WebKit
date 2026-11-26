@@ -1454,6 +1454,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/cocoa/DisplayCaptureSourceCocoa.h
     platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.h
     platform/mediastream/cocoa/ScreenCaptureKitCaptureSource.h
+    platform/mediastream/cocoa/ScreenCaptureKitSelection.h
     platform/mediastream/cocoa/ScreenCaptureKitSharingSessionManager.h
     platform/mediastream/cocoa/WebAudioSourceProviderCocoa.h
 

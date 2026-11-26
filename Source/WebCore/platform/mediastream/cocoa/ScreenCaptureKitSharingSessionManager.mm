@@ -35,7 +35,6 @@
 #import "ScreenCaptureKitCaptureSource.h"
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
 
@@ -262,8 +261,6 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
         return;
     }
 
-    m_pendingContentFilter = contentFilter;
-
     std::optional<CaptureDevice> device;
 
 #if HAVE(WINDOW_CAPTURE)
@@ -298,6 +295,8 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
     UNUSED_PARAM(isTab);
     device = CaptureDevice("1"_str, CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
 #endif
+
+    m_pendingContentSelection = { contentFilter, String { device->persistentId() }, device->type() };
 
     auto completionHandler = std::exchange(m_completionHandler, nullptr);
     completionHandler(device);
@@ -434,67 +433,24 @@ void ScreenCaptureKitSharingSessionManager::contentSharingPickerFailedWithError(
     cancelPicking();
 }
 
-static bool operator==(const SCContentFilter* filter, const CaptureDevice& device)
-{
-    auto deviceID = parseInteger<uint32_t>(device.persistentId());
-    if (!deviceID)
-        return false;
-
-#if HAVE(WINDOW_CAPTURE)
-    if (device.type() == CaptureDevice::DeviceType::Screen) {
-        if (filter.style != SCShareableContentStyleDisplay)
-            return false;
-
-        RetainPtr displays = retainPtr(filter.includedDisplays);
-        if (![displays count])
-            return false;
-
-        return displays.get()[0].displayID == deviceID;
-    }
-
-    if (device.type() == CaptureDevice::DeviceType::Window || device.type() == CaptureDevice::DeviceType::BrowserTab) {
-        if (filter.style != SCShareableContentStyleWindow)
-            return false;
-
-        RetainPtr windows = retainPtr(filter.includedWindows);
-        ASSERT([windows count] == 1);
-        if (![windows count])
-            return false;
-
-        return windows.get()[0].windowID == deviceID;
-    }
-#else
-    UNUSED_PARAM(filter);
-    return true;
-#endif
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice(const CaptureDevice& device)
+void ScreenCaptureKitSharingSessionManager::captureSourceWasDestroyedWithoutSession()
 {
     RELEASE_ASSERT(isMainThread());
 
-    if (m_pendingContentFilter.get() != device) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::cancelPendingSessionForDevice - unknown capture device.");
-        return;
-    }
-
-    m_pendingContentFilter = nullptr;
-    cancelPicking();
+    if (!promptingInProgress() && !m_pendingContentSelection)
+        cancelPicking();
 }
 
-RetainPtr<SCContentFilter> ScreenCaptureKitSharingSessionManager::contentFilter(const CaptureDevice& device)
+ScreenCaptureKitSelection ScreenCaptureKitSharingSessionManager::takeContentSelection(const CaptureDevice& device)
 {
     RELEASE_ASSERT(isMainThread());
 
-    if (m_pendingContentFilter.get() != device) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::contentFilterFromCaptureDevice - unknown capture device.");
+    if (!m_pendingContentSelection || m_pendingContentSelection.deviceID() != device.persistentId() || m_pendingContentSelection.deviceType() != device.type()) {
+        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::takeContentSelection - unknown capture device.");
         return { };
     }
 
-    return std::exchange(m_pendingContentFilter, { });
+    return std::exchange(m_pendingContentSelection, { });
 }
 
 RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver> observer, SCContentFilter* contentFilter, SCStreamConfiguration* configuration, SCStreamDelegate* delegate)

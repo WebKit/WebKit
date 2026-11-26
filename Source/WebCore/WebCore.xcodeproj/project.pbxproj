@@ -195,6 +195,7 @@
 		073930E02AC6490B00C1D1B1 /* PhotoCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 073930DF2AC6490B00C1D1B1 /* PhotoCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073931172ACC6D1E00C1D1B1 /* PhotoSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 073931162ACC6D1D00C1D1B1 /* PhotoSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0739311A2ACCBF3C00C1D1B1 /* JSPhotoSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 073931182ACCBF3B00C1D1B1 /* JSPhotoSettings.h */; };
+		726DA64E382AC323AFA6BDF5 /* ScreenCaptureKitSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = 564F4131C7DD0BC8285E6379 /* ScreenCaptureKitSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073955BB27AB277F009A08D2 /* ScreenCaptureKitSharingSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07035D3227A9B60B00FB03E4 /* ScreenCaptureKitSharingSessionManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7910,6 +7911,7 @@
 		070334D61459FFD5008D8D45 /* TrackBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackBase.h; sourceTree = "<group>"; };
 		070334D8145A006F008D8D45 /* TrackBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackBase.cpp; sourceTree = "<group>"; };
 		070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackCustom.cpp; sourceTree = "<group>"; };
+		564F4131C7DD0BC8285E6379 /* ScreenCaptureKitSelection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureKitSelection.h; sourceTree = "<group>"; };
 		07035D3227A9B60B00FB03E4 /* ScreenCaptureKitSharingSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenCaptureKitSharingSessionManager.h; sourceTree = "<group>"; };
 		07035D3427A9B61100FB03E4 /* ScreenCaptureKitSharingSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenCaptureKitSharingSessionManager.mm; sourceTree = "<group>"; };
 		070363DA181A1CDC00C074A5 /* AVCaptureDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCaptureDeviceManager.h; sourceTree = "<group>"; };
@@ -28055,6 +28057,7 @@
 				41D1938F2152C561006F14CA /* RealtimeVideoUtilities.h */,
 				070BED97273F415600583926 /* ScreenCaptureKitCaptureSource.h */,
 				070BED96273F415600583926 /* ScreenCaptureKitCaptureSource.mm */,
+				564F4131C7DD0BC8285E6379 /* ScreenCaptureKitSelection.h */,
 				07035D3227A9B60B00FB03E4 /* ScreenCaptureKitSharingSessionManager.h */,
 				07035D3427A9B61100FB03E4 /* ScreenCaptureKitSharingSessionManager.mm */,
 				07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderCocoa.h */,
@@ -49151,6 +49154,7 @@
 				E401B3632A942E3F0018B557 /* ScopedName.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
 				070BED98273F415D00583926 /* ScreenCaptureKitCaptureSource.h in Headers */,
+				726DA64E382AC323AFA6BDF5 /* ScreenCaptureKitSelection.h in Headers */,
 				073955BB27AB277F009A08D2 /* ScreenCaptureKitSharingSessionManager.h in Headers */,
 				0E9C1157291C18A400A2C2F2 /* ScreenDataOverrides.h in Headers */,
 				46AD2CD028E4FD5100040F10 /* ScreenOrientation.h in Headers */,

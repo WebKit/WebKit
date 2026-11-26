@@ -78,11 +78,11 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     case CaptureDevice::DeviceType::BrowserTab:
 #if HAVE(SCREEN_CAPTURE_KIT)
         if (ScreenCaptureKitCaptureSource::isAvailable()) {
-            auto deviceID = ScreenCaptureKitCaptureSource::computeDeviceID(device);
-            if (!deviceID)
-                return CaptureSourceOrError { WTF::move(deviceID).error() };
-            return create([deviceID = deviceID.value(), &device] (auto& source) {
-                return makeUniqueRefWithoutRefCountedCheck<ScreenCaptureKitCaptureSource>(source, device, deviceID);
+            auto selection = ScreenCaptureKitSharingSessionManager::singleton().takeContentSelection(device);
+            if (!selection)
+                return CaptureSourceOrError { CaptureSourceError { "Unknown display device"_s, MediaAccessDenialReason::PermissionDenied } };
+            return create([&selection, &device](auto& source) {
+                return makeUniqueRefWithoutRefCountedCheck<ScreenCaptureKitCaptureSource>(source, device, WTF::move(selection));
             }, device, WTF::move(hashSalts), constraints, pageIdentifier);
         }
         ASSERT_NOT_REACHED();
