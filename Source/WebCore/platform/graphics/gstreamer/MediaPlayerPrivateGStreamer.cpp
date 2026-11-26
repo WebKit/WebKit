@@ -704,6 +704,8 @@ Ref<MediaTimePromise> MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget
 
     GST_INFO_OBJECT(pipeline(), "[Seek] seek attempt to %s", toString(inTarget.time).utf8());
 
+    resumeDataFlowIfNeeded(false);
+
     // Avoid useless seeking.
     if (inTarget.time == currentTime()) {
         GST_DEBUG_OBJECT(pipeline(), "[Seek] Already at requested position. Aborting.");
@@ -5124,6 +5126,58 @@ String MediaPlayerPrivateGStreamer::codecForStreamId(TrackID streamId)
         return emptyString();
 
     return m_codecs.get(streamId);
+}
+
+void MediaPlayerPrivateGStreamer::didRemovingSteps()
+{
+    if (isMediaStreamPlayer() || !m_source)
+        return;
+
+    suspendDataFlowIfNeeded();
+}
+
+void MediaPlayerPrivateGStreamer::didPostConnectionSteps()
+{
+    if (isMediaStreamPlayer() || !m_source)
+        return;
+
+    resumeDataFlowIfNeeded(true);
+}
+
+void MediaPlayerPrivateGStreamer::suspendDataFlowIfNeeded()
+{
+    if (m_playbackSuspendedWhileDetached)
+        return;
+
+    GST_INFO_OBJECT(m_pipeline.get(), "Suspending data flow");
+    suspendDataFlow();
+    m_playbackSuspendedWhileDetached = true;
+}
+
+void MediaPlayerPrivateGStreamer::resumeDataFlowIfNeeded(bool restorePosition)
+{
+    if (!m_playbackSuspendedWhileDetached)
+        return;
+
+    GST_INFO_OBJECT(m_pipeline.get(), "Resuming data flow from suspended state");
+    resumeDataFlow(restorePosition);
+    m_playbackSuspendedWhileDetached = false;
+}
+
+void MediaPlayerPrivateGStreamer::suspendDataFlow()
+{
+    ASSERT(m_source && WEBKIT_IS_WEB_SRC(m_source.get()));
+
+    gst_element_send_event(GST_ELEMENT(m_source.get()), gst_event_new_flush_start());
+}
+
+void MediaPlayerPrivateGStreamer::resumeDataFlow(bool restorePosition)
+{
+    ASSERT(m_source && WEBKIT_IS_WEB_SRC(m_source.get()));
+
+    gst_element_send_event(GST_ELEMENT(m_source.get()), gst_event_new_flush_stop(false));
+    if (restorePosition)
+        doSeek(SeekTarget { currentTime() }, rate());
 }
 
 #if ENABLE(MEDIA_TELEMETRY)

@@ -265,6 +265,9 @@ public:
 
     void elementIdChanged(const String&) const final;
 
+    void didRemovingSteps() final;
+    void didPostConnectionSteps() final;
+
 protected:
     enum MainThreadNotification {
         VideoChanged = 1 << 0,
@@ -389,6 +392,11 @@ protected:
     void tearDown(bool clearMediaPlayer);
     virtual void willSetPipelineToNull() { }
 
+    void suspendDataFlowIfNeeded();
+    void resumeDataFlowIfNeeded(bool restorePosition);
+    virtual void suspendDataFlow();
+    virtual void resumeDataFlow(bool restorePosition);
+
     URL m_url;
     const Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
@@ -476,6 +484,8 @@ protected:
 #endif
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
+
+    bool m_playbackSuspendedWhileDetached { false };
 
     TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
     TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>> m_videoTracks;

@@ -258,6 +258,7 @@ Ref<MediaTimePromise> MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTar
         rebuildPipeline();
 
     GST_INFO_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8());
+    resumeDataFlowIfNeeded(false);
     if (!doSeek(target, m_playbackRate))
         m_seekPromise->reject(PlatformMediaError::Cancelled);
     return *m_seekPromise;
@@ -571,6 +572,24 @@ void MediaPlayerPrivateGStreamerMSE::setInitialVideoSize(const FloatSize& videoS
 
     GST_DEBUG("Setting initial video size: %gx%g", videoSize.width(), videoSize.height());
     m_videoSize = videoSize;
+}
+
+void MediaPlayerPrivateGStreamerMSE::suspendDataFlow()
+{
+    ASSERT(pipeline() && webKitMediaSrc());
+
+    GST_INFO_OBJECT(pipeline(), "Suspending and flushing all WebKitMediaSrc streams");
+    webKitMediaSrcFlushAndSuspend(webKitMediaSrc());
+}
+
+void MediaPlayerPrivateGStreamerMSE::resumeDataFlow(bool restorePosition)
+{
+    ASSERT(pipeline() && webKitMediaSrc());
+
+    GST_INFO_OBJECT(pipeline(), "Resuming all WebKitMediaSrc streams");
+    if (restorePosition)
+        doSeek(SeekTarget { currentTime() }, rate());
+    webKitMediaSrcResume(webKitMediaSrc());
 }
 
 void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)

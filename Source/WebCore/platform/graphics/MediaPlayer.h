@@ -455,6 +455,9 @@ public:
     using MediaPlayerEnums::BufferingPolicy;
     void setBufferingPolicy(BufferingPolicy);
 
+    void didRemovingSteps();
+    void didPostConnectionSteps();
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.
     // This is different from the asynchronous MediaKeyError.

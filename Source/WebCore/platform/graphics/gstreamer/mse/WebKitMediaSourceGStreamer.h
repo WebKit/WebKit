@@ -58,6 +58,9 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc*, const Vector<RefPtr<WebCore::Med
 
 void webKitMediaSrcFlush(WebKitMediaSrc*, WebCore::TrackID);
 
+void webKitMediaSrcFlushAndSuspend(WebKitMediaSrc*);
+void webKitMediaSrcResume(WebKitMediaSrc*);
+
 void webKitMediaSrcSetPlayer(WebKitMediaSrc*, ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamerMSE>&&);
 
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)

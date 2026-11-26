@@ -70,6 +70,9 @@ public:
     bool timeIsProgressing() const override;
     void notifyActiveSourceBuffersChanged() final;
 
+    void suspendDataFlow() final;
+    void resumeDataFlow(bool restorePosition) final;
+
     void sourceSetup(GstElement*) override;
 
     // return false to avoid false-positive "stalled" event - it should be soon addressed in the spec
