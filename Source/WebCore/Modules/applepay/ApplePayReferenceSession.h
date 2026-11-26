@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ApplePayReferenceRequest.h"
+#include "ExceptionOr.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -43,14 +44,22 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<ApplePayReferenceSession> create(Document&, ApplePayReferenceRequest&&);
+    static ExceptionOr<Ref<ApplePayReferenceSession>> create(Document&, ApplePayReferenceRequest&&);
     ~ApplePayReferenceSession();
 
     using PreparePromise = DOMPromiseDeferred<IDLDOMString>;
     void prepare(Document&, PreparePromise&&);
 
 private:
-    explicit ApplePayReferenceSession(Document&);
+    ApplePayReferenceSession(Document&, ApplePayReferenceRequest&&);
+
+    // ActiveDOMObject
+    void stop() final;
+    void suspend(ReasonForSuspension) final;
+
+    const ApplePayReferenceRequest m_request;
+    std::unique_ptr<PreparePromise> m_preparePromise;
+    bool m_didCallPrepare { false };
 };
 
 } // namespace WebCore

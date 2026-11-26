@@ -25,6 +25,9 @@
 
 [
     Conditional=APPLE_PAY_REFERENCE_SESSION,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary ApplePayReferenceRequest {
     required DOMString clientIdentifier;
 };

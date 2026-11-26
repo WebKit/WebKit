@@ -1,4 +1,5 @@
-Test the ApplePayReferenceSession scaffolding: construction and prepare().
+CONSOLE MESSAGE: Permission policy 'Payment' check failed for document with origin 'https://localhost:8443'.
+Test ApplePayReferenceSession construction, which needs no user gesture.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -6,9 +7,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS typeof ApplePayReferenceSession is "function"
 PASS new ApplePayReferenceSession() threw TypeError.
 PASS new ApplePayReferenceSession({}) threw TypeError.
+PASS new ApplePayReferenceSession({ clientIdentifier: '' }) threw TypeError.
 PASS session = new ApplePayReferenceSession(request) did not throw exception.
 
-PASS session.prepare() rejected with NotSupportedError.
+In a third-party iframe:
+PASS frameResult is "SecurityError"
+PASS frameResult is "constructed"
+
+In an about:blank iframe, which is not secure for payment, then after removing it:
+PASS new FrameSession(request) threw InvalidAccessError.
+PASS new FrameSession(request) threw InvalidAccessError.
+
+The request is validated before the document:
+PASS new FrameSession({ clientIdentifier: '' }) threw TypeError.
 
 PASS successfullyParsed is true
 
