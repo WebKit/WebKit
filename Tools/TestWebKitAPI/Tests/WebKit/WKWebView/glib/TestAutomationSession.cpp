@@ -1392,6 +1392,97 @@ static void testBidiContextDestroyedReportsClosedOriginalOpener(AutomationTest* 
     g_assert_true(destroyedEvents[0]->getString("originalOpener"_s) == openerHandle);
 }
 
+static String createUserContext(AutomationTest& test, int commandIdentifier)
+{
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "browser.createUserContext"_s, JSON::Object::create());
+    return response->getObject("result"_s)->getString("userContext"_s);
+}
+
+struct BrowsingContextCreation {
+    AutomationTest& test;
+    GRefPtr<WebKitWebView> webView;
+};
+
+// The client answers with creation.webView, or else with a view it creates while handling the request, as an embedder
+// does, so that the view gets the storage of the requested user context.
+static Ref<JSON::Object> createBrowsingContext(BrowsingContextCreation& creation, int commandIdentifier, const String& userContext)
+{
+    auto& test = creation.test;
+    auto signalID = g_signal_connect(test.m_session, "create-web-view", G_CALLBACK(+[](WebKitAutomationSession*, BrowsingContextCreation* creation) -> WebKitWebView* {
+        if (!creation->webView)
+            creation->webView = creation->test.createWebView("is-controlled-by-automation", TRUE, nullptr);
+        return creation->webView.get();
+    }), &creation);
+    auto parameters = JSON::Object::create();
+    parameters->setString("type"_s, "tab"_s);
+    parameters->setString("userContext"_s, userContext);
+    test.sendBidiCommand(commandIdentifier, "browsingContext.create"_s, WTF::move(parameters));
+    auto response = test.waitForBidiMessage([commandIdentifier](const JSON::Object& message) {
+        auto responseIdentifier = message.getInteger("id"_s);
+        return responseIdentifier && *responseIdentifier == commandIdentifier;
+    });
+    g_signal_handler_disconnect(test.m_session, signalID);
+    g_assert_nonnull(response.get());
+    return response.releaseNonNull();
+}
+
+static void testBidiCreateFailsForPageOfAnotherUserContext(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    g_assert_nonnull(test->requestSession(createVersion4UUIDString().utf8()));
+    auto initialWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(initialWebView.get()));
+
+    auto userContext = createUserContext(*test, 1);
+    BrowsingContextCreation creation { *test, nullptr };
+    g_assert_true(createBrowsingContext(creation, 2, userContext)->getObject("result"_s)->getString("userContext"_s) == userContext);
+
+    // A client may answer with a page it reused. One of another user context fails the command, whichever user
+    // context was requested.
+    BrowsingContextCreation reuseOfUserContextPage { *test, creation.webView };
+    g_assert_true(createBrowsingContext(reuseOfUserContextPage, 3, "default"_s)->getString("error"_s) == "unsupported operation"_s);
+    BrowsingContextCreation reuseOfDefaultPage { *test, initialWebView };
+    g_assert_true(createBrowsingContext(reuseOfDefaultPage, 4, userContext)->getString("error"_s) == "unsupported operation"_s);
+}
+
+static void testBidiPopupKeepsStorageOfOpener(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    g_assert_nonnull(test->requestSession(createVersion4UUIDString().utf8()));
+    auto initialWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(initialWebView.get()));
+
+    auto userContext = createUserContext(*test, 1);
+    BrowsingContextCreation creation { *test, nullptr };
+    auto openerHandle = createBrowsingContext(creation, 2, userContext)->getObject("result"_s)->getString("context"_s);
+    auto* openerWebView = creation.webView.get();
+    webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(openerWebView), TRUE);
+    test->loadURIAndWait(openerWebView, kServer->getURIForPath("/target").legacyCStringPointer());
+
+    struct Popup {
+        AutomationTest& test;
+        GRefPtr<WebKitWebView> webView;
+    } popup { *test, nullptr };
+    g_signal_connect(openerWebView, "create", G_CALLBACK(+[](WebKitWebView* webView, WebKitNavigationAction*, Popup* popup) -> WebKitWebView* {
+        popup->webView = popup->test.createWebView("related-view", webView, nullptr);
+        return popup->webView.get();
+    }), &popup);
+    evaluateInContext(*test, 3, "window.open('/target'), 0"_s, openerHandle);
+    test->waitUntil([&] {
+        const char* uri = popup.webView ? webkit_web_view_get_uri(popup.webView.get()) : nullptr;
+        return uri && g_str_has_suffix(uri, "/target") && !webkit_web_view_is_loading(popup.webView.get());
+    });
+
+    // The page of the popup is in the data store of its opener, and so is the storage of the view.
+#if ENABLE(2022_GLIB_API)
+    g_assert_false(webkit_web_view_get_network_session(openerWebView) == webkit_web_context_get_network_session_for_automation(test->m_webContext.get()));
+    g_assert_true(webkit_web_view_get_network_session(popup.webView.get()) == webkit_web_view_get_network_session(openerWebView));
+#else
+    g_assert_false(webkit_web_view_get_website_data_manager(openerWebView) == webkit_web_context_get_website_data_manager(test->m_webContext.get()));
+    g_assert_true(webkit_web_view_get_website_data_manager(popup.webView.get()) == webkit_web_view_get_website_data_manager(openerWebView));
+#endif
+}
+
 #endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
@@ -1585,6 +1676,8 @@ void beforeAll()
     AutomationTest::add("WebKitAutomationSession", "bidi-call-function-navigation-cancels-pending-command", testBidiCallFunctionNavigationCancelsPendingCommand);
     AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-subtree", testBidiContextDestroyedReportsSubtree);
     AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-closed-original-opener", testBidiContextDestroyedReportsClosedOriginalOpener);
+    AutomationTest::add("WebKitAutomationSession", "bidi-create-fails-for-page-of-another-user-context", testBidiCreateFailsForPageOfAnotherUserContext);
+    AutomationTest::add("WebKitAutomationSession", "bidi-popup-keeps-storage-of-opener", testBidiPopupKeepsStorageOfOpener);
 #if OS(LINUX)
     AutomationTest::add("WebKitAutomationSession", "bidi-iframe-realm-destroyed-when-iframe-process-terminates", testBidiIframeRealmDestroyedWhenIframeProcessTerminates);
 #endif

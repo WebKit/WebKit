@@ -37,21 +37,36 @@
 namespace WebKit {
 
 #if USE(GLIB)
-BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebContext>&& context)
+#if ENABLE(2022_GLIB_API)
+BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitNetworkSession>&& networkSession)
     : m_dataStore(dataStore)
     , m_processPool(processPool)
-    , m_context(WTF::move(context))
+    , m_networkSession(WTF::move(networkSession))
 {
-};
+}
+#else
+BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebsiteDataManager>&& websiteDataManager)
+    : m_dataStore(dataStore)
+    , m_processPool(processPool)
+    , m_websiteDataManager(WTF::move(websiteDataManager))
+{
+}
+#endif
 #else
 BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool)
     : m_dataStore(dataStore)
     , m_processPool(processPool)
 {
-};
-#endif // PLATFORM(GTK)
+}
+#endif // USE(GLIB)
 
 BidiUserContext::~BidiUserContext() = default;
+
+void BidiUserContext::didFinishPageCreation()
+{
+    ASSERT(m_pendingPageCreationCount);
+    --m_pendingPageCreationCount;
+}
 
 Vector<Ref<WebPageProxy>> BidiUserContext::allPages() const
 {

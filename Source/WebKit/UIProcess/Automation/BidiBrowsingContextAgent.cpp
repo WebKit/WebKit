@@ -41,6 +41,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include <JavaScriptCore/MathCommon.h>
 #include <limits>
 #include <wtf/Borrow.h>
@@ -299,6 +300,7 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
+    String userContextID = defaultUserContextID();
     if (!optionalReferenceContext.isNull()) {
         // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
         // https://w3c.github.io/webdriver-bidi/#get-a-navigable
@@ -307,25 +309,36 @@ void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::
         ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
         auto [pageHandle, frameHandle] = handles.value();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!frameHandle.isEmpty(), InvalidParameter);
+        RefPtr referencePage = session->webPageProxyForHandle(pageHandle);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!referencePage, FrameNotFound);
+        userContextID = session->bidiProcessor().browserAgent().userContextForPage(*referencePage);
     }
 
-    if (!optionalUserContext.isNull())
+    if (!optionalUserContext.isNull()) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(optionalUserContext), NoSuchUserContext);
+        userContextID = optionalUserContext;
+    }
 
-    // FIXME: Create the page in the requested user context, or the reference context's one, instead of the default.
-    // https://bugs.webkit.org/show_bug.cgi?id=327241
+    RefPtr<WebsiteDataStore> websiteDataStore;
+    if (userContextID != defaultUserContextID()) {
+        websiteDataStore = session->websiteDataStoreForUserContext(userContextID);
+        // A reference page can still name a user context whose removal is pending.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!websiteDataStore, NoSuchUserContext);
+    }
+
     // FIXME: implement `background` option.
 
-    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [session, callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) mutable {
+    session->createBrowsingContextInWebsiteDataStore(browsingContextPresentationFromCreateType(createType), websiteDataStore.get(), [session, userContextID, callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
         auto [resultContext, resultPresentation] = WTF::move(result.value());
-        String userContextID = defaultUserContextID();
-        if (RefPtr page = session->webPageProxyForHandle(resultContext))
-            userContextID = session->bidiProcessor().browserAgent().userContextForPage(*page);
+        RefPtr page = session->webPageProxyForHandle(resultContext);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, InternalError);
+        // A client that cannot create the page in the user context may answer with a page it reused from another one.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(session->bidiProcessor().browserAgent().userContextForPage(*page) != userContextID, NotImplemented);
         callback({ { WTF::move(resultContext), WTF::move(userContextID) } });
     });
 }

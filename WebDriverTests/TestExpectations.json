@@ -2181,6 +2181,9 @@
             },
             "test_unique_id": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"]}}
+            },
+            "test_storage_isolation": {
+                "expected": {"glib": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}}
@@ -2192,7 +2195,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288104"}},
         "subtests": {
             "test_simple_prompts[alert-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_simple_prompts[alert-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2201,7 +2204,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_simple_prompts[confirm-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_simple_prompts[confirm-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2210,7 +2213,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_simple_prompts[prompt-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_simple_prompts[prompt-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2219,7 +2222,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[alert-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_default_handler[alert-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2228,7 +2231,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[confirm-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_default_handler[confirm-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2237,7 +2240,7 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
             },
             "test_default_handler[prompt-accept]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
+                "expected": {"glib": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/291666", "note": "The prompt stays open. Removing the user context closes the page, and the late success of the cancelled script.evaluate stops the WPT BiDi client from reading messages (client.py sets the result of a cancelled future), so the next command can time out."}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/291666", "note": "The session's prompt handler is not applied to WebDriver BiDi prompts, so the prompt stays open and the script.evaluate that opened it is still pending at teardown"}}
             },
             "test_default_handler[prompt-dismiss]": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -2285,6 +2288,12 @@
                 "expected": {"glib": {"status": ["PASS"]}}
             },
             "test_remove_context_skips_beforeunload_prompt[window]": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_remove_context_closes_contexts[tab]": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_remove_context_closes_contexts[window]": {
                 "expected": {"glib": {"status": ["PASS"]}}
             }
         },
@@ -2417,10 +2426,10 @@
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288335"}}
             },
             "test_new_user_context[tab]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288335"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["SKIP"], "bug": "webkit.org/b/288335"}}
             },
             "test_new_user_context[window]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288335"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["SKIP"], "bug": "webkit.org/b/288335"}}
             },
             "test_context_is_ready_after_event[tab]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
@@ -2485,10 +2494,10 @@
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288336"}}
             },
             "test_new_user_context[tab]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
             },
             "test_new_user_context[window]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
             },
             "test_client_window[tab]": {
                 "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
@@ -2594,6 +2603,12 @@
             },
             "test_reference_context[window]": {
                 "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
+            },
+            "test_reference_context_with_no_user_context_set[tab]": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_reference_context_with_no_user_context_set[window]": {
+                "expected": {"glib": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
@@ -2633,10 +2648,16 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
             },
             "test_user_context[tab]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
             },
             "test_user_context[window]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/303210"}}
+            },
+            "test_overrides_user_context_from_reference_context": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_user_context_nested_iframes": {
+                "expected": {"glib": {"status": ["PASS"]}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
@@ -6036,7 +6057,7 @@
                 "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/321603", "note": "Events and results don't include userContext yet"}}
             },
             "test_create_result_custom_user_context[new]": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/326991"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}}
             }
         }
     },

@@ -94,6 +94,7 @@
 #include "BidiEventNames.h"
 #include "BidiInputAgent.h"
 #include "BidiScriptAgent.h"
+#include "BidiUserContext.h"
 #include "IdentifierTypes.h"
 #include "WebDriverBidiProcessor.h"
 #endif
@@ -591,6 +592,17 @@ std::expected<String, AutomationCommandError> WebAutomationSession::nodeHandleFo
 
     return sharedId->asString();
 }
+
+WebsiteDataStore* WebAutomationSession::websiteDataStoreForUserContext(const String& userContextID) const
+{
+    auto* userContext = m_bidiProcessor->browserAgent().userContext(userContextID);
+    return userContext ? &userContext->dataStore() : nullptr;
+}
+
+BidiUserContext* WebAutomationSession::userContextForWebsiteDataStore(const WebsiteDataStore& dataStore) const
+{
+    return m_bidiProcessor->browserAgent().userContextForWebsiteDataStore(dataStore);
+}
 #endif
 
 // Platform-independent Commands.
@@ -648,6 +660,11 @@ NODELETE static Inspector::Protocol::Automation::BrowsingContextPresentation toP
 
 void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
 {
+    createBrowsingContextInWebsiteDataStore(WTF::move(presentationHint), nullptr, WTF::move(callback));
+}
+
+void WebAutomationSession::createBrowsingContextInWebsiteDataStore(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, WebsiteDataStore* websiteDataStore, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
+{
     ASSERT(m_client);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!m_client, InternalError, "The remote session could not request a new browsing context."_s);
 
@@ -656,7 +673,20 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
     if (presentationHint == Inspector::Protocol::Automation::BrowsingContextPresentation::Tab)
         options |= API::AutomationSessionBrowsingContextOptionsPreferNewTab;
 
-    m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = Ref { *this }, callback = WTF::move(callback)](WebPageProxy* page) mutable {
+#if ENABLE(WEBDRIVER_BIDI)
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(websiteDataStore && !m_bidiProcessor->browserAgent().willCreatePageInWebsiteDataStore(*websiteDataStore), NoSuchUserContext);
+#endif
+
+    m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), websiteDataStore, [protectedThis = Ref { *this }, requestedWebsiteDataStore = RefPtr { websiteDataStore }, callback = WTF::move(callback)](WebPageProxy* page) mutable {
+#if ENABLE(WEBDRIVER_BIDI)
+        if (requestedWebsiteDataStore) {
+            protectedThis->m_bidiProcessor->browserAgent().didFinishCreatingPageInWebsiteDataStore(*requestedWebsiteDataStore);
+            // The user context may have been removed meanwhile; a page created for it is being closed.
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!protectedThis->userContextForWebsiteDataStore(*requestedWebsiteDataStore), NoSuchUserContext);
+        }
+#endif
+        // A client that cannot create the page in the requested data store may answer with no page.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page && requestedWebsiteDataStore, NotImplemented);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page || page->isClosed(), InternalError, "The remote session failed to create a new browsing context."_s);
 
         RefPtr protectedPage = page;
@@ -1670,9 +1700,7 @@ void WebAutomationSession::didCreatePage(WebPageProxy& page)
     if (RefPtr openerPage = getOpenerPage(page))
         m_originalOpenerHandles.set(page.identifier(), handleForWebPageProxy(*openerPage));
 
-    m_bidiProcessor->browserAgent().didCreatePage(page);
-    // The browser agent closes a page created in a user context whose removal is pending.
-    if (page.isClosed())
+    if (!m_bidiProcessor->browserAgent().didCreatePage(page))
         return;
 
     m_bidiProcessor->emulationAgent().didCreatePage(page);

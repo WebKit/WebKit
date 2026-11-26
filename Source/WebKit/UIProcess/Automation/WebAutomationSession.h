@@ -94,6 +94,7 @@ class OpenPanelParameters;
 
 namespace WebKit {
 
+class BidiUserContext;
 class ViewSnapshot;
 class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
@@ -101,6 +102,7 @@ class WebPageProxy;
 class WebPageInspectorController;
 class WebProcessPool;
 class WebProcessProxy;
+class WebsiteDataStore;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class InspectorPassthroughChannel;
@@ -277,6 +279,7 @@ public:
     void getBrowsingContexts(Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&) override;
     void getBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::BrowsingContext>>&&) override;
     void createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&) override;
+    void createBrowsingContextInWebsiteDataStore(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, WebsiteDataStore*, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&);
     void closeBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     Inspector::CommandResult<void> deleteSession() override;
     void resolveBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<void>&&) override;
@@ -402,6 +405,8 @@ public:
     bool isValidUserContext(const String& userContextID) const;
     std::expected<String, AutomationCommandError> nodeHandleForSharedReference(const JSON::Object& sharedReference) const;
     void setFilesForBidi(const String& pageHandle, const String& frameHandle, const String& nodeHandle, Vector<String>&& paths, AutomationCompletionHandler&&);
+    WebsiteDataStore* websiteDataStoreForUserContext(const String& userContextID) const;
+    BidiUserContext* userContextForWebsiteDataStore(const WebsiteDataStore&) const;
 #endif
 
 private:
