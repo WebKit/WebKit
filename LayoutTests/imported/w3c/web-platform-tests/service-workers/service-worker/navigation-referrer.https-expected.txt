@@ -1,0 +1,71 @@
+
+PASS Setup service worker
+PASS iframe navigation, no-sw: Referer header and document.referrer
+PASS iframe navigation, fallback: Referer header and document.referrer
+PASS iframe navigation, passthrough: Referer header and document.referrer
+PASS iframe navigation, navpreload: Referer header and document.referrer
+PASS iframe with no-referrer policy navigation, no-sw: Referer header and document.referrer
+PASS iframe with no-referrer policy navigation, fallback: Referer header and document.referrer
+PASS iframe with no-referrer policy navigation, passthrough: Referer header and document.referrer
+PASS iframe with no-referrer policy navigation, navpreload: Referer header and document.referrer
+PASS top-level navigation, no-sw: Referer header and document.referrer
+PASS top-level navigation, fallback: Referer header and document.referrer
+PASS top-level navigation, passthrough: Referer header and document.referrer
+PASS top-level navigation, navpreload: Referer header and document.referrer
+PASS top-level with no-referrer policy navigation, no-sw: Referer header and document.referrer
+PASS top-level with no-referrer policy navigation, fallback: Referer header and document.referrer
+PASS top-level with no-referrer policy navigation, passthrough: Referer header and document.referrer
+PASS top-level with no-referrer policy navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in popup from same-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in popup from same-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in popup from same-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in popup from same-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab assign in popup from same-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab assign in popup from same-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab assign in popup from same-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab assign in popup from same-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in popup from cross-site page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in popup from cross-site page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in popup from cross-site page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in popup from cross-site page navigation, navpreload: Referer header and document.referrer
+PASS same-tab assign in popup from cross-site page navigation, no-sw: Referer header and document.referrer
+PASS same-tab assign in popup from cross-site page navigation, fallback: Referer header and document.referrer
+PASS same-tab assign in popup from cross-site page navigation, passthrough: Referer header and document.referrer
+PASS same-tab assign in popup from cross-site page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in popup from cross-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in popup from cross-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in popup from cross-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in popup from cross-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in popup from controlled page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in popup from controlled page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in popup from controlled page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in popup from controlled page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in iframe from same-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in iframe from same-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in iframe from same-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in iframe from same-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab assign in iframe from same-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab assign in iframe from same-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab assign in iframe from same-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab assign in iframe from same-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in iframe from cross-site page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in iframe from cross-site page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in iframe from cross-site page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in iframe from cross-site page navigation, navpreload: Referer header and document.referrer
+PASS same-tab assign in iframe from cross-site page navigation, no-sw: Referer header and document.referrer
+PASS same-tab assign in iframe from cross-site page navigation, fallback: Referer header and document.referrer
+PASS same-tab assign in iframe from cross-site page navigation, passthrough: Referer header and document.referrer
+PASS same-tab assign in iframe from cross-site page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in iframe from cross-origin page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in iframe from cross-origin page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in iframe from cross-origin page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in iframe from cross-origin page navigation, navpreload: Referer header and document.referrer
+PASS same-tab click in iframe from controlled page navigation, no-sw: Referer header and document.referrer
+PASS same-tab click in iframe from controlled page navigation, fallback: Referer header and document.referrer
+PASS same-tab click in iframe from controlled page navigation, passthrough: Referer header and document.referrer
+PASS same-tab click in iframe from controlled page navigation, navpreload: Referer header and document.referrer
+PASS same-tab assign in noopener popup from controlled page navigation, no-sw: Referer header and document.referrer
+PASS same-tab assign in noopener popup from controlled page navigation, fallback: Referer header and document.referrer
+PASS same-tab assign in noopener popup from controlled page navigation, passthrough: Referer header and document.referrer
+PASS same-tab assign in noopener popup from controlled page navigation, navpreload: Referer header and document.referrer
+

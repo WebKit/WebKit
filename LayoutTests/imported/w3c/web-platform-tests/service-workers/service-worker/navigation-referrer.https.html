@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="timeout" content="long">
+<title>Service Worker: passthrough and preload navigations keep the referrer</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+<body>
+<script>
+'use strict';
+
+const script = './resources/fetch-rewrite-worker.js';
+const base = './resources/navigation-referrer-server.py';
+const scope = base + '?with-sw';
+const page_url = location.href.split('#')[0];
+let registration;
+
+function target_url(swaction) {
+  if (swaction === 'no-sw') {
+    return new URL(base + '?no-sw', location).href;
+  }
+  if (swaction === 'navpreload') {
+    assert_true('navigationPreload' in registration,
+                'navigation preload must be supported');
+  }
+  // `ignore` makes the worker skip respondWith(), so the request falls back to
+  // the network.
+  const action = swaction === 'fallback' ? 'ignore' : swaction;
+  return new URL(`${scope}&${action}`, location).href;
+}
+
+function wait_for_message(source_getter) {
+  return new Promise(resolve => {
+    self.addEventListener('message', function listener(evt) {
+      if (evt.source !== source_getter()) return;
+      self.removeEventListener('message', listener);
+      resolve(evt.data);
+    });
+  });
+}
+
+async function navigate_iframe(t, url, referrer_policy) {
+  const frame = document.createElement('iframe');
+  t.add_cleanup(() => frame.remove());
+  if (referrer_policy) frame.referrerPolicy = referrer_policy;
+  const message = wait_for_message(() => frame.contentWindow);
+  frame.src = url;
+  document.body.append(frame);
+  return message;
+}
+
+async function navigate_popup(t, url, referrer_policy) {
+  const name = token();
+  const popup = window.open('about:blank', name);
+  t.add_cleanup(() => popup.close());
+  const link = document.createElement('a');
+  t.add_cleanup(() => link.remove());
+  link.href = url;
+  link.target = name;
+  link.textContent = 'navigate popup';
+  if (referrer_policy) link.referrerPolicy = referrer_policy;
+  document.body.append(link);
+  const message = wait_for_message(() => popup);
+  link.click();
+  return message;
+}
+
+/**
+ * Loads a helper page at `url` in a popup or an iframe. The helper navigates
+ * its own browsing context.
+ */
+async function open_helper(t, container, url) {
+  let win;
+  const message = wait_for_message(() => win);
+  if (container === 'popup') {
+    win = window.open(url);
+    t.add_cleanup(() => win.close());
+  } else {
+    const frame = document.createElement('iframe');
+    frame.src = url;
+    document.body.append(frame);
+    t.add_cleanup(() => frame.remove());
+    win = frame.contentWindow;
+  }
+  return message;
+}
+
+/**
+ * Opens the helper at `url` in a window without an opener, so the helper can
+ * enter the back/forward cache when it navigates away. The target page sends
+ * its result over a BroadcastChannel.
+ */
+async function open_noopener_helper(t, url, channel_name) {
+  const channel = new BroadcastChannel(channel_name);
+  t.add_cleanup(() => channel.close());
+  const message = new Promise(resolve => channel.onmessage = e => resolve(e.data));
+  window.open(url, '_blank', 'noopener');
+  return message;
+}
+
+/**
+ * Returns the URL of a helper page that navigates its own browsing context to
+ * the target URL. See the server for the values of `how`.
+ */
+function helper_url(scenario, swaction) {
+  const server = new URL(base, location);
+  const helper = {
+    'same-origin': server.href + '?helper',
+    'cross-site': get_host_info().HTTPS_NOTSAMESITE_ORIGIN + server.pathname +
+                  '?helper',
+    'cross-origin': get_host_info().HTTPS_REMOTE_ORIGIN + server.pathname +
+                    '?helper',
+    // The helper itself loads through the worker, so the worker controls it.
+    'controlled': target_url(swaction) + '&helper',
+  }[scenario.helper];
+  const channel = scenario.channel ? `&channel=${scenario.channel}` : '';
+  const url = encodeURIComponent(target_url(swaction) + channel);
+  return `${helper}&${scenario.how}=${url}`;
+}
+
+promise_test(async t => {
+  registration = await service_worker_unregister_and_register(t, script, scope);
+  add_completion_callback(() => registration.unregister());
+  await wait_for_state(t, registration.installing, 'activated');
+  if (registration.navigationPreload)
+    await registration.navigationPreload.enable();
+}, 'Setup service worker');
+
+const scenarios = [
+  {name: 'iframe', navigate: navigate_iframe, policy: '',
+   expected: {referer: page_url, documentReferrer: page_url}},
+  {name: 'iframe with no-referrer policy', navigate: navigate_iframe,
+   policy: 'no-referrer',
+   expected: {referer: 'not set', documentReferrer: ''}},
+  {name: 'top-level', navigate: navigate_popup, policy: '',
+   expected: {referer: page_url, documentReferrer: page_url}},
+  {name: 'top-level with no-referrer policy', navigate: navigate_popup,
+   policy: 'no-referrer',
+   expected: {referer: 'not set', documentReferrer: ''}},
+];
+
+// The navigated document starts the navigation itself, in the same tab.
+for (const container of ['popup', 'iframe']) {
+  for (const [how, helper] of [['click', 'same-origin'],
+                               ['assign', 'same-origin'],
+                               ['click', 'cross-site'],
+                               ['assign', 'cross-site'],
+                               ['click', 'cross-origin'],
+                               ['click', 'controlled']]) {
+    scenarios.push({
+      name: `same-tab ${how} in ${container} from ${helper} page`,
+      navigate: (t, url) => open_helper(t, container, url),
+      how, helper,
+    });
+  }
+}
+
+// The helper loaded through the worker navigates away, and the browser can
+// put it in the back/forward cache.
+const channel = token();
+scenarios.push({
+  name: 'same-tab assign in noopener popup from controlled page',
+  navigate: (t, url) => open_noopener_helper(t, url, channel),
+  how: 'assign', helper: 'controlled', channel,
+});
+
+/**
+ * Returns the expected result. A same-tab navigation has the helper page as
+ * referrer; the default policy strict-origin-when-cross-origin cuts a
+ * cross-origin referrer to its origin.
+ */
+function expected_result(scenario, url) {
+  if (!scenario.helper) return scenario.expected;
+  const referrer = scenario.helper.startsWith('cross-') ?
+      new URL(url).origin + '/' : url;
+  return {referer: referrer, documentReferrer: referrer};
+}
+
+for (const scenario of scenarios) {
+  for (const swaction of ['no-sw', 'fallback', 'passthrough', 'navpreload']) {
+    promise_test(async t => {
+      const url = scenario.helper ? helper_url(scenario, swaction) :
+                                    target_url(swaction);
+      const result = await scenario.navigate(t, url, scenario.policy);
+      assert_equals(
+          JSON.stringify({referer: result.referer,
+                          documentReferrer: result.documentReferrer}),
+          JSON.stringify(expected_result(scenario, url)));
+    }, `${scenario.name} navigation, ${swaction}: Referer header and ` +
+       'document.referrer');
+  }
+}
+</script>
+</body>

@@ -191,6 +191,10 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     if (isNavigation)
         options.redirect = FetchOptions::Redirect::Manual;
 
+    // An empty Referer header means the request has no referrer. FetchRequest expects "no-referrer" for that, as an empty referrer would make fetch(event.request) send the worker script URL.
+    if (referrer.isEmpty())
+        referrer = "no-referrer"_s;
+
     URL requestURL = request.url();
     auto fetchRequest = FetchRequest::create(globalScope, WTF::move(body), WTF::move(requestHeaders),  WTF::move(request), WTF::move(options), WTF::move(referrer));
 
