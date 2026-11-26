@@ -92,7 +92,7 @@ FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLin
     float strokeWidth = this->strokeWidth();
 
     if (hasMarkers) {
-        auto markerRect = this->markerRect(repaintRectCalculation, strokeWidth);
+        auto markerRect = this->markerRect(repaintRectCalculation, strokeWidthForMarkerUnits());
         if (!markerRect.isNaN())
             strokeBoundingBox.unite(markerRect);
     }
