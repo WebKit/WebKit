@@ -514,6 +514,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<UIMenu> _selectMenu;
     std::unique_ptr<WebKit::CompactContextMenuPresenter> _selectContextMenuPresenter;
     BOOL _isAnimatingContextMenuDismissal;
+    BOOL _isShowingMenu;
 #endif
 }
 
@@ -712,6 +713,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         page->setSelectElementIsOpen(focusedInfo.frameID(), focusedInfo.elementContext, true);
     }
 
+    _isShowingMenu = YES;
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         if (RetainPtr strongSelf = weakSelf.get())
             [[strongSelf->_view.get() webView] _didShowContextMenu];
@@ -726,6 +728,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     if (RefPtr page = [view page])
         page->setSelectElementIsOpen(focusedInfo.frameID(), elementContext, false);
 
+    _isShowingMenu = NO;
     _isAnimatingContextMenuDismissal = YES;
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext] {
         if (RetainPtr strongSelf = weakSelf.get()) {
@@ -744,6 +747,7 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         return;
 
     _selectContextMenuPresenter = nullptr;
+    _isShowingMenu = NO;
     RetainPtr view = _view.get();
     [view _removeContextMenuHintContainerIfPossible];
     if (RefPtr page = [view page]) {
@@ -762,7 +766,66 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
     _selectContextMenuPresenter->present(_interactionPoint);
 }
 
+- (Vector<RetainPtr<UIAction>>)_enabledMenuActions
+{
+    Vector<RetainPtr<UIAction>> actions;
+    auto appendIfEnabled = [&](UIMenuElement *element) {
+        RetainPtr action = dynamic_objc_cast<UIAction>(element);
+        if (!action || ([action attributes] & UIMenuElementAttributesDisabled) || ![action title].length)
+            return;
+
+        actions.append(WTF::move(action));
+    };
+
+    for (UIMenuElement *element in [_selectMenu children]) {
+        if (RetainPtr group = dynamic_objc_cast<UIMenu>(element)) {
+            for (UIMenuElement *groupedElement in [group children])
+                appendIfEnabled(groupedElement);
+            continue;
+        }
+
+        appendIfEnabled(element);
+    }
+
+    return actions;
+}
+
 #endif // USE(UICONTEXTMENU)
+
+- (BOOL)isShowingMenu
+{
+#if USE(UICONTEXTMENU)
+    return _isShowingMenu;
+#else
+    return NO;
+#endif
+}
+
+- (NSArray<NSString *> *)enabledMenuItemTitles
+{
+#if USE(UICONTEXTMENU)
+    return createNSArray([self _enabledMenuActions], [](const auto& action) {
+        return [action title];
+    }).autorelease();
+#else
+    return @[];
+#endif
+}
+
+- (BOOL)selectEnabledMenuItemWithTitle:(NSString *)title
+{
+#if USE(UICONTEXTMENU)
+    for (auto& action : [self _enabledMenuActions]) {
+        if (![[action title] isEqualToString:title])
+            continue;
+
+        [action performWithSender:nil target:nil];
+        [_view.get() accessoryDone];
+        return YES;
+    }
+#endif
+    return NO;
+}
 
 // WKSelectTesting
 

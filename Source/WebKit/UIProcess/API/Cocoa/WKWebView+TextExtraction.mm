@@ -222,9 +222,7 @@ static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentif
 - (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates failureDescription:(const String&)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler;
 - (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler;
 - (Vector<String>)_activeNativeMenuItemTitles;
-#if PLATFORM(MAC)
-- (RetainPtr<NSPopUpButtonCell>)_activePopupButtonCell;
-#endif
+- (BOOL)_hasActiveNativeMenu;
 @end
 
 @implementation WKWebView (WKTextExtraction)
@@ -1077,10 +1075,8 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     if (!targetFrame)
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
-#if PLATFORM(MAC)
-    if ([self _activePopupButtonCell] && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !interaction.text.isEmpty())
+    if ([self _hasActiveNativeMenu] && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !interaction.text.isEmpty())
         return completionHandler([NSString stringWithFormat:@"Select popup menu item labeled '%@'", interaction.text.createNSString().get()], nil);
-#endif
 
     [self _describeInteraction:WTF::move(interaction) inFrame:targetFrame staleNodeResolution:WebKit::StaleNodeResolutionState { .requestedIdentifier = nodeIdentifierString } completionHandler:completionHandler];
 }

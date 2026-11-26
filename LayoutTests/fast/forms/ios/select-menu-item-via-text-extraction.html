@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<select id="select">
+    <option>One</option>
+    <option selected>Two</option>
+    <option value="three">Three</option>
+    <option disabled>Four</option>
+</select>
+<script>
+jsTestIsAsync = true;
+changeCount = 0;
+
+addEventListener("load", async () => {
+    description("Verifies that the selectmenuitem text extraction interaction can choose an option in the select context menu.");
+
+    select.addEventListener("change", () => changeCount++);
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+
+    const debugText = await UIHelper.requestDebugText({ outputFormat: "texttree" });
+    nativeMenuLine = debugText.split("\n").find(line => line.includes("nativePopupMenu")) || "";
+    shouldBeTrue("nativeMenuLine.includes(\"items=['One','Two','Three']\")");
+
+    disabledItemError = await UIHelper.performTextExtractionInteraction("selectmenuitem", { text: "Four" });
+    shouldBeEqualToString("disabledItemError", "No popup menu item with title 'Four'");
+    shouldBeEqualToString("select.value", "Two");
+
+    result = await UIHelper.performTextExtractionInteractionResult("selectmenuitem", { text: "Three" });
+    shouldBeEqualToString("result.error", "");
+    shouldBeEqualToString("result.summary", "Successfully updated option in select element");
+
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "three");
+    shouldBe("changeCount", "1");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

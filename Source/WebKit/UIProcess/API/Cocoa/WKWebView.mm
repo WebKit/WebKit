@@ -247,16 +247,13 @@
 #import <WebCore/ExceptionData.h>
 #endif
 
-#if ENABLE(SCREEN_TIME)
-#import <pal/cocoa/ScreenTimeSoftLink.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #import "PointerTouchCompatibilitySimulator.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
+#import "WKFormSelectPicker.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewIOS.h"
@@ -279,6 +276,10 @@
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 #import <pal/spi/mac/NSViewSPI.h>
+#endif
+
+#if ENABLE(SCREEN_TIME)
+#import <pal/cocoa/ScreenTimeSoftLink.h>
 #endif
 
 #import "WebKitSwiftSoftLink.h"
@@ -7349,6 +7350,17 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 
 #endif // PLATFORM(MAC)
 
+- (BOOL)_hasActiveNativeMenu
+{
+#if PLATFORM(MAC)
+    return !![self _activePopupButtonCell];
+#elif PLATFORM(IOS_FAMILY)
+    return !![_contentView visibleSelectPicker];
+#else
+    return NO;
+#endif
+}
+
 - (Vector<String>)_activeNativeMenuItemTitles
 {
 #if PLATFORM(MAC)
@@ -7363,9 +7375,27 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     }
 
     return itemTitles;
+#elif PLATFORM(IOS_FAMILY)
+    return makeVector<String>([[_contentView visibleSelectPicker] enabledMenuItemTitles]);
 #else
-    // FIXME: Bridge this into UIKit's context menu interaction.
     return { };
+#endif
+}
+
+- (BOOL)_selectActiveNativeMenuItemWithTitle:(NSString *)title
+{
+#if PLATFORM(MAC)
+    RetainPtr nativePopup = [self _activePopupButtonCell];
+    if (!nativePopup || [nativePopup indexOfItemWithTitle:title] == -1)
+        return NO;
+
+    [nativePopup selectItemWithTitle:title];
+    [retainPtr([nativePopup menu]) cancelTrackingWithoutAnimation];
+    return YES;
+#elif PLATFORM(IOS_FAMILY)
+    return [[_contentView visibleSelectPicker] selectEnabledMenuItemWithTitle:title];
+#else
+    return NO;
 #endif
 }
 
@@ -7441,15 +7471,9 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
         return completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:@"Browsing context is invalid" summary:nil interactedElementBounds:CGRectNull]).get());
     }
 
-#if PLATFORM(MAC)
-    RetainPtr nativePopup = [self _activePopupButtonCell];
-    if (nativePopup && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !interaction.text.isEmpty()) {
+    if ([self _hasActiveNativeMenu] && interaction.action == WebCore::TextExtraction::Action::SelectMenuItem && !interaction.text.isEmpty()) {
         RetainPtr title = interaction.text.createNSString();
-        BOOL foundItem = [nativePopup indexOfItemWithTitle:title.get()] != -1;
-        if (foundItem) {
-            [nativePopup selectItemWithTitle:title.get()];
-            [retainPtr([nativePopup menu]) cancelTrackingWithoutAnimation];
-        }
+        BOOL foundItem = [self _selectActiveNativeMenuItemWithTitle:title];
         page->callAfterNextPresentationUpdate([title, foundItem, completionHandler = makeBlockPtr(WTF::move(completionHandler))] {
             RetainPtr errorDescription = foundItem ? nil : [NSString stringWithFormat:@"No popup menu item with title '%@'", title.get()];
             RetainPtr summary = foundItem ? [NSString stringWithFormat:@"Successfully updated option in select element"] : nil;
@@ -7458,7 +7482,6 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
         });
         return;
     }
-#endif // PLATFORM(MAC)
 
     [self _performInteraction:WTF::move(interaction) inFrame:targetFrame actionType:actionType staleNodeResolution:WebKit::StaleNodeResolutionState { .requestedIdentifier = nodeIdentifierString } completionHandler:completionHandler];
 }

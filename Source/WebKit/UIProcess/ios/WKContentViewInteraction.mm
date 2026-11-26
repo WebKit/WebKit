@@ -67,6 +67,7 @@
 #import "WKFocusedFormControlView.h"
 #import "WKFormColorControl.h"
 #import "WKFormSelectControl.h"
+#import "WKFormSelectPicker.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
 #import "WKImageAnalysisGestureRecognizer.h"
@@ -8307,6 +8308,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 - (Vector<WebKit::OptionItem>&)focusedSelectElementOptions
 {
     return _focusedElementInformation.selectOptions;
+}
+
+- (WKSelectPicker *)visibleSelectPicker
+{
+    RetainPtr picker = dynamic_objc_cast<WKSelectPicker>([self.selectControl control]);
+    return [picker isShowingMenu] ? picker.autorelease() : nil;
 }
 
 // Note that selectability is also affected by the CSS property user-select.

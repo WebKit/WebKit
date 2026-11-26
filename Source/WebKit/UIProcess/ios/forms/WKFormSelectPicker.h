@@ -48,6 +48,9 @@
 #endif
 >
 - (instancetype)initWithView:(WKContentView *)view;
+- (BOOL)selectEnabledMenuItemWithTitle:(NSString *)title;
+@property (nonatomic, readonly) BOOL isShowingMenu;
+@property (nonatomic, readonly) NSArray<NSString *> *enabledMenuItemTitles;
 @end
 
 @interface WKSelectMultiplePicker : NSObject <WKFormControl>

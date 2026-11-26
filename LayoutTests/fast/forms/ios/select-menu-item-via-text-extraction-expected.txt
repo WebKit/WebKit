@@ -1,0 +1,16 @@
+Verifies that the selectmenuitem text extraction interaction can choose an option in the select context menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS nativeMenuLine.includes("items=['One','Two','Three']") is true
+PASS disabledItemError is "No popup menu item with title 'Four'"
+PASS select.value is "Two"
+PASS result.error is ""
+PASS result.summary is "Successfully updated option in select element"
+PASS select.value is "three"
+PASS changeCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

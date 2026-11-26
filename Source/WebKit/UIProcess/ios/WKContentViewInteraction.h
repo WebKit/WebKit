@@ -153,6 +153,7 @@ enum class PickerDismissalReason : uint8_t;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class WKSelectPicker;
 @class WKTargetedPreviewContainer;
 @class WKTextInteractionWrapper;
 @class WKTextRange;
@@ -858,6 +859,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)dismissFilePicker;
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (Vector<WebKit::OptionItem>&) focusedSelectElementOptions;
+@property (nonatomic, readonly) WKSelectPicker *visibleSelectPicker;
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
