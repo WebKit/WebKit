@@ -111,16 +111,19 @@ public:
     void addDamage(Damage&&);
 #endif
 
-    void damageWholeLayer()
+    bool damageWholeLayer()
     {
 #if ENABLE(DAMAGE_TRACKING)
         if (!damagePropagationEnabled() || m_rect.isEmpty())
-            return;
+            return false;
 
         if (!m_layerDamage)
             m_layerDamage = Damage(m_rect.size(), Damage::Mode::Full);
         else
             m_layerDamage->makeFull();
+        return true;
+#else
+        return false;
 #endif
     }
 
@@ -179,10 +182,15 @@ private:
     class LayerRectTracker {
         WTF_MAKE_TZONE_ALLOCATED_INLINE(LayerRectTracker);
     public:
+        // Whether a tracked rect bounds what the layer paints, or matches it exactly.
+        enum class Coverage : bool { Bounds, Exact };
+        // Whether the layer damaged its whole rect this frame, like one that moved.
+        enum class FullyDamaged : bool { No, Yes };
+
         void advanceToNextFrame() { ++m_currentFrameID; }
         uint64_t generateLayerRectID() { return ++m_lastLayerRectID; }
 
-        void recordVisit(uint64_t layerRectID, const FloatRect& rectInFrame);
+        void recordVisit(uint64_t layerRectID, const FloatRect& rectInFrame, Coverage, FullyDamaged);
 
         // Adds what has to be repainted to the damage, then advances every surviving entry to the rect it
         // painted this frame and drops the entries of the layers that no longer paint.
@@ -192,6 +200,9 @@ private:
         struct Entry {
             FloatRect previousRect;
             FloatRect currentRect; // United over every visit of the walk.
+            Coverage previousRectCoverage { Coverage::Bounds };
+            Coverage currentRectCoverage { Coverage::Bounds };
+            FullyDamaged currentRectFullyDamaged { FullyDamaged::No };
             uint64_t lastVisitedFrameID { 0 };
         };
 
@@ -311,7 +322,8 @@ private:
     bool hasLayerDamage() const { return m_layerDamage && !m_layerDamage->isEmpty(); }
     bool hasGroupPropertyDamage() const;
     bool hasDamageInSubtree() const;
-    void trackLayerRect(PaintContext&, const FloatRect& layerRectInFrame);
+    void trackLayerRect(PaintContext&, const FloatRect& layerRectInFrame, LayerRectTracker::Coverage, LayerRectTracker::FullyDamaged);
+    bool combinedTransformMovedOnScreen() const;
 #endif
 
     struct AnimationsState {
@@ -408,6 +420,7 @@ private:
     std::optional<Damage> m_layerDamage;
     const std::unique_ptr<LayerRectTracker> m_layerRectTracker;
     uint64_t m_layerRectID { 0 };
+    std::optional<TransformationMatrix> m_transformAtLastDamage;
     bool m_groupPropertyChanged { false };
 #endif
 };

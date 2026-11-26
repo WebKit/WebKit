@@ -429,6 +429,32 @@ public:
         return add(enclosingIntRect(rect));
     }
 
+    // Adds the area that changed between the rects, up to four bands per rect, each inflated by outset.
+    void addChangedArea(const FloatRect& previous, const FloatRect& current, float outset = 0)
+    {
+        auto addBand = [&](FloatRect band) {
+            if (band.isEmpty())
+                return;
+            band.inflate(outset);
+            add(band);
+        };
+
+        auto addPartOutside = [&](const FloatRect& rect, const FloatRect& other) {
+            const auto overlap = intersection(rect, other);
+            if (overlap.isEmpty()) {
+                addBand(rect);
+                return;
+            }
+            addBand({ rect.x(), rect.y(), rect.width(), overlap.y() - rect.y() });
+            addBand({ rect.x(), overlap.maxY(), rect.width(), rect.maxY() - overlap.maxY() });
+            addBand({ rect.x(), overlap.y(), overlap.x() - rect.x(), overlap.height() });
+            addBand({ overlap.maxX(), overlap.y(), rect.maxX() - overlap.maxX(), overlap.height() });
+        };
+
+        addPartOutside(previous, current);
+        addPartOutside(current, previous);
+    }
+
     ALWAYS_INLINE bool add(const Rects& rects)
     {
         if (rects.isEmpty() || !shouldAdd())

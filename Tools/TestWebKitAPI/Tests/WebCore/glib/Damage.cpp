@@ -768,6 +768,48 @@ TEST(Damage, MaxRectangles)
     EXPECT_EQ(damage.bounds(), IntRect(0, 0, 1024, 768));
 }
 
+TEST(Damage, AddChangedArea)
+{
+    // Unchanged rects add nothing.
+    Damage damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 10, 10, 50, 40 });
+    EXPECT_TRUE(damage.isEmpty());
+
+    // A rect sliding right adds the strip it left and the strip it entered.
+    damage = Damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 30, 10, 50, 40 });
+    EXPECT_EQ(damage.size(), 2);
+    EXPECT_EQ(damage[0], IntRect(10, 10, 20, 40));
+    EXPECT_EQ(damage[1], IntRect(60, 10, 20, 40));
+
+    // A rect growing to the right only adds the new part.
+    damage = Damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 10, 10, 80, 40 });
+    EXPECT_EQ(damage.size(), 1);
+    EXPECT_EQ(damage[0], IntRect(60, 10, 30, 40));
+
+    // A rect sliding down adds a band above and a band below.
+    damage = Damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 10, 20, 50, 40 });
+    EXPECT_EQ(damage.size(), 2);
+    EXPECT_EQ(damage[0], IntRect(10, 10, 50, 10));
+    EXPECT_EQ(damage[1], IntRect(10, 50, 50, 10));
+
+    // Disjoint rects add both.
+    damage = Damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 200, 10, 50, 40 });
+    EXPECT_EQ(damage.size(), 2);
+    EXPECT_EQ(damage[0], IntRect(10, 10, 50, 40));
+    EXPECT_EQ(damage[1], IntRect(200, 10, 50, 40));
+
+    // The outset inflates each band.
+    damage = Damage(IntSize { 1024, 768 });
+    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 30, 10, 50, 40 }, 1);
+    EXPECT_EQ(damage.size(), 2);
+    EXPECT_EQ(damage[0], IntRect(9, 9, 22, 42));
+    EXPECT_EQ(damage[1], IntRect(59, 9, 22, 42));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(GTK) || PLATFORM(WPE)

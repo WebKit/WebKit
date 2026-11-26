@@ -328,7 +328,7 @@ void SkiaCompositingLayer::addDamage(Damage&& damage)
         m_layerDamage = WTF::move(damage);
 }
 
-void SkiaCompositingLayer::LayerRectTracker::recordVisit(uint64_t id, const FloatRect& rectInFrame)
+void SkiaCompositingLayer::LayerRectTracker::recordVisit(uint64_t id, const FloatRect& rectInFrame, Coverage coverage, FullyDamaged fullyDamaged)
 {
     auto& entry = m_entries.add(id, Entry { }).iterator->value;
 
@@ -337,8 +337,14 @@ void SkiaCompositingLayer::LayerRectTracker::recordVisit(uint64_t id, const Floa
     if (!wasVisitedThisFrame(entry)) {
         entry.lastVisitedFrameID = m_currentFrameID;
         entry.currentRect = rectInFrame;
-    } else
+        entry.currentRectCoverage = coverage;
+        entry.currentRectFullyDamaged = fullyDamaged;
+    } else {
         entry.currentRect.unite(rectInFrame);
+        entry.currentRectCoverage = Coverage::Bounds;
+        if (fullyDamaged == FullyDamaged::Yes)
+            entry.currentRectFullyDamaged = FullyDamaged::Yes;
+    }
 }
 
 void SkiaCompositingLayer::LayerRectTracker::damageStaleLayerRectsAndAdvanceEntries(Damage& frameDamage)
@@ -354,17 +360,25 @@ void SkiaCompositingLayer::LayerRectTracker::damageStaleLayerRectsAndAdvanceEntr
             return true;
         }
 
-        // The layer moved, so repaint both where it was and where it now is.
         if (entry.previousRect != entry.currentRect) {
-            frameDamage.add(std::exchange(entry.previousRect, entry.currentRect));
-            frameDamage.add(entry.currentRect);
+            // With exact rects, only the difference changed: changes to the layer itself are in its own
+            // damage. A clip sliding over static content only repaints the strips it uncovered or covered.
+            if (entry.previousRectCoverage == Coverage::Exact && entry.currentRectCoverage == Coverage::Exact && entry.currentRectFullyDamaged == FullyDamaged::No) {
+                // To avoid AA clipping artifacts at the edges, inflate by one device pixel.
+                frameDamage.addChangedArea(entry.previousRect, entry.currentRect, 1);
+            } else {
+                frameDamage.add(entry.previousRect);
+                frameDamage.add(entry.currentRect);
+            }
         }
+        entry.previousRect = entry.currentRect;
+        entry.previousRectCoverage = entry.currentRectCoverage;
 
         return false;
     });
 }
 
-void SkiaCompositingLayer::trackLayerRect(PaintContext& context, const FloatRect& layerRectInFrame)
+void SkiaCompositingLayer::trackLayerRect(PaintContext& context, const FloatRect& layerRectInFrame, LayerRectTracker::Coverage coverage, LayerRectTracker::FullyDamaged fullyDamaged)
 {
     auto& layerRectTracker = context.collectState->layerRectTracker;
 
@@ -372,7 +386,7 @@ void SkiaCompositingLayer::trackLayerRect(PaintContext& context, const FloatRect
     if (!m_layerRectID)
         m_layerRectID = layerRectTracker.generateLayerRectID();
 
-    layerRectTracker.recordVisit(m_layerRectID, layerRectInFrame);
+    layerRectTracker.recordVisit(m_layerRectID, layerRectInFrame, coverage, fullyDamaged);
 }
 
 void SkiaCompositingLayer::resolveBackdropDamage(const Vector<FloatRect>& backdropRectsInFrame, Damage& frameDamage)
@@ -521,10 +535,6 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
     TransformationMatrix futureCombinedForChildren;
 
     if (!m_rect.isEmpty() || !m_masksToBounds) {
-#if ENABLE(DAMAGE_TRACKING)
-        TransformationMatrix previousTransform = m_transforms.combined;
-#endif
-
         FloatPoint origin(m_anchorPoint.x(), m_anchorPoint.y());
         origin.scale(m_rect.size().width(), m_rect.size().height());
         m_transforms.combined = parentTransform;
@@ -560,8 +570,9 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
         futureCombinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
 #if ENABLE(DAMAGE_TRACKING)
-        if (previousTransform != m_transforms.combined)
-            damageWholeLayer();
+        // A new layer has no previous area, so the layer rect tracker damages it already.
+        if (!m_transformAtLastDamage || (combinedTransformMovedOnScreen() && damageWholeLayer()))
+            m_transformAtLastDamage = m_transforms.combined;
 #endif
 
         m_visible = m_backfaceVisibility || !m_transforms.combined.isBackFaceVisible();
@@ -947,7 +958,10 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
     const IntRect clipBounds = canvas.getDeviceClipBounds();
     auto layerRectInFrame = FloatRect(projectedBoundingBox(transform, paintedLayerRect(), clipBounds));
 
-    trackLayerRect(context, layerRectInFrame);
+    // The bounding box is exact when both the layer and its clip are plain rectangles on screen.
+    const auto coverage = canvas.isClipRect() && SkM44(transform).asM33().rectStaysRect() ? LayerRectTracker::Coverage::Exact : LayerRectTracker::Coverage::Bounds;
+    const auto fullyDamaged = m_layerDamage && m_layerDamage->mode() == Damage::Mode::Full ? LayerRectTracker::FullyDamaged::Yes : LayerRectTracker::FullyDamaged::No;
+    trackLayerRect(context, layerRectInFrame, coverage, fullyDamaged);
 
     if (!m_layerDamage)
         return;
@@ -961,6 +975,29 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
 
     for (const auto& rect : *m_layerDamage)
         context.collectState->frameDamage.add(projectedBoundingBox(transform, FloatRect(rect), clipBounds));
+}
+
+bool SkiaCompositingLayer::combinedTransformMovedOnScreen() const
+{
+    ASSERT(m_transformAtLastDamage);
+    const auto& reference = *m_transformAtLastDamage;
+    if (reference == m_transforms.combined)
+        return false;
+    if (!reference.isAffine() || !m_transforms.combined.isAffine())
+        return true;
+
+    // Moved if any corner shifts by more than 1e-3 device pixels, as GrClip::kBoundsTolerance in Skia.
+    static constexpr double maximumIgnoredShift = 1e-3;
+    const auto rect = paintedLayerRect();
+    for (const auto& corner : { rect.minXMinYCorner(), rect.maxXMinYCorner(), rect.minXMaxYCorner(), rect.maxXMaxYCorner() }) {
+        // In double, since float precision is coarser than the tolerance far from the origin.
+        double beforeX, beforeY, afterX, afterY;
+        reference.map(corner.x(), corner.y(), beforeX, beforeY);
+        m_transforms.combined.map(corner.x(), corner.y(), afterX, afterY);
+        if (std::abs(beforeX - afterX) > maximumIgnoredShift || std::abs(beforeY - afterY) > maximumIgnoredShift)
+            return true;
+    }
+    return false;
 }
 
 void SkiaCompositingLayer::collectBackdropDamage(SkCanvas& canvas, PaintContext& context)

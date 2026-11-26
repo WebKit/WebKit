@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .clip { position: fixed; left: 10px; top: 10px; width: 50px; height: 40px; overflow: hidden; animation: slide 1s linear infinite alternate; }
+      .inner { position: absolute; left: 0; top: 0; width: 100px; height: 40px; background-color: green; animation: counter-slide 1s linear infinite alternate; }
+      /* The clip slides right while the opposite animation keeps the content in place on screen. */
+      @keyframes slide { to { transform: translateX(20px); } }
+      @keyframes counter-slide { to { transform: translateX(-20px); } }
+    </style>
+  </head>
+  <body>
+    <div class="clip"><div class="inner"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      // Once the animations run on the compositor, only thin strips at the edges of the clip, which slide
+      // from 10 to 30 and from 60 to 80, are damaged, never the visible content in between.
+      const isStripAtClipEdge = rect => rect[2] <= 10
+          && ((rect[0] >= 8 && rect[0] + rect[2] <= 32) || (rect[0] >= 58 && rect[0] + rect[2] <= 82));
+      waitForDamagedAnimationFrames(10, damages => {
+          for (const damage of damages.filter(damage => damage.rects.length).slice(-3)) {
+              for (const rect of damage.rects) {
+                  if (!assert(isStripAtClipEdge(rect), `damage rect ${JSON.stringify(rect)} is not a strip at an edge of the clip`)) {
+                      failTest(`FAIL: ${failure}`);
+                      return;
+                  }
+              }
+          }
+          passTest();
+      });
+    </script>
+  </body>
+</html>
