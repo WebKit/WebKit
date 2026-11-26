@@ -187,6 +187,12 @@ void CoordinatedSceneState::invalidate()
     for (Ref layer : layers)
         layer->invalidateClient();
 
+    // Layers detached since the last flush can still be referenced by the scrolling tree
+    // until its next commit, so they must not keep a pointer to the client either.
+    auto layersToRemove = WTF::move(m_layersToRemove);
+    for (Ref layer : layersToRemove)
+        layer->invalidateClient();
+
     {
         Locker pendingLayersLock { m_pendingLayersLock };
         m_pendingLayers = { };
