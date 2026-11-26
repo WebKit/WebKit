@@ -24,8 +24,12 @@
  */
 
 #include "config.h"
+#include <wtf/glib/GUniquePtr.h>
 
+#include <dlfcn.h>
 #include <gio/gio.h>
+
+static thread_local bool loggingEnabled;
 
 inline std::ostringstream& log()
 {
@@ -40,69 +44,48 @@ inline std::string takeLogStr()
     return string;
 }
 
-static void (* _g_error_free)(GError*) = g_error_free;
-#define g_error_free(x) \
-    log() << "g_error_free(" << ptr << ");"; \
-    _g_error_free(x);
+class FreeLogging {
+public:
+    FreeLogging()
+    {
+        takeLogStr();
+        loggingEnabled = true;
+    }
 
-static void (* _g_list_free)(GList*) = g_list_free;
-#define g_list_free(x) \
-    log() << "g_list_free(" << ptr << ");"; \
-    _g_list_free(x);
-
-static void (* _g_slist_free)(GSList*) = g_slist_free;
-#define g_slist_free(x) \
-    log() << "g_slist_free(" << ptr << ");"; \
-    _g_slist_free(x);
-
-static void (* _g_pattern_spec_free)(GPatternSpec*) = g_pattern_spec_free;
-#define g_pattern_spec_free(x) \
-    log() << "g_pattern_spec_free(" << ptr << ");"; \
-    _g_pattern_spec_free(x);
-
-static void (* _g_dir_close)(GDir*) = g_dir_close;
-#define g_dir_close(x) \
-    log() << "g_dir_close(" << ptr << ");"; \
-    _g_dir_close(x);
-
-static void (* _g_timer_destroy)(GTimer*) = g_timer_destroy;
-#define g_timer_destroy(x) \
-    log() << "g_timer_destroy(" << ptr << ");"; \
-    _g_timer_destroy(x);
-
-static void (* _g_key_file_free)(GKeyFile*) = g_key_file_free;
-#define g_key_file_free(x) \
-    log() << "g_key_file_free(" << ptr << ");"; \
-    _g_key_file_free(x);
-
-#include <wtf/glib/GUniquePtr.h>
-
-// The g_free macro trick doesn't work for GPtrDeleter<char>: the compiler
-// generates a copy in every file that uses GUniquePtr<char>, and the linker
-// keeps only one. It may keep a copy from a file where the macro wasn't
-// active, so the log stays empty. Defining our own specialization with
-// operator() outside the class body makes it a strong symbol the linker
-// always picks.
-namespace WTF {
-template<> struct GPtrDeleter<char> {
-    void operator()(char* ptr) const;
+    ~FreeLogging()
+    {
+        loggingEnabled = false;
+    }
 };
-}
-void WTF::GPtrDeleter<char>::operator()(char* ptr) const
-{
-    log() << "g_free(" << ptr << ");";
-    g_free(ptr);
-}
+
+#define DEFINE_LOGGING_FREE_FUNCTION(type, function) \
+    extern "C" void (function)(type ptr) \
+    { \
+        static auto* realFunction = reinterpret_cast<void (*)(type)>(dlsym(RTLD_NEXT, #function)); \
+        if (loggingEnabled) \
+            log() << #function "(" << static_cast<const void*>(ptr) << ");"; \
+        realFunction(ptr); \
+    }
+
+DEFINE_LOGGING_FREE_FUNCTION(gpointer, g_free)
+DEFINE_LOGGING_FREE_FUNCTION(GError*, g_error_free)
+DEFINE_LOGGING_FREE_FUNCTION(GList*, g_list_free)
+DEFINE_LOGGING_FREE_FUNCTION(GSList*, g_slist_free)
+DEFINE_LOGGING_FREE_FUNCTION(GPatternSpec*, g_pattern_spec_free)
+DEFINE_LOGGING_FREE_FUNCTION(GDir*, g_dir_close)
+DEFINE_LOGGING_FREE_FUNCTION(GTimer*, g_timer_destroy)
+DEFINE_LOGGING_FREE_FUNCTION(GKeyFile*, g_key_file_free)
 
 namespace TestWebKitAPI {
 
 TEST(WTF_GUniquePtr, Basic)
 {
+    FreeLogging logging;
     std::ostringstream actual;
 
     {
         GUniquePtr<char> a(g_strdup("a"));
-        actual << "g_free(" << a.get() << ");";
+        actual << "g_free(" << static_cast<const void*>(a.get()) << ");";
     }
     ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
     actual.str("");
@@ -164,6 +147,7 @@ static void returnOutChar(char** outChar)
 
 TEST(WTF_GUniquePtr, OutPtr)
 {
+    FreeLogging logging;
     std::ostringstream actual;
 
     {
@@ -176,7 +160,7 @@ TEST(WTF_GUniquePtr, OutPtr)
     {
         GUniqueOutPtr<char> a;
         returnOutChar(&a.outPtr());
-        actual << "g_free(" << a.get() << ");";
+        actual << "g_free(" << static_cast<const void*>(a.get()) << ");";
     }
     ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
     actual.str("");
@@ -184,11 +168,11 @@ TEST(WTF_GUniquePtr, OutPtr)
     {
         GUniqueOutPtr<char> a;
         returnOutChar(&a.outPtr());
-        actual << "g_free(" << a.get() << ");";
+        actual << "g_free(" << static_cast<const void*>(a.get()) << ");";
         returnOutChar(&a.outPtr());
         ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
         actual.str("");
-        actual << "g_free(" << a.get() << ");";
+        actual << "g_free(" << static_cast<const void*>(a.get()) << ");";
     }
     ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
     actual.str("");
@@ -198,7 +182,7 @@ TEST(WTF_GUniquePtr, OutPtr)
         returnOutChar(&a.outPtr());
         GUniquePtr<char> b(a.release());
         ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
-        actual << "g_free(" << b.get() << ");";
+        actual << "g_free(" << static_cast<const void*>(b.get()) << ");";
     }
     ASSERT_STREQ(actual.str().c_str(), takeLogStr().c_str());
     actual.str("");
