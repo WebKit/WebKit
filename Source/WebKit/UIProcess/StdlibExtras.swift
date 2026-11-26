@@ -73,7 +73,7 @@ extension WTF.String {
         #if compiler(>=6.4)
         self = string.utf8CString.span.withUnsafeBufferPointer { ptr in
             // swift-format-ignore: NeverForceUnwrap
-            let cppspan = unsafe SpanConstChar(UnsafeBufferPointer(start: ptr.baseAddress!, count: string.utf8CString.count))
+            let cppspan = unsafe SpanConstChar(UnsafeBufferPointer(start: ptr.baseAddress!, count: ptr.count - 1))
             return unsafe WTF.String.fromUTF8(cppspan)
         }
         #else
