@@ -426,16 +426,16 @@ static std::optional<OSType> pixelFormatTypeForDecodedVideo(const VideoInfo& inf
     if (!info.pixelFormat())
         return { };
 
-    // The 8-bit planar formats are repacked into a biplanar buffer when the CVPixelBuffer is created, or a triplanar one with alpha.
-    OSType biPlanarFormat = info.colorSpace().fullRange.value_or(false) ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
-    switch (*info.pixelFormat()) {
-    case VideoPixelFormat::I420:
-        return biPlanarFormat;
-    case VideoPixelFormat::I420A:
-        return pixelFormatWithAlpha(biPlanarFormat);
-    default:
+    // The planar formats are repacked into a biplanar buffer when the CVPixelBuffer is created, or a triplanar one with alpha.
+    bool hasAlpha = pixelFormatHasAlpha(*info.pixelFormat());
+    auto layout = planarYUVFormatLayout(pixelFormatWithoutAlpha(*info.pixelFormat()));
+    auto sampleFormat = layout ? PlanarImageConverter::pixelBufferSampleFormat(layout->format) : std::nullopt;
+    if (!sampleFormat)
         return { };
-    }
+    auto colorFormat = PlanarImageConverter::pixelFormat(layout->subsampling, *sampleFormat, info.colorSpace().fullRange.value_or(false));
+    if (!colorFormat || !hasAlpha)
+        return colorFormat;
+    return pixelFormatWithAlpha(*colorFormat);
 }
 
 // Calls add() with every property that can be expressed both as a CMFormatDescription extension and
@@ -816,10 +816,11 @@ static std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> decodedVideoToC
     if (samples.size() != 1)
         return makeUnexpected("A decoded video block must hold exactly one frame"_s);
 
-    bool hasAlpha = info.pixelFormat() == VideoPixelFormat::I420A;
     auto pixelFormatType = pixelFormatTypeForDecodedVideo(info);
     if (!pixelFormatType)
         return makeUnexpected("Unsupported decoded video pixel format"_s);
+    auto pixelFormat = *info.pixelFormat();
+    bool hasAlpha = pixelFormatHasAlpha(pixelFormat);
 
     auto& sample = samples.first();
     RefPtr sampleData = sample.data;
@@ -841,7 +842,7 @@ static std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> decodedVideoToC
     RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
 
     Ref contiguousData = sampleData->makeContiguous();
-    if (!copyI420ToPixelBuffer(contiguousData->span(), width, height, pixelBuffer))
+    if (!copyPlanarYUVToPixelBuffer(contiguousData->span(), pixelFormat, info.colorSpace().fullRange.value_or(false), pixelBuffer))
         return makeUnexpected("Invalid decoded video data"_s);
 
     addImageBufferProperties(info, [&](CFStringRef key, CFTypeRef value) {

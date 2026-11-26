@@ -131,10 +131,11 @@ public:
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
 
-    // Only I420 and I420A are supported, tightly packed.
-    static std::optional<size_t> planarBufferSize(IntSize, VideoPixelFormat);
+    // The formats of planarYUVFormatLayout() and I420A, tightly packed: Y, U, V, then alpha for I420A.
+    WEBCORE_EXPORT static Vector<ComputedPlaneLayout> planarBufferLayout(IntSize, VideoPixelFormat);
+    WEBCORE_EXPORT static std::optional<size_t> planarBufferSize(IntSize, VideoPixelFormat);
     // The I420A alpha plane is alphaFrame's luma, or opaque if alphaFrame is null or can't be read.
-    bool copyToPlanarBuffer(std::span<uint8_t> destination, VideoPixelFormat, VideoFrame* alphaFrame);
+    WEBCORE_EXPORT bool copyToPlanarBuffer(std::span<uint8_t> destination, VideoPixelFormat, VideoFrame* alphaFrame);
 
     virtual IntSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;
@@ -171,9 +172,9 @@ protected:
 
     void initializePresentationTime(MediaTime);
 
-    // Both copy tightly packed 8-bit planes into a destination sized for the frame.
-    WEBCORE_EXPORT virtual bool copyToI420(std::span<uint8_t>);
-    WEBCORE_EXPORT virtual bool copyLumaPlane(std::span<uint8_t>);
+    // copyToPlanarYUV() fills a destination laid out by planarBufferLayout(); copyLumaPlane() writes the luma as tightly packed samples.
+    WEBCORE_EXPORT virtual bool copyToPlanarYUV(std::span<uint8_t>, VideoPixelFormat);
+    WEBCORE_EXPORT virtual bool copyLumaPlane(std::span<uint8_t>, PlanarImageConverter::SampleFormat);
 
 private:
     virtual Ref<VideoFrame> clone() = 0;

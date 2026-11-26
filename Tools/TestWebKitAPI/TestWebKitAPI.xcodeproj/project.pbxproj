@@ -886,6 +886,7 @@
 				WebCore/cocoa/TestGraphicsContextGLCocoa.mm,
 				WebCore/cocoa/TestUTIRegistry.cpp,
 				WebCore/cocoa/TestUTIUtilities.cpp,
+				WebCore/cocoa/VideoFrameLibWebRTCTests.mm,
 				WebCore/cocoa/VideoMediaSampleRendererTests.mm,
 				WebCore/cocoa/WebCoreDecompressionSessionTests.mm,
 				WebCore/cocoa/WebCoreNSURLSession.mm,

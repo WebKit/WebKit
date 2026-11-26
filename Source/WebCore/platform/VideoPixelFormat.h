@@ -74,6 +74,82 @@ inline bool isHighBitDepthVideoPixelFormat(VideoPixelFormat format)
         || format == VideoPixelFormat::I444AP10 || format == VideoPixelFormat::I444AP12;
 }
 
+inline bool pixelFormatHasAlpha(VideoPixelFormat format)
+{
+    switch (format) {
+    case VideoPixelFormat::I420A:
+    case VideoPixelFormat::I420AP10:
+    case VideoPixelFormat::I420AP12:
+    case VideoPixelFormat::I422A:
+    case VideoPixelFormat::I422AP10:
+    case VideoPixelFormat::I422AP12:
+    case VideoPixelFormat::I444A:
+    case VideoPixelFormat::I444AP10:
+    case VideoPixelFormat::I444AP12:
+    case VideoPixelFormat::RGBA:
+    case VideoPixelFormat::BGRA:
+        return true;
+    case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRX:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+inline VideoPixelFormat pixelFormatWithoutAlpha(VideoPixelFormat format)
+{
+    switch (format) {
+    case VideoPixelFormat::I420A:
+        return VideoPixelFormat::I420;
+    case VideoPixelFormat::I420AP10:
+        return VideoPixelFormat::I420P10;
+    case VideoPixelFormat::I420AP12:
+        return VideoPixelFormat::I420P12;
+    case VideoPixelFormat::I422A:
+        return VideoPixelFormat::I422;
+    case VideoPixelFormat::I422AP10:
+        return VideoPixelFormat::I422P10;
+    case VideoPixelFormat::I422AP12:
+        return VideoPixelFormat::I422P12;
+    case VideoPixelFormat::I444A:
+        return VideoPixelFormat::I444;
+    case VideoPixelFormat::I444AP10:
+        return VideoPixelFormat::I444P10;
+    case VideoPixelFormat::I444AP12:
+        return VideoPixelFormat::I444P12;
+    case VideoPixelFormat::RGBA:
+        return VideoPixelFormat::RGBX;
+    case VideoPixelFormat::BGRA:
+        return VideoPixelFormat::BGRX;
+    case VideoPixelFormat::I420:
+    case VideoPixelFormat::I420P10:
+    case VideoPixelFormat::I420P12:
+    case VideoPixelFormat::I422:
+    case VideoPixelFormat::I422P10:
+    case VideoPixelFormat::I422P12:
+    case VideoPixelFormat::I444:
+    case VideoPixelFormat::I444P10:
+    case VideoPixelFormat::I444P12:
+    case VideoPixelFormat::NV12:
+    case VideoPixelFormat::RGBX:
+    case VideoPixelFormat::BGRX:
+        return format;
+    }
+    ASSERT_NOT_REACHED();
+    return format;
+}
+
 struct PlanarYUVFormatLayout {
     PlanarImageConverter::ChromaSubsampling subsampling;
     PlanarImageConverter::SampleFormat format;

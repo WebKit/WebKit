@@ -48,7 +48,7 @@ namespace WebCore {
 class VideoFrameLibWebRTC final : public VideoFrame {
 public:
     using ConversionCallback = std::function<RetainPtr<CVPixelBufferRef>(webrtc::VideoFrameBuffer&)>;
-    static RefPtr<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, std::optional<PlatformVideoColorSpace>&&, Ref<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
+    WEBCORE_EXPORT static RefPtr<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, std::optional<PlatformVideoColorSpace>&&, Ref<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
     webrtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer() const { return webrtc::scoped_refptr { m_buffer.ptr() }; }
 
@@ -59,8 +59,8 @@ private:
     IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
-    bool copyToI420(std::span<uint8_t>) final;
-    bool copyLumaPlane(std::span<uint8_t>) final;
+    bool copyToPlanarYUV(std::span<uint8_t>, VideoPixelFormat) final;
+    bool copyLumaPlane(std::span<uint8_t>, PlanarImageConverter::SampleFormat) final;
 
     Ref<VideoFrame> clone() final;
 

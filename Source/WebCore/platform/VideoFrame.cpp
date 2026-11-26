@@ -129,81 +129,98 @@ Ref<VideoFrame> VideoFrame::updateShouldIgnoreAlpha(bool shouldIgnore, ShouldClo
     return updatedVideoFrame;
 }
 
-bool VideoFrame::copyToI420(std::span<uint8_t> destination)
+bool VideoFrame::copyToPlanarYUV(std::span<uint8_t> destination, VideoPixelFormat format)
 {
 #if PLATFORM(COCOA)
-    // VideoFrame::copyTo reads the pixel buffer as 8-bit 4:2:0 biplanar.
-    auto format = pixelFormat();
-    if (format != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange && format != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
+    // Only 8-bit 4:2:0 pixel buffers hold I420 samples unchanged.
+    auto pixelFormat = this->pixelFormat();
+    if (format == VideoPixelFormat::I420 && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarFullRange && pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
         return false;
 #endif
-    auto size = presentationSize();
-    size_t width = size.width();
-    size_t height = size.height();
-    size_t chromaWidth = (width + 1) / 2;
-    size_t chromaHeight = (height + 1) / 2;
-    size_t lumaSize = width * height;
-    size_t chromaSize = chromaWidth * chromaHeight;
-    Vector<ComputedPlaneLayout> layouts {
-        { .destinationOffset = 0, .destinationStride = width, .sourceHeight = height, .sourceWidthBytes = width },
-        { .destinationOffset = lumaSize, .destinationStride = chromaWidth, .sourceHeight = chromaHeight, .sourceWidthBytes = chromaWidth },
-        { .destinationOffset = lumaSize + chromaSize, .destinationStride = chromaWidth, .sourceHeight = chromaHeight, .sourceWidthBytes = chromaWidth }
-    };
+    auto layouts = planarBufferLayout(presentationSize(), format);
+    if (layouts.isEmpty())
+        return false;
     // VideoFrame::copyTo on Cocoa calls back before returning.
     bool succeeded = false;
-    copyTo(destination, VideoPixelFormat::I420, ColorSpace::SRGB(), WTF::move(layouts), [&](std::optional<Vector<PlaneLayout>>&& planeLayouts) {
+    copyTo(destination, format, ColorSpace::SRGB(), WTF::move(layouts), [&](std::optional<Vector<PlaneLayout>>&& planeLayouts) {
         succeeded = planeLayouts && !planeLayouts->isEmpty();
     });
     return succeeded;
 }
 
-bool VideoFrame::copyLumaPlane(std::span<uint8_t> destination)
+bool VideoFrame::copyLumaPlane(std::span<uint8_t> destination, PlanarImageConverter::SampleFormat format)
 {
 #if PLATFORM(COCOA)
     RetainPtr pixelBuffer = this->pixelBuffer();
-    return pixelBuffer && copyAlphaFromLumaPlane(pixelBuffer.get(), destination, presentationSize().width());
+    return pixelBuffer && copyAlphaFromLumaPlane(pixelBuffer, destination, format);
 #else
     UNUSED_PARAM(destination);
+    UNUSED_PARAM(format);
     return false;
 #endif
 }
 
-static size_t planarChromaSize(size_t width, size_t height)
+Vector<ComputedPlaneLayout> VideoFrame::planarBufferLayout(IntSize size, VideoPixelFormat format)
 {
-    return ((width + 1) / 2) * ((height + 1) / 2);
+    bool hasAlpha = pixelFormatHasAlpha(format);
+    auto layout = planarYUVFormatLayout(pixelFormatWithoutAlpha(format));
+    if (!layout || size.isEmpty())
+        return { };
+
+    size_t width = size.width();
+    size_t height = size.height();
+    size_t chromaWidth = PlanarImageConverter::chromaWidth(layout->subsampling, width);
+    size_t chromaHeight = PlanarImageConverter::chromaHeight(layout->subsampling, height);
+    size_t sampleSize = layout->format.sampleSize();
+
+    Vector<ComputedPlaneLayout> layouts;
+    size_t offset = 0;
+    auto appendPlane = [&](size_t planeWidth, size_t planeHeight) {
+        size_t rowBytes = planeWidth * sampleSize;
+        layouts.append({ .destinationOffset = offset, .destinationStride = rowBytes, .sourceHeight = planeHeight, .sourceWidthBytes = rowBytes });
+        offset += rowBytes * planeHeight;
+    };
+    appendPlane(width, height);
+    appendPlane(chromaWidth, chromaHeight);
+    appendPlane(chromaWidth, chromaHeight);
+    if (hasAlpha)
+        appendPlane(width, height);
+    return layouts;
 }
 
 std::optional<size_t> VideoFrame::planarBufferSize(IntSize size, VideoPixelFormat format)
 {
-    if (format != VideoPixelFormat::I420 && format != VideoPixelFormat::I420A)
+    auto layouts = planarBufferLayout(size, format);
+    if (layouts.isEmpty())
         return { };
-    size_t lumaSize = static_cast<size_t>(size.width()) * size.height();
-    size_t i420Size = lumaSize + 2 * planarChromaSize(size.width(), size.height());
-    if (format == VideoPixelFormat::I420A)
-        return i420Size + lumaSize;
-    return i420Size;
+    auto lastPlane = layouts.last();
+    return lastPlane.destinationOffset + lastPlane.destinationStride * lastPlane.sourceHeight;
 }
 
 bool VideoFrame::copyToPlanarBuffer(std::span<uint8_t> destination, VideoPixelFormat format, VideoFrame* alphaFrame)
 {
     auto size = presentationSize();
-    size_t width = size.width();
-    size_t height = size.height();
-    ASSERT(width && height);
-    ASSERT(!alphaFrame || (format == VideoPixelFormat::I420A && alphaFrame->presentationSize() == size));
+    ASSERT(!size.isEmpty());
+    ASSERT(!alphaFrame || (pixelFormatHasAlpha(format) && alphaFrame->presentationSize() == size));
     auto byteSize = planarBufferSize(size, format);
     if (!byteSize || destination.size() != *byteSize)
         return false;
 
-    size_t lumaSize = width * height;
-    size_t alphaOffset = lumaSize + 2 * planarChromaSize(width, height);
-    if (!copyToI420(destination.first(alphaOffset)))
+    if (!pixelFormatHasAlpha(format))
+        return copyToPlanarYUV(destination, format);
+
+    size_t alphaOffset = planarBufferLayout(size, format)[3].destinationOffset;
+    auto colorFormat = pixelFormatWithoutAlpha(format);
+    if (!copyToPlanarYUV(destination.first(alphaOffset), colorFormat))
         return false;
-    if (format == VideoPixelFormat::I420)
+    auto alphaFormat = planarYUVFormatLayout(colorFormat)->format;
+    auto alphaPlane = destination.subspan(alphaOffset);
+    if (alphaFrame && alphaFrame->copyLumaPlane(alphaPlane, alphaFormat))
         return true;
-    auto alphaPlane = destination.subspan(alphaOffset, lumaSize);
-    if (!alphaFrame || !alphaFrame->copyLumaPlane(alphaPlane))
+    if (alphaFormat.sampleSize() == 1)
         memsetSpan(alphaPlane, 255);
+    else
+        std::ranges::fill(spanReinterpretCast<uint16_t>(alphaPlane), static_cast<uint16_t>((1 << alphaFormat.bitDepth) - 1));
     return true;
 }
 

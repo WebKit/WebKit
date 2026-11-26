@@ -38,6 +38,10 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 class ProcessIdentity;
+enum class VideoPixelFormat;
+namespace PlanarImageConverter {
+struct SampleFormat;
+}
 
 // Creates CVPixelBufferPool that creates CVPixelBuffers backed by IOSurfaces.
 // These buffers can be for example sent through IPC.
@@ -62,8 +66,8 @@ std::optional<int> bitDepthOfPixelFormatWithAlphaPlane(OSType);
 std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat);
 std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef);
 bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer);
-bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, size_t destinationBytesPerRow);
-bool copyI420ToPixelBuffer(std::span<const uint8_t> source, size_t width, size_t height, CVPixelBufferRef destination);
+bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, PlanarImageConverter::SampleFormat);
+bool copyPlanarYUVToPixelBuffer(std::span<const uint8_t> source, VideoPixelFormat sourceFormat, bool isFullRange, CVPixelBufferRef destination);
 // The color planes of a pixel buffer with an alpha plane, in the bi-planar format with the same layout.
 WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBufferWithoutAlphaPlane(CVPixelBufferRef);
 // VideoToolbox doesn't support the pixel formats WebKit registers: those are replaced by their color planes, without alpha.
