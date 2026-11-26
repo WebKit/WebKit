@@ -59,7 +59,6 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
-#include "PaintOrderIterator.h"
 #include "PositionedLayoutConstraints.h"
 #include "RelayoutScopeForScrollbarChange.h"
 #include "RenderBlockFlow.h"
@@ -1645,118 +1644,9 @@ Node* RenderBlock::nodeForHitTest() const
     return element();
 }
 
-bool RenderBlock::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
-{
-    ASSERT(!isSkippedContentRoot(*this));
-
-    // Hit test descendants first.
-    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
-    const LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));
-
-    if (hitTestContents(request, result, locationInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
-        updateHitTestResult(result, physicalToBlockStartRelative(locationInContainer.point() - localOffset));
-        return true;
-    }
-    return false;
-}
-
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (Paint::PaintOrderIterator::canIterate(*this))
-        return Paint::BlockHitTester { *this, request, result, locationInContainer, accumulatedOffset, hitTestAction }.hitTest();
-
-    const LayoutPoint adjustedLocation(accumulatedOffset + location());
-    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
-
-    // Check if we need to do anything at all.
-    if (!hitTestVisualOverflow(locationInContainer, accumulatedOffset))
-        return false;
-
-    if ((hitTestAction == HitTestAction::BlockBackground || hitTestAction == HitTestAction::ChildBlockBackground)
-        && visibleToHitTesting(request) && isPointInOverflowControl(result, locationInContainer.point(), adjustedLocation)) {
-        updateHitTestResult(result, locationInContainer.point() - localOffset);
-        // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
-        if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer) == HitTestProgress::Stop)
-           return true;
-    }
-
-    if (!hitTestClipPath(locationInContainer, accumulatedOffset))
-        return false;
-
-    auto shouldHittestContent = !isSkippedContentRoot(*this);
-    if (shouldHittestContent) {
-        // If we have clipping, then we can't have any spillout.
-        bool useClip = (hasControlClip() || hasNonVisibleOverflow());
-        bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize)));
-        if (checkChildren && hitTestChildren(request, result, locationInContainer, adjustedLocation, hitTestAction))
-            return true;
-
-        if (!checkChildren && hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction))
-            return true;
-    }
-
-    if (!hitTestBorderRadius(locationInContainer, accumulatedOffset))
-        return false;
-
-    // Now hit test our background
-    if (hitTestAction == HitTestAction::BlockBackground || hitTestAction == HitTestAction::ChildBlockBackground) {
-        LayoutRect boundsRect(adjustedLocation, borderBoxSize());
-        if (visibleToHitTesting(request) && locationInContainer.intersects(boundsRect)) {
-            updateHitTestResult(result, physicalToBlockStartRelative(locationInContainer.point() - localOffset));
-            if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
-                return true;
-        }
-    }
-
-    return false;
-}
-
-bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    if (childrenInline() && !isRenderTable()) {
-        if (style().isSkippedRootOrSkippedContent())
-            return false;
-        return hitTestInlineChildren(request, result, locationInContainer, accumulatedOffset, hitTestAction);
-    }
-
-    // Hit test our children.
-    HitTestAction childHitTest = hitTestAction;
-    if (hitTestAction == HitTestAction::ChildBlockBackgrounds)
-        childHitTest = HitTestAction::ChildBlockBackground;
-    for (auto* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-        LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*child, accumulatedOffset);
-        if (child->hasSelfPaintingLayer())
-            continue;
-        if (child->isFloating()) {
-            // Like BlockPainter::paintChild, in reverse.
-            if (hitTestAction == HitTestAction::Float && is<RenderBlockFlow>(*this) && hitTestFloat(*child, request, result, locationInContainer, childPoint))
-                return true;
-            continue;
-        }
-        if (child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
-            return true;
-    }
-
-    return false;
-}
-
-bool RenderBlock::hitTestFloat(RenderBox& floatBox, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& floatBoxLocation)
-{
-    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
-
-    // Layout skips the floats that line-clamp hides after the clamp point.
-    if (floatBox.isForceHiddenByLineClamp())
-        return false;
-
-    auto adjustedFloatBoxLocation = floatBoxLocation;
-    if (auto* renderView = dynamicDowncast<RenderView>(*this))
-        adjustedFloatBoxLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
-
-    // Like BlockPainter::paintFloat, as a whole.
-    if (!floatBox.hitTest(request, result, locationInContainer, adjustedFloatBoxLocation))
-        return false;
-    updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedFloatBoxLocation));
-    return true;
+    return Paint::BlockHitTester::hitTest(*this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 static inline bool isEditingBoundary(RenderElement* ancestor, RenderBox& child)
@@ -3129,22 +3019,6 @@ LayoutSize RenderBlock::intrinsicSize() const
         height = LayoutUnit { fixedHeight->resolveZoom(style().usedZoomForLength()) };
 
     return { width, height };
-}
-
-bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    if (!isFieldset())
-        return false;
-
-    auto* legend = findFieldsetLegend();
-    if (!legend || !legend->isExcludedFromNormalLayout() || legend->hasSelfPaintingLayer())
-        return false;
-
-    HitTestAction childHitTest = hitTestAction;
-    if (hitTestAction == HitTestAction::ChildBlockBackgrounds)
-        childHitTest = HitTestAction::ChildBlockBackground;
-    LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*legend, accumulatedOffset);
-    return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
 
 String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& style, String&& string)

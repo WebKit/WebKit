@@ -297,7 +297,7 @@ void BlockPainter::paintSubtree()
             break;
         case Event::Child: {
             auto paintInfoForChild = paintInfoForBlockChildren(block, paintInfo);
-            auto paintType = is<RenderBlockFlow>(block) ? PaintAsBlock : PaintAsStackingContainer;
+            auto paintType = is<RenderBlockFlow>(block) ? PaintBlockType::Block : PaintBlockType::StackingContainer;
             paintChild(block, paintInfo, iterator.scrolledOffset(), protect(iterator.child()), paintInfoForChild, paintType);
             break;
         }
@@ -378,7 +378,7 @@ void BlockPainter::paintChildren(RenderBlock& block, PaintInfo& paintInfo, const
         for (auto& renderer : flexBox->flexLayout().flexItems()) {
             CheckedPtr flexItem = renderer;
             if (flexItem)
-                paintChild(block, paintInfo, scrolledOffset, *flexItem, paintInfoForChild, PaintAsStackingContainer);
+                paintChild(block, paintInfo, scrolledOffset, *flexItem, paintInfoForChild, PaintBlockType::StackingContainer);
         }
         return;
     }
@@ -420,7 +420,7 @@ void BlockPainter::paintChild(RenderBlock& block, PaintInfo& paintInfo, const La
             // Only a RenderBlockFlow places floats.
             if (is<RenderBlockFlow>(block))
                 paintFloat(paintInfo, child, childPoint);
-        } else if (paintType == PaintAsStackingContainer)
+        } else if (paintType == PaintBlockType::StackingContainer)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
         else
             child.paint(paintInfoForChild, childPoint);

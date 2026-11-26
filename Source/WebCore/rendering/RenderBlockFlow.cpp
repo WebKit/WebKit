@@ -3506,26 +3506,6 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
     return result;
 }
 
-bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    ASSERT(childrenInline());
-
-    CheckedPtr inlineLayout = this->inlineLayout();
-    if (hitTestAction == HitTestAction::Float && inlineLayout && inlineLayout->hasFloats()) {
-        // Like BlockPainter::paintFloatsAndBlockLevelContentInInline, in reverse.
-        for (auto& child : inlineLayout->floatsAndBlockLevelBoxesInTreeOrder() | std::views::reverse) {
-            if (child->hasSelfPaintingLayer())
-                continue;
-            auto childPoint = blockStartRelativeToPhysicalForChild(child, accumulatedOffset);
-            if (child->isFloating() ? hitTestFloat(child, request, result, locationInContainer, childPoint) : child->nodeAtPoint(request, result, locationInContainer, childPoint, hitTestAction))
-                return true;
-        }
-        return false;
-    }
-
-    return inlineLayout && inlineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
-}
-
 void RenderBlockFlow::addOverflowFromInlineChildren()
 {
     if (inlineLayout())

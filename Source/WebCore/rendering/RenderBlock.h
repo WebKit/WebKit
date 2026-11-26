@@ -268,7 +268,6 @@ protected:
 
     void layout() override;
 
-    bool hitTestFloat(RenderBox&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&);
 
     std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalMarginStartAndEnd(const RenderBox&) const;
     inline LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderBox&) const;
@@ -328,7 +327,6 @@ protected:
 
     // Hit-tests a fieldset's legend, which is excluded from normal layout and placed in the border,
     // so it is positioned against the unscrolled offset rather than the scrolled content.
-    bool hitTestExcludedChildrenInBorder(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
 private:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
@@ -345,9 +343,6 @@ private:
 
     void paintSelection(PaintInfo&, const LayoutPoint&);
 
-    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-    virtual bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction);
-    virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) { return false; }
 
     std::pair<LayoutUnit, LayoutUnit> computeBlockIntrinsicLogicalWidths() const;
     

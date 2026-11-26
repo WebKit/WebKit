@@ -60,7 +60,6 @@ public:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
     void flexItemWillBeRemoved(const RenderBox& flexItem);
-    bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
 
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 

@@ -190,7 +190,7 @@ LayoutOptionalOutsets FlexLayout::adjustAllowedLayoutOverflow(LayoutOptionalOuts
     return allowance;
 }
 
-bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
+bool FlexLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestAction::Foreground)
         return false;

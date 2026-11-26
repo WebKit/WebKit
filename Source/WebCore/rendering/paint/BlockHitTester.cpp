@@ -28,13 +28,18 @@
 
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "LocalFrameViewInlines.h"
 #include "PaintOrderIterator.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderSVGText.h"
+#include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -63,11 +68,171 @@ static bool isBackgroundAction(HitTestAction action)
     return action == HitTestAction::BlockBackground || action == HitTestAction::ChildBlockBackground;
 }
 
+bool BlockHitTester::hitTest(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& accumulatedOffset, HitTestAction action)
+{
+    if (PaintOrderIterator::canIterate(block))
+        return BlockHitTester { block, request, result, location, accumulatedOffset, action }.hitTestSubtree();
+    return hitTestBlock(block, request, result, location, accumulatedOffset, action);
+}
+
+bool BlockHitTester::hitTestBlock(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& accumulatedOffset, HitTestAction action)
+{
+    auto adjustedLocation = accumulatedOffset + block.location();
+    auto localOffset = toLayoutSize(adjustedLocation);
+
+    // Check if we need to do anything at all.
+    if (!block.hitTestVisualOverflow(location, accumulatedOffset))
+        return false;
+
+    if (isBackgroundAction(action) && block.visibleToHitTesting(request) && block.isPointInOverflowControl(result, location.point(), adjustedLocation)) {
+        block.updateHitTestResult(result, location.point() - localOffset);
+        // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
+        if (result.addNodeToListBasedTestResult(protect(block.nodeForHitTest()).get(), request, location) == HitTestProgress::Stop)
+            return true;
+    }
+
+    if (!block.hitTestClipPath(location, accumulatedOffset))
+        return false;
+
+    if (!isSkippedContentRoot(block)) {
+        // If we have clipping, then we can't have any spillout.
+        bool useClip = block.hasControlClip() || block.hasNonVisibleOverflow();
+        bool checkChildren = !useClip || (block.hasControlClip() ? location.intersects(block.controlClipRect(adjustedLocation)) : location.intersects(block.overflowClipRect(adjustedLocation, OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize)));
+        if (checkChildren && hitTestChildren(block, request, result, location, adjustedLocation, action))
+            return true;
+
+        if (!checkChildren && hitTestExcludedChildrenInBorder(block, request, result, location, adjustedLocation, action))
+            return true;
+    }
+
+    if (!block.hitTestBorderRadius(location, accumulatedOffset))
+        return false;
+
+    // Now hit test our background
+    if (isBackgroundAction(action)) {
+        LayoutRect boundsRect(adjustedLocation, block.borderBoxSize());
+        if (block.visibleToHitTesting(request) && location.intersects(boundsRect)) {
+            block.updateHitTestResult(result, block.physicalToBlockStartRelative(location.point() - localOffset));
+            if (result.addNodeToListBasedTestResult(protect(block.nodeForHitTest()).get(), request, location, boundsRect) == HitTestProgress::Stop)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool BlockHitTester::hitTestChildren(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& adjustedLocation, HitTestAction action)
+{
+    ASSERT(!isSkippedContentRoot(block));
+    // Grids hit test with PaintOrderIterator.
+    ASSERT(!is<RenderGrid>(block));
+
+    if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(block))
+        return flexBox->flexLayout().hitTest(request, result, location, adjustedLocation, action);
+
+    // Hit test descendants first.
+    auto localOffset = toLayoutSize(adjustedLocation);
+    auto scrolledOffset = localOffset - toLayoutSize(block.scrollPosition());
+
+    if (hitTestContents(block, request, result, location, toLayoutPoint(scrolledOffset), action)) {
+        block.updateHitTestResult(result, block.physicalToBlockStartRelative(location.point() - localOffset));
+        return true;
+    }
+    return false;
+}
+
+bool BlockHitTester::hitTestContents(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& scrolledOffset, HitTestAction action)
+{
+    if (block.childrenInline() && !block.isRenderTable()) {
+        if (block.style().isSkippedRootOrSkippedContent())
+            return false;
+        return hitTestInlineChildren(block, request, result, location, scrolledOffset, action);
+    }
+
+    for (CheckedPtr child = block.lastChildBox(); child; child = child->previousSiblingBox()) {
+        if (hitTestChild(block, *child, request, result, location, block.blockStartRelativeToPhysicalForChild(*child, scrolledOffset), action, HitTestBlockType::Block))
+            return true;
+    }
+    return false;
+}
+
+bool BlockHitTester::hitTestInlineChildren(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& scrolledOffset, HitTestAction action)
+{
+    ASSERT(block.childrenInline());
+
+    if (CheckedPtr svgText = dynamicDowncast<RenderSVGText>(block))
+        return svgText->hitTestInlineChildren(request, result, location, scrolledOffset, action);
+
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(block);
+    CheckedPtr inlineLayout = blockFlow ? blockFlow->inlineLayout() : nullptr;
+    if (!inlineLayout)
+        return false;
+
+    if (action == HitTestAction::Float && inlineLayout->hasFloats()) {
+        // The floats and blocks-in-inline, in the reverse of the order they paint in.
+        for (auto& child : inlineLayout->floatsAndBlockLevelBoxesInTreeOrder() | std::views::reverse) {
+            if (child->hasSelfPaintingLayer())
+                continue;
+            auto childPoint = block.blockStartRelativeToPhysicalForChild(child, scrolledOffset);
+            if (child->isFloating() ? hitTestFloat(block, child, request, result, location, childPoint) : child->nodeAtPoint(request, result, location, childPoint, action))
+                return true;
+        }
+        return false;
+    }
+
+    return inlineLayout->hitTest(request, result, location, scrolledOffset, action);
+}
+
+bool BlockHitTester::hitTestChild(RenderBlock& block, RenderBox& child, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& childPoint, HitTestAction action, HitTestBlockType hitTestType)
+{
+    if (child.hasSelfPaintingLayer())
+        return false;
+    // A stacking container is hit tested all actions at once, in the foreground action of its container.
+    if (hitTestType == HitTestBlockType::StackingContainer)
+        return action == HitTestAction::Foreground && child.hitTest(request, result, location, childPoint);
+    if (child.isFloating()) {
+        // Only a RenderBlockFlow places floats.
+        return action == HitTestAction::Float && is<RenderBlockFlow>(block) && hitTestFloat(block, child, request, result, location, childPoint);
+    }
+    return child.nodeAtPoint(request, result, location, childPoint, actionForChildren(action));
+}
+
+bool BlockHitTester::hitTestFloat(RenderBlock& block, RenderBox& floatBox, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& floatBoxLocation)
+{
+    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
+
+    // Layout skips the floats that line-clamp hides after the clamp point.
+    if (floatBox.isForceHiddenByLineClamp())
+        return false;
+
+    auto adjustedFloatBoxLocation = floatBoxLocation;
+    if (CheckedPtr renderView = dynamicDowncast<RenderView>(block))
+        adjustedFloatBoxLocation += toLayoutSize(protect(renderView->frameView())->scrollPosition());
+
+    // A float is hit tested all actions at once.
+    if (!floatBox.hitTest(request, result, location, adjustedFloatBoxLocation))
+        return false;
+    block.updateHitTestResult(result, location.point() - toLayoutSize(adjustedFloatBoxLocation));
+    return true;
+}
+
+bool BlockHitTester::hitTestExcludedChildrenInBorder(RenderBlock& block, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& location, const LayoutPoint& adjustedLocation, HitTestAction action)
+{
+    if (!block.isFieldset())
+        return false;
+
+    CheckedPtr legend = block.findFieldsetLegend();
+    if (!legend || !legend->isExcludedFromNormalLayout() || legend->hasSelfPaintingLayer())
+        return false;
+
+    return legend->nodeAtPoint(request, result, location, block.blockStartRelativeToPhysicalForChild(*legend, adjustedLocation), actionForChildren(action));
+}
+
 // A fieldset's legend is not a grid or flex item. It paints beneath them, so it is hit tested after them.
 bool BlockHitTester::hitTestLegendAfterItems(RenderBlock& container, HitTestAction action, const LayoutPoint& adjustedLocation)
 {
     if (is<RenderGrid>(container))
-        return container.hitTestExcludedChildrenInBorder(m_request, m_result, m_location, adjustedLocation, action);
+        return hitTestExcludedChildrenInBorder(container, m_request, m_result, m_location, adjustedLocation, action);
 
     // FIXME: Grid and flex containers hit test the legend differently. Grid does it in every action, without the
     // scroll offset. Flex does it below. They should do the same.
@@ -96,7 +261,7 @@ bool BlockHitTester::hitTestOutsideListMarker(RenderBlock& block, HitTestAction 
     return markerBox->nodeAtPoint(m_request, m_result, m_location, listItem->blockStartRelativeToPhysicalForChild(*marker, adjustedLocation), action);
 }
 
-bool BlockHitTester::hitTest()
+bool BlockHitTester::hitTestSubtree()
 {
     using Event = PaintOrderIterator::Event;
 
@@ -199,31 +364,14 @@ bool BlockHitTester::hitTest()
         case Event::InlineContent:
             if (block->style().isSkippedRootOrSkippedContent())
                 break;
-            if (block->hitTestInlineChildren(m_request, m_result, m_location, iterator.scrolledOffset(), parent().action)) {
+            if (hitTestInlineChildren(block, m_request, m_result, m_location, iterator.scrolledOffset(), parent().action)) {
                 updateEnclosingBlocks(depth);
                 return true;
             }
             break;
         case Event::Child: {
-            CheckedRef child = iterator.child();
-            auto action = parent().action;
-            if (!is<RenderBlockFlow>(block)) {
-                // Grid and flex items that aren't entered are hit tested all actions at once, in the foreground action of their container.
-                if (action == HitTestAction::Foreground && child->hitTest(m_request, m_result, m_location, iterator.childPaintOffset())) {
-                    updateEnclosingBlocks(depth);
-                    return true;
-                }
-                break;
-            }
-            if (child->isFloating()) {
-                // Like the painting, in reverse.
-                if (action == HitTestAction::Float && block->hitTestFloat(child, m_request, m_result, m_location, iterator.childPaintOffset())) {
-                    updateEnclosingBlocks(depth);
-                    return true;
-                }
-                break;
-            }
-            if (child->nodeAtPoint(m_request, m_result, m_location, iterator.childPaintOffset(), actionForChildren(action))) {
+            auto hitTestType = is<RenderBlockFlow>(block) ? HitTestBlockType::Block : HitTestBlockType::StackingContainer;
+            if (hitTestChild(block, protect(iterator.child()), m_request, m_result, m_location, iterator.childPaintOffset(), parent().action, hitTestType)) {
                 updateEnclosingBlocks(depth);
                 return true;
             }
@@ -232,7 +380,7 @@ bool BlockHitTester::hitTest()
         case Event::BeforeContents: {
             // In reverse order this comes last: the block's own background.
             auto entered = parent();
-            if (entered.shouldHitTestContent && !entered.checkChildren && block->hitTestExcludedChildrenInBorder(m_request, m_result, m_location, adjustedLocation, entered.action)) {
+            if (entered.shouldHitTestContent && !entered.checkChildren && hitTestExcludedChildrenInBorder(block, m_request, m_result, m_location, adjustedLocation, entered.action)) {
                 updateEnclosingBlocks(depth - 1);
                 return true;
             }

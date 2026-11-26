@@ -36,17 +36,31 @@ namespace WebCore {
 class HitTestRequest;
 class HitTestResult;
 class RenderBlock;
+class RenderBox;
 
 namespace Paint {
 
-// Hit tests a block subtree by walking it in reverse paint order with PaintOrderIterator.
+// The static functions hit test one block. hitTest() walks the block's subtree in reverse paint order with
+// PaintOrderIterator when the subtree can be iterated, using a BlockHitTester instance for the walk.
 class BlockHitTester {
 public:
-    BlockHitTester(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
-
-    bool hitTest();
+    static bool hitTest(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
 private:
+    BlockHitTester(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+
+    bool hitTestSubtree();
+
+    static bool hitTestBlock(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
+    static bool hitTestChildren(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction);
+    static bool hitTestContents(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& scrolledOffset, HitTestAction);
+    static bool hitTestInlineChildren(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& scrolledOffset, HitTestAction);
+
+    enum class HitTestBlockType : bool { Block, StackingContainer };
+    static bool hitTestChild(RenderBlock&, RenderBox& child, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& childPoint, HitTestAction, HitTestBlockType);
+    static bool hitTestFloat(RenderBlock&, RenderBox& floatBox, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& floatBoxLocation);
+    static bool hitTestExcludedChildrenInBorder(RenderBlock&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction);
+
     struct Parent {
         HitTestAction action;
         bool shouldHitTestContent;

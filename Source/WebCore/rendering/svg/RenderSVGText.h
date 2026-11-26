@@ -41,6 +41,8 @@ public:
     RenderSVGText(SVGTextElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderSVGText();
 
+    bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+
     NODELETE SVGTextElement& textElement() const;
 
     bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
@@ -85,7 +87,6 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-    bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
