@@ -50,7 +50,7 @@ struct PadProbeInformation {
 class AppendPipeline {
     WTF_MAKE_TZONE_ALLOCATED(AppendPipeline);
 public:
-    AppendPipeline(SourceBufferPrivateGStreamer&, MediaPlayerPrivateGStreamerMSE&);
+    AppendPipeline(SourceBufferPrivateGStreamer&);
     virtual ~AppendPipeline();
 
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
@@ -58,7 +58,7 @@ public:
     void stopParser();
     void startChangingType();
     SourceBufferPrivateGStreamer& sourceBufferPrivate() { return m_sourceBufferPrivate; }
-    MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
+    RefPtr<MediaPlayerPrivateGStreamerMSE> playerPrivate() { return m_sourceBufferPrivate.player(); }
 
     GstElement* pipeline() const { return m_pipeline.get(); }
 
@@ -157,7 +157,6 @@ private:
     bool m_errorReceived { false };
 
     SourceBufferPrivateGStreamer& m_sourceBufferPrivate;
-    MediaPlayerPrivateGStreamerMSE* m_playerPrivate;
 
     MediaTime m_initialDuration;
     GRefPtr<GstElement> m_pipeline;

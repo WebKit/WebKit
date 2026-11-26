@@ -42,6 +42,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 #include <gst/video/video.h>
+#include <wtf/Assertions.h>
 #include <wtf/Condition.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -255,15 +256,22 @@ void AppendPipeline::configureOptionalDemuxerFromAnyThread()
     }
 }
 
-AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
+AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate)
     : m_sourceBufferPrivate(sourceBufferPrivate)
-    , m_playerPrivate(&playerPrivate)
     , m_wasBusAlreadyNotifiedOfAvailableSamples(false)
 {
     ASSERT(isMainThread());
     std::call_once(s_staticInitializationFlag, AppendPipeline::staticInitialization);
 
-    GST_DEBUG_OBJECT(m_playerPrivate->pipeline(), "Creating AppendPipeline (%p)", this);
+    RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
+    if (!protectedPlayerPrivate) {
+        // Asserts aren't enabled in Release, but it's still helpful to log the failure.
+        GST_ERROR("Can't create AppendPipeline (%p) with a null playerPrivate", this);
+        ASSERT(protectedPlayerPrivate);
+        return;
+    }
+
+    GST_DEBUG_OBJECT(protectedPlayerPrivate->pipeline(), "Creating AppendPipeline (%p)", this);
 
     // FIXME: give a name to the pipeline, maybe related with the track it's managing.
     // The track name is still unknown at this time, though.
@@ -418,8 +426,15 @@ void AppendPipeline::removeParserForDemuxerPad(const GRefPtr<GstPad>& pad)
 void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
 {
     auto scopeExit = makeScopeExit([&] {
+        RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
+        if (!protectedPlayerPrivate) {
+            GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
+            ASSERT(protectedPlayerPrivate);
+            return;
+        }
+
         // MediaPlayerPrivateGStreamerBase will take care of setting up encryption.
-        m_playerPrivate->handleNeedContextMessage(message);
+        protectedPlayerPrivate->handleNeedContextMessage(message);
     });
 
     if (!m_demux->numsrcpads)
@@ -728,7 +743,16 @@ void AppendPipeline::didReceiveInitializationSegment()
             if (track->streamType == StreamType::Video) {
                 GST_DEBUG_OBJECT(pipeline(), "Setting initial video size to that of track with id '%" PRIu64 "', %gx%g.",
                     track->trackId, static_cast<double>(track->presentationSize.width()), static_cast<double>(track->presentationSize.height()));
-                m_playerPrivate->setInitialVideoSize(track->presentationSize);
+
+                RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
+                if (!protectedPlayerPrivate) {
+                    // Asserts aren't enabled in Release, but it's still helpful to log the failure.
+                    GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
+                    ASSERT(protectedPlayerPrivate);
+                    return;
+                }
+
+                protectedPlayerPrivate->setInitialVideoSize(track->presentationSize);
                 break;
             }
         }
@@ -1262,19 +1286,26 @@ void AppendPipeline::linkPadWithTrack(GstPad* demuxerSrcPad, Track& track)
 
 Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(Track& appendPipelineTrack, int trackIndex, TrackID trackId)
 {
+    RefPtr<MediaPlayerPrivateGStreamerMSE> protectedPlayerPrivate = playerPrivate();
+    if (!protectedPlayerPrivate) {
+        // Asserts aren't enabled in Release, but it's still helpful to log the failure.
+        GST_ERROR("Can't operate on a null playerPrivate from AppendPipeline (%p)", this);
+        RELEASE_ASSERT(protectedPlayerPrivate);
+    }
+
     RefPtr<WebCore::TrackPrivateBase> track;
     TrackPrivateBaseGStreamer* gstreamerTrack = nullptr;
     // FIXME: AudioTrackPrivateGStreamer etc. should probably use pads of the playback pipeline rather than the append pipeline.
     GRefPtr<GstPad> pad(appendPipelineTrack.appsinkPad);
     switch (appendPipelineTrack.streamType) {
     case StreamType::Audio: {
-        auto specificTrack = AudioTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTF::move(pad), trackId);
+        auto specificTrack = AudioTrackPrivateGStreamer::create(protectedPlayerPrivate, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Video: {
-        auto specificTrack = VideoTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTF::move(pad), trackId);
+        auto specificTrack = VideoTrackPrivateGStreamer::create(protectedPlayerPrivate, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
@@ -1458,8 +1489,11 @@ static GstPadProbeReturn appendPipelineAppsinkPadEventProbe([[maybe_unused]] Gst
 
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_PROTECTION:
-        if (appendPipeline && appendPipeline->playerPrivate())
-            appendPipeline->playerPrivate()->handleProtectionEvent(event);
+        if (appendPipeline) {
+            RefPtr protectedPlayerPrivate = appendPipeline->playerPrivate();
+            if (protectedPlayerPrivate)
+                protectedPlayerPrivate->handleProtectionEvent(event);
+        }
         return GST_PAD_PROBE_DROP;
     default:
         break;

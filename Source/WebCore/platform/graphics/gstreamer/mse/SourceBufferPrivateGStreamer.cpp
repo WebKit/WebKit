@@ -73,7 +73,7 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
     : SourceBufferPrivate(mediaSource)
     , m_type(contentType)
     , m_textTracksEnabled(textTracksEnabled)
-    , m_appendPipeline(makeUnique<AppendPipeline>(*this, *player()))
+    , m_appendPipeline(makeUnique<AppendPipeline>(*this))
 #if !RELEASE_LOG_DISABLED
     , m_logger(mediaSource.logger())
     , m_logIdentifier(mediaSource.nextSourceBufferLogIdentifier())
