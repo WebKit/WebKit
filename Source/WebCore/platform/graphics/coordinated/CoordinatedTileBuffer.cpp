@@ -221,12 +221,21 @@ void CoordinatedUnacceleratedTileBuffer::finishPainting()
 #endif
 
 #if USE(SKIA)
+static SkSurfaceProps tileSurfaceProps(SkAlphaType alphaType)
+{
+    auto properties = FontRenderOptions::singleton().createSurfaceProps();
+    // LCD text assumes an opaque background. Alpha tiles are blended over a background later.
+    if (alphaType != kOpaque_SkAlphaType)
+        return properties.cloneWithPixelGeometry(kUnknown_SkPixelGeometry);
+    return properties;
+}
+
 bool CoordinatedUnacceleratedTileBuffer::prepareForPainting()
 {
     if (tryAllocateData()) {
         auto alphaType = supportsAlpha() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
         auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), kBGRA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
-        auto properties = FontRenderOptions::singleton().createSurfaceProps();
+        auto properties = tileSurfaceProps(alphaType);
         m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.mutableSpan().data(), imageInfo.minRowBytes64(), &properties);
     }
 
@@ -255,7 +264,7 @@ Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const sk_sp<
     auto imageInfo = SkImageInfo::Make(size.width(), size.height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
     auto backendFormat = threadSafeGrContext->defaultBackendFormat(kRGBA_8888_SkColorType, GrRenderable::kYes);
     ASSERT(backendFormat.isValid());
-    auto properties = FontRenderOptions::singleton().createSurfaceProps();
+    auto properties = tileSurfaceProps(alphaType);
     auto maxResourceCacheBytes = PlatformDisplay::sharedDisplay().maxSkiaResourceCacheBytes();
     auto characterization = threadSafeGrContext->createCharacterization(maxResourceCacheBytes, imageInfo, backendFormat, 0, kTopLeft_GrSurfaceOrigin, properties, skgpu::Mipmapped::kNo);
     return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTF::move(characterization), flags, distance, renderingUpdateID));
