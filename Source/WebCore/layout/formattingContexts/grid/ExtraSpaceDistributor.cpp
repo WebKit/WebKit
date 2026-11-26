@@ -194,6 +194,7 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
     // planned increase, per https://github.com/w3c/csswg-drafts/issues/3648.
     Vector<LayoutUnit> plannedIncreases(unsizedTracks.size());
 
+    TrackIndexes spannedAffectedTracksIndexes;
     TrackIndexes nonAffectedTracksIndexes;
 
     // 2. For each accommodated item...
@@ -211,6 +212,8 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
             else
                 spannedNonAffectedTracks.append(trackIndex);
         }
+        for (auto trackIndex : spannedAffectedTracks)
+            spannedAffectedTracksIndexes.appendIfNotContains(trackIndex);
 
         // https://drafts.csswg.org/css-grid-1/#extra-space
         // 2.1. "Find the space to distribute: Subtract the affected size of every spanned track
@@ -264,7 +267,7 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
     // 3. "Update the tracks' affected sizes by adding in the planned increase [...] (If the affected
     // size is an infinite growth limit, set it to the track's base size plus the planned increase.)"
     if (spaceDistributionTarget == ExtraSpaceDistributionTarget::BaseSizes) {
-        for (auto trackIndex : affectedTracksIndexes)
+        for (auto trackIndex : spannedAffectedTracksIndexes)
             unsizedTracks[trackIndex].baseSize += plannedIncreases[trackIndex];
         for (auto trackIndex : nonAffectedTracksIndexes)
             unsizedTracks[trackIndex].baseSize += plannedIncreases[trackIndex];
@@ -285,7 +288,7 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
                 tracksWhoseGrowthLimitBecameFinite.append(trackIndex);
         }
     };
-    for (auto trackIndex : affectedTracksIndexes)
+    for (auto trackIndex : spannedAffectedTracksIndexes)
         updateGrowthLimit(trackIndex);
     for (auto trackIndex : nonAffectedTracksIndexes)
         updateGrowthLimit(trackIndex);
