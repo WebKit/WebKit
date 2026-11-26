@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Display: parsing display-visibility with invalid values</title>
+<link rel="help" href="https://drafts.csswg.org/css-display-4/#display-visibility">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+<body>
+<script>
+test_invalid_value('display-visibility', 'auto');
+test_invalid_value('display-visibility', 'none');
+test_invalid_value('display-visibility', 'hidden');
+test_invalid_value('display-visibility', 'visible');
+test_invalid_value('display-visibility', 'normal discard');
+test_invalid_value('display-visibility', 'discard, normal');
+test_invalid_value('display-visibility', '0');
+test_invalid_value('display-visibility', '10px');
+test_invalid_value('display-visibility', '100%');
+</script>
+</body>

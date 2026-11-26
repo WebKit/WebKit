@@ -1,0 +1,11 @@
+
+PASS e.style['display-visibility'] = "auto" should not set the property value
+PASS e.style['display-visibility'] = "none" should not set the property value
+PASS e.style['display-visibility'] = "hidden" should not set the property value
+PASS e.style['display-visibility'] = "visible" should not set the property value
+PASS e.style['display-visibility'] = "normal discard" should not set the property value
+PASS e.style['display-visibility'] = "discard, normal" should not set the property value
+PASS e.style['display-visibility'] = "0" should not set the property value
+PASS e.style['display-visibility'] = "10px" should not set the property value
+PASS e.style['display-visibility'] = "100%" should not set the property value
+

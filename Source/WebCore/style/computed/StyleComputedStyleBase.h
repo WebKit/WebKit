@@ -107,6 +107,7 @@ enum class DominantBaseline : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint64_t;
 enum class FieldSizing : bool;
+enum class DisplayVisibility : bool;
 enum class FillAttachment : uint8_t;
 enum class FillBox : uint8_t;
 enum class FillSizeType : uint8_t;

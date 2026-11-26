@@ -271,6 +271,8 @@ public:
     PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
     PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
 
+    PREFERRED_TYPE(DisplayVisibility) unsigned displayVisibility : 1;
+
     PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
     PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 5;
     PREFERRED_TYPE(bool) unsigned usesAnchorFunctions : 1;

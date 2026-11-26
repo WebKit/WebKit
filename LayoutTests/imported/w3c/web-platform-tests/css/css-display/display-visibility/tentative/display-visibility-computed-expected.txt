@@ -1,0 +1,4 @@
+
+PASS Property display-visibility value 'normal'
+PASS Property display-visibility value 'discard'
+

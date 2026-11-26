@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Display: display-visibility: discard removes the box from layout and painting</title>
+<link rel="help" href="https://drafts.csswg.org/css-display-4/#display-visibility">
+<link rel="match" href="display-visibility-discard-rendering-ref.html">
+<style>
+  #discarded {
+    display: block;
+    display-visibility: discard;
+    width: 100px;
+    height: 100px;
+    background: red;
+  }
+  #after { width: 100px; height: 100px; background: green; }
+</style>
+<div id="discarded"></div>
+<div id="after"></div>
