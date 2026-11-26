@@ -443,6 +443,9 @@ private:
     size_t m_currentOpcodeStartingOffset { 0 };
 
     unsigned m_unreachableBlocks { 0 };
+    // Blocks entered while already unreachable are not pushed on m_controlStack.
+    // rethrow still has to see which of those labels are catches.
+    Vector<BlockType, 16> m_unreachableControls;
     unsigned m_loopIndex { 0 };
     unsigned m_callProfileIndex { 0 };
 };
@@ -3978,8 +3981,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         const auto& exceptionSignature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
 
-        if (m_unreachableBlocks > 1)
+        if (m_unreachableBlocks > 1) {
+            WASM_VALIDATOR_FAIL_IF(m_unreachableControls.isEmpty(), "catch block isn't associated to a try"_s);
+            BlockType& kind = m_unreachableControls.last();
+            WASM_VALIDATOR_FAIL_IF(kind != BlockType::Try && kind != BlockType::Catch, "catch block isn't associated to a try"_s);
+            kind = BlockType::Catch;
             return { };
+        }
 
         ControlEntry& data = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
@@ -4001,8 +4009,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case CatchAll: {
-        if (m_unreachableBlocks > 1)
+        if (m_unreachableBlocks > 1) {
+            WASM_VALIDATOR_FAIL_IF(m_unreachableControls.isEmpty(), "catch block isn't associated to a try"_s);
+            BlockType& kind = m_unreachableControls.last();
+            WASM_VALIDATOR_FAIL_IF(kind != BlockType::Try && kind != BlockType::Catch, "catch block isn't associated to a try"_s);
+            kind = BlockType::Catch;
             return { };
+        }
 
         ControlEntry& data = m_controlStack.last();
         m_unreachableBlocks = 0;
@@ -4019,7 +4032,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseDelegateTarget(target, m_unreachableBlocks));
 
-        if (m_unreachableBlocks == 1) {
+        if (m_unreachableBlocks > 1) {
+            WASM_VALIDATOR_FAIL_IF(m_unreachableControls.isEmpty() || m_unreachableControls.last() != BlockType::Try, "delegate isn't associated to a try"_s);
+            m_unreachableControls.takeLast();
+        } else if (m_unreachableBlocks == 1) {
             ControlEntry controlEntry = m_controlStack.takeLast();
             WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
 
@@ -4046,7 +4062,9 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case End: {
-        if (m_unreachableBlocks == 1) {
+        if (m_unreachableBlocks > 1)
+            m_unreachableControls.takeLast();
+        else if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
             const uint32_t parentBegin = parentEntryBegin();
             if (ControlType::isIf(data.controlData)) {
@@ -4075,6 +4093,23 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case Loop:
     case If:
     case Block: {
+        BlockType type = BlockType::Block;
+        switch (m_currentOpcode) {
+        case OpType::Try:
+            type = BlockType::Try;
+            break;
+        case OpType::Loop:
+            type = BlockType::Loop;
+            break;
+        case OpType::If:
+            type = BlockType::If;
+            break;
+        case OpType::Block:
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_unreachableControls.append(type);
         m_unreachableBlocks++;
         BlockSignature unused;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(unused), "can't get inline type for "_s, m_currentOpcode, " in unreachable context"_s);
@@ -4095,6 +4130,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case TryTable: {
+        m_unreachableControls.append(BlockType::TryTable);
         m_unreachableBlocks++;
 
         BlockSignature unused;
@@ -4194,9 +4230,17 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case Rethrow: {
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target, m_unreachableBlocks));
 
-        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        uint32_t virtualDepth = m_unreachableBlocks - 1;
+        ASSERT(virtualDepth == m_unreachableControls.size());
+        if (target < virtualDepth) {
+            WASM_VALIDATOR_FAIL_IF(m_unreachableControls[virtualDepth - 1 - target] != BlockType::Catch, "rethrow doesn't refer to a catch block"_s);
+            return { };
+        }
+
+        uint32_t realTarget = target - virtualDepth;
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - realTarget].controlData;
         WASM_VALIDATOR_FAIL_IF(!ControlType::isAnyCatch(data), "rethrow doesn't refer to a catch block"_s);
         return { };
     }
