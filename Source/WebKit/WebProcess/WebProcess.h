@@ -294,6 +294,9 @@ public:
     
     OptionSet<TextCheckerState> textCheckerState() const { return m_textCheckerState; }
     void setTextCheckerState(OptionSet<TextCheckerState>);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void spellCheckingLanguagesChanged();
+#endif
 
     EventDispatcher& eventDispatcher() LIFETIME_BOUND { return m_eventDispatcher; }
 

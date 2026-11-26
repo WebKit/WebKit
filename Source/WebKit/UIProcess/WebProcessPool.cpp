@@ -490,6 +490,13 @@ void WebProcessPool::textCheckerStateChanged()
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
 }
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+void WebProcessPool::spellCheckingLanguagesChanged()
+{
+    sendToAllProcesses(Messages::WebProcess::SpellCheckingLanguagesChanged());
+}
+#endif
+
 void WebProcessPool::notifyProcessPoolsTextCheckerStateChanged()
 {
     for (auto& processPool : allProcessPools())

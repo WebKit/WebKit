@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+description("Tests that asynchronous spell checking while typing does not mark the text of a spellcheck=false descendant in the same paragraph.");
+
+jsTestIsAsync = true;
+
+internals.settings.setAsynchronousSpellCheckingEnabled(true);
+
+var root = document.getElementById("root");
+root.innerHTML = "<div contenteditable>Hello <span spellcheck='false'>zz</span> there</div>";
+var editable = root.firstChild;
+
+function spellingMarkerCount(node)
+{
+    return internals.markerCountForNode(node, "Spelling");
+}
+
+editable.focus();
+getSelection().setPosition(editable.lastChild, editable.lastChild.length);
+document.execCommand("InsertText", false, " ");
+document.execCommand("InsertText", false, "z");
+document.execCommand("InsertText", false, "z");
+document.execCommand("InsertText", false, " ");
+shouldBecomeEqual("spellingMarkerCount(editable.lastChild)", "1", function() {
+    shouldBe("spellingMarkerCount(editable.childNodes[1].firstChild)", "0");
+    root.innerHTML = "";
+    finishJSTest();
+});
+</script>
+</body>
+</html>

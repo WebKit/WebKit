@@ -1,0 +1,11 @@
+Tests that asynchronous spell checking while typing does not mark the text of a spellcheck=false descendant in the same paragraph.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS spellingMarkerCount(editable.lastChild) became 1
+PASS spellingMarkerCount(editable.childNodes[1].firstChild) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

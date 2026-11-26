@@ -121,6 +121,8 @@ public:
 
     WEBCORE_EXPORT void dispatchUserTextInputEvent();
 
+    bool hasCachedSelection() const { return m_hasCachedSelection; }
+
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&);
     virtual void updatePlaceholderText() = 0;
@@ -136,7 +138,6 @@ protected:
     NODELETE bool cacheSelection(unsigned start, unsigned end, TextFieldSelectionDirection);
 
     void restoreCachedSelection(SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
-    bool hasCachedSelection() const { return m_hasCachedSelection; }
 
     unsigned computeSelectionStart() const;
     unsigned computeSelectionEnd() const;

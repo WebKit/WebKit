@@ -282,7 +282,15 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 void TextChecker::setSpellCheckingLanguages(const Vector<String>& languages)
 {
 #if ENABLE(SPELLCHECK)
-    TextCheckerEnchant::singleton().updateSpellCheckingLanguages(languages);
+    auto& textChecker = TextCheckerEnchant::singleton();
+    auto previousLanguages = textChecker.loadedSpellCheckingLanguages();
+    textChecker.updateSpellCheckingLanguages(languages);
+
+    if (textChecker.loadedSpellCheckingLanguages() == previousLanguages)
+        return;
+
+    for (const auto& processPool : WebProcessPool::allProcessPools())
+        processPool->spellCheckingLanguagesChanged();
 #else
     UNUSED_PARAM(languages);
 #endif

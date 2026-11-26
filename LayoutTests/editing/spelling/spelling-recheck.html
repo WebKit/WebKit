@@ -1,0 +1,80 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+description("Tests that rechecking spelling drops the existing markers and marks the misspellings in the editable text that has spell checking enabled.");
+
+var root = document.getElementById("root");
+var editable;
+var shadow;
+
+function spellingMarkerCount(node)
+{
+    return internals.markerCountForNode(node, "Spelling");
+}
+
+function setUp(markup)
+{
+    root.innerHTML = markup;
+    editable = root.firstChild;
+}
+
+debug("A stale marker on a correctly spelled word goes away.");
+setUp("<div contenteditable>Hello</div>");
+getSelection().setPosition(editable.firstChild, 0);
+internals.setMarkerFor("Spelling", 0, 5, "");
+shouldBe("spellingMarkerCount(editable.firstChild)", "1");
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(editable.firstChild)", "0");
+debug("");
+
+debug("A misspelling that was never typed gets a marker.");
+setUp("<div contenteditable>zz</div>");
+shouldBe("spellingMarkerCount(editable.firstChild)", "0");
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(editable.firstChild)", "1");
+debug("");
+
+debug("Text that is not editable is not checked.");
+setUp("<div>zz</div>");
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(editable.firstChild)", "0");
+debug("");
+
+debug("A spellcheck=false descendant is not marked, and the text after it is.");
+setUp("<div contenteditable>Hello <span spellcheck='false'>zz</span> zz</div>");
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(editable.childNodes[1].firstChild)", "0");
+shouldBe("spellingMarkerCount(editable.lastChild)", "1");
+debug("");
+
+debug("The text after a spellcheck=false descendant at the start is marked.");
+setUp("<div contenteditable><code spellcheck='false'>zz</code> zz</div>");
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(editable.firstChild.firstChild)", "0");
+shouldBe("spellingMarkerCount(editable.lastChild)", "1");
+debug("");
+
+debug("Editable text inside a shadow tree is checked.");
+setUp("<div></div>");
+shadow = editable.attachShadow({ mode: "open" });
+shadow.innerHTML = "<div contenteditable>zz</div>";
+internals.recheckSpellingAndGrammar();
+shouldBe("spellingMarkerCount(shadow.firstChild.firstChild)", "1");
+debug("");
+
+debug("A text control the user has interacted with is checked.");
+setUp("<textarea>zz</textarea>");
+editable.focus();
+editable.setSelectionRange(0, 0);
+shouldBeFalse("internals.hasSpellingMarker(0, 2)");
+internals.recheckSpellingAndGrammar();
+shouldBeTrue("internals.hasSpellingMarker(0, 2)");
+root.innerHTML = "";
+</script>
+</body>
+</html>

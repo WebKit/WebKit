@@ -382,6 +382,7 @@ public:
     TextCheckingGuesses guessesForMisspelledOrUngrammatical(const SimpleRange&);
     bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
+    WEBCORE_EXPORT void recheckSpellingAndGrammar();
     WEBCORE_EXPORT void markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart, const VisibleSelection& selectionAfterTyping, AllowTextReplacement);
     std::optional<SimpleRange> markMisspellings(const VisibleSelection&); // Returns first misspelling range.
     void markBadGrammar(const VisibleSelection&);

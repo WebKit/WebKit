@@ -1631,6 +1631,9 @@ public:
 
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void recheckSpellingAndGrammar();
+#endif
 
 #if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String&);

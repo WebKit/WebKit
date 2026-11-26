@@ -31,6 +31,7 @@
 #include "BoundaryPointInlines.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
+#include "Editor.h"
 #include "EditorClient.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
@@ -230,6 +231,12 @@ TextCheckingHelper::TextCheckingHelper(EditorClient& client, const SimpleRange& 
 {
 }
 
+static bool isSpellCheckingEnabledFor(const SimpleRange& range)
+{
+    Ref document = range.start.document();
+    return protect(document->editor())->isSpellCheckingEnabledFor(range.start.container.ptr());
+}
+
 auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::pair<MisspelledWord, std::optional<SimpleRange>>
 {
     std::pair<MisspelledWord, std::optional<SimpleRange>> first;
@@ -262,8 +269,11 @@ auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::
 
         auto misspellingRange = resolveCharacterRange(m_range, CharacterRange(currentChunkOffset + misspellingLocation, misspellingLength));
 
-        if (operation == Operation::MarkAll)
+        if (operation == Operation::MarkAll) {
+            if (!isSpellCheckingEnabledFor(misspellingRange))
+                continue;
             addMarker(misspellingRange, DocumentMarkerType::Spelling);
+        }
 
         if (first.first.word.isNull()) {
             first = {
@@ -434,7 +444,8 @@ int TextCheckingHelper::findUngrammaticalPhrases(Operation operation, const Vect
         
         if (operation == Operation::MarkAll) {
             auto badGrammarRange = resolveCharacterRange(m_range, { badGrammarPhraseLocation - startOffset + detail->range.location, detail->range.length });
-            addMarker(badGrammarRange, DocumentMarkerType::Grammar, DocumentMarker::GrammarData { detail->userDescription, detail->uuid });
+            if (isSpellCheckingEnabledFor(badGrammarRange))
+                addMarker(badGrammarRange, DocumentMarkerType::Grammar, DocumentMarker::GrammarData { detail->userDescription, detail->uuid });
         }
         
         // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)

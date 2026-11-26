@@ -3126,6 +3126,12 @@ void Internals::advanceToNextMisspelling()
 #endif
 }
 
+void Internals::recheckSpellingAndGrammar()
+{
+    if (RefPtr document = contextDocument())
+        protect(document->editor())->recheckSpellingAndGrammar();
+}
+
 Vector<String> Internals::userPreferredLanguages() const
 {
     return WTF::userPreferredLanguages(ShouldMinimizeLanguages::No);

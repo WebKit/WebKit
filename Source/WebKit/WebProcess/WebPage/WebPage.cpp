@@ -7033,6 +7033,16 @@ void WebPage::unmarkAllBadGrammar()
     }
 }
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+void WebPage::recheckSpellingAndGrammar()
+{
+    for (RefPtr frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame))
+            protect(localFrame->editor())->recheckSpellingAndGrammar();
+    }
+}
+#endif
+
 #if USE(APPKIT)
 void WebPage::uppercaseWord(FrameIdentifier frameID)
 {
