@@ -76,6 +76,8 @@ public Q_SLOTS:
     void stop();
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
     void runJavaScript(const QString& script, const QJSValue& callback = QJSValue());
+    void setDownloadPath(quint32 id, const QString& path);
+    void cancelDownload(quint32 id);
 
 Q_SIGNALS:
     void webViewCreated();
@@ -83,10 +85,17 @@ Q_SIGNALS:
     void titleChanged();
     void loadingChanged(WPEQtViewLoadRequest* loadRequest);
     void loadProgressChanged();
+    void downloadStarted(quint32 id, const QUrl&);
+    void downloadDestinationRequested(quint32 id, const QString& suggestedFilename);
+    void downloadProgress(quint32 id, qreal progress);
+    void downloadFinished(quint32 id, const QString& destination);
+    void downloadFailed(quint32 id, const QString& error);
 
 protected:
     bool errorOccured() const;
     void setErrorOccured(bool);
+
+    void setCurrentDownload(WebKitDownload*);
 
     bool event(QEvent*) override;
     void geometryChange(const QRectF&, const QRectF&) override;
@@ -123,6 +132,12 @@ private:
     static void notifyLoadProgressCallback(WPEQtView*);
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
+    static void downloadStartedCallback(WebKitNetworkSession*, WebKitDownload*, WPEQtView*);
+    static gboolean downloadDecideDestinationCallback(WebKitDownload*, const gchar*, WPEQtView*);
+    static void downloadProgressCallback(WebKitDownload*, GParamSpec*, WPEQtView*);
+    static void downloadFinishedCallback(WebKitDownload*, WPEQtView*);
+    static void downloadFailedCallback(WebKitDownload*, GError*, WPEQtView*);
+    bool useCustomDownloadHandling() const;
 
     Q_DECLARE_PRIVATE(WPEQtView)
     QScopedPointer<WPEQtViewPrivate> d_ptr;
