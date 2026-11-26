@@ -134,6 +134,9 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetIsInProcessCache(bool isInProcessCache) -> ()
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
+#if HAVE(QOS_CLASSES)
+    MainThreadQOSClassForTesting() -> (uint32_t qosClass)
+#endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     [DeferSendingIfSuspended] SetScreenProperties(struct WebCore::ScreenProperties screenProperties)

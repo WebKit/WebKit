@@ -416,6 +416,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return result.autorelease();
 }
 
+- (void)_getMainThreadQOSClassForProcessForTesting:(pid_t)processIdentifier completionHandler:(void(^)(unsigned qosClass))completionHandler
+{
+    if (!processIdentifier)
+        return completionHandler(0);
+    for (Ref process : protect(*_processPool)->processes()) {
+        if (process->processID() != processIdentifier)
+            continue;
+        process->sendWithAsyncReply(Messages::WebProcess::MainThreadQOSClassForTesting(), makeBlockPtr(completionHandler));
+        return;
+    }
+    completionHandler(0);
+}
+
 - (void)_countWebPagesInAllProcessesForTesting:(void(^)(unsigned))completionHandler
 {
     protect(*_processPool)->countWebPagesInAllProcessesForTesting([completionHandler = makeBlockPtr(completionHandler)] (unsigned result) {

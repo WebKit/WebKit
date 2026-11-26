@@ -880,9 +880,9 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, JSCOptionsForWebProcess jscOptions)
+Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger enableWebAssemblyDebugger, WebProcessProxy::IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, JSCOptionsForWebProcess jscOptions, WebProcessProxy::IsPrewarmedAtUtilityQOS isPrewarmedAtUtilityQOS)
 {
-    auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, enhancedSecurity, isPrewarmed, crossOriginIsolation, WebProcessProxy::ShouldLaunchProcess::Yes);
+    auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, enhancedSecurity, isPrewarmed, crossOriginIsolation, WebProcessProxy::ShouldLaunchProcess::Yes, isPrewarmedAtUtilityQOS);
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed, enableWebAssemblyDebugger, jscOptions);
     m_processes.append(processProxy.copyRef());
 
@@ -940,6 +940,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     ASSERT_UNUSED(didRemove, didRemove);
 
     ASSERT(prewarmedProcess->isPrewarmed());
+    prewarmedProcess->liftPrewarmedUtilityQOSIfNeeded();
     if (!prewarmedProcess->hasWebsiteDataStore())
         prewarmedProcess->setWebsiteDataStore(websiteDataStore);
     prewarmedProcess->markIsNoLongerInPrewarmedPool();
@@ -1198,11 +1199,37 @@ void WebProcessPool::prewarmProcess(WebsiteDataStore* websiteDataStore)
         return;
     }
 
-    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance");
-
     auto lockdownMode = lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     auto enhancedSecurity = defaultEnhancedSecurity(*this, lockdownMode, protect(m_defaultPageGroup->preferences()));
-    createNewWebProcess(websiteDataStore, lockdownMode, enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed::Yes);
+    auto isPrewarmedAtUtilityQOS = WebProcessProxy::IsPrewarmedAtUtilityQOS::No;
+    if (shouldPrewarmEnhancedSecurityProcessForSharedProcess(lockdownMode, enhancedSecurity)) {
+        enhancedSecurity = EnhancedSecurity::EnabledPolicy;
+#if HAVE(QOS_CLASSES)
+        if (m_hasUsedSharedProcessEnhancedSecurityPrewarmUtilityQOS)
+            isPrewarmedAtUtilityQOS = WebProcessProxy::IsPrewarmedAtUtilityQOS::Yes;
+#endif
+    }
+
+    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance (enhancedSecurity=%d)", isEnhancedSecurityEnabledForState(enhancedSecurity));
+    if (isPrewarmedAtUtilityQOS == WebProcessProxy::IsPrewarmedAtUtilityQOS::Yes)
+        WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Launching the prewarmed WebProcess at utility QoS");
+    createNewWebProcess(websiteDataStore, lockdownMode, enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed::Yes, ProcessCrossOriginIsolation::None, { }, isPrewarmedAtUtilityQOS);
+}
+
+bool WebProcessPool::shouldPrewarmEnhancedSecurityProcessForSharedProcess(WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+{
+    if (!m_hasUsedSharedProcessEnhancedSecurity || lockdownMode == WebProcessProxy::LockdownMode::Enabled || isEnhancedSecurityEnabledForState(enhancedSecurity))
+        return false;
+
+    bool hasStandardProcess = false;
+    for (Ref process : m_prewarmedProcesses) {
+        if (process->wasTerminated() || process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled)
+            continue;
+        if (isEnhancedSecurityEnabledForState(process->enhancedSecurity()))
+            return false;
+        hasStandardProcess = true;
+    }
+    return hasStandardProcess;
 }
 
 void WebProcessPool::enableProcessTermination()
@@ -2501,6 +2528,13 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         }
         m_webProcessCache->updateCapacity(*this);
     }
+
+    if (!m_hasUsedSharedProcessEnhancedSecurity && BrowsingContextGroup::shouldUseEnhancedSecurityForSharedProcess(protect(page.preferences()), lockdownMode))
+        m_hasUsedSharedProcessEnhancedSecurity = true;
+
+    if (!m_hasUsedSharedProcessEnhancedSecurityPrewarmUtilityQOS && protect(page.preferences())->siteIsolationSharedProcessEnhancedSecurityPrewarmUtilityQOSEnabled()
+        && BrowsingContextGroup::shouldUseEnhancedSecurityForSharedProcess(protect(page.preferences()), lockdownMode))
+        m_hasUsedSharedProcessEnhancedSecurityPrewarmUtilityQOS = true;
 
     bool isMainFrameNavigation = frame.isMainFrame();
     Ref sourceProcess = frame.process();

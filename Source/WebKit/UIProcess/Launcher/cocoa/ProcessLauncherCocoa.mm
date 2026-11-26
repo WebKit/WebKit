@@ -518,7 +518,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     }
 
     ref();
-    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), mainDispatchQueueSingleton(), ^(xpc_object_t reply) {
+    auto bootstrapReplyHandler = makeBlockPtr(^(xpc_object_t reply) {
         // Errors are handled in the event handler.
         // It is possible for this block to be called after the error event handler, in which case we're no longer
         // launching and we already took care of cleaning things up.
@@ -549,6 +549,16 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 
         deref();
     });
+
+    // XPC runs the receiver's handler at the sender's QoS or higher, so send from a utility queue.
+    if (m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("prewarmed-at-utility-qos"_s) == "1"_s) {
+        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr([xpcConnection = m_xpcConnection, bootstrapMessage = WTF::move(bootstrapMessage), bootstrapReplyHandler = WTF::move(bootstrapReplyHandler)] {
+            xpc_connection_send_message_with_reply(xpcConnection.get(), bootstrapMessage.get(), mainDispatchQueueSingleton(), bootstrapReplyHandler.get());
+        }).get());
+        return;
+    }
+
+    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), mainDispatchQueueSingleton(), bootstrapReplyHandler.get());
 }
 
 void ProcessLauncher::terminateProcess([[maybe_unused]] const String& reason)

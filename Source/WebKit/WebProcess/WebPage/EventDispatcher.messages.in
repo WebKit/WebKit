@@ -43,4 +43,7 @@ messages -> EventDispatcher {
     SetScrollingAccelerationCurve(WebCore::PageIdentifier pageID, std::optional<WebKit::ScrollingAccelerationCurve> curve)
 #endif
     PageScreenDidChange(WebCore::PageIdentifier pageID, uint32_t displayID, std::optional<unsigned> nominalFramesPerSecond)
+#if HAVE(QOS_CLASSES)
+    LiftPrewarmedUtilityQOS()
+#endif
 }

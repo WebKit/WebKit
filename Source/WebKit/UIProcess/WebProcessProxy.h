@@ -207,6 +207,7 @@ public:
     using UserInitiatedActionMap = HashMap<WebCore::UserGestureTokenIdentifier, Ref<API::UserInitiatedAction>>;
 
     enum class IsPrewarmed : bool { No, Yes };
+    enum class IsPrewarmedAtUtilityQOS : bool { No, Yes };
 
     enum class ShouldLaunchProcess : bool { No, Yes };
     using LockdownMode = WebKit::LockdownMode;
@@ -220,7 +221,7 @@ public:
         Shared
     };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes, IsPrewarmedAtUtilityQOS = IsPrewarmedAtUtilityQOS::No);
 
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
@@ -456,6 +457,7 @@ public:
 #endif
 
     bool isPrewarmed() const { return m_isPrewarmed; }
+    void liftPrewarmedUtilityQOSIfNeeded();
     void markIsNoLongerInPrewarmedPool();
 
     bool isForeground() const { return !!m_foregroundToken; }
@@ -955,6 +957,7 @@ private:
     bool m_hasCommittedAnyMeaningfulProvisionalLoads { false }; // True if the process has committed a provisional load to a URL that was not about:*.
     bool m_hasCommittedWebArchive { false };
     bool m_isPrewarmed;
+    bool m_isPrewarmedAtUtilityQOS { false };
     bool m_isPrintProcess { false };
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };

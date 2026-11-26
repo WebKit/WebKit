@@ -6161,6 +6161,16 @@ SiteIsolationSharedProcessEnhancedSecurityEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: false
 
+SiteIsolationSharedProcessEnhancedSecurityPrewarmUtilityQOSEnabled:
+  type: bool
+  status: internal
+  defaultsOverridable: true
+  category: security
+  humanReadableName: "Site Isolation: Utility QoS for Enhanced Security prewarmed process"
+  humanReadableDescription: "Launch the prewarmed Enhanced Security process for the Site Isolation shared process at utility QoS until it is used"
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 SlowFrameIndicatorVisible:
   type: bool
   status: internal

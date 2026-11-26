@@ -670,9 +670,10 @@ private:
     std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, BrowsingContextGroup&, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&, const std::optional<WebCore::Site>& backForwardInheritedSite);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, BrowsingContextGroup&, WebProcessProxy& sourceProcess, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
-    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, JSCOptionsForWebProcess = { });
+    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, JSCOptionsForWebProcess = { }, WebProcessProxy::IsPrewarmedAtUtilityQOS = WebProcessProxy::IsPrewarmedAtUtilityQOS::No);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&, ProcessCrossOriginIsolation);
+    bool shouldPrewarmEnhancedSecurityProcessForSharedProcess(WebProcessProxy::LockdownMode, EnhancedSecurity);
     void shutDownPrewarmedProcessesForWebsiteDataStore(WebsiteDataStore&);
 
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, JSCOptionsForWebProcess = { });
@@ -816,6 +817,8 @@ private:
     WeakHashSet<WebProcessProxy> m_prewarmedProcesses;
 
     bool m_hasUsedSiteIsolation { false };
+    bool m_hasUsedSharedProcessEnhancedSecurity { false };
+    bool m_hasUsedSharedProcessEnhancedSecurityPrewarmUtilityQOS { false };
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
