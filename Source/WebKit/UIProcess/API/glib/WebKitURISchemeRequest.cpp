@@ -109,7 +109,7 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriScheme.isNull())
-        request->priv->uriScheme = request->priv->task->request().url().protocol().utf8();
+        request->priv->uriScheme = makeUTF8CString(request->priv->task->request().url().protocol());
 
     return request->priv->uriScheme.legacyCStringPointer();
 }
@@ -127,7 +127,7 @@ const char* webkit_uri_scheme_request_get_uri(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uri.isNull())
-        request->priv->uri = request->priv->task->request().url().string().utf8();
+        request->priv->uri = makeUTF8CString(request->priv->task->request().url().string());
 
     return request->priv->uri.legacyCStringPointer();
 }
@@ -145,7 +145,7 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriPath.isNull())
-        request->priv->uriPath = request->priv->task->request().url().path().utf8();
+        request->priv->uriPath = makeUTF8CString(request->priv->task->request().url().path());
 
     return request->priv->uriPath.legacyCStringPointer();
 }
@@ -180,7 +180,7 @@ const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* r
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (!request->priv->httpMethod)
-        request->priv->httpMethod = g_intern_string(request->priv->task->request().httpMethod().utf8().legacyCStringPointer());
+        request->priv->httpMethod = g_intern_string(makeUTF8CString(request->priv->task->request().httpMethod()).legacyCStringPointer());
 
     return request->priv->httpMethod;
 }

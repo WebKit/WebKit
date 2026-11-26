@@ -47,7 +47,7 @@ FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<We
 #if PLATFORM(COCOA)
             const String& path = fileData->filename;
             if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
-                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8());
+                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", makeUTF8CString(path));
                 m_data = nullptr;
                 break;
             }
@@ -82,7 +82,7 @@ Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandle
             const String& path = fileData->filename;
 #if PLATFORM(COCOA)
             if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
-                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8());
+                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", makeUTF8CString(path));
                 return std::nullopt;
             }
 #endif // PLATFORM(COCOA)

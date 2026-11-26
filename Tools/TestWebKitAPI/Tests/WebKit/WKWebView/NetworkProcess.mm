@@ -86,7 +86,7 @@ TEST(WebKit, HTTPReferer)
             connection.receiveHTTPRequest([connection, expectedReferer, &done] (Vector<char>&& request) {
                 if (expectedReferer) {
                     auto expectedHeaderField = makeString("Referer: "_s, unsafeSpan(expectedReferer), "\r\n"_s);
-                    EXPECT_TRUE(contains(request.span(), byteCast<uint8_t>(expectedHeaderField.utf8().span())));
+                    EXPECT_TRUE(contains(request.span(), byteCast<uint8_t>(makeUTF8CString(expectedHeaderField).span())));
                 } else
                     EXPECT_FALSE(contains(request.span(), "Referer:"_span));
                 done = true;

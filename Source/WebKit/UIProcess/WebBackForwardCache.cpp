@@ -102,7 +102,7 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForw
         removeOldestEntry();
     ASSERT(size() <= capacity());
 
-    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::addEntry: item=%s, hasSuspendedPage=%d, size=%u/%u", item.identifier().toString().utf8(), !!item.suspendedPage(), size(), capacity());
+    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::addEntry: item=%s, hasSuspendedPage=%d, size=%u/%u", makeUTF8CString(item.identifier().toString()), !!item.suspendedPage(), size(), capacity());
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<SuspendedPageProxy>&& suspendedPage)
@@ -132,7 +132,7 @@ void WebBackForwardCache::removeEntry(WebBackForwardListItem& item)
 {
     ASSERT(m_itemsWithCachedPage.contains(item));
     m_itemsWithCachedPage.remove(item);
-    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::removeEntry: item=%s, size=%u/%u", item.identifier().toString().utf8(), size(), capacity());
+    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::removeEntry: item=%s, size=%u/%u", makeUTF8CString(item.identifier().toString()), size(), capacity());
     item.setBackForwardCacheEntry(nullptr); // item may be dead after this call.
 }
 
@@ -153,7 +153,7 @@ void WebBackForwardCache::removeEntriesForFrameItem(WebPageProxyIdentifier pageI
 
 Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardListItem& item)
 {
-    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::takeSuspendedPage: item=%s", item.identifier().toString().utf8());
+    RELEASE_LOG(BackForwardCache, "WebBackForwardCache::takeSuspendedPage: item=%s", makeUTF8CString(item.identifier().toString()));
 
     ASSERT(m_itemsWithCachedPage.contains(item));
     ASSERT(item.backForwardCacheEntry());

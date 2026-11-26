@@ -52,14 +52,14 @@ GRefPtr<GUri> URL::createGUri() const
     if (isNull())
         return nullptr;
 
-    return adoptGRef(g_uri_parse(m_string.utf8().legacyCStringPointer(),
+    return adoptGRef(g_uri_parse(makeUTF8CString(m_string).legacyCStringPointer(),
         static_cast<GUriFlags>(G_URI_FLAGS_HAS_PASSWORD | G_URI_FLAGS_ENCODED_PATH | G_URI_FLAGS_ENCODED_QUERY | G_URI_FLAGS_ENCODED_FRAGMENT | G_URI_FLAGS_SCHEME_NORMALIZE | G_URI_FLAGS_PARSE_RELAXED),
         nullptr));
 }
 
 bool URL::hostIsIPAddress(StringView host)
 {
-    return !host.isEmpty() && g_hostname_is_ip_address(host.utf8().legacyCStringPointer());
+    return !host.isEmpty() && g_hostname_is_ip_address(makeUTF8CString(host).legacyCStringPointer());
 }
 
 } // namespace WTF

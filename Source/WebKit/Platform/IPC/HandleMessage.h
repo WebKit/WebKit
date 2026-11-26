@@ -91,7 +91,7 @@ void logMessageImpl(const C& connection, MessageName messageName, void* object, 
     if (auto argumentDescriptions = messageArgumentDescriptions(messageName))
         (stream.dumpProperty((*argumentDescriptions)[ArgsIndex].name, ValueOrEllipsis(std::get<ArgsIndex>(args))), ...);
 
-    LOG(IPCMessages, "%s", stream.release().utf8());
+    LOG(IPCMessages, "%s", makeUTF8CString(stream.release()));
 #else
     UNUSED_PARAM(connection);
     UNUSED_PARAM(messageName);
@@ -121,7 +121,7 @@ void logReply(const C& connection, MessageName messageName, const T&... args)
     if (auto argumentDescriptions = messageReplyArgumentDescriptions(messageName))
         (stream.dumpProperty((*argumentDescriptions)[argIndex++].name, ValueOrEllipsis(args)), ...);
 
-    LOG(IPCMessages, "%s", stream.release().utf8());
+    LOG(IPCMessages, "%s", makeUTF8CString(stream.release()));
 #else
     UNUSED_PARAM(connection);
     UNUSED_PARAM(messageName);

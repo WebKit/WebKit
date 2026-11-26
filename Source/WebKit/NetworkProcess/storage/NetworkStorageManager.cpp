@@ -126,7 +126,7 @@ NODELETE static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activ
 static String encode(const String& string, FileSystem::Salt salt)
 {
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    auto utf8String = string.utf8();
+    auto utf8String = makeUTF8CString(string);
     crypto->addBytes(std::as_bytes(utf8String.span()));
     crypto->addBytes(salt);
     return base64URLEncodeToString(crypto->computeHash());
@@ -587,7 +587,7 @@ void NetworkStorageManager::performEvictionForOrigin(const WebCore::SecurityOrig
 {
     for (auto& clientOrigin : borrow(record.clientOrigins)) {
         auto origin = WebCore::ClientOrigin { topOrigin, clientOrigin };
-        RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEvictionForOrigin sessionID=%" PRIu64 " clears data for origin %" SENSITIVE_LOG_STRING " due to %" PUBLIC_LOG_STRING, this, m_sessionID.toUInt64(), clientOrigin.toString().utf8(), reason.characters());
+        RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEvictionForOrigin sessionID=%" PRIu64 " clears data for origin %" SENSITIVE_LOG_STRING " due to %" PUBLIC_LOG_STRING, this, m_sessionID.toUInt64(), makeUTF8CString(clientOrigin.toString()), reason.characters());
         originStorageManager(origin)->deleteData(types, -WallTime::infinity());
         removeOriginStorageManagerIfPossible(origin);
     }
@@ -739,7 +739,7 @@ void NetworkStorageManager::donePrepareForTimeBasedEviction(TimeBasedEvictionMod
             continue;
 
         if (pushSubscriptionOriginSet.contains(topOrigin)) {
-            RELEASE_LOG(Storage, "%p - NetworkStorageManager::performTimeBasedEviction sessionID=%" PRIu64 " skipping origin %" SENSITIVE_LOG_STRING " with active push subscription", this, m_sessionID.toUInt64(), topOrigin.toString().utf8());
+            RELEASE_LOG(Storage, "%p - NetworkStorageManager::performTimeBasedEviction sessionID=%" PRIu64 " skipping origin %" SENSITIVE_LOG_STRING " with active push subscription", this, m_sessionID.toUInt64(), makeUTF8CString(topOrigin.toString()));
             continue;
         }
 
@@ -2233,7 +2233,7 @@ void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(IPC::Conne
 {
     if (RefPtr databaseConnection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection)) {
         if (!databaseConnection->checkedDatabase()->isVersionChangeTransactionFinishingOrFinished(transactionIdentifier)) {
-            RELEASE_LOG_FAULT(IndexedDB, "NetworkStorageManager::didFinishHandlingVersionChangeTransaction: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", transactionIdentifier.loggingString().utf8());
+            RELEASE_LOG_FAULT(IndexedDB, "NetworkStorageManager::didFinishHandlingVersionChangeTransaction: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", makeUTF8CString(transactionIdentifier.loggingString()));
             return;
         }
         databaseConnection->didFinishHandlingVersionChange(transactionIdentifier);

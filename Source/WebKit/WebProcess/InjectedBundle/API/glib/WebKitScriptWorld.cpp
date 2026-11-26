@@ -103,7 +103,7 @@ static WebKitScriptWorld* webkitScriptWorldCreate(Ref<InjectedBundleScriptWorld>
 {
     WebKitScriptWorld* world = WEBKIT_SCRIPT_WORLD(g_object_new(WEBKIT_TYPE_SCRIPT_WORLD, nullptr));
     world->priv->scriptWorld = WTF::move(scriptWorld);
-    world->priv->name = world->priv->scriptWorld->name().utf8();
+    world->priv->name = makeUTF8CString(world->priv->scriptWorld->name());
 
     ASSERT(!scriptWorlds().contains(world->priv->scriptWorld.get()));
     scriptWorlds().add(world->priv->scriptWorld.get(), world);

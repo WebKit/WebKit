@@ -1342,7 +1342,7 @@ struct WKWebsiteData {
     }
 #endif
 
-    RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8());
+    RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", makeUTF8CString(notificationData.originString));
 
     notificationData.sourceSession = _websiteDataStore->sessionID();
     protect(protect(*_websiteDataStore)->networkProcess())->processNotificationEvent(notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
@@ -1365,7 +1365,7 @@ struct WKWebsiteData {
 
 -(void)_processWebCorePersistentNotificationClose:(const WebCore::NotificationData&)notificationData completionHandler:(void(^)(bool))completionHandler
 {
-    RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8());
+    RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", makeUTF8CString(notificationData.originString));
 
     protect(protect(*_websiteDataStore)->networkProcess())->processNotificationEvent(notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);

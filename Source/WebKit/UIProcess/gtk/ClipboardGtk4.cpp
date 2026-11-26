@@ -257,13 +257,13 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     Vector<GdkContentProvider*> providers;
 
     if (selectionData.hasURIList()) {
-        auto uriList = selectionData.uriList().utf8();
+        auto uriList = makeUTF8CString(selectionData.uriList());
         GRefPtr bytes = gBytesNew(uriList.span());
         providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
     }
 
     if (selectionData.hasMarkup()) {
-        auto markup = selectionData.markup().utf8();
+        auto markup = makeUTF8CString(selectionData.markup());
         GRefPtr bytes = gBytesNew(markup.span());
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
@@ -274,7 +274,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     }
 
     if (selectionData.hasText())
-        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, selectionData.text().utf8().legacyCStringPointer()));
+        providers.append(gdk_content_provider_new_typed(G_TYPE_STRING, makeUTF8CString(selectionData.text()).legacyCStringPointer()));
 
     if (selectionData.canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
@@ -288,7 +288,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
 
     for (const auto& it : selectionData.buffers()) {
         GRefPtr<GBytes> bytes = it.value->createGBytes();
-        providers.append(gdk_content_provider_new_for_bytes(it.key.utf8().legacyCStringPointer(), bytes.get()));
+        providers.append(gdk_content_provider_new_for_bytes(makeUTF8CString(it.key).legacyCStringPointer(), bytes.get()));
     }
 
     if (providers.isEmpty()) {

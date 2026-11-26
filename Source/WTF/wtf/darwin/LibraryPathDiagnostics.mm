@@ -102,7 +102,7 @@ LibraryPathDiagnosticsLogger::LibraryPathDiagnosticsLogger()
 void LibraryPathDiagnosticsLogger::logJSONPayload(const JSON::Object &object)
 {
     auto textRepresentation = object.toJSONString();
-    auto utf8 = textRepresentation.utf8();
+    auto utf8 = makeUTF8CString(textRepresentation);
     auto span = byteCast<char>(utf8.span());
     os_log(m_osLog, "%{public}.*s", static_cast<int>(span.size()), span.data());
 }
@@ -174,13 +174,13 @@ NODELETE static bool isAddressInSharedRegion(const void* addr)
 
 void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installName)
 {
-    void *handle = posixDlopen(installName.utf8(), RTLD_NOLOAD);
+    void *handle = posixDlopen(makeUTF8CString(installName), RTLD_NOLOAD);
     if (!handle)
         return;
 
     const struct mach_header *header = _dyld_get_dlopen_image_header(handle);
     if (!header) {
-        auto utf8 = installName.utf8();
+        auto utf8 = makeUTF8CString(installName);
         auto span = byteCast<char>(utf8.span());
         logError("Unable to locate mach header for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -189,7 +189,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
     Dl_info info = { };
     int dladdr_ret = dladdr(header, &info);
     if (!dladdr_ret) {
-        auto utf8 = installName.utf8();
+        auto utf8 = makeUTF8CString(installName);
         auto span = byteCast<char>(utf8.span());
         logError("No info returned from dladdr() for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -197,7 +197,7 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
 
     uuid_t uuid = { 0 };
     if (!_dyld_get_image_uuid(header, uuid)) {
-        auto utf8 = installName.utf8();
+        auto utf8 = makeUTF8CString(installName);
         auto span = byteCast<char>(utf8.span());
         logError("No UUID found for %.*s", static_cast<int>(span.size()), span.data());
         return;
@@ -263,7 +263,7 @@ void LibraryPathDiagnosticsLogger::logCryptexCanaryInfo(canary_cryptex_t which, 
     const canary_meta_t *metadata = canary_metadata(which);
 
     if (!metadata) {
-        auto utf8 = description.utf8();
+        auto utf8 = makeUTF8CString(description);
         auto span = byteCast<char>(utf8.span());
         logError("Unable to load canary metadata for '%.*s' cryptex", static_cast<int>(span.size()), span.data());
         return;

@@ -348,7 +348,7 @@ struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
         : contentRuleList(WTF::move(contentRuleList))
 #if ENABLE(CONTENT_EXTENSIONS)
-        , identifier(this->contentRuleList->name().utf8())
+        , identifier(makeUTF8CString(this->contentRuleList->name()))
 #endif
         , referenceCount(1)
     {

@@ -70,7 +70,7 @@ static GRefPtr<GUri> soupFirstPartyForCookies(const URL& firstPartyForCookies)
             return urlToSoupURI(originURL);
     }
 
-    return adoptGRef(g_uri_build(G_URI_FLAGS_NONE, firstPartyForCookies.protocol().utf8().legacyCStringPointer(), nullptr, nullptr, -1, "", nullptr, nullptr));
+    return adoptGRef(g_uri_build(G_URI_FLAGS_NONE, makeUTF8CString(firstPartyForCookies.protocol()).legacyCStringPointer(), nullptr, nullptr, -1, "", nullptr, nullptr));
 }
 
 GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRegistry) const
@@ -162,7 +162,7 @@ void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) 
     if (!headers.isEmpty()) {
         HTTPHeaderMap::const_iterator end = headers.end();
         for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            soup_message_headers_append(soupHeaders, it->key.utf8().legacyCStringPointer(), it->value.utf8().legacyCStringPointer());
+            soup_message_headers_append(soupHeaders, makeUTF8CString(it->key).legacyCStringPointer(), makeUTF8CString(it->value).legacyCStringPointer());
     }
 }
 

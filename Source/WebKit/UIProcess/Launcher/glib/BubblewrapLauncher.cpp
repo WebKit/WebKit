@@ -159,7 +159,7 @@ static void createBwrapInfo(GSubprocessLauncher* launcher, Vector<UTF8CString>& 
     }
 
     g_subprocess_launcher_take_fd(launcher, bwrapInfoFD, bwrapInfoFD);
-    args.appendList<UTF8CString>({ "--info-fd"_s, String::number(bwrapInfoFD).utf8() });
+    args.appendList<UTF8CString>({ "--info-fd"_s, makeUTF8CString(String::number(bwrapInfoFD)) });
 }
 
 static int createFlatpakInfo(const char* instanceID)
@@ -191,7 +191,7 @@ static void bindSymlinksRealPath(Vector<UTF8CString>& args, const String& path, 
 {
     auto realPath = FileSystem::realPath(path);
     if (path != realPath) {
-        auto rpath = realPath.utf8();
+        auto rpath = makeUTF8CString(realPath);
         args.appendList<UTF8CString>({ bindOption, rpath, rpath });
     }
 }
@@ -238,8 +238,8 @@ static void bindDBusSession(Vector<UTF8CString>& args, XDGDBusProxy& dbusProxy, 
 
     auto sandboxedSessionBusPath = FileSystem::pathByAppendingComponent(String { sandboxedUserRuntimeDirectory() }, "bus"_s);
     args.appendList<UTF8CString>({
-        "--ro-bind"_s, *dbusSessionProxyPath, sandboxedSessionBusPath.utf8(),
-        "--setenv"_s, "DBUS_SESSION_BUS_ADDRESS"_s, makeString("unix:path="_s, sandboxedSessionBusPath).utf8()
+        "--ro-bind"_s, *dbusSessionProxyPath, makeUTF8CString(sandboxedSessionBusPath),
+        "--setenv"_s, "DBUS_SESSION_BUS_ADDRESS"_s, makeUTF8CString(makeString("unix:path="_s, sandboxedSessionBusPath))
     });
 }
 
@@ -253,7 +253,7 @@ static void bindX11(Vector<UTF8CString>& args)
         }, 1);
         auto displayString = display.substring(1, displayNumberEnd - 1);
         auto x11File = makeString("/tmp/.X11-unix/X"_s, displayString);
-        bindIfExists(args, x11File.utf8(), BindFlags::ReadWrite);
+        bindIfExists(args, makeUTF8CString(x11File), BindFlags::ReadWrite);
     }
 
     const char* xauth = g_getenv("XAUTHORITY");
@@ -384,10 +384,10 @@ static void bindA11y(Vector<UTF8CString>& args, XDGDBusProxy& dbusProxy, const S
         return;
 
     ASSERT(sandboxedAccessibilityBusAddress.startsWith("unix:path="_s));
-    auto sandboxedAccessibilityBusPath = sandboxedAccessibilityBusAddress.substring(strlen("unix:path=")).utf8();
+    auto sandboxedAccessibilityBusPath = makeUTF8CString(sandboxedAccessibilityBusAddress.substring(strlen("unix:path=")));
     args.appendList<UTF8CString>({
         "--ro-bind"_s, *accessibilityProxyPath, sandboxedAccessibilityBusPath,
-        "--setenv"_s, "AT_SPI_BUS_ADDRESS"_s, sandboxedAccessibilityBusAddress.utf8(),
+        "--setenv"_s, "AT_SPI_BUS_ADDRESS"_s, makeUTF8CString(sandboxedAccessibilityBusAddress),
     });
 }
 #endif
@@ -424,21 +424,21 @@ static void bindGStreamerData(Vector<UTF8CString>& args)
     GUniquePtr<char> defaultRegistryPath(g_build_filename(g_get_user_cache_dir(), "gstreamer-1.0", nullptr));
     const char* registryPath = environmentVariableValue("GST_REGISTRY", defaultRegistryPath.get());
     auto registryDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(registryPath));
-    bindIfExists(args, registryDir.utf8(), BindFlags::ReadWrite);
+    bindIfExists(args, makeUTF8CString(registryDir), BindFlags::ReadWrite);
 
     bindPathVar(args, "GST_PRESET_PATH");
 
     // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
     if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
-        bindIfExists(args, parentDir.utf8(), BindFlags::ReadWrite);
+        bindIfExists(args, makeUTF8CString(parentDir), BindFlags::ReadWrite);
     }
 
     // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
     // permissions for its parent directory.
     if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
-        bindIfExists(args, parentDir.utf8(), BindFlags::ReadWrite);
+        bindIfExists(args, makeUTF8CString(parentDir), BindFlags::ReadWrite);
     }
 
     // /usr/lib is already added so this is only required for other dirs.
@@ -504,7 +504,7 @@ static void bindV4l(Vector<UTF8CString>& args)
         if (!isV4LNode)
             continue;
 
-        auto path = FileSystem::pathByAppendingComponent("/dev"_s, fileName).utf8();
+        auto path = makeUTF8CString(FileSystem::pathByAppendingComponent("/dev"_s, fileName));
         args.appendList<UTF8CString>({
             "--dev-bind-try"_s, path, path,
         });
@@ -755,7 +755,7 @@ static std::optional<UTF8CString> directoryContainingDBusSocket(StringView dbusA
 
         auto pathEnd = dbusAddressString.find(',', pathStart);
         auto path = pathEnd == notFound ? dbusAddressString.substring(pathStart) : dbusAddressString.substring(pathStart, pathEnd - pathStart);
-        GRefPtr<GFile> file = gFileNewForPath(path.utf8());
+        GRefPtr<GFile> file = gFileNewForPath(makeUTF8CString(path));
         GRefPtr<GFile> parent = adoptGRef(g_file_get_parent(file.get()));
         if (!parent)
             return std::nullopt;
@@ -834,7 +834,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     };
 
     if (enableDebugPermissions()) {
-        auto rrOutputDir = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), "rr"_s).utf8();
+        auto rrOutputDir = makeUTF8CString(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), "rr"_s));
 
         sandboxArgs.appendList<UTF8CString>({
             // Other binaries are helpful for debugging such as gdbserver.
@@ -902,7 +902,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     if (flatpakInfoFd != -1) {
         g_subprocess_launcher_take_fd(launcher, flatpakInfoFd, flatpakInfoFd);
         sandboxArgs.appendList<UTF8CString>({
-            "--ro-bind-data"_s, String::number(flatpakInfoFd).utf8(), "/.flatpak-info"_s
+            "--ro-bind-data"_s, makeUTF8CString(String::number(flatpakInfoFd)), "/.flatpak-info"_s
         });
     }
 
@@ -927,7 +927,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
         Vector<String> extraPaths = { "mediaKeysDirectory"_s, "waylandSocket"_s };
         for (const auto& path : extraPaths) {
-            auto extraPath = launchOptions.extraInitializationData.get(path).utf8();
+            auto extraPath = makeUTF8CString(launchOptions.extraInitializationData.get(path));
             if (!extraPath.isEmpty())
                 sandboxArgs.appendList<UTF8CString>({ "--bind-try"_s, extraPath, extraPath });
         }
@@ -964,20 +964,20 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
         auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(execDirectory));
-        bindIfExists(sandboxArgs, parentDir.utf8());
+        bindIfExists(sandboxArgs, makeUTF8CString(parentDir));
     }
 
     auto executablePath = FileSystem::currentExecutablePath();
     if (!executablePath.isNull()) {
         // Our executable is `/foo/bar/bin/Process`, we want `/foo/bar` as a usable prefix
         auto parentDir = FileSystem::parentPath(FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(executablePath)));
-        bindIfExists(sandboxArgs, parentDir.utf8());
+        bindIfExists(sandboxArgs, makeUTF8CString(parentDir));
     }
 #endif
 
     int seccompFd = setupSeccomp();
     g_subprocess_launcher_take_fd(launcher, seccompFd, seccompFd);
-    sandboxArgs.appendList<UTF8CString>({ "--seccomp"_s, String::number(seccompFd).utf8() });
+    sandboxArgs.appendList<UTF8CString>({ "--seccomp"_s, makeUTF8CString(String::number(seccompFd)) });
 
     int bwrapFd = argumentsToFileDescriptor(sandboxArgs, "bwrap");
     g_subprocess_launcher_take_fd(launcher, bwrapFd, bwrapFd);
@@ -985,7 +985,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     Vector<UTF8CString> bwrapArgs = {
         ASCIILiteral { BWRAP_EXECUTABLE },
         "--args"_s,
-        String::number(bwrapFd).utf8(),
+        makeUTF8CString(String::number(bwrapFd)),
         "--"_s,
     };
 

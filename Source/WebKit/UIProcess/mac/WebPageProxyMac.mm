@@ -679,7 +679,7 @@ static RetainPtr<NSString> pathToPDFOnDisk(const String& suggestedFilename)
     if ([fileManager fileExistsAtPath:path.get()]) {
         auto [fileHandle, temporaryFilePath] = FileSystem::createTemporaryFileInDirectory(pdfDirectoryPath.get(), makeString('-', suggestedFilename));
         if (!fileHandle) {
-            SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8());
+            SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", makeUTF8CString(suggestedFilename));
             return nil;
         }
 
@@ -728,7 +728,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     RetainPtr nsData = toNSDataNoCopy(data, FreeWhenDone::No);
 
     if (![[NSFileManager defaultManager] createFileAtPath:nsPath.get() contents:nsData.get() attributes:fileAttributes.get()]) {
-        SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", sanitizedFilename.utf8());
+        SAFE_WTFLOGALWAYS("Cannot create PDF file in the temporary directory (%s).", makeUTF8CString(sanitizedFilename));
         return;
     }
     auto originatingURLString = frameInfo.request.url().string();

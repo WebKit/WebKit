@@ -1518,7 +1518,7 @@ inline SelectorCodeGenerator::SelectorCodeGenerator(const CSSSelector& rootSelec
     , m_originalSelector(rootSelector)
 {
     if (shouldDumpCSSJITDisassembly()) [[unlikely]] {
-        auto selectorTextUTF8 = m_originalSelector.selectorText().utf8();
+        auto selectorTextUTF8 = makeUTF8CString(m_originalSelector.selectorText());
         auto selectorTextSpan = byteCast<char>(selectorTextUTF8.span());
         dataLogF("Compiling \"%.*s\"\n", static_cast<int>(selectorTextSpan.size()), selectorTextSpan.data());
     }
@@ -1932,7 +1932,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
     for (unsigned i = 0; i < m_functionCalls.size(); i++)
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 
-    codeRef = FINALIZE_CSSJIT_CODE(linkBuffer, JSC::CSSSelectorPtrTag, nullptr, "CSS Selector JIT for \"%s\"", m_originalSelector.selectorText().utf8());
+    codeRef = FINALIZE_CSSJIT_CODE(linkBuffer, JSC::CSSSelectorPtrTag, nullptr, "CSS Selector JIT for \"%s\"", makeUTF8CString(m_originalSelector.selectorText()));
 
     if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)
         return SelectorCompilationStatus::SimpleSelectorChecker;

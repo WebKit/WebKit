@@ -105,7 +105,7 @@ SQLiteStorageArea::~SQLiteStorageArea()
     bool databaseIsEmpty = isEmpty();
     close();
     if (databaseIsEmpty) {
-        RELEASE_LOG(Storage, "SQLiteStorageArea::~SQLiteStorageArea deletes empty database file %" PRIVATE_LOG_STRING, m_path.utf8());
+        RELEASE_LOG(Storage, "SQLiteStorageArea::~SQLiteStorageArea deletes empty database file %" PRIVATE_LOG_STRING, makeUTF8CString(m_path));
         WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
     }
 }
@@ -137,7 +137,7 @@ void SQLiteStorageArea::clear()
     assertIsCurrent(m_queue.get());
 
     close();
-    RELEASE_LOG(Storage, "SQLiteStorageArea::clear deletes database file %" PRIVATE_LOG_STRING, m_path.utf8());
+    RELEASE_LOG(Storage, "SQLiteStorageArea::clear deletes database file %" PRIVATE_LOG_STRING, makeUTF8CString(m_path));
     WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
     notifyListenersAboutClear();
 }
@@ -203,7 +203,7 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
     }
 
     if (!openResult) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::prepareDatabase failed to open database at '%s'", m_path.utf8());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::prepareDatabase failed to open database at '%s'", makeUTF8CString(m_path));
         return false;
     }
 
@@ -533,7 +533,7 @@ SQLiteStorageArea::IsDatabaseDeleted SQLiteStorageArea::handleDatabaseErrorIfNee
     if (databaseError == SQLITE_CORRUPT || databaseError == SQLITE_NOTADB) {
         close();
 
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::handleDatabaseCorruption deletes corrupted database file '%s'", m_path.utf8());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::handleDatabaseCorruption deletes corrupted database file '%s'", makeUTF8CString(m_path));
         WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
         return IsDatabaseDeleted::Yes;
     }

@@ -136,7 +136,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 {
     String path = makeString("/proc/self/task/"_s, id, "/stat"_s);
-    int fd = posixOpen(path.utf8(), O_RDONLY);
+    int fd = posixOpen(makeUTF8CString(path), O_RDONLY);
     if (fd < 0)
         return false;
 

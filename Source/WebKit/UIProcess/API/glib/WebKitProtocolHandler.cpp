@@ -828,13 +828,13 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
     htmlBuilder.append(tablesBuilder.toString(), "</body></html>"_s);
 
-    GMallocString html { htmlBuilder.toString().utf8() };
+    GMallocString html { makeUTF8CString(htmlBuilder.toString()) };
     auto streamLength = html.lengthInBytes();
     GRefPtr stream = gMemoryInputStreamNewFromData(WTF::move(html));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
 
     if (requestURL.path() == "/stdout"_s)
-        SAFE_WTFLOGALWAYS("GPU information\n%s", prettyPrintJSON(infoAsString).utf8());
+        SAFE_WTFLOGALWAYS("GPU information\n%s", makeUTF8CString(prettyPrintJSON(infoAsString)));
 }
 
 } // namespace WebKit

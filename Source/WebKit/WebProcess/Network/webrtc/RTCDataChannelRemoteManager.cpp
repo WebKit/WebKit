@@ -228,7 +228,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didChangeReadyState(We
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData(WebCore::RTCDataChannelIdentifier identifier, const String& string)
 {
-    auto text = string.utf8();
+    auto text = makeUTF8CString(string);
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, asByteSpan(text.span()) }, 0);
 }
 

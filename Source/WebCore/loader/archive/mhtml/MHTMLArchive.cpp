@@ -156,7 +156,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     stringBuilder.append("\";\r\n\tboundary=\""_s, boundary, "\"\r\n\r\n"_s);
 
     ASSERT(stringBuilder.toString().containsOnlyASCII());
-    auto asciiString = stringBuilder.toString().utf8();
+    auto asciiString = makeUTF8CString(stringBuilder.toString());
     SharedBufferBuilder mhtmlData;
     mhtmlData.append(asciiString.span());
 
@@ -172,7 +172,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
         stringBuilder.append("\r\nContent-Transfer-Encoding: "_s, contentEncoding, "\r\nContent-Location: "_s, resource.url.string(), "\r\n\r\n"_s);
 
-        asciiString = stringBuilder.toString().utf8();
+        asciiString = makeUTF8CString(stringBuilder.toString());
         mhtmlData.append(asciiString.span());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
@@ -196,7 +196,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         }
     }
 
-    asciiString = makeString("--"_s, boundary, "--\r\n"_s).utf8();
+    asciiString = makeUTF8CString(makeString("--"_s, boundary, "--\r\n"_s));
     mhtmlData.append(asciiString.span());
 
     return mhtmlData.takeBuffer();

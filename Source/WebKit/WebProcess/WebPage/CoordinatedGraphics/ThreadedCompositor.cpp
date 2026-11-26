@@ -529,7 +529,7 @@ void ThreadedCompositor::renderLayerTree()
     if (shouldNotifiyDidComposite)
         m_didCompositeRunLoopObserver->schedule(&RunLoop::mainSingleton());
 
-    WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", reasonsToString(reasons).utf8());
+    WTFEmitSignpost(this, DidRenderFrame, "reasons: %s", makeUTF8CString(reasonsToString(reasons)));
 
     PlatformDisplay::sharedDisplay().skiaGLContext()->swapBuffers();
 
@@ -581,7 +581,7 @@ ASCIILiteral ThreadedCompositor::stateToString(ThreadedCompositor::State state)
 void ThreadedCompositor::scheduleUpdateLocked()
 {
     assertIsHeld(m_state.lock);
-    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).utf8(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
+    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", makeUTF8CString(reasonsToString(m_state.reasons)), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
 
     switch (m_state.state) {
     case State::Idle:
@@ -607,7 +607,7 @@ void ThreadedCompositor::frameComplete()
     ASSERT(m_workQueue->runLoop().isCurrent());
 
     Locker locker { m_state.lock };
-    WTFEmitSignpost(this, FrameComplete, "reasons: %s, state: %s, waiting for tiles: %s", reasonsToString(m_state.reasons).utf8(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no");
+    WTFEmitSignpost(this, FrameComplete, "reasons: %s, state: %s, waiting for tiles: %s", makeUTF8CString(reasonsToString(m_state.reasons)), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no");
 
     switch (m_state.state) {
     case State::Idle:

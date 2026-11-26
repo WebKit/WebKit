@@ -110,7 +110,7 @@ std::optional<UTF8CString> validateAndConvertToUTF8(const String& pin)
 {
     if (!hasAtLeastFourCodepoints(pin))
         return std::nullopt;
-    auto result = pin.utf8();
+    auto result = makeUTF8CString(pin);
     if (result.length() < kMinBytes || result.length() > kMaxBytes)
         return std::nullopt;
     return result;
@@ -446,7 +446,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol
 
     const size_t minPaddedPinLength = 64;
     Vector<uint8_t> paddedPin(ReserveCapacityTag { }, minPaddedPinLength);
-    paddedPin.append(inputPin.utf8().span());
+    paddedPin.append(makeUTF8CString(inputPin).span());
     for (int i = paddedPin.size(); i < 64; i++)
         paddedPin.append('\0');
 

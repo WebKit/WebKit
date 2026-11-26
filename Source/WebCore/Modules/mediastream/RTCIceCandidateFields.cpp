@@ -42,7 +42,7 @@ namespace WebCore {
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String& sdp)
 {
-    auto candidate = webrtc::Candidate::ParseCandidateString(std::string_view { byteCast<char>(sdp.utf8().span()) });
+    auto candidate = webrtc::Candidate::ParseCandidateString(std::string_view { byteCast<char>(makeUTF8CString(sdp).span()) });
     if (!candidate.ok())
         return { };
 

@@ -14,7 +14,6 @@ b3/B3Procedure.cpp
 b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
 b3/air/AirGenerate.cpp
 bytecode/AccessCase.cpp
-bytecode/BytecodeDumper.cpp
 bytecode/CallLinkInfo.cpp
 bytecode/CodeBlock.cpp
 bytecode/CodeBlockHash.cpp

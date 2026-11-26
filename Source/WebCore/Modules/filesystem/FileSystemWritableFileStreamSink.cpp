@@ -113,7 +113,7 @@ static void fetchDataBytesForWrite(const std::optional<FileSystemWritableFileStr
             });
         },
         [&](const String& string) {
-            completionHandler(byteCast<uint8_t>(string.utf8().span()));
+            completionHandler(byteCast<uint8_t>(makeUTF8CString(string).span()));
         }
     );
 }

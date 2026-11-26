@@ -208,7 +208,7 @@ const gchar* webkit_credential_get_username(WebKitCredential* credential)
     g_return_val_if_fail(credential, 0);
 
     if (credential->username.isNull())
-        credential->username = credential->credential.user().utf8();
+        credential->username = makeUTF8CString(credential->credential.user());
     return credential->username.legacyCStringPointer();
 }
 
@@ -227,7 +227,7 @@ const gchar* webkit_credential_get_password(WebKitCredential* credential)
     g_return_val_if_fail(credential, 0);
 
     if (credential->password.isNull())
-        credential->password = credential->credential.password().utf8();
+        credential->password = makeUTF8CString(credential->credential.password());
     return credential->password.legacyCStringPointer();
 }
 

@@ -90,7 +90,7 @@ static UTF8CString buildAcceptLanguages(const Vector<String>& languages)
         }
     }
 
-    return builder.toString().utf8();
+    return makeUTF8CString(builder.toString());
 }
 
 HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const

@@ -66,7 +66,7 @@ TEST(WTF, AtomStringExistingHash)
 
 static inline UTF8CString testAtomStringNumber(double number)
 {
-    return AtomString::number(number).string().utf8();
+    return makeUTF8CString(AtomString::number(number).string());
 }
 
 TEST(WTF, AtomStringCreationFromNullASCIILiteral)

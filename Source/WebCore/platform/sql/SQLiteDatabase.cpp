@@ -56,7 +56,7 @@ static constexpr auto notOpenErrorMessage = "database is not open"_s;
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     auto* functionName = static_cast<const char*>(sqlite3_user_data(context));
-    sqliteResultError(context, makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s).utf8());
+    sqliteResultError(context, makeUTF8CString(makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s)));
 }
 
 static void initializeSQLiteIfNecessary()
@@ -194,7 +194,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
 
         auto shmFileName = makeString(filename, "-shm"_s);
         if (FileSystem::fileExists(shmFileName) && !FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
-            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.utf8());
+            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", makeUTF8CString(shmFileName));
             if (!FileSystem::makeSafeToUseMemoryMapForPath(shmFileName))
                 return false;
         }
@@ -279,7 +279,7 @@ bool SQLiteDatabase::useWALJournalMode()
 #ifndef NDEBUG
         String mode = statement->columnText(0);
         if (!equalLettersIgnoringASCIICase(mode, "wal"_s)) {
-            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", mode.utf8());
+            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", makeUTF8CString(mode));
             return false;
         }
 #endif
@@ -532,7 +532,7 @@ void SQLiteDatabase::clearAllTables()
         tables.append(statement->columnText(0));
     for (auto& table : tables) {
         if (!executeCommandSlow(makeString("DROP TABLE "_s, table)))
-            LOG(SQLDatabase, "Unable to drop table %s", table.utf8());
+            LOG(SQLDatabase, "Unable to drop table %s", makeUTF8CString(table));
     }
 }
 
@@ -760,7 +760,7 @@ static int callCollationFunction(void* arg, int aLength, const void* a, int bLen
 void SQLiteDatabase::setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&& collationFunction)
 {
     auto functionObject = new Function<int(int, const void*, int, const void*)>(WTF::move(collationFunction));
-    sqliteCreateCollation(m_db, collationName.utf8(), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
+    sqliteCreateCollation(m_db, makeUTF8CString(collationName), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
 }
 
 void SQLiteDatabase::releaseMemory()
@@ -800,7 +800,7 @@ static std::expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteData
 
 std::unique_ptr<SQLiteStatement> SQLiteDatabase::prepareStatementSlow(StringView queryString)
 {
-    auto query = queryString.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>).utf8();
+    auto query = makeUTF8CString(queryString.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>));
     auto sqlStatement = constructAndPrepareStatement(*this, byteCast<char>(query.spanIncludingNullTerminator()));
     if (!sqlStatement) {
         RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query);

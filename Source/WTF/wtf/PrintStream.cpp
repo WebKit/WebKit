@@ -100,7 +100,7 @@ static void printExpectedCStringHelper(PrintStream& out, const char* type, std::
 
 void printInternal(PrintStream& out, StringView string)
 {
-    printExpectedCStringHelper(out, "StringView", string.tryGetUTF8());
+    printExpectedCStringHelper(out, "StringView", tryMakeUTF8CString(string));
 }
 
 // The stream's bytes are read back as UTF-8, so only ASCII and UTF-8 can be written through
@@ -118,7 +118,7 @@ static void printCStringSpan(PrintStream& out, std::span<const CharacterType> ch
 
     if constexpr (std::same_as<CharacterType, Latin1Character>) {
         if (!charactersAreAllASCII(characters)) [[unlikely]] {
-            printExpectedCStringHelper(out, "Latin1CString", String { characters }.tryGetUTF8());
+            printExpectedCStringHelper(out, "Latin1CString", tryMakeUTF8CString(String { characters }));
             return;
         }
     }
@@ -144,7 +144,7 @@ void printInternal(PrintStream& out, const ASCIICString& string)
 
 void printInternal(PrintStream& out, const String& string)
 {
-    printExpectedCStringHelper(out, "String", string.tryGetUTF8());
+    printExpectedCStringHelper(out, "String", tryMakeUTF8CString(string));
 }
 
 void printInternal(PrintStream& out, String& string)
@@ -154,7 +154,7 @@ void printInternal(PrintStream& out, String& string)
 
 void printInternal(PrintStream& out, const AtomString& string)
 {
-    printExpectedCStringHelper(out, "String", string.string().tryGetUTF8());
+    printExpectedCStringHelper(out, "String", tryMakeUTF8CString(string.string()));
 }
 
 void printInternal(PrintStream& out, const StringImpl* string)
@@ -163,7 +163,7 @@ void printInternal(PrintStream& out, const StringImpl* string)
         printInternal(out, "(null StringImpl*)");
         return;
     }
-    printExpectedCStringHelper(out, "StringImpl*", string->tryGetUTF8());
+    printExpectedCStringHelper(out, "StringImpl*", tryMakeUTF8CString(*string));
 }
 
 void printInternal(PrintStream& stream, std::span<const char8_t> codeUnits)

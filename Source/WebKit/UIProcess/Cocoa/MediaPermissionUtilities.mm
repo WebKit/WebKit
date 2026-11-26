@@ -245,7 +245,7 @@ bool checkUsageDescriptionStringForSpeechRecognition()
 
 static RetainPtr<NSString> visibleDomain(const String& host)
 {
-    auto domain = WTF::URLHelpers::userVisibleURL(host.utf8().span());
+    auto domain = WTF::URLHelpers::userVisibleURL(makeUTF8CString(host).span());
     return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString() : domain.createNSString();
 }
 

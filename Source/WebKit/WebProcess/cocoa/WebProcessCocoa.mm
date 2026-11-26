@@ -743,7 +743,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
         auto javaScriptConfigFile = makeString(parameters.javaScriptConfigurationDirectory, "/JSC.config"_s);
-        JSC::processConfigFile(javaScriptConfigFile.utf8().data(), "com.apple.WebKit.WebContent"_s, m_uiProcessBundleIdentifier.utf8());
+        JSC::processConfigFile(makeUTF8CString(javaScriptConfigFile).data(), "com.apple.WebKit.WebContent"_s, makeUTF8CString(m_uiProcessBundleIdentifier));
     }
 }
 
@@ -1681,7 +1681,7 @@ void WebProcess::setNotifyState(const String& name, uint64_t state)
         m_notifyTokens.set(name, token);
 
     if (token == NOTIFY_TOKEN_INVALID) {
-        WEBPROCESS_RELEASE_LOG_ERROR(Process, "setNotifyState: Couldn't create token for %" PUBLIC_LOG_STRING ": %d", name.utf8(), status);
+        WEBPROCESS_RELEASE_LOG_ERROR(Process, "setNotifyState: Couldn't create token for %" PUBLIC_LOG_STRING ": %d", makeUTF8CString(name), status);
         return;
     }
 

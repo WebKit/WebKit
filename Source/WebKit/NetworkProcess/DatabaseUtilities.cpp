@@ -90,14 +90,14 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
     CreatedNewFile createdNewFile = CreatedNewFile::No;
     if (!FileSystem::fileExists(m_storageFilePath)) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_storageFilePath))) {
-            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, m_storageFilePath.utf8());
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, makeUTF8CString(m_storageFilePath));
             return createdNewFile;
         }
         createdNewFile = CreatedNewFile::Yes;
     }
 
     if (!m_database->open(m_storageFilePath, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked)) {
-        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), m_storageFilePath.utf8());
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), makeUTF8CString(m_storageFilePath));
         return createdNewFile;
     }
     
@@ -110,7 +110,7 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
 
     if (createdNewFile == CreatedNewFile::Yes) {
         if (!createSchema()) {
-            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), m_storageFilePath.utf8());
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::createSchema failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database->lastErrorMsg(), makeUTF8CString(m_storageFilePath));
         }
     }
     return createdNewFile;

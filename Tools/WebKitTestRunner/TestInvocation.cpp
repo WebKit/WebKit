@@ -174,7 +174,7 @@ void TestInvocation::loadTestInCrossOriginIframe()
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\""_s, url.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
+        "<iframe src=\""_s, makeUTF8CString(url).span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
@@ -378,7 +378,7 @@ void TestInvocation::dumpResults()
     if (m_textOutput.hasOverflowed())
         dump("text output overflowed"_s);
     else if (m_textOutput.length() || !m_audioResult)
-        dump(m_textOutput.toString().utf8());
+        dump(makeUTF8CString(m_textOutput.toString()));
     else
         dumpAudio(m_audioResult.get());
 

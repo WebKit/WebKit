@@ -537,7 +537,7 @@ ExceptionOr<Ref<PerformanceMark>> Performance::mark(JSC::JSGlobalObject& globalO
 #if USE(SYSPROF_CAPTURE)
     if (isSignpostEnabled()) {
         if (auto time = signpostTime(mark.returnValue()->startTime()))
-            WTFEmitSignpostAlwaysWithSpecificTime(mark.returnValue().ptr(), WebKitPerformanceMark, *time, "%" PUBLIC_LOG_STRING, markName.utf8());
+            WTFEmitSignpostAlwaysWithSpecificTime(mark.returnValue().ptr(), WebKitPerformanceMark, *time, "%" PUBLIC_LOG_STRING, makeUTF8CString(markName));
     }
 #endif
 
@@ -565,7 +565,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
 
     if (isSignpostEnabled()) {
         Ref entry { measure.returnValue() };
-        auto message = measureName.utf8();
+        auto message = makeUTF8CString(measureName);
 #if OS(DARWIN) || USE(SYSPROF_CAPTURE)
         {
             auto platformStartTime = signpostTime(entry->startTime());

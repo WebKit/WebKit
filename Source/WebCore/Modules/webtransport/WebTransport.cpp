@@ -523,7 +523,7 @@ void WebTransport::close(WebTransportCloseInfo&& closeInfo)
         return;
     if (m_state == State::Connecting)
         return cleanupWithSessionError();
-    m_session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(StringView { closeInfo.reason }.left(1024).utf8()));
+    m_session->terminate(closeInfo.closeCode, trimToValidUTF8Length1024(makeUTF8CString(StringView { closeInfo.reason }.left(1024))));
     cleanup(DOMException::create(ExceptionCode::AbortError), WTF::move(closeInfo));
 }
 

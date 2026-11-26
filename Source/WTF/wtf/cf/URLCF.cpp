@@ -49,7 +49,7 @@ RetainPtr<CFURLRef> URL::createCFURL(const String& string)
         auto characters = string.span8();
         return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(characters.data()), characters.size(), kCFStringEncodingUTF8, nullptr, true));
     }
-    auto utf8 = string.utf8();
+    auto utf8 = makeUTF8CString(string);
     auto utf8Span = utf8.span();
     return adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(utf8Span.data()), utf8Span.size(), kCFStringEncodingUTF8, nullptr, true));
 }

@@ -376,7 +376,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<Variant<String, Ref<D
         bool success = WTF::switchOn(part,
             [&](const String& filePath) {
                 if (!file.appendFileContents(filePath)) {
-                    LOG_ERROR("Failed copying File contents to a Blob temporary file (%s to %s)", filePath.utf8(), path.utf8());
+                    LOG_ERROR("Failed copying File contents to a Blob temporary file (%s to %s)", makeUTF8CString(filePath), makeUTF8CString(path));
                     return false;
                 }
                 return true;

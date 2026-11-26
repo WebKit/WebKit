@@ -183,7 +183,7 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
         return;
 
     if (!FileSystem::makeAllDirectories(directory)) {
-        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8());
+        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", makeUTF8CString(directory));
         return;
     }
 
@@ -212,7 +212,7 @@ void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostN
     ASSERT(enforcer);
 
     for (const auto& hostName : hostNames) {
-        GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(hostName.utf8().legacyCStringPointer(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
+        GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(makeUTF8CString(hostName).legacyCStringPointer(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
         soup_hsts_enforcer_set_policy(enforcer, policy.get());
     }
 }

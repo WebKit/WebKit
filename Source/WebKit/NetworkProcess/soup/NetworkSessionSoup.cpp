@@ -83,10 +83,10 @@ void NetworkSessionSoup::setCookiePersistentStorage(const String& storagePath, S
     GRefPtr<SoupCookieJar> jar;
     switch (storageType) {
     case SoupCookiePersistentStorageType::Text:
-        jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().legacyCStringPointer(), FALSE));
+        jar = adoptGRef(soup_cookie_jar_text_new(makeUTF8CString(storagePath).legacyCStringPointer(), FALSE));
         break;
     case SoupCookiePersistentStorageType::SQLite:
-        jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().legacyCStringPointer(), FALSE));
+        jar = adoptGRef(soup_cookie_jar_db_new(makeUTF8CString(storagePath).legacyCStringPointer(), FALSE));
         break;
     }
     storageSession->setCookieStorage(WTF::move(jar));

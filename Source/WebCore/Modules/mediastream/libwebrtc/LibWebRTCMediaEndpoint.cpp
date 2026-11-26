@@ -212,7 +212,7 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
     }
 
     webrtc::SdpParseError error;
-    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description->type()), std::string_view { byteCast<char>(description->sdp().utf8().span()) }, &error);
+    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description->type()), std::string_view { byteCast<char>(makeUTF8CString(description->sdp()).span()) }, &error);
 
     if (!sessionDescription) {
         protect(m_peerConnectionBackend)->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, fromStdString(error.description) });
@@ -233,7 +233,7 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
     ASSERT(!m_isStopped);
 
     webrtc::SdpParseError error;
-    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), std::string_view { byteCast<char>(description.sdp().utf8().span()) }, &error);
+    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), std::string_view { byteCast<char>(makeUTF8CString(description.sdp()).span()) }, &error);
     if (!sessionDescription) {
         protect(m_peerConnectionBackend)->setRemoteDescriptionFailed(Exception { ExceptionCode::SyntaxError, fromStdString(error.description) });
         return;
@@ -260,7 +260,7 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
 
     std::vector<std::string> ids;
     for (auto& id : mediaStreamIds)
-        ids.push_back(id.utf8().toStdString());
+        ids.push_back(makeUTF8CString(id).toStdString());
 
     auto newRTPSender = m_backend->AddTrack(WTF::move(rtcTrack), WTF::move(ids));
     if (!newRTPSender.ok())
@@ -420,7 +420,7 @@ std::pair<LibWebRTCRtpSenderBackend::Source, webrtc::scoped_refptr<webrtc::Media
     switch (track.privateTrack().type()) {
     case RealtimeMediaSource::Type::Audio: {
         Ref audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory->CreateAudioTrack(track.id().utf8().toStdString(), audioSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateAudioTrack(makeUTF8CString(track.id()).toStdString(), audioSource.ptr());
         source = WTF::move(audioSource);
         break;
     }
@@ -431,7 +431,7 @@ std::pair<LibWebRTCRtpSenderBackend::Source, webrtc::scoped_refptr<webrtc::Media
         if (context && context->settingsValues().peerConnectionVideoScalingAdaptationDisabled)
             videoSource->disableVideoScaling();
 
-        auto rtcVideoTrack = m_peerConnectionFactory->CreateVideoTrack(webrtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), std::string_view { byteCast<char>(track.id().utf8().span()) });
+        auto rtcVideoTrack = m_peerConnectionFactory->CreateVideoTrack(webrtc::scoped_refptr<webrtc::VideoTrackSourceInterface> (videoSource.ptr()), std::string_view { byteCast<char>(makeUTF8CString(track.id()).span()) });
         rtcVideoTrack->set_content_hint(toWebRTCContentHint(track.privateTrack().contentHint()));
         rtcTrack = WTF::move(rtcVideoTrack);
         source = WTF::move(videoSource);
@@ -472,7 +472,7 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel
 {
     auto init = LibWebRTCDataChannelHandler::fromRTCDataChannelInit(options);
     // FIXME: Forward or log error  if there is one.
-    auto channel = m_backend->CreateDataChannelOrError(label.utf8().toStdString(), &init);
+    auto channel = m_backend->CreateDataChannelOrError(makeUTF8CString(label).toStdString(), &init);
     return channel.ok() ? makeUnique<LibWebRTCDataChannelHandler>(channel.MoveValue()) : nullptr;
 }
 
@@ -898,7 +898,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const webrtc::scoped_refptr<const 
             // Stats are very verbose, let's only display them in inspector console in verbose mode.
             logger().toObservers(LogWebRTC, WTFLogLevel::Debug, { }, Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint"_s, "OnStatsDelivered"_s, logIdentifier()), statsLogger);
 
-            RELEASE_LOG_FORWARDABLE(WebRTCStats, LibWebRtcMediaEndpointOnStatsDelivered, logIdentifier(), statsLogger.toJSONString().utf8());
+            RELEASE_LOG_FORWARDABLE(WebRTCStats, LibWebRtcMediaEndpointOnStatsDelivered, logIdentifier(), makeUTF8CString(statsLogger.toJSONString()));
         }
     });
 #else // !RELEASE_LOG_DISABLED

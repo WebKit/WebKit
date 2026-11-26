@@ -377,7 +377,7 @@ RefPtr<API::Data> WebExtension::serializeManifest()
     if (!manifestJSON)
         return nullptr;
 
-    return API::Data::create(manifestJSON->toJSONString().utf8().span());
+    return API::Data::create(makeUTF8CString(manifestJSON->toJSONString()).span());
 }
 
 RefPtr<API::Data> WebExtension::serializeLocalization()
@@ -385,7 +385,7 @@ RefPtr<API::Data> WebExtension::serializeLocalization()
     if (!m_localization || !m_localization->localizationJSON())
         return nullptr;
 
-    return API::Data::create(m_localization->localizationJSON()->toJSONString().utf8().span());
+    return API::Data::create(makeUTF8CString(m_localization->localizationJSON()->toJSONString()).span());
 }
 
 RefPtr<WebExtensionLocalization> WebExtension::localization()
@@ -545,7 +545,7 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     auto basePath = FileSystem::realPath(m_resourceBaseURL.fileSystemPath());
     auto resourcePath = FileSystem::realPath(result.fileSystemPath());
     if (!resourcePath.startsWith(basePath)) {
-        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", resourcePath.utf8());
+        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", makeUTF8CString(resourcePath));
         return { };
     }
 
@@ -699,7 +699,7 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
 
     case Error::InvalidManifest:
         if (underlyingError && !underlyingError->localizedDescription().isEmpty())
-            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse manifest: %s", "WKWebExtensionErrorInvalidManifest description, because of a JSON error", underlyingError->localizedDescription().utf8());
+            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse manifest: %s", "WKWebExtensionErrorInvalidManifest description, because of a JSON error", makeUTF8CString(underlyingError->localizedDescription()));
         else
             localizedDescription = WEB_UI_STRING("Unable to parse manifest because of an unexpected format.", "WKWebExtensionErrorInvalidManifest description");
         break;
@@ -756,7 +756,7 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
 
     case Error::InvalidDeclarativeNetRequest:
         if (underlyingError && !underlyingError->localizedDescription().isEmpty())
-            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse `declarativeNetRequest` rules: %s", "WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error", underlyingError->localizedDescription().utf8());
+            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse `declarativeNetRequest` rules: %s", "WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error", makeUTF8CString(underlyingError->localizedDescription()));
         else
             localizedDescription = WEB_UI_STRING("Unable to parse `declarativeNetRequest` rules because of an unexpected error.", "WKWebExtensionErrorInvalidDeclarativeNetRequest description");
         break;
@@ -2628,7 +2628,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
 
         auto& ruleset = optionalRuleset.value();
         if (seenRulesetIDs.contains(ruleset.rulesetID)) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id", ruleset.rulesetID.utf8())));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("`declarative_net_request` ruleset with id \"%s\" is invalid. Ruleset id must be unique.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id", makeUTF8CString(ruleset.rulesetID))));
             continue;
         }
 

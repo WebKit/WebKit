@@ -52,9 +52,9 @@ static bool soupServerListen(SoupServer* server, const String& host, unsigned po
     if (host == "all"_s)
         return soup_server_listen_all(server, port, options, error);
 
-    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.utf8().legacyCStringPointer(), port));
+    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(makeUTF8CString(host).legacyCStringPointer(), port));
     if (!address) {
-        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.utf8());
+        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", makeUTF8CString(host));
         return false;
     }
 
@@ -71,11 +71,11 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     auto originHeader = String::fromLatin1(soup_message_headers_get_one(requestHeaders, "Origin"));
     auto result = webSocketServer->messageHandler().validateHandshakeHeaders(hostHeader, originHeader);
     if (!result) {
-        RELEASE_LOG_ERROR(WebDriverBiDi, "Rejected WebSocket handshake: %s", result.error().utf8());
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Rejected WebSocket handshake: %s", makeUTF8CString(result.error()));
         auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
         auto responseCharacters = byteCast<char>(response.data.span());
         soup_server_message_set_status(message, response.statusCode, nullptr);
-        soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+        soup_server_message_set_response(message, makeUTF8CString(response.contentType).legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
         return;
     }
 
@@ -99,7 +99,7 @@ static void handleIncomingHandshake(SoupServer*, SoupServerMessage* message, con
     RELEASE_LOG(WebDriverBiDi, "Error during handshake, sending error response: %s", errorResponse.data);
     soup_server_message_set_status(message, errorResponse.statusCode, nullptr);
     auto* responseHeaders = soup_server_message_get_response_headers(message);
-    soup_message_headers_append(responseHeaders, "Content-Type", errorResponse.contentType.utf8().legacyCStringPointer());
+    soup_message_headers_append(responseHeaders, "Content-Type", makeUTF8CString(errorResponse.contentType).legacyCStringPointer());
     soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
     auto* responseBody = soup_server_message_get_response_body(message);
     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, errorResponse.data.data(), errorResponse.data.length());
@@ -194,8 +194,8 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
 void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
 {
     ASSERT(connection);
-    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    GRefPtr rawMessage = gBytesNew(message.utf8().span());
+    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", makeUTF8CString(message));
+    GRefPtr rawMessage = gBytesNew(makeUTF8CString(message).span());
     soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
 }
 

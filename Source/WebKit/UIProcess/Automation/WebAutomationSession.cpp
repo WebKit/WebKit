@@ -703,7 +703,7 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
         auto callbacks = protectedThis->m_pendingCloseBrowsingContextCallbacksPerPage.take(pageID);
         if (callbacks.isEmpty())
             return;
-        RELEASE_LOG(Automation, "[s:%s] closeBrowsingContext completed after %.0f s although the client did not close page %" PRIu64, protectedThis->sessionIdentifier().utf8(), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
+        RELEASE_LOG(Automation, "[s:%s] closeBrowsingContext completed after %.0f s although the client did not close page %" PRIu64, makeUTF8CString(protectedThis->sessionIdentifier()), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
         for (auto& callback : borrow(callbacks))
             callback({ });
     });

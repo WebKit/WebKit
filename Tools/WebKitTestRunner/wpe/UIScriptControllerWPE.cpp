@@ -68,7 +68,7 @@ void UIScriptControllerWPE::copyText(JSStringRef text)
     if (!TestController::singleton().useWPELegacyAPI()) {
         auto* clipboard = wpe_display_get_clipboard(wpe_display_get_primary());
         auto* content = wpe_clipboard_content_new();
-        wpe_clipboard_content_set_text(content, text->string().utf8().legacyCStringPointer());
+        wpe_clipboard_content_set_text(content, makeUTF8CString(text->string()).legacyCStringPointer());
         wpe_clipboard_set_content(clipboard, content);
         wpe_clipboard_content_unref(content);
     }
@@ -209,7 +209,7 @@ void UIScriptControllerWPE::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 
         auto eventTypeString = eventObject->getString("type"_s);
         if (!eventTypeString) {
-            SAFE_WTFLOGALWAYS("Failed to find type key in %s", eventTypeString.utf8());
+            SAFE_WTFLOGALWAYS("Failed to find type key in %s", makeUTF8CString(eventTypeString));
             break;
         }
 
@@ -225,7 +225,7 @@ void UIScriptControllerWPE::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             if (!momentumPhaseString.isNull()) {
                 momentumPhase = wheelEventPhaseFromString(momentumPhaseString);
                 if (momentumPhase == EventSenderProxy::WheelEventPhase::Cancelled || momentumPhase == EventSenderProxy::WheelEventPhase::MayBegin) {
-                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", momentumPhaseString.utf8());
+                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", makeUTF8CString(momentumPhaseString));
                     break;
                 }
             }

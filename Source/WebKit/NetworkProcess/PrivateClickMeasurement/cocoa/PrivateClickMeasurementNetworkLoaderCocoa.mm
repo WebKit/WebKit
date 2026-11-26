@@ -138,7 +138,7 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
     if (jsonPayload) {
         request.get().HTTPMethod = @"POST";
         [request setValue:WebCore::HTTPHeaderValues::applicationJSONContentType().createNSString().get() forHTTPHeaderField:@"Content-Type"];
-        auto body = jsonPayload->toJSONString().utf8();
+        auto body = makeUTF8CString(jsonPayload->toJSONString());
         request.get().HTTPBody = toNSData(byteCast<uint8_t>(body.span())).get();
     }
 

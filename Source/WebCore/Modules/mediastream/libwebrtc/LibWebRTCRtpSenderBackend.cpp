@@ -246,7 +246,7 @@ void LibWebRTCRtpSenderBackend::setMediaStreamIds(const FixedVector<String>& str
 {
     std::vector<std::string> ids;
     for (auto& id : streamIds)
-        ids.push_back(id.utf8().toStdString());
+        ids.push_back(makeUTF8CString(id).toStdString());
     m_rtcSender->SetStreams(ids);
 }
 

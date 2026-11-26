@@ -115,13 +115,13 @@ bool ResourceMonitorThrottler::tryAccess(const String& host, ContinuousApproxima
     bool wasGranted = throttler.tryAccessAndUpdateHistory(time, m_config);
 
     if (wasGranted) {
-        RESOURCEMONITOR_RELEASE_LOG("Throttler granted for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8());
+        RESOURCEMONITOR_RELEASE_LOG("Throttler granted for unloading the resource for %" PUBLIC_LOG_STRING ".", makeUTF8CString(host));
 
         maintainHosts(time);
         if (m_persistence)
             m_persistence->recordAccess(host, time);
     } else
-        RESOURCEMONITOR_RELEASE_LOG("Throttler denied for unloading the resource for %" PUBLIC_LOG_STRING ".", host.utf8());
+        RESOURCEMONITOR_RELEASE_LOG("Throttler denied for unloading the resource for %" PUBLIC_LOG_STRING ".", makeUTF8CString(host));
 
     return wasGranted;
 }

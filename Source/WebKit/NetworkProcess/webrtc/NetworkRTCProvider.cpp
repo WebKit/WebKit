@@ -77,7 +77,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 {
 #if PLATFORM(COCOA)
     if (CheckedPtr session = downcast<NetworkSessionCocoa>(connection.networkSession()))
-        m_applicationBundleIdentifier = session->sourceApplicationBundleIdentifier().utf8();
+        m_applicationBundleIdentifier = makeUTF8CString(session->sourceApplicationBundleIdentifier());
 #endif
 #if !RELEASE_LOG_DISABLED
     LibWebRTCProvider::setRTCLogging(WebKit2LogWebRTC.state == WTFLogChannelState::On ? WTFLogLevel::Info : WTFLogLevel::Warning);

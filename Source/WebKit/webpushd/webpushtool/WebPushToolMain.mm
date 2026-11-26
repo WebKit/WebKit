@@ -189,9 +189,9 @@ public:
 
         connection.sendPushMessage(WTF::move(pushMessage), [this, bundleIdentifier = connection.bundleIdentifier(), webClipIdentifier = connection.pushPartition()](String error) mutable {
             if (error.isEmpty())
-                SAFE_PRINTF("Successfully injected push message %s for [bundleID = %s, webClipIdentifier = %s, scope = %s]\n", m_pushMessage.payload.utf8(), bundleIdentifier.utf8(), webClipIdentifier.utf8(), m_pushMessage.registrationURL.string().utf8());
+                SAFE_PRINTF("Successfully injected push message %s for [bundleID = %s, webClipIdentifier = %s, scope = %s]\n", makeUTF8CString(m_pushMessage.payload), makeUTF8CString(bundleIdentifier), makeUTF8CString(webClipIdentifier), makeUTF8CString(m_pushMessage.registrationURL.string()));
             else
-                SAFE_PRINTF("Injected push message with error: %s\n", error.utf8());
+                SAFE_PRINTF("Injected push message with error: %s\n", makeUTF8CString(error));
             done();
         });
     }

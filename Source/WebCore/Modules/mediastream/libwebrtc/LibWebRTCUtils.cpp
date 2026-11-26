@@ -186,7 +186,7 @@ static inline webrtc::RtpCodec fromRTCRtpCodec(const RTCRtpCodec& codec, webrtc:
         return { };
 
     webrtc::RtpCodec rtcCodec;
-    rtcCodec.name = StringView(codec.mimeType).substring(6).utf8().toStdString();
+    rtcCodec.name = makeUTF8CString(StringView(codec.mimeType).substring(6)).toStdString();
     rtcCodec.kind = type;
     if (codec.clockRate)
         rtcCodec.clock_rate = static_cast<int>(codec.clockRate);
@@ -196,9 +196,9 @@ static inline webrtc::RtpCodec fromRTCRtpCodec(const RTCRtpCodec& codec, webrtc:
     for (auto parameter : StringView(codec.sdpFmtpLine).split(';')) {
         auto position = parameter.find('=');
         if (position != notFound)
-            rtcCodec.parameters.emplace(parameter.left(position).utf8().toStdString(), parameter.substring(position + 1).utf8().toStdString());
+            rtcCodec.parameters.emplace(makeUTF8CString(parameter.left(position)).toStdString(), makeUTF8CString(parameter.substring(position + 1)).toStdString());
         else
-            rtcCodec.parameters.emplace("", parameter.utf8().toStdString());
+            rtcCodec.parameters.emplace("", makeUTF8CString(parameter).toStdString());
     }
 
     return rtcCodec;
@@ -218,11 +218,11 @@ static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCR
         rtcParameters.max_bitrate_bps = parameters.maxBitrate;
     if (parameters.maxFramerate)
         rtcParameters.max_framerate = parameters.maxFramerate;
-    rtcParameters.rid = parameters.rid.utf8().toStdString();
+    rtcParameters.rid = makeUTF8CString(parameters.rid).toStdString();
     if (parameters.scaleResolutionDownBy)
         rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
     if (!parameters.scalabilityMode.isNull())
-        rtcParameters.scalability_mode = parameters.scalabilityMode.utf8().toStdString();
+        rtcParameters.scalability_mode = makeUTF8CString(parameters.scalabilityMode).toStdString();
 
     rtcParameters.bitrate_priority = toWebRTCBitRatePriority(parameters.priority);
     if (parameters.networkPriority)
@@ -245,7 +245,7 @@ static inline webrtc::RtpExtension fromRTCHeaderExtensionParameters(const RTCRtp
 {
     webrtc::RtpExtension rtcParameters;
 
-    rtcParameters.uri = parameters.uri.utf8().toStdString();
+    rtcParameters.uri = makeUTF8CString(parameters.uri).toStdString();
     rtcParameters.id = webrtc::RtpHeaderExtensionId { parameters.id };
     rtcParameters.encrypt = parameters.encrypted;
 
@@ -303,7 +303,7 @@ RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcPara
 
 void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& rtcParameters, webrtc::MediaType mediaType)
 {
-    rtcParameters.transaction_id = parameters.transactionId.utf8().toStdString();
+    rtcParameters.transaction_id = makeUTF8CString(parameters.transactionId).toStdString();
 
     if (parameters.encodings.size() != rtcParameters.encodings.size()) {
         // If encodings size is different, setting parameters will fail. Let's make it so.
@@ -359,7 +359,7 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
     if (parameters.rtcp.reducedSize)
         rtcParameters.rtcp.reduced_size = *parameters.rtcp.reducedSize;
     if (!parameters.rtcp.cname.isNull())
-        rtcParameters.rtcp.cname = parameters.rtcp.cname.utf8().toStdString();
+        rtcParameters.rtcp.cname = makeUTF8CString(parameters.rtcp.cname).toStdString();
 }
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)
@@ -403,7 +403,7 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& i
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
     for (auto& stream : borrow(init.streams))
-        rtcInit.stream_ids.push_back(stream->id().utf8().toStdString());
+        rtcInit.stream_ids.push_back(makeUTF8CString(stream->id()).toStdString());
 
     if (type == webrtc::MediaType::AUDIO) {
         if (!init.sendEncodings.isEmpty())

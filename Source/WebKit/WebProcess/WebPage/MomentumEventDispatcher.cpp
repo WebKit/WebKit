@@ -261,7 +261,7 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine);
     stream << curve;
-    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %" PUBLIC_LOG_STRING, stream.release().utf8());
+    RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %" PUBLIC_LOG_STRING, makeUTF8CString(stream.release()));
 #endif
 
     Locker locker { m_accelerationCurvesLock };

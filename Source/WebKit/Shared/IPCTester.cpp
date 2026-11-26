@@ -105,7 +105,7 @@ static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
         driverName = String::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
     if (driverName.isEmpty() || driverName == "default"_s)
         return defaultTestDriver;
-    auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, driverName.utf8().legacyCStringPointer()));
+    auto testDriver = reinterpret_cast<WKMessageTestDriverFunc>(dlsym(RTLD_DEFAULT, makeUTF8CString(driverName).legacyCStringPointer()));
     RELEASE_ASSERT(testDriver);
     return testDriver;
 }

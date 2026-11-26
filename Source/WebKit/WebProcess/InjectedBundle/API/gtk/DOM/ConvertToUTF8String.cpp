@@ -33,7 +33,7 @@ gchar* convertToUTF8String(WTF::String const& s)
     if (s.isNull())
         return nullptr;
 
-    return gStrdup(s.utf8());
+    return gStrdup(makeUTF8CString(s));
 }
 
 gchar* convertToUTF8String(URL const& s)

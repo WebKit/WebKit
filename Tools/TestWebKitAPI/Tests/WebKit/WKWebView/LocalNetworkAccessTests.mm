@@ -78,7 +78,7 @@ static RetainPtr<TestWKWebView> createWebViewForLocalNetworkAccessTesting(BOOL l
 static RetainPtr<WKWebsiteDataStore> dataStoreWithAddressSpaceOverrides(const String& overrides)
 {
     auto configuration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
-    auto overridesString = adoptWK(WKStringCreateWithUTF8CString(overrides.utf8().legacyCStringPointer()));
+    auto overridesString = adoptWK(WKStringCreateWithUTF8CString(makeUTF8CString(overrides).legacyCStringPointer()));
     WKWebsiteDataStoreConfigurationSetIPAddressSpaceOverridesForTesting(configuration.get(), overridesString.get());
     return adoptNS((WKWebsiteDataStore *)WKWebsiteDataStoreCreateWithConfiguration(configuration.get()));
 }
@@ -592,7 +592,7 @@ TEST(LocalNetworkAccessTests, ConcurrentRequestsRaiseOnePrompt)
 static void revokeLocalNetworkAccessPermissions(WKWebsiteDataStore *store, NSString *topOrigin)
 {
     bool done = false;
-    auto origin = adoptWK(WKStringCreateWithUTF8CString(String(topOrigin).utf8().legacyCStringPointer()));
+    auto origin = adoptWK(WKStringCreateWithUTF8CString(makeUTF8CString(String(topOrigin)).legacyCStringPointer()));
     WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTesting((WKWebsiteDataStoreRef)store, origin.get(), &done, [](void* context) {
         *static_cast<bool*>(context) = true;
     });

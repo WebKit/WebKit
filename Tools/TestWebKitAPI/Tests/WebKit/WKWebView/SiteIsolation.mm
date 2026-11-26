@@ -719,7 +719,7 @@ static void printTree(_WKFrameTreeNode *n, size_t indent = 0)
 static void printTree(const ExpectedFrameTree& n, size_t indent = 0)
 {
     if (auto* s = std::get_if<String>(&n.remoteOrOrigin))
-        SAFE_WTFLOGALWAYS("%s%s", indentation(indent), s->utf8());
+        SAFE_WTFLOGALWAYS("%s%s", indentation(indent), makeUTF8CString(*s));
     else
         SAFE_WTFLOGALWAYS("%s(remote)", indentation(indent));
     for (const auto& c : n.children)
@@ -3480,7 +3480,7 @@ static void runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit subf
                 auto prefix = "<html><body>"_s;
                 auto body = makeString(prefix, responseBody(path));
                 connection.send(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, body.length(), "\r\n\r\n"_s, prefix));
-                heldResponses.append({ path, connection, Vector<uint8_t> { byteCast<uint8_t>(responseBody(path).utf8().span()) } });
+                heldResponses.append({ path, connection, Vector<uint8_t> { byteCast<uint8_t>(makeUTF8CString(responseBody(path)).span()) } });
                 return;
             }
             connection.send(HTTPResponse(responseBody(path)).serialize(), [&, connection] {

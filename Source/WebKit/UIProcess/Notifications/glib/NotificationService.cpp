@@ -338,7 +338,7 @@ static const char* applicationIcon()
             }
 #endif
 
-            auto desktopFileID = makeString(applicationID.span(), ".desktop"_s).utf8();
+            auto desktopFileID = makeUTF8CString(makeString(applicationID.span(), ".desktop"_s));
             GRefPtr<GDesktopAppInfo> appInfo = adoptGRef(g_desktop_app_info_new(desktopFileID.legacyCStringPointer()));
             if (!appInfo)
                 return { };
@@ -392,8 +392,8 @@ bool NotificationService::showNotification(const WebNotification& notification, 
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
 
-        g_variant_builder_add(&builder, "{sv}", "title", gVariantNewString(notification.title().utf8()));
-        g_variant_builder_add(&builder, "{sv}", "body", gVariantNewString(notification.body().utf8()));
+        g_variant_builder_add(&builder, "{sv}", "title", gVariantNewString(makeUTF8CString(notification.title())));
+        g_variant_builder_add(&builder, "{sv}", "body", gVariantNewString(makeUTF8CString(notification.body())));
         g_variant_builder_add(&builder, "{sv}", "default-action", g_variant_new_string("default"));
         if (resources) {
             if (auto* bytes = iconCache().iconBytes(notification.iconURL(), resources->icon())) {
@@ -402,7 +402,7 @@ bool NotificationService::showNotification(const WebNotification& notification, 
             }
         }
         addResult.iterator->value.portalID = createVersion4UUIDString();
-        g_dbus_proxy_call(m_proxy.get(), "AddNotification", gVariantNew("(s@a{sv})", addResult.iterator->value.portalID.utf8(), g_variant_builder_end(&builder)),
+        g_dbus_proxy_call(m_proxy.get(), "AddNotification", gVariantNew("(s@a{sv})", makeUTF8CString(addResult.iterator->value.portalID), g_variant_builder_end(&builder)),
             G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer) {
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(source), result, &error.outPtr()));
@@ -435,14 +435,14 @@ bool NotificationService::showNotification(const WebNotification& notification, 
 
         UTF8CString body;
         if (m_capabilities.contains(Capabilities::Body))
-            body = notification.body().utf8();
+            body = makeUTF8CString(notification.body());
 
         const char* appIcon = applicationIcon();
 
         g_dbus_proxy_call(m_proxy.get(), "Notify", gVariantNew(
             "(susssasa{sv}i)",
             g_get_application_name(), addResult.iterator->value.id, appIcon ? appIcon : "",
-            notification.title().utf8(), body,
+            makeUTF8CString(notification.title()), body,
             &actionsBuilder, &hintsBuilder, -1
             ), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
                 GUniqueOutPtr<GError> error;
@@ -475,7 +475,7 @@ void NotificationService::cancelNotification(WebNotificationIdentifier webNotifi
         if (it->value.portalID.isEmpty())
             return;
 
-        g_dbus_proxy_call(m_proxy.get(), "RemoveNotification", gVariantNew("(s)", it->value.portalID.utf8()), G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
+        g_dbus_proxy_call(m_proxy.get(), "RemoveNotification", gVariantNew("(s)", makeUTF8CString(it->value.portalID)), G_DBUS_CALL_FLAGS_NONE, -1, nullptr,
             [](GObject* source, GAsyncResult* result, gpointer) {
                 GUniqueOutPtr<GError> error;
                 GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(source), result, &error.outPtr()));

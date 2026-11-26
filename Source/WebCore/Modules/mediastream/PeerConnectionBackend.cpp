@@ -147,7 +147,7 @@ private:
         assertIsHeld(m_clientsLock);
         ASSERT(!m_logFile);
 
-        m_logFile = FilePrintStream::open(m_path.utf8(), overwrite ? "w"_s : "a"_s);
+        m_logFile = FilePrintStream::open(makeUTF8CString(m_path), overwrite ? "w"_s : "a"_s);
 
         // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
         setvbuf(m_logFile->file(), nullptr, _IONBF, 0);
@@ -267,7 +267,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP offer created:\n", sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateOfferSucceeded, logIdentifier(), sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateOfferSucceeded, logIdentifier(), makeUTF8CString(sdp));
 #endif
 
     ASSERT(m_offerAnswerCallback);
@@ -303,7 +303,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "SDP answer created:\n", sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateAnswerSucceeded, logIdentifier(), sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, PeerConnectionBackendCreateAnswerSucceeded, logIdentifier(), makeUTF8CString(sdp));
 #endif
 
     ASSERT(m_offerAnswerCallback);

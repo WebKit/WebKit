@@ -746,12 +746,12 @@ void VisibleSelection::debugPosition() const
     if (!m_start.anchorNode())
         SAFE_FPRINTF(stderr, "pos:   null");
     else if (m_start == m_end) {
-        SAFE_FPRINTF(stderr, "pos:   %s ", m_start.anchorNode()->nodeName().utf8());
+        SAFE_FPRINTF(stderr, "pos:   %s ", makeUTF8CString(m_start.anchorNode()->nodeName()));
         m_start.showAnchorTypeAndOffset();
     } else {
-        SAFE_FPRINTF(stderr, "start: %s ", m_start.anchorNode()->nodeName().utf8());
+        SAFE_FPRINTF(stderr, "start: %s ", makeUTF8CString(m_start.anchorNode()->nodeName()));
         m_start.showAnchorTypeAndOffset();
-        SAFE_FPRINTF(stderr, "end:   %s ", m_end.anchorNode()->nodeName().utf8());
+        SAFE_FPRINTF(stderr, "end:   %s ", makeUTF8CString(m_end.anchorNode()->nodeName()));
         m_end.showAnchorTypeAndOffset();
     }
 

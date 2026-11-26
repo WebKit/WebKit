@@ -126,7 +126,7 @@ JSValueRef callWithArguments(JSObjectRef callbackFunction, JSRetainPtr<JSGlobalC
     if (exception) {
         JSC::JSLockHolder lock(globalObject->vm());
         auto exceptionValue = toJS(globalObject, exception);
-        RELEASE_LOG_ERROR(Extensions, "Uncaught exception in extension callback: %" PUBLIC_LOG_STRING, exceptionValue.toWTFString(globalObject).utf8());
+        RELEASE_LOG_ERROR(Extensions, "Uncaught exception in extension callback: %" PUBLIC_LOG_STRING, makeUTF8CString(exceptionValue.toWTFString(globalObject)));
         WebCore::reportException(globalObject, exceptionValue);
     }
 
@@ -147,7 +147,7 @@ void WebExtensionCallbackHandler::reportError(const String& message)
     if (!m_rejectFunction)
         return;
 
-    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %" PUBLIC_LOG_STRING, message.utf8());
+    RELEASE_LOG_ERROR(Extensions, "Promise rejected: %" PUBLIC_LOG_STRING, makeUTF8CString(message));
 
     JSValueRef messageValue = JSValueMakeString(m_globalContext.get(), toJSString(message).get());
     JSValueRef error = JSObjectMakeError(m_globalContext.get(), 1, &messageValue, nullptr);
@@ -284,7 +284,7 @@ JSObjectRef toJSError(JSContextRef context, const String& string)
 {
     ASSERT(context);
 
-    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %" PUBLIC_LOG_STRING, string.utf8());
+    RELEASE_LOG_ERROR(Extensions, "Exception thrown: %" PUBLIC_LOG_STRING, makeUTF8CString(string));
 
     JSValueRef messageArgument = toJSValueRef(context, string, NullOrEmptyString::NullStringAsEmptyString);
 

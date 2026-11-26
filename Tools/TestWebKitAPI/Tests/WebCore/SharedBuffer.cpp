@@ -502,7 +502,7 @@ constexpr size_t arraysize( const T (&)[N] ) { return N; }
 
 static void readAllChunks(std::vector<String>* chunks, FragmentedSharedBuffer& buffer, const String& separator = "\r\n"_s, bool includeSeparator = false)
 {
-    SharedBufferChunkReader chunkReader(&buffer, separator.utf8());
+    SharedBufferChunkReader chunkReader(&buffer, makeUTF8CString(separator));
     String chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback(includeSeparator);
     while (!chunk.isNull()) {
         chunks->push_back(chunk);

@@ -45,7 +45,7 @@ namespace WebCore {
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    auto rpIdUTF8 = rpId.utf8();
+    auto rpIdUTF8 = makeUTF8CString(rpId);
     crypto->addBytes(std::as_bytes(rpIdUTF8.span()));
     return crypto->computeHash();
 }
@@ -174,7 +174,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     if (!topOrigin.isNull())
         object->setString("topOrigin"_s, topOrigin);
 
-    return ArrayBuffer::create(byteCast<uint8_t>(object->toJSONString().utf8().span()));
+    return ArrayBuffer::create(byteCast<uint8_t>(makeUTF8CString(object->toJSONString()).span()));
 }
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)

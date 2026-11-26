@@ -218,7 +218,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                         URL url { line };
                         if (transferredFilesFromPortal && url.isValid()) {
                             GUniqueOutPtr<GError> error;
-                            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().legacyCStringPointer(), 0, &error.outPtr()));
+                            GUniquePtr<gchar> filename(g_filename_from_uri(makeUTF8CString(line).legacyCStringPointer(), 0, &error.outPtr()));
                             if (!error && filename)
                                 continue;
                         }

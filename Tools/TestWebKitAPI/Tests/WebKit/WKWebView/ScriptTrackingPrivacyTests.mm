@@ -723,7 +723,7 @@ TEST(ScriptTrackingPrivacyTests, DirectFormFieldAccess)
             "var %@TextAreaInputValue = %@TextAreaInput.value;"
             "function %@GetElementValueById(id) { return document.getElementById(id)?.value; }"
             , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted
-            , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, expectedPureValue("textAreaInput"_s).utf8().legacyCStringPointer()
+            , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted, makeUTF8CString(expectedPureValue("textAreaInput"_s)).legacyCStringPointer()
             , pureOrTainted, pureOrTainted, pureOrTainted, pureOrTainted];
     };
 

@@ -37,7 +37,7 @@ void logCompilationError(WGSL::FailedCheck& failedCheck)
     message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
     for (const auto& error : failedCheck.errors)
         message.print("\n"_s, error);
-    SAFE_WTFLOGALWAYS("%s", message.toString().utf8());
+    SAFE_WTFLOGALWAYS("%s", makeUTF8CString(message.toString()));
     GTEST_FAIL();
 }
 

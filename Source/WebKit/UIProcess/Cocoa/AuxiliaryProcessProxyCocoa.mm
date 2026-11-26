@@ -227,10 +227,10 @@ bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t even
 
         OSObjectPtr<os_log_t> osLog;
         if (!subsystem.isEmpty() && !category.isEmpty())
-            osLog = adoptOSObject(osLogCreate(subsystem.utf8(), category.utf8()));
+            osLog = adoptOSObject(osLogCreate(makeUTF8CString(subsystem), makeUTF8CString(category)));
 
         process->didReceiveLogsDuringLaunchForTesting();
-        auto message = messageString.utf8();
+        auto message = makeUTF8CString(messageString);
         logWithProcessNamePrefix(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), process->processName(), static_cast<int>(pid), UTF8CStringView::fromUTF8(message.spanIncludingNullTerminator()));
     } else if (messageName == disableLogMessageName) {
         RefPtr process = m_process.get();

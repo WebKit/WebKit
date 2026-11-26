@@ -49,7 +49,7 @@ WebExtensionSQLiteStatement::WebExtensionSQLiteStatement(Ref<WebExtensionSQLiteD
 
     db->assertQueue();
 
-    int result = WebCore::sqlitePrepare(db->sqlite3Handle(), query.utf8(), &m_handle);
+    int result = WebCore::sqlitePrepare(db->sqlite3Handle(), makeUTF8CString(query), &m_handle);
     if (result != SQLITE_OK) {
         db->reportErrorWithCode(result, query, outError);
         return;
@@ -171,7 +171,7 @@ void WebExtensionSQLiteStatement::bind(const String& string, int parameterIndex)
     ASSERT(isValid());
     ASSERT_ARG(parameterIndex, parameterIndex > 0);
 
-    int result = WebCore::sqliteBindText(m_handle, parameterIndex, string.utf8());
+    int result = WebCore::sqliteBindText(m_handle, parameterIndex, makeUTF8CString(string));
     if (result != SQLITE_OK)
         RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }

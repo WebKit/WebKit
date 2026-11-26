@@ -88,7 +88,7 @@ Ref<ManagerProxy> ManagerProxy::create(const String& machServiceName, NetworkSes
 }
 
 ManagerProxy::ManagerProxy(const String& machServiceName, NetworkSession& networkSession)
-    : m_connection(Connection::create(machServiceName.utf8(), networkSession))
+    : m_connection(Connection::create(makeUTF8CString(machServiceName), networkSession))
 { }
 
 void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm, CompletionHandler<void()>&& completionHandler)

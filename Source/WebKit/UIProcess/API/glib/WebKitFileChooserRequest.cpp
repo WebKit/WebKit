@@ -227,7 +227,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
-        g_ptr_array_add(request->priv->mimeTypes.get(), gStrdup(mimeTypeString.utf8()));
+        g_ptr_array_add(request->priv->mimeTypes.get(), gStrdup(makeUTF8CString(mimeTypeString)));
     }
     g_ptr_array_add(request->priv->mimeTypes.get(), 0);
 
@@ -274,7 +274,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
         String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
-        gtk_file_filter_add_mime_type(request->priv->filter.get(), mimeTypeString.utf8().legacyCStringPointer());
+        gtk_file_filter_add_mime_type(request->priv->filter.get(), makeUTF8CString(mimeTypeString).legacyCStringPointer());
     }
 
     return request->priv->filter.get();

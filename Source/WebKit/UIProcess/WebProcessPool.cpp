@@ -1267,7 +1267,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 #if ENABLE(EXTENSION_CAPABILITIES)
     for (auto& page : process.pages()) {
         if (RefPtr mediaCapability = page->mediaCapability()) {
-            WEBPROCESSPOOL_RELEASE_LOG(ProcessCapabilities, "processDidFinishLaunching[envID=%" PUBLIC_LOG_STRING "]: updating media capability", mediaCapability->environmentIdentifier().utf8());
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessCapabilities, "processDidFinishLaunching[envID=%" PUBLIC_LOG_STRING "]: updating media capability", makeUTF8CString(mediaCapability->environmentIdentifier()));
             page->updateMediaCapability();
         }
     }

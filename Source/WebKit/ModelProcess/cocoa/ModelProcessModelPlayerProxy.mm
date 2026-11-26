@@ -839,7 +839,7 @@ void ModelProcessModelPlayerProxy::updateAnchorParenting()
             desiredParent = [anchor->entity coreEntity];
 
             if (!tracked->anchorPlacement.isEmpty()) {
-                auto placementName = tracked->anchorPlacement.utf8();
+                auto placementName = makeUTF8CString(tracked->anchorPlacement);
                 if (REEntityRef placement = REEntityFindInHierarchyByName(desiredParent, placementName.legacyCStringPointer()))
                     desiredParent = placement;
                 else
@@ -1676,7 +1676,7 @@ void ModelProcessModelPlayerProxy::animateModelToFitPortal(CompletionHandler<voi
 #if HAVE(MODEL_MEMORY_ATTRIBUTION)
 static void setIBLAssetOwnership(const String& attributionTaskID, REAssetRef iblAsset)
 {
-    auto attributionIDString = attributionTaskID.utf8();
+    auto attributionIDString = makeUTF8CString(attributionTaskID);
 
     if (REPtr<REAssetRef> skyboxTexture = REIBLAssetGetSkyboxTexture(iblAsset)) {
         RELEASE_LOG_DEBUG(ModelElement, "Attributing skyboxTexture to task ID: %s", attributionIDString);
@@ -2127,7 +2127,7 @@ void ModelProcessModelPlayerProxy::updatePortalChildAnchoring()
 
         REEntityRef placementEntity = [anchorEntity coreEntity];
         if (!child.placement.isEmpty()) {
-            auto placementName = child.placement.utf8();
+            auto placementName = makeUTF8CString(child.placement);
             if (REEntityRef namedEntity = REEntityFindInHierarchyByName(placementEntity, placementName.legacyCStringPointer()))
                 placementEntity = namedEntity;
             else if (!child.isAttached)

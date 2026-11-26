@@ -219,7 +219,7 @@ void DownloadProxy::didCreateDestination(const String& path)
 void DownloadProxy::updateQuarantinePropertiesIfPossible()
 {
     auto fileURL = URL::fileURLWithFileSystemPath(m_destinationFilename);
-    auto path = fileURL.fileSystemPath().utf8();
+    auto path = makeUTF8CString(fileURL.fileSystemPath());
 
     auto file = std::unique_ptr<_qtn_file, QuarantineFileDeleter>(qtn_file_alloc());
     if (!file)

@@ -191,7 +191,7 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
             StringBuilder interopConstraints;
             for (auto flag : hevcParameters->generalConstraintIndicatorFlags)
                 interopConstraints.append(hex(flag, 2));
-            parameters["interop-constraints"] = interopConstraints.toString().utf8().toStdString();
+            parameters["interop-constraints"] = makeUTF8CString(interopConstraints.toString()).toStdString();
         }
     }
 

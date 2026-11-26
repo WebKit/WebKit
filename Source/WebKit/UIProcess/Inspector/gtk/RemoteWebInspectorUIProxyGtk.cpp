@@ -140,7 +140,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     // unfortunately.
     URL url { saveDatas[0].url };
     // Strip leading / character.
-    gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().legacyCStringPointer());
+    gtk_file_chooser_set_current_name(chooser, makeUTF8CString(url.path().substring(1)).legacyCStringPointer());
 
     if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
         return;
@@ -154,7 +154,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         decodedData->shrinkToFit();
         dataVector = WTF::move(*decodedData);
     } else
-        dataString = saveDatas[0].content.utf8();
+        dataString = makeUTF8CString(saveDatas[0].content);
 
     const char* data = !dataString.isNull() ? dataString.legacyCStringPointer() : reinterpret_cast<const char*>(dataVector.span().data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();

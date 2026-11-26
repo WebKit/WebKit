@@ -226,7 +226,7 @@ String layoutTreeAsText(const InitialContainingBlock& initialContainingBlock, co
 void showLayoutTree(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
 {
     auto treeAsText = layoutTreeAsText(initialContainingBlock, layoutState);
-    SAFE_WTFLOGALWAYS("%s", treeAsText.utf8());
+    SAFE_WTFLOGALWAYS("%s", makeUTF8CString(treeAsText));
 }
 
 void showLayoutTree(const InitialContainingBlock& initialContainingBlock)

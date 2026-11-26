@@ -261,7 +261,7 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
         auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: "_s, location, "\r\nContent-Length: 0\r\n\r\n"_s);
         connection.send(WTF::move(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
-                auto expectedHttpGetString = makeString("GET "_s, location, " HTTP/1.1\r\n"_s).utf8();
+                auto expectedHttpGetString = makeUTF8CString(makeString("GET "_s, location, " HTTP/1.1\r\n"_s));
                 EXPECT_TRUE(contains(request2.span(), byteCast<uint8_t>(expectedHttpGetString.span())));
                 constexpr auto response = "HTTP/1.1 200 OK\r\n"
                     "Content-Length: 0\r\n\r\n"_s;
@@ -369,8 +369,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         EXPECT_TRUE(contains(request4.span(), "POST / HTTP/1.1\r\n"_span));
                                         EXPECT_TRUE(contains(request4.span(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,"_span));
 
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(token.utf8().span())));
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(unlinkableToken.utf8().span())));
+                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(makeUTF8CString(token).span())));
+                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(makeUTF8CString(unlinkableToken).span())));
 
                                         auto request4String = String::fromLatin1(request4.span());
 

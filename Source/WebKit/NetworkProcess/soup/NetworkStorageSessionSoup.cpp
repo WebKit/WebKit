@@ -95,7 +95,7 @@ void NetworkStorageSession::notifyCookie(SoupCookie* cookie, bool added)
         return;
 
     for (const auto& host : m_cookieChangeObservers.keys()) {
-        if (!soup_cookie_domain_matches(cookie, host.utf8().legacyCStringPointer()))
+        if (!soup_cookie_domain_matches(cookie, makeUTF8CString(host).legacyCStringPointer()))
             continue;
 
         auto observers = m_cookieChangeObservers.getOptional(host);
@@ -259,8 +259,8 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
     }
 
     GRefPtr<GHashTable> attributes = adoptGRef(secret_attributes_build(SECRET_SCHEMA_COMPAT_NETWORK,
-        "domain", realm.utf8().legacyCStringPointer(),
-        "server", protectionSpace.host().utf8().legacyCStringPointer(),
+        "domain", makeUTF8CString(realm).legacyCStringPointer(),
+        "server", makeUTF8CString(protectionSpace.host()).legacyCStringPointer(),
         "port", protectionSpace.port(),
         "protocol", schemeFromProtectionSpaceServerType(protectionSpace.serverType()).characters(),
         "authtype", authTypeFromProtectionSpaceAuthenticationScheme(protectionSpace.authenticationScheme()).characters(),
@@ -319,8 +319,8 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
         return;
 
     GRefPtr<GHashTable> attributes = adoptGRef(secret_attributes_build(SECRET_SCHEMA_COMPAT_NETWORK,
-        "domain", realm.utf8().legacyCStringPointer(),
-        "server", protectionSpace.host().utf8().legacyCStringPointer(),
+        "domain", makeUTF8CString(realm).legacyCStringPointer(),
+        "server", makeUTF8CString(protectionSpace.host()).legacyCStringPointer(),
         "port", protectionSpace.port(),
         "protocol", schemeFromProtectionSpaceServerType(protectionSpace.serverType()).characters(),
         "authtype", authTypeFromProtectionSpaceAuthenticationScheme(protectionSpace.authenticationScheme()).characters(),
@@ -328,8 +328,8 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
     if (!attributes)
         return;
 
-    g_hash_table_insert(attributes.get(), g_strdup("user"), gStrdup(credential.user().utf8()));
-    auto utf8Password = credential.password().utf8();
+    g_hash_table_insert(attributes.get(), g_strdup("user"), gStrdup(makeUTF8CString(credential.user())));
+    auto utf8Password = makeUTF8CString(credential.password());
     auto passwordCharacters = byteCast<char>(utf8Password.span());
     GRefPtr newSecretValue = adoptGRef(secret_value_new(passwordCharacters.data(), passwordCharacters.size(), "text/plain"));
     secret_service_store(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(), SECRET_COLLECTION_DEFAULT, _("WebKitGTK password"),
@@ -434,7 +434,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
         // FIXME: Remove this once libsoup's cookie-date parser accepts a date that writes the month
         // before the day of the month. RFC 6265 section 5.1.1 accepts either ordering.
         auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString);
-        auto utf8CookieString = (dayFirst ? *dayFirst : cookieString).utf8();
+        auto utf8CookieString = makeUTF8CString(dayFirst ? *dayFirst : cookieString);
         GUniquePtr<SoupCookie> cookie(soup_cookie_parse(utf8CookieString.legacyCStringPointer(), origin.get()));
 
         if (!cookie)
@@ -557,7 +557,7 @@ void NetworkStorageSession::deleteCookie(const URL&, const URL& url, const Strin
     if (!cookies)
         return completionHandler();
 
-    auto cookieName = name.utf8();
+    auto cookieName = makeUTF8CString(name);
     bool wasDeleted = false;
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
@@ -603,7 +603,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> ho
 {
     SoupCookieJar* cookieJar = cookieStorage();
     for (const auto& hostname : hostnames) {
-        auto hostNameString = hostname.utf8();
+        auto hostNameString = makeUTF8CString(hostname);
 
         CookieList cookies(soup_cookie_jar_all_cookies(cookieJar));
         for (auto* item = cookies.get(); item; item = g_slist_next(item)) {
@@ -771,7 +771,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 
 Vector<Cookie> NetworkStorageSession::domCookiesForHost(const URL& url)
 {
-    auto host = url.host().utf8();
+    auto host = makeUTF8CString(url.host());
 
     CookieList soupCookies(soup_cookie_jar_all_cookies(cookieStorage()));
 

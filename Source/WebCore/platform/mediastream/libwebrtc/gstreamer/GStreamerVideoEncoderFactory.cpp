@@ -106,7 +106,7 @@ public:
             notifyEncodedFrame(WTF::move(encodedFrame));
         });
         if (!result) {
-            SAFE_GST_PRINTERRLN("Unable to create GStreamer video encoder: %s", result.error().utf8());
+            SAFE_GST_PRINTERRLN("Unable to create GStreamer video encoder: %s", makeUTF8CString(result.error()));
             return;
         }
         lazyInitialize(m_internalEncoder, WTF::move(*result));

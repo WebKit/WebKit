@@ -89,7 +89,7 @@ static std::optional<String> getLanguageCode(GstTagList* tags)
     if (!language)
         return std::nullopt;
 
-    auto convertedLanguage = UTF8CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(language->utf8().legacyCStringPointer()));
+    auto convertedLanguage = UTF8CStringView::unsafeFromUTF8(gst_tag_get_language_code_iso_639_1(makeUTF8CString(*language).legacyCStringPointer()));
     GST_DEBUG("Converted track's language code to %s.", convertedLanguage.utf8());
     return String(convertedLanguage.span());
 }
@@ -412,7 +412,7 @@ void TrackDataHolder::streamIdChanged()
     ASSERT(isMainThread());
     m_gstStreamId = gstStreamId;
     m_id = streamId.value();
-    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, m_gstStreamId.utf8());
+    GST_INFO("Track %" PRIu64 " got stream start. GStreamer stream-id: %s", m_id, makeUTF8CString(m_gstStreamId));
 }
 
 void TrackDataHolder::streamChanged()

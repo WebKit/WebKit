@@ -211,7 +211,7 @@ JSValueRef JSWebExtensionAPITestObjC::setDictionary(JSContextRef context, JSObje
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.setDictionary() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.setDictionary() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -275,7 +275,7 @@ JSValueRef JSWebExtensionAPITestObjC::getNullableDictionary(JSContextRef context
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getNullableDictionary() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getNullableDictionary() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -335,7 +335,7 @@ JSValueRef JSWebExtensionAPITestObjC::enable(JSContextRef context, JSObjectRef, 
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.enable() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.enable() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -385,7 +385,7 @@ JSValueRef JSWebExtensionAPITestObjC::registerScripts(JSContextRef context, JSOb
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.registerScripts() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.registerScripts() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -449,7 +449,7 @@ JSValueRef JSWebExtensionAPITestObjC::create(JSContextRef context, JSObjectRef, 
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.create() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.create() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -550,7 +550,7 @@ JSValueRef JSWebExtensionAPITestObjC::get(JSContextRef context, JSObjectRef, JSO
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.get() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.get() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -600,7 +600,7 @@ JSValueRef JSWebExtensionAPITestObjC::getManifest(JSContextRef context, JSObject
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getManifest() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getManifest() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJSValueRefOrJSNull(context, impl->getManifest());
 }
@@ -611,7 +611,7 @@ JSValueRef JSWebExtensionAPITestObjC::postMessage(JSContextRef context, JSObject
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.postMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.postMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -659,7 +659,7 @@ JSValueRef JSWebExtensionAPITestObjC::getMessage(JSContextRef context, JSObjectR
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -703,7 +703,7 @@ JSValueRef JSWebExtensionAPITestObjC::getURL(JSContextRef context, JSObjectRef, 
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getURL() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getURL() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -737,7 +737,7 @@ JSValueRef JSWebExtensionAPITestObjC::runTests(JSContextRef context, JSObjectRef
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.runTests() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.runTests() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -763,7 +763,7 @@ JSValueRef JSWebExtensionAPITestObjC::openPopup(JSContextRef context, JSObjectRe
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.openPopup() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.openPopup() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -831,7 +831,7 @@ JSValueRef JSWebExtensionAPITestObjC::createMenu(JSContextRef context, JSObjectR
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.createMenu() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.createMenu() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -912,7 +912,7 @@ JSValueRef JSWebExtensionAPITestObjC::notify(JSContextRef context, JSObjectRef, 
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.notify() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.notify() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -1013,7 +1013,7 @@ JSValueRef JSWebExtensionAPITestObjC::getBackgroundPage(JSContextRef context, JS
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getBackgroundPage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.getBackgroundPage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJSValueRefOrJSNull(context, impl->getBackgroundPage(context));
 }
@@ -1024,7 +1024,7 @@ JSValueRef JSWebExtensionAPITestObjC::addListener(JSContextRef context, JSObject
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.addListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.addListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -1063,7 +1063,7 @@ JSValueRef JSWebExtensionAPITestObjC::removeListener(JSContextRef context, JSObj
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.removeListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.removeListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -1102,7 +1102,7 @@ JSValueRef JSWebExtensionAPITestObjC::hasListener(JSContextRef context, JSObject
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.hasListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testObjC.hasListener() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -1137,7 +1137,7 @@ JSValueRef JSWebExtensionAPITestObjC::onChanged(JSContextRef context, JSObjectRe
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.onChanged in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.onChanged in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJS(context, getPtr(impl->onChanged()));
 }
@@ -1150,7 +1150,7 @@ JSValueRef JSWebExtensionAPITestObjC::tabId(JSContextRef context, JSObjectRef ob
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.tabId in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.tabId in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     RefPtr page = toWebPage(context);
     if (!page) [[unlikely]] {
@@ -1169,7 +1169,7 @@ JSValueRef JSWebExtensionAPITestObjC::rootNodeIdentifier(JSContextRef context, J
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.ROOT_NODE_ID in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.ROOT_NODE_ID in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJSValueRef(context, impl->rootNodeIdentifier(), NullOrEmptyString::NullStringAsEmptyString);
 }
@@ -1183,7 +1183,7 @@ JSValueRef JSWebExtensionAPITestObjC::action(JSContextRef context, JSObjectRef o
     if (!impl || !impl->isForMainWorld()) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.action in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testObjC.action in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJS(context, getPtr(impl->action()));
 }

@@ -187,7 +187,7 @@ void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSh
 
 void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONTEXT_CONNECTION_RELEASE_LOG("addSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, makeUTF8CString(sharedWorkerObjectIdentifier.toString()));
     auto& sharedWorkerObjects = m_sharedWorkerObjects.ensure(sharedWorkerObjectIdentifier.processIdentifier(), [] { return HashSet<WebCore::SharedWorkerObjectIdentifier> { }; }).iterator->value;
     ASSERT(!sharedWorkerObjects.contains(sharedWorkerObjectIdentifier));
     sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
@@ -204,7 +204,7 @@ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::Sh
 
 void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
-    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8());
+    CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, makeUTF8CString(sharedWorkerObjectIdentifier.toString()));
     auto it = m_sharedWorkerObjects.find(sharedWorkerObjectIdentifier.processIdentifier());
     ASSERT(it != m_sharedWorkerObjects.end());
     if (it == m_sharedWorkerObjects.end())

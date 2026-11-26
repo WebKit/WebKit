@@ -134,7 +134,7 @@ UTF8CString SourceProvider::sourceCodeDumpFilePath(const UTF8CString& dumpDirect
             handle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
         }
         if (handle) {
-            auto sourceText = source().utf8();
+            auto sourceText = makeUTF8CString(source());
             handle.write(WTF::asByteSpan(sourceText.span()));
             handle.flush();
             m_sourceCodeDumpFilePath = FileSystem::fileSystemRepresentation(filePath);

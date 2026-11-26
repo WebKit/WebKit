@@ -146,7 +146,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return @[ ];
 
     return createNSArray(paths, [] (auto& path) {
-        return [NSURL fileURLWithFileSystemRepresentation:path.utf8().legacyCStringPointer() isDirectory:NO relativeToURL:nil];
+        return [NSURL fileURLWithFileSystemRepresentation:makeUTF8CString(path).legacyCStringPointer() isDirectory:NO relativeToURL:nil];
     }).autorelease();
 }
 

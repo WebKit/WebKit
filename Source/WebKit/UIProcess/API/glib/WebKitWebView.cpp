@@ -509,7 +509,7 @@ void PageLoadStateObserver::didChangeIsLoading()
 
 void PageLoadStateObserver::didChangeTitle()
 {
-    m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
+    m_webView->priv->title = makeUTF8CString(getPage(m_webView).pageLoadState().title());
     g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
     g_object_thaw_notify(G_OBJECT(m_webView));
 }
@@ -525,7 +525,7 @@ void PageLoadStateObserver::didChangeActiveURL()
 {
     if (m_webView->priv->isActiveURIChangeBlocked)
         return;
-    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().string().utf8();
+    m_webView->priv->activeURI = makeUTF8CString(getPage(m_webView).pageLoadState().activeURL().string());
     g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
     g_object_thaw_notify(G_OBJECT(m_webView));
 }
@@ -2823,7 +2823,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent,
         webView->priv->isActiveURIChangeBlocked = false;
         break;
     case WEBKIT_LOAD_COMMITTED: {
-        auto activeURL = getPage(webView).pageLoadState().activeURL().string().utf8();
+        auto activeURL = makeUTF8CString(getPage(webView).pageLoadState().activeURL().string());
         // Active URL is trusted now. If it's different to our active URI, due to the
         // update block before WEBKIT_LOAD_STARTED, we update it here to be in sync
         // again with the page load state.
@@ -2854,7 +2854,7 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
     webkitWebViewCompleteAuthenticationRequest(webView);
 
     gboolean returnValue;
-    gSignalEmit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI.utf8(), error, &returnValue);
+    gSignalEmit(webView, signals[LOAD_FAILED], 0, loadEvent, makeUTF8CString(failingURI), error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
@@ -2869,7 +2869,7 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const String& 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_website_data_manager_get_tls_errors_policy(websiteDataManager);
 #endif
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
-        auto failingURIUTF8 = failingURI.utf8();
+        auto failingURIUTF8 = makeUTF8CString(failingURI);
         gboolean returnValue;
         gSignalEmit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, failingURIUTF8, certificate, tlsErrors, &returnValue);
         if (!returnValue)
@@ -2925,7 +2925,7 @@ void webkitWebViewUpdatePageIcons(WebKitWebView *webView)
         return;
 
     auto cancellable = adoptGRef(g_cancellable_new());
-    webkit_favicon_database_get_page_icons(database, getPage(webView).pageLoadState().activeURL().string().utf8().legacyCStringPointer(), cancellable.get(), [](GObject* database, GAsyncResult* result, gpointer userData) {
+    webkit_favicon_database_get_page_icons(database, makeUTF8CString(getPage(webView).pageLoadState().activeURL().string()).legacyCStringPointer(), cancellable.get(), [](GObject* database, GAsyncResult* result, gpointer userData) {
         auto webView = adoptGRef(WEBKIT_WEB_VIEW(userData));
 
         GUniqueOutPtr<GError> error;
@@ -4115,7 +4115,7 @@ const gchar* webkit_web_view_get_custom_charset(WebKitWebView* webView)
     if (customTextEncoding.isEmpty())
         return 0;
 
-    webView->priv->customTextEncoding = customTextEncoding.utf8();
+    webView->priv->customTextEncoding = makeUTF8CString(customTextEncoding);
     return webView->priv->customTextEncoding.legacyCStringPointer();
 }
 
@@ -4557,7 +4557,7 @@ static void webkitWebViewRunJavaScriptWithParams(WebKitWebView* webView, WebKit:
             }
             builder.append(exceptionDetails.message);
             SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
-                "%s", builder.toString().utf8());
+                "%s", makeUTF8CString(builder.toString()));
         }
     });
 }

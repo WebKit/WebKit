@@ -227,7 +227,7 @@ RefPtr<API::Data> WebExtensionContext::localizedResourceData(const RefPtr<API::D
     if (localizedString == stylesheetContents)
         return resourceData;
 
-    return API::Data::create(localizedString.utf8().span());
+    return API::Data::create(makeUTF8CString(localizedString).span());
 }
 
 String WebExtensionContext::localizedResourceString(const String& resourceContents, const String& mimeType)
@@ -1879,7 +1879,7 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
 
 String WebExtensionContext::processDisplayName()
 {
-    return WEB_UI_FORMAT_STRING("%s Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension", protect(extension())->displayShortName().utf8());
+    return WEB_UI_FORMAT_STRING("%s Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension", makeUTF8CString(protect(extension())->displayShortName()));
 }
 
 Vector<String> WebExtensionContext::corsDisablingPatterns()
@@ -1978,9 +1978,9 @@ const String& WebExtensionContext::backgroundWebViewInspectionName()
         return m_backgroundWebViewInspectionName;
 
     if (protect(extension())->backgroundContentIsServiceWorker())
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Service Worker", "Label for an inspectable Web Extension service worker", protect(extension())->displayShortName().utf8());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Service Worker", "Label for an inspectable Web Extension service worker", makeUTF8CString(protect(extension())->displayShortName()));
     else
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Background Page", "Label for an inspectable Web Extension background page", protect(extension())->displayShortName().utf8());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Background Page", "Label for an inspectable Web Extension background page", makeUTF8CString(protect(extension())->displayShortName()));
 
     return m_backgroundWebViewInspectionName;
 }

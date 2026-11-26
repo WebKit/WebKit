@@ -166,14 +166,14 @@ WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTes
     auto* result = WEBKIT_WEB_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_WEB_HIT_TEST_RESULT,
 #endif
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? absoluteLinkURL.utf8() : UTF8CString { },
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? absoluteImageURL.utf8() : UTF8CString { },
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? absoluteMediaURL.utf8() : UTF8CString { },
-        "link-title", !linkTitle.isEmpty() ? linkTitle.utf8() : UTF8CString { },
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? makeUTF8CString(absoluteLinkURL) : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? makeUTF8CString(absoluteImageURL) : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? makeUTF8CString(absoluteMediaURL) : UTF8CString { },
+        "link-title", !linkTitle.isEmpty() ? makeUTF8CString(linkTitle) : UTF8CString { },
 #if ENABLE(2022_GLIB_API)
-        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { })));
+        "link-label", !linkLabel.isEmpty() ? makeUTF8CString(linkLabel) : UTF8CString { })));
 #else
-        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8() : UTF8CString { },
+        "link-label", !linkLabel.isEmpty() ? makeUTF8CString(linkLabel) : UTF8CString { },
         "node", kit(hitTestResult.innerNonSharedNode())));
 #endif
 

@@ -68,7 +68,7 @@ void AccessibilityController::printToStderr(JSStringRef jsMessage) const
 {
     auto message = toWTFString(jsMessage);
     if (!message.isEmpty())
-        SAFE_FPRINTF(stderr, "%s\n", message.utf8());
+        SAFE_FPRINTF(stderr, "%s\n", makeUTF8CString(message));
     else
         SAFE_FPRINTF(stderr, ">>> AccessibilityController::printToStderr <<<\n");
 }

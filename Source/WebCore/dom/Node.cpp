@@ -343,7 +343,7 @@ void Node::dumpStatistics()
 
     printf("Element tag name distibution:\n");
     for (auto& stringSizePair : perTagCount)
-        SAFE_PRINTF("  Number of <%s> tags: %zu\n", stringSizePair.key.utf8(), stringSizePair.value);
+        SAFE_PRINTF("  Number of <%s> tags: %zu\n", makeUTF8CString(stringSizePair.key), stringSizePair.value);
 
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
@@ -1978,12 +1978,12 @@ void Node::showNode(ASCIILiteral prefix) const
     if (isTextNode()) {
         String value = makeStringByReplacingAll(nodeValue(), '\\', "\\\\"_s);
         value = makeStringByReplacingAll(value, '\n', "\\n"_s);
-        SAFE_FPRINTF(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8(), this, value.utf8());
+        SAFE_FPRINTF(stderr, "%s%s\t%p \"%s\"\n", prefix, makeUTF8CString(nodeName()), this, makeUTF8CString(value));
     } else {
         StringBuilder attrs;
         appendAttributeDesc(this, attrs, classAttr, " CLASS="_s);
         appendAttributeDesc(this, attrs, styleAttr, " STYLE="_s);
-        SAFE_FPRINTF(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8(), this, renderer(), attrs.toString().utf8(), needsStyleRecalc() ? " (needs style recalc)"_s : ""_s, childNeedsStyleRecalc() ? " (child needs style recalc)"_s : ""_s);
+        SAFE_FPRINTF(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, makeUTF8CString(nodeName()), this, renderer(), makeUTF8CString(attrs.toString()), needsStyleRecalc() ? " (needs style recalc)"_s : ""_s, childNeedsStyleRecalc() ? " (child needs style recalc)"_s : ""_s);
     }
 }
 
@@ -2012,7 +2012,7 @@ void Node::showNodePathForThis() const
 
         switch (node->nodeType()) {
         case NodeType::Element: {
-            SAFE_FPRINTF(stderr, "/%s", node->nodeName().utf8());
+            SAFE_FPRINTF(stderr, "/%s", makeUTF8CString(node->nodeName()));
 
             const Element& element = uncheckedDowncast<Element>(*node);
             const AtomString& idattr = element.getIdAttribute();
@@ -2023,18 +2023,18 @@ void Node::showNodePathForThis() const
                     if (previous->nodeName() == node->nodeName())
                         ++count;
                 if (hasIdAttr)
-                    SAFE_FPRINTF(stderr, "[@id=\"%s\" and position()=%d]", idattr.string().utf8(), count);
+                    SAFE_FPRINTF(stderr, "[@id=\"%s\" and position()=%d]", makeUTF8CString(idattr.string()), count);
                 else
                     fprintf(stderr, "[%d]", count);
             } else if (hasIdAttr)
-                SAFE_FPRINTF(stderr, "[@id=\"%s\"]", idattr.string().utf8());
+                SAFE_FPRINTF(stderr, "[@id=\"%s\"]", makeUTF8CString(idattr.string()));
             break;
         }
         case NodeType::Text:
             fprintf(stderr, "/text()");
             break;
         case NodeType::Attribute:
-            SAFE_FPRINTF(stderr, "/@%s", node->nodeName().utf8());
+            SAFE_FPRINTF(stderr, "/@%s", makeUTF8CString(node->nodeName()));
             break;
         default:
             break;
@@ -2055,7 +2055,7 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
         indent.append(baseIndent);
         for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrShadowHostNode())
             indent.append('\t');
-        SAFE_FPRINTF(stderr, "%s", indent.toString().utf8());
+        SAFE_FPRINTF(stderr, "%s", makeUTF8CString(indent.toString()));
         node->showNode();
         indent.append('\t');
         if (!node->isShadowRoot()) {
@@ -2088,7 +2088,7 @@ static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, con
 {
     if (node == markedNode)
         SAFE_FPRINTF(stderr, "*");
-    SAFE_FPRINTF(stderr, "%s\n", indent.utf8());
+    SAFE_FPRINTF(stderr, "%s\n", makeUTF8CString(indent));
     node->showNode();
     if (!node->isShadowRoot()) {
         if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node))

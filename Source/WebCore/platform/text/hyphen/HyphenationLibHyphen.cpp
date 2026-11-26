@@ -209,7 +209,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     // which stores either UTF-16 or Latin1 data. This is unfortunate for performance
     // reasons and we should consider switching to a more flexible hyphenation library
     // if it is available.
-    auto utf8StringCopy = string.utf8();
+    auto utf8StringCopy = makeUTF8CString(string);
 
     // WebCore often passes strings like " wordtohyphenate" to the platform layer. Since
     // libhyphen isn't advanced enough to deal with leading spaces (presumably CoreFoundation

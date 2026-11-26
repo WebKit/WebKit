@@ -220,15 +220,15 @@ void SpielSpeechWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>
 
     const auto& uri = utterance->voice()->voiceURI();
     if (!m_voices.contains(uri)) {
-        GST_ERROR("Unknown voice URI: %s", uri.utf8());
+        GST_ERROR("Unknown voice URI: %s", makeUTF8CString(uri));
         ASSERT_NOT_REACHED();
         return;
     }
 
     // TODO: Detect whether the utterance text is XML and enable SSML if that is the case.
     auto voice = m_voices.get(uri);
-    GRefPtr spielUtterance = adoptGRef(spiel_utterance_new(utterance->text().utf8().legacyCStringPointer()));
-    spiel_utterance_set_language(spielUtterance.get(), utterance->lang().utf8().legacyCStringPointer());
+    GRefPtr spielUtterance = adoptGRef(spiel_utterance_new(makeUTF8CString(utterance->text()).legacyCStringPointer()));
+    spiel_utterance_set_language(spielUtterance.get(), makeUTF8CString(utterance->lang()).legacyCStringPointer());
     spiel_utterance_set_voice(spielUtterance.get(), voice);
     spiel_utterance_set_volume(spielUtterance.get(), utterance->volume());
     spiel_utterance_set_pitch(spielUtterance.get(), utterance->pitch());

@@ -422,7 +422,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
         return false;
 
     auto aliasedOption = makeString(unsafeSpan(&name[4]), '=', unsafeSpan(stringValue));
-    if (Options::setOption(aliasedOption.utf8().legacyCStringPointer()))
+    if (Options::setOption(makeUTF8CString(aliasedOption).legacyCStringPointer()))
         return true;
 
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
@@ -1347,7 +1347,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
                 return false;                                           \
             unaliasedOption = makeString(unaliasedOption, '=', invertedValueStr); \
         }                                                               \
-        return setOptionWithoutAlias(unaliasedOption.utf8().legacyCStringPointer(), verify);    \
+        return setOptionWithoutAlias(makeUTF8CString(unaliasedOption).legacyCStringPointer(), verify);    \
     }
 
     FOR_EACH_JSC_ALIASED_OPTION(FOR_EACH_OPTION)

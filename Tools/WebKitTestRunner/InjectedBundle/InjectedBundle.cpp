@@ -250,7 +250,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             beforeTest = toWTFString(options) == "BeforeTest"_s;
 
         if (auto options = stringValue(messageBodyDictionary, "JSCOptions"))
-            JSC::Options::setOptions(toWTFString(options).utf8().legacyCStringPointer());
+            JSC::Options::setOptions(makeUTF8CString(toWTFString(options)).legacyCStringPointer());
 
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
@@ -361,7 +361,7 @@ void InjectedBundle::setAllowedHosts(WKDictionaryRef settings)
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     if (auto jscOpts = stringValue(settings, "JSCOptions"))
-        JSC::Options::setOptions(toWTFString(jscOpts).utf8().legacyCStringPointer());
+        JSC::Options::setOptions(makeUTF8CString(toWTFString(jscOpts)).legacyCStringPointer());
 
     m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_dumpCSSPageBoxes = booleanValue(settings, "DumpCSSPageBoxes");
@@ -460,7 +460,7 @@ void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTest
     if (output.isEmpty())
         return;
     // FIXME: Do we really have to convert to UTF-8 instead of using toWK?
-    auto string = output.tryGetUTF8();
+    auto string = tryMakeUTF8CString(output);
     // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
     // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
     // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.

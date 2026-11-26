@@ -116,7 +116,7 @@ static void checkFrameworkVersion(xpc_object_t message)
     auto webkitBundleVersion = ASCIILiteral { WEBKIT_BUNDLE_VERSION };
     if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
         auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
-        logAndSetCrashLogMessage(errorMessage.utf8());
+        logAndSetCrashLogMessage(makeUTF8CString(errorMessage));
         crashDueWebKitFrameworkVersionMismatch();
     }
 }
@@ -129,7 +129,7 @@ static bool s_isWebProcess = false;
 static void setUserDirSuffix(String&& suffix)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (_set_user_dir_suffix(suffix.utf8().legacyCStringPointer())) {
+    if (_set_user_dir_suffix(makeUTF8CString(suffix).legacyCStringPointer())) {
         RELEASE_LOG(IPC, "Successfully set temp dir");
         confstr(_CS_DARWIN_USER_TEMP_DIR, nullptr, 0);
         return;
@@ -229,7 +229,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             } else if (serviceName == modelServiceName)
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(MODEL_SERVICE_INITIALIZER));
             else {
-                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName.utf8());
+                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", makeUTF8CString(serviceName));
                 return;
             }
 

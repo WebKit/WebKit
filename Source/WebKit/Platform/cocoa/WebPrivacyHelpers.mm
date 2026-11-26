@@ -567,8 +567,8 @@ public:
     TrackerAddressLookupInfo(WebCore::IPAddress&& network, unsigned netMaskLength, String&& owner, String&& host, CanBlock canBlock)
         : m_network { WTF::move(network) }
         , m_netMaskLength { netMaskLength }
-        , m_owner { owner.utf8() }
-        , m_host { host.utf8() }
+        , m_owner { makeUTF8CString(owner) }
+        , m_host { makeUTF8CString(host) }
         , m_canBlock { canBlock }
     {
     }

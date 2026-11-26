@@ -314,14 +314,14 @@ GVariant* MediaSessionGLib::getMetadataAsGVariant(std::optional<NowPlayingInfo> 
 
     g_variant_builder_add(&builder, "{sv}", "mpris:trackid", g_variant_new("o", DBUS_MPRIS_TRACK_PATH));
     g_variant_builder_add(&builder, "{sv}", "mpris:length", g_variant_new_int64(info->duration * 1000000));
-    g_variant_builder_add(&builder, "{sv}", "xesam:title", gVariantNewString(info->metadata.title.utf8()));
-    g_variant_builder_add(&builder, "{sv}", "xesam:album", gVariantNewString(info->metadata.album.utf8()));
+    g_variant_builder_add(&builder, "{sv}", "xesam:title", gVariantNewString(makeUTF8CString(info->metadata.title)));
+    g_variant_builder_add(&builder, "{sv}", "xesam:album", gVariantNewString(makeUTF8CString(info->metadata.album)));
     if (info->metadata.artwork)
-        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", gVariantNewString(info->metadata.artwork->src.utf8()));
+        g_variant_builder_add(&builder, "{sv}", "mpris:artUrl", gVariantNewString(makeUTF8CString(info->metadata.artwork->src)));
 
     GVariantBuilder artistBuilder;
     g_variant_builder_init(&artistBuilder, G_VARIANT_TYPE("as"));
-    gVariantBuilderAdd(&artistBuilder, "s", info->metadata.artist.utf8());
+    gVariantBuilderAdd(&artistBuilder, "s", makeUTF8CString(info->metadata.artist));
     g_variant_builder_add(&builder, "{sv}", "xesam:artist", g_variant_builder_end(&artistBuilder));
 
     return g_variant_builder_end(&builder);

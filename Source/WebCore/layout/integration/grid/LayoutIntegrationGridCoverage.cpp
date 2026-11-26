@@ -754,7 +754,7 @@ static void printLegacyGridReasons()
         stream << "\n";
     }
     stream << "---------------------------------------------------\n";
-    SAFE_WTFLOGALWAYS("%s", stream.release().utf8());
+    SAFE_WTFLOGALWAYS("%s", makeUTF8CString(stream.release()));
 }
 #endif
 

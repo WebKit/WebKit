@@ -50,7 +50,7 @@ void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const UTF
         nw_parameters_set_source_application(parameters, *sourceApplicationAuditToken);
 
     if (!attributedBundleIdentifier.isEmpty())
-        nw_parameters_set_attributed_bundle_identifier(parameters, attributedBundleIdentifier.utf8().legacyCStringPointer());
+        nw_parameters_set_attributed_bundle_identifier(parameters, makeUTF8CString(attributedBundleIdentifier).legacyCStringPointer());
 }
 
 void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker, IsRTC isRTC)

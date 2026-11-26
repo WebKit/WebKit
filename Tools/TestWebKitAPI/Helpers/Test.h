@@ -90,7 +90,7 @@ namespace WTF {
 
 inline std::ostream& operator<<(std::ostream& os, const String& string)
 {
-    return os << string.utf8().toStdString();
+    return os << makeUTF8CString(string).toStdString();
 }
 
 inline std::ostream& operator<<(std::ostream& os, const ASCIILiteral& string)

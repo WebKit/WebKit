@@ -47,11 +47,11 @@ void installBreakpadExceptionHandler()
         return;
 
     if (FileSystem::fileType(breakpadMinidumpDir) != FileSystem::FileType::Directory) {
-        SAFE_WTFLOGALWAYS("Breakpad dir \"%s\" is not a directory, not installing handler", breakpadMinidumpDir.utf8());
+        SAFE_WTFLOGALWAYS("Breakpad dir \"%s\" is not a directory, not installing handler", makeUTF8CString(breakpadMinidumpDir));
         return;
     }
 
-    static NeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler(google_breakpad::MinidumpDescriptor(breakpadMinidumpDir.utf8().legacyCStringPointer()), nullptr,
+    static NeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler(google_breakpad::MinidumpDescriptor(makeUTF8CString(breakpadMinidumpDir).legacyCStringPointer()), nullptr,
         [](const google_breakpad::MinidumpDescriptor&, void*, bool succeeded) -> bool {
             return succeeded;
         }, nullptr, true, -1);

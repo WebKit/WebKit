@@ -55,32 +55,32 @@ KeyedEncoderGlib::~KeyedEncoderGlib()
 void KeyedEncoderGlib::encodeBytes(const String& key, std::span<const uint8_t> bytes)
 {
     GRefPtr gBytes = gBytesNewStatic(bytes);
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
 }
 
 void KeyedEncoderGlib::encodeBool(const String& key, bool value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_boolean(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_boolean(value));
 }
 
 void KeyedEncoderGlib::encodeUInt32(const String& key, uint32_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_uint32(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_uint32(value));
 }
     
 void KeyedEncoderGlib::encodeUInt64(const String& key, uint64_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_uint64(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_uint64(value));
 }
 
 void KeyedEncoderGlib::encodeInt32(const String& key, int32_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_int32(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_int32(value));
 }
 
 void KeyedEncoderGlib::encodeInt64(const String& key, int64_t value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_int64(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_int64(value));
 }
 
 void KeyedEncoderGlib::encodeFloat(const String& key, float value)
@@ -90,12 +90,12 @@ void KeyedEncoderGlib::encodeFloat(const String& key, float value)
 
 void KeyedEncoderGlib::encodeDouble(const String& key, double value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), g_variant_new_double(value));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), g_variant_new_double(value));
 }
 
 void KeyedEncoderGlib::encodeString(const String& key, const String& value)
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", key.utf8(), gVariantNewString(value.utf8()));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(key), gVariantNewString(makeUTF8CString(value)));
 }
 
 void KeyedEncoderGlib::beginObject(const String& key)
@@ -108,7 +108,7 @@ void KeyedEncoderGlib::beginObject(const String& key)
 void KeyedEncoderGlib::endObject()
 {
     GVariantBuilder* builder = m_variantBuilderStack.takeLast();
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", m_objectStack.last().first.utf8(), g_variant_builder_end(builder));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(m_objectStack.last().first), g_variant_builder_end(builder));
     m_objectStack.removeLast();
 }
 
@@ -130,7 +130,7 @@ void KeyedEncoderGlib::endArrayElement()
 
 void KeyedEncoderGlib::endArray()
 {
-    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", m_arrayStack.last().first.utf8(), g_variant_builder_end(m_arrayStack.last().second.get()));
+    gVariantBuilderAdd(m_variantBuilderStack.last(), "{sv}", makeUTF8CString(m_arrayStack.last().first), g_variant_builder_end(m_arrayStack.last().second.get()));
     m_arrayStack.removeLast();
 }
 

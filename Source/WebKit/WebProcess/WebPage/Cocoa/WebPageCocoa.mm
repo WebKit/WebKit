@@ -1296,7 +1296,7 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
             if (!removedParameters.isEmpty()) {
                 send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
                 auto removedParametersString = makeStringByJoining(borrow(removedParameters).get(), ", "_s);
-                WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Removed all query parameters after cross-site navigation: %s", removedParametersString.utf8());
+                WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Removed all query parameters after cross-site navigation: %s", makeUTF8CString(removedParametersString));
             }
             return { sanitizedURL, removedParameters.isEmpty() ? DidFilterLinkDecoration::No : DidFilterLinkDecoration::Yes };
         }
@@ -1331,7 +1331,7 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
         if (trigger == LinkDecorationFilteringTrigger::Navigation)
             send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
         auto removedParametersString = makeStringByJoining(removedParameters, ", "_s);
-        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Blocked known tracking query parameters: %s", removedParametersString.utf8());
+        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Blocked known tracking query parameters: %s", makeUTF8CString(removedParametersString));
     }
 
     return { sanitizedURL, DidFilterLinkDecoration::Yes };

@@ -71,7 +71,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
         auto protocolsSpan = unsafeMakeSpan(protocols.get(), protocolList.size());
         unsigned i = 0;
         for (auto& subprotocol : protocolList)
-            protocolsSpan[i++] = gStrdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>).utf8());
+            protocolsSpan[i++] = gStrdup(makeUTF8CString(subprotocol.trim(isASCIIWhitespaceWithoutFF<char16_t>)));
     }
 
     {
@@ -83,7 +83,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
 
     g_signal_connect(msg, "request-certificate-password", G_CALLBACK(+[](SoupMessage* msg, GTlsPassword* tlsPassword, WebSocketTask* task) -> gboolean {
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificatePassword(WebCore::soupURIToURL(soup_message_get_uri(msg)), tlsPassword);
-        auto password = protect(protect(task->m_channel)->session()->networkStorageSession())->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
+        auto password = makeUTF8CString(protect(protect(task->m_channel)->session()->networkStorageSession())->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password());
         g_tls_password_set_value(tlsPassword, reinterpret_cast<const unsigned char*>(password.data()), password.length());
         soup_message_tls_client_certificate_password_request_complete(msg);
         return TRUE;
@@ -259,7 +259,7 @@ void WebSocketTask::close(int32_t code, const String& reason)
         code = SOUP_WEBSOCKET_CLOSE_NO_STATUS;
 
     if (soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
-        soup_websocket_connection_close(m_connection.get(), code, reason.utf8().legacyCStringPointer());
+        soup_websocket_connection_close(m_connection.get(), code, makeUTF8CString(reason).legacyCStringPointer());
 }
 
 void WebSocketTask::cancel()

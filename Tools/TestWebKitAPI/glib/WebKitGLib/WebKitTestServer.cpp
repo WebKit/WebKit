@@ -96,12 +96,12 @@ UTF8CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
     g_assert_false(m_baseWebSocketURL.isNull());
     g_assert_true(path && *path == '/');
-    return URL(m_baseWebSocketURL, String::fromLatin1(path + 1)).string().utf8(); // Ignore the leading slash.
+    return makeUTF8CString(URL(m_baseWebSocketURL, String::fromLatin1(path + 1)).string()); // Ignore the leading slash.
 }
 
 UTF8CString WebKitTestServer::getURIForPath(const char* path) const
 {
-    return URL(m_baseURL, String::fromLatin1(path)).string().utf8();
+    return makeUTF8CString(URL(m_baseURL, String::fromLatin1(path)).string());
 }
 
 unsigned WebKitTestServer::port() const

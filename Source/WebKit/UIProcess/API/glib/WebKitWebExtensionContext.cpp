@@ -227,7 +227,7 @@ static gboolean webkitWebExtensionContextInitableInit(GInitable* initable, GCanc
         for (Ref internalError : context->errors()) {
             if (internalError->domain() == WEBKIT_CONTEXT_ERROR_DOMAIN) {
                 g_set_error_literal(error, webkit_web_extension_context_error_quark(),
-                    toWebKitWebExtensionContextError(internalError->errorCode()), internalError->localizedDescription().utf8().legacyCStringPointer());
+                    toWebKitWebExtensionContextError(internalError->errorCode()), makeUTF8CString(internalError->localizedDescription()).legacyCStringPointer());
                 return FALSE;
             }
         }
@@ -320,7 +320,7 @@ const gchar* webkit_web_extension_context_get_base_uri(WebKitWebExtensionContext
     auto baseURI = priv->context->baseURL();
     g_return_val_if_fail(!baseURI.isEmpty(), nullptr);
 
-    priv->baseURI = baseURI.string().utf8();
+    priv->baseURI = makeUTF8CString(baseURI.string());
     return priv->baseURI.legacyCStringPointer();
 }
 
@@ -379,7 +379,7 @@ const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensio
     if (optionsPageURI.isEmpty())
         return nullptr;
 
-    priv->optionsPageURI = optionsPageURI.string().utf8();
+    priv->optionsPageURI = makeUTF8CString(optionsPageURI.string());
     return priv->optionsPageURI.legacyCStringPointer();
 }
 
@@ -455,7 +455,7 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
     if (overrideNewTabPageURI.isEmpty())
         return nullptr;
 
-    priv->overrideNewTabPageURI = overrideNewTabPageURI.string().utf8();
+    priv->overrideNewTabPageURI = makeUTF8CString(overrideNewTabPageURI.string());
     return priv->overrideNewTabPageURI.legacyCStringPointer();
 }
 
@@ -493,7 +493,7 @@ void webkit_web_extension_context_load_background_content(WebKitWebExtensionCont
     context->priv->context->loadBackgroundContent([task = WTF::move(task)](RefPtr<API::Error> error) {
         if (error) {
             SAFE_G_TASK_RETURN_NEW_ERROR(task.get(), webkit_web_extension_context_error_quark(),
-                toWebKitWebExtensionContextError(error->errorCode()), "%s", error->localizedDescription().utf8());
+                toWebKitWebExtensionContextError(error->errorCode()), "%s", makeUTF8CString(error->localizedDescription()));
         } else
             g_task_return_boolean(task.get(), TRUE);
     });

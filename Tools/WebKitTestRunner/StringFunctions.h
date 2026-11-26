@@ -73,7 +73,7 @@ inline WKRetainPtr<WKStringRef> toWK(const WTF::UTF8CString& string)
 
 inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
 {
-    return toWK(string.utf8());
+    return toWK(makeUTF8CString(string));
 }
 
 inline WKRetainPtr<WKURLRef> toWKURL(const WTF::UTF8CString& string)
@@ -83,12 +83,12 @@ inline WKRetainPtr<WKURLRef> toWKURL(const WTF::UTF8CString& string)
 
 inline WKRetainPtr<WKURLRef> toWKURL(const WTF::String& string)
 {
-    return toWKURL(string.utf8());
+    return toWKURL(makeUTF8CString(string));
 }
 
 inline WKRetainPtr<WKURLRef> toWKURL(WKURLRef baseURL, const WTF::String& relativeURL)
 {
-    return adoptWK(WKURLCreateWithBaseURL(baseURL, relativeURL.utf8().legacyCStringPointer()));
+    return adoptWK(WKURLCreateWithBaseURL(baseURL, makeUTF8CString(relativeURL).legacyCStringPointer()));
 }
 
 inline RefPtr<OpaqueJSString> toJS(WKStringRef string)

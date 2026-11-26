@@ -232,7 +232,7 @@ String cookieStringForStorage(const String& scriptValue)
     // Encode the string as UTF-8 and create an ISO-Latin-1 string of those bytes. Constructing a
     // string with the UTF-8 bytes reinterpreted as Latin-1 is the way to get CFNetwork to preserve
     // those UTF-8 bytes when parsing/storing the cookie.
-    return String(byteCast<Latin1Character>(scriptValue.utf8().span()));
+    return String(byteCast<Latin1Character>(makeUTF8CString(scriptValue).span()));
 }
 
 } // namespace CookieUtil

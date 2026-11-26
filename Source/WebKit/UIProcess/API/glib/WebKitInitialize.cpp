@@ -76,7 +76,7 @@ static void initializeRemoteInspectorServer()
             ipAddress = ipAddress.substring(1, hostLength - 2);
         }
 
-        return adoptGRef(g_inet_socket_address_new_from_string(ipAddress.utf8().legacyCStringPointer(), *port));
+        return adoptGRef(g_inet_socket_address_new_from_string(makeUTF8CString(ipAddress).legacyCStringPointer(), *port));
     };
 
     auto inspectorHTTPAddress = parseAddress(httpAddress);
@@ -95,7 +95,7 @@ static void initializeRemoteInspectorServer()
 
     if (inspectorHTTPAddress) {
         if (RemoteInspectorHTTPServer::singleton().start(WTF::move(inspectorHTTPAddress), Inspector::RemoteInspectorServer::singleton().port()))
-            Inspector::RemoteInspector::setInspectorServerAddress(RemoteInspectorHTTPServer::singleton().inspectorServerAddress().utf8());
+            Inspector::RemoteInspector::setInspectorServerAddress(makeUTF8CString(RemoteInspectorHTTPServer::singleton().inspectorServerAddress()));
     } else
         Inspector::RemoteInspector::setInspectorServerAddress(UTF8CString::unsafeFromUTF8(address));
 }

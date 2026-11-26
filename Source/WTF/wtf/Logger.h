@@ -378,18 +378,18 @@ private:
         auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
-        SAFE_WTFLOG(&channel, "%s", logMessage.utf8());
+        SAFE_WTFLOG(&channel, "%s", makeUTF8CString(logMessage));
 #elif USE(OS_LOG)
-        osLog(channel, logMessage.utf8());
+        osLog(channel, makeUTF8CString(logMessage));
 #elif OS(ANDROID)
-        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage));
 #elif ENABLE(JOURNALD_LOG)
         if (WTFShouldLogToJournal())
-            SAFE_SD_JOURNAL_SEND("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8());
+            SAFE_SD_JOURNAL_SEND("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", makeUTF8CString(logMessage));
         else
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage));
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8());
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage));
 #endif
 
         sendMessageToObservers(channel, level, { }, arguments...);
@@ -415,24 +415,24 @@ private:
         auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
 #if RELEASE_LOG_DISABLED
-        SAFE_WTFLOG_VERBOSE(file, line, function, &channel, "%s", logMessage.utf8());
+        SAFE_WTFLOG_VERBOSE(file, line, function, &channel, "%s", makeUTF8CString(logMessage));
 #elif USE(OS_LOG)
-        osLog(channel, logMessage.utf8());
+        osLog(channel, makeUTF8CString(logMessage));
         UNUSED_PARAM(file);
         UNUSED_PARAM(line);
         UNUSED_PARAM(function);
 #elif OS(ANDROID)
-        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s FILE=%s:%d: %s", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+        SAFE_ANDROID_LOG_PRINT(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s FILE=%s:%d: %s", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
 #elif ENABLE(JOURNALD_LOG)
         if (WTFShouldLogToJournal()) {
             auto fileString = makeString("CODE_FILE="_s, unsafeSpan(file));
             auto lineString = makeString("CODE_LINE="_s, line);
-            SAFE_SD_JOURNAL_SEND_WITH_LOCATION(fileString.utf8(), lineString.utf8(), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8());
+            SAFE_SD_JOURNAL_SEND_WITH_LOCATION(makeUTF8CString(fileString), makeUTF8CString(lineString), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", makeUTF8CString(logMessage));
         } else {
-            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+            SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s [%s:%d %s]\n", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
         }
 #else
-        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), logMessage.utf8(), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
+        SAFE_FPRINTF(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", UTF8CStringView::unsafeFromUTF8(channel.name), makeUTF8CString(logMessage), UTF8CStringView::unsafeFromUTF8(file), line, UTF8CStringView::unsafeFromUTF8(function));
 #endif
 
         sendMessageToObservers(channel, level, { { file, function, line } }, arguments...);

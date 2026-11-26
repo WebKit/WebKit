@@ -268,7 +268,7 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
     UNUSED_PARAM(process); // TODO: add support for getting PID of other WebKit processes.
     pid_t pid = getpid();
 
-    return !sandboxCheck(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), ioKitClass.utf8());
+    return !sandboxCheck(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), makeUTF8CString(ioKitClass));
 }
 
 bool Internals::isIOKitAvailable()
@@ -363,7 +363,7 @@ bool Internals::emitLogs(const String& logString, unsigned logCount, bool useMai
 {
     auto blockPtr = makeBlockPtr([logString, logCount] {
         for (unsigned i = 0; i < logCount; i++)
-            RELEASE_LOG(Testing, "%s", logString.utf8());
+            RELEASE_LOG(Testing, "%s", makeUTF8CString(logString));
     });
     if (useMainThread)
         dispatch_async(mainDispatchQueueSingleton(), blockPtr.get());

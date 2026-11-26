@@ -44,17 +44,17 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
         if (!g_strcmp0(methodName, "GetAttributeValue")) {
             const char* name;
             g_variant_get(parameters, "(&s)", &name);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentAttribute(String::fromUTF8(name)).utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", makeUTF8CString(atspiObject->documentAttribute(String::fromUTF8(name)))));
         } else if (!g_strcmp0(methodName, "GetAttributes")) {
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(a{ss})"));
             g_variant_builder_open(&builder, G_VARIANT_TYPE("a{ss}"));
             auto attributes = atspiObject->documentAttributes();
             for (const auto& it : attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", makeUTF8CString(it.key), makeUTF8CString(it.value));
             g_variant_builder_close(&builder);
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
         } else if (!g_strcmp0(methodName, "GetLocale"))
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->documentLocale().utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", makeUTF8CString(atspiObject->documentLocale())));
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {

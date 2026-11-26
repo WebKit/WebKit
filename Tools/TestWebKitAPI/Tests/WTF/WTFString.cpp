@@ -81,7 +81,7 @@ TEST(WTF, StringStartsWithEmptyVsNull)
 
 static inline UTF8CString testStringNumberFixedPrecision(double number)
 {
-    return String::numberToStringFixedPrecision(number).utf8();
+    return makeUTF8CString(String::numberToStringFixedPrecision(number));
 }
 
 TEST(WTF, StringNumberFixedPrecision)
@@ -128,7 +128,7 @@ TEST(WTF, StringNumberFixedPrecision)
 
 static inline UTF8CString testStringNumberFixedWidth(double number)
 {
-    return String::numberToStringFixedWidth(number, 6).utf8();
+    return makeUTF8CString(String::numberToStringFixedWidth(number, 6));
 }
 
 TEST(WTF, StringNumberFixedWidth)
@@ -173,7 +173,7 @@ TEST(WTF, StringNumberFixedWidth)
 
 static inline UTF8CString testStringNumber(double number)
 {
-    return String::number(number).utf8();
+    return makeUTF8CString(String::number(number));
 }
 
 TEST(WTF, StringNumber)
@@ -268,7 +268,7 @@ TEST(WTF, StringReplaceWithLiteral)
     testString = String::fromUTF8("résumé");
     EXPECT_FALSE(testString.is8Bit());
     testString = makeStringByReplacingAll(testString, '3', "NotFound"_s);
-    EXPECT_EQ(UTF8CString { u8"résumé"_span }, testString.utf8());
+    EXPECT_EQ(UTF8CString { u8"résumé"_span }, makeUTF8CString(testString));
 }
 
 TEST(WTF, StringIsolatedCopy)
@@ -535,7 +535,7 @@ TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
     char16_t orphanHighSurrogate[] = { 'a', 'b', 'c', 0xD800, 'd', 'e', 'f', 0 };
     String stringWithOrphanHigh = String(std::span { orphanHighSurrogate, 7 });
 
-    auto result = stringWithOrphanHigh.utf8();
+    auto result = makeUTF8CString(stringWithOrphanHigh);
     // U+FFFD in UTF-8 is 0xEF 0xBF 0xBD
     EXPECT_EQ(UTF8CString { u8"abc\xEF\xBF\xBD" "def"_span }, result);
 
@@ -543,14 +543,14 @@ TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
     char16_t orphanLowSurrogate[] = { 'x', 0xDC00, 'y', 0 };
     String stringWithOrphanLow = String(std::span { orphanLowSurrogate, 3 });
 
-    auto resultLow = stringWithOrphanLow.utf8();
+    auto resultLow = makeUTF8CString(stringWithOrphanLow);
     EXPECT_EQ(UTF8CString { u8"x\xEF\xBF\xBDy"_span }, resultLow);
 
     // Create a string with two consecutive orphan surrogates
     char16_t doubleOrphan[] = { 0xD800, 0xD800, 0 };
     String stringWithDoubleOrphan = String(std::span { doubleOrphan, 2 });
 
-    auto resultDouble = stringWithDoubleOrphan.utf8();
+    auto resultDouble = makeUTF8CString(stringWithDoubleOrphan);
     // Each orphan should become one replacement character
     EXPECT_EQ(UTF8CString { u8"\xEF\xBF\xBD\xEF\xBF\xBD"_span }, resultDouble);
 
@@ -558,7 +558,7 @@ TEST(WTF, StringUTF8ConversionInvalidUTF16LenientMode)
     char16_t reversedPair[] = { 0xDC00, 0xD800, 0 };
     String stringWithReversed = String(std::span { reversedPair, 2 });
 
-    auto resultReversed = stringWithReversed.utf8();
+    auto resultReversed = makeUTF8CString(stringWithReversed);
     // Both are invalid, should become two replacement characters
     EXPECT_EQ(UTF8CString { u8"\xEF\xBF\xBD\xEF\xBF\xBD"_span }, resultReversed);
 }
@@ -574,7 +574,7 @@ TEST(WTF, StringUTF8ConversionLongStrings)
             auto bytes = utf8Bytes(string);
             EXPECT_EQ(bytes.size(), bytes.capacity());
             EXPECT_EQ(string, String::fromUTF8(bytes.span()));
-            EXPECT_EQ(string, String::fromUTF8(string.utf8().span()));
+            EXPECT_EQ(string, String::fromUTF8(makeUTF8CString(string).span()));
         }
 
         for (char16_t filler : { 0x61, 0xB6, 0x2603 }) {
@@ -588,8 +588,8 @@ TEST(WTF, StringUTF8ConversionLongStrings)
                 auto bytes = utf8Bytes(string);
                 EXPECT_EQ(bytes.size(), bytes.capacity());
                 EXPECT_EQ(expected, String::fromUTF8(bytes.span()));
-                EXPECT_EQ(expected, String::fromUTF8(string.utf8().span()));
-                EXPECT_FALSE(string.tryGetUTF8(ConversionMode::Strict).has_value());
+                EXPECT_EQ(expected, String::fromUTF8(makeUTF8CString(string).span()));
+                EXPECT_FALSE(tryMakeUTF8CString(string, ConversionMode::Strict).has_value());
             }
         }
     }

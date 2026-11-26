@@ -69,8 +69,8 @@ RTCNetwork::RTCNetwork(String&& name, String&& description, IPAddress prefix, in
 
 std::unique_ptr<webrtc::Network> RTCNetwork::value() const
 {
-    auto nameUTF8 = name.utf8();
-    auto descriptionUTF8 = description.utf8();
+    auto nameUTF8 = makeUTF8CString(name);
+    auto descriptionUTF8 = makeUTF8CString(description);
     webrtc::Network network(toStdStringView(nameUTF8), toStdStringView(descriptionUTF8), prefix.rtcAddress(), prefixLength, webrtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
@@ -111,7 +111,7 @@ webrtc::SocketAddress SocketAddress::rtcAddress() const
     webrtc::SocketAddress result;
     result.SetPort(port);
     result.SetScopeID(scopeID);
-    auto hostnameUTF8 = hostname.utf8();
+    auto hostnameUTF8 = makeUTF8CString(hostname);
     result.SetIP(toStdStringView(hostnameUTF8));
     if (ipAddress)
         result.SetResolvedIP(ipAddress->rtcAddress());

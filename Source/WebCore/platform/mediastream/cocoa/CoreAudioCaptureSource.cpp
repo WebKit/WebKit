@@ -388,7 +388,7 @@ void CoreAudioCaptureSource::handleNewCurrentMicrophoneDevice(const CaptureDevic
     if (!isProducingData() || persistentID() == device.persistentId())
         return;
 
-    RELEASE_LOG_INFO(WebRTC, "CoreAudioCaptureSource switching from '%s' to '%s'", name().utf8(), device.label().utf8());
+    RELEASE_LOG_INFO(WebRTC, "CoreAudioCaptureSource switching from '%s' to '%s'", makeUTF8CString(name()), makeUTF8CString(device.label()));
 
     setName(AtomString { device.label() });
     setPersistentId(device.persistentId());

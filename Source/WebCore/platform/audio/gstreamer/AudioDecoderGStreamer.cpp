@@ -100,7 +100,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
     auto& scanner = GStreamerRegistryScanner::singleton();
     auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
     if (!lookupResult) {
-        GST_WARNING("No decoder found for codec %s", codecName.utf8());
+        GST_WARNING("No decoder found for codec %s", makeUTF8CString(codecName));
         callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
         return;
     }

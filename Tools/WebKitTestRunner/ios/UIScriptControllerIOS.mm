@@ -1583,7 +1583,7 @@ void UIScriptControllerIOS::setFocusStartsInputSessionPolicy(JSStringRef policyJ
     else if (policyString == "auto"_s)
         webView.get().focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
     else
-        SAFE_WTFLOGALWAYS("setFocusStartsInputSessionPolicy received an invalid policy `%s`.", policyString.utf8());
+        SAFE_WTFLOGALWAYS("setFocusStartsInputSessionPolicy received an invalid policy `%s`.", makeUTF8CString(policyString));
 }
 
 // FIXME: Write this in terms of HIDEventGenerator once we know how to reset caps lock state

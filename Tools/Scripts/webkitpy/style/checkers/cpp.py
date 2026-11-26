@@ -3779,7 +3779,8 @@ def check_posix_string_wrappers(clean_lines, line_number, file_state, error):
     _check_string_wrappers(clean_lines, line_number, file_state, error, _POSIX_STRING_WRAPPERS, '<wtf/posix/POSIXExtras.h>', 'runtime/posix_string_wrappers', {})
 
 
-_STRING_EXPRESSION = r'((?:[A-Za-z_]\w*(?:\(\s*\))?\s*(?:\.|->)\s*)*[A-Za-z_]\w*(?:\(\s*\))?)'
+_STRING_CHAIN = r'(?:[A-Za-z_]\w*(?:\(\s*\))?\s*(?:\.|->)\s*)*[A-Za-z_]\w*(?:\(\s*\))?'
+_STRING_EXPRESSION = r'(makeUTF8CString\(\s*' + _STRING_CHAIN + r'\s*\)|' + _STRING_CHAIN + r')'
 _LEGACY_CSTRING_POINTER_WITH_LENGTH_PATTERN = re.compile(
     r'\b' + _STRING_EXPRESSION + r'\s*\.\s*legacyCStringPointer\s*\(\s*\)\s*,\s*' + _STRING_EXPRESSION + r'\s*\.\s*(?:length|size)\s*\(\s*\)')
 
@@ -3908,7 +3909,7 @@ def check_log_string_conversions(clean_lines, line_number, file_state, error):
             continue
         if pointer_call.group(1):
             error(line_number, 'runtime/log_string_conversion', 4,
-                  "Pass '.utf8()' instead of '.%s().data()' to '%s()'. It converts typed strings itself, and %s loses non-ASCII characters."
+                  "Pass 'makeUTF8CString(string)' instead of 'string.%s().data()' to '%s()'. It converts typed strings itself, and %s loses non-ASCII characters."
                   % (pointer_call.group(1), macro, 'ASCII conversion' if pointer_call.group(1) == 'ascii' else 'a Latin-1 pointer'))
         else:
             error(line_number, 'runtime/log_string_conversion', 4,

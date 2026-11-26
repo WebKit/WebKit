@@ -147,7 +147,7 @@ String stringFromFileSystemRepresentation(UTF8CStringView path)
 
 UTF8CString fileSystemRepresentation(const String& path)
 {
-    return path.utf8();
+    return makeUTF8CString(path);
 }
 #endif
 
@@ -185,8 +185,8 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
 #endif // PLATFORM(PLAYSTATION)
 
     auto templatePath = makeString(temporaryDirectory.isEmpty() ? defaultTemporaryDirectory() : temporaryDirectory, "/"_s, prefix, "-XXXXXX"_s, suffix);
-    UTF8CString templatePathUTF8 = templatePath.utf8();
-    UTF8CString suffixUTF8 = suffix.utf8();
+    UTF8CString templatePathUTF8 = makeUTF8CString(templatePath);
+    UTF8CString suffixUTF8 = makeUTF8CString(suffix);
 
 #if HAVE(MKOSTEMPS)
     auto handle = FileHandle::adopt(mkostemps(byteCast<char>(templatePathUTF8.mutableSpanIncludingNullTerminator().data()), suffixUTF8.length(), O_CLOEXEC));

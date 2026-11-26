@@ -77,7 +77,7 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
 String PlatformPasteboard::readString(size_t, const String& type) const
 {
     struct wpe_pasteboard_string string = { nullptr, 0 };
-    wpe_pasteboard_get_string(m_pasteboard, type.utf8().legacyCStringPointer(), &string);
+    wpe_pasteboard_get_string(m_pasteboard, makeUTF8CString(type).legacyCStringPointer(), &string);
     if (!string.length)
         return String();
 
@@ -93,8 +93,8 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     static constexpr auto plainText = "text/plain;charset=utf-8"_s;
     static constexpr auto htmlText = "text/html"_s;
 
-    auto textString = content.text.utf8();
-    auto markupString = content.markup.utf8();
+    auto textString = makeUTF8CString(content.text);
+    auto markupString = makeUTF8CString(content.markup);
 
     IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     std::array<struct wpe_pasteboard_string_pair, 2> pairs = { {
@@ -123,8 +123,8 @@ void PlatformPasteboard::write(const String& type, const String& string)
         { { nullptr, 0 }, { nullptr, 0 } },
     };
 
-    auto typeUTF8 = type.utf8();
-    auto stringUTF8 = string.utf8();
+    auto typeUTF8 = makeUTF8CString(type);
+    auto stringUTF8 = makeUTF8CString(string);
     initializePasteboardString(&pairs[0].type, typeUTF8.span());
     initializePasteboardString(&pairs[0].string, stringUTF8.span());
     struct wpe_pasteboard_string_map map = { pairs, 1 };

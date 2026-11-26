@@ -729,12 +729,12 @@ Node::NeedsPostConnectionSteps HTMLAttachmentElement::insertionSteps(InsertionTy
         auto now = WTF::MonotonicTime::now();
         if (lastInsertion && lastRemoval && lastRemoval.attachment() != reinterpret_cast<uintptr_t>(this) && lastRemoval.document() == reinterpret_cast<uintptr_t>(document.ptr())) {
             RELEASE_LOG(Editing, "HTMLAttachmentElement - quick insert(A)-remove(A)-insert(B) within %fs of the first document[%p] load, stacks below:", document->monotonicTimestamp(), reinterpret_cast<const void*>(lastRemoval.document()));
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 1st insertion %fms ago:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), lastInsertion.uniqueIdentifier().utf8(), (now - lastInsertion.time()).milliseconds(), compactStackTrace(lastInsertion.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 1st insertion %fms ago:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), makeUTF8CString(lastInsertion.uniqueIdentifier()), (now - lastInsertion.time()).milliseconds(), compactStackTrace(lastInsertion.stackTrace()));
             lastInsertion.reset();
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - removal %fms ago:%s", reinterpret_cast<const void*>(lastRemoval.attachment()), lastRemoval.uniqueIdentifier().utf8(), (now - lastRemoval.time()).milliseconds(), compactStackTrace(lastRemoval.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - removal %fms ago:%s", reinterpret_cast<const void*>(lastRemoval.attachment()), makeUTF8CString(lastRemoval.uniqueIdentifier()), (now - lastRemoval.time()).milliseconds(), compactStackTrace(lastRemoval.stackTrace()));
             lastRemoval.reset();
             lastInsertion.capture(*this, now);
-            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 2nd insertion:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), lastInsertion.uniqueIdentifier().utf8(), compactStackTrace(lastInsertion.stackTrace()));
+            RELEASE_LOG(Editing, "HTMLAttachmentElement[%p uuid=%s] - 2nd insertion:%s", reinterpret_cast<const void*>(lastInsertion.attachment()), makeUTF8CString(lastInsertion.uniqueIdentifier()), compactStackTrace(lastInsertion.stackTrace()));
         } else {
             lastInsertion.capture(*this, now);
             lastRemoval.reset();
@@ -1036,7 +1036,7 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
 
 // FIXME: Remove after rdar://136373445 is fixed.
 #if PLATFORM(MAC)
-    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", uniqueIdentifier().utf8(), attachmentType().utf8());
+    RELEASE_LOG(Editing, "HTMLAttachmentElement[uuid=%s] requestAttachmentIcon with type='%s'", makeUTF8CString(uniqueIdentifier()), makeUTF8CString(attachmentType()));
 #endif
 
     dispatchEvent(Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));

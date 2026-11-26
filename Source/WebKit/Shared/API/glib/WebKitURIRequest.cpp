@@ -129,7 +129,7 @@ const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), 0);
 
-    request->priv->uri = request->priv->resourceRequest.url().string().utf8();
+    request->priv->uri = makeUTF8CString(request->priv->resourceRequest.url().string());
     return request->priv->uri.legacyCStringPointer();
 }
 
@@ -200,7 +200,7 @@ const gchar* webkit_uri_request_get_http_method(WebKitURIRequest* request)
         return nullptr;
 
     if (!request->priv->httpMethod)
-        request->priv->httpMethod = g_intern_string(request->priv->resourceRequest.httpMethod().utf8().legacyCStringPointer());
+        request->priv->httpMethod = g_intern_string(makeUTF8CString(request->priv->resourceRequest.httpMethod()).legacyCStringPointer());
     return request->priv->httpMethod;
 }
 

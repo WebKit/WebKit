@@ -49,10 +49,10 @@ struct _WebKitWebExtensionMatchPattern {
     }
 
     RefPtr<WebExtensionMatchPattern> matchPattern;
-    UTF8CString string { matchPattern->string().utf8() };
-    UTF8CString scheme { matchPattern->scheme().utf8() };
-    UTF8CString host { matchPattern->host().utf8() };
-    UTF8CString path { matchPattern->path().utf8() };
+    UTF8CString string { makeUTF8CString(matchPattern->string()) };
+    UTF8CString scheme { makeUTF8CString(matchPattern->scheme()) };
+    UTF8CString host { makeUTF8CString(matchPattern->host()) };
+    UTF8CString path { makeUTF8CString(matchPattern->path()) };
     bool matchesAllURLs { matchPattern->matchesAllURLs() };
     bool matchesAllHosts { matchPattern->matchesAllHosts() };
     int referenceCount { 1 };
@@ -212,7 +212,7 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_stri
 
     if (error && internalError) {
         SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", makeUTF8CString(internalError->localizedDescription()));
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);
@@ -242,7 +242,7 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_sche
 
     if (error && internalError) {
         SAFE_G_SET_ERROR(error, webkit_web_extension_match_pattern_error_quark(),
-            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionMatchPatternError(internalError->errorCode()), "%s", makeUTF8CString(internalError->localizedDescription()));
     }
 
     return webkitWebExtensionMatchPatternCreate(matchPattern);

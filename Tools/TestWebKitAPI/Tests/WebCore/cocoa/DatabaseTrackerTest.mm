@@ -200,10 +200,10 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     String fullWebDatabasePath = databaseTracker->fullPathForDatabase(origin, webDatabaseName, false);
     createFileAtPath(fullWebDatabasePath);
 
-    posixChmod(fullWebDatabasePath.utf8(), 555);
+    posixChmod(makeUTF8CString(fullWebDatabasePath), 555);
 
 #if !PLATFORM(IOS_FAMILY)
-    posixChflags(fullWebDatabasePath.utf8(), UF_IMMUTABLE);
+    posixChflags(makeUTF8CString(fullWebDatabasePath), UF_IMMUTABLE);
 #endif
 
     EXPECT_FALSE(databaseTracker->deleteOrigin(origin));
@@ -214,10 +214,10 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
     EXPECT_EQ((unsigned)1, databaseTracker->databaseNames(origin).size());
 
-    posixChmod(fullWebDatabasePath.utf8(), 666);
+    posixChmod(makeUTF8CString(fullWebDatabasePath), 666);
 
 #if !PLATFORM(IOS_FAMILY)
-    posixChflags(fullWebDatabasePath.utf8(), 0);
+    posixChflags(makeUTF8CString(fullWebDatabasePath), 0);
 #endif
 
     EXPECT_TRUE(FileSystem::deleteFile(fullWebDatabasePath));

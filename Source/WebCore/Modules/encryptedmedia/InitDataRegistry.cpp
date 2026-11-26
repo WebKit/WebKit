@@ -117,7 +117,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
         kidsArray->pushString(base64URLEncodeToString(buffer->span()));
     object->setArray("kids"_s, WTF::move(kidsArray));
 
-    return SharedBuffer::create(object->toJSONString().utf8().span());
+    return SharedBuffer::create(makeUTF8CString(object->toJSONString()).span());
 }
 
 std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const SharedBuffer& buffer)

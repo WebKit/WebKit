@@ -220,7 +220,7 @@ static inline size_t capitalizeCharacter(StringView textContent, unsigned startC
 // the rest. We determine the titlecased prefix and return only that.
 static size_t capitalizeWordWithLocale(StringView textContent, unsigned startOffset, unsigned endOffset, const AtomString& locale, StringBuilder& output)
 {
-    auto localeUTF8 = locale.string().utf8();
+    auto localeUTF8 = makeUTF8CString(locale.string());
     unsigned wordLength = std::min(endOffset, textContent.length()) - startOffset;
     if (!wordLength)
         return 0;

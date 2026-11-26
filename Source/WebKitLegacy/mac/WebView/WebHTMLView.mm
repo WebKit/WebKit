@@ -3945,7 +3945,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 
 #ifdef LOG_TIMES
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().utf8(), thisTime);
+    LOG(Timing, "%s draw seconds = %f", makeUTF8CString(widget->part()->baseURL().URL()), thisTime);
 #endif
 
 #if PLATFORM(MAC)

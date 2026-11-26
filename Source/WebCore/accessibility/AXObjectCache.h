@@ -125,8 +125,8 @@ struct AXTreeData {
     void dumpToStderr() const
     {
         for (const String& warning : warnings)
-            SAFE_FPRINTF(stderr, "WARNING: %s\n", warning.utf8());
-        SAFE_FPRINTF(stderr, "==AX Trees (PID %d)==\n%s\n%s\n", getpid(), liveTree.utf8(), isolatedTree.utf8());
+            SAFE_FPRINTF(stderr, "WARNING: %s\n", makeUTF8CString(warning));
+        SAFE_FPRINTF(stderr, "==AX Trees (PID %d)==\n%s\n%s\n", getpid(), makeUTF8CString(liveTree), makeUTF8CString(isolatedTree));
     }
 };
 

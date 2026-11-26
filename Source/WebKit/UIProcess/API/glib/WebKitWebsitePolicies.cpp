@@ -298,7 +298,7 @@ const gchar* webkit_website_policies_get_custom_user_agent(WebKitWebsitePolicies
 
     if (policies->priv->customUserAgent.isNull()) {
         const auto& newCustomUserAgent = policies->priv->websitePolicies->customUserAgent();
-        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? UTF8CString() : newCustomUserAgent.utf8();
+        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? UTF8CString() : makeUTF8CString(newCustomUserAgent);
     }
     return policies->priv->customUserAgent.legacyCStringPointer();
 }

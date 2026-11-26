@@ -575,7 +575,7 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
     return AudioDecoder::DecodePromise::all(promises)->whenSettled(m_queue.get(), [protectedThis = Ref { *this }, generation = m_generation](auto&& result) {
         assertIsCurrent(protectedThis->m_queue.get());
         if (!result && protectedThis->m_filters.contains(Filter::IgnoreAudioDecodingErrors)) {
-            RELEASE_LOG_ERROR(Media, "MediaSamplesDecoder ignoring audio decoding error: %s", result.error().utf8());
+            RELEASE_LOG_ERROR(Media, "MediaSamplesDecoder ignoring audio decoding error: %s", makeUTF8CString(result.error()));
             return protectedThis->settleWithPendingOutput(true, generation);
         }
         return protectedThis->settleWithPendingOutput(!!result, generation);

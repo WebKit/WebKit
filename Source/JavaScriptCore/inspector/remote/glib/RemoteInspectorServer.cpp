@@ -169,8 +169,8 @@ const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers(
                 return;
             auto clientCapabilities = RemoteInspector::singleton().clientCapabilities();
             connection.sendMessage("DidStartAutomationSession"_s, gVariantNew("(ss)",
-                clientCapabilities ? UTF8CStringView { clientCapabilities->browserName.utf8() } : ""_s,
-                clientCapabilities ? UTF8CStringView { clientCapabilities->browserVersion.utf8() } : ""_s));
+                clientCapabilities ? UTF8CStringView { makeUTF8CString(clientCapabilities->browserName) } : ""_s,
+                clientCapabilities ? UTF8CStringView { makeUTF8CString(clientCapabilities->browserVersion) } : ""_s));
         }}
     }
     });

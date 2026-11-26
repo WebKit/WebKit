@@ -1229,7 +1229,7 @@ public:
         __block bool webPushDaemonDone = false;
         sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
             if (!error.isEmpty())
-                SAFE_WTFLOGALWAYS("ERROR: %s", error.utf8());
+                SAFE_WTFLOGALWAYS("ERROR: %s", makeUTF8CString(error));
             webPushDaemonDone = true;
         });
         TestWebKitAPI::Util::run(&webPushDaemonDone);
@@ -1966,7 +1966,7 @@ TEST_F(WebPushDBuiltInTest, ShowAndGetNotifications)
     webPushDaemonDone = false;
     sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::InjectPushMessageForTesting(message), ^(const String& error) {
         if (!error.isEmpty())
-            SAFE_WTFLOGALWAYS("ERROR: %s", error.utf8());
+            SAFE_WTFLOGALWAYS("ERROR: %s", makeUTF8CString(error));
         webPushDaemonDone = true;
     });
     TestWebKitAPI::Util::run(&webPushDaemonDone);

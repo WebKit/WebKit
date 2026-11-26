@@ -56,7 +56,7 @@ Ref<NetworkNotificationManager> NetworkNotificationManager::create(const String&
 NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())
-        lazyInitialize(m_connection, WebPushD::Connection::create(webPushMachServiceName.utf8(), WTF::move(configuration)));
+        lazyInitialize(m_connection, WebPushD::Connection::create(makeUTF8CString(webPushMachServiceName), WTF::move(configuration)));
 }
 
 NetworkNotificationManager::~NetworkNotificationManager() = default;

@@ -180,7 +180,7 @@ bool XSLStyleSheet::parseString(const String& string)
     }
 
     m_stylesheetDoc = xmlCtxtReadMemory(ctxt, buffer, size,
-        finalURL().string().utf8().legacyCStringPointer(),
+        makeUTF8CString(finalURL().string()).legacyCStringPointer(),
         BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE",
         XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
     xmlFreeParserCtxt(ctxt);
@@ -204,7 +204,7 @@ void XSLStyleSheet::loadChildSheets()
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the
         // import/include list.
-        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(finalURL().string().utf8().legacyCStringPointer()));
+        xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(makeUTF8CString(finalURL().string()).legacyCStringPointer()));
         if (!idNode)
             return;
         stylesheetRoot = idNode->parent;
@@ -302,7 +302,7 @@ xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const 
             // In order to ensure that libxml canonicalized both URLs, we get the original href
             // string from the import rule and canonicalize it using libxml before comparing it
             // with the URI argument.
-            auto importHref = import->href().utf8();
+            auto importHref = makeUTF8CString(import->href());
             xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
             xmlChar* childURI = xmlBuildURI((const xmlChar*)importHref.legacyCStringPointer(), base);
             bool equalURIs = xmlStrEqual(uri, childURI);

@@ -345,7 +345,7 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
 
     auto orientation = webkitGstImageOrientationTag(gstVideoFrame.rotation(), gstVideoFrame.isMirrored());
     if (orientation != m_orientation) {
-        auto orientationCString = orientation.utf8();
+        auto orientationCString = makeUTF8CString(orientation);
         GST_DEBUG_OBJECT(m_harness->element(), "New orientation: %s", orientationCString);
         GRefPtr tags = adoptGRef(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientationCString.legacyCStringPointer(), nullptr));
         GRefPtr event = adoptGRef(gst_event_new_tag(tags.leakRef()));

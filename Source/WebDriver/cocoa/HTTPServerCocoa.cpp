@@ -223,7 +223,7 @@ bool HTTPConnection::didReceiveHeader()
         error->setString("stacktrace"_s, emptyString());
         auto responseBody = JSON::Object::create();
         responseBody->setObject("value"_s, WTF::move(error));
-        respond({ 400, responseBody->toJSONString().utf8(), "application/json; charset=utf-8"_s }, true);
+        respond({ 400, makeUTF8CString(responseBody->toJSONString()), "application/json; charset=utf-8"_s }, true);
         return false;
     }
 
@@ -409,7 +409,7 @@ std::optional<uint16_t> HTTPServer::startListener(ASCIILiteral address, uint16_t
 {
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create_secure_tcp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     nw_parameters_set_reuse_local_address(parameters.get(), true);
-    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host(address.characters(), String::number(port).utf8().legacyCStringPointer())).get());
+    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host(address.characters(), makeUTF8CString(String::number(port)).legacyCStringPointer())).get());
 
     OSObjectPtr listener = adoptOSObject(nw_listener_create(parameters.get()));
     if (!listener)

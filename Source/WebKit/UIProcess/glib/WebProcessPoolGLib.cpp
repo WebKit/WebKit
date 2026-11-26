@@ -396,8 +396,8 @@ const String& WebProcessPool::sandboxedAccessibilityBusAddress() const
 const String& WebProcessPool::generateNextAccessibilityBusName()
 {
     m_accessibilityBusName = makeString(String::fromUTF8(WTF::applicationID().span()), ".Sandboxed.WebProcess-"_s, WTF::UUID::createVersion4());
-    RELEASE_ASSERT(g_dbus_is_name(m_accessibilityBusName.value().utf8().legacyCStringPointer()));
-    RELEASE_ASSERT(!g_dbus_is_unique_name(m_accessibilityBusName.value().utf8().legacyCStringPointer()));
+    RELEASE_ASSERT(g_dbus_is_name(makeUTF8CString(m_accessibilityBusName.value()).legacyCStringPointer()));
+    RELEASE_ASSERT(!g_dbus_is_unique_name(makeUTF8CString(m_accessibilityBusName.value()).legacyCStringPointer()));
 
     return accessibilityBusName();
 }

@@ -1078,7 +1078,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder)
     if (!classNameString)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Class name missing"];
 
-    auto className = classNameString->string().utf8();
+    auto className = makeUTF8CString(classNameString->string());
 
     RetainPtr<Class> objectClass = objcLookUpClass(className);
     if (!objectClass)

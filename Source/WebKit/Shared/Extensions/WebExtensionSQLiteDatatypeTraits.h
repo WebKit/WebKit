@@ -98,7 +98,7 @@ public:
         if (!value)
             return sqlite3_bind_null(statement, index);
 
-        return WebCore::sqliteBindText(statement, index, value.utf8());
+        return WebCore::sqliteBindText(statement, index, makeUTF8CString(value));
     }
 };
 

@@ -85,13 +85,13 @@ void ProcessLauncher::launchProcess()
 #else
     PlayStation::LaunchParam param { socketPair.client.value(), m_launchOptions.userId };
     int32_t appLocalPid = PlayStation::launchProcess(
-        !m_launchOptions.processPath.isEmpty() ? m_launchOptions.processPath.utf8().legacyCStringPointer() : defaultProcessPath(m_launchOptions.processType),
+        !m_launchOptions.processPath.isEmpty() ? makeUTF8CString(m_launchOptions.processPath).legacyCStringPointer() : defaultProcessPath(m_launchOptions.processType),
         argv, param);
 #endif
 
     if (appLocalPid < 0) {
 #ifndef NDEBUG
-        SAFE_FPRINTF(stderr, "Failed to launch process. err=0x%08x path=%s\n", appLocalPid, m_launchOptions.processPath.utf8());
+        SAFE_FPRINTF(stderr, "Failed to launch process. err=0x%08x path=%s\n", appLocalPid, makeUTF8CString(m_launchOptions.processPath));
 #endif
         return;
     }

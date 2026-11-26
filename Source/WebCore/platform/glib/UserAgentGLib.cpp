@@ -168,7 +168,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     if (!checked) {
         // For release builds, we'll only check the first resource load, mainly to ensure that any
         // configured application details or user agent branding is OK.
-        RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", userAgent.utf8());
+        RELEASE_ASSERT_WITH_MESSAGE(isValidUserAgentHeaderValue(userAgent), "%s is not a valid user agent header", makeUTF8CString(userAgent));
         checked = true;
     }
     ASSERT(isValidUserAgentHeaderValue(userAgent));

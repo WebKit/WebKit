@@ -150,7 +150,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
         // Shrink the vector.
         temporaryFilePath.shrink(strlenSpan(temporaryFilePath.span()));
     } else {
-        const auto temporaryDirectoryUtf8 = temporaryDirectory.utf8();
+        const auto temporaryDirectoryUtf8 = makeUTF8CString(temporaryDirectory);
         memcpySpan(temporaryFilePath.mutableSpan(), temporaryDirectoryUtf8.span());
         // Shrink the vector.
         temporaryFilePath.shrink(temporaryDirectoryUtf8.length());
@@ -161,11 +161,11 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     ASSERT(temporaryFilePath.last() == '/');
 
     // Append the file name.
-    temporaryFilePath.append(prefix.utf8().span());
+    temporaryFilePath.append(makeUTF8CString(prefix).span());
     temporaryFilePath.append("XXXXXX"_span);
     
     // Append the file name suffix.
-    auto suffixUTF8 = suffix.utf8();
+    auto suffixUTF8 = makeUTF8CString(suffix);
     temporaryFilePath.append(suffixUTF8.spanIncludingNullTerminator());
 
     auto fileHandle = FileHandle::adopt(mkostemps(temporaryFilePath.mutableSpan().data(), suffixUTF8.length(), O_CLOEXEC));
@@ -284,7 +284,7 @@ bool makeSafeToUseMemoryMapForPath(const String& path)
     NSError *error = nil;
     BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen } ofItemAtPath:path.createNSString().get() error:&error];
     if (error || !success) {
-        SAFE_WTFLOGALWAYS("makeSafeToUseMemoryMapForPath(%s) failed with error %@", path.utf8(), error);
+        SAFE_WTFLOGALWAYS("makeSafeToUseMemoryMapForPath(%s) failed with error %@", makeUTF8CString(path), error);
         return false;
     }
     return true;
@@ -298,7 +298,7 @@ bool setExcludedFromBackup(const String& path, bool excluded)
 
     NSError *error;
     if (![[NSURL fileURLWithPath:path.createNSString().get() isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
-        LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8(), error.localizedDescription);
+        LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", makeUTF8CString(path), error.localizedDescription);
         return false;
     }
 

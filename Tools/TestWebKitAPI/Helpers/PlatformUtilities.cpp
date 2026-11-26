@@ -94,7 +94,7 @@ WKRetainPtr<WKStringRef> toWK(const UTF8CString& string)
 
 WKRetainPtr<WKStringRef> toWK(const String& string)
 {
-    return toWK(string.utf8());
+    return toWK(makeUTF8CString(string));
 }
 
 #endif // WK_HAVE_C_SPI

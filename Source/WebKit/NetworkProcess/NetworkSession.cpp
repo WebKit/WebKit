@@ -767,7 +767,7 @@ void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& ap
 #if PLATFORM(COCOA)
     auto appBundleID = applicationBundleIdentifier();
     if (!isRunningTest(appBundleID))
-        SAFE_WTFLOGALWAYS("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty"_s : appBundleID.utf8());
+        SAFE_WTFLOGALWAYS("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty"_s : makeUTF8CString(appBundleID));
     RELEASE_ASSERT(isRunningTest(applicationBundleIdentifier()));
 #endif
     m_privateClickMeasurement->setPrivateClickMeasurementAppBundleIDForTesting(WTF::move(appBundleIDForTesting));

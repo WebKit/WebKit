@@ -1624,7 +1624,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
             break;
     }
 
-    HTMLMEDIAELEMENT_RELEASE_LOG(CanPlayType, mimeType.utf8(), canPlay.utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(CanPlayType, makeUTF8CString(mimeType), makeUTF8CString(canPlay));
 
     return canPlay;
 }
@@ -3308,7 +3308,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 {
     if (static_cast<int>(state) != static_cast<int>(m_networkState))
-        HTMLMEDIAELEMENT_RELEASE_LOG(SetNetworkState, convertEnumerationToString(state).utf8(), convertEnumerationToString(m_networkState).utf8());
+        HTMLMEDIAELEMENT_RELEASE_LOG(SetNetworkState, makeUTF8CString(convertEnumerationToString(state)), makeUTF8CString(convertEnumerationToString(m_networkState)));
 
     if (state == MediaPlayer::NetworkState::Empty) {
         // Just update the cached state and leave, we can't do anything.
@@ -3472,7 +3472,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     m_tracksAreReady = tracksAreReady;
 
-    HTMLMEDIAELEMENT_RELEASE_LOG(SetReadyState, convertEnumerationToString(state).utf8(), convertEnumerationToString(m_readyState).utf8(), tracksAreReady);
+    HTMLMEDIAELEMENT_RELEASE_LOG(SetReadyState, makeUTF8CString(convertEnumerationToString(state)), makeUTF8CString(convertEnumerationToString(m_readyState)), tracksAreReady);
 
     if (tracksAreReady)
         m_readyState = newState;
@@ -4127,7 +4127,7 @@ void HTMLMediaElement::seekInternal(const MediaTime& time)
 
 void HTMLMediaElement::seekWithTolerance(const SeekTarget& target, bool fromDOM)
 {
-    HTMLMEDIAELEMENT_RELEASE_LOG(SeekWithTolerance, target.toString().utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(SeekWithTolerance, makeUTF8CString(target.toString()));
     // 4.8.10.9 Seeking
 
     // 1 - Set the media element's show poster flag to false.
@@ -5520,7 +5520,7 @@ void HTMLMediaElement::addAudioTrack(Ref<AudioTrack>&& track)
     track->setLogger(protect(logger()), logIdentifier());
 #endif
     track->addClient(*this);
-    HTMLMEDIAELEMENT_RELEASE_LOG(AddAudioTrack, track->id().string().utf8(), MediaElementSession::descriptionForTrack(track).utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(AddAudioTrack, makeUTF8CString(track->id().string()), makeUTF8CString(MediaElementSession::descriptionForTrack(track)));
     ensureAudioTracks().append(WTF::move(track));
 }
 
@@ -5552,7 +5552,7 @@ void HTMLMediaElement::addVideoTrack(Ref<VideoTrack>&& track)
     track->setLogger(protect(logger()), logIdentifier());
 #endif
     track->addClient(*this);
-    HTMLMEDIAELEMENT_RELEASE_LOG(AddVideoTrack, track->id().string().utf8(), MediaElementSession::descriptionForTrack(track).utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(AddVideoTrack, makeUTF8CString(track->id().string()), makeUTF8CString(MediaElementSession::descriptionForTrack(track)));
     ensureVideoTracks().append(WTF::move(track));
 }
 
@@ -5561,7 +5561,7 @@ void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
     if (!m_audioTracks || !m_audioTracks->contains(track))
         return;
     track.clearClient(*this);
-    HTMLMEDIAELEMENT_RELEASE_LOG(RemoveAudioTrack, track.id().string().utf8(), MediaElementSession::descriptionForTrack(track).utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(RemoveAudioTrack, makeUTF8CString(track.id().string()), makeUTF8CString(MediaElementSession::descriptionForTrack(track)));
     m_audioTracks->remove(track);
 }
 
@@ -5803,7 +5803,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             currentlyEnabledTracks.append(textTrack);
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack, *this) : 0;
-        HTMLMEDIAELEMENT_RELEASE_LOG(ConfigureTextTrackGroup, textTrack->kindKeyword().string().utf8(), textTrack->language().string().utf8(), textTrack->validBCP47Language().string().utf8(), trackScore);
+        HTMLMEDIAELEMENT_RELEASE_LOG(ConfigureTextTrackGroup, makeUTF8CString(textTrack->kindKeyword().string()), makeUTF8CString(textTrack->language().string()), makeUTF8CString(textTrack->validBCP47Language().string()), trackScore);
 
         if (trackScore) {
 
@@ -6738,7 +6738,7 @@ void HTMLMediaElement::mediaEngineWasUpdated()
 
 void HTMLMediaElement::mediaPlayerEngineUpdated()
 {
-    HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerEngineUpdated, protect(m_player)->engineDescription().utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerEngineUpdated, makeUTF8CString(protect(m_player)->engineDescription()));
 
 #if ENABLE(MEDIA_SOURCE)
     m_droppedVideoFrames = 0;
@@ -6779,7 +6779,7 @@ void HTMLMediaElement::mediaPlayerDidInitializeMediaEngine() WTF_IGNORES_THREAD_
 void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 {
     if (RefPtr mediaSession = m_mediaSession)
-        HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerCharacteristicsChanged, mediaSession->description().utf8());
+        HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerCharacteristicsChanged, makeUTF8CString(mediaSession->description()));
     else
         HTMLMEDIAELEMENT_RELEASE_LOG(MediaPlayerCharacteristicsChangedNoMediaSession);
 
@@ -8433,7 +8433,7 @@ void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
 
 void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType checkType)
 {
-    HTMLMEDIAELEMENT_RELEASE_LOG(ConfigureTextTrackDisplay, convertEnumerationToString(checkType).utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(ConfigureTextTrackDisplay, makeUTF8CString(convertEnumerationToString(checkType)));
     ASSERT(m_textTracks);
 
     if (m_processingPreferenceChange)
@@ -10269,7 +10269,7 @@ void HTMLMediaElement::userDidInterfereWithAutoplay()
 
 void HTMLMediaElement::setAutoplayEventPlaybackState(AutoplayEventPlaybackState reason)
 {
-    HTMLMEDIAELEMENT_RELEASE_LOG(SetAutoplayEventPlaybackState, convertEnumerationToString(reason).utf8());
+    HTMLMEDIAELEMENT_RELEASE_LOG(SetAutoplayEventPlaybackState, makeUTF8CString(convertEnumerationToString(reason)));
     m_autoplayEventPlaybackState = reason;
 
     if (reason == AutoplayEventPlaybackState::PreventedAutoplay) {
@@ -10301,7 +10301,7 @@ void HTMLMediaElement::visibilityAdjustmentStateDidChange()
 void HTMLMediaElement::sceneIdentifierDidChange()
 {
     if (RefPtr page = document().page()) {
-        HTMLMEDIAELEMENT_RELEASE_LOG(SceneIdentifierDidChange, page->sceneIdentifier().utf8());
+        HTMLMEDIAELEMENT_RELEASE_LOG(SceneIdentifierDidChange, makeUTF8CString(page->sceneIdentifier()));
         if (RefPtr player = m_player)
             player->setSceneIdentifier(page->sceneIdentifier());
     }

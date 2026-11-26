@@ -221,7 +221,7 @@ void initializeIfNeeded()
             for (const auto* name : layerNames)
                 formattedLayerList.append(" "_s, UTF8CStringView::unsafeFromUTF8(name));
         }
-        RELEASE_LOG_DEBUG(Vulkan, "Requesting %zu layers%s", layerNames.size(), formattedLayerList.toString().utf8());
+        RELEASE_LOG_DEBUG(Vulkan, "Requesting %zu layers%s", layerNames.size(), makeUTF8CString(formattedLayerList.toString()));
 
         StringBuilder formattedExtensionList;
         if (extensionNames.size()) {
@@ -229,7 +229,7 @@ void initializeIfNeeded()
             for (const auto* name : extensionNames)
                 formattedExtensionList.append(" "_s, UTF8CStringView::unsafeFromUTF8(name));
         }
-        RELEASE_LOG_DEBUG(Vulkan, "Requesting %zu extensions%s", extensionNames.size(), formattedExtensionList.toString().utf8());
+        RELEASE_LOG_DEBUG(Vulkan, "Requesting %zu extensions%s", extensionNames.size(), makeUTF8CString(formattedExtensionList.toString()));
     }
 #endif
 

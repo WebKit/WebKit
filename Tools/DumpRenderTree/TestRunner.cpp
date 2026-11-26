@@ -2127,7 +2127,7 @@ void TestRunner::waitToDumpWatchdogTimerFired()
 
     auto logs = getAndResetAccumulatedLogs();
     if (!logs.isEmpty())
-        SAFE_FPRINTF(testResult, "Logs accumulated during test run:\n%s\n", logs.utf8());
+        SAFE_FPRINTF(testResult, "Logs accumulated during test run:\n%s\n", makeUTF8CString(logs));
 
     notifyDone();
 }

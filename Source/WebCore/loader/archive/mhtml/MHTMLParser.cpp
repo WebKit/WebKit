@@ -149,7 +149,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
             LOG_ERROR("Binary contents requires end of part");
             return nullptr;
         }
-        m_lineReader.setSeparator(endOfPartBoundary.utf8());
+        m_lineReader.setSeparator(makeUTF8CString(endOfPartBoundary));
         Vector<uint8_t> part;
         if (!m_lineReader.nextChunk(part)) {
             LOG_ERROR("Binary contents requires end of part");
@@ -180,8 +180,8 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
                 endOfPartReached = true;
                 break;
             }
-            // Note that we use line.utf8() and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
-            content.append(line.utf8().span());
+            // Note that we use makeUTF8CString(line) and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
+            content.append(makeUTF8CString(line).span());
             if (mimeHeader.contentTransferEncoding() == MIMEHeader::QuotedPrintable) {
                 // The line reader removes the \r\n, but we need them for the content in this case as the QuotedPrintable decoder expects CR-LF terminated lines.
                 content.append("\r\n"_span);

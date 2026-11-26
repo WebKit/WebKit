@@ -225,7 +225,7 @@ void WebInspectorUIProxy::platformInspectedURLChanged(const String& url)
     if (!m_inspectorWindow)
         return;
 
-    auto title = makeString(u8"Web Inspector — "_span, url).utf8();
+    auto title = makeUTF8CString(makeString(u8"Web Inspector — "_span, url));
     wpe_toplevel_set_title(m_inspectorWindow.get(), title.legacyCStringPointer());
 }
 
@@ -242,7 +242,7 @@ static String computeContentHash(const String& content, bool base64Encoded)
         if (decoded)
             digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_data(G_CHECKSUM_SHA256, decoded->span().data(), decoded->size()));
     } else {
-        auto utf8 = content.utf8();
+        auto utf8 = makeUTF8CString(content);
         auto characters = byteCast<char>(utf8.span());
         digest = GMallocString::unsafeAdoptFromUTF8(g_compute_checksum_for_string(G_CHECKSUM_SHA256, characters.data(), characters.size()));
     }
@@ -259,7 +259,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
     URL url { saveDatas[0].url };
-    auto filename = url.path().substring(1).utf8();
+    auto filename = makeUTF8CString(url.path().substring(1));
 
     const gchar* downloadsDir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
     if (!downloadsDir) {
@@ -269,7 +269,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
 
     auto hash = computeContentHash(saveDatas[0].content, saveDatas[0].base64Encoded);
 
-    auto updatedFilename = makeString(filename, "-"_s, hash.left(8)).utf8();
+    auto updatedFilename = makeUTF8CString(makeString(filename, "-"_s, hash.left(8)));
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_build_filename(downloadsDir, updatedFilename.legacyCStringPointer(), nullptr));
 

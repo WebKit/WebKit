@@ -141,7 +141,7 @@ void WebDataListSuggestionsDropdownGtk::platformShow(WebCore::DataListSuggestion
     for (const auto& suggestion : information.suggestions) {
         GtkTreeIter iter;
         gtk_list_store_append(model, &iter);
-        gtk_list_store_set(model, &iter, 0, suggestion.value.utf8().legacyCStringPointer(), -1);
+        gtk_list_store_set(model, &iter, 0, makeUTF8CString(suggestion.value).legacyCStringPointer(), -1);
     }
 
     GtkRequisition treeViewRequisition;

@@ -107,13 +107,13 @@ template<typename T>
 decltype(auto) convertAXLogArg(T&& arg)
 {
     if constexpr (std::is_pointer_v<std::remove_cvref_t<T>> && std::derived_from<std::remove_pointer_t<std::remove_cvref_t<T>>, AXCoreObject>)
-        return arg ? arg->debugDescription().utf8() : UTF8CString { "(null)"_s };
+        return arg ? makeUTF8CString(arg->debugDescription()) : UTF8CString { "(null)"_s };
     else if constexpr (std::derived_from<std::remove_cvref_t<T>, AXCoreObject>)
-        return arg.debugDescription().utf8();
+        return makeUTF8CString(arg.debugDescription());
     else if constexpr (requires { { *arg } -> std::convertible_to<const AXCoreObject&>; })
-        return arg ? arg->debugDescription().utf8() : UTF8CString { "(null)"_s };
+        return arg ? makeUTF8CString(arg->debugDescription()) : UTF8CString { "(null)"_s };
     else if constexpr (std::same_as<std::remove_cvref_t<T>, String>)
-        return arg.utf8();
+        return makeUTF8CString(arg);
     else
         return std::forward<T>(arg);
 }

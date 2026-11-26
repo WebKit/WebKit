@@ -833,7 +833,7 @@ void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, Pol
     }
 
     if (policyDecision.backForwardFrameState) {
-        RELEASE_LOG(Loading, "didReceivePolicyDecision: Received FrameState for child frame, URL=%" SENSITIVE_LOG_STRING, policyDecision.backForwardFrameState->urlString.utf8());
+        RELEASE_LOG(Loading, "didReceivePolicyDecision: Received FrameState for child frame, URL=%" SENSITIVE_LOG_STRING, makeUTF8CString(policyDecision.backForwardFrameState->urlString));
         setHistoryItemForBackForwardNavigation(protect(*policyDecision.backForwardFrameState));
     }
 

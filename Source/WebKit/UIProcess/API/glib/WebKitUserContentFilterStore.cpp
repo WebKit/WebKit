@@ -516,7 +516,7 @@ void webkit_user_content_filter_store_fetch_identifiers(WebKitUserContentFilterS
 
         auto result = GMallocSpan<gchar*>::malloc(bytesToAllocate);
         for (size_t i = 0; i < identifiers.size(); ++i) {
-            const auto identifier = identifiers[i].utf8();
+            const auto identifier = makeUTF8CString(identifiers[i]);
             result[i] = gStrdup(identifier);
         }
         result[identifiers.size()] = nullptr;

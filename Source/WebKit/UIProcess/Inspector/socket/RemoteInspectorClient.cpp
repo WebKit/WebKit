@@ -108,13 +108,13 @@ RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& o
     : m_observer(observer)
 {
     if (!url.host() || !url.port()) {
-        LOG_ERROR("Invalid inspector url: %s", url.string().utf8());
+        LOG_ERROR("Invalid inspector url: %s", makeUTF8CString(url.string()));
         return;
     }
 
-    m_connectionID = connectInet(url.host().utf8(), url.port().value());
+    m_connectionID = connectInet(makeUTF8CString(url.host()), url.port().value());
     if (!m_connectionID) {
-        LOG_ERROR("Inspector client could not connect to %s", url.string().utf8());
+        LOG_ERROR("Inspector client could not connect to %s", makeUTF8CString(url.string()));
         return;
     }
 
@@ -127,7 +127,7 @@ void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_connectionID);
-    send(m_connectionID.value(), byteCast<uint8_t>(event.utf8().span()));
+    send(m_connectionID.value(), byteCast<uint8_t>(makeUTF8CString(event).span()));
 }
 
 HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()
@@ -209,7 +209,7 @@ void RemoteInspectorClient::setBackendCommands(const Event& event)
     if (!event.message || event.message->isEmpty())
         return;
 
-    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(byteCast<uint8_t>(event.message->utf8().span())));
+    m_backendCommandsURL = makeString("data:text/javascript;base64,"_s, base64Encoded(byteCast<uint8_t>(makeUTF8CString(*event.message).span())));
 }
 
 void RemoteInspectorClient::setTargetList(const Event& event)

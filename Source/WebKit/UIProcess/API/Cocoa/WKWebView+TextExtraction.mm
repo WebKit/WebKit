@@ -687,11 +687,11 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     ](std::optional<WebKit::ConnectedRemapCandidate>&& candidate) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf || !candidate) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Interaction failed; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Interaction failed; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), makeUTF8CString(requestedIdentifier));
             return reportStaleNode();
         }
 
-        RELEASE_LOG(TextExtraction, "<%@: %p> Interaction failed; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+        RELEASE_LOG(TextExtraction, "<%@: %p> Interaction failed; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), makeUTF8CString(requestedIdentifier));
         interaction.nodeIdentifier = candidate->nodeIdentifier;
         [strongSelf _performInteraction:WTF::move(interaction) inFrame:RefPtr { candidate->frame.ptr() } actionType:actionType staleNodeResolution:WebKit::StaleNodeResolutionState {
             .requestedIdentifier = requestedIdentifier,
@@ -1114,7 +1114,7 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
         }
 
         if (!result.describesInteractionTarget) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Unable to describe the target of an interaction with node %" PUBLIC_LOG_STRING, [strongSelf class], strongSelf.get(), staleNodeResolution.requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Unable to describe the target of an interaction with node %" PUBLIC_LOG_STRING, [strongSelf class], strongSelf.get(), makeUTF8CString(staleNodeResolution.requestedIdentifier));
             auto errorDescription = makeString("Unable to describe the target of the interaction."_s, resolutionIsStale ? staleNodeIdentifierGuidance : ""_s);
             completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
                 NSDebugDescriptionErrorKey: errorDescription.createNSString()
@@ -1179,11 +1179,11 @@ NODELETE static OptionSet<WebCore::DataDetectorType> coreDataDetectorTypes(_WKTe
     ](std::optional<WebKit::ConnectedRemapCandidate>&& candidate) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf || !candidate) {
-            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Describe target missing; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+            RELEASE_LOG_ERROR(TextExtraction, "<%@: %p> Describe target missing; every node that uid=%" PUBLIC_LOG_STRING " could be re-resolved to is also stale", [strongSelf class], strongSelf.get(), makeUTF8CString(requestedIdentifier));
             return reportStaleNode();
         }
 
-        RELEASE_LOG(TextExtraction, "<%@: %p> Describe target missing; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), requestedIdentifier.utf8());
+        RELEASE_LOG(TextExtraction, "<%@: %p> Describe target missing; re-resolved stale node %" PUBLIC_LOG_STRING " to a connected node and retrying", [strongSelf class], strongSelf.get(), makeUTF8CString(requestedIdentifier));
         interaction.nodeIdentifier = candidate->nodeIdentifier;
         [strongSelf _describeInteraction:WTF::move(interaction) inFrame:RefPtr { candidate->frame.ptr() } staleNodeResolution:WebKit::StaleNodeResolutionState {
             .requestedIdentifier = requestedIdentifier,

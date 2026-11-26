@@ -214,7 +214,7 @@ void ProfilerSupport::dumpIonGraphFunction(const String& functionName, ASCIILite
     auto tierSuffix = osr ? makeString("-"_s, tier, "-OSR"_s) : makeString("-"_s, tier);
     auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, tierSuffix, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, String { Options::ionGraphDirectory() });
     RELEASE_ASSERT(handle);
-    handle.write(WTF::asByteSpan(string.utf8().span()));
+    handle.write(WTF::asByteSpan(makeUTF8CString(string).span()));
     handle.flush();
 }
 

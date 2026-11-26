@@ -46,7 +46,7 @@ void logPreformatted([[maybe_unused]] WTFLogChannel& channel, [[maybe_unused]] c
 {
 #if !LOG_DISABLED
     if (channel.state != WTFLogChannelState::Off)
-        SAFE_WTFLOG(&channel, "%s", message.utf8());
+        SAFE_WTFLOG(&channel, "%s", makeUTF8CString(message));
 #endif
 }
 
@@ -72,9 +72,9 @@ static int releaseLogPriority(ReleaseLogType type)
 void releaseLogPreformatted(WTFLogChannel& channel, ReleaseLogType type, const String& file, unsigned line, const String& function, const String& message)
 {
     UNUSED_PARAM(line);
-    auto fileUTF8 = file.utf8();
-    auto functionUTF8 = function.utf8();
-    auto messageUTF8 = message.utf8();
+    auto fileUTF8 = makeUTF8CString(file);
+    auto functionUTF8 = makeUTF8CString(function);
+    auto messageUTF8 = makeUTF8CString(message);
     WTF_RELEASE_LOG_SEND(channel, releaseLogPriority(type), safePrintfType(fileUTF8), line, safePrintfType(functionUTF8), "%s", messageUTF8);
 }
 

@@ -468,7 +468,7 @@ static gboolean webkitWebExtensionInitableInit(GInitable* initable, GCancellable
     Ref extension = WebKit::WebExtension::create(extensionPath.get(), internalError);
     if (internalError) {
         SAFE_G_SET_ERROR(error, webkit_web_extension_error_quark(),
-            toWebKitWebExtensionError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionError(internalError->errorCode()), "%s", makeUTF8CString(internalError->localizedDescription()));
         return FALSE;
     }
 
@@ -498,7 +498,7 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
     if (!extension->errors().isEmpty()) {
         Ref internalError = extension->errors().last();
         SAFE_G_SET_ERROR(error, webkit_web_extension_error_quark(),
-            toWebKitWebExtensionError(internalError->errorCode()), "%s", internalError->localizedDescription().utf8());
+            toWebKitWebExtensionError(internalError->errorCode()), "%s", makeUTF8CString(internalError->localizedDescription()));
     }
 
     WebKitWebExtension* object = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, nullptr));
@@ -616,7 +616,7 @@ const gchar* webkit_web_extension_get_default_locale(WebKitWebExtension* extensi
     if (defaultLocale.isEmpty())
         return nullptr;
 
-    priv->defaultLocale = defaultLocale.utf8();
+    priv->defaultLocale = makeUTF8CString(defaultLocale);
     return priv->defaultLocale.legacyCStringPointer();
 }
 
@@ -643,7 +643,7 @@ const gchar* webkit_web_extension_get_display_name(WebKitWebExtension* extension
     if (displayName.isEmpty())
         return nullptr;
 
-    priv->displayName = displayName.utf8();
+    priv->displayName = makeUTF8CString(displayName);
     return priv->displayName.legacyCStringPointer();
 }
 
@@ -670,7 +670,7 @@ const gchar* webkit_web_extension_get_display_short_name(WebKitWebExtension* ext
     if (displayShortName.isEmpty())
         return nullptr;
 
-    priv->displayShortName = displayShortName.utf8();
+    priv->displayShortName = makeUTF8CString(displayShortName);
     return priv->displayShortName.legacyCStringPointer();
 }
 
@@ -697,7 +697,7 @@ const gchar* webkit_web_extension_get_display_version(WebKitWebExtension* extens
     if (displayVersion.isEmpty())
         return nullptr;
 
-    priv->displayVersion = displayVersion.utf8();
+    priv->displayVersion = makeUTF8CString(displayVersion);
     return priv->displayVersion.legacyCStringPointer();
 }
 
@@ -724,7 +724,7 @@ const gchar* webkit_web_extension_get_display_description(WebKitWebExtension* ex
     if (displayDescription.isEmpty())
         return nullptr;
 
-    priv->displayDescription = displayDescription.utf8();
+    priv->displayDescription = makeUTF8CString(displayDescription);
     return priv->displayDescription.legacyCStringPointer();
 }
 
@@ -755,7 +755,7 @@ const gchar* webkit_web_extension_get_display_action_label(WebKitWebExtension* e
     if (displayActionLabel.isEmpty())
         return nullptr;
 
-    priv->displayActionLabel = displayActionLabel.utf8();
+    priv->displayActionLabel = makeUTF8CString(displayActionLabel);
     return priv->displayActionLabel.legacyCStringPointer();
 }
 
@@ -836,7 +836,7 @@ const gchar* webkit_web_extension_get_version(WebKitWebExtension* extension)
     if (version.isEmpty())
         return nullptr;
 
-    priv->version = version.utf8();
+    priv->version = makeUTF8CString(version);
     return priv->version.legacyCStringPointer();
 }
 
@@ -868,7 +868,7 @@ const gchar* const * webkit_web_extension_get_requested_permissions(WebKitWebExt
 
     priv->requestedPermissions = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (auto permission : requestedPermissions)
-        g_ptr_array_add(priv->requestedPermissions.get(), gStrdup(permission.utf8()));
+        g_ptr_array_add(priv->requestedPermissions.get(), gStrdup(makeUTF8CString(permission)));
     g_ptr_array_add(priv->requestedPermissions.get(), nullptr);
 
     return reinterpret_cast<gchar**>(priv->requestedPermissions->pdata);
@@ -903,7 +903,7 @@ const gchar* const * webkit_web_extension_get_optional_permissions(WebKitWebExte
 
     priv->optionalPermissions = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (auto permission : optionalPermissions)
-        g_ptr_array_add(priv->optionalPermissions.get(), gStrdup(permission.utf8()));
+        g_ptr_array_add(priv->optionalPermissions.get(), gStrdup(makeUTF8CString(permission)));
     g_ptr_array_add(priv->optionalPermissions.get(), nullptr);
 
     return reinterpret_cast<gchar**>(priv->optionalPermissions->pdata);

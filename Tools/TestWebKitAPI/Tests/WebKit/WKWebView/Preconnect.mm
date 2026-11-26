@@ -427,7 +427,7 @@ TEST(Preconnect, PrivacyProxyRequestFlags)
 
 static void appendHPACKString(Vector<uint8_t>& headerBlock, const String& string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = makeUTF8CString(string);
     headerBlock.append(utf8.length());
     headerBlock.append(byteCast<uint8_t>(utf8.span()));
 }

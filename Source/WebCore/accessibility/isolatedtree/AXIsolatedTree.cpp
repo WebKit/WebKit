@@ -207,7 +207,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
         return nullptr;
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
-        WTFBeginSignpostAlways(tree.ptr(), InitialAccessibilityIsolatedTreeBuild, "building isolated tree for AXObjectCache: %" PRIVATE_LOG_STRING ", is the top-document: %d", axObjectCache.debugDescription().utf8(), document->isTopDocument());
+        WTFBeginSignpostAlways(tree.ptr(), InitialAccessibilityIsolatedTreeBuild, "building isolated tree for AXObjectCache: %" PRIVATE_LOG_STRING ", is the top-document: %d", makeUTF8CString(axObjectCache.debugDescription()), document->isTopDocument());
 
     if (!Accessibility::inRenderTreeOrStyleUpdate(*document))
         document->updateLayoutIgnorePendingStylesheets();
@@ -418,8 +418,8 @@ void AXIsolatedTree::queueChange(NodeChange&& nodeChange)
         pending.childrenUpdates.append({ *parentID, WTF::move(siblingsIDs) });
     }
 
-    ASSERT_WITH_MESSAGE(objectID != parentID, "object ID was the same as its parent ID (%s) when queueing a node change", objectID.loggingString().utf8());
-    ASSERT_WITH_MESSAGE(m_nodeMap.contains(objectID), "node map should've contained objectID: %s", objectID.loggingString().utf8());
+    ASSERT_WITH_MESSAGE(objectID != parentID, "object ID was the same as its parent ID (%s) when queueing a node change", makeUTF8CString(objectID.loggingString()));
+    ASSERT_WITH_MESSAGE(m_nodeMap.contains(objectID), "node map should've contained objectID: %s", makeUTF8CString(objectID.loggingString()));
     auto childrenIDs = m_nodeMap.get(objectID).childrenIDs;
     pending.childrenUpdates.append({ objectID, WTF::move(childrenIDs) });
 }
@@ -533,7 +533,7 @@ void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vecto
         queueChange(WTF::move(append));
 
     for (const auto& axID : parentUpdateIDs) {
-        ASSERT_WITH_MESSAGE(m_nodeMap.contains(axID), "An object marked as needing a parent update should've had an entry in the node map by now. ID was %s", axID.loggingString().utf8());
+        ASSERT_WITH_MESSAGE(m_nodeMap.contains(axID), "An object marked as needing a parent update should've had an entry in the node map by now. ID was %s", makeUTF8CString(axID.loggingString()));
         markDirtyAndGetWorkingChanges().parentUpdates.set(axID, *m_nodeMap.get(axID).parentID);
     }
 
@@ -1887,7 +1887,7 @@ void AXIsolatedTree::applyCommittedChanges(PendingChanges&& committedChanges)
     AX_ASSERT(!isMainThread());
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
-        WTFBeginSignpostAlways(this, AccessibilityIsolatedTreeApplyCommittedChanges, "tree ID: %" PRIVATE_LOG_STRING "", treeID().loggingString().utf8());
+        WTFBeginSignpostAlways(this, AccessibilityIsolatedTreeApplyCommittedChanges, "tree ID: %" PRIVATE_LOG_STRING "", makeUTF8CString(treeID().loggingString()));
 
     // Any structural change can affect some ancestor's stitchedUnignoredChildren result.
     // Property changes that could affect the unignored-children result (IsIgnored, StitchGroups, etc.)
@@ -2046,7 +2046,7 @@ void AXIsolatedTree::applyCommittedChanges(PendingChanges&& committedChanges)
     }
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
-        WTFEndSignpostAlways(this, AccessibilityIsolatedTreeApplyCommittedChanges, "tree ID: %" PRIVATE_LOG_STRING "", treeID().loggingString().utf8());
+        WTFEndSignpostAlways(this, AccessibilityIsolatedTreeApplyCommittedChanges, "tree ID: %" PRIVATE_LOG_STRING "", makeUTF8CString(treeID().loggingString()));
 }
 
 void AXIsolatedTree::sortedLiveRegionsDidChange(Vector<AXID> liveRegionIDs)
@@ -2165,7 +2165,7 @@ void AXIsolatedTree::processQueuedNodeUpdates()
     SetForScope processingScope(m_isProcessingQueuedNodeUpdates, true);
 
     if (AXObjectCache::isAppleInternalInstall()) [[unlikely]]
-        WTFBeginSignpostAlways(this, UpdateAccessibilityIsolatedTree, "updating isolated tree for AXObjectCache: %" PRIVATE_LOG_STRING "", cache ? CheckedPtr { cache }->debugDescription().utf8() : "null"_s);
+        WTFBeginSignpostAlways(this, UpdateAccessibilityIsolatedTree, "updating isolated tree for AXObjectCache: %" PRIVATE_LOG_STRING "", cache ? makeUTF8CString(CheckedPtr { cache }->debugDescription()) : "null"_s);
 
     for (const auto& nodeIDs : m_needsNodeRemoval)
         removeNode(nodeIDs.key, nodeIDs.value);

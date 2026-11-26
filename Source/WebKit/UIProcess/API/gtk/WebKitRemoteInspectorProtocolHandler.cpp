@@ -136,7 +136,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     }).iterator->value.get();
     webViewResult.iterator->value = client;
 
-    auto html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString().utf8();
+    auto html = makeUTF8CString(client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString());
     GRefPtr bytes = gBytesNew(html.span());
     GRefPtr stream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     webkit_uri_scheme_request_finish(request, stream.get(), html.length(), "text/html");
@@ -158,7 +158,7 @@ void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
     scriptBuilder.append("document.getElementById('targetlist').innerHTML='"_s);
     clientForWebView->appendTargetList(scriptBuilder, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
     scriptBuilder.append("';"_s);
-    auto script = scriptBuilder.toString().utf8();
+    auto script = makeUTF8CString(scriptBuilder.toString());
     auto scriptCharacters = byteCast<char>(script.span());
     webkit_web_view_evaluate_javascript(webView, scriptCharacters.data(), scriptCharacters.size(), nullptr, nullptr, nullptr, nullptr, nullptr);
 }

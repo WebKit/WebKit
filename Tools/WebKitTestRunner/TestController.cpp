@@ -542,7 +542,7 @@ static void addMessageToConsole(WKPageRef, WKStringRef message, const void*)
     if (!invocation || invocation->gotFinalMessage())
         return;
     if (invocation->shouldDumpJSConsoleLogInStdErr()) {
-        if (auto string = messageString.tryGetUTF8())
+        if (auto string = tryMakeUTF8CString(messageString))
             SAFE_FPRINTF(stderr, "%s", *string);
         else
             SAFE_FPRINTF(stderr, "Out of memory\n");
@@ -2028,7 +2028,7 @@ void TestController::dumpResponse(const String& result)
     unsigned resultLength = result.length();
     printf("Content-Type: text/plain\n");
     printf("Content-Length: %u\n", resultLength);
-    fwrite(result.utf8().legacyCStringPointer(), 1, resultLength, stdout);
+    fwrite(makeUTF8CString(result).legacyCStringPointer(), 1, resultLength, stdout);
     printf("#EOF\n");
     fprintf(stderr, "#EOF\n");
     fflush(stdout);
@@ -2215,19 +2215,19 @@ WKURLRef TestController::createTestURL(std::span<const char> pathOrURL)
         auto path = testPath(url.get());
         auto pathString = String::fromUTF8(std::span { path });
         if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(pathString)) {
-            SAFE_PRINTF("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathString.utf8());
+            SAFE_PRINTF("Failed: File for URL ‘%s’ was not found or is inaccessible\n", makeUTF8CString(pathString));
             return nullptr;
         }
         return url.leakRef();
     }
 
     // Creating from filesytem path.
-    auto urlString = makeString("file://"_s, FileSystem::realPath(String::fromUTF8(pathOrURL))).utf8();
+    auto urlString = makeUTF8CString(makeString("file://"_s, FileSystem::realPath(String::fromUTF8(pathOrURL))));
     auto url = toWKURL(urlString);
     auto path = testPath(url.get());
     auto pathString = String::fromUTF8(std::span { path });
     if (!m_usingServerMode && !FileSystem::fileExists(pathString)) {
-        SAFE_PRINTF("Failed: File ‘%s’ was not found or is inaccessible\n", pathString.utf8());
+        SAFE_PRINTF("Failed: File ‘%s’ was not found or is inaccessible\n", makeUTF8CString(pathString));
         return nullptr;
     }
     return url.leakRef();
@@ -4195,7 +4195,7 @@ void TestController::didFailProvisionalNavigation(WKPageRef page, WKErrorRef err
     auto errorDescription = toWTFString(adoptWK(WKErrorCopyLocalizedDescription(error)));
     int errorCode = WKErrorGetErrorCode(error);
     auto errorMessage = makeString("Failed: "_s, errorDescription, " (errorDomain="_s, errorDomain, ", code="_s, errorCode, ") for URL "_s, failingURLString);
-    SAFE_PRINTF("%s\n", errorMessage.utf8());
+    SAFE_PRINTF("%s\n", makeUTF8CString(errorMessage));
 }
 
 WKRetainPtr<WKStringRef> TestController::lastProvisionalNavigationFailureURL() const
@@ -4733,7 +4733,7 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
                     auto blockedURL = sanitizeExternalURL(urlString.get());
                     auto message = makeString("CONSOLE MESSAGE: Blocked access to external URL "_s, blockedURL, '\n');
                     if (protectedCurrentInvocation()->shouldDumpJSConsoleLogInStdErr()) {
-                        if (auto string = message.tryGetUTF8())
+                        if (auto string = tryMakeUTF8CString(message))
                             SAFE_FPRINTF(stderr, "%s", *string);
                         else
                             SAFE_FPRINTF(stderr, "Out of memory\n");

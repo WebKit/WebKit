@@ -63,7 +63,7 @@ void SessionHost::sendWebInspectorEvent(const String& event)
     if (!m_clientID)
         return;
 
-    send(m_clientID.value(), byteCast<uint8_t>(event.utf8().span()));
+    send(m_clientID.value(), byteCast<uint8_t>(makeUTF8CString(event).span()));
 }
 
 #if PLATFORM(WIN)
@@ -175,9 +175,9 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
     } else
         m_isRemoteBrowser = true;
 
-    m_clientID = connectInet(targetIp.utf8(), targetPort);
+    m_clientID = connectInet(makeUTF8CString(targetIp), targetPort);
     if (!m_clientID)
-        completionHandler(makeString(targetIp.utf8().span(), ':', targetPort, " is not reachable."_s));
+        completionHandler(makeString(makeUTF8CString(targetIp).span(), ':', targetPort, " is not reachable."_s));
     else
         completionHandler(std::nullopt);
 }
@@ -220,7 +220,7 @@ std::optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const st
             continue;
 
         target.id = *targetId;
-        target.name = name.utf8();
+        target.name = makeUTF8CString(name);
         targetList.append(target);
     }
     return targetList;

@@ -800,7 +800,7 @@ String ViewportConfiguration::description() const
 
 void ViewportConfiguration::dump() const
 {
-    SAFE_WTFLOGALWAYS("%s", description().utf8());
+    SAFE_WTFLOGALWAYS("%s", makeUTF8CString(description()));
 }
 
 #endif

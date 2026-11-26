@@ -1957,7 +1957,7 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     if (error.isAccessControl() && (loadInfo.type == ResourceLoadInfo::Type::Fetch || loadInfo.type == ResourceLoadInfo::Type::XMLHTTPRequest)) {
         RefPtr<WebFrameProxy> originatingFrame = loadInfo.frameID ? WebFrameProxy::webFrame(*loadInfo.frameID) : nullptr;
         if (originatingFrame && isURLForThisExtension(originatingFrame->url())) {
-            RELEASE_LOG_ERROR(Extensions, "Requesting permission to access URL due to CORS failure: %{sensitive}s", loadInfo.originalURL.string().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Requesting permission to access URL due to CORS failure: %{sensitive}s", makeUTF8CString(loadInfo.originalURL.string()));
             requestPermissionToAccessURLs({ loadInfo.originalURL }, getTab(pageID), nullptr, GrantOnCompletion::Yes, { PermissionStateOptions::RequestedWithTabsPermission, PermissionStateOptions::IncludeOptionalPermissions });
         }
     }
@@ -3792,7 +3792,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             }
 
             NSError *serializationError;
-            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(rules->toJSONString().utf8().span())).autorelease();
+            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(makeUTF8CString(rules->toJSONString()).span())).autorelease();
             if (serializationError)
                 RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
             else
@@ -3816,7 +3816,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         }
 
         NSError *serializationError;
-        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(rules->toJSONString().utf8().span())).autorelease();
+        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(makeUTF8CString(rules->toJSONString()).span())).autorelease();
         if (serializationError)
             RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
         else

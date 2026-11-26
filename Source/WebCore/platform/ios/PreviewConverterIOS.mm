@@ -147,7 +147,7 @@ void PreviewConverter::platformReceivedTemporaryFileURL(URL&& temporaryFileURL)
 #if ENABLE(BLOCKING_OF_WEBCONTENT_FILE_WRITE)
     String uti = WebCore::UTIFromMIMEType(m_originalResponse.mimeType());
     if (uti.startsWith("dyn."_s)) {
-        RELEASE_LOG(Process, "Got UTI %s for MIME type %s", uti.utf8(), m_originalResponse.mimeType().utf8());
+        RELEASE_LOG(Process, "Got UTI %s for MIME type %s", makeUTF8CString(uti), makeUTF8CString(m_originalResponse.mimeType()));
         if (m_originalResponse.mimeType() == "application/rtf")
             uti = "public.rtf"_s;
     }

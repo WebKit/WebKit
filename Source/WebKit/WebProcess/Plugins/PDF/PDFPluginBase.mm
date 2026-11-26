@@ -1538,7 +1538,7 @@ static void verboseLog(PDFIncrementalLoader* incrementalLoader, std::optional<ui
         stream << " not";
     stream << " complete";
 
-    LOG(IncrementalPDFVerbose, "%s", stream.release().utf8());
+    LOG(IncrementalPDFVerbose, "%s", makeUTF8CString(stream.release()));
 }
 #endif
 

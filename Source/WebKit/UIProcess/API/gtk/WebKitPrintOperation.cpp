@@ -360,8 +360,8 @@ static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, GUn
 
 static void webkitPrintOperationFailed(WebKitPrintOperation* printOperation, WebCore::ResourceError&& error)
 {
-    webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(gQuarkFromString(error.domain().utf8()),
-        toWebKitError(error.errorCode()), error.localizedDescription().utf8().legacyCStringPointer()) });
+    webkitPrintOperationFailed(printOperation, GUniquePtr<GError> { g_error_new_literal(gQuarkFromString(makeUTF8CString(error.domain())),
+        toWebKitError(error.errorCode()), makeUTF8CString(error.localizedDescription()).legacyCStringPointer()) });
     webkitPrintOperationFinished(printOperation);
 }
 

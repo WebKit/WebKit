@@ -109,7 +109,7 @@ static void listenForUncapturedErrors(WebGPU::Device& device, const WGPUUncaptur
         RefPtr device = weakDevice;
         if (!device || device->isLost())
             return;
-        auto message = error.message.utf8();
+        auto message = makeUTF8CString(error.message);
         auto type = WebGPU::CAPI::toAPI(std::optional<WebGPU::Error> { WTF::move(error) });
         WGPUDevice handle = WebGPU::CAPI::toAPI(*device);
         callbackInfo.callback(&handle, type, WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
@@ -154,7 +154,7 @@ WGPUFuture wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescrip
         }
         protectedAdapter->requestDevice(*apiDescriptor, [callback = WTF::move(callback), uncapturedErrorCallbackInfo = descriptor->uncapturedErrorCallbackInfo](std::expected<Ref<WebGPU::Device>, String>&& device) {
             if (!device) {
-                auto message = device.error().utf8();
+                auto message = makeUTF8CString(device.error());
                 return callback(WGPURequestDeviceStatus_Error, nullptr, WebGPU::CAPI::toAPI(message));
             }
             if (uncapturedErrorCallbackInfo.callback)

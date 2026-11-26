@@ -102,7 +102,7 @@ static void blockNetworkAccessIfNeeded(IPC::Connection* parentProcessConnection)
     OSObjectPtr xpcConnection = protect(parentProcessConnection)->xpcConnection();
     auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection.get());
     if (isPlatformBinary && signingIdentifier != "com.apple.textkit.nsattributedstringagent"_s) {
-        RELEASE_LOG(Process, "Not blocking network access since parent process %s is a platform binary", signingIdentifier.utf8());
+        RELEASE_LOG(Process, "Not blocking network access since parent process %s is a platform binary", makeUTF8CString(signingIdentifier));
         return;
     }
 

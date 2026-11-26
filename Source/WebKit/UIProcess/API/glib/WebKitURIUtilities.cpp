@@ -50,5 +50,5 @@ gchar* webkit_uri_for_display(const gchar* uri)
     if (!result)
         return nullptr;
 
-    return gStrdup(result.utf8());
+    return gStrdup(makeUTF8CString(result));
 }

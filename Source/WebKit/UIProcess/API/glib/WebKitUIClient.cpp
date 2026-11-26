@@ -90,26 +90,26 @@ private:
     void runJavaScriptAlert(WebPageProxy& page, const String& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptAlert(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptAlert(m_webView, makeUTF8CString(message), WTF::move(completionHandler));
     }
 
     void runJavaScriptConfirm(WebPageProxy& page, const String& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptConfirm(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptConfirm(m_webView, makeUTF8CString(message), WTF::move(completionHandler));
     }
 
     void runJavaScriptPrompt(WebPageProxy& page, const String& message, const String& defaultValue, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(const String&)>&& completionHandler) final
     {
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-        webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptPrompt(m_webView, makeUTF8CString(message), makeUTF8CString(defaultValue), WTF::move(completionHandler));
     }
 
     bool canRunBeforeUnloadConfirmPanel() const final { return true; }
 
     void runBeforeUnloadConfirmPanel(WebPageProxy&, String&& message, WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) final
     {
-        webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, message.utf8(), WTF::move(completionHandler));
+        webkitWebViewRunJavaScriptBeforeUnloadConfirm(m_webView, makeUTF8CString(message), WTF::move(completionHandler));
     }
 
     void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers) final

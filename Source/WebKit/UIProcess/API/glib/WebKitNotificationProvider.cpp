@@ -140,7 +140,7 @@ void WebKitNotificationProvider::show(WebPageProxy* page, WebNotification& webNo
 
     GRefPtr<WebKitNotification> notification = m_apiNotifications.get(webNotification.identifier());
     if (!notification) {
-        withdrawAnyPreviousAPINotificationMatchingTag(webNotification.tag().utf8());
+        withdrawAnyPreviousAPINotificationMatchingTag(makeUTF8CString(webNotification.tag()));
         notification = adoptGRef(webkitNotificationCreate(webNotification));
         g_signal_connect(notification.get(), "closed", G_CALLBACK(apiNotificationCloseCallback), this);
         g_signal_connect(notification.get(), "clicked", G_CALLBACK(apiNotificationClickedCallback), this);

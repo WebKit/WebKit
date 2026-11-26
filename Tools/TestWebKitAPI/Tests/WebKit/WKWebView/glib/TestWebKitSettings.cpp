@@ -562,7 +562,7 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
     g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);
 
     // Overflowing uint settings should raise an error.
-    gKeyFileLoadFromData(key_file.get(), bigIntNotSupported.utf8(), G_KEY_FILE_NONE, &error.outPtr());
+    gKeyFileLoadFromData(key_file.get(), makeUTF8CString(bigIntNotSupported), G_KEY_FILE_NONE, &error.outPtr());
     g_assert_no_error(error.get());
     g_assert_false(webkit_settings_apply_from_key_file(settings.get(), key_file.get(), "websettings", &error.outPtr()));
     g_assert_error(error.get(), G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE);

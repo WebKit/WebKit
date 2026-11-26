@@ -127,7 +127,7 @@ void Connection::getPushPermissionState(const String& scope, CompletionHandler<v
 
 void Connection::requestPushPermission(const String& scope, CompletionHandler<void(bool)>&& completionHandler)
 {
-    SAFE_PRINTF("Request push permission state for %s\n", scope.utf8());
+    SAFE_PRINTF("Request push permission state for %s\n", makeUTF8CString(scope));
 
     sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTF::move(completionHandler));
 }

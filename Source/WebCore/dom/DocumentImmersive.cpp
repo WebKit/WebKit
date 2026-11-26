@@ -211,7 +211,7 @@ void DocumentImmersive::exitImmersiveIfNeeded(CompletionHandler<void()>&& comple
         exitImmersive([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](auto result) mutable {
             RefPtr protectedThis = weakThis.get();
             if (protectedThis && result.hasException())
-                RELEASE_LOG_ERROR(Immersive, "%p - DocumentImmersive: %s", protectedThis.get(), result.releaseException().message().utf8());
+                RELEASE_LOG_ERROR(Immersive, "%p - DocumentImmersive: %s", protectedThis.get(), makeUTF8CString(result.releaseException().message()));
 
             if (completionHandler)
                 completionHandler();
@@ -253,7 +253,7 @@ void DocumentImmersive::exitRemovedImmersiveElementIfNeeded(ImmersiveElement* el
 
 void DocumentImmersive::handleImmersiveError(ImmersiveElement* element, const String& message, EmitErrorEvent emitErrorEvent, ExceptionCode code, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
-    RELEASE_LOG_ERROR(Immersive, "%p - DocumentImmersive: %s", this, message.utf8());
+    RELEASE_LOG_ERROR(Immersive, "%p - DocumentImmersive: %s", this, makeUTF8CString(message));
 
     if (m_activeRequest.element == element) {
         m_activeRequest.stage = ActiveRequest::Stage::None;

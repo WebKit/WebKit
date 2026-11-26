@@ -3838,7 +3838,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
     auto testJS = makeString("fetch('http://127.0.0.1:"_s, server.port(), "/bar.xml', { headers: { 'Custom-Header': 'CustomHeaderValue' } });"_s);
 
     RetainPtr schemeHandler = adoptNS([ServiceWorkerSchemeHandler new]);
-    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:testJS.utf8()];
+    [schemeHandler addMappingFromURLString:@"sw-ext://ABC/sw.js" toData:makeUTF8CString(testJS)];
 
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];

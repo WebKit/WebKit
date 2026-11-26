@@ -941,7 +941,7 @@ void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQU
     }
 #endif
 
-    auto packetData = packet.utf8();
+    auto packetData = makeUTF8CString(packet);
     auto packetBytes = packetData.span();
     int sent = static_cast<int>(send(m_debugServer.m_clientSocket, packetBytes.data(), packetBytes.size(), 0));
     if (sent < 0)

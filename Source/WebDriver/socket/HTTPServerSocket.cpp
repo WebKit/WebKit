@@ -35,7 +35,7 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
 
-    if (auto id = endpoint.listenInet(host ? host->utf8() : UTF8CString { }, port, *this)) {
+    if (auto id = endpoint.listenInet(host ? makeUTF8CString(*host) : UTF8CString { }, port, *this)) {
         m_server = id;
         return true;
     }
@@ -92,7 +92,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
         auto& headers = message.requestHeaders;
         auto result = validateRequestHeaders(headerValue(headers, "Host"_s), headerValue(headers, "Origin"_s), message.method, headerValue(headers, "Content-Type"_s));
         if (!result) {
-            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", result.error().utf8());
+            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", makeUTF8CString(result.error()));
             sendResponse(rejectedRequestResponse(result.error()));
             return;
         }
@@ -126,7 +126,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
 void HTTPRequestHandler::sendResponse(HTTPRequestHandler::Response&& response)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
-    endpoint.send(m_client.value(), byteCast<uint8_t>(packHTTPMessage(WTF::move(response)).utf8().span()));
+    endpoint.send(m_client.value(), byteCast<uint8_t>(makeUTF8CString(packHTTPMessage(WTF::move(response))).span()));
     reset();
 }
 

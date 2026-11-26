@@ -207,7 +207,7 @@ void WebSocketChannel::close(int code, const String& reason)
 
 void WebSocketChannel::fail(String&& reason)
 {
-    RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8());
+    RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, makeUTF8CString(reason));
     ASSERT(!m_suspended);
     if (m_document) {
         LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(protect(m_document), m_progressIdentifier, reason);
@@ -376,7 +376,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
     if (m_document) {
         LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(protect(m_document), m_progressIdentifier, message);
         protect(m_document)->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
-        LOG_ERROR("%s", message.utf8());
+        LOG_ERROR("%s", makeUTF8CString(message));
     }
     m_shouldDiscardReceivedData = true;
     if (RefPtr client = m_client)
@@ -514,7 +514,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         uint8_t lowByte = code;
         buf.append(highByte);
         buf.append(lowByte);
-        auto reasonUTF8 = reason.utf8();
+        auto reasonUTF8 = makeUTF8CString(reason);
         buf.append(reasonUTF8.span());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, borrow(buf)->span());

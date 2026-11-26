@@ -1631,18 +1631,32 @@ ASCIICString StringImpl::asciiForCharacters(std::span<const char16_t> characters
     return asciiForCharactersInternal(characters);
 }
 
-std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
+std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const Latin1Character> source)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
+    return tryGetUTF8([](std::span<const char8_t> converted) {
         return UTF8CString { converted };
     }, source);
 }
 
-std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const char16_t> characters, ConversionMode mode)
+std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const char16_t> characters, ConversionMode mode)
 {
-    return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
+    return tryGetUTF8([](std::span<const char8_t> converted) {
         return UTF8CString { converted };
     }, characters, mode);
+}
+
+UTF8CString makeUTF8CString(std::span<const Latin1Character> characters)
+{
+    auto expectedString = tryMakeUTF8CString(characters);
+    RELEASE_ASSERT(expectedString);
+    return expectedString.value();
+}
+
+UTF8CString makeUTF8CString(std::span<const char16_t> characters, ConversionMode mode)
+{
+    auto expectedString = tryMakeUTF8CString(characters, mode);
+    RELEASE_ASSERT(expectedString);
+    return expectedString.value();
 }
 
 size_t StringImpl::utf8LengthFromUTF16(std::span<const char16_t> characters)
@@ -1668,20 +1682,6 @@ void StringImpl::convertUTF16ToUTF8ReplacingUnpairedSurrogates(std::span<const c
     ASSERT_WITH_SECURITY_IMPLICATION(destination.size() == utf8LengthFromUTF16ReplacingUnpairedSurrogates(source));
     auto written = simdutf::convert_utf16le_to_utf8_with_replacement(source, destination);
     ASSERT_UNUSED(written, written == destination.size());
-}
-
-std::expected<UTF8CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
-{
-    if (is8Bit())
-        return utf8ForCharacters(span8());
-    return utf8ForCharacters(span16(), mode);
-}
-
-UTF8CString StringImpl::utf8(ConversionMode mode) const
-{
-    auto expectedString = tryGetUTF8(mode);
-    RELEASE_ASSERT(expectedString);
-    return expectedString.value();
 }
 
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const

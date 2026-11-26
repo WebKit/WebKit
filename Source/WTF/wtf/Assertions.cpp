@@ -580,7 +580,7 @@ ALLOW_NONLITERAL_FORMAT_END
 
     loggingAccumulator().accumulate(loggingString);
 
-    logToStderr(channel, loggingString.utf8());
+    logToStderr(channel, makeUTF8CString(loggingString));
 }
 
 void WTFLog(WTFLogChannel* channel, const char* format, ...)
@@ -692,14 +692,14 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
             else if (equalLettersIgnoringASCIICase(level, "debug"_s))
                 logChannelLevel = WTFLogLevel::Debug;
             else
-                SAFE_WTFLOGALWAYS("Unknown logging level: %s", level.utf8());
+                SAFE_WTFLOGALWAYS("Unknown logging level: %s", makeUTF8CString(level));
         }
 
         if (WTFLogChannel* channel = WTFLogChannelByName(channels, count, component)) {
             channel->state = logChannelState;
             channel->level = logChannelLevel;
         } else
-            SAFE_WTFLOGALWAYS("Unknown logging channel: %s", component.utf8());
+            SAFE_WTFLOGALWAYS("Unknown logging channel: %s", makeUTF8CString(component));
     }
 }
 

@@ -61,7 +61,7 @@ void platformSaveDataToFile(GRefPtr<GFile>&& file, const String& content, bool b
         decodedData->shrinkToFit();
         platformSaveData->dataVector = WTF::move(*decodedData);
     } else
-        platformSaveData->dataString = content.utf8();
+        platformSaveData->dataString = makeUTF8CString(content);
 
     const char* data = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.legacyCStringPointer() : reinterpret_cast<const char*>(platformSaveData->dataVector.span().data());
     size_t dataLength = !platformSaveData->dataString.isNull() ? platformSaveData->dataString.length() : platformSaveData->dataVector.size();

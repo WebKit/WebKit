@@ -1120,7 +1120,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
 
         overrideData = SharedBuffer::create(WTF::move(*buffer));
     } else
-        overrideData = SharedBuffer::create(content.utf8().span());
+        overrideData = SharedBuffer::create(makeUTF8CString(content).span());
 
     pendingInterceptResponse->respond(overrideResponse, overrideData);
 
@@ -1146,7 +1146,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
 
         data = SharedBuffer::create(WTF::move(*buffer));
     } else
-        data = SharedBuffer::create(content.utf8().span());
+        data = SharedBuffer::create(makeUTF8CString(content).span());
 
     // Mimic data URL load behavior - report didReceiveResponse & didFinishLoading.
     ResourceResponse response(URL { protect(pendingRequest->m_loader)->url() }, String { mimeType }, data->size(), String());

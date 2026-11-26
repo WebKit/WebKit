@@ -118,10 +118,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {
         if (type() == ContextMenuItemType::CheckableAction) {
-            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), title().utf8().legacyCStringPointer(), nullptr, nullptr));
+            m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), makeUTF8CString(title()).legacyCStringPointer(), nullptr, nullptr));
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_gtkAction), checked());
         } else
-            m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), title().utf8().legacyCStringPointer(), 0, nullptr);
+            m_gtkAction = gtk_action_new(g_action_get_name(m_gAction.get()), makeUTF8CString(title()).legacyCStringPointer(), 0, nullptr);
         gtk_action_set_sensitive(m_gtkAction, enabled());
     }
 

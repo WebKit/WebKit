@@ -738,7 +738,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
         printIndent(indent);
         printf("  document=%p (needs style recalc %d)\n", localFrame->document(), localFrame->document() ? localFrame->document()->childNeedsStyleRecalc() : false);
         printIndent(indent);
-        SAFE_PRINTF("  uri=%s\n", localFrame->document()->documentURI().utf8());
+        SAFE_PRINTF("  uri=%s\n", makeUTF8CString(localFrame->document()->documentURI()));
     }
     for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);

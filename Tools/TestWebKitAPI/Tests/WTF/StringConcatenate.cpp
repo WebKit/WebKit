@@ -298,10 +298,10 @@ TEST(WTF, StringConcatenate_Tuple)
     EXPECT_EQ("hello 42 world"_s, makeString(std::make_tuple("hello"_s, ' ', unsigned(42), ' ', "world"_s)));
 
     char16_t checkmarkCodepoint = 0x2713;
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint), ' ', "world"_s).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint, ' ', "world"_s)).utf8());
-    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeString(std::make_tuple("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s)).utf8());
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeUTF8CString(makeString("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s)));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeUTF8CString(makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint), ' ', "world"_s)));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeUTF8CString(makeString("hello"_s, ' ', std::make_tuple(checkmarkCodepoint, ' ', "world"_s))));
+    EXPECT_EQ(UTF8CString { u8"hello \xE2\x9C\x93 world"_span }, makeUTF8CString(makeString(std::make_tuple("hello"_s, ' ', checkmarkCodepoint, ' ', "world"_s))));
 
     const char16_t helloCodepoints[] = { 'h', 'e', 'l', 'l', 'o', '\0' };
     EXPECT_EQ("hello 42 world"_s, makeString(helloCodepoints, ' ', unsigned(42), ' ', "world"_s));

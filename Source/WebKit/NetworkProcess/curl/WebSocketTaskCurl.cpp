@@ -137,7 +137,7 @@ void WebSocketTask::didOpen(WebCore::CurlStreamID)
 
     UTF8CString cookieHeader;
     if (!cookieHeaderField.isEmpty())
-        cookieHeader = makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s).utf8();
+        cookieHeader = makeUTF8CString(makeString("Cookie: "_s, cookieHeaderField, "\r\n"_s));
 
     auto originalMessage = m_handshake->clientHandshakeMessage();
     auto handshakeMessageLength = originalMessage.length() + cookieHeader.length();
@@ -430,7 +430,7 @@ void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& rea
         unsigned char lowByte = static_cast<unsigned short>(code);
         buf.append(static_cast<char>(highByte));
         buf.append(static_cast<char>(lowByte));
-        buf.append(reason.utf8().span());
+        buf.append(makeUTF8CString(reason).span());
     }
 
     if (!sendFrame(WebCore::WebSocketFrame::OpCodeClose, buf.span()))

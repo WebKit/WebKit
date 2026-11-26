@@ -267,7 +267,7 @@ TEST_F(LoggingTest, DISABLED_TestRELEASE_LOG_WITH_LEVEL_IF)
 {
     bool enabled = true;
     RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Error, "Is there someone else up there that we can talk to?");
-    SAFE_WTFLOGALWAYS("%s", output().utf8());
+    SAFE_WTFLOGALWAYS("%s", makeUTF8CString(output()));
     EXPECT_TRUE(output().containsIgnoringASCIICase("someone else"_s));
 
     RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Debug, "No, now go away");

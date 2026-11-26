@@ -956,7 +956,7 @@ TEST_F(FileSystemTest, readEntireFile)
 
     auto buffer = FileSystem::readEntireFile(tempFilePath());
     EXPECT_TRUE(buffer);
-    auto contents = String { byteCast<Latin1Character>(buffer.value().span()) }.utf8();
+    auto contents = makeUTF8CString(String { byteCast<Latin1Character>(buffer.value().span()) });
     EXPECT_EQ(contents, FileSystemTestData);
 }
 

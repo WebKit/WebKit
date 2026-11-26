@@ -609,7 +609,7 @@ template<typename StringType>
 static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(char16_t))
 {
     auto encode = [shouldEncode] (const StringType& input) {
-        auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> String {
+        auto result = tryGetUTF8([&](std::span<const char8_t> span) -> String {
             StringBuilder builder(OverflowPolicy::RecordOverflow);
             for (char c : span) {
                 if (shouldEncode(c))
@@ -620,7 +620,7 @@ static String percentEncodeCharacters(const StringType& input, bool(*shouldEncod
                     return { };
             }
             return builder.toString();
-        });
+        }, input);
         RELEASE_ASSERT(result);
         return result.value();
     };
@@ -897,7 +897,7 @@ bool protocolIs(StringView string, ASCIILiteral protocol)
 
 void URL::print() const
 {
-    SAFE_PRINTF("%s\n", m_string.utf8());
+    SAFE_PRINTF("%s\n", makeUTF8CString(m_string));
 }
 
 #endif

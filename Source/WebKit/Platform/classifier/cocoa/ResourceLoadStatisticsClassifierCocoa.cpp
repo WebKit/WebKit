@@ -109,14 +109,14 @@ const struct svm_model* ResourceLoadStatisticsClassifierCocoa::singletonPredicti
 {
     static std::optional<struct svm_model*> corePredictionModel = [&]() -> std::optional<struct svm_model*> {
         if (auto path = storagePath(); !path.isEmpty())
-            return svm_load_model(path.utf8().legacyCStringPointer());
+            return svm_load_model(makeUTF8CString(path).legacyCStringPointer());
         return std::nullopt;
     }();
 
     if (corePredictionModel && corePredictionModel.value())
         return corePredictionModel.value();
 
-    SAFE_WTFLOGALWAYS("ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel(): Couldn't load model file at path %s.", storagePath().utf8());
+    SAFE_WTFLOGALWAYS("ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel(): Couldn't load model file at path %s.", makeUTF8CString(storagePath()));
     m_useCorePrediction = false;
     return nullptr;
 }

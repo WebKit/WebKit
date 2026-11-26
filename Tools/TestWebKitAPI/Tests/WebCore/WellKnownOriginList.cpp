@@ -64,7 +64,7 @@ static WebCore::WellKnownOriginListResult findIn(ASCIILiteral callerOrigin, cons
     WebCore::WellKnownOriginListPolicy&& policy = { })
 {
     auto origin = WebCore::SecurityOriginData::fromURL(URL { callerOrigin });
-    auto utf8 = resource.utf8();
+    auto utf8 = makeUTF8CString(resource);
     return WebCore::findOriginInWellKnownList(origin, byteCast<uint8_t>(utf8.span()), "origins"_s, WTF::move(policy));
 }
 

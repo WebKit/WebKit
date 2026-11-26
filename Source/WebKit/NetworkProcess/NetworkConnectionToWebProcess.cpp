@@ -565,7 +565,7 @@ void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& r
         return;
     }
     if (RegistrableDomain(request.firstPartyForCookies()).isEmpty()) {
-        CONNECTION_RELEASE_LOG(Loading, "createSocketChannel: forcing EphemeralStateless because Web process is not allowed to use firstPartyForCookies %" SENSITIVE_LOG_STRING " for url %" SENSITIVE_LOG_STRING, request.firstPartyForCookies().string().utf8(), request.url().string().utf8());
+        CONNECTION_RELEASE_LOG(Loading, "createSocketChannel: forcing EphemeralStateless because Web process is not allowed to use firstPartyForCookies %" SENSITIVE_LOG_STRING " for url %" SENSITIVE_LOG_STRING, makeUTF8CString(request.firstPartyForCookies().string()), makeUTF8CString(request.url().string()));
         storedCredentialsPolicy = WebCore::StoredCredentialsPolicy::EphemeralStateless;
     }
 
@@ -627,7 +627,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 {
     bool allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
     if (!allowCookieAccess) [[unlikely]]
-        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8(), loadParameters.request.url().string().utf8());
+        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, makeUTF8CString(loadParameters.request.firstPartyForCookies().string()), makeUTF8CString(loadParameters.request.url().string()));
 
     MESSAGE_CHECK(allowCookieAccess);
     if (!NetworkProcess::singleton().allowsWebPageProxyIdentifier(m_webProcessIdentifier, loadParameters.webPageProxyID)) {
@@ -2426,7 +2426,7 @@ void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedP
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(const String& host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", host.utf8());
+    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", makeUTF8CString(host));
     if (CheckedPtr session = networkSession())
         protect(session->resourceMonitorThrottler())->tryAccess(host, ContinuousApproximateTime::now(), WTF::move(completionHandler));
     else

@@ -43,9 +43,9 @@ ValidationBubbleGtk::ValidationBubbleGtk(GtkWidget* webView, String&& message, c
     GtkWidget* label = gtk_label_new(nullptr);
 
     // https://docs.gtk.org/Pango/pango_markup.html
-    auto escapedMessage = gMarkupEscapeText(m_message.utf8());
+    auto escapedMessage = gMarkupEscapeText(makeUTF8CString(m_message));
     String markup = makeString("<span font='"_s, m_fontSize, "'>"_s, escapedMessage.span(), "</span>"_s);
-    gtk_label_set_markup(GTK_LABEL(label), markup.utf8().legacyCStringPointer());
+    gtk_label_set_markup(GTK_LABEL(label), makeUTF8CString(markup).legacyCStringPointer());
 
     gtk_widget_set_halign(label, GTK_ALIGN_START);
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);

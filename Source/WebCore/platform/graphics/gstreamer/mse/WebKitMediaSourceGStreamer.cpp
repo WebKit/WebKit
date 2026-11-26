@@ -330,12 +330,12 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
             continue;
         }
 
-        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(gObjectNew(webkit_media_src_pad_get_type(), "name", makeString("src_"_s, String::number(track->id())).utf8(), "direction", GST_PAD_SRC));
+        GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(gObjectNew(webkit_media_src_pad_get_type(), "name", makeUTF8CString(makeString("src_"_s, String::number(track->id()))), "direction", GST_PAD_SRC));
         gst_pad_set_activatemode_function(GST_PAD(pad.get()), webKitMediaSrcActivateMode);
 
         ASSERT(track->initialCaps());
         auto stream = adoptRef(new Stream(source, GRefPtr<GstPad>(GST_PAD(pad.get())), *track,
-            adoptGRef(gst_stream_new(makeString(track->id()).utf8().legacyCStringPointer(), track->initialCaps().get(), gstStreamType(track->type()), GST_STREAM_FLAG_SELECT))));
+            adoptGRef(gst_stream_new(makeUTF8CString(makeString(track->id())).legacyCStringPointer(), track->initialCaps().get(), gstStreamType(track->type()), GST_STREAM_FLAG_SELECT))));
         pad->priv->stream = ThreadSafeWeakPtr { *stream.get() };
 
         gst_stream_collection_add_stream(source->priv->collection.get(), GRefPtr<GstStream>(stream->streamInfo.get()).leakRef());

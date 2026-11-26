@@ -57,8 +57,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorker);
 
-#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8(), ##__VA_ARGS__)
-#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8(), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, makeUTF8CString(identifier().toString()), ##__VA_ARGS__)
+#define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, makeUTF8CString(identifier().toString()), ##__VA_ARGS__)
 
 NODELETE static HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
 {
@@ -202,7 +202,7 @@ void SharedWorker::reportNetworkUsage(size_t bytesTransferredOverNetwork)
 
     if (delta) {
         if (m_resourceMonitor) {
-            RELEASE_LOG(ResourceMonitoring, "[identifier=%" PUBLIC_LOG_STRING "] SharedWorker::reportNetworkUsage to ResourceMonitor: %zu bytes", identifier().toString().utf8(), delta.value());
+            RELEASE_LOG(ResourceMonitoring, "[identifier=%" PUBLIC_LOG_STRING "] SharedWorker::reportNetworkUsage to ResourceMonitor: %zu bytes", makeUTF8CString(identifier().toString()), delta.value());
             m_resourceMonitor->addNetworkUsage(delta);
         }
     }

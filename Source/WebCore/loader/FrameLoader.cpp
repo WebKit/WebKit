@@ -1864,7 +1864,7 @@ SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
 
     auto& srcdoc = iframeElement->attributeWithoutSynchronization(srcdocAttr);
     ASSERT(!srcdoc.isNull());
-    auto encodedSrcdoc = srcdoc.string().utf8();
+    auto encodedSrcdoc = makeUTF8CString(srcdoc.string());
 
     ResourceResponse response(URL(), String { textHTMLContentTypeAtom() }, encodedSrcdoc.length(), "UTF-8"_s);
     return SubstituteData(SharedBuffer::create(encodedSrcdoc.span()), URL(), WTF::move(response), iframeElement->srcdocSessionHistoryVisibility());

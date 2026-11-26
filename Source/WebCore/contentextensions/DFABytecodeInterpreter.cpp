@@ -264,7 +264,7 @@ auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags fl
         url = urlString.span8();
     else {
         // FIXME: Stuffing a UTF-8 string into a Latin1 buffer seems wrong.
-        urlCString = urlString.utf8();
+        urlCString = makeUTF8CString(urlString);
         url = byteCast<Latin1Character>(urlCString.span());
     }
     ASSERT(url.data());

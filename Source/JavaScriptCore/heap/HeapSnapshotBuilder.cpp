@@ -364,7 +364,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
         if (json.hasOverflowed()) [[unlikely]]
             m_hasOverflowed = true;
         else
-            out.print(json.toString().utf8());
+            out.print(makeUTF8CString(json.toString()));
     };
 
     auto appendNodeJSON = [&] (const HeapSnapshotNode& node) {

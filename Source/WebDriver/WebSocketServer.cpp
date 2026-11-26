@@ -160,7 +160,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
     reply->setString("error"_s, CommandResult::errorCodeToString(errorCode));
     reply->setString("type"_s, "error"_s);
 
-    return { (connection ? (*connection) : nullptr), reply->toJSONString().utf8() };
+    return { (connection ? (*connection) : nullptr), makeUTF8CString(reply->toJSONString()) };
 }
 
 WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const String& type, unsigned id, Ref<JSON::Value>&& result)
@@ -175,7 +175,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const S
         reply->setObject("result"_s, JSON::Object::create());
 
     // Connection will be set when sending the message back to the client, from the incoming message.
-    return { nullptr, reply->toJSONString().utf8() };
+    return { nullptr, makeUTF8CString(reply->toJSONString()) };
 }
 
 std::optional<Command> Command::fromData(const char* data, size_t dataLength)
@@ -213,7 +213,7 @@ void WebSocketServer::sendMessage(const String& sessionId, const String& message
 {
     auto connection = this->connection(sessionId);
     if (!connection) {
-        RELEASE_LOG_ERROR(WebDriverBiDi, "No connection found for session %s when trying to send message: %s", sessionId.utf8(), message.utf8());
+        RELEASE_LOG_ERROR(WebDriverBiDi, "No connection found for session %s when trying to send message: %s", makeUTF8CString(sessionId), makeUTF8CString(message));
         return;
     }
     sendMessage(*connection, message);
@@ -223,7 +223,7 @@ void WebSocketServer::sendErrorResponse(const String& sessionId, std::optional<u
 {
     auto connection = this->connection(sessionId);
     if (!connection) {
-        RELEASE_LOG_ERROR(WebDriverBiDi, "No connection found for session %s when trying to send error response", sessionId.utf8());
+        RELEASE_LOG_ERROR(WebDriverBiDi, "No connection found for session %s when trying to send error response", makeUTF8CString(sessionId));
         return;
     }
     sendErrorResponse(*connection, commandId, errorCode, errorMessage, stacktrace);

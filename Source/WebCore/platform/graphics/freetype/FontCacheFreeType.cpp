@@ -294,7 +294,7 @@ static AliasStrength strengthOfFirstAlias(const FcPattern& original)
 static Vector<String> strongAliasesForFamily(const String& family)
 {
     RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
-    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(family.utf8().legacyCStringPointer())))
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(makeUTF8CString(family).legacyCStringPointer())))
         return Vector<String>();
 
     FcConfigSubstitute(nullptr, pattern.get(), FcMatchPattern);
@@ -376,7 +376,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     FcPatternAddBool(pattern.get(), FC_VARIABLE, FcDontCare);
 #endif
     String familyNameString(getFamilyNameStringFromFamily(family));
-    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.utf8().legacyCStringPointer())))
+    if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(makeUTF8CString(familyNameString).legacyCStringPointer())))
         return nullptr;
 
     if (!configurePatternForFontDescription(pattern.get(), fontDescription))
@@ -461,7 +461,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (FT_Face freeTypeFace = cairoFtFaceLocker.ftFace()) {
         auto variants = buildVariationSettings(freeTypeFace, fontDescription, fontCreationContext);
         if (!variants.isEmpty())
-            FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().legacyCStringPointer()));
+            FcPatternAddString(resultPattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(makeUTF8CString(variants).legacyCStringPointer()));
     }
 #endif
 

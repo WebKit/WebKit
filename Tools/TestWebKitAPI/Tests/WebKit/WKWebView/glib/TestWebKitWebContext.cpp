@@ -293,7 +293,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     // WebKitURISchemeRequest when reading data, but we still need way more than that to
     // ensure that we reach the load-committed state before failing, so we use an 8MB HTML.
     String longHTMLContent = generateHTMLContent(8 * 1024 * 1024);
-    test->registerURISchemeHandler("error", longHTMLContent.utf8().legacyCStringPointer(), -1, "text/html");
+    test->registerURISchemeHandler("error", makeUTF8CString(longHTMLContent).legacyCStringPointer(), -1, "text/html");
     test->m_loadEvents.clear();
     test->loadURI("error:error");
     test->waitUntilLoadFinished();
@@ -779,7 +779,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     g_assert_true(serverType == ProxyTest::WebSocketServerType::NoProxy);
 
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
-    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), nullptr);
+    WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(makeUTF8CString(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), nullptr);
     auto* dataManager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
@@ -819,7 +819,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use a default proxy uri, but ignoring requests to localhost.
     static const char* ignoreHosts[] = { "localhost", nullptr };
-    settings = webkit_network_proxy_settings_new(test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer(), ignoreHosts);
+    settings = webkit_network_proxy_settings_new(makeUTF8CString(test->m_proxyServer.baseURL().string()).legacyCStringPointer(), ignoreHosts);
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
@@ -835,7 +835,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Use scheme specific proxy instead of the default.
     settings = webkit_network_proxy_settings_new(nullptr, nullptr);
-    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", test->m_proxyServer.baseURL().string().utf8().legacyCStringPointer());
+    webkit_network_proxy_settings_add_proxy_for_scheme(settings, "http", makeUTF8CString(test->m_proxyServer.baseURL().string()).legacyCStringPointer());
     webkit_website_data_manager_set_network_proxy_settings(dataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort"));
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());

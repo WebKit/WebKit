@@ -125,14 +125,14 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             const char* name;
             g_variant_get(parameters, "(i&s)", &offset, &name);
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset);
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", attributes.attributes.get(String::fromUTF8(name)).utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", makeUTF8CString(attributes.attributes.get(String::fromUTF8(name)))));
         } else if (!g_strcmp0(methodName, "GetAttributes")) {
             int offset;
             g_variant_get(parameters, "(i)", &offset);
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset);
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", makeUTF8CString(it.key), makeUTF8CString(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss}ii)", &builder, attributes.startOffset, attributes.endOffset));
         } else if (!g_strcmp0(methodName, "GetAttributeRun")) {
             int offset;
@@ -141,13 +141,13 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             auto attributes = atspiObject->textAttributesWithUTF8Offset(offset, includeDefaults);
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", makeUTF8CString(it.key), makeUTF8CString(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss}ii)", &builder, attributes.startOffset, attributes.endOffset));
         } else if (!g_strcmp0(methodName, "GetDefaultAttributes") || !g_strcmp0(methodName, "GetDefaultAttributeSet")) {
             auto attributes = atspiObject->textAttributesWithUTF8Offset();
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("a{ss}"));
             for (const auto& it : attributes.attributes)
-                gVariantBuilderAdd(&builder, "{ss}", it.key.utf8(), it.value.utf8());
+                gVariantBuilderAdd(&builder, "{ss}", makeUTF8CString(it.key), makeUTF8CString(it.value));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(a{ss})", &builder));
         } else if (!g_strcmp0(methodName, "GetCharacterExtents")) {
             int offset;
@@ -329,7 +329,7 @@ bool AccessibilityObject::allowsTextRanges() const
 UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = makeUTF8CString(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (endOffset == -1)
@@ -370,7 +370,7 @@ void AccessibilityObjectAtspi::textInserted(const String& insertedText, const Vi
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
     auto& reportedText = maskedText.isNull() ? insertedText : maskedText;
     auto insertedTextLength = StringView(reportedText).codePointCount();
-    auto utf8InsertedText = reportedText.utf8();
+    auto utf8InsertedText = makeUTF8CString(reportedText);
     AccessibilityAtspi::singleton().textChanged(*this, "insert", WTF::move(utf8InsertedText), offset - insertedTextLength, insertedTextLength);
 }
 
@@ -383,7 +383,7 @@ void AccessibilityObjectAtspi::textDeleted(const String& deletedText, const Visi
     auto utf16Offset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(position), m_hasListMarkerAtStart);
     auto mapping = offsetMapping(utf16Text);
     auto offset = UTF16OffsetToUTF8(mapping, utf16Offset);
-    auto utf8DeletedText = deletedText.utf8();
+    auto utf8DeletedText = makeUTF8CString(deletedText);
     auto deletedTextLength = StringView(deletedText).codePointCount();
     AccessibilityAtspi::singleton().textChanged(*this, "delete", WTF::move(utf8DeletedText), offset, deletedTextLength);
 }
@@ -462,7 +462,7 @@ IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGran
 UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity granularity, int& startOffset, int& endOffset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = makeUTF8CString(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset > length)
@@ -486,7 +486,7 @@ UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity g
 int AccessibilityObjectAtspi::characterAtOffset(int offset) const
 {
     auto utf16Text = text();
-    auto utf8Text = utf16Text.utf8();
+    auto utf8Text = makeUTF8CString(utf16Text);
 
     auto length = static_cast<int>(StringView(utf16Text).codePointCount());
     if (offset < 0 || offset >= length)

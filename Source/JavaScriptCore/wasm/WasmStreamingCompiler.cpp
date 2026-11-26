@@ -50,7 +50,7 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_parser(m_info.get(), *this)
     , m_source(source)
 {
-    m_info->sourceURL = Name(wasmSourceURL.utf8().span());
+    m_info->sourceURL = Name(makeUTF8CString(wasmSourceURL).span());
     m_info->requestIdentifier = requestIdentifier;
     Vector<JSCell*> dependencies;
     dependencies.append(globalObject);

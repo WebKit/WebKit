@@ -153,7 +153,7 @@ static UTF8CString allPositionTypeFailures(const Position& a, Node* nodeB, unsig
         if (strcmp(result, string(-expectedResult)))
             failures.append(makeString("order(b"_s, typeStringSuffix(b), ")="_s, result, "<expected:"_s, string(-expectedResult), '>'));
     }
-    return join(failures, ", "_s).utf8();
+    return makeUTF8CString(join(failures, ", "_s));
 }
 
 static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
@@ -169,7 +169,7 @@ static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* 
                 failures.append(makeString("order(b"_s, typeStringSuffix(b), ",a"_s, typeStringSuffix(a), ")="_s, result, "<expected:"_s, string(-expectedResult), '>'));
         }
     }
-    return join(failures, " | "_s).utf8();
+    return makeUTF8CString(join(failures, " | "_s));
 }
 
 static UTF8CString allPositionTypeFailures(Node& nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)

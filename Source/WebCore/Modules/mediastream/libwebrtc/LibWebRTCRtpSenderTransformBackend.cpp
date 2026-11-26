@@ -68,7 +68,7 @@ bool LibWebRTCRtpSenderTransformBackend::requestKeyFrame(const String& rid)
 {
     std::vector<std::string> rtcRids;
     if (!rid.isEmpty())
-        rtcRids.push_back(rid.utf8().toStdString());
+        rtcRids.push_back(makeUTF8CString(rid).toStdString());
     ASSERT(mediaType() == MediaType::Video);
     return m_rtcSender->GenerateKeyFrame(rtcRids).ok();
 }

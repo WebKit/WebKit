@@ -399,7 +399,7 @@ const gchar* webkit_context_menu_item_get_title(WebKitContextMenuItem* item)
     if (item->priv->menuItem->type() == WebCore::ContextMenuItemType::Separator)
         return nullptr;
     if (item->priv->titleUTF8.isNull())
-        item->priv->titleUTF8 = item->priv->menuItem->title().utf8();
+        item->priv->titleUTF8 = makeUTF8CString(item->priv->menuItem->title());
     return item->priv->titleUTF8.legacyCStringPointer();
 #else
     g_assert_not_reached();

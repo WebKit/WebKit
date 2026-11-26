@@ -355,7 +355,7 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
 
     if (!proxy.ignoreAddressList.isEmpty()) {
         auto ignoreAddressListUTF8 = WTF::map(proxy.ignoreAddressList, [](const String& ignoreAddress) {
-            return ignoreAddress.utf8();
+            return makeUTF8CString(ignoreAddress);
         });
         Vector<const char*> ignoreAddressList(ReserveCapacityTag { }, ignoreAddressListUTF8.size() + 1);
         for (const auto& ignoreAddress : ignoreAddressListUTF8)
@@ -366,20 +366,20 @@ static WebKitNetworkProxyMode parseProxyCapabilities(const Inspector::RemoteInsp
         *settings = webkit_network_proxy_settings_new(nullptr, nullptr);
 
     if (proxy.ftpURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "ftp", proxy.ftpURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "ftp", makeUTF8CString(*proxy.ftpURL).legacyCStringPointer());
     if (proxy.httpURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "http", proxy.httpURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "http", makeUTF8CString(*proxy.httpURL).legacyCStringPointer());
     if (proxy.httpsURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "https", proxy.httpsURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "https", makeUTF8CString(*proxy.httpsURL).legacyCStringPointer());
     if (proxy.socksURL)
-        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "socks", proxy.socksURL->utf8().legacyCStringPointer());
+        webkit_network_proxy_settings_add_proxy_for_scheme(*settings, "socks", makeUTF8CString(*proxy.socksURL).legacyCStringPointer());
 
     return WEBKIT_NETWORK_PROXY_MODE_CUSTOM;
 }
 
 WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const String& sessionID, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
-    auto* session = WEBKIT_AUTOMATION_SESSION(gObjectNew(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID.utf8()));
+    auto* session = WEBKIT_AUTOMATION_SESSION(gObjectNew(WEBKIT_TYPE_AUTOMATION_SESSION, "id", makeUTF8CString(sessionID)));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
     WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);
@@ -394,12 +394,12 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     }
 
     for (auto& certificate : capabilities.certificates) {
-        GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(certificate.second.utf8().legacyCStringPointer(), nullptr));
+        GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(makeUTF8CString(certificate.second).legacyCStringPointer(), nullptr));
         if (tlsCertificate) {
 #if ENABLE(2022_GLIB_API)
-            webkit_network_session_allow_tls_certificate_for_host(networkSession, tlsCertificate.get(), certificate.first.utf8().legacyCStringPointer());
+            webkit_network_session_allow_tls_certificate_for_host(networkSession, tlsCertificate.get(), makeUTF8CString(certificate.first).legacyCStringPointer());
 #else
-            webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), certificate.first.utf8().legacyCStringPointer());
+            webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), makeUTF8CString(certificate.first).legacyCStringPointer());
 #endif
         }
     }
@@ -408,7 +408,7 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
             // FIXME: expose pac proxy in public API.
             auto settings = WebCore::SoupNetworkProxySettings(WebCore::SoupNetworkProxySettings::Mode::Auto);
             if (capabilities.proxy->autoconfigURL)
-                settings.defaultProxyURL = capabilities.proxy->autoconfigURL->utf8();
+                settings.defaultProxyURL = makeUTF8CString(*capabilities.proxy->autoconfigURL);
             if (!settings.isEmpty()) {
 #if ENABLE(2022_GLIB_API)
                 Ref dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));

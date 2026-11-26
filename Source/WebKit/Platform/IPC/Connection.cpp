@@ -2000,7 +2000,7 @@ void Connection::setShouldCrashOnMessageCheckFailure(bool shouldCrash)
 
 void Connection::logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "%s %u: Invalid message dispatched %s: %s", file.utf8(), line, function.utf8(), reason.utf8());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "%s %u: Invalid message dispatched %s: %s", makeUTF8CString(file), line, makeUTF8CString(function), makeUTF8CString(reason));
     CRASH_IF_TESTING
 }
 

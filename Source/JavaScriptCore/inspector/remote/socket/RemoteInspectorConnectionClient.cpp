@@ -77,7 +77,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
                         auto call = methods.get(methodName);
                         (this->*call)(event);
                     } else
-                        LOG_ERROR("Unknown event: %s", methodName.utf8());
+                        LOG_ERROR("Unknown event: %s", makeUTF8CString(methodName));
                 });
             }
         });

@@ -347,24 +347,12 @@ public:
     static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const Latin1Character> characters);
     static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const char16_t> characters);
 
-    static WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> utf8ForCharacters(std::span<const Latin1Character> characters);
-    static WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> utf8ForCharacters(std::span<const char16_t> characters, ConversionMode = ConversionMode::Lenient);
     static WTF_EXPORT_PRIVATE size_t utf8LengthFromUTF16(std::span<const char16_t> characters);
     static WTF_EXPORT_PRIVATE size_t utf8LengthFromUTF16ReplacingUnpairedSurrogates(std::span<const char16_t> characters);
     static WTF_EXPORT_PRIVATE size_t tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination);
     static WTF_EXPORT_PRIVATE void convertUTF16ToUTF8ReplacingUnpairedSurrogates(std::span<const char16_t> source, std::span<char8_t> destination);
     template<typename CharacterType, size_t inlineCapacity>
     static std::expected<void, UTF8ConversionError> convertToUTF8(std::span<const char16_t>, Vector<CharacterType, inlineCapacity>&, ConversionMode);
-
-    template<typename Func>
-    static std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8ForCharacters(NOESCAPE const Func&, std::span<const Latin1Character> characters);
-    template<typename Func>
-    static std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8ForCharacters(NOESCAPE const Func&, std::span<const char16_t> characters, ConversionMode = ConversionMode::Lenient);
-
-    template<typename Func>
-    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;
-    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = ConversionMode::Lenient) const;
-    WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
 
 private:
     // The high bits of 'hash' are always empty, but we prefer to store our flags
@@ -689,6 +677,16 @@ template<size_t inlineCapacity> NODELETE bool equalIgnoringNullity(const Vector<
 
 template<typename CharacterType1, typename CharacterType2>
 NODELETE SUPPRESS_NODELETE std::strong_ordering codePointCompare(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2);
+
+WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const Latin1Character>);
+WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
+WTF_EXPORT_PRIVATE UTF8CString makeUTF8CString(std::span<const Latin1Character>);
+WTF_EXPORT_PRIVATE UTF8CString makeUTF8CString(std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
+
+template<typename Func>
+std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, std::span<const Latin1Character>);
+template<typename Func>
+std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
 
 NODELETE bool isUnicodeWhitespace(char16_t);
 
@@ -1487,14 +1485,6 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(std::span<const
     return newImpl;
 }
 
-template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
-{
-    if (is8Bit())
-        return tryGetUTF8ForCharacters(function, span8());
-    return tryGetUTF8ForCharacters(function, span16(), mode);
-}
-
 static inline std::span<const char8_t> nonNullEmptyUTF8Span()
 {
     static constexpr char8_t empty = 0;
@@ -1502,7 +1492,7 @@ static inline std::span<const char8_t> nonNullEmptyUTF8Span()
 }
 
 template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(NOESCAPE const Func& function, std::span<const Latin1Character> characters)
+inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func& function, std::span<const Latin1Character> characters)
 {
     if (characters.empty())
         return function(nonNullEmptyUTF8Span());
@@ -1565,13 +1555,13 @@ inline std::expected<void, UTF8ConversionError> StringImpl::convertToUTF8(std::s
 }
 
 template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringImpl::tryGetUTF8ForCharacters(NOESCAPE const Func& function, std::span<const char16_t> characters, ConversionMode mode)
+inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func& function, std::span<const char16_t> characters, ConversionMode mode)
 {
     if (characters.empty())
         return function(nonNullEmptyUTF8Span());
 
     Vector<char8_t, 1024> bufferVector;
-    if (auto result = convertToUTF8(characters, bufferVector, mode); !result)
+    if (auto result = StringImpl::convertToUTF8(characters, bufferVector, mode); !result)
         return makeUnexpected(result.error());
     return function(bufferVector.span());
 }

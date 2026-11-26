@@ -2246,7 +2246,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         coordinator->setRootNodeIsInUserScroll(true);
 
         if (coordinator->scrollingPerformanceTestingEnabled() && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
+            WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, makeUTF8CString(_page->currentURL()));
             _scrollPerfIntervalState = ScrollPerfIntervalState::FingerDown;
             _scrollPerfRubberbandingNotified = NO;
         }
@@ -2334,7 +2334,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Inactive;
             }
             if (decelerate && _scrollPerfIntervalState == ScrollPerfIntervalState::Inactive) {
-                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, _page->currentURL().utf8());
+                WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES; currentURL=%" PRIVATE_LOG_STRING, makeUTF8CString(_page->currentURL()));
                 _scrollPerfIntervalState = ScrollPerfIntervalState::Momentum;
             }
         }
@@ -5421,7 +5421,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
         String keyString = key;
         String valueString = value;
         WebCore::setViewportFeature(viewportArguments, keyString, valueString, metaViewportInteractiveWidgetEnabled, perEdgeViewportFitEnabled, [](WebCore::ViewportErrorCode, const String& errorMessage) {
-            SAFE_WTFLOGALWAYS("-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", errorMessage.utf8());
+            SAFE_WTFLOGALWAYS("-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", makeUTF8CString(errorMessage));
         });
     }).get()];
 

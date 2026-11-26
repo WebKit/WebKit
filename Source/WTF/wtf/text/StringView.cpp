@@ -115,18 +115,18 @@ ASCIICString StringView::ascii() const
     return StringImpl::asciiForCharacters(span16());
 }
 
-std::expected<UTF8CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
+std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(StringView string, ConversionMode mode)
 {
-    if (isNull())
+    if (string.isNull())
         return UTF8CString { u8""_span };
-    if (is8Bit())
-        return StringImpl::utf8ForCharacters(span8());
-    return StringImpl::utf8ForCharacters(span16(), mode);
+    if (string.is8Bit())
+        return tryMakeUTF8CString(string.span8());
+    return tryMakeUTF8CString(string.span16(), mode);
 }
 
-UTF8CString StringView::utf8(ConversionMode mode) const
+UTF8CString makeUTF8CString(StringView string, ConversionMode mode)
 {
-    auto expectedString = tryGetUTF8(mode);
+    auto expectedString = tryMakeUTF8CString(string, mode);
     RELEASE_ASSERT(expectedString);
     return expectedString.value();
 }

@@ -68,10 +68,10 @@ void ScriptBuffer::append(const String& string)
 {
     if (string.isEmpty())
         return;
-    auto result = string.tryGetUTF8([&](std::span<const char8_t> span) -> bool {
+    auto result = tryGetUTF8([&](std::span<const char8_t> span) -> bool {
         m_buffer.append(span);
         return true;
-    });
+    }, string);
     RELEASE_ASSERT(result);
 }
 

@@ -44,9 +44,9 @@ static bool soupServerListen(SoupServer* server, const std::optional<String>& ho
     if (host.value() == "all"_s)
         return soup_server_listen_all(server, port, options, error);
 
-    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(host.value().utf8().legacyCStringPointer(), port));
+    GRefPtr<GSocketAddress> address = adoptGRef(g_inet_socket_address_new_from_string(makeUTF8CString(host.value()).legacyCStringPointer(), port));
     if (!address) {
-        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", host.value().utf8());
+        SAFE_G_SET_ERROR(error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT, "Invalid host IP address '%s'", makeUTF8CString(host.value()));
         return false;
     }
 
@@ -71,11 +71,11 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
         auto method = String::fromUTF8(soup_server_message_get_method(message));
         auto result = httpServer.m_requestHandler.validateRequestHeaders(hostHeader, originHeader, method, contentTypeHeader);
         if (!result) {
-            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", result.error().utf8());
+            RELEASE_LOG_ERROR(WebDriverClassic, "Rejected HTTP request: %s", makeUTF8CString(result.error()));
             auto response = HTTPRequestHandler::rejectedRequestResponse(result.error());
             auto responseCharacters = byteCast<char>(response.data.span());
             soup_server_message_set_status(message, response.statusCode, nullptr);
-            soup_server_message_set_response(message, response.contentType.utf8().legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
+            soup_server_message_set_response(message, makeUTF8CString(response.contentType).legacyCStringPointer(), SOUP_MEMORY_COPY, responseCharacters.data(), responseCharacters.size());
             return;
         }
 
@@ -95,7 +95,7 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
                     // §6.3 Processing Model.
                     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
                     auto* responseHeaders = soup_server_message_get_response_headers(message.get());
-                    soup_message_headers_append(responseHeaders, "Content-Type", response.contentType.utf8().legacyCStringPointer());
+                    soup_message_headers_append(responseHeaders, "Content-Type", makeUTF8CString(response.contentType).legacyCStringPointer());
                     soup_message_headers_append(responseHeaders, "Cache-Control", "no-cache");
                     auto* responseBody = soup_server_message_get_response_body(message.get());
                     soup_message_body_append(responseBody, SOUP_MEMORY_COPY, response.data.data(), response.data.length());

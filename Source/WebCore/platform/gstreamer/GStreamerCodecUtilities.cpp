@@ -73,7 +73,7 @@ std::pair<UTF8CStringView, String> GStreamerCodecUtilities::parseH264ProfileAndL
         level = String(byteCast<Latin1Character>(unsafeSpan(levelAsStringFallback)));
     }
 
-    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", codec.utf8(), GST_STR_NULL(profile.utf8()), level.ascii().data());
+    GST_DEBUG("Codec %s translates to H.264 profile %s and level %s", makeUTF8CString(codec), GST_STR_NULL(profile.utf8()), level.ascii().data());
     return { profile, level };
 }
 
@@ -189,7 +189,7 @@ static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(cons
         parameters = parseVPCodecParametersIgnoringColorFields(codecString);
 
     if (!parameters) {
-        GST_DEBUG("Unable to parse codec string %s", codecString.utf8());
+        GST_DEBUG("Unable to parse codec string %s", makeUTF8CString(codecString));
         return { nullptr, nullptr };
     }
     GRefPtr inputCaps = adoptGRef(gst_caps_new_any());

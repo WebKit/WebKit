@@ -174,7 +174,7 @@ static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, 
     EXPECT_WK_STREQ(result[0], message);
     if ([result[1] boolValue] != enhancedSecurityEnabled) {
         ADD_FAILURE_AT(location.file_name(), location.line())
-            << "Enhanced security mismatch for alert '" << message.utf8().toStdString() << "'"
+            << "Enhanced security mismatch for alert '" << makeUTF8CString(message).toStdString() << "'"
             << " (expected: " << (enhancedSecurityEnabled ? "Enabled" : "Disabled")
             << ", actual: " << ([result[1] boolValue] ? "Enabled" : "Disabled") << ")";
     }

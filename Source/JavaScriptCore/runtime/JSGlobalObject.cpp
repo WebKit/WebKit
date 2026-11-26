@@ -526,7 +526,7 @@ JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* g
             return JSValue::encode(jsUndefined());
         }
 
-        auto utf8String = jsonData.utf8();
+        auto utf8String = makeUTF8CString(jsonData);
 
         fileHandle.write(byteCast<uint8_t>(utf8String.span()));
         dataLogLn("Dumped sampling profiler samples to ", tempFilePath);
@@ -630,7 +630,7 @@ void JSGlobalObject::startSignpost(String&& message)
         return JSCJSGlobalObjectSignpostIdentifier::generate();
     }).iterator->value.toUInt64()));
     UNUSED_VARIABLE(identifier);
-    auto string = message.utf8();
+    auto string = makeUTF8CString(message);
     WTFBeginSignpostAlways(identifier, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, string);
     ProfilerSupport::markStart(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTF::move(string));
 }
@@ -641,7 +641,7 @@ void JSGlobalObject::stopSignpost(String&& message)
     if (auto stored = m_signposts.takeOptional(message))
         identifier = std::bit_cast<void*>(static_cast<uintptr_t>(stored->toUInt64()));
     UNUSED_VARIABLE(identifier);
-    auto string = message.utf8();
+    auto string = makeUTF8CString(message);
     WTFEndSignpostAlways(identifier, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, string);
     ProfilerSupport::markEnd(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTF::move(string));
     --activeJSGlobalObjectSignpostIntervalCount;

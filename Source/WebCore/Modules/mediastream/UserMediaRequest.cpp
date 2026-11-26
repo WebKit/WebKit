@@ -161,7 +161,7 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
 
 void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, MediaDeviceHashSalts&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8() : ""_s, videoDevice ? videoDevice.persistentId().utf8() : ""_s);
+    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? makeUTF8CString(audioDevice.persistentId()) : ""_s, videoDevice ? makeUTF8CString(videoDevice.persistentId()) : ""_s);
 
     Ref document = downcast<Document>(*scriptExecutionContext());
     RefPtr localWindow = document->window();

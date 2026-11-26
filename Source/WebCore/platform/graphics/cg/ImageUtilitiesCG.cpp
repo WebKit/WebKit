@@ -84,7 +84,7 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     auto suffix = makeString('.', destinationExtension);
     auto [destinationPath, destinationFileHandle] = FileSystem::openTemporaryFile(baseName, suffix);
     if (!destinationFileHandle) {
-        RELEASE_LOG_ERROR(Images, "transcodeImage: Destination image could not be created: %s %s\n", path.utf8(), destinationUTI.utf8());
+        RELEASE_LOG_ERROR(Images, "transcodeImage: Destination image could not be created: %s %s\n", makeUTF8CString(path), makeUTF8CString(destinationUTI));
         return nullString();
     }
 
@@ -102,7 +102,7 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
     CGImageDestinationAddImageFromSource(destination.get(), source.get(), 0, nullptr);
 
     if (!CGImageDestinationFinalize(destination.get())) {
-        RELEASE_LOG_ERROR(Images, "transcodeImage: Image transcoding fails: %s %s\n", path.utf8(), destinationUTI.utf8());
+        RELEASE_LOG_ERROR(Images, "transcodeImage: Image transcoding fails: %s %s\n", makeUTF8CString(path), makeUTF8CString(destinationUTI));
         destinationFileHandle = { };
         FileSystem::deleteFile(destinationPath);
         return nullString();

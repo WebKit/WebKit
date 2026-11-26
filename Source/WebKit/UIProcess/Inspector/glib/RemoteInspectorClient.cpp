@@ -178,7 +178,7 @@ RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspect
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-    g_socket_client_connect_to_host_async(socketClient.get(), m_hostAndPort.utf8().legacyCStringPointer(), 0, m_cancellable.get(),
+    g_socket_client_connect_to_host_async(socketClient.get(), makeUTF8CString(m_hostAndPort).legacyCStringPointer(), 0, m_cancellable.get(),
         [](GObject* object, GAsyncResult* result, gpointer userData) {
             GUniqueOutPtr<GError> error;
             GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(object), result, &error.outPtr()));
@@ -253,7 +253,7 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)
 {
-    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", connectionID, targetID, message.utf8()));
+    m_socketConnection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", connectionID, targetID, makeUTF8CString(message)));
 }
 
 void RemoteInspectorClient::closeFromFrontend(uint64_t connectionID, uint64_t targetID)

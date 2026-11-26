@@ -388,7 +388,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!audioTracks || ![audioTracks count]) {
-        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found for '%s' type", mimeType.utf8());
+        RELEASE_LOG_FAULT(WebAudio, "AudioFileReader: No audio tracks found for '%s' type", makeUTF8CString(mimeType));
         return nullptr;
     }
 

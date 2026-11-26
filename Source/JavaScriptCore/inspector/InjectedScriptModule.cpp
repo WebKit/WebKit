@@ -72,11 +72,11 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
         auto& stack = error->stack();
         if (stack.size() > 0)
             lineColumn = stack[0].computeLineAndColumn();
-        SAFE_WTFLOGALWAYS("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", name().utf8(), error->value().toWTFString(injectedScript.globalObject()).utf8(), lineColumn.line, lineColumn.column);
+        SAFE_WTFLOGALWAYS("Error when calling 'hasInjectedModule' for '%s': %s (%d:%d)\n", makeUTF8CString(name()), makeUTF8CString(error->value().toWTFString(injectedScript.globalObject())), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!hasInjectedModuleResult.value()) {
-        SAFE_WTFLOGALWAYS("VM is terminated when calling 'injectModule' for '%s'\n", name().utf8());
+        SAFE_WTFLOGALWAYS("VM is terminated when calling 'injectModule' for '%s'\n", makeUTF8CString(name()));
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!hasInjectedModuleResult.value().isBoolean() || !hasInjectedModuleResult.value().asBoolean()) {
@@ -92,7 +92,7 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
             auto& stack = error->stack();
             if (stack.size() > 0)
                 lineColumn = stack[0].computeLineAndColumn();
-            SAFE_WTFLOGALWAYS("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", name().utf8(), error->value().toWTFString(injectedScript.globalObject()).utf8(), lineColumn.line, lineColumn.column);
+            SAFE_WTFLOGALWAYS("Error when calling 'injectModule' for '%s': %s (%d:%d)\n", makeUTF8CString(name()), makeUTF8CString(error->value().toWTFString(injectedScript.globalObject())), lineColumn.line, lineColumn.column);
             RELEASE_ASSERT_NOT_REACHED();
         }
     }

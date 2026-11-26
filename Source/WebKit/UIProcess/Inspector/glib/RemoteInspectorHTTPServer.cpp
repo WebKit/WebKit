@@ -107,7 +107,7 @@ const String& RemoteInspectorHTTPServer::inspectorServerAddress() const
 unsigned RemoteInspectorHTTPServer::handleRequest(const char* path, SoupMessageHeaders* responseHeaders, SoupMessageBody* responseBody) const
 {
     if (UTF8CStringView::unsafeFromUTF8(path) == "/"_s) {
-        auto html = m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP).toString().utf8();
+        auto html = makeUTF8CString(m_client->buildTargetListPage(RemoteInspectorClient::InspectorType::HTTP).toString());
         soup_message_headers_append(responseHeaders, "Content-Type", "text/html");
         auto htmlBytes = html.span();
         soup_message_body_append(responseBody, SOUP_MEMORY_COPY, htmlBytes.data(), htmlBytes.size());
@@ -161,7 +161,7 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
     if (!webSocketConnection || soup_websocket_connection_get_state(webSocketConnection) != SOUP_WEBSOCKET_STATE_OPEN)
         return;
 
-    auto utf8 = message.utf8();
+    auto utf8 = makeUTF8CString(message);
     // Soup is going to copy the data immediately, so we can use gBytesNewStatic() here to avoid more data copies.
     GRefPtr bytes = gBytesNewStatic(utf8.span());
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());

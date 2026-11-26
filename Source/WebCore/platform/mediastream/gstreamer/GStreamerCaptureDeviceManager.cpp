@@ -250,7 +250,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     if (!gstCaptureDevice)
         return;
 
-    GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", gstCaptureDevice->label().utf8());
+    GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", makeUTF8CString(gstCaptureDevice->label()));
     const auto type = gstCaptureDevice->type();
     m_gstreamerDevices.append(WTF::move(*gstCaptureDevice));
     if (type == CaptureDevice::DeviceType::Speaker)

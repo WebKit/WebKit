@@ -62,7 +62,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
         // New key/value, store the previous one if any.
         if (!key.isEmpty()) {
             if (keyValuePairs.find(key) != keyValuePairs.end())
-                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", key.utf8());
+                LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", makeUTF8CString(key));
             keyValuePairs.add(key, value.toString().trim(deprecatedIsSpaceOrNewline));
             key = String();
             value.clear();
@@ -131,7 +131,7 @@ MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(StringView text)
         return SevenBit;
     if (equalLettersIgnoringASCIICase(encoding, "binary"_s))
         return Binary;
-    LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.utf8());
+    LOG_ERROR("Unknown encoding '%s' found in MIME header.", makeUTF8CString(text));
     return Unknown;
 }
 

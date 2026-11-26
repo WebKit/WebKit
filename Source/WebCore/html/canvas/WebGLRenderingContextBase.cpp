@@ -1120,7 +1120,7 @@ void WebGLRenderingContextBase::bindAttribLocation(WebGLProgram& program, GCGLui
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindAttribLocation"_s, "index out of range"_s);
         return;
     }
-    protect(graphicsContextGL())->bindAttribLocation(program.object(), index, name.utf8());
+    protect(graphicsContextGL())->bindAttribLocation(program.object(), index, makeUTF8CString(name));
 }
 
 bool WebGLRenderingContextBase::validateBufferTarget(ASCIILiteral functionName, GCGLenum target)
@@ -3278,7 +3278,7 @@ void WebGLRenderingContextBase::shaderSource(WebGLShader& shader, const String& 
         return;
     if (!validateWebGLObject("shaderSource"_s, shader))
         return;
-    protect(graphicsContextGL())->shaderSource(shader.object(), string.utf8());
+    protect(graphicsContextGL())->shaderSource(shader.object(), makeUTF8CString(string));
     shader.setSource(string);
 }
 

@@ -103,7 +103,7 @@ public:
     RefPtr<NativeImage> nativeImageAtIndex(unsigned index, const ImageDrawDescriptor&) final { return nativeImageAtIndex(index); }
 
     // Testing support.
-    UTF8CString sourceUTF8() const { return sourceURL().string().utf8(); }
+    UTF8CString sourceUTF8() const { return makeUTF8CString(sourceURL().string()); }
     void setAsyncDecodingEnabledForTesting(bool enabled) { m_source->setAsyncDecodingEnabledForTesting(enabled); }
     bool isAsyncDecodingEnabledForTesting() const { return m_source->isAsyncDecodingEnabledForTesting(); }
     void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }

@@ -115,7 +115,7 @@ UTF8CString CodeBlock::inferredName() const
     case EvalCode:
         return "<eval>"_s;
     case FunctionCode:
-        return uncheckedDowncast<FunctionExecutable>(ownerExecutable())->ecmaName().utf8();
+        return makeUTF8CString(uncheckedDowncast<FunctionExecutable>(ownerExecutable())->ecmaName().string());
     case ModuleCode:
         return "<module>"_s;
     default:
@@ -168,9 +168,9 @@ UTF8CString CodeBlock::sourceCodeForTools() const
         return ownerExecutable()->source().toUTF8();
 
     FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(ownerExecutable());
-    return executable->source().provider()->getRange(
+    return makeUTF8CString(executable->source().provider()->getRange(
         executable->functionStart(),
-        executable->parametersStartOffset() + executable->source().length()).utf8();
+        executable->parametersStartOffset() + executable->source().length()));
 }
 
 UTF8CString CodeBlock::sourceCodeOnOneLine() const

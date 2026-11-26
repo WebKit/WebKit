@@ -161,7 +161,7 @@ void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
     if (m_state != State::Blocked)
         return;
 
-    m_replacementData = MockContentFilterSettings::singleton().blockedString().utf8().span();
+    m_replacementData = makeUTF8CString(MockContentFilterSettings::singleton().blockedString()).span();
 }
 
 } // namespace WebCore

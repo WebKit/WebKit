@@ -63,7 +63,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(StopData);
 String stringToHex(StringView str)
 {
     StringBuilder result;
-    auto utf8 = str.utf8();
+    auto utf8 = makeUTF8CString(str);
     for (auto c : utf8.span())
         result.append(hex(byteCast<uint8_t>(c), 2, Lowercase));
     return result.toString();

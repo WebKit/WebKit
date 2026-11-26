@@ -225,7 +225,7 @@ void IDBTransaction::abortInternal()
     RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
-        RELEASE_LOG(IndexedDB, "IDBTransaction::abortInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
+        RELEASE_LOG(IndexedDB, "IDBTransaction::abortInternal: version change transaction %" PUBLIC_LOG_STRING, makeUTF8CString(info().identifier().loggingString()));
 
     m_database->willAbortTransaction(*this);
 
@@ -483,7 +483,7 @@ void IDBTransaction::commitInternal()
     RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(!isFinishedOrFinishing());
     if (isVersionChange())
-        RELEASE_LOG(IndexedDB, "IDBTransaction::commitInternal: version change transaction %" PUBLIC_LOG_STRING, info().identifier().loggingString().utf8());
+        RELEASE_LOG(IndexedDB, "IDBTransaction::commitInternal: version change transaction %" PUBLIC_LOG_STRING, makeUTF8CString(info().identifier().loggingString()));
 
     transitionedToFinishing(IndexedDB::TransactionState::Committing);
     m_database->willCommitTransaction(*this);

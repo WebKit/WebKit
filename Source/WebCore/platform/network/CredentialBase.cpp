@@ -98,7 +98,7 @@ bool CredentialBase::compare(const Credential& a, const Credential& b)
 
 String CredentialBase::serializationForBasicAuthorizationHeader() const
 {
-    auto credentialStringData = makeString(m_user, ':', m_password).utf8();
+    auto credentialStringData = makeUTF8CString(makeString(m_user, ':', m_password));
     return makeString("Basic "_s, base64Encoded(byteCast<uint8_t>(credentialStringData.span())));
 }
 

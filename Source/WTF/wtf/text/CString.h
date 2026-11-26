@@ -280,7 +280,7 @@ public:
 
 // Latin-1 is refused for the same reason legacyCStringPointer() withholds a pointer from it: a printf
 // destination reads the bytes back as UTF-8 or ASCII, so a non-ASCII Latin-1 byte would be garbled. Use
-// String::utf8(), or String::ascii() where losing a non-ASCII character to '?' is as acceptable as it is
+// makeUTF8CString(), or String::ascii() where losing a non-ASCII character to '?' is as acceptable as it is
 // for the other unprintables. This is an exact match, so it wins over the CStringBase overload above, which
 // would require a derived-to-base conversion.
 const char* safePrintfType(const Latin1CString&) = delete;

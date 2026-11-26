@@ -41,7 +41,7 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
 
     // Build any filename with the given extension.
     auto filename = makeString("a."_s, string);
-    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().legacyCStringPointer())) {
+    if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(makeUTF8CString(filename).legacyCStringPointer())) {
         if (mimeType != XDG_MIME_TYPE_UNKNOWN)
             return String::fromUTF8(mimeType);
     }
@@ -64,7 +64,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
 
     String returnValue;
     char* extension;
-    if (xdg_mime_get_simple_globs(mimeType.utf8().legacyCStringPointer(), &extension, 1)) {
+    if (xdg_mime_get_simple_globs(makeUTF8CString(mimeType).legacyCStringPointer(), &extension, 1)) {
         auto view = std::string_view(extension);
         if (view[0] == '.' && view.size() > 1)
             returnValue = String::fromUTF8(view.substr(1).data());
@@ -80,7 +80,7 @@ Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& mimeType)
 
     Vector<String> returnValue;
     std::array<char*, MAX_EXTENSION_COUNT> extensions;
-    int n = xdg_mime_get_simple_globs(mimeType.utf8().legacyCStringPointer(), extensions.data(), MAX_EXTENSION_COUNT);
+    int n = xdg_mime_get_simple_globs(makeUTF8CString(mimeType).legacyCStringPointer(), extensions.data(), MAX_EXTENSION_COUNT);
     for (int i = 0; i < n; ++i) {
         returnValue.append(String::fromUTF8(extensions[i]));
         free(extensions[i]);

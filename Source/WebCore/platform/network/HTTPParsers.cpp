@@ -329,7 +329,7 @@ static String trimInputSample(std::span<const uint8_t> input)
 std::optional<WallTime> parseHTTPDate(const String& value)
 {
     // FIXME: parseDate() requires Latin1, but we're passing it UTF-8.
-    double dateInMillisecondsSinceEpoch = parseDate(byteCast<Latin1Character>(value.utf8().span()));
+    double dateInMillisecondsSinceEpoch = parseDate(byteCast<Latin1Character>(makeUTF8CString(value).span()));
     if (!std::isfinite(dateInMillisecondsSinceEpoch))
         return std::nullopt;
     // This assumes system_clock epoch equals Unix epoch which is true for all implementations but unspecified.

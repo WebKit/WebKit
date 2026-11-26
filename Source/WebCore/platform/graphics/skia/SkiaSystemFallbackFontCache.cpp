@@ -95,7 +95,7 @@ private:
             auto* pattern = FcPatternCreate();
             if (!locale.isNull()) {
                 FcLangSet* langSet = FcLangSetCreate();
-                FcLangSetAdd(langSet, reinterpret_cast<const FcChar8*>(locale.utf8().legacyCStringPointer()));
+                FcLangSetAdd(langSet, reinterpret_cast<const FcChar8*>(makeUTF8CString(locale).legacyCStringPointer()));
                 FcPatternAddLangSet(pattern, FC_LANG, langSet);
                 FcLangSetDestroy(langSet);
             }
@@ -210,7 +210,7 @@ sk_sp<SkTypeface> SkiaSystemFallbackFontCache::fontForCharacterCluster(const Str
         return nullptr;
 
     return m_typefaceCache.ensure({ font->path, font->ttcIndex }, [font] -> sk_sp<SkTypeface> {
-        return FontCache::forCurrentThread().fontManager().makeFromFile(font->path.utf8().legacyCStringPointer(), font->ttcIndex);
+        return FontCache::forCurrentThread().fontManager().makeFromFile(makeUTF8CString(font->path).legacyCStringPointer(), font->ttcIndex);
     }).iterator->value;
 }
 

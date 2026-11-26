@@ -129,12 +129,6 @@ public:
     WTF_EXPORT_PRIVATE ASCIICString ascii() const;
     WTF_EXPORT_PRIVATE Latin1CString latin1() const;
 
-    WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
-
-    template<typename Func>
-    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;
-    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = ConversionMode::Lenient) const;
-
     char16_t codeUnitAt(unsigned index) const;
     char16_t operator[](unsigned index) const { return codeUnitAt(index); }
 
@@ -522,14 +516,6 @@ inline String String::substring(unsigned position, unsigned length) const
         return *this;
 
     SUPPRESS_UNCOUNTED_ARG return m_impl->substring(position, length);
-}
-
-template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> String::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
-{
-    if (!m_impl)
-        return function(nonNullEmptyUTF8Span());
-    SUPPRESS_UNCOUNTED_ARG return m_impl->tryGetUTF8(function, mode);
 }
 
 #if USE(FOUNDATION) && defined(__OBJC__)

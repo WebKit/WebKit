@@ -72,7 +72,7 @@ public:
         auto handle = WTF::move(result.second);
         ASSERT_TRUE(!!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
+        auto rc = handle.write(byteCast<uint8_t>(makeUTF8CString(FileMonitorTestData).span()));
         ASSERT_TRUE(!!rc);
     }
     
@@ -143,7 +143,7 @@ TEST_F(FileMonitorTest, DetectChange)
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto command = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(command.utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(command).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -183,7 +183,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(firstCommand.utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -201,7 +201,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     testQueue->dispatch([this] () mutable {
         auto secondCommand = createCommand(tempFilePath(), FileMonitorSecondRevisedData);
-        auto rc = system(secondCommand.utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(secondCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -237,7 +237,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -274,7 +274,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
         EXPECT_EQ(FileMonitorTestData, fileContents);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        auto rc = system(firstCommand.utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -288,7 +288,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     resetTestState();
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -321,7 +321,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     });
 
     testQueue->dispatch([this] () mutable {
-        auto rc = system(makeString("rm -f "_s, tempFilePath()).utf8().legacyCStringPointer());
+        auto rc = system(makeUTF8CString(makeString("rm -f "_s, tempFilePath())).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;
@@ -340,11 +340,11 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
         auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Truncate);
         ASSERT_FALSE(!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
+        auto rc = handle.write(byteCast<uint8_t>(makeUTF8CString(FileMonitorTestData).span()));
         ASSERT_TRUE(!!rc);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);
-        rc = system(firstCommand.utf8().legacyCStringPointer());
+        rc = system(makeUTF8CString(firstCommand).legacyCStringPointer());
         ASSERT_NE(rc, -1);
         if (rc == -1)
             didFinish = true;

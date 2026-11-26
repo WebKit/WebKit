@@ -1072,7 +1072,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
         auto recordSize = recordData.size();
 
         if (!FileSystem::overwriteEntireFile(recordPath, recordData.span()))
-            RELEASE_LOG_ERROR(NetworkCacheStorage, "Failed to write %zu bytes of network cache record data to %" PUBLIC_LOG_STRING, recordSize, recordPath.utf8());
+            RELEASE_LOG_ERROR(NetworkCacheStorage, "Failed to write %zu bytes of network cache record data to %" PUBLIC_LOG_STRING, recordSize, makeUTF8CString(recordPath));
 
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, identifier, recordSize]() mutable {
             m_approximateRecordsSize += recordSize;

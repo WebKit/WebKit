@@ -671,7 +671,7 @@ static void autoActivateFont(const String& name, CGFloat size)
 static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userInstalledFontMapLock())
 {
     if (auto fontURL = userInstalledFontMap().getOptional(family)) {
-        RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterFont, family.utf8(), fontURL->string().utf8());
+        RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterFont, makeUTF8CString(family), makeUTF8CString(fontURL->string()));
         RetainPtr cfURL = fontURL->createCFURL();
 
         CFErrorRef error = nullptr;
@@ -679,7 +679,7 @@ static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userIns
             SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr adoptedError = adoptCF(error);
             RetainPtr descriptionCF = adoptCF(CFErrorCopyDescription(adoptedError.get()));
             String errorDescription(descriptionCF.get());
-            RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterError, family.utf8(), errorDescription.utf8());
+            RELEASE_LOG_FORWARDABLE(Fonts, FontCacheCoreTextRegisterError, makeUTF8CString(family), makeUTF8CString(errorDescription));
         }
 
         userInstalledFontMap().removeIf([&](auto& keyAndValue) {

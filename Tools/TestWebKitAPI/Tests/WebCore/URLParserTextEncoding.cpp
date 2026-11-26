@@ -72,8 +72,8 @@ bool eq(T&& s1, U&& s2)
 {
     // Compared as UTF-8 bytes, matching the returned condition, so that a null String
     // matches an empty one.
-    EXPECT_EQ(s1.utf8(), s2.utf8());
-    return s1.utf8() == s2.utf8();
+    EXPECT_EQ(makeUTF8CString(s1), makeUTF8CString(s2));
+    return makeUTF8CString(s1) == makeUTF8CString(s2);
 }
 
 static String insertTabAtLocation(StringView string, size_t location)

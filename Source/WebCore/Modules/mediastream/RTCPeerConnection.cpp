@@ -439,7 +439,7 @@ void RTCPeerConnection::setLocalDescription(RTCLocalSessionDescriptionInit&& loc
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "Setting local description to:\n", localDescription.sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetLocalDescription, logIdentifier(), localDescription.sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetLocalDescription, logIdentifier(), makeUTF8CString(localDescription.sdp));
 #endif
 
     chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, localDescription = WTF::move(localDescription)](Ref<DeferredPromise>&& promise) mutable {
@@ -492,7 +492,7 @@ void RTCPeerConnection::setRemoteDescription(RTCSessionDescriptionInit&& remoteD
 
 #if !RELEASE_LOG_DISABLED
     logger().toObservers(LogWebRTC, WTFLogLevel::Always, { }, LOGIDENTIFIER, "Setting remote description to:\n", remoteDescription.sdp);
-    RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetRemoteDescription, logIdentifier(), remoteDescription.sdp.utf8());
+    RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetRemoteDescription, logIdentifier(), makeUTF8CString(remoteDescription.sdp));
 #endif
 
     chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, remoteDescription = WTF::move(remoteDescription)](Ref<DeferredPromise>&& promise) mutable {

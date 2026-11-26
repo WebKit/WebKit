@@ -285,7 +285,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imag
         data = image->image()->data();
 
     if (!data) {
-        LOG_ERROR("No data for image %s", url.string().utf8());
+        LOG_ERROR("No data for image %s", makeUTF8CString(url.string()));
         return;
     }
 

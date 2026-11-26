@@ -122,7 +122,7 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 {
     ensureDebugCategoryIsInitialized();
     static Atomic<uint32_t> decoderId;
-    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1)).utf8().legacyCStringPointer());
+    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeUTF8CString(makeString("image-decoder-parser-"_s, decoderId.exchangeAdd(1))).legacyCStringPointer());
     m_parserHarness = GStreamerElementHarness::create(WTF::move(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
         GRefPtr caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
         auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });

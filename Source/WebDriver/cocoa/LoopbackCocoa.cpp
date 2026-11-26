@@ -47,7 +47,7 @@ bool isLoopbackURL(const String& string)
 
     if (host.startsWith('[') && host.endsWith(']'))
         host = host.substring(1, host.length() - 2);
-    auto address = host.utf8();
+    auto address = makeUTF8CString(host);
 
     in_addr address4;
     if (inet_pton(AF_INET, address.legacyCStringPointer(), &address4) == 1)
@@ -65,7 +65,7 @@ bool validateListeningHost(const String& host)
     if (host.isEmpty() || host == "local"_s)
         return true;
 
-    SAFE_FPRINTF(stderr, "minidriver only listens on this machine, so --host=%s isn't supported.\n", host.utf8());
+    SAFE_FPRINTF(stderr, "minidriver only listens on this machine, so --host=%s isn't supported.\n", makeUTF8CString(host));
     return false;
 }
 

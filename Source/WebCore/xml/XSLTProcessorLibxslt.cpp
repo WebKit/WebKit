@@ -218,8 +218,8 @@ static MallocSpan<const char*> xsltParamArrayFromParameterMap(XSLTProcessor::Par
 
     size_t index = 0;
     for (auto& parameter : parameters) {
-        parameterArray[index++] = fastStrDup(parameter.key.utf8().legacyCStringPointer());
-        parameterArray[index++] = fastStrDup(parameter.value.utf8().legacyCStringPointer());
+        parameterArray[index++] = fastStrDup(makeUTF8CString(parameter.key).legacyCStringPointer());
+        parameterArray[index++] = fastStrDup(makeUTF8CString(parameter.value).legacyCStringPointer());
     }
     parameterArray[index] = nullptr;
 

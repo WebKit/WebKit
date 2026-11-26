@@ -1409,12 +1409,12 @@ void XMLDocumentParser::flushDeferredEntityDeclarations()
             return;
         }
 
-        auto nameUTF8 = decl.name.utf8();
+        auto nameUTF8 = makeUTF8CString(decl.name);
         if (xmlGetDocEntity(context()->myDoc, byteCast<xmlChar>(nameUTF8.data())))
             continue;
-        auto publicIdUTF8 = decl.publicId.utf8();
-        auto systemIdUTF8 = decl.systemId.utf8();
-        auto contentUTF8 = decl.content.utf8();
+        auto publicIdUTF8 = makeUTF8CString(decl.publicId);
+        auto systemIdUTF8 = makeUTF8CString(decl.systemId);
+        auto contentUTF8 = makeUTF8CString(decl.content);
         xmlSAX2EntityDecl(context(),
             byteCast<xmlChar>(nameUTF8.data()),
             decl.type,
@@ -1623,7 +1623,7 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const S
         return nullptr;
 
     XMLDocumentParserScope scope(&cachedResourceLoader, errorFunc);
-    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), url.utf8().legacyCStringPointer(), encoding, XSLT_PARSE_OPTIONS);
+    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), makeUTF8CString(url).legacyCStringPointer(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
 
@@ -1685,7 +1685,7 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
     ASSERT(!m_context);
     ASSERT(m_parsingFragment);
 
-    auto chunkAsUTF8 = chunk.utf8();
+    auto chunkAsUTF8 = makeUTF8CString(chunk);
     
     // libxml2 takes an int for a length, and therefore can't handle XML chunks larger than 2 GiB.
     if (chunkAsUTF8.length() > INT_MAX)

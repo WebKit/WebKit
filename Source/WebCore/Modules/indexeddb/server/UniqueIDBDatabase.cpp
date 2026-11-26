@@ -245,7 +245,7 @@ void UniqueIDBDatabase::performCurrentOpenOperationAfterSpaceCheck(bool isGrante
             if (!backingStoreOpenError)
                 m_databaseInfo = makeUnique<IDBDatabaseInfo>(databaseInfo);
             else {
-                LOG_ERROR("Failed to get database info '%s'", backingStoreOpenError.message().utf8());
+                LOG_ERROR("Failed to get database info '%s'", makeUTF8CString(backingStoreOpenError.message()));
                 m_backingStore = nullptr;
             }
         }

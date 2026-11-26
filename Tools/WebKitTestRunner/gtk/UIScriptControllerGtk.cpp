@@ -87,7 +87,7 @@ void UIScriptControllerGtk::setContinuousSpellCheckingEnabled(bool enabled)
 
 void UIScriptControllerGtk::copyText(JSStringRef text)
 {
-    auto string = text->string().utf8();
+    auto string = makeUTF8CString(text->string());
 #if USE(GTK4)
     gdk_clipboard_set_text(gdk_display_get_clipboard(gdk_display_get_default()), string.legacyCStringPointer());
 #else
@@ -206,7 +206,7 @@ static Ref<JSON::Object> toJSONObject(GVariant* variant)
 JSObjectRef UIScriptControllerGtk::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
     auto* webView = TestController::singleton().mainWebView()->platformView();
-    GRefPtr<GVariant> contentDictionary = WKViewContentsOfUserInterfaceItem(webView, toWTFString(interfaceItem).utf8().legacyCStringPointer());
+    GRefPtr<GVariant> contentDictionary = WKViewContentsOfUserInterfaceItem(webView, makeUTF8CString(toWTFString(interfaceItem)).legacyCStringPointer());
     auto jsonObject = toJSONObject(contentDictionary.get());
 
     return JSValueToObject(m_context->jsContext(), contentDictionary ? JSValueMakeFromJSONString(m_context->jsContext(), ::createJSString(jsonObject->toJSONString()).get()) : JSValueMakeUndefined(m_context->jsContext()), nullptr);
@@ -278,7 +278,7 @@ void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 
         auto eventTypeString = eventObject->getString("type"_s);
         if (!eventTypeString) {
-            SAFE_WTFLOGALWAYS("Failed to find type key in %s", eventTypeString.utf8());
+            SAFE_WTFLOGALWAYS("Failed to find type key in %s", makeUTF8CString(eventTypeString));
             break;
         }
 
@@ -294,7 +294,7 @@ void UIScriptControllerGtk::sendEventStream(JSStringRef eventsJSON, JSValueRef c
             if (!momentumPhaseString.isNull()) {
                 momentumPhase = wheelEventPhaseFromString(momentumPhaseString);
                 if (momentumPhase == WheelEventPhase::Cancelled || momentumPhase == WheelEventPhase::MayBegin) {
-                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", momentumPhaseString.utf8());
+                    SAFE_WTFLOGALWAYS("Invalid value %s for momentumPhase", makeUTF8CString(momentumPhaseString));
                     break;
                 }
             }

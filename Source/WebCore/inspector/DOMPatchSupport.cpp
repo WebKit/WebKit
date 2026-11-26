@@ -515,7 +515,7 @@ void DOMPatchSupport::dumpMap(const ResultMap& map, const String& name)
 {
     fprintf(stderr, "\n\n");
     for (size_t i = 0; i < map.size(); ++i)
-        SAFE_FPRINTF(stderr, "%s[%lu]: %s (%p) - [%lu]\n", name.utf8(), i, map[i].first ? nodeName(map[i].first->m_node).utf8() : ""_s, map[i].first, map[i].second);
+        SAFE_FPRINTF(stderr, "%s[%lu]: %s (%p) - [%lu]\n", makeUTF8CString(name), i, map[i].first ? makeUTF8CString(nodeName(map[i].first->m_node)) : ""_s, map[i].first, map[i].second);
 }
 
 #endif

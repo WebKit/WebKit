@@ -168,7 +168,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
 
     for (VKCTranslatedParagraph *paragraph in paragraphs.get()) {
         if (!paragraph.text.length) {
-            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8());
+            RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", makeUTF8CString(transactionID.loggingString()));
             continue;
         }
 
@@ -203,20 +203,20 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
     static auto imageAnalysisRequestID = TransactionID::generateMonotonic();
     auto currentRequestID = imageAnalysisRequestID.increment();
     if (shouldLogFullImageTranslationResults())
-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", currentRequestID.loggingString().utf8(), imageURL);
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", makeUTF8CString(currentRequestID.loggingString()), imageURL);
     else
-        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", currentRequestID.loggingString().utf8());
+        RELEASE_LOG(Translation, "[#%{public}s] Image translation started", makeUTF8CString(currentRequestID.loggingString()));
     auto request = createImageAnalyzerRequest(image, VKAnalysisTypeText);
     [analyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion), sourceLocale, targetLocale, currentRequestID, startTime] (VKCImageAnalysis *analysis, NSError *analysisError) mutable {
         callOnMainRunLoop([completion = WTF::move(completion), analysis = RetainPtr { analysis }, analysisError = RetainPtr { analysisError }, sourceLocale, targetLocale, currentRequestID, startTime] () mutable {
             auto imageAnalysisDelay = MonotonicTime::now() - startTime;
             if (!analysis) {
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), analysisError.get());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", makeUTF8CString(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), analysisError.get());
                 return completion({ });
             }
 
             if (![analysis hasResultsForAnalysisTypes:VKAnalysisTypeText]) {
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (no text)", makeUTF8CString(currentRequestID.loggingString()), imageAnalysisDelay.seconds());
                 return completion({ });
             }
 
@@ -230,15 +230,15 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
                     stringToLog.append(String { info.string });
                     firstLine = false;
                 }
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), allLines.get().count, stringToLog.toString().utf8());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", makeUTF8CString(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), allLines.get().count, makeUTF8CString(stringToLog.toString()));
             } else
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8(), imageAnalysisDelay.seconds(), allLines.get().count);
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", makeUTF8CString(currentRequestID.loggingString()), imageAnalysisDelay.seconds(), allLines.get().count);
 
             auto translationStartTime = MonotonicTime::now();
             auto completionBlock = makeBlockPtr([completion = WTF::move(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
                 auto translationDelay = MonotonicTime::now() - translationStartTime;
                 if (error) {
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", currentRequestID.loggingString().utf8(), translationDelay.seconds(), error);
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation failed in %.3f sec. (error: %{public}@)", makeUTF8CString(currentRequestID.loggingString()), translationDelay.seconds(), error);
                     return completion({ });
                 }
 
@@ -251,9 +251,9 @@ void requestVisualTranslation(VKCImageAnalyzer *analyzer, NSURL *imageURL, const
                         stringToLog.append(String { paragraph.text });
                         firstLine = false;
                     }
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8(), translationDelay.seconds(), translation.paragraphs.count, stringToLog.toString().utf8());
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu): \"%{private}s\"", makeUTF8CString(currentRequestID.loggingString()), translationDelay.seconds(), translation.paragraphs.count, makeUTF8CString(stringToLog.toString()));
                 } else
-                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", currentRequestID.loggingString().utf8(), translationDelay.seconds(), translation.paragraphs.count);
+                    RELEASE_LOG(Translation, "[#%{public}s] Image translation completed in %.3f sec. (paragraph count: %zu)", makeUTF8CString(currentRequestID.loggingString()), translationDelay.seconds(), translation.paragraphs.count);
 
                 completion(makeTextRecognitionResult(translation, currentRequestID));
             });

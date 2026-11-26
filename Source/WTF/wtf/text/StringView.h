@@ -130,12 +130,6 @@ public:
 
     WTF_EXPORT_PRIVATE ASCIICString ascii() const;
 
-    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = ConversionMode::Lenient) const;
-    WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = ConversionMode::Lenient) const;
-
-    template<typename Func>
-    std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = ConversionMode::Lenient) const;
-
     template<size_t N>
     class UpconvertedCharactersWithSize;
     using UpconvertedCharacters = UpconvertedCharactersWithSize<32>;
@@ -303,6 +297,12 @@ NODELETE inline bool codePointCompareLessThan(StringView a, StringView b)
 }
 
 WTF_EXPORT_PRIVATE size_t utf8Length(StringView);
+
+WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(StringView, ConversionMode = ConversionMode::Lenient);
+WTF_EXPORT_PRIVATE UTF8CString makeUTF8CString(StringView, ConversionMode = ConversionMode::Lenient);
+
+template<typename Func>
+std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, StringView, ConversionMode = ConversionMode::Lenient);
 
 } // namespace WTF
 
@@ -1588,12 +1588,20 @@ inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
 }
 
 template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> StringView::tryGetUTF8(NOESCAPE const Func& function, ConversionMode mode) const
+inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func& function, StringView string, ConversionMode mode)
 {
-    if (is8Bit())
-        return StringImpl::tryGetUTF8ForCharacters(function, span8());
-    return StringImpl::tryGetUTF8ForCharacters(function, span16(), mode);
+    if (string.is8Bit())
+        return tryGetUTF8(function, string.span8());
+    return tryGetUTF8(function, string.span16(), mode);
 }
+
+#ifdef __swift__
+// Swift does not convert a String to a StringView.
+inline UTF8CString makeUTF8CString(const String& string, ConversionMode mode = ConversionMode::Lenient)
+{
+    return makeUTF8CString(StringView { string }, mode);
+}
+#endif
 
 template<> struct VectorTraits<StringView> : VectorTraitsBase<false, void> {
     static constexpr bool canMoveWithMemcpy = true;
@@ -1614,6 +1622,9 @@ using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
 using WTF::utf8Length;
+using WTF::tryGetUTF8;
+using WTF::makeUTF8CString;
+using WTF::tryMakeUTF8CString;
 using WTF::nullStringView;
 using WTF::emptyStringView;
 using WTF::codePointCompare;

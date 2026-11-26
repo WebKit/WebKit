@@ -133,7 +133,7 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
 {
     auto debuggableType = parseDebuggableTypeFromString(type);
     if (!debuggableType) {
-        LOG_ERROR("Unknown debuggable type: \"%s\"", type.utf8());
+        LOG_ERROR("Unknown debuggable type: \"%s\"", makeUTF8CString(type));
         return;
     }
 
@@ -159,7 +159,7 @@ void RemoteInspectorProtocolHandler::runScript(const String& script)
         RemoveTransientActivation::Yes
     }, wantsResult, [] (auto&& result) {
         if (!result && result.error())
-            LOG_ERROR("Exception running script \"%s\"", result.error()->message.utf8());
+            LOG_ERROR("Exception running script \"%s\"", makeUTF8CString(result.error()->message));
     });
 }
 
@@ -243,7 +243,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
         "</script>"_s);
     htmlBuilder.append("</html>"_s);
 
-    auto html = htmlBuilder.toString().utf8();
+    auto html = makeUTF8CString(htmlBuilder.toString());
     auto data = SharedBuffer::create(html.span());
     ResourceResponse response(WTF::move(requestURL), "text/html"_s, html.length(), "UTF-8"_s);
     task.didReceiveResponse(WTF::move(response));

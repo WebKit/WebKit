@@ -454,7 +454,7 @@ static String psoPreamble()
 static void printPsoOnProgramExit(int sig)
 {
     if (psoReproStringBuilder().length())
-        /* NOLINT */ SAFE_WTFLOGALWAYS("// ------------------------------------------------------------------------\n// Dumping Metal repro case:\n// ------------------------------------------------------------------------\n%s\n// ------------------------------------------------------------------------\n// End of repro case\n// ------------------------------------------------------------------------", psoReproStringBuilder().toString().utf8());
+        /* NOLINT */ SAFE_WTFLOGALWAYS("// ------------------------------------------------------------------------\n// Dumping Metal repro case:\n// ------------------------------------------------------------------------\n%s\n// ------------------------------------------------------------------------\n// End of repro case\n// ------------------------------------------------------------------------", makeUTF8CString(psoReproStringBuilder().toString()));
 
     if (existingSigabortHandlers()[sig])
         existingSigabortHandlers()[sig](sig);

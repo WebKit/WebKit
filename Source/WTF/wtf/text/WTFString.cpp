@@ -414,18 +414,6 @@ Latin1CString String::latin1() const
     return result;
 }
 
-std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8(ConversionMode mode) const
-{
-    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->tryGetUTF8(mode) : UTF8CString { u8""_span };
-}
-
-UTF8CString String::utf8(ConversionMode mode) const
-{
-    auto expectedString = tryGetUTF8(mode);
-    RELEASE_ASSERT(expectedString);
-    return expectedString.value();
-}
-
 String String::make8Bit(std::span<const char16_t> source)
 {
     std::span<Latin1Character> destination;

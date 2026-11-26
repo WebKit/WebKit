@@ -246,7 +246,7 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
 {
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
-    resource->priv->uri = request.url().string().utf8();
+    resource->priv->uri = makeUTF8CString(request.url().string());
     resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequestRequester::Main;
     return resource;
 }
@@ -275,8 +275,8 @@ void webkitWebResourceFailed(WebKitWebResource* resource, WebCore::ResourceError
     if (resourceError.tlsErrors())
         g_signal_emit(resource, signals[FAILED_WITH_TLS_ERRORS], 0, resourceError.certificate(), static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()));
     else {
-        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(resourceError.domain().utf8()),
-            toWebKitError(resourceError.errorCode()), resourceError.localizedDescription().utf8().legacyCStringPointer()));
+        GUniquePtr<GError> error(g_error_new_literal(gQuarkFromString(makeUTF8CString(resourceError.domain())),
+            toWebKitError(resourceError.errorCode()), makeUTF8CString(resourceError.localizedDescription()).legacyCStringPointer()));
         g_signal_emit(resource, signals[FAILED], 0, error.get());
     }
 

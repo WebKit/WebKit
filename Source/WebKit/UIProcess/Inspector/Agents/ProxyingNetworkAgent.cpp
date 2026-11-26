@@ -700,7 +700,7 @@ static std::optional<Vector<uint8_t>> decodeContent(const String& content, bool 
 {
     if (base64Encoded)
         return base64Decode(content);
-    auto utf8 = content.utf8();
+    auto utf8 = makeUTF8CString(content);
     return Vector<uint8_t> { byteCast<uint8_t>(utf8.span()) };
 }
 

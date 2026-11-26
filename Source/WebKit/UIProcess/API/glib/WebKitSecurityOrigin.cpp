@@ -176,7 +176,7 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
         return nullptr;
 
     if (origin->protocol.isNull())
-        origin->protocol = origin->securityOriginData.protocol().utf8();
+        origin->protocol = makeUTF8CString(origin->securityOriginData.protocol());
     return origin->protocol.legacyCStringPointer();
 }
 
@@ -201,7 +201,7 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
         return nullptr;
 
     if (origin->host.isNull())
-        origin->host = origin->securityOriginData.host().utf8();
+        origin->host = makeUTF8CString(origin->securityOriginData.host());
     return origin->host.legacyCStringPointer();
 }
 
@@ -271,6 +271,6 @@ gchar* webkit_security_origin_to_string(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    auto cstring = origin->securityOriginData.toString().utf8();
+    auto cstring = makeUTF8CString(origin->securityOriginData.toString());
     return cstring == "null"_s || cstring == ""_s ? nullptr : gStrdup(cstring);
 }

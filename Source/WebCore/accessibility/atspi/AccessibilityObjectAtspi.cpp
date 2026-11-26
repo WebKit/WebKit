@@ -395,7 +395,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(methodName, "GetRole"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", atspiObject->role()));
         else if (!g_strcmp0(methodName, "GetRoleName"))
-            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", atspiObject->roleName().utf8()));
+            g_dbus_method_invocation_return_value(invocation, gVariantNew("(s)", makeUTF8CString(atspiObject->roleName())));
         else if (!g_strcmp0(methodName, "GetLocalizedRoleName"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", atspiObject->localizedRoleName()));
         else if (!g_strcmp0(methodName, "GetState")) {
@@ -448,10 +448,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         if (!g_strcmp0(propertyName, "Description"))
             return gVariantNewString(atspiObject->description());
         if (!g_strcmp0(propertyName, "Locale"))
-            return gVariantNewString(atspiObject->locale().utf8());
+            return gVariantNewString(makeUTF8CString(atspiObject->locale()));
         if (!g_strcmp0(propertyName, "AccessibleId")) {
             auto objectID = atspiObject->m_coreObject->objectID();
-            return gVariantNewString(atspiObject->m_coreObject ? UTF8CStringView { String::number(objectID.toUInt64()).utf8() } : ""_s);
+            return gVariantNewString(atspiObject->m_coreObject ? UTF8CStringView { makeUTF8CString(String::number(objectID.toUInt64())) } : ""_s);
         }
         if (!g_strcmp0(propertyName, "Parent"))
             return atspiObject->parentReference();
@@ -519,7 +519,7 @@ const String& AccessibilityObjectAtspi::path()
 
 GVariant* AccessibilityObjectAtspi::reference()
 {
-    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), path().utf8());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), makeUTF8CString(path()));
 }
 
 GVariant* AccessibilityObjectAtspi::hyperlinkReference()
@@ -529,7 +529,7 @@ GVariant* AccessibilityObjectAtspi::hyperlinkReference()
         m_hyperlinkPath = AccessibilityAtspi::singleton().registerHyperlink(*this, { { const_cast<GDBusInterfaceInfo*>(&webkit_hyperlink_interface), &s_hyperlinkFunctions } });
     }
 
-    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), m_hyperlinkPath.utf8());
+    return gVariantNew("(so)", AccessibilityAtspi::singleton().uniqueName(), makeUTF8CString(m_hyperlinkPath));
 }
 
 void AccessibilityObjectAtspi::setParent(std::optional<AccessibilityObjectAtspi*> atspiParent)
@@ -656,7 +656,7 @@ UTF8CString AccessibilityObjectAtspi::name() const
     if (m_coreObject->role() == AccessibilityRole::ListBoxOption || m_coreObject->role() == AccessibilityRole::MenuListOption) {
         auto value = m_coreObject->stringValue();
         if (!value.isEmpty())
-            return value.utf8();
+            return makeUTF8CString(value);
     }
 
     Vector<AccessibilityText> textOrder;
@@ -673,7 +673,7 @@ UTF8CString AccessibilityObjectAtspi::name() const
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject description.
         if (text.textSource != AccessibilityTextSource::Help && text.textSource != AccessibilityTextSource::Summary)
-            return text.text.utf8();
+            return makeUTF8CString(text.text);
     }
 
     return ""_s;
@@ -693,12 +693,12 @@ UTF8CString AccessibilityObjectAtspi::description() const
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject name.
         if (text.textSource == AccessibilityTextSource::Help || text.textSource == AccessibilityTextSource::Summary)
-            return text.text.utf8();
+            return makeUTF8CString(text.text);
 
         // If there is no other text alternative, the title tag contents will have been
         // used for the AtkObject name. We don't want to duplicate it here.
         if (text.textSource == AccessibilityTextSource::TitleTag && nameTextAvailable)
-            return text.text.utf8();
+            return makeUTF8CString(text.text);
 
         nameTextAvailable = true;
     }
@@ -1049,7 +1049,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 void AccessibilityObjectAtspi::buildAttributes(GVariantBuilder* builder) const
 {
     for (const auto& it : attributes())
-        gVariantBuilderAdd(builder, "{ss}", it.key.utf8(), it.value.utf8());
+        gVariantBuilderAdd(builder, "{ss}", makeUTF8CString(it.key), makeUTF8CString(it.value));
 }
 
 RelationMap AccessibilityObjectAtspi::relationMap() const
@@ -1155,7 +1155,7 @@ void AccessibilityObjectAtspi::buildStates(GVariantBuilder* builder) const
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
 {
-    gVariantBuilderAdd(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), m_path.utf8());
+    gVariantBuilderAdd(builder, "(so)", AccessibilityAtspi::singleton().uniqueName(), makeUTF8CString(m_path));
     g_variant_builder_add(builder, "@(so)", AccessibilityAtspi::singleton().applicationReference());
     g_variant_builder_add(builder, "@(so)", parentReference());
 

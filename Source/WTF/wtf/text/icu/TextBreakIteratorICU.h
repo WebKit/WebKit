@@ -61,7 +61,7 @@ public:
         });
 
         UErrorCode status = U_ZERO_ERROR;
-        m_iterator = ubrkOpen(type, localeWithOptionalBreakKeyword.string().utf8(), nullptr, 0, &status);
+        m_iterator = ubrkOpen(type, makeUTF8CString(localeWithOptionalBreakKeyword.string()), nullptr, 0, &status);
         if (!m_iterator || U_FAILURE(status)) {
             status = U_ZERO_ERROR;
             m_iterator = ubrk_open(type, "", nullptr, 0, &status); // There's no reason for this to ever fail, unless there's an allocation failure, in which case we _should_ crash; that's the behavior of our allocators.
@@ -154,7 +154,7 @@ private:
             return locale;
 
         // The uloc functions model locales as char*, so we have to downconvert our AtomString.
-        auto utf8Locale = locale.string().utf8();
+        auto utf8Locale = makeUTF8CString(locale.string());
         if (!utf8Locale.length())
             return locale;
         Vector<char> scratchBuffer(FillWith { }, utf8Locale.length() + 11, 0);

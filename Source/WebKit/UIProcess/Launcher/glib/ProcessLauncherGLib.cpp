@@ -170,7 +170,7 @@ void ProcessLauncher::launchProcess()
     Vector<UTF8CString> prefixArgs;
     if (!m_launchOptions.processCmdPrefix.isNull()) {
         for (auto& arg : m_launchOptions.processCmdPrefix.split(' '))
-            prefixArgs.append(arg.utf8());
+            prefixArgs.append(makeUTF8CString(arg));
         nargs += prefixArgs.size();
     }
 

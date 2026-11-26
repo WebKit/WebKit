@@ -374,7 +374,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
     LOG_WITH_STREAM(Network, stream << "WebSocket "_s << this << " send() Sending String '"_s << message << "'"_s);
     if (m_state == CONNECTING)
         return Exception { ExceptionCode::InvalidStateError };
-    auto utf8 = message.utf8();
+    auto utf8 = makeUTF8CString(message);
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
         size_t payloadSize = utf8.length();
@@ -587,7 +587,7 @@ void WebSocket::didReceiveMessage(String&& message)
         if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
             RefPtr channel = socket.m_channel;
             if (auto* inspector = channel->channelInspector()) {
-                auto utf8Message = message.utf8();
+                auto utf8Message = makeUTF8CString(message);
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(byteCast<uint8_t>(utf8Message.span()), WebSocketFrame::OpCode::OpCodeText));
             }
         }

@@ -144,7 +144,7 @@ WGPUFuture wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUCom
     @autoreleasepool {
         WebGPU::CAPI::Future future { protect(WebGPU::CAPI::fromAPI(device))->instance() };
         createComputePipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
+            auto utf8 = makeUTF8CString(message);
             callbackInfo.callback(status, pipeline, WebGPU::CAPI::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
         });
@@ -222,7 +222,7 @@ WGPUFuture wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURend
     @autoreleasepool {
         WebGPU::CAPI::Future future { protect(WebGPU::CAPI::fromAPI(device))->instance() };
         createRenderPipelineAsync(device, *descriptor, [callbackInfo, future](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, String&& message) {
-            auto utf8 = message.utf8();
+            auto utf8 = makeUTF8CString(message);
             callbackInfo.callback(status, pipeline, WebGPU::CAPI::toAPI(utf8), callbackInfo.userdata1, callbackInfo.userdata2);
             future.complete();
         });
@@ -332,7 +332,7 @@ WGPUFuture wgpuDevicePopErrorScope(WGPUDevice device, WGPUPopErrorScopeCallbackI
         WebGPU::CAPI::Future future { protectedDevice->instance() };
         protectedDevice->popErrorScope([callbackInfo, future](bool succeeded, std::optional<WebGPU::Error>&& error) {
             if (error) {
-                auto message = error->message.utf8();
+                auto message = makeUTF8CString(error->message);
                 callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WebGPU::CAPI::toAPI(error), WebGPU::CAPI::toAPI(message), callbackInfo.userdata1, callbackInfo.userdata2);
             } else if (succeeded)
                 callbackInfo.callback(WGPUPopErrorScopeStatus_Success, WGPUErrorType_NoError, WebGPU::CAPI::toAPI(""_s), callbackInfo.userdata1, callbackInfo.userdata2);

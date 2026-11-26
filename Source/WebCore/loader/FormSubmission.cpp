@@ -78,7 +78,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
     }
 
     Vector<uint8_t> bodyData("body="_span);
-    FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
+    FormDataBuilder::encodeStringAsFormData(bodyData, makeUTF8CString(body));
     body = makeStringByReplacingAll(byteCast<Latin1Character>(bodyData.span()), '+', "%20"_s);
 
     auto query = url.query();

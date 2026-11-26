@@ -485,7 +485,7 @@ TEST(WKWebView, AttributedStringFromListWithNegativeStartValue)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << makeUTF8CString(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
@@ -546,7 +546,7 @@ TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << makeUTF8CString(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
@@ -585,7 +585,7 @@ TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
 
     TextStream stream;
     stream << "expected " << actual << " to equal " << expected;
-    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+    EXPECT_EQ(actual, expected) << makeUTF8CString(stream.release()).toStdString();
 }
 
 TEST(WKWebView, AttributedStringWithoutNetworkLoads)

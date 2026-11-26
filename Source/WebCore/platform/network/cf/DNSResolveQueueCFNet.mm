@@ -119,7 +119,7 @@ static constexpr auto timeoutForDNSResolution = 60_s;
 
 void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<CompletionHandlerWrapper>&& completionHandler)
 {
-    OSObjectPtr hostEndpoint = adoptOSObject(nw_endpoint_create_host(hostname.utf8().legacyCStringPointer(), "0"));
+    OSObjectPtr hostEndpoint = adoptOSObject(nw_endpoint_create_host(makeUTF8CString(hostname).legacyCStringPointer(), "0"));
     OSObjectPtr context = adoptOSObject(nw_context_create("WebKit DNS Lookup"));
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create());
 

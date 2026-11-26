@@ -87,7 +87,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         // show an empty URL or a blank page. These changes ensure a relevant URL bar and useful page content during the load.
         if (!navigationAction->isProcessingUserGesture()) {
             page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-            auto html = makeString("<script>location = '"_s, response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>"_s).utf8();
+            auto html = makeUTF8CString(makeString("<script>location = '"_s, response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>"_s));
             page->loadData(SharedBuffer::create(html.span()), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }

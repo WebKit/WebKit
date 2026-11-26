@@ -406,7 +406,7 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
 sk_sp<SkTypeface> FontCache::matchFamilyStyle(const AtomString& familyName, const SkFontStyle& style)
 {
     return m_typefaceCache.ensure({ familyName, style }, [&] {
-        return fontManager().matchFamilyStyle(familyName.string().utf8().legacyCStringPointer(), style);
+        return fontManager().matchFamilyStyle(makeUTF8CString(familyName.string()).legacyCStringPointer(), style);
     }).iterator->value;
 }
 

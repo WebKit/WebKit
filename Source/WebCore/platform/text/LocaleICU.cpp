@@ -57,7 +57,7 @@ using namespace icu;
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return makeUnique<LocaleICU>(locale.string().utf8());
+    return makeUnique<LocaleICU>(makeUTF8CString(locale.string()));
 }
 
 LocaleICU::LocaleICU(UTF8CString&& locale)

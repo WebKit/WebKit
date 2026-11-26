@@ -82,7 +82,7 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
     if (parameters)
         messageBuilder.append(",\"params\":"_s, parameters->toJSONString());
     messageBuilder.append('}');
-    RELEASE_LOG_INFO(SessionHost, "    SEND inspector #%04ld: Automation.%s (%u bytes)", sequenceID, command.utf8(), messageBuilder.length());
+    RELEASE_LOG_INFO(SessionHost, "    SEND inspector #%04ld: Automation.%s (%u bytes)", sequenceID, makeUTF8CString(command), messageBuilder.length());
     sendMessageToBackend(messageBuilder.toString());
 
     return sequenceID;
@@ -109,7 +109,7 @@ void SessionHost::dispatchMessage(const String& message)
             return;
         dispatchBidiMessage(WTF::move(messageObject));
 #else
-        RELEASE_LOG_ERROR(SessionHost, "Received from browser message without id: %s", message.utf8());
+        RELEASE_LOG_ERROR(SessionHost, "Received from browser message without id: %s", makeUTF8CString(message));
 #endif
         return;
     }
@@ -157,7 +157,7 @@ void SessionHost::dispatchBidiMessage(RefPtr<JSON::Object>&& event)
     if (m_bidiHandler)
         m_bidiHandler->dispatchBidiMessage(WTF::move(event));
     else
-        RELEASE_LOG(SessionHost, "No bidi message handler to dispatch message %s", event->toJSONString().utf8());
+        RELEASE_LOG(SessionHost, "No bidi message handler to dispatch message %s", makeUTF8CString(event->toJSONString()));
 }
 #endif
 

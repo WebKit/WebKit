@@ -535,7 +535,7 @@ TEST(WebCoreHTMLParser, FastPathEntityWithoutSemicolonInAttributeValue)
     EXPECT_EQ("&AEligX"_s, testFastParserAttribute("<span title=\"&AEligX\"></span>"_s));
 
     // Named entity with semicolon (e.g. &AElig; followed by text).
-    EXPECT_EQ(UTF8CString { u8"\xC3\x86X"_span }, testFastParserAttribute("<span title=\"&AElig;X\"></span>"_s).utf8());
+    EXPECT_EQ(UTF8CString { u8"\xC3\x86X"_span }, makeUTF8CString(testFastParserAttribute("<span title=\"&AElig;X\"></span>"_s)));
 }
 
 } // namespace TestWebKitAPI

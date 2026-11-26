@@ -366,7 +366,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         OSObjectPtr languages = adoptOSObject(xpc_array_create(nullptr, 0));
         for (auto language : StringView(languagesIterator->value).split(','))
-            xpcArraySetString(languages.get(), XPC_ARRAY_APPEND, language.utf8());
+            xpcArraySetString(languages.get(), XPC_ARRAY_APPEND, makeUTF8CString(language));
         xpc_dictionary_set_value(bootstrapMessage.get(), "OverrideLanguages", languages.get());
     }
 
@@ -400,10 +400,10 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
 
-    auto clientIdentifierUTF8 = clientIdentifier.utf8();
+    auto clientIdentifierUTF8 = makeUTF8CString(clientIdentifier);
     xpcDictionarySetString(bootstrapMessage.get(), "client-identifier"_s, !clientIdentifier.isEmpty() ? UTF8CStringView { clientIdentifierUTF8 } : UTF8CStringView::unsafeFromUTF8(*_NSGetProgname()));
-    xpcDictionarySetString(bootstrapMessage.get(), "client-bundle-identifier"_s, applicationBundleIdentifier().utf8());
-    xpcDictionarySetString(bootstrapMessage.get(), "process-identifier"_s, String::number(m_launchOptions.processIdentifier.toUInt64()).utf8());
+    xpcDictionarySetString(bootstrapMessage.get(), "client-bundle-identifier"_s, makeUTF8CString(applicationBundleIdentifier()));
+    xpcDictionarySetString(bootstrapMessage.get(), "process-identifier"_s, makeUTF8CString(String::number(m_launchOptions.processIdentifier.toUInt64())));
     RetainPtr processName = [&]() -> RetainPtr<NSString> {
 #if PLATFORM(MAC)
         if (RetainPtr<NSString> name = NSRunningApplication.currentApplication.localizedName; name.get().length)
@@ -446,7 +446,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     OSObjectPtr extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     for (const auto& keyValuePair : m_launchOptions.extraInitializationData)
-        xpcDictionarySetString(extraInitializationData.get(), keyValuePair.key.utf8(), keyValuePair.value.utf8());
+        xpcDictionarySetString(extraInitializationData.get(), makeUTF8CString(keyValuePair.key), makeUTF8CString(keyValuePair.value));
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
@@ -465,7 +465,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", name, xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8());
+            LOG_ERROR("Error while launching %s: %s", name, makeUTF8CString(xpcDictionaryGetString(event, xpcErrorDescriptionKey)));
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", name);
 

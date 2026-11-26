@@ -1477,7 +1477,7 @@ void Position::debugPosition(ASCIILiteral msg) const
     if (isNull())
         SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else
-        SAFE_FPRINTF(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8(), deprecatedNode(), m_offset);
+        SAFE_FPRINTF(stderr, "Position [%s]: %s [%p] at %d\n", msg, makeUTF8CString(deprecatedNode()->nodeName()), deprecatedNode(), m_offset);
 }
 
 String Position::debugDescription() const

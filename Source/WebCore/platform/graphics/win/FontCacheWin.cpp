@@ -112,7 +112,7 @@ static const Vector<String>* getLinkedFonts(String& family)
 
     DWORD linkedFontsBufferSize = 0;
     if (::RegQueryValueEx(fontLinkKey, family.wideCharacters().data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
-        SAFE_WTFLOGALWAYS("The font link key %s does not exist in the registry.", family.utf8());
+        SAFE_WTFLOGALWAYS("The font link key %s does not exist in the registry.", makeUTF8CString(family));
         return result;
     }
 

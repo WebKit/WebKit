@@ -68,7 +68,7 @@ GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
     GRefPtr tagList = adoptGRef(gst_tag_list_new_empty());
 
     if (!track->label().isEmpty())
-        gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, track->label().utf8().legacyCStringPointer(), nullptr);
+        gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, makeUTF8CString(track->label()).legacyCStringPointer(), nullptr);
 
     GST_DEBUG("Track tags: %" GST_PTR_FORMAT, tagList.get());
     return tagList;
@@ -92,7 +92,7 @@ GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
     }
 
     auto flags = track->enabled() ? GST_STREAM_FLAG_SELECT : GST_STREAM_FLAG_NONE;
-    GRefPtr stream = adoptGRef(gst_stream_new(track->id().utf8().legacyCStringPointer(), caps.get(), type, flags));
+    GRefPtr stream = adoptGRef(gst_stream_new(makeUTF8CString(track->id()).legacyCStringPointer(), caps.get(), type, flags));
     auto tags = mediaStreamTrackPrivateGetTags(track);
     gst_stream_set_tags(stream.get(), tags.get());
     return stream;
@@ -198,7 +198,7 @@ public:
         if (!m_track)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Starting observation of track %s", m_track->id().utf8());
+        GST_DEBUG_OBJECT(m_src.get(), "Starting observation of track %s", makeUTF8CString(m_track->id()));
         m_track->addObserver(*this);
         if (m_track->isAudio())
             m_track->source().addAudioSampleObserver(*this);
@@ -215,7 +215,7 @@ public:
         if (!m_track)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Stopping observation of track %s", m_track->id().utf8());
+        GST_DEBUG_OBJECT(m_src.get(), "Stopping observation of track %s", makeUTF8CString(m_track->id()));
         m_isObserving = false;
 
         if (m_track->isAudio())
@@ -386,9 +386,9 @@ public:
             m_videoMirrored = videoMirrored;
 
             auto orientation = webkitGstImageOrientationTag(m_videoRotation, videoMirrored);
-            GST_DEBUG_OBJECT(m_src.get(), "Setting orientation tag: %s", orientation.utf8());
+            GST_DEBUG_OBJECT(m_src.get(), "Setting orientation tag: %s", makeUTF8CString(orientation));
             GRefPtr tags = adoptGRef(gst_tag_list_make_writable(gst_stream_get_tags(m_stream.get())));
-            gst_tag_list_add(tags.get(), GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE_ORIENTATION, orientation.utf8().legacyCStringPointer(), nullptr);
+            gst_tag_list_add(tags.get(), GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE_ORIENTATION, makeUTF8CString(orientation).legacyCStringPointer(), nullptr);
             gst_stream_set_tags(m_stream.get(), tags.get());
         }
 
@@ -810,7 +810,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
     auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
     auto priv = self->priv;
 
-    GST_DEBUG_OBJECT(self, "Track with ID %s was removed", track.id().utf8());
+    GST_DEBUG_OBJECT(self, "Track with ID %s was removed", makeUTF8CString(track.id()));
 
     String sourceId;
     for (auto& [padName, currentSource] : priv->sources) {
@@ -1141,7 +1141,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
         counter = self->priv->videoPadCounter.exchangeAdd(1);
     }
 
-    GST_DEBUG_OBJECT(self, "Setup %s source for track %s", sourceType.characters(), track->id().utf8());
+    GST_DEBUG_OBJECT(self, "Setup %s source for track %s", sourceType.characters(), makeUTF8CString(track->id()));
 
     auto padName = makeString(sourceType, "_src"_s, counter);
     Ref source = InternalSource::create(GST_ELEMENT_CAST(self), *track, padName, consumerIsVideoPlayer);
@@ -1211,7 +1211,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     GST_DEBUG_OBJECT(self, "%s Ghosting %" GST_PTR_FORMAT, objectPath.utf8(), pad.get());
 #endif
 
-    auto* ghostPad = webkitGstGhostPadFromStaticTemplate(padTemplate, padName.utf8(), pad.get());
+    auto* ghostPad = webkitGstGhostPadFromStaticTemplate(padTemplate, makeUTF8CString(padName), pad.get());
     gst_pad_store_sticky_event(ghostPad, stickyStreamStartEvent.get());
     gst_element_add_pad(GST_ELEMENT_CAST(self), ghostPad);
 

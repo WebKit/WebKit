@@ -96,7 +96,7 @@ void ResourceLoader::loadGResource()
 
         gsize dataSize;
         const auto* data = static_cast<const guchar*>(g_bytes_get_data(bytes.get(), &dataSize));
-        GUniquePtr<char> fileName(g_path_get_basename(url.path().utf8().legacyCStringPointer()));
+        GUniquePtr<char> fileName(g_path_get_basename(makeUTF8CString(url.path()).legacyCStringPointer()));
         auto contentTypeString = contentTypeLookUpForKnownResource(fileName.get());
         if (!contentTypeString) {
             auto contentType = GMallocString::unsafeAdoptFromUTF8(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
@@ -111,11 +111,11 @@ void ResourceLoader::loadGResource()
     }, protectedThis.leakRef()));
 
     g_task_set_priority(task.get(), RunLoopSourcePriority::AsyncIONetwork);
-    g_task_set_task_data(task.get(), gStrdup(m_request.url().string().utf8()), g_free);
+    g_task_set_task_data(task.get(), gStrdup(makeUTF8CString(m_request.url().string())), g_free);
     g_task_run_in_thread(task.get(), [](GTask* task, gpointer, gpointer taskData, GCancellable*) {
         URL url({ }, String::fromUTF8(static_cast<const char*>(taskData)));
         GError* error = nullptr;
-        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer"_s) ? makeString("/org/webkit/pdfjs"_s, url.path()).utf8().legacyCStringPointer() : url.path().utf8().legacyCStringPointer(),
+        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer"_s) ? makeUTF8CString(makeString("/org/webkit/pdfjs"_s, url.path())).legacyCStringPointer() : makeUTF8CString(url.path()).legacyCStringPointer(),
             G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
         if (!bytes)
             g_task_return_error(task, error);

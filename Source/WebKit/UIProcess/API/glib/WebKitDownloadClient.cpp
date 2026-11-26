@@ -82,7 +82,7 @@ private:
     {
         ASSERT(m_download);
         didReceiveResponse(downloadProxy, resourceResponse);
-        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), filename.utf8(), WTF::move(completionHandler));
+        webkitDownloadDecideDestinationWithSuggestedFilename(m_download.get(), makeUTF8CString(filename), WTF::move(completionHandler));
     }
 
     void didCreateDestination(DownloadProxy& downloadProxy, const String& path) override

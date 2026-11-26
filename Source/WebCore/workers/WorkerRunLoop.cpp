@@ -234,11 +234,11 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
         if (currentRunLoopStatus.addRunLoopSpin() == RunLoopStatus::ShouldLogExcessiveRunLoopSpinning::No)
             continue;
 
-        RELEASE_LOG(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
+        RELEASE_LOG(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), m_sharedTimer->fireTimeDelay().seconds(), makeUTF8CString(result.activeRunLoopTimersBeforeFiring), makeUTF8CString(result.activeRunLoopTimersAfterFiring));
 
 #if PLATFORM(COCOA)
         if (WTF::CocoaApplication::isAppleApplication())
-            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), protect(m_sharedTimer)->fireTimeDelay().seconds(), result.activeRunLoopTimersBeforeFiring.utf8(), result.activeRunLoopTimersAfterFiring.utf8());
+            RELEASE_LOG_FAULT_WITH_PAYLOAD(ServiceWorker, "ServiceWorker message queue spun excessively without making web content progress for %f seconds. Shared timer firing in %f seconds. RunLoop rimers before: %s. RunLoop timers after: %s", currentRunLoopStatus.secondsSpentSpinning(), protect(m_sharedTimer)->fireTimeDelay().seconds(), makeUTF8CString(result.activeRunLoopTimersBeforeFiring), makeUTF8CString(result.activeRunLoopTimersAfterFiring));
 #endif
 
         // Reset status to start tracking a new sequence of spinning.

@@ -154,7 +154,7 @@ void ModelProcessModelPlayer::didFinishLoading(WebCore::NodeIdentifier nodeID, c
 
 void ModelProcessModelPlayer::didConvertModelData(Ref<WebCore::SharedBuffer>&& convertedData, const String& convertedMIMEType)
 {
-    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didConvertModelData mimeType=%s id=%" PRIu64, this, convertedMIMEType.utf8(), m_id.toUInt64());
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didConvertModelData mimeType=%s id=%" PRIu64, this, makeUTF8CString(convertedMIMEType), m_id.toUInt64());
     RELEASE_ASSERT(modelProcessEnabled());
 
     protect(client())->didConvertModelData(*this, WTF::move(convertedData), convertedMIMEType);
@@ -274,7 +274,7 @@ void ModelProcessModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Mode
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());
 
     if (!WebCore::MIMETypeRegistry::isSupportedModelMIMEType(model.mimeType())) {
-        RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer::load: Found unexpected model mimetype: %s", this, model.mimeType().utf8());
+        RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer::load: Found unexpected model mimetype: %s", this, makeUTF8CString(model.mimeType()));
         if (RefPtr client = m_client.get())
             client->logWarning(*this, makeString("Unsupported model MIME type \""_s, model.mimeType(), "\" in <model> element. The model may fail to render."_s));
     }

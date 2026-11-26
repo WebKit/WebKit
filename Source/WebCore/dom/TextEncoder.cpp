@@ -34,9 +34,9 @@ namespace WebCore {
 
 RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 {
-    auto result = input.tryGetUTF8([&](std::span<const char8_t> span) -> RefPtr<Uint8Array> {
+    auto result = tryGetUTF8([&](std::span<const char8_t> span) -> RefPtr<Uint8Array> {
         return Uint8Array::tryCreate(byteCast<uint8_t>(span));
-    });
+    }, input);
     if (result)
         return result.value();
     return Uint8Array::tryCreate(nullptr, 0);

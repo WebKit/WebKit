@@ -298,7 +298,7 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
     Wasm::Name sourceURL;
     if (creationMode == Wasm::CreationMode::FromModuleLoader && sourceProvider) {
         auto sourceURLString = sourceProvider->sourceOrigin().url().string();
-        sourceURL = Wasm::Name(sourceURLString.utf8().span());
+        sourceURL = Wasm::Name(makeUTF8CString(sourceURLString).span());
     }
     Wasm::Module::validateAsync(vm, WTF::move(source), WTF::move(sourceURL), createSharedTask<Wasm::Module::CallbackType>([weakTicket = WTF::move(weakTicket), importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
         vm.deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [importObject, sourceProvider = WTF::move(sourceProvider), compileOptions = WTF::move(compileOptions), result = WTF::move(result), resolveKind, creationMode, &vm](DeferredWorkTimer::Ticket& ticket) mutable {

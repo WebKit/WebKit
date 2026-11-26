@@ -104,7 +104,7 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
         return std::nullopt;
 
     OSObjectPtr parameters = adoptOSObject(nw_parameters_create_secure_tcp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
-    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host("127.0.0.1", String::number(port).utf8().legacyCStringPointer())).get());
+    nw_parameters_set_local_endpoint(parameters.get(), adoptOSObject(nw_endpoint_create_host("127.0.0.1", makeUTF8CString(String::number(port)).legacyCStringPointer())).get());
 
     OSObjectPtr webSocketOptions = adoptOSObject(nw_ws_create_options(nw_ws_version_13));
     nw_ws_options_set_auto_reply_ping(webSocketOptions.get(), true);
@@ -211,7 +211,7 @@ void WebSocketServer::startConnection(WebSocketMessageHandler::Connection&& conn
         // machine. Clients that aren't browsers usually send no origin.
         auto origin = originOfHandshake(request);
         if (!origin.isNull() && !isLoopbackURL(origin)) {
-            RELEASE_LOG(WebDriverBiDi, "Rejecting a WebSocket handshake from origin %s", origin.utf8());
+            RELEASE_LOG(WebDriverBiDi, "Rejecting a WebSocket handshake from origin %s", makeUTF8CString(origin));
             return rejection.get();
         }
 
@@ -346,8 +346,8 @@ void WebSocketServer::didCloseConnection(const WebSocketMessageHandler::Connecti
 void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
 {
     ASSERT(connection);
-    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
-    sendText(connection.get(), message.utf8().span());
+    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", makeUTF8CString(message));
+    sendText(connection.get(), makeUTF8CString(message).span());
 }
 
 void WebSocketServer::disconnect()

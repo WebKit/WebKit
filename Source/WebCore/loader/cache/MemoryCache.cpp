@@ -135,7 +135,7 @@ bool MemoryCache::add(CachedResource& resource)
     
     resourceAccessed(resource);
 
-    LOG(ResourceLoading, "MemoryCache::add Added '%.255s', resource %p\n", resource.url().string().utf8(), &resource);
+    LOG(ResourceLoading, "MemoryCache::add Added '%.255s', resource %p\n", makeUTF8CString(resource.url().string()), &resource);
     return true;
 }
 
@@ -297,7 +297,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
     while (it != m_liveDecodedResources.end()) {
         RefPtr current = *it;
 
-        LOG(ResourceLoading, " live resource %p %.255s - loaded %d, decodedSize %u", current.get(), current->url().string().utf8(), current->isLoaded(), current->decodedSize());
+        LOG(ResourceLoading, " live resource %p %.255s - loaded %d, decodedSize %u", current.get(), makeUTF8CString(current->url().string()), current->isLoaded(), current->decodedSize());
 
         // Increment the iterator now because the call to destroyDecodedData() below
         // may cause a call to ListHashSet::remove() and invalidate the current
@@ -429,7 +429,7 @@ void MemoryCache::remove(CachedResource& resource)
     RELEASE_ASSERT(isMainThread());
     RefPtr protectedResource { resource };
 
-    LOG(ResourceLoading, "Evicting resource %p for '%.255s' from cache", &resource, resource.url().string().utf8());
+    LOG(ResourceLoading, "Evicting resource %p for '%.255s' from cache", &resource, makeUTF8CString(resource.url().string()));
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (auto* resources = sessionResourceMap(resource.sessionID())) {
@@ -846,7 +846,7 @@ void MemoryCache::dumpLRULists(bool includeLive) const
         WTFLogAlways("\nList %d:\n", i);
         for (Ref resource : *m_allResources[i]) {
             if (includeLive || !resource->hasClients())
-                SAFE_WTFLOGALWAYS("  %p %.255s %.1fK, %.1fK, accesses: %u, clients: %d\n", resource.ptr(), resource->url().string().utf8(), resource->decodedSize() / 1024.0f, (resource->encodedSize() + resource->overheadSize()) / 1024.0f, resource->accessCount(), resource->numberOfClients());
+                SAFE_WTFLOGALWAYS("  %p %.255s %.1fK, %.1fK, accesses: %u, clients: %d\n", resource.ptr(), makeUTF8CString(resource->url().string()), resource->decodedSize() / 1024.0f, (resource->encodedSize() + resource->overheadSize()) / 1024.0f, resource->accessCount(), resource->numberOfClients());
         }
     }
 }

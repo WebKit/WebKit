@@ -63,7 +63,7 @@ static UTF8CString buildICULocale(StringView calendarId)
     String bcp47(calendarId.toString());
     auto mapped = mapBCP47ToICUCalendarKeyword(bcp47);
     auto icuKeyword = mapped ? *mapped : bcp47;
-    return makeString("und@calendar="_s, icuKeyword).utf8();
+    return makeUTF8CString(makeString("und@calendar="_s, icuKeyword));
 }
 
 // buildCalendarTemplate — internal: opens ICU UCalendar for the given CalendarID, set to UTC.

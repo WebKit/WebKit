@@ -171,11 +171,11 @@ void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organiz
         if (uniqueDomainList.size() == 3)
             initialListOfSites.append(","_s);
 
-        SUPPRESS_UNRETAINED_ARG informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for two sites"), initialListOfSites.toString().utf8().legacyCStringPointer(), lastSite.utf8().legacyCStringPointer()]);
+        SUPPRESS_UNRETAINED_ARG informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for two sites"), makeUTF8CString(initialListOfSites.toString()).legacyCStringPointer(), makeUTF8CString(lastSite).legacyCStringPointer()]);
         relatedWebsitesString = nil;
         accessoryTextList = nil;
     } else {
-        SUPPRESS_UNRETAINED_ARG informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for four or more sites."), uniqueDomainList[0].utf8().legacyCStringPointer(), uniqueDomainList[1].utf8().legacyCStringPointer(), uniqueDomainList.size() - 2]);
+        SUPPRESS_UNRETAINED_ARG informativeText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for four or more sites."), makeUTF8CString(uniqueDomainList[0]).legacyCStringPointer(), makeUTF8CString(uniqueDomainList[1]).legacyCStringPointer(), uniqueDomainList.size() - 2]);
 
         SUPPRESS_UNRETAINED_ARG relatedWebsitesString = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Related %@ websites", @"Label describing the list of related websites controlled by the same organization"), organizationName.createCFString().get()]);
         accessoryTextList = adoptNS([[NSMutableArray alloc] initWithCapacity:uniqueDomainList.size()]);

@@ -48,7 +48,7 @@ Ref<SharedBuffer> serializeTargetedElementSelectors(const TargetedElementSelecto
     rootObject->setArray("selectors"_s, WTF::move(selectorsArray));
 
     auto jsonString = rootObject->toJSONString();
-    return SharedBuffer::create(jsonString.utf8().span());
+    return SharedBuffer::create(makeUTF8CString(jsonString).span());
 }
 
 std::optional<TargetedElementSelectors> deserializeTargetedElementSelectors(std::span<const uint8_t> data)

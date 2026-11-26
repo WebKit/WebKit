@@ -189,7 +189,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         auto& stack = error->stack();
         if (stack.size() > 0)
             lineColumn = stack[0].computeLineAndColumn();
-        SAFE_WTFLOGALWAYS("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(globalObject).utf8(), lineColumn.line, lineColumn.column);
+        SAFE_WTFLOGALWAYS("Error when creating injected script: %s (%d:%d)\n", makeUTF8CString(error->value().toWTFString(globalObject)), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!createResult.value()) {

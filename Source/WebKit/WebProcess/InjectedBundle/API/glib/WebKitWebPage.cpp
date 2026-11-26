@@ -202,9 +202,9 @@ private:
     {
         ASSERT(documentLoader);
         if (!documentLoader->unreachableURL().isEmpty())
-            return documentLoader->unreachableURL().string().utf8();
+            return makeUTF8CString(documentLoader->unreachableURL().string());
 
-        return documentLoader->url().string().utf8();
+        return makeUTF8CString(documentLoader->url().string());
     }
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
@@ -243,7 +243,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = frame.coreLocalFrame()->document()->url().string().utf8();
+        const auto uri = makeUTF8CString(frame.coreLocalFrame()->document()->url().string());
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);
@@ -470,8 +470,8 @@ private:
         GRefPtr<GPtrArray> textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         GRefPtr<GPtrArray> textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
         for (auto& pair : values) {
-            g_ptr_array_add(textFieldNames.get(), gStrdup(pair.first.utf8()));
-            g_ptr_array_add(textFieldValues.get(), gStrdup(pair.second.utf8()));
+            g_ptr_array_add(textFieldNames.get(), gStrdup(makeUTF8CString(pair.first)));
+            g_ptr_array_add(textFieldValues.get(), gStrdup(makeUTF8CString(pair.second)));
         }
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN

@@ -205,7 +205,7 @@ const gchar* webkit_user_agent_to_string(WebKitUserAgent* userAgent)
     if (userAgent->userAgentString.isNull()) {
         String appName = userAgent->applicationName.isNull() ? String { } : String::fromUTF8(userAgent->applicationName.span());
         String appVer = userAgent->applicationVersion.isNull() ? String { } : String::fromUTF8(userAgent->applicationVersion.span());
-        userAgent->userAgentString = WebCore::standardUserAgent(appName, appVer, toWebCoreUserAgentType(userAgent->type)).utf8();
+        userAgent->userAgentString = makeUTF8CString(WebCore::standardUserAgent(appName, appVer, toWebCoreUserAgentType(userAgent->type)));
     }
     return userAgent->userAgentString.legacyCStringPointer();
 }

@@ -181,7 +181,7 @@ JSValueRef JSWebExtensionAPITestCPP::notifyFail(JSContextRef context, JSObjectRe
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.notifyFail() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.notifyFail() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -207,7 +207,7 @@ JSValueRef JSWebExtensionAPITestCPP::sendMessage(JSContextRef context, JSObjectR
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.sendMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.sendMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -248,7 +248,7 @@ JSValueRef JSWebExtensionAPITestCPP::runWithUserGesture(JSContextRef context, JS
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.runWithUserGesture() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.runWithUserGesture() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -275,7 +275,7 @@ JSValueRef JSWebExtensionAPITestCPP::isProcessingUserGesture(JSContextRef contex
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.isProcessingUserGesture() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.isProcessingUserGesture() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return JSValueMakeBoolean(context, impl->isProcessingUserGesture());
 }
@@ -286,7 +286,7 @@ JSValueRef JSWebExtensionAPITestCPP::assertEq(JSContextRef context, JSObjectRef,
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.assertEq() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.assertEq() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -331,7 +331,7 @@ JSValueRef JSWebExtensionAPITestCPP::assertRejects(JSContextRef context, JSObjec
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.assertRejects() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.assertRejects() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -412,7 +412,7 @@ JSValueRef JSWebExtensionAPITestCPP::create(JSContextRef context, JSObjectRef, J
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.create() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.create() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -521,7 +521,7 @@ JSValueRef JSWebExtensionAPITestCPP::get(JSContextRef context, JSObjectRef, JSOb
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.get() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.get() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -583,7 +583,7 @@ JSValueRef JSWebExtensionAPITestCPP::getAll(JSContextRef context, JSObjectRef, J
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getAll() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getAll() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -624,7 +624,7 @@ JSValueRef JSWebExtensionAPITestCPP::clear(JSContextRef context, JSObjectRef, JS
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.clear() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.clear() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -686,7 +686,7 @@ JSValueRef JSWebExtensionAPITestCPP::getItems(JSContextRef context, JSObjectRef,
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getItems() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getItems() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -744,7 +744,7 @@ JSValueRef JSWebExtensionAPITestCPP::getBytesInUse(JSContextRef context, JSObjec
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getBytesInUse() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getBytesInUse() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -802,7 +802,7 @@ JSValueRef JSWebExtensionAPITestCPP::set(JSContextRef context, JSObjectRef, JSOb
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.set() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.set() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -874,7 +874,7 @@ JSValueRef JSWebExtensionAPITestCPP::setAccessLevel(JSContextRef context, JSObje
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.setAccessLevel() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.setAccessLevel() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -946,7 +946,7 @@ JSValueRef JSWebExtensionAPITestCPP::getURL(JSContextRef context, JSObjectRef, J
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getURL() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getURL() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -980,7 +980,7 @@ JSValueRef JSWebExtensionAPITestCPP::getManifest(JSContextRef context, JSObjectR
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getManifest() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.getManifest() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJSValueRefOrJSNull(context, impl->getManifest());
 }
@@ -991,7 +991,7 @@ JSValueRef JSWebExtensionAPITestCPP::sendRuntimeMessage(JSContextRef context, JS
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.sendRuntimeMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.sendRuntimeMessage() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
 
@@ -1129,7 +1129,7 @@ JSValueRef JSWebExtensionAPITestCPP::onAlarm(JSContextRef context, JSObjectRef o
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.onAlarm in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.onAlarm in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return toJS(context, getPtr(impl->onAlarm()));
 }
@@ -1142,7 +1142,7 @@ JSValueRef JSWebExtensionAPITestCPP::quotaBytes(JSContextRef context, JSObjectRe
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.QUOTA_BYTES in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.QUOTA_BYTES in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return JSValueMakeNumber(context, impl->quotaBytes());
 }
@@ -1155,7 +1155,7 @@ JSValueRef JSWebExtensionAPITestCPP::maxItems(JSContextRef context, JSObjectRef 
     if (!impl) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.MAX_ITEMS in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter testCPP.MAX_ITEMS in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 
     SUPPRESS_UNCOUNTED_ARG return JSValueMakeNumber(context, impl->maxItems());
 }

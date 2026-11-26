@@ -149,7 +149,7 @@ std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String&
 String SQLiteFileSystem::computeHashForFileName(StringView fileName)
 {
     auto cryptoDigest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    auto utf8FileName = fileName.utf8();
+    auto utf8FileName = makeUTF8CString(fileName);
     cryptoDigest->addBytes(std::as_bytes(utf8FileName.span()));
     return cryptoDigest->toHexString();
 }

@@ -145,7 +145,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
     } else
         service = iterator->value.get();
 
-    auto ip = inet_addr(ipAddress.utf8().legacyCStringPointer());
+    auto ip = inet_addr(makeUTF8CString(ipAddress).legacyCStringPointer());
 
     // FIXME: Add IPv6 support.
     if (ip == ( in_addr_t)(-1)) {
@@ -166,7 +166,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
         kDNSServiceFlagsUnique,
 #endif
         0,
-        addResult.iterator->value->name.utf8().legacyCStringPointer(),
+        makeUTF8CString(addResult.iterator->value->name).legacyCStringPointer(),
         kDNSServiceType_A,
         kDNSServiceClass_IN,
         4,

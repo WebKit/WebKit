@@ -381,7 +381,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
         return nullptr;
 
     char* error = nullptr;
-    auto profileOrProfilePath = info.isProfilePath ? FileSystem::fileSystemRepresentation(info.profileOrProfilePath) : info.profileOrProfilePath.utf8();
+    auto profileOrProfilePath = info.isProfilePath ? FileSystem::fileSystemRepresentation(info.profileOrProfilePath) : makeUTF8CString(info.profileOrProfilePath);
     if (profileOrProfilePath.isNull())
         return nullptr;
     SandboxProfilePtr sandboxProfile { info.isProfilePath ? sandboxCompileFile(profileOrProfilePath, info.sandboxParameters.get(), &error) : sandboxCompileString(profileOrProfilePath, info.sandboxParameters.get(), &error) };
@@ -408,7 +408,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     auto sandboxBuildID = unsafeSpanIncludingNullTerminator(SANDBOX_BUILD_ID);
     memcpySpan(std::span { cachedHeader.sandboxBuildID }, sandboxBuildID);
 
-    auto osVersionUTF8 = osVersion.utf8();
+    auto osVersionUTF8 = makeUTF8CString(osVersion);
     memcpySpan(std::span { cachedHeader.osVersion }, osVersionUTF8.spanIncludingNullTerminator());
 
     const size_t expectedFileSize = sizeof(cachedHeader) + cachedHeader.headerSize + (haveBuiltin ? cachedHeader.builtinSize : 0) + cachedHeader.dataSize;
@@ -527,7 +527,7 @@ static void getSandboxProfileOrProfilePath(const SandboxInitializationParameters
 static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, bool isProfilePath, const SandboxInitializationParameters& parameters)
 {
     char* errorBuf;
-    auto temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : profileOrProfilePath.utf8();
+    auto temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : makeUTF8CString(profileOrProfilePath);
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
 
     if (sandboxInitWithParameters(temp, flags, parameters.namedParameterVector().span().data(), &errorBuf)) {
@@ -652,7 +652,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     if (isRelocatedFramework)
         bundlePath = webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent;
 
-    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8());
+    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, makeUTF8CString(bundlePath));
     sandboxParameters.addParameter("WK_FRAMEWORKS_ARE_RELOCATED"_s, isRelocatedFramework ? "YES"_s : "NO"_s);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
@@ -660,7 +660,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     std::optional<String> homeDirectory = FileSystem::homeDirectory();
     RELEASE_ASSERT(homeDirectory);
     
-    sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory->utf8());
+    sandboxParameters.addPathParameter("HOME_DIR"_s, makeUTF8CString(*homeDirectory));
     String path = FileSystem::pathByAppendingComponents(*homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Preferences"_s }));
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path));
 

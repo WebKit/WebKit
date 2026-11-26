@@ -49,7 +49,7 @@ void webkitScriptDialogSetUserInput(WebKitScriptDialog* dialog, const String& in
     if (webkit_script_dialog_get_dialog_type(dialog) != WEBKIT_SCRIPT_DIALOG_PROMPT)
         return;
 
-    webkit_script_dialog_prompt_set_text(dialog, input.utf8().legacyCStringPointer());
+    webkit_script_dialog_prompt_set_text(dialog, makeUTF8CString(input).legacyCStringPointer());
 }
 
 bool webkitScriptDialogIsUserHandled(WebKitScriptDialog* dialog)

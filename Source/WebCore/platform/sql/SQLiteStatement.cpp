@@ -130,7 +130,7 @@ int SQLiteStatement::bindText(int index, StringView text)
         auto characters = spanReinterpretCast<const char>(text.span8());
         return sqliteBindText(m_statement, index, characters.empty() ? ""_span : characters);
     }
-    return sqliteBindText(m_statement, index, text.utf8());
+    return sqliteBindText(m_statement, index, makeUTF8CString(text));
 }
 
 int SQLiteStatement::bindInt(int index, int integer)

@@ -113,14 +113,14 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const S
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.utf8());
+        LOG_ERROR("Failed to prepare statement to set value in database (%s)", makeUTF8CString(query));
         return false;
     }
 
     statement->bindText(1, value);
 
     if (statement->step() != SQLITE_DONE) {
-        LOG_ERROR("Failed to step statement to set value in database (%s)", query.utf8());
+        LOG_ERROR("Failed to step statement to set value in database (%s)", makeUTF8CString(query));
         return false;
     }
 
@@ -131,7 +131,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", db.lastError(), query.utf8());
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", db.lastError(), makeUTF8CString(query));
         return false;
     }
 
@@ -145,7 +145,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
         return true;
     }
 
-    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.utf8());
+    LOG_ERROR("Error (%i) reading text result from database (%s)", result, makeUTF8CString(query));
     return false;
 }
 
@@ -348,7 +348,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGUIDVersionMap()).
             currentVersion = entry->value.version.isNull() ? emptyString() : entry->value.version.isolatedCopy();
-            LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.utf8());
+            LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, makeUTF8CString(currentVersion));
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
 
@@ -377,9 +377,9 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
             }
 
             if (currentVersion.length()) {
-                LOG(StorageAPI, "Retrieved current version %s from database %s", currentVersion.utf8(), databaseDebugName().utf8());
+                LOG(StorageAPI, "Retrieved current version %s from database %s", makeUTF8CString(currentVersion), makeUTF8CString(databaseDebugName()));
             } else if (!m_new || shouldSetVersionInNewDatabase) {
-                LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.utf8(), databaseDebugName().utf8());
+                LOG(StorageAPI, "Setting version %s in database %s that was just created", makeUTF8CString(m_expectedVersion), makeUTF8CString(databaseDebugName()));
                 if (!setVersionInDatabase(m_expectedVersion, false)) {
                     String message = formatErrorMessage("unable to open database, failed to write current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                     transaction.rollback();
@@ -394,7 +394,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
     }
 
     if (currentVersion.isNull()) {
-        LOG(StorageAPI, "Database %s does not have its version set", databaseDebugName().utf8());
+        LOG(StorageAPI, "Database %s does not have its version set", makeUTF8CString(databaseDebugName()));
         currentVersion = emptyString();
     }
 
@@ -451,7 +451,7 @@ bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
         if (shouldCacheVersion)
             setCachedVersion(version);
     } else
-        LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().utf8());
+        LOG_ERROR("Failed to retrieve version from database %s", makeUTF8CString(databaseDebugName()));
 
     m_databaseAuthorizer->enable();
 
@@ -471,7 +471,7 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
         if (shouldCacheVersion)
             setCachedVersion(version);
     } else
-        LOG_ERROR("Failed to set version %s in database (%s)", version.utf8(), query.utf8());
+        LOG_ERROR("Failed to set version %s in database (%s)", makeUTF8CString(version), makeUTF8CString(query));
 
     m_databaseAuthorizer->enable();
 
@@ -566,7 +566,7 @@ void Database::markAsDeletedAndClose()
     if (m_deleted)
         return;
 
-    LOG(StorageAPI, "Marking %s (%p) as deleted", stringIdentifierIsolatedCopy().utf8(), this);
+    LOG(StorageAPI, "Marking %s (%p) as deleted", makeUTF8CString(stringIdentifierIsolatedCopy()), this);
     m_deleted = true;
 
     close();
@@ -703,7 +703,7 @@ Vector<String> Database::performGetTableNames()
 
     auto statement = sqliteDatabase().prepareStatement("SELECT name FROM sqlite_master WHERE type='table';"_s);
     if (!statement) {
-        LOG_ERROR("Unable to retrieve list of tables for database %s", databaseDebugName().utf8());
+        LOG_ERROR("Unable to retrieve list of tables for database %s", makeUTF8CString(databaseDebugName()));
         enableAuthorizer();
         return Vector<String>();
     }
@@ -719,7 +719,7 @@ Vector<String> Database::performGetTableNames()
     enableAuthorizer();
 
     if (result != SQLITE_DONE) {
-        LOG_ERROR("Error getting tables for database %s", databaseDebugName().utf8());
+        LOG_ERROR("Error getting tables for database %s", makeUTF8CString(databaseDebugName()));
         return Vector<String>();
     }
 

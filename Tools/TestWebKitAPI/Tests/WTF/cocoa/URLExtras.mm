@@ -182,7 +182,7 @@ TEST(URLExtras, URLExtras_Spoof)
         "xn--jfa"_s, // U+0138
     };
     for (auto& host : punycodedSpoofHosts) {
-        auto url = makeString("http://"_s, host, '/').utf8();
+        auto url = makeUTF8CString(makeString("http://"_s, host, '/'));
         EXPECT_WK_STREQ(url, userVisibleString(literalURL(url)));
     }
 }

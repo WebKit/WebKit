@@ -84,7 +84,7 @@ protected:
         handle = { };
 
         WTR::TestCommand command;
-        command.absolutePath = std::filesystem::path { m_testFilePath.utf8().data() };
+        command.absolutePath = std::filesystem::path { makeUTF8CString(m_testFilePath).data() };
         std::unordered_map<std::string, WTR::TestHeaderKeyType> keyTypeMap { { "useFlexibleViewport", WTR::TestHeaderKeyType::BoolTestRunner } };
         return WTR::testHeaderForTest(command, keyTypeMap);
     }

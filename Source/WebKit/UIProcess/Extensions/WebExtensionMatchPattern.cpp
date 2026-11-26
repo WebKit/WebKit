@@ -201,7 +201,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
     UserContentURLPattern pattern { patternString };
 
     if (!pattern.scheme().isEmpty() && !isValidScheme(pattern.scheme())) {
-        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern", patternString.utf8(), pattern.scheme().utf8()));
+        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern", makeUTF8CString(patternString), makeUTF8CString(pattern.scheme())));
         return;
     }
 
@@ -213,19 +213,19 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& patternString, 
             break;
 
         case UserContentURLPattern::Error::MissingScheme:
-            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a scheme.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a scheme.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern", makeUTF8CString(patternString)));
             break;
 
         case UserContentURLPattern::Error::MissingHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a host.", "WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a host.", "WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern", makeUTF8CString(patternString)));
             break;
 
         case UserContentURLPattern::Error::InvalidHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern", patternString.utf8(), pattern.host().utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because the host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern", makeUTF8CString(patternString), makeUTF8CString(pattern.host())));
             break;
 
         case UserContentURLPattern::Error::MissingPath:
-            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a path.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern", patternString.utf8()));
+            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("\"%s\" cannot be parsed because it doesn't have a path.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern", makeUTF8CString(patternString)));
             break;
         }
 
@@ -250,7 +250,7 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
     outError = nullptr;
 
     if (!isValidScheme(scheme)) {
-        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme", scheme.utf8()));
+        outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme", makeUTF8CString(scheme)));
         return;
     }
 
@@ -264,16 +264,16 @@ WebExtensionMatchPattern::WebExtensionMatchPattern(const String& scheme, const S
             break;
 
         case UserContentURLPattern::Error::MissingScheme:
-            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme", scheme.utf8()));
+            outError = createError(Error::InvalidScheme, WEB_UI_FORMAT_STRING("Scheme \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme", makeUTF8CString(scheme)));
             break;
 
         case UserContentURLPattern::Error::MissingHost:
         case UserContentURLPattern::Error::InvalidHost:
-            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("Host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host", host.utf8()));
+            outError = createError(Error::InvalidHost, WEB_UI_FORMAT_STRING("Host \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host", makeUTF8CString(host)));
             break;
 
         case UserContentURLPattern::Error::MissingPath:
-            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("Path \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path", path.utf8()));
+            outError = createError(Error::InvalidPath, WEB_UI_FORMAT_STRING("Path \"%s\" is invalid.", "WKWebExtensionMatchPatternErrorInvalidPath description for missing path", makeUTF8CString(path)));
             break;
         }
 

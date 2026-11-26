@@ -119,7 +119,7 @@ void AppendPipeline::setupDemuxing()
     }, this, nullptr);
 
     const String& type = m_sourceBufferPrivate.type().containerType();
-    GST_DEBUG_OBJECT(pipeline(), "SourceBuffer containerType: %s", type.utf8());
+    GST_DEBUG_OBJECT(pipeline(), "SourceBuffer containerType: %s", makeUTF8CString(type));
 
     if (type.endsWith("mp4"_s) || type.endsWith("aac"_s)) {
         m_demux = makeGStreamerElement("qtdemux"_s);
@@ -171,7 +171,7 @@ void AppendPipeline::setupDemuxing()
             assertedElementSetState(appendPipeline->m_demux.get(), GST_STATE_PLAYING);
         }), this);
     } else {
-        GST_ELEMENT_ERROR(pipeline(), STREAM, WRONG_TYPE, ("Unsupported container mimetype: %s", type.utf8().legacyCStringPointer()), (nullptr));
+        GST_ELEMENT_ERROR(pipeline(), STREAM, WRONG_TYPE, ("Unsupported container mimetype: %s", makeUTF8CString(type).legacyCStringPointer()), (nullptr));
         return;
     }
 
@@ -270,7 +270,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     static size_t appendPipelineCount = 0;
     String pipelineName = makeString("append-pipeline-"_s,
         makeStringByReplacingAll(m_sourceBufferPrivate.type().containerType(), '/', '-'), '-', appendPipelineCount++);
-    m_pipeline = gst_pipeline_new(pipelineName.utf8().legacyCStringPointer());
+    m_pipeline = gst_pipeline_new(makeUTF8CString(pipelineName).legacyCStringPointer());
     registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get());
 
@@ -546,7 +546,7 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         MediaTime pts = bufferTimeToStreamTime(segment, GST_BUFFER_PTS(buffer));
         MediaTime dts = bufferTimeToStreamTime(segment, GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_DTS_OR_PTS(buffer));
         GST_TRACE_OBJECT(track.appsinkPad.get(), "Mapped buffer to segment, PTS %" GST_TIME_FORMAT " -> %s DTS %" GST_TIME_FORMAT " -> %s",
-            GST_TIME_ARGS(GST_BUFFER_PTS(buffer)), pts.toString().utf8(), GST_TIME_ARGS(GST_BUFFER_DTS(buffer)), dts.toString().utf8());
+            GST_TIME_ARGS(GST_BUFFER_PTS(buffer)), makeUTF8CString(pts.toString()), GST_TIME_ARGS(GST_BUFFER_DTS(buffer)), makeUTF8CString(dts.toString()));
         mediaSample->setTimestamps(pts, dts);
     } else if (!GST_BUFFER_DTS(buffer) && GST_BUFFER_PTS(buffer) > 0
         && GST_BUFFER_PTS(buffer) <= toGstClockTime(PlatformTimeRanges::timeFudgeFactor())
@@ -563,9 +563,9 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
 
     GST_TRACE_OBJECT(pipeline(), "append: trackId=%" PRIu64 " PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
         mediaSample->trackID(),
-        mediaSample->presentationTime().toString().utf8(),
-        mediaSample->decodeTime().toString().utf8(),
-        mediaSample->duration().toString().utf8(),
+        makeUTF8CString(mediaSample->presentationTime().toString()),
+        makeUTF8CString(mediaSample->decodeTime().toString()),
+        makeUTF8CString(mediaSample->duration().toString()),
         mediaSample->presentationSize().width(), mediaSample->presentationSize().height());
 
     if (track.streamType == StreamType::Text) {
@@ -806,7 +806,7 @@ void AppendPipeline::resetParserState()
         static unsigned i = 0;
         // This is here for debugging purposes. It does not make sense to have it as class member.
         String dotFileName = makeString("reset-pipeline-"_s, ++i);
-        gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().legacyCStringPointer());
+        gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, makeUTF8CString(dotFileName).legacyCStringPointer());
     }
 #endif
 }
@@ -831,7 +831,7 @@ void AppendPipeline::startChangingType()
     m_pendingInitializationSegmentForChangeType = true;
 
     auto type = sourceBufferPrivate().m_type;
-    GST_INFO_OBJECT(pipeline(), "Pending type change -> %s", type.raw().utf8());
+    GST_INFO_OBJECT(pipeline(), "Pending type change -> %s", makeUTF8CString(type.raw()));
 }
 
 void AppendPipeline::resetElementsForChangeType()
@@ -839,7 +839,7 @@ void AppendPipeline::resetElementsForChangeType()
     ASSERT(isMainThread());
 
     auto type = sourceBufferPrivate().m_type;
-    GST_INFO_OBJECT(pipeline(), "Replacing appsrc, typefind and demuxer for type change -> %s", type.raw().utf8());
+    GST_INFO_OBJECT(pipeline(), "Replacing appsrc, typefind and demuxer for type change -> %s", makeUTF8CString(type.raw()));
 
     gst_element_unlink_many(m_appsrc.get(), m_typefind.get(), m_demux.get(), nullptr);
     for (const auto& track : m_tracks) {

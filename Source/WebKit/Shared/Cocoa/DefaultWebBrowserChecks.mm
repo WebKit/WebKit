@@ -231,7 +231,7 @@ bool hasProhibitedUsageStrings()
     for (NSString *prohibitedString : prohibitedStrings) {
         if ([infoDictionary objectForKey:prohibitedString]) {
             String message = adoptNS([[NSString alloc] initWithFormat:@"[In-App Browser Privacy] %@ used prohibited usage string %@.", retainPtr([[NSBundle mainBundle] bundleIdentifier]).get(), prohibitedString]).get();
-            SAFE_WTFLOGALWAYS("%s", message.utf8());
+            SAFE_WTFLOGALWAYS("%s", makeUTF8CString(message));
             hasProhibitedUsageStrings = true;
             break;
         }

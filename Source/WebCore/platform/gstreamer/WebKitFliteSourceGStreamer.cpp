@@ -215,7 +215,7 @@ static GstFlowReturn webkitFliteSrcCreate(GstBaseSrc* baseSource, guint64 offset
     if (!members->didLoadUtterance) {
         members->didLoadUtterance = true;
 
-        GUniquePtr<cst_wave> wave(fliteLibrary()->textToWave(priv->text.utf8().legacyCStringPointer(), priv->currentVoice));
+        GUniquePtr<cst_wave> wave(fliteLibrary()->textToWave(makeUTF8CString(priv->text).legacyCStringPointer(), priv->currentVoice));
         if (wave->sample_rate != priv->info.rate) {
             GstAudioInfo info;
             gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_S16, wave->sample_rate, priv->info.channels, nullptr);

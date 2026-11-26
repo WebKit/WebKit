@@ -109,7 +109,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
         if (!fileHandle)
             return;
 
-        auto content = saveDatas[0].content.utf8();
+        auto content = makeUTF8CString(saveDatas[0].content);
         auto contentSize = content.length();
         auto bytesWritten = fileHandle.write(byteCast<uint8_t>(content.span()));
         if (bytesWritten != contentSize) {

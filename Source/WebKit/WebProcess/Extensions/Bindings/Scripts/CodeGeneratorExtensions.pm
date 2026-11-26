@@ -501,7 +501,7 @@ EOF
     if (${functionEarlyReturnCondition}) [[unlikely]]
         return ${defaultEarlyReturnValue};
 
-    RELEASE_LOG_DEBUG(Extensions, "Called function ${call} (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called function ${call} (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
 EOF
 
             my @parameters = ();
@@ -952,7 +952,7 @@ EOF
     if (${getterEarlyReturnCondition}) [[unlikely]]
         return JSValueMakeUndefined(context);
 
-    RELEASE_LOG_DEBUG(Extensions, "Called getter ${call} in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called getter ${call} in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 EOF
 
             if ($needsPage || $needsPageIdentifier) {
@@ -995,7 +995,7 @@ EOF
     if (${setterEarlyReturnCondition}) [[unlikely]]
         return false;
 
-    RELEASE_LOG_DEBUG(Extensions, "Called setter ${call} in %" PUBLIC_LOG_STRING " world", toDebugString(impl->contentWorldType()).utf8());
+    RELEASE_LOG_DEBUG(Extensions, "Called setter ${call} in %" PUBLIC_LOG_STRING " world", makeUTF8CString(toDebugString(impl->contentWorldType())));
 EOF
 
                 my $platformValue;

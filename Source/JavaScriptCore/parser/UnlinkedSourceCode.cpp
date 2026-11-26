@@ -35,7 +35,7 @@ UTF8CString UnlinkedSourceCode::toUTF8() const
     if (!m_provider)
         return ""_s;
     
-    return m_provider->source().substring(m_startOffset, m_endOffset - m_startOffset).utf8();
+    return makeUTF8CString(m_provider->source().substring(m_startOffset, m_endOffset - m_startOffset));
 }
 
 } // namespace JSC

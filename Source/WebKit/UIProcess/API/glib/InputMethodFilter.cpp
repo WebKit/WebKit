@@ -290,7 +290,7 @@ void InputMethodFilter::notifySurrounding(const String& text, uint64_t cursorPos
     m_surrounding.cursorPosition = cursorPosition;
     m_surrounding.selectionPosition = selectionPosition;
 
-    auto textUTF8 = m_surrounding.text.utf8();
+    auto textUTF8 = makeUTF8CString(m_surrounding.text);
     auto cursorPositionUTF8 = cursorPosition != text.length() ? utf8Length(StringView(text).left(cursorPosition)) : textUTF8.length();
     auto selectionPositionUTF8 = cursorPositionUTF8;
     if (cursorPosition != selectionPosition)
@@ -324,7 +324,7 @@ void InputMethodFilter::preeditChanged()
     webkit_input_method_context_get_preedit(m_context.get(), &preeditText.outPtr(), &underlines, &cursorOffset);
 
     auto newPreedit = GMallocString::unsafeAdoptFromUTF8(WTF::move(preeditText));
-    if (newPreedit == m_preedit.text.utf8()) {
+    if (newPreedit == makeUTF8CString(m_preedit.text)) {
         g_list_free_full(underlines, reinterpret_cast<GDestroyNotify>(webkit_input_method_underline_free));
         return;
     }

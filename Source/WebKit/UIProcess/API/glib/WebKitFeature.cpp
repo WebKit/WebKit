@@ -124,15 +124,15 @@ struct _WebKitFeature {
 
     RefPtr<API::Feature> feature;
     UTF8CString identifier { toIdentifier(feature->key()) };
-    UTF8CString name { feature->name().utf8() };
-    UTF8CString details { feature->details().utf8() };
+    UTF8CString name { makeUTF8CString(feature->name()) };
+    UTF8CString details { makeUTF8CString(feature->details()) };
     int referenceCount { 1 };
 
     static UTF8CString toIdentifier(const String& key)
     {
         if (key.endsWith("Enabled"_s))
-            return StringView(key).left(key.length() - (sizeof("Enabled") - 1)).utf8();
-        return key.utf8();
+            return makeUTF8CString(StringView(key).left(key.length() - (sizeof("Enabled") - 1)));
+        return makeUTF8CString(key);
     }
 };
 

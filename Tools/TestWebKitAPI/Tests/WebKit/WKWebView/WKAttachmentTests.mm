@@ -2895,7 +2895,7 @@ TEST(WKAttachmentTestsMac, WideLayoutSnapshotExcludesSelectionBackground)
     for (auto [x, y] : { std::pair { 4.0, 40.0 }, { width - 10, 6.0 }, { width - 10, height - 6 } }) {
         auto unselected = unselectedReader.at(x * scale, y * scale);
         auto selected = selectedReader.at(x * scale, y * scale);
-        EXPECT_EQ(unselected, selected) << "at (" << x << ", " << y << "): " << unselected.debugDescription().utf8().legacyCStringPointer() << " vs. " << selected.debugDescription().utf8().legacyCStringPointer();
+        EXPECT_EQ(unselected, selected) << "at (" << x << ", " << y << "): " << makeUTF8CString(unselected.debugDescription()).legacyCStringPointer() << " vs. " << makeUTF8CString(selected.debugDescription()).legacyCStringPointer();
     }
 }
 

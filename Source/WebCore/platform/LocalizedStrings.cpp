@@ -1105,7 +1105,7 @@ String imageTitle(const String& filename, const IntSize& size)
 #elif PLATFORM(WIN)
     return WEB_UI_FORMAT_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", filename.wideCharacters().span().data(), size.width(), size.height());
 #elif USE(GLIB)
-    return WEB_UI_FORMAT_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", filename.utf8(), size.width(), size.height());
+    return WEB_UI_FORMAT_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", makeUTF8CString(filename), size.width(), size.height());
 #else
     return makeStringByReplacingAll(WEB_UI_FORMAT_STRING("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", size.width(), size.height()), "<filename>"_s, filename);
 #endif
@@ -1302,7 +1302,7 @@ String validationMessagePatternMismatchText(const String& title)
 #if PLATFORM(COCOA)
     return WEB_UI_FORMAT_CFSTRING("Match the requested format: %@", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.createCFString().get());
 #elif USE(GLIB)
-    return WEB_UI_FORMAT_STRING("Match the requested format: %s", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", title.utf8());
+    return WEB_UI_FORMAT_STRING("Match the requested format: %s", "Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern", makeUTF8CString(title));
 #else
     UNUSED_PARAM(title);
     return validationMessagePatternMismatchText();
@@ -1328,7 +1328,7 @@ String validationMessageRangeUnderflowText(const String& minimum)
 #if PLATFORM(COCOA)
     return WEB_UI_FORMAT_CFSTRING("Value must be greater than or equal to %@", "Validation message for input form controls with value lower than allowed minimum", minimum.createCFString().get());
 #elif USE(GLIB)
-    return WEB_UI_FORMAT_STRING("Value must be greater than or equal to %s", "Validation message for input form controls with value lower than allowed minimum", minimum.utf8());
+    return WEB_UI_FORMAT_STRING("Value must be greater than or equal to %s", "Validation message for input form controls with value lower than allowed minimum", makeUTF8CString(minimum));
 #else
     UNUSED_PARAM(minimum);
     return WEB_UI_STRING("range underflow", "Validation message for input form controls with value lower than allowed minimum");
@@ -1340,7 +1340,7 @@ String validationMessageRangeOverflowText(const String& maximum)
 #if PLATFORM(COCOA)
     return WEB_UI_FORMAT_CFSTRING("Value must be less than or equal to %@", "Validation message for input form controls with value higher than allowed maximum", maximum.createCFString().get());
 #elif USE(GLIB)
-    return WEB_UI_FORMAT_STRING("Value must be less than or equal to %s", "Validation message for input form controls with value higher than allowed maximum", maximum.utf8());
+    return WEB_UI_FORMAT_STRING("Value must be less than or equal to %s", "Validation message for input form controls with value higher than allowed maximum", makeUTF8CString(maximum));
 #else
     UNUSED_PARAM(maximum);
     return WEB_UI_STRING("range overflow", "Validation message for input form controls with value higher than allowed maximum");
@@ -1386,7 +1386,7 @@ String textTrackAutomaticMenuItemText()
 
 String captionStylePreviewWithProfileName(const String& profileName)
 {
-    return WEB_UI_FORMAT_STRING("This is the %s subtitle style", "This is the %s subtitle style (Caption User Preferences)", profileName.utf8());
+    return WEB_UI_FORMAT_STRING("This is the %s subtitle style", "This is the %s subtitle style (Caption User Preferences)", makeUTF8CString(profileName));
 }
 
 String captionStylePreview()

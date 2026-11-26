@@ -141,12 +141,12 @@ std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::tryOpenDatabase()
         existsDatabaseFile = SQLiteFileSystem::ensureDatabaseFileExists(m_databasePath, false);
 
     if (!existsDatabaseFile && !isOnMemory() && !FileSystem::makeAllDirectories(FileSystem::parentPath(m_databasePath))) {
-        LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8());
+        LOG_ERROR("Unable to create the Cookie Database path %s", makeUTF8CString(m_databasePath));
         return makeUnexpected(DatabaseError::Unavailable);
     }
 
     if (!m_database.open(m_databasePath)) {
-        LOG_ERROR("Failed to open cookie database %s: %s", m_databasePath.utf8(), m_database.lastErrorMsg());
+        LOG_ERROR("Failed to open cookie database %s: %s", makeUTF8CString(m_databasePath), m_database.lastErrorMsg());
         return makeUnexpected(errorForSQLiteResult(m_database.lastError()));
     }
 
@@ -327,7 +327,7 @@ std::expected<void, CookieJarDB::DatabaseError> CookieJarDB::checkDatabaseValidi
     String resultText = integrity->columnText(0);
 
     if (resultText != "ok"_s) {
-        LOG_ERROR("Cookie database integrity check failed - %s", resultText.utf8());
+        LOG_ERROR("Cookie database integrity check failed - %s", makeUTF8CString(resultText));
         return makeUnexpected(DatabaseError::Corrupt);
     }
 

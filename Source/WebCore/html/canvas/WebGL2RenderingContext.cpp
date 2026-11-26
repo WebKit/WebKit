@@ -1329,7 +1329,7 @@ GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const
         return -1;
     if (!validateWebGLObject("getFragDataLocation"_s, program))
         return -1;
-    return protect(graphicsContextGL())->getFragDataLocation(program.object(), name.utf8());
+    return protect(graphicsContextGL())->getFragDataLocation(program.object(), makeUTF8CString(name));
 }
 
 void WebGL2RenderingContext::uniform1ui(const WebGLUniformLocation* location, GCGLuint v0)
@@ -2279,7 +2279,7 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
     program.setRequiredTransformFeedbackBufferCount(
         bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? std::min(static_cast<size_t>(1), varyings.size()) : varyings.size());
     auto varyingsUTF8 = varyings.map([](const String& value) {
-        return value.utf8();
+        return makeUTF8CString(value);
     });
     protect(graphicsContextGL())->transformFeedbackVaryings(program.object(), varyingsUTF8, bufferMode);
 }
@@ -2542,7 +2542,7 @@ GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, con
         return 0;
     if (!validateWebGLObject("getUniformBlockIndex"_s, program))
         return 0;
-    return protect(graphicsContextGL())->getUniformBlockIndex(program.object(), uniformBlockName.utf8());
+    return protect(graphicsContextGL())->getUniformBlockIndex(program.object(), makeUTF8CString(uniformBlockName));
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLenum pname)

@@ -46,14 +46,14 @@ static String moduleDirectory()
 WKStringRef createInjectedBundlePath()
 {
     auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), "TestWebKitAPIInjectedBundle.dll"_s);
-    return WKStringCreateWithUTF8CString(path.utf8().legacyCStringPointer());
+    return WKStringCreateWithUTF8CString(makeUTF8CString(path).legacyCStringPointer());
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
     String filename = makeString("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\"_s, unsafeSpan(resource), '.', unsafeSpan(extension));
     auto url = URL::fileURLWithFileSystemPath(FileSystem::pathByAppendingComponent(moduleDirectory(), filename));
-    return WKURLCreateWithUTF8CString(url.string().utf8().legacyCStringPointer());
+    return WKURLCreateWithUTF8CString(makeUTF8CString(url.string()).legacyCStringPointer());
 }
 
 WKURLRef URLForNonExistentResource()

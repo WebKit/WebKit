@@ -180,7 +180,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ru
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM "_s, protectedThis->m_tableName, " WHERE id IN ("_s, makeStringByJoining(ruleIdMapToString(ruleIDs).span(), ", "_s), ")"_s));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete rules for extension %s.", protectedThis->uniqueIdentifier().utf8());
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete rules for extension %s.", makeUTF8CString(protectedThis->uniqueIdentifier()));
             errorMessage = makeString("Failed to delete rules from "_s, toString(protectedThis->m_storageType), " rules storage."_s);
         }
 
@@ -276,7 +276,7 @@ String WebExtensionDeclarativeNetRequestSQLiteStore::insertRule(double ruleID, c
 
     DatabaseResult result = SQLiteDatabaseExecute(database, makeString("INSERT INTO "_s, m_tableName, " (id, rule) VALUES (?, ?)"_s), ruleID, ruleData);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to insert %s rule for extension %s", toString(m_storageType).utf8(), uniqueIdentifier().utf8());
+        RELEASE_LOG_ERROR(Extensions, "Failed to insert %s rule for extension %s", makeUTF8CString(toString(m_storageType)), makeUTF8CString(uniqueIdentifier()));
         return makeString("Failed to add "_s, toString(m_storageType), " rule."_s);
     }
 
@@ -311,7 +311,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::createFreshDatabase
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("CREATE TABLE "_s, m_tableName, " (id INTEGER PRIMARY KEY NOT NULL, rule BLOB NOT NULL)"_s));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", makeUTF8CString(m_tableName), makeUTF8CString(uniqueIdentifier()), lastErrorMessage(), result);
     return result;
 }
 
@@ -341,7 +341,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::resetDatabaseSchema
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("DROP TABLE IF EXISTS "_s, m_tableName));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", makeUTF8CString(m_tableName), makeUTF8CString(uniqueIdentifier()), lastErrorMessage(), result);
 
     return result;
 }

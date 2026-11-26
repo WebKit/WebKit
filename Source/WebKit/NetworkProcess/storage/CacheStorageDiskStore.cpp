@@ -78,7 +78,7 @@ CacheStorageDiskStore::SafeFileData CacheStorageDiskStore::SafeFileData::read(co
     bool canMapFile = true;
     if (!FileSystem::isSafeToUseMemoryMapForPath(filePath)) {
         canMapFile = FileSystem::makeSafeToUseMemoryMapForPath(filePath);
-        RELEASE_LOG_ERROR_IF(!canMapFile, CacheStorage, "CacheStorageDiskStore::SafeFileData::read fails to mark file %" SENSITIVE_LOG_STRING " as safe to use for mmap", filePath.utf8());
+        RELEASE_LOG_ERROR_IF(!canMapFile, CacheStorage, "CacheStorageDiskStore::SafeFileData::read fails to mark file %" SENSITIVE_LOG_STRING " as safe to use for mmap", makeUTF8CString(filePath));
     }
 
     // Try memory mapping first if it's safe to do so.

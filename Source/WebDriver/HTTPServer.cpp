@@ -91,7 +91,7 @@ HTTPRequestHandler::Response HTTPRequestHandler::rejectedRequestResponse(const S
     errorObject->setString("stacktrace"_s, emptyString());
     auto responseObject = JSON::Object::create();
     responseObject->setObject("value"_s, WTF::move(errorObject));
-    return { result.httpStatusCode(), responseObject->toJSONString().utf8(), "application/json; charset=utf-8"_s };
+    return { result.httpStatusCode(), makeUTF8CString(responseObject->toJSONString()), "application/json; charset=utf-8"_s };
 }
 
 HTTPServer::HTTPServer(HTTPRequestHandler& requestHandler)

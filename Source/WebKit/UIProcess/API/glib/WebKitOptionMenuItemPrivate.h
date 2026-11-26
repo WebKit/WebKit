@@ -27,13 +27,13 @@ struct _WebKitOptionMenuItem {
     _WebKitOptionMenuItem() = default;
 
     _WebKitOptionMenuItem(const WebKit::WebPopupItem& item)
-        : label(item.m_text.trim(deprecatedIsSpaceOrNewline).utf8())
+        : label(makeUTF8CString(item.m_text.trim(deprecatedIsSpaceOrNewline)))
         , isGroupLabel(item.m_isLabel)
         , isGroupChild(item.m_text.startsWith("    "_s))
         , isEnabled(item.m_isEnabled)
     {
         if (!item.m_toolTip.isEmpty())
-            tooltip = item.m_toolTip.utf8();
+            tooltip = makeUTF8CString(item.m_toolTip);
     }
 
     explicit _WebKitOptionMenuItem(_WebKitOptionMenuItem* other)

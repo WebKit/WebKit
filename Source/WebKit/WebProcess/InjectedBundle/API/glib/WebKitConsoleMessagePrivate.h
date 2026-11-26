@@ -28,9 +28,9 @@ struct _WebKitConsoleMessage {
     _WebKitConsoleMessage(JSC::MessageSource source, JSC::MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
         : source(source)
         , level(level)
-        , message(message.utf8())
+        , message(makeUTF8CString(message))
         , lineNumber(lineNumber)
-        , sourceID(sourceID.utf8())
+        , sourceID(makeUTF8CString(sourceID))
     {
     }
 

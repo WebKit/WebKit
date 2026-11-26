@@ -60,10 +60,10 @@ static std::filesystem::path toStdFileSystemPath(StringView path)
 {
 #if HAVE(MISSING_U8STRING)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return std::filesystem::u8path(path.utf8().data());
+    return std::filesystem::u8path(makeUTF8CString(path).data());
 ALLOW_DEPRECATED_DECLARATIONS_END
 #else
-    return { std::u8string(path.utf8().data()) };
+    return { std::u8string(makeUTF8CString(path).data()) };
 #endif
 }
 

@@ -91,10 +91,10 @@ RefPtr<WebCore::RealtimeMediaSource> CapturePreviewManager::createSource(const W
     if (!sourceOrError) {
         RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager unable to create %s preview source for '%s' (%s), denialReason=%d, %s",
             device.type() == WebCore::CaptureDevice::DeviceType::Microphone ? "microphone" : "camera",
-            device.label().utf8(),
-            device.persistentId().utf8(),
+            makeUTF8CString(device.label()),
+            makeUTF8CString(device.persistentId()),
             static_cast<int>(sourceOrError.error.denialReason),
-            sourceOrError.error.errorMessage.utf8());
+            makeUTF8CString(sourceOrError.error.errorMessage));
         return nullptr;
     }
 
@@ -155,7 +155,7 @@ void CapturePreviewManager::startAudioSource(const WebCore::CaptureDevice& devic
 
     m_audioSource = createSource(device);
     if (!m_audioSource) {
-        RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager no audio source for '%s'", device.label().utf8());
+        RELEASE_LOG_ERROR(WebRTC, "CapturePreviewManager no audio source for '%s'", makeUTF8CString(device.label()));
         return;
     }
 

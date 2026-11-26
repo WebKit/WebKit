@@ -254,7 +254,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
-        auto utf8File = cookieFile.utf8();
+        auto utf8File = makeUTF8CString(cookieFile);
         RetainPtr url = adoptCF(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, byteCast<UInt8>(utf8File.span()).data(), static_cast<CFIndex>(utf8File.length()), true));
         RetainPtr cfCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromFile(kCFAllocatorDefault, url.get(), nullptr));
         m_uiProcessCookieStorageIdentifier = identifyingDataFromCookieStorage(cfCookieStorage.get());
@@ -333,10 +333,10 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
     ASSERT(isMainRunLoop());
 
     auto completionHandler = [identifier, callback = WTF::move(callback)](const String& error) mutable {
-        RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal completed for identifier %" PUBLIC_LOG_STRING " (error '%" PUBLIC_LOG_STRING "')", identifier.toString().utf8(), error.isEmpty() ? "null"_s : error.utf8());
+        RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal completed for identifier %" PUBLIC_LOG_STRING " (error '%" PUBLIC_LOG_STRING "')", makeUTF8CString(identifier.toString()), error.isEmpty() ? "null"_s : makeUTF8CString(error));
         callback(error);
     };
-    RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal started for identifier %" PUBLIC_LOG_STRING, identifier.toString().utf8());
+    RELEASE_LOG(Storage, "WebsiteDataStore::removeDataStoreWithIdentifier: Removal started for identifier %" PUBLIC_LOG_STRING, makeUTF8CString(identifier.toString()));
     if (!identifier.isValid())
         return completionHandler("Identifier is invalid"_s);
 

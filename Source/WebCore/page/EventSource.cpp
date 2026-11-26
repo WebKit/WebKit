@@ -121,7 +121,7 @@ void EventSource::connect()
 #if PLATFORM(COCOA)
         // CFNetwork sends header values as Latin-1 bytes, so pass the UTF-8 bytes as Latin-1 characters.
         // Other network backends UTF-8 encode header values themselves.
-        request.setHTTPHeaderField(HTTPHeaderName::LastEventID, String(byteCast<Latin1Character>(m_lastEventId.utf8().span())));
+        request.setHTTPHeaderField(HTTPHeaderName::LastEventID, String(byteCast<Latin1Character>(makeUTF8CString(m_lastEventId).span())));
 #else
         request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 #endif

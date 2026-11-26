@@ -188,7 +188,7 @@ public:
         if (!parameters.isNull())
             messageBuilder.append(",\"params\":"_s, parameters);
         messageBuilder.append('}');
-        m_connection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8()));
+        m_connection->sendMessage("SendMessageToBackend"_s, gVariantNew("(tts)", m_connectionID, m_target.id, makeUTF8CString(messageBuilder.toString())));
         return sequenceID;
     }
 
@@ -283,7 +283,7 @@ public:
         }
 
         for (auto& message : m_bidiMessages) {
-            auto serializedMessage = message->toJSONString().utf8();
+            auto serializedMessage = makeUTF8CString(message->toJSONString());
             g_test_message("Unmatched BiDi message: %s", serializedMessage.legacyCStringPointer());
         }
         return nullptr;
@@ -566,7 +566,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     response = test->navigateAndWaitForResponse(pageHandle, fragmentURI);
     g_assert_nonnull(response->getObject("result"_s).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
-    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeString(String::fromUTF8(fragmentURI.span()), "#changed"_s).utf8());
+    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeUTF8CString(makeString(String::fromUTF8(fragmentURI.span()), "#changed"_s)));
 
     // A navigation the page starts while the awaited one still awaits its policy decision cancels that
     // decision: the awaited navigation is destroyed without reporting anything. The command completes with the
@@ -578,7 +578,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
         return !!s_heldPolicyDecision;
     });
     auto replacementURI = kServer->getURIForPath("/replacement");
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(replacementURI.span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView.get(), makeUTF8CString(makeString("location.href = '"_s, String::fromUTF8(replacementURI.span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     response = test->waitForResponse(heldCommandID);
     g_assert_nonnull(response->getObject("result"_s).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
@@ -593,7 +593,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
         return !!s_heldPolicyDecision;
     });
     auto slowReplacementURI = kServer->getURIForPath("/slow-replacement");
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(slowReplacementURI.span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView.get(), makeUTF8CString(makeString("location.href = '"_s, String::fromUTF8(slowReplacementURI.span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     test->waitUntil([&] {
         return !!s_heldReplacementRequest;
     });
@@ -620,7 +620,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
 
     // A navigate sent while the error page for a failed load is being loaded: that load may cancel the policy
     // check of the command's navigation, and has no navigation of its own. The command still completes.
-    auto unreachableURI = makeString("http://127.0.0.1:"_s, s_unreachablePort, '/').utf8();
+    auto unreachableURI = makeUTF8CString(makeString("http://127.0.0.1:"_s, s_unreachablePort, '/'));
     response = test->navigateAndWaitForResponse(pageHandle, unreachableURI);
     g_assert_nonnull(response->getObject("result"_s).get());
     response = test->navigateAndWaitForResponse(pageHandle, targetURI);
@@ -647,7 +647,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     g_assert_nonnull(response->getObject("result"_s).get());
     g_assert_true(webkit_web_view_is_loading(webView.get()));
     s_slowScriptWasServed = false;
-    webkit_web_view_evaluate_javascript(webView.get(), makeString("location.href = '"_s, String::fromUTF8(kServer->getURIForPath("/slow-script-page").span()), '\'').utf8().legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView.get(), makeUTF8CString(makeString("location.href = '"_s, String::fromUTF8(kServer->getURIForPath("/slow-script-page").span()), '\'')).legacyCStringPointer(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     auto waitCommandID = test->sendCommandToBackend("waitForNavigationToComplete"_s, makeString("{\"browsingContextHandle\":\""_s, pageHandle, "\",\"pageLoadStrategy\":\"Eager\",\"pageLoadTimeout\":10000}"_s));
     g_assert_nonnull(test->waitForResponse(waitCommandID)->getObject("result"_s).get());
     g_assert_true(s_slowScriptWasServed);
@@ -658,7 +658,7 @@ static void checkNavigationCommandsAwaitTheirOwnNavigation(AutomationTest* test)
     response = test->navigateAndWaitForResponse(pageHandle, anchorURI);
     g_assert_nonnull(response->getObject("result"_s).get());
     g_assert_false(webkit_web_view_is_loading(webView.get()));
-    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeString(String::fromUTF8(anchorURI.span()), "#changed"_s).utf8());
+    ASSERT_CMP_CSTRING(webkit_web_view_get_uri(webView.get()), ==, makeUTF8CString(makeString(String::fromUTF8(anchorURI.span()), "#changed"_s)));
     s_slowScriptWasServed = false;
     response = test->waitForResponse(test->sendNavigateCommand(pageHandle, String::fromUTF8(anchorURI.span()), "Eager"_s));
     g_assert_nonnull(response->getObject("result"_s).get());
@@ -877,7 +877,7 @@ static void verifyIframeRealmEnumeration(AutomationTest& test, WebKitWebView* we
 static void testBidiCallFunctionNavigationCancelsPendingCommand(AutomationTest* test, gconstpointer)
 {
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
-    auto sessionID = createVersion4UUIDString().utf8();
+    auto sessionID = makeUTF8CString(createVersion4UUIDString());
     g_assert_nonnull(test->requestSession(sessionID));
 
     auto webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
@@ -1110,7 +1110,7 @@ static void assertRealmWasDestroyedOnce(AutomationTest& test, int commandIdentif
 static void testBidiIframeRealmDestroyedWhenIframeProcessTerminates(AutomationTest* test, gconstpointer)
 {
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
-    auto sessionID = createVersion4UUIDString().utf8();
+    auto sessionID = makeUTF8CString(createVersion4UUIDString());
     g_assert_nonnull(test->requestSession(sessionID));
 
     auto webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
@@ -1163,7 +1163,7 @@ static void testBidiIframeRealmDestroyedWhenIframeProcessTerminates(AutomationTe
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
-    auto sessionID = createVersion4UUIDString().utf8();
+    auto sessionID = makeUTF8CString(createVersion4UUIDString());
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
 #if ENABLE(2022_GLIB_API)

@@ -73,11 +73,11 @@ void logFormActivity(const String& message)
 {
 #if !LOG_DISABLED
     if (LOG_CHANNEL(AccessibilityFormErrors).state != logChannelStateOff) {
-        LOG(AccessibilityFormErrors, "%s", message.utf8());
+        LOG(AccessibilityFormErrors, "%s", makeUTF8CString(message));
         return;
     }
 #endif
-    RELEASE_LOG(AccessibilityFormErrors, "%" PUBLIC_LOG_STRING, message.utf8());
+    RELEASE_LOG(AccessibilityFormErrors, "%" PUBLIC_LOG_STRING, makeUTF8CString(message));
 }
 
 // How long to keep watching after a submission attempt. Long enough for a server round-trip to come

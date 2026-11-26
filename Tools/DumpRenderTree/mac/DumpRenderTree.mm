@@ -1067,7 +1067,7 @@ static bool handleControlCommand(std::span<const char> command)
         unsigned resultLength = result.length();
         printf("Content-Type: text/plain\n");
         printf("Content-Length: %u\n", resultLength);
-        fwrite(result.utf8().legacyCStringPointer(), 1, resultLength, stdout);
+        fwrite(makeUTF8CString(result).legacyCStringPointer(), 1, resultLength, stdout);
         printf("#EOF\n");
         fprintf(stderr, "#EOF\n");
         fflush(stdout);
@@ -1428,7 +1428,7 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
     // conversion methods cannot. After the conversion to a buffer, we turn that buffer into
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to
     // the result without any conversion.
-    if (auto utf8Result = WTF::String(innerText).tryGetUTF8()) {
+    if (auto utf8Result = tryMakeUTF8CString(WTF::String(innerText))) {
         auto string = WTF::move(utf8Result.value());
         [result appendFormat:@"%@\n", String::fromUTF8WithLatin1Fallback(string.span()).createCFString().get()];
     } else
@@ -1919,7 +1919,7 @@ static void runTest(const std::string& inputLine)
     ASSERT(!inputLine.empty());
 
     auto command = WTR::parseInputLine(inputLine);
-    WTF::setCrashLogMessage(makeString("CRASHING TEST: "_s, String::fromUTF8(command.pathOrURL.c_str())).utf8());
+    WTF::setCrashLogMessage(makeUTF8CString(makeString("CRASHING TEST: "_s, String::fromUTF8(command.pathOrURL.c_str()))));
     auto testHeader = WTR::testHeaderForTest(command, WTR::TestOptions::keyTypeMapping());
     if (auto disabledKey = WTR::firstDisabledKeyForTest(command, testHeader, disabledKeys)) {
         WTR::dumpSkippedTestReply(*disabledKey);
@@ -1957,7 +1957,7 @@ static void runTest(const std::string& inputLine)
         testPath = [url.get() absoluteString];
 
     auto message = makeString("CRASHING TEST: "_s, testPath);
-    WTF::setCrashLogMessage(message.utf8());
+    WTF::setCrashLogMessage(makeUTF8CString(message));
 
     auto options = testOptionsForTest(command, WTF::move(testHeader.features));
 

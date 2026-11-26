@@ -205,7 +205,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
     auto mimeType = parseMIMEType(contentType);
     if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
         auto boundaryWithDashes = makeString("--"_s, *multipartBoundary);
-        auto boundary = boundaryWithDashes.utf8();
+        auto boundary = makeUTF8CString(boundaryWithDashes);
         size_t boundaryLength = boundary.length();
 
         size_t currentBoundaryIndex = find(data, byteCast<uint8_t>(boundary.span()));

@@ -200,7 +200,7 @@ static int runWGSL(const CommandLine& options)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
     if (options.dumpGeneratedCode())
-        SAFE_PRINTF("%s", msl.utf8());
+        SAFE_PRINTF("%s", makeUTF8CString(msl));
 #pragma clang diagnostic pop
 
     return EXIT_SUCCESS;

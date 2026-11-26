@@ -36,7 +36,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     if (domain.isEmpty())
         return false;
 
-    return soup_tld_domain_is_public_suffix(domain.convertToASCIILowercase().utf8().legacyCStringPointer());
+    return soup_tld_domain_is_public_suffix(makeUTF8CString(domain.convertToASCIILowercase()).legacyCStringPointer());
 }
 
 static String permissiveTopPrivateDomain(StringView domain)
@@ -69,7 +69,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
     if (tldView.isEmpty())
         return String();
 
-    const auto tldCString = tldView.utf8();
+    const auto tldCString = makeUTF8CString(tldView);
 
     GUniqueOutPtr<GError> error;
     if (const char* baseDomain = soup_tld_get_base_domain(tldCString.legacyCStringPointer(), &error.outPtr()))

@@ -2827,7 +2827,7 @@ static void testIsBuiltinCalendar()
         "islamic-civil"_s, "islamic-tbla"_s, "islamic-umalqura"_s,
         "iso8601"_s, "japanese"_s, "persian"_s, "roc"_s };
     for (auto id : calenders)
-        TCHECK_TRUE(JSC::isBuiltinCalendar(id).has_value(), makeString(id, ": canonical accepted"_s).utf8().legacyCStringPointer());
+        TCHECK_TRUE(JSC::isBuiltinCalendar(id).has_value(), makeUTF8CString(makeString(id, ": canonical accepted"_s)).legacyCStringPointer());
 
     // Legacy CLDR aliases resolve to their canonical CalendarID (both flag states).
     TCHECK_TRUE(JSC::isBuiltinCalendar("islamicc"_s).has_value(), "islamicc alias -> islamic-civil");

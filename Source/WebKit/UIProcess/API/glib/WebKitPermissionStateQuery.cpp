@@ -43,7 +43,7 @@
 
 struct _WebKitPermissionStateQuery {
     explicit _WebKitPermissionStateQuery(const WTF::String& permissionName, API::SecurityOrigin& origin, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
-        : permissionName(permissionName.utf8())
+        : permissionName(makeUTF8CString(permissionName))
         , securityOrigin(webkitSecurityOriginCreate(origin.securityOrigin().isolatedCopy()))
         , completionHandler(WTF::move(completionHandler))
     {

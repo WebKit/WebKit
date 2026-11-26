@@ -88,7 +88,7 @@ WKDictionaryRef TestNotificationProvider::notificationPermissions() const
     auto permissions = WKMutableDictionaryCreate();
 
     for (auto& [origin, allowed] : m_permissions) {
-        auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().legacyCStringPointer()));
+        auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(makeUTF8CString(origin).legacyCStringPointer()));
         auto wkAllowed = adoptWK(WKBooleanCreate(allowed));
         WKDictionarySetItem(permissions, wkOriginString.get(), wkAllowed.get());
     }
@@ -100,7 +100,7 @@ void TestNotificationProvider::setPermission(const String& origin, bool allowed)
 {
     m_permissions.set(origin, allowed);
 
-    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().legacyCStringPointer()));
+    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(makeUTF8CString(origin).legacyCStringPointer()));
     auto wkOrigin = adoptWK(WKSecurityOriginCreateFromString(wkOriginString.get()));
 
     for (auto& manager : m_managers)
@@ -111,7 +111,7 @@ void TestNotificationProvider::resetPermission(const String& origin)
 {
     m_permissions.remove(origin);
 
-    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().legacyCStringPointer()));
+    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(makeUTF8CString(origin).legacyCStringPointer()));
     auto wkOrigin = adoptWK(WKSecurityOriginCreateFromString(wkOriginString.get()));
     auto wkOriginTypeRef = static_cast<WKTypeRef>(wkOrigin.get());
     auto wkOriginArray = adoptWK(WKArrayCreate(&wkOriginTypeRef, 1));

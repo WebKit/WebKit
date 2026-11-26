@@ -138,10 +138,10 @@ void GarbageCollectionController::dumpHeapForVM(VM& vm)
         jsonData = snapshotBuilder.json();
     }
 
-    auto utf8String = jsonData.utf8();
+    auto utf8String = makeUTF8CString(jsonData);
 
     fileHandle.write(byteCast<uint8_t>(utf8String.span()));
-    SAFE_WTFLOGALWAYS("Dumped GC heap to %s%s", tempFilePath.utf8(), isMainThread() ? ""_s : " for Worker"_s);
+    SAFE_WTFLOGALWAYS("Dumped GC heap to %s%s", makeUTF8CString(tempFilePath), isMainThread() ? ""_s : " for Worker"_s);
 }
 
 void GarbageCollectionController::dumpHeap()

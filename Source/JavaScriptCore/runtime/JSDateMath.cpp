@@ -430,7 +430,7 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
     // with simple spaces before parsing.
     String updatedString = makeStringByReplacingAll(date, narrowNoBreakSpace, space);
 
-    auto expectedString = updatedString.tryGetUTF8();
+    auto expectedString = tryMakeUTF8CString(updatedString);
     if (!expectedString) {
         if (expectedString.error() == UTF8ConversionError::OutOfMemory)
             throwOutOfMemoryError(globalObject, scope);
@@ -454,7 +454,7 @@ String DateCache::timeZoneDisplayName(bool isDST)
 {
     if (m_timeZoneStandardDisplayNameCache.isNull()) {
         auto& timeZoneCache = *this->timeZoneCache();
-        auto language = defaultLanguage().utf8();
+        auto language = makeUTF8CString(defaultLanguage());
         {
             Vector<char16_t, 32> standardDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.legacyCStringPointer(), standardDisplayNameBuffer);

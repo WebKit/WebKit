@@ -91,7 +91,7 @@ void SelectionData::setURIList(const String& uriListString)
             }
 
             GUniqueOutPtr<GError> error;
-            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().legacyCStringPointer(), 0, &error.outPtr()));
+            GUniquePtr<gchar> filename(g_filename_from_uri(makeUTF8CString(line).legacyCStringPointer(), 0, &error.outPtr()));
             if (!error && filename)
                 m_filenames.append(String::fromUTF8(filename.get()));
         }
@@ -111,7 +111,7 @@ void SelectionData::setURL(const URL& url, const String& label)
         return;
 
     String actualLabel = label.isEmpty() ? url.string() : label;
-    auto escaped = gMarkupEscapeText(actualLabel.utf8());
+    auto escaped = gMarkupEscapeText(makeUTF8CString(actualLabel));
     setMarkup(makeString("<a href=\""_s, url.string(), "\">"_s, escaped.span(), "</a>"_s));
 }
 

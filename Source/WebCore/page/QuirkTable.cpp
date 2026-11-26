@@ -681,7 +681,7 @@ static QuirkTable loadQuirkTable()
     auto result = parseQuirkTable(json);
     for (auto& error : result.errors) {
         UNUSED_VARIABLE(error); // RELEASE_LOG_ERROR compiles away on ports without logging.
-        RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, error.description().utf8());
+        RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, makeUTF8CString(error.description()));
     }
     ASSERT_WITH_MESSAGE(result.errors.isEmpty(), "QuirkTable.json has errors; see the log");
     return WTF::move(result.table);

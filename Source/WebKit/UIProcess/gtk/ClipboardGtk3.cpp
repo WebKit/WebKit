@@ -207,7 +207,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     if (selectionData.hasCustomData())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 0, ClipboardTargetType::Custom);
     for (const auto& type : selectionData.buffers().keys())
-        gtk_target_list_add(list.get(), gdk_atom_intern(type.utf8().legacyCStringPointer(), FALSE), 0, ClipboardTargetType::Buffer);
+        gtk_target_list_add(list.get(), gdk_atom_intern(makeUTF8CString(type).legacyCStringPointer(), FALSE), 0, ClipboardTargetType::Buffer);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
@@ -223,12 +223,12 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
             auto& data = *static_cast<WriteAsyncData*>(userData);
             switch (info) {
             case ClipboardTargetType::Markup: {
-                auto markup = data.selectionData.markup().utf8();
+                auto markup = makeUTF8CString(data.selectionData.markup());
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/html"), 8, reinterpret_cast<const guchar*>(markup.data()), markup.length());
                 break;
             }
             case ClipboardTargetType::Text:
-                gtk_selection_data_set_text(selection, data.selectionData.text().utf8().legacyCStringPointer(), -1);
+                gtk_selection_data_set_text(selection, makeUTF8CString(data.selectionData.text()).legacyCStringPointer(), -1);
                 break;
             case ClipboardTargetType::Image: {
                 if (data.selectionData.hasImage()) {
@@ -238,7 +238,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
                 break;
             }
             case ClipboardTargetType::URIList: {
-                auto uriList = data.selectionData.uriList().utf8();
+                auto uriList = makeUTF8CString(data.selectionData.uriList());
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
                 break;
             }

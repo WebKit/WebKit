@@ -92,7 +92,7 @@ void DNSResolveQueueGLib::platformResolve(const String& hostname)
     ASSERT(isMainThread());
 
     GRefPtr<GResolver> resolver = adoptGRef(g_resolver_get_default());
-    g_resolver_lookup_by_name_async(resolver.get(), hostname.utf8().legacyCStringPointer(), nullptr, [](GObject* resolver, GAsyncResult* result, gpointer) {
+    g_resolver_lookup_by_name_async(resolver.get(), makeUTF8CString(hostname).legacyCStringPointer(), nullptr, [](GObject* resolver, GAsyncResult* result, gpointer) {
         GList* addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(resolver), result, nullptr);
         g_clear_pointer(&addresses, g_resolver_free_addresses);
         DNSResolveQueue::singleton().decrementRequestCount();
@@ -107,7 +107,7 @@ void DNSResolveQueueGLib::resolve(const String& hostname, uint64_t identifier, D
     GRefPtr<GResolver> resolver = adoptGRef(g_resolver_get_default());
     auto request = makeUnique<DNSResolveQueueGLib::Request>(identifier, WTF::move(completionHandler));
     GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
-    g_resolver_lookup_by_name_async(resolver.get(), hostname.utf8().legacyCStringPointer(), cancellable.get(), [](GObject* resolver, GAsyncResult* result, gpointer userData) {
+    g_resolver_lookup_by_name_async(resolver.get(), makeUTF8CString(hostname).legacyCStringPointer(), cancellable.get(), [](GObject* resolver, GAsyncResult* result, gpointer userData) {
         std::unique_ptr<DNSResolveQueueGLib::Request> request(static_cast<DNSResolveQueueGLib::Request*>(userData));
         GUniqueOutPtr<GError> error;
         GList* addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(resolver), result, &error.outPtr());

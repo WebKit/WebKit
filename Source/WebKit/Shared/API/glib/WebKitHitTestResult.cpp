@@ -240,16 +240,16 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTe
 
     return WEBKIT_HIT_TEST_RESULT(gObjectNew(WEBKIT_TYPE_HIT_TEST_RESULT,
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL.utf8() : UTF8CString { },
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL.utf8() : UTF8CString { },
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL.utf8() : UTF8CString { },
-        "link-title", !hitTestResult.linkTitle.isEmpty() ? hitTestResult.linkTitle.utf8() : UTF8CString { },
-        "link-label", !hitTestResult.linkLabel.isEmpty() ? hitTestResult.linkLabel.utf8() : UTF8CString { }));
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? makeUTF8CString(hitTestResult.absoluteLinkURL) : UTF8CString { },
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? makeUTF8CString(hitTestResult.absoluteImageURL) : UTF8CString { },
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? makeUTF8CString(hitTestResult.absoluteMediaURL) : UTF8CString { },
+        "link-title", !hitTestResult.linkTitle.isEmpty() ? makeUTF8CString(hitTestResult.linkTitle) : UTF8CString { },
+        "link-label", !hitTestResult.linkLabel.isEmpty() ? makeUTF8CString(hitTestResult.linkLabel) : UTF8CString { }));
 }
 
 static bool stringIsEqualToCString(const String& string, const UTF8CString& cString)
 {
-    return ((string.isEmpty() && cString.isNull()) || (string.utf8() == cString));
+    return ((string.isEmpty() && cString.isNull()) || (makeUTF8CString(string) == cString));
 }
 
 bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResultData& webHitTestResult)

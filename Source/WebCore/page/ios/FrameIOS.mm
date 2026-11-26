@@ -209,7 +209,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
 #if RECT_LOGGING
         CGRect rect = renderer->absoluteBoundingBoxRect(true);
         if (renderer->node())
-            SAFE_PRINTF("%s %f %f %f %f\n", renderer->node()->nodeName().utf8(), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            SAFE_PRINTF("%s %f %f %f %f\n", makeUTF8CString(renderer->node()->nodeName()), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 #endif
         if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
             *isReplaced = renderer->isBlockLevelReplacedOrAtomicInline();

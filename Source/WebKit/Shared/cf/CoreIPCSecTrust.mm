@@ -238,7 +238,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
 
 #define RETURN_IF_OPTIONAL_ERROR \
     if (!optionalDataError.isNull()) { \
-        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust optionalArrayOfDataHelper error: %s", optionalDataError.utf8()); \
+        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust optionalArrayOfDataHelper error: %s", makeUTF8CString(optionalDataError)); \
         ASSERT_NOT_REACHED(); \
         return; \
     }
@@ -556,7 +556,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     CoreIPCSecTrustData::PolicyOption policyVector;
                     String error = updatePolicyVector((NSDictionary *)value, policyVector);
                     if (!error.isNull()) {
-                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust updatePolicyVector error %s", error.utf8());
+                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust updatePolicyVector error %s", makeUTF8CString(error));
                         ASSERT_NOT_REACHED();
                         return;
                     }

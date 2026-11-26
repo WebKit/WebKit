@@ -718,7 +718,7 @@ void VisiblePosition::debugPosition(ASCIILiteral msg) const
     if (isNull())
         SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else {
-        SAFE_FPRINTF(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8());
+        SAFE_FPRINTF(stderr, "Position [%s]: %s, ", msg, makeUTF8CString(m_deepPosition.deprecatedNode()->nodeName()));
         m_deepPosition.showAnchorTypeAndOffset();
     }
 }

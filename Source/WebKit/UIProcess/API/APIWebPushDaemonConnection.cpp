@@ -42,7 +42,7 @@ using namespace WebCore;
 
 WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    : m_connection(WebKit::WebPushD::Connection::create(machServiceName.utf8(), WTF::move(configuration)))
+    : m_connection(WebKit::WebPushD::Connection::create(makeUTF8CString(machServiceName), WTF::move(configuration)))
 #endif
 {
 }

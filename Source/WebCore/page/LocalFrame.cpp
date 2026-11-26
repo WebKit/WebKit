@@ -864,7 +864,7 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     page->setHasInjectedUserScript();
     loader->client().willInjectUserScript(world);
 
-    WTFBeginSignpost(this, UserScript, "injectUserScript: %" PRIVATE_LOG_STRING " (%u bytes, top frame only %d, doc start %d)", script.debugDescription().utf8(), script.source().length(), script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly, script.injectionTime() == UserScriptInjectionTime::DocumentStart);
+    WTFBeginSignpost(this, UserScript, "injectUserScript: %" PRIVATE_LOG_STRING " (%u bytes, top frame only %d, doc start %d)", makeUTF8CString(script.debugDescription()), script.source().length(), script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly, script.injectionTime() == UserScriptInjectionTime::DocumentStart);
     protect(this->script())->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), JSC::SourceTaintedOrigin::Untainted, URL(script.url())), world);
     WTFEndSignpost(this, UserScript);
 }
@@ -1712,7 +1712,7 @@ void LocalFrame::showResourceMonitoringError()
         protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Unloaded"_s, valueDictionaryForResult(true), ShouldSample::No);
     }
 
-    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": unloading", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
+    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": unloading", url.isValid() ? makeUTF8CString(url.string()) : "invalid"_s, mainFrameURL.isValid() ? makeUTF8CString(mainFrameURL.string()) : "invalid"_s);
 
     document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Error, makeString("Frame was unloaded because its network usage exceeded the limit: "_s, ResourceMonitorChecker::singleton().networkUsageThreshold(), " bytes, url="_s, url.string()));
 
@@ -1743,7 +1743,7 @@ void LocalFrame::reportResourceMonitoringWarning()
         protect(page->diagnosticLoggingClient())->logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::iframeResourceMonitoringKey(), "IFrame ResourceMonitoring Throttled"_s, valueDictionaryForResult(false), ShouldSample::No);
     }
 
-    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": not unloading due to global limits", url.isValid() ? url.string().utf8() : "invalid"_s, mainFrameURL.isValid() ? mainFrameURL.string().utf8() : "invalid"_s);
+    FRAME_RELEASE_LOG(ResourceMonitoring, "Detected excessive network usage in frame at %" SENSITIVE_LOG_STRING " and main frame at %" SENSITIVE_LOG_STRING ": not unloading due to global limits", url.isValid() ? makeUTF8CString(url.string()) : "invalid"_s, mainFrameURL.isValid() ? makeUTF8CString(mainFrameURL.string()) : "invalid"_s);
 
     if (RefPtr document = this->document())
         document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Warning, "Frame's network usage exceeded the limit."_s);

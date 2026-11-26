@@ -551,10 +551,10 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
         WTFLogAlways("Test failed at %s:%d", __FILE__, lineNumber);
         WTFLogAlways("- Got %zu parameter(s)", removedParameters.size());
         for (auto& parameter : removedParameters)
-            SAFE_WTFLOGALWAYS("    %s", parameter.utf8());
+            SAFE_WTFLOGALWAYS("    %s", makeUTF8CString(parameter));
         WTFLogAlways("- Expected %zu parameter(s)", expectedParameters.size());
         for (auto& parameter : expectedParameters)
-            SAFE_WTFLOGALWAYS("    %s", parameter.utf8());
+            SAFE_WTFLOGALWAYS("    %s", makeUTF8CString(parameter));
     };
 
     auto removedParameters1 = removeQueryParameters(url1, keyRemovalSet2);

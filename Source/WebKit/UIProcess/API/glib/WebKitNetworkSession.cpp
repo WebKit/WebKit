@@ -138,8 +138,8 @@ static void webkitNetworkSessionConstructed(GObject* object)
     WebKitNetworkSessionPrivate* priv = WEBKIT_NETWORK_SESSION(object)->priv;
     if (!priv->websiteDataManager) {
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(
-            !priv->dataDirectory.isNull() ? WTF::move(priv->dataDirectory) : WebsiteDataStore::defaultBaseDataDirectory().utf8(),
-            !priv->cacheDirectory.isNull() ? WTF::move(priv->cacheDirectory) : WebsiteDataStore::defaultBaseCacheDirectory().utf8())
+            !priv->dataDirectory.isNull() ? WTF::move(priv->dataDirectory) : makeUTF8CString(WebsiteDataStore::defaultBaseDataDirectory()),
+            !priv->cacheDirectory.isNull() ? WTF::move(priv->cacheDirectory) : makeUTF8CString(WebsiteDataStore::defaultBaseCacheDirectory()))
         );
     }
 

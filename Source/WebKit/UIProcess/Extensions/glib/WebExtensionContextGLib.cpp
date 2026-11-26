@@ -108,7 +108,7 @@ WebExtensionContext::~WebExtensionContext()
 
 void WebExtensionContext::recordError(Ref<API::Error> error)
 {
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", error->localizedDescription().utf8());
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", makeUTF8CString(error->localizedDescription()));
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.
@@ -139,7 +139,7 @@ GRefPtr<GKeyFile> WebExtensionContext::readStateFromPath(const String& stateFile
     GRefPtr<GKeyFile> stateFile(adoptGRef(g_key_file_new()));
     GUniqueOutPtr<GError> error;
 
-    g_key_file_load_from_file(stateFile.get(), stateFilePath.utf8().legacyCStringPointer(), G_KEY_FILE_NONE, &error.outPtr());
+    g_key_file_load_from_file(stateFile.get(), makeUTF8CString(stateFilePath).legacyCStringPointer(), G_KEY_FILE_NONE, &error.outPtr());
     if (error && !g_error_matches(error.get(), g_file_error_quark(), G_FILE_ERROR_NOENT))
         RELEASE_LOG_ERROR(Extensions, "Failed to coordinate reading extension state: %" PUBLIC_LOG_STRING, error->message);
 
@@ -193,7 +193,7 @@ void WebExtensionContext::writeStateToStorage() const
     if (!currentState())
         return;
 
-    if (!g_key_file_save_to_file(currentState().get(), stateFilePath().utf8().legacyCStringPointer(), &error.outPtr()))
+    if (!g_key_file_save_to_file(currentState().get(), makeUTF8CString(stateFilePath()).legacyCStringPointer(), &error.outPtr()))
         RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %" PUBLIC_LOG_STRING, error->message);
 }
 
@@ -335,7 +335,7 @@ void WebExtensionContext::loadBackgroundWebView()
         m_backgroundWebViewActivity = protect(backgroundProcess->throttler())->foregroundActivity(activityName);
 
     if (!protect(extension())->backgroundContentIsServiceWorker()) {
-        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(backgroundContentURL().string().utf8().legacyCStringPointer())));
+        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(makeUTF8CString(backgroundContentURL().string()).legacyCStringPointer())));
         webkit_web_view_load_request(m_backgroundWebView.get(), uriRequest.get());
         return;
     }
@@ -555,7 +555,7 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WebKitWebView *we
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (isInspectorBackgroundPage(webView)) {
-        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(inspectorBackgroundPageURL().utf8().legacyCStringPointer())));
+        GRefPtr<WebKitURIRequest> uriRequest(adoptGRef(webkit_uri_request_new(makeUTF8CString(inspectorBackgroundPageURL()).legacyCStringPointer())));
         webkit_web_view_load_request(webView, uriRequest.get());
         return;
     }
@@ -576,7 +576,7 @@ bool WebExtensionContext::isNotRunningInTestRunner()
 void WebExtensionContext::saveStorageAccessLevelsToStorage()
 {
     for (auto [dataType, accessLevel] : m_storageAccessLevels)
-        g_key_file_set_string(m_state.get(), storageAccessLevelsKey, toAPIString(dataType).utf8().legacyCStringPointer(), toAPIString(accessLevel).utf8().legacyCStringPointer());
+        g_key_file_set_string(m_state.get(), storageAccessLevelsKey, makeUTF8CString(toAPIString(dataType)).legacyCStringPointer(), makeUTF8CString(toAPIString(accessLevel)).legacyCStringPointer());
     writeStateToStorage();
 }
 

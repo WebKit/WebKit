@@ -139,7 +139,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
         return true;
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
-    auto value = String::number(size).utf8();
+    auto value = makeUTF8CString(String::number(size));
     return !!FileSystem::overwriteEntireFile(sizeFilePath, byteCast<uint8_t>(value.span()));
 }
 

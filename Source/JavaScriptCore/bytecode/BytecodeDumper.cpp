@@ -210,7 +210,7 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
             this->m_out.printf("  %1u = {\n", i);
             auto& unlinkedTable = this->block()->unlinkedStringSwitchJumpTable(i);
             for (const auto& entry : unlinkedTable.m_offsetTable) {
-                this->m_out.print("\t\t\"", entry.key->utf8(), "\" => ");
+                this->m_out.print("\t\t\"", makeUTF8CString(*entry.key), "\" => ");
                 this->m_out.printf("%04d\n", entry.value.m_branchOffset);
             }
             this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);

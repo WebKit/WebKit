@@ -418,5 +418,5 @@ char* jsc_exception_report(JSCException* exception)
             report.append("  "_s, line, '\n');
     }
 
-    return GMallocString { report.toString().utf8() }.leakUTF8();
+    return GMallocString { makeUTF8CString(report.toString()) }.leakUTF8();
 }

@@ -2201,7 +2201,7 @@ inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compi
 {
     messageStorage.clear();
     for (auto& message : borrow(compilationInfo.messages))
-        messageStorage.append(message.message.utf8());
+        messageStorage.append(makeUTF8CString(message.message));
     Vector<WGPUCompilationMessage> result(ReserveCapacityTag { }, compilationInfo.messages.size());
     for (auto [i, message] : indexedRange(compilationInfo.messages)) {
         auto utf8 = byteCast<char>(messageStorage[i].span());
@@ -2773,7 +2773,7 @@ inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
 // functions free the strings of the structs they are for.
 inline WGPUStringView toAPIAllocated(const String& string)
 {
-    auto utf8 = string.utf8();
+    auto utf8 = makeUTF8CString(string);
     auto source = utf8.spanIncludingNullTerminator();
     auto* data = static_cast<char*>(fastMalloc(source.size()));
     memcpySpan(unsafeMakeSpan(data, source.size()), source);

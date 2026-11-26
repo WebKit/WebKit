@@ -380,13 +380,13 @@ void GStreamerRegistryScanner::refresh()
 #ifndef GST_DISABLE_GST_DEBUG
     GST_DEBUG("%s registry scanner initialized", m_isMediaSource ? "MSE" : "Regular playback");
     for (auto& mimeType : m_decoderMimeTypeSet)
-        GST_DEBUG("Decoder mime-type registered: %s", mimeType.utf8());
+        GST_DEBUG("Decoder mime-type registered: %s", makeUTF8CString(mimeType));
     for (auto& [codec, result] : m_decoderCodecMap)
-        GST_DEBUG("%s decoder codec pattern registered: %s", result.isUsingHardware ? "Hardware" : "Software", codec.utf8());
+        GST_DEBUG("%s decoder codec pattern registered: %s", result.isUsingHardware ? "Hardware" : "Software", makeUTF8CString(codec));
     for (auto& mimeType : m_encoderMimeTypeSet)
-        GST_DEBUG("Encoder mime-type registered: %s", mimeType.utf8());
+        GST_DEBUG("Encoder mime-type registered: %s", makeUTF8CString(mimeType));
     for (auto& [codec, result] : m_encoderCodecMap)
-        GST_DEBUG("%s encoder codec pattern registered: %s", result.isUsingHardware ? "Hardware" : "Software", codec.utf8());
+        GST_DEBUG("%s encoder codec pattern registered: %s", result.isUsingHardware ? "Hardware" : "Software", makeUTF8CString(codec));
 #endif
 }
 
@@ -802,7 +802,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isHEVCCode
     }
 
     if (!GStreamerCodecUtilities::parseHEVCProfile(codec)) {
-        GST_ERROR("HEVC codec string is invalid: %s", codec.utf8());
+        GST_ERROR("HEVC codec string is invalid: %s", makeUTF8CString(codec));
         return { false, nullptr };
     }
 
@@ -825,9 +825,9 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
         result = { false, nullptr };
     else {
         auto& codecMap = configuration == Configuration::Decoding ? m_decoderCodecMap : m_encoderCodecMap;
-        auto utf8CodecName = codecName.utf8();
+        auto utf8CodecName = makeUTF8CString(codecName);
         for (const auto& [codecId, lookupResult] : codecMap) {
-            if (!fnmatch(codecId.utf8().legacyCStringPointer(), utf8CodecName.legacyCStringPointer(), 0)) {
+            if (!fnmatch(makeUTF8CString(codecId).legacyCStringPointer(), utf8CodecName.legacyCStringPointer(), 0)) {
                 bool isSupported = shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
                 if (isSupported) {
                     result.isSupported = true;
@@ -840,7 +840,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
 
 #ifndef GST_DISABLE_GST_DEBUG
     ASCIILiteral configLogString = configurationNameForLogging(configuration);
-    GST_LOG("Checked %s %s codec \"%s\" supported %s", shouldCheckForHardwareUse ? "hardware" : "software", configLogString.characters(), codec.utf8(), boolForPrinting(result.isSupported));
+    GST_LOG("Checked %s %s codec \"%s\" supported %s", shouldCheckForHardwareUse ? "hardware" : "software", configLogString.characters(), makeUTF8CString(codec), boolForPrinting(result.isSupported));
 #endif
     return result;
 }
@@ -946,12 +946,12 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
             .findIf([containerType, codec](auto& hardwareContentType) -> bool {
             auto hardwareContainer = hardwareContentType.containerType();
             if (!hardwareContainer.isEmpty()
-                && fnmatch(hardwareContainer.utf8().legacyCStringPointer(), containerType.utf8().legacyCStringPointer(), 0))
+                && fnmatch(makeUTF8CString(hardwareContainer).legacyCStringPointer(), makeUTF8CString(containerType).legacyCStringPointer(), 0))
                 return false;
             auto hardwareCodecs = hardwareContentType.codecs();
             return hardwareCodecs.isEmpty()
                 || hardwareCodecs.findIf([codec](auto& hardwareCodec) -> bool {
-                    return !fnmatch(hardwareCodec.utf8().legacyCStringPointer(), codec.utf8().legacyCStringPointer(), 0);
+                    return !fnmatch(makeUTF8CString(hardwareCodec).legacyCStringPointer(), makeUTF8CString(codec).legacyCStringPointer(), 0);
             }) != notFound;
         }) != notFound;
         if (!isCodecSupported(configuration, codec, requiresHardwareSupport, caseSensitive))
@@ -1006,7 +1006,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
 
     auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codec);
     if (!profile || !level) {
-        GST_ERROR("H.264 profile / level was not recognised in codec %s", codec.utf8());
+        GST_ERROR("H.264 profile / level was not recognised in codec %s", makeUTF8CString(codec));
         return { false, nullptr };
     }
 
@@ -1061,7 +1061,7 @@ static bool parseAC4LevelAndProfile(const String& codec)
     // Full format requires exactly 4 components: ["ac-4", bitstream_version, presentation_version, mdcompat].
     // See ETSI TS 103 190-2 v1.3.1 Appendix E.13.
     if (parts.size() != 4) {
-        GST_WARNING("AC-4 codec string has wrong number of components: %s", codec.utf8());
+        GST_WARNING("AC-4 codec string has wrong number of components: %s", makeUTF8CString(codec));
         return false;
     }
 
@@ -1071,14 +1071,14 @@ static bool parseAC4LevelAndProfile(const String& codec)
     // presentation_version must be 1 (stereo/5.1); value 2 denotes IMS which is assumed not supported.
     auto presentationVersion = parseInteger<unsigned>(parts[2]);
     if (!presentationVersion || *presentationVersion != 1) {
-        GST_DEBUG("AC-4 codec string has unsupported presentation_version: %s", codec.utf8());
+        GST_DEBUG("AC-4 codec string has unsupported presentation_version: %s", makeUTF8CString(codec));
         return false;
     }
     // md_compat (level): only levels 0-3 are assumed supported.
     // Levels 4-6 are reserved by the AC-4 spec. Level 7 (unlimited number of tracks) is assumed unsupported.
     auto mdcompat = parseInteger<unsigned>(parts[3]);
     if (!mdcompat || *mdcompat > 3) {
-        GST_DEBUG("AC-4 codec string has unsupported mdcompat level: %s", codec.utf8());
+        GST_DEBUG("AC-4 codec string has unsupported mdcompat level: %s", makeUTF8CString(codec));
         return false;
     }
     return true;
@@ -1097,7 +1097,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
         auto& videoConfiguration = mediaConfiguration.video.value();
 #ifndef GST_DISABLE_GST_DEBUG
         GST_DEBUG("Checking %s support for video configuration: \"%s\" size: %ux%u bitrate: %" G_GUINT64_FORMAT " framerate: %f", configLogString.characters(),
-            videoConfiguration.contentType.utf8(),
+            makeUTF8CString(videoConfiguration.contentType),
             videoConfiguration.width, videoConfiguration.height,
             videoConfiguration.bitrate, videoConfiguration.framerate);
 #endif
@@ -1146,7 +1146,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
         auto& audioConfiguration = mediaConfiguration.audio.value();
 #ifndef GST_DISABLE_GST_DEBUG
         GST_DEBUG("Checking %s support for audio configuration: \"%s\" %s channels, bitrate: %" G_GUINT64_FORMAT " samplerate: %u", configLogString.characters(),
-            audioConfiguration.contentType.utf8(), audioConfiguration.channels.utf8(),
+            makeUTF8CString(audioConfiguration.contentType), makeUTF8CString(audioConfiguration.channels),
             audioConfiguration.bitrate.value_or(0), audioConfiguration.samplerate.value_or(0));
 #endif
         auto contentType = ContentType(audioConfiguration.contentType);

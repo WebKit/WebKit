@@ -111,7 +111,7 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
     if (url.isEmpty())
         return 0;
 
-    priv->uri = url.utf8();
+    priv->uri = makeUTF8CString(url);
     return priv->uri.legacyCStringPointer();
 }
 
@@ -133,7 +133,7 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
     if (title.isEmpty())
         return 0;
 
-    priv->title = title.utf8();
+    priv->title = makeUTF8CString(title);
     return priv->title.legacyCStringPointer();
 }
 
@@ -157,6 +157,6 @@ const gchar* webkit_back_forward_list_item_get_original_uri(WebKitBackForwardLis
     if (originalURL.isEmpty())
         return 0;
 
-    priv->originalURI = originalURL.utf8();
+    priv->originalURI = makeUTF8CString(originalURL);
     return priv->originalURI.legacyCStringPointer();
 }

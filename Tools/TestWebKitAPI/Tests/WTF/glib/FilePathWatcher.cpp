@@ -99,7 +99,7 @@ TEST(WTF_FilePathWatcher, FiresOnWrite)
     });
     EXPECT_TRUE(watcher.isActive());
 
-    auto contents = String::fromLatin1("changed").utf8();
+    auto contents = makeUTF8CString(String::fromLatin1("changed"));
     FileSystem::overwriteEntireFile(watched, byteCast<uint8_t>(contents.span()));
 
     EXPECT_TRUE(runMainLoopUntil([&] {
@@ -119,7 +119,7 @@ TEST(WTF_FilePathWatcher, FiresOnSymlinkSwap)
     String targetB = writeAndReturnPath(dir.path(), "tz-b", std::span<const uint8_t> { });
     auto linkPath = gBuildFilename(dir.path(), "localtime"_s);
 
-    if (posixSymlink(targetA.utf8(), linkPath) < 0)
+    if (posixSymlink(makeUTF8CString(targetA), linkPath) < 0)
         GTEST_SKIP() << "symlink() unavailable on this filesystem";
 
     bool fired = false;
@@ -129,7 +129,7 @@ TEST(WTF_FilePathWatcher, FiresOnSymlinkSwap)
     EXPECT_TRUE(watcher.isActive());
 
     g_unlink(linkPath.utf8());
-    ASSERT_EQ(posixSymlink(targetB.utf8(), linkPath), 0);
+    ASSERT_EQ(posixSymlink(makeUTF8CString(targetB), linkPath), 0);
 
     EXPECT_TRUE(runMainLoopUntil([&] {
         return fired;
@@ -150,7 +150,7 @@ TEST(WTF_FilePathWatcher, IgnoresUnrelatedSiblings)
     });
     EXPECT_TRUE(watcher.isActive());
 
-    auto contents = String::fromLatin1("noise").utf8();
+    auto contents = makeUTF8CString(String::fromLatin1("noise"));
     FileSystem::overwriteEntireFile(sibling, byteCast<uint8_t>(contents.span()));
 
     // 1s of pumping is more than enough for any real notification to land;

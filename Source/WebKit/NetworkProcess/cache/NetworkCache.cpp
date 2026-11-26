@@ -434,7 +434,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().utf8(), static_cast<int>(request.priority()));
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), static_cast<int>(request.priority()));
 
     Key storageKey = makeCacheKey(RecordType::Resource, request);
     auto priority = static_cast<unsigned>(request.priority());
@@ -530,10 +530,10 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
         auto useDecision = info.useDecision ? static_cast<int>(*info.useDecision) : -1;
 
         if (entry) {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheHit, info.startTime - info.completionTime, "Network cache hit for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", makeUTF8CString(info.url.string()), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheHit);
         } else {
-            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", info.url.string().utf8(), retrieveDecision, speculativeLoadDecision, useDecision);
+            WTFBeginSignpostAlwaysWithTimeDelta(&info, NetworkCacheMiss, info.startTime - info.completionTime, "Network cache miss for %" PRIVATE_LOG_STRING " retrieveDecision: %d speculativeLoadDecision: %d useDecision: %d", makeUTF8CString(info.url.string()), retrieveDecision, speculativeLoadDecision, useDecision);
             WTFEndSignpostAlways(&info, NetworkCacheMiss);
         }
     }
@@ -630,7 +630,7 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
 
     auto key = makeCacheKey(RecordType::CompressionDictionary, request);
 
-    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().utf8(), key.partition().utf8());
+    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), makeUTF8CString(key.partition()));
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
@@ -964,7 +964,7 @@ void Cache::dumpContentsToFile()
     size_t capacity = m_storage->capacity();
     traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const TraversalRecord* traversalRecord) mutable {
         if (!traversalRecord) {
-            auto writeData = makeString(
+            auto writeData = makeUTF8CString(makeString(
                 "{}\n"
                 "],\n"
                 "\"totals\": {\n"
@@ -973,7 +973,7 @@ void Cache::dumpContentsToFile()
                 "\"bodySize\": "_s, totals.bodySize, ",\n"
                 "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
                 "}\n}\n"_s
-            ).utf8();
+            ));
             fileHandle.write(byteCast<uint8_t>(writeData.span()));
             fileHandle = { };
             return;
@@ -997,7 +997,7 @@ void Cache::dumpContentsToFile()
         totals.bodySize += info.bodySize;
 
         json.append(",\n"_s);
-        fileHandle.write(byteCast<uint8_t>(json.toString().utf8().span()));
+        fileHandle.write(byteCast<uint8_t>(makeUTF8CString(json.toString()).span()));
     });
 }
 

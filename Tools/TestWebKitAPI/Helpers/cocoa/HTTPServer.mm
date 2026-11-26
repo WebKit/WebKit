@@ -267,10 +267,10 @@ static ASCIILiteral statusText(unsigned statusCode)
 static Vector<uint8_t> toUTF8Vector(const String& string)
 {
     Vector<uint8_t> result;
-    std::ignore = string.tryGetUTF8([&](std::span<const char8_t> utf8) {
+    std::ignore = tryGetUTF8([&](std::span<const char8_t> utf8) {
         result.append(byteCast<uint8_t>(utf8));
         return true;
-    });
+    }, string);
     return result;
 }
 

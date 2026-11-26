@@ -383,8 +383,8 @@ static_assert(!IsLessThanComparable<ASCIICString, Latin1CString>);
 // The conversions that have been migrated report their encoding in the type.
 static_assert(std::same_as<decltype(std::declval<const String&>().ascii()), ASCIICString>);
 static_assert(std::same_as<decltype(std::declval<const String&>().latin1()), Latin1CString>);
-static_assert(std::same_as<decltype(std::declval<const String&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
-static_assert(std::same_as<decltype(std::declval<const StringView&>().tryGetUTF8()), std::expected<UTF8CString, UTF8ConversionError>>);
+static_assert(std::same_as<decltype(tryMakeUTF8CString(std::declval<const String&>())), std::expected<UTF8CString, UTF8ConversionError>>);
+static_assert(std::same_as<decltype(tryMakeUTF8CString(std::declval<const StringView&>())), std::expected<UTF8CString, UTF8ConversionError>>);
 static_assert(std::same_as<decltype(WTF::convertToASCIILowercase(u8""_span)), UTF8CString>);
 // A CStringBase could only have been sliced from a typed string, so comparing one would ignore its encoding.
 static_assert(!IsEqualityComparable<UTF8CString, CStringBase>);

@@ -39,7 +39,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
 
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);
-    bool ret = psl_is_public_suffix2(psl, domain.toStringWithoutCopying().convertToLowercaseWithoutLocale().utf8().legacyCStringPointer(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
+    bool ret = psl_is_public_suffix2(psl, makeUTF8CString(domain.toStringWithoutCopying().convertToLowercaseWithoutLocale()).legacyCStringPointer(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
     return ret;
 }
 
@@ -57,7 +57,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
         return String();
 
     // This function is expected to work with the format used by cookies, so skip any leading dots.
-    auto domainUTF8 = domain.utf8();
+    auto domainUTF8 = makeUTF8CString(domain);
     auto characters = domainUTF8.span();
 
     unsigned position = 0;

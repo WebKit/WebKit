@@ -1191,7 +1191,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), portDirectory, "icondatabase", nullptr));
         directoryPath = FileSystem::stringFromFileSystemRepresentation(databaseDirectory.get());
     }
-    priv->faviconDatabaseDirectory = directoryPath.utf8();
+    priv->faviconDatabaseDirectory = makeUTF8CString(directoryPath);
 
     // Build the full path to the icon database file on disk.
     auto faviconDatabasePath = gBuildFilename(priv->faviconDatabaseDirectory, "WebpageIcons.db");
@@ -1586,7 +1586,7 @@ const gchar* const* webkit_web_context_get_spell_checking_languages(WebKitWebCon
     static GRefPtr<GPtrArray> languagesToReturn;
     languagesToReturn = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (const auto& language : spellCheckingLanguages)
-        g_ptr_array_add(languagesToReturn.get(), gStrdup(language.utf8()));
+        g_ptr_array_add(languagesToReturn.get(), gStrdup(makeUTF8CString(language)));
     g_ptr_array_add(languagesToReturn.get(), nullptr);
 
     return reinterpret_cast<char**>(languagesToReturn->pdata);

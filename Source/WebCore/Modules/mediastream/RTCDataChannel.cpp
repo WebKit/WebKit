@@ -148,7 +148,7 @@ ExceptionOr<void> RTCDataChannel::send(const String& data)
     if (!computeNewBufferedAmount(m_bufferedAmount, data.length()))
         return Exception { ExceptionCode::OperationError, "Trying to send too much data"_s };
 
-    auto utf8 = data.utf8();
+    auto utf8 = makeUTF8CString(data);
 
     auto newBufferedAmount = computeNewBufferedAmount(m_bufferedAmount, utf8.length());
     if (!newBufferedAmount)

@@ -288,7 +288,7 @@ void AudioSessionMac::setCategory(CategoryType category, Mode mode, RouteSharing
 
         protectedThis->m_setupArbitrationOngoing = false;
         if (error != RoutingArbitrationError::None) {
-            RELEASE_LOG_ERROR(Media, "AudioSessionMac::setCategory() - beginArbitrationWithCategory:%s failed with error %s", convertEnumerationToString(protectedThis->m_category).utf8(), convertEnumerationToString(error).utf8());
+            RELEASE_LOG_ERROR(Media, "AudioSessionMac::setCategory() - beginArbitrationWithCategory:%s failed with error %s", makeUTF8CString(convertEnumerationToString(protectedThis->m_category)), makeUTF8CString(convertEnumerationToString(error)));
             return;
         }
 

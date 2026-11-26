@@ -35,7 +35,7 @@ namespace WebCore {
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(WPE)
 RefPtr<SharedBuffer> loadPlatformResource(StringView name, StringView extension)
 {
-    SAFE_WTFLOGALWAYS("WARNING: trying to load platform resource '%s.%s'", name.utf8(), extension.utf8());
+    SAFE_WTFLOGALWAYS("WARNING: trying to load platform resource '%s.%s'", makeUTF8CString(name), makeUTF8CString(extension));
     return nullptr;
 }
 #endif

@@ -100,7 +100,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 #if ENABLE(VARIATION_FONTS)
     auto variants = buildVariationSettings(freeTypeFace, description, fontCreationContext);
     if (!variants.isEmpty())
-        FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().legacyCStringPointer()));
+        FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(makeUTF8CString(variants).legacyCStringPointer()));
     auto defaultValues = defaultVariationValues(freeTypeFace, ShouldLocalizeAxisNames::No);
     bool hasWeightVariationAxis = defaultValues.contains(FontVariationAxisTag::wght);
     bool hasSlopeVariationAxis = defaultValues.contains(FontVariationAxisTag::slnt) || defaultValues.contains(FontVariationAxisTag::ital);
