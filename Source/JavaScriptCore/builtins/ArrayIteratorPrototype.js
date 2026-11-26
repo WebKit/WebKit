@@ -54,7 +54,8 @@ function arrayIteratorNextHelper(array, kind, index)
 
     var length = @isTypedArrayView(array) ? @typedArrayLength(array) : @toLength(array.length);
     if (index < length) {
-        @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, index + 1);
+        if (@getArrayIteratorInternalField(this, @arrayIteratorFieldIndex) !== -1)
+            @putArrayIteratorInternalField(this, @arrayIteratorFieldIndex, index + 1);
         done = false;
         if (kind === @iterationKindKey)
             value = index;
