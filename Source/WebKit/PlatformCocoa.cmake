@@ -1216,6 +1216,8 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
 
         # XPC services are part of WebKit.framework, so they must finish
         # signing before the framework bundle signs.
+        # FIXME: The framework isn't signed again when only an XPC service
+        # changes, so its seal over the service goes stale.
         add_dependencies(WebKit_CodeSign ${_target}_CodeSign)
     endfunction()
 
@@ -2641,6 +2643,8 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_SB_FILES})
     add_dependencies(WebKit WebKitSandboxProfiles)
 
+    # FIXME: Compile the nib again when WebContentProcess.xib changes, and make it a LINK_DEPENDS of WebProcess, so that
+    # the .xpc is signed again then.
     add_custom_command(OUTPUT ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib COMMAND
         ibtool --compile ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib ${WEBKIT_DIR}/Resources/WebContentProcess.xib
         VERBATIM)

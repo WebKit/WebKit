@@ -52,17 +52,24 @@ set(PRODUCT_NAME MiniBrowser)
 
 set(MiniBrowser_Contents_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MiniBrowser.app/Contents)
 file(MAKE_DIRECTORY ${MiniBrowser_Contents_Directory}/Resources)
-add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib
-    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib ${MINIBROWSER_DIR}/BrowserWindow.xib VERBATIM)
-add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib
-    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib ${MINIBROWSER_DIR}/ExtensionManagerWindowController.xib VERBATIM)
-add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib
-    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib ${MINIBROWSER_DIR}/MainMenu.xib VERBATIM)
-add_custom_target(MiniBrowserNibs ALL DEPENDS
-    ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib
-    ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib
-    ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib
+set(MiniBrowser_XIBS
+    ${MINIBROWSER_DIR}/BrowserWindow.xib
+    ${MINIBROWSER_DIR}/ExtensionManagerWindowController.xib
+    ${MINIBROWSER_DIR}/MainMenu.xib
 )
+# FIXME: Compile the nibs for CMAKE_OSX_DEPLOYMENT_TARGET, with --minimum-deployment-target.
+# FIXME: Run ibtool from the configured Xcode, with WEBKIT_XCRUN.
+# FIXME: Have ibtool print its errors and warnings as text, with --errors --warnings --output-format human-readable-text.
+foreach (_xib IN LISTS MiniBrowser_XIBS)
+    get_filename_component(_nib_name ${_xib} NAME_WE)
+    set(_nib ${MiniBrowser_Contents_Directory}/Resources/${_nib_name}.nib)
+    add_custom_command(OUTPUT ${_nib}
+        COMMAND ibtool --compile ${_nib} ${_xib}
+        DEPENDS ${_xib}
+        VERBATIM)
+    list(APPEND MiniBrowser_NIBS ${_nib})
+endforeach ()
+add_custom_target(MiniBrowserNibs ALL DEPENDS ${MiniBrowser_NIBS})
 
 include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 # FIXME: Use the standard WEBKIT_EXECUTABLE macro.
@@ -89,7 +96,8 @@ else ()
         ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
 endif ()
 _WEBKIT_ADD_DSYM(MiniBrowser)
-_WEBKIT_ADD_CODE_SIGN(MiniBrowser)
+# The bundle's signature covers its Info.plist and resources.
+_WEBKIT_ADD_CODE_SIGN(MiniBrowser DEPENDS ${MiniBrowser_Contents_Directory}/Info.plist ${MiniBrowser_NIBS})
 
 # SIP strips DYLD_* for XPC children, so they load system WebKit -> version mismatch crash.
 # Set __XPC_DYLD_FRAMEWORK_PATH so XPC services find this build's frameworks.
