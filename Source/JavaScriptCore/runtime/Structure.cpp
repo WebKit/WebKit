@@ -343,6 +343,7 @@ Structure::Structure(VM& vm, StructureVariant variant, Structure* previous)
     setHasBeenFlattenedBefore(previous->hasBeenFlattenedBefore());
     setGrewPastTransitionLimitThroughPutById(previous->grewPastTransitionLimitThroughPutById());
     m_keyedAddsPastTransitionLimit = previous->m_keyedAddsPastTransitionLimit;
+    setPrototypeReflattenCount(previous->prototypeReflattenCount());
     setHasAnyKindOfGetterSetterProperties(previous->hasAnyKindOfGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
     setHasNonEnumerableProperties(previous->hasNonEnumerableProperties());
@@ -1099,6 +1100,8 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     }
 
     setDictionaryKind(NoneDictionaryKind);
+    if (hasBeenFlattenedBefore())
+        setPrototypeReflattenCount(std::min<unsigned>(prototypeReflattenCount() + 1, s_prototypeReflattenCountMask));
     setHasBeenFlattenedBefore(true);
 
     ASSERT(this->outOfLineCapacity() == afterOutOfLineCapacity);

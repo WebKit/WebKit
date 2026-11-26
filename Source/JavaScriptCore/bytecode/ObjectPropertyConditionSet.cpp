@@ -589,7 +589,7 @@ static std::optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGloba
                 return std::nullopt;
 
             ASSERT(structure->isObject());
-            if (structure->hasBeenFlattenedBefore()) {
+            if (!structure->canFlattenForCaching()) {
                 if (structure->isUncacheableDictionary())
                     return std::nullopt;
                 if (!structure->propertyAccessesAreCacheable())

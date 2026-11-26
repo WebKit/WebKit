@@ -14,9 +14,15 @@ function isDictionary(object) {
 function get1(object) { return object.value; }
 function get2(object) { return object.value; }
 function get3(object) { return object.value; }
+function get4(object) { return object.value; }
+function get5(object) { return object.value; }
+function get6(object) { return object.value; }
 noInline(get1);
 noInline(get2);
 noInline(get3);
+noInline(get4);
+noInline(get5);
+noInline(get6);
 
 function read(get, prototype) {
     let object = Object.create(prototype);
@@ -44,7 +50,12 @@ delete prototype2.hole;
 read(get2, prototype2);
 shouldBe(isDictionary(prototype2), false);
 
-// There is only one more flattening.
+// A prototype can be flattened three more times, and then it stays a dictionary.
+for (let get of [get3, get4, get5]) {
+    $vm.toCacheableDictionary(prototype1);
+    read(get, prototype1);
+    shouldBe(isDictionary(prototype1), false);
+}
 $vm.toCacheableDictionary(prototype1);
-read(get3, prototype1);
+read(get6, prototype1);
 shouldBe(isDictionary(prototype1), true);

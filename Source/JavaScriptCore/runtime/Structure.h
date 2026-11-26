@@ -311,6 +311,15 @@ public:
 
     JS_EXPORT_PRIVATE Structure* flattenDictionaryStructure(VM&, JSObject*);
 
+    // Re-flattening a growing dictionary churns, but a large prototype that gains one late property would
+    // otherwise block every cache through it for good.
+    bool canFlattenForCaching() const
+    {
+        if (!hasBeenFlattenedBefore())
+            return true;
+        return mayBePrototype() && !isUncacheableDictionary() && prototypeReflattenCount() < s_prototypeReflattenCountMask;
+    }
+
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
@@ -850,6 +859,7 @@ public:
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 6);
     DEFINE_BITFIELD(bool, hasSpecialProperties, HasSpecialProperties, 1, 7);
     DEFINE_BITFIELD(DefinitelyNonThenableState, definitelyNonThenableState, DefinitelyNonThenableState, 2, 8); // This flag can be flipped on the main thread at any timing.
+    DEFINE_BITFIELD(unsigned, prototypeReflattenCount, PrototypeReflattenCount, 2, 10);
     DEFINE_BITFIELD(bool, grewPastTransitionLimitThroughPutById, GrewPastTransitionLimitThroughPutById, 1, 12);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
     DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.

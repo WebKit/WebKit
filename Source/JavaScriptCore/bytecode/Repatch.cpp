@@ -613,7 +613,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     return GiveUpOnCache;
 
                 if (structure->isDictionary()) {
-                    if (structure->hasBeenFlattenedBefore())
+                    if (!structure->canFlattenForCaching())
                         return GiveUpOnCache;
                     structure->flattenDictionaryStructure(vm, uncheckedDowncast<JSObject>(baseCell));
                     return RetryCacheLater; // We may have changed property offsets.
@@ -665,8 +665,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 }
             }
 
-            // Fresh dictionaries were flattened above, but one that has already been flattened once is not
-            // re-flattened and stays a dictionary. A custom with no backing property in the slot base's structure
+            // Dictionaries were flattened above, except one that canFlattenForCaching() rejects, which stays a
+            // dictionary. A custom with no backing property in the slot base's structure
             // (invalidOffset, such as one served from a static property table) is shadowed by adding that
             // property, which on a dictionary happens in place with no structure transition, leaving the
             // constant custom getter recorded here stale.
@@ -1222,7 +1222,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (!cacheStatus)
                     return GiveUpOnCache;
 
-                // prepareChainForCaching leaves a dictionary that has already been flattened once as a dictionary.
+                // prepareChainForCaching leaves a dictionary that canFlattenForCaching() rejects as a dictionary.
                 // A custom with no backing property in the base's structure (invalidOffset, such as one served from
                 // a static property table) is shadowed by adding that property, which on a dictionary happens in
                 // place with no structure transition, leaving this cache stale.

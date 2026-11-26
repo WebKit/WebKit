@@ -820,7 +820,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
         return;
 
     if (structure->isDictionary()) {
-        if (structure->hasBeenFlattenedBefore())
+        if (!structure->canFlattenForCaching())
             return;
         structure->flattenDictionaryStructure(vm, uncheckedDowncast<JSObject>(baseCell));
     }

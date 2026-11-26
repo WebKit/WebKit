@@ -135,7 +135,7 @@ size_t normalizePrototypeChain(JSGlobalObject* globalObject, JSCell* base, bool&
         current = prototype.asCell();
         structure = current->structure();
         if (structure->isDictionary()) {
-            if (structure->hasBeenFlattenedBefore())
+            if (!structure->canFlattenForCaching())
                 return InvalidPrototypeChain;
             structure->flattenDictionaryStructure(vm, asObject(current));
         }

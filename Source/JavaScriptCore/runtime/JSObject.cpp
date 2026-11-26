@@ -4432,7 +4432,7 @@ constexpr unsigned butterflyInButterflySpace = 10; // out-of-line only: in vm.au
 constexpr unsigned butterflyOutOfLineStorageIsZeroFilled = 11; // out-of-line only
 constexpr unsigned structureIsDictionary = 12;
 constexpr unsigned structureIsUncacheableDictionary = 13; // the kind flattenDictionaryStructure() renumbers
-constexpr unsigned structureHasBeenFlattenedBefore = 14; // ineligible for further flattening
+constexpr unsigned structureHasBeenFlattenedBefore = 14;
 constexpr unsigned structureInlineCapacity = 15; // saturated to 4 bits
 }
 
