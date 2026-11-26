@@ -40,7 +40,7 @@ void StopIfNecessaryTimer::doWork(VM& vm)
 {
     cancelTimer();
     WTF::storeStoreFence();
-    vm.heap.stopIfNecessary();
+    vm.heap.stopIfNecessaryFromRunLoop();
 }
 
 void StopIfNecessaryTimer::scheduleSoon()
