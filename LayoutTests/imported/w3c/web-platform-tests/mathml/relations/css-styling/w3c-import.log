@@ -13,6 +13,18 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-displaystyle-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-displaystyle-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-displaystyle-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathbackground-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathbackground-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathbackground-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathcolor-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathcolor-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathcolor-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathsize-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathsize-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/anchor-mathsize-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/attribute-mapping-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/blur-filter-expected.html
@@ -141,6 +153,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/min-max-width-001.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/min-max-width-002.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mozilla-393760-1-expected.xml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mozilla-393760-1-ref.xml
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mozilla-393760-1.xml
