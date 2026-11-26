@@ -2345,6 +2345,9 @@ public:
     RefPtr<WebCore::ShareableBitmap> shareableBitmapForNodeIncludingOffscreen(WebCore::Node&);
 
     void paintRemoteFrameContents(WebCore::FrameIdentifier, const WebCore::IntRect&, WebCore::GraphicsContext&);
+#if ENABLE(GPU_PROCESS) && ENABLE(PDF_PLUGIN)
+    bool recordPDFPageIntoRemoteSnapshot(WebCore::GraphicsContext&, PDFPluginIdentifier, NOESCAPE const Function<RefPtr<WebCore::SharedBuffer>()>& documentData, unsigned pageIndex, const WebCore::FloatRect& pageRect, WebCore::ImageBuffer& fallback);
+#endif
 
 #if ENABLE(GPU_PROCESS)
     // Frames hosted elsewhere that paint calls into record themselves into the same snapshot. The
@@ -3515,6 +3518,9 @@ private:
         // Frames hosted elsewhere that were painted into the recording, the parts painted, relative to each
         // frame's visible content, and the largest scale they were painted at.
         HashMap<WebCore::FrameIdentifier, PaintedFrame> paintedFrames;
+#if ENABLE(PDF_PLUGIN)
+        HashMap<PDFPluginIdentifier, WebCore::RenderingResourceIdentifier> recordedPDFDocuments;
+#endif
     };
     std::optional<RemoteSnapshotState> m_remoteSnapshotState;
 #endif

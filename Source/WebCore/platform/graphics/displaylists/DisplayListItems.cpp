@@ -824,6 +824,32 @@ void EndTransparencyLayer::apply(GraphicsContext& context) const
         context.endTransparencyLayer();
 }
 
+bool DrawPDFPage::isResolved() const
+{
+    if (!std::holds_alternative<Ref<SharedPDFDocument>>(m_document))
+        return false;
+    return !m_fallbackImage || m_fallbackImage->isResolved();
+}
+
+void DrawPDFPage::apply(GraphicsContext& context) const
+{
+    RELEASE_ASSERT(isResolved());
+    if (m_fallbackImage) {
+        Ref image = m_fallbackImage->image();
+        context.drawNativeImage(image, m_pageRect, FloatRect { { }, image->size() });
+        return;
+    }
+    protect(document())->drawPage(context, m_pageIndex, m_pageRect);
+}
+
+void DrawPDFPage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
+{
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("document-identifier"_s, documentIdentifier());
+    ts.dumpProperty("page-index"_s, pageIndex());
+    ts.dumpProperty("page-rect"_s, pageRect());
+}
+
 void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 {
     context.applyDeviceScaleFactor(m_scaleFactor);

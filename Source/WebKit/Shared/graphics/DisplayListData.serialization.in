@@ -381,6 +381,12 @@ header: <WebCore/DisplayListItems.h>
     WebCore::RasterDrawingOptions options();
 }
 
+[CustomHeader, DisableMissingMemberCheck] class WebCore::DisplayList::DrawPDFPage {
+    WebCore::RenderingResourceIdentifier documentIdentifier();
+    unsigned pageIndex();
+    WebCore::FloatRect pageRect();
+}
+
 [CustomHeader] class WebCore::DisplayList::DrawPatternNativeImage {
     WebCore::RenderingResourceIdentifier imageIdentifier();
     WebCore::FloatRect destRect();
@@ -423,6 +429,11 @@ header: "DisplayListData.h"
     WebCore::ImageBufferParameters parameters;
 }
 
+[CustomHeader] struct WebKit::DisplayListDataPDFDocument {
+    WebCore::RenderingResourceIdentifier identifier;
+    Ref<WebCore::SharedBuffer> data;
+}
+
 using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::ApplyDeviceScaleFactor,
     WebCore::DisplayList::BeginTransparencyLayer,
@@ -451,6 +462,7 @@ using WebKit::DisplayListDataItem = Variant<
     WebCore::DisplayList::DrawLinesForText,
     WebCore::DisplayList::DrawMeshGradient,
     WebCore::DisplayList::DrawNativeImage,
+    WebCore::DisplayList::DrawPDFPage,
     WebCore::DisplayList::DrawPath,
     WebCore::DisplayList::DrawPatternNativeImage,
     WebCore::DisplayList::DrawPatternImageBuffer,
@@ -495,6 +507,7 @@ using WebKit::DisplayListDataItem = Variant<
     Vector<WebKit::DisplayListDataFont> m_fonts;
     Vector<WebKit::DisplayListDataNativeImage> m_nativeImages;
     Vector<WebKit::DisplayListDataImageBuffer> m_imageBuffers;
+    Vector<WebKit::DisplayListDataPDFDocument> m_pdfDocuments;
     Vector<Vector<WebKit::DisplayListDataItem>> m_bottomUpDisplayLists;
 }
 

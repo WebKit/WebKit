@@ -1814,6 +1814,7 @@
 		46C8C3D72E80E824005507BE /* ScrollbarInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C8C3D62E80E824005507BE /* ScrollbarInlines.h */; };
 		46C963C22B6C992A002F46D1 /* ShareableBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C963C02B6C9921002F46D1 /* ShareableBitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C963C62B6C9CAE002F46D1 /* ShareableBitmapHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C963C42B6C9CAE002F46D1 /* ShareableBitmapHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		63EFD0086C6283FB3741C81C /* SharedPDFDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = C46A3F076204F6D309FBBFDA /* SharedPDFDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C963C82B6CA1BC002F46D1 /* ShareableBitmapCG.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46C963C32B6C993C002F46D1 /* ShareableBitmapCG.mm */; };
 		46CA943127B8695800F4F5FF /* InbandTextTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */; };
 		46CA9C441F97BBE9004CFC3A /* VisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CA9C411F97BBE7004CFC3A /* VisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7558,6 +7559,7 @@
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
 		63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8388CA7C42BEE5A116A9DF69 /* NativeImageCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2C6A282FDB134A3AC040F85D /* PDFKitDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A908DB0F4779B15E42E79BE0 /* PDFKitDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0CEBF20D2F07F3689744454A /* ImageDrawDescriptorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		807547D380B36BF6457BF6C4 /* ColorAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = A0FE1D51155B617031EC275F /* ColorAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5A8EA984E6E737343E65221A /* ImageContentSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696F89359DB2093C05E5988 /* ImageContentSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12094,6 +12096,8 @@
 		46C963C32B6C993C002F46D1 /* ShareableBitmapCG.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareableBitmapCG.mm; sourceTree = "<group>"; };
 		46C963C42B6C9CAE002F46D1 /* ShareableBitmapHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmapHandle.h; sourceTree = "<group>"; };
 		46C963C52B6C9CAE002F46D1 /* ShareableBitmapHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapHandle.cpp; sourceTree = "<group>"; };
+		C46A3F076204F6D309FBBFDA /* SharedPDFDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedPDFDocument.h; sourceTree = "<group>"; };
+		BD712C1EF0881D5996268B86 /* SharedPDFDocument.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedPDFDocument.cpp; sourceTree = "<group>"; };
 		46CA9C411F97BBE7004CFC3A /* VisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityState.h; sourceTree = "<group>"; };
 		46CA9C421F97BBE7004CFC3A /* VisibilityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VisibilityState.idl; sourceTree = "<group>"; };
 		46CF504827AB1EA10070DBC8 /* SharedWorkerContextManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedWorkerContextManager.h; sourceTree = "<group>"; };
@@ -24262,6 +24266,8 @@
 		8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPauseSessionIdentifier.h; sourceTree = "<group>"; };
 		0266086DEAF2F2D10EC0FF0F /* NativeImageCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeImageCocoa.h; sourceTree = "<group>"; };
 		AFA81AFC192B3B83C4D127ED /* NativeImageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeImageCocoa.mm; sourceTree = "<group>"; };
+		A908DB0F4779B15E42E79BE0 /* PDFKitDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFKitDocument.h; sourceTree = "<group>"; };
+		0A5425302CF53C258BFE8991 /* PDFKitDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitDocument.mm; sourceTree = "<group>"; };
 		920A67A63082764F62086B03 /* ImageDrawDescriptorTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDrawDescriptorTypes.h; sourceTree = "<group>"; };
 		A0FE1D51155B617031EC275F /* ColorAppearance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorAppearance.h; sourceTree = "<group>"; };
 		1BA5B0B524C398F9ED0D21D8 /* ImageContentSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageContentSettings.cpp; sourceTree = "<group>"; };
@@ -37285,6 +37291,8 @@
 				46C963C02B6C9921002F46D1 /* ShareableBitmap.h */,
 				46C963C52B6C9CAE002F46D1 /* ShareableBitmapHandle.cpp */,
 				46C963C42B6C9CAE002F46D1 /* ShareableBitmapHandle.h */,
+				BD712C1EF0881D5996268B86 /* SharedPDFDocument.cpp */,
+				C46A3F076204F6D309FBBFDA /* SharedPDFDocument.h */,
 				1C4DB02427339E5E007B0AD1 /* ShouldLocalizeAxisNames.h */,
 				72FD30A927E3217A0023CDAC /* SourceBrush.cpp */,
 				72FD30AA27E3217B0023CDAC /* SourceBrush.h */,
@@ -37484,6 +37492,8 @@
 				AFA81AFC192B3B83C4D127ED /* NativeImageCocoa.mm */,
 				CDC522422A4F6E7900155FAE /* NullPlaybackSessionInterface.h */,
 				CDC522442A4F705F00155FAE /* NullVideoPresentationInterface.h */,
+				A908DB0F4779B15E42E79BE0 /* PDFKitDocument.h */,
+				0A5425302CF53C258BFE8991 /* PDFKitDocument.mm */,
 				FED1234567890ABCDEF12345 /* PeriodicSharedTimer.h */,
 				FED1234567890ABCDEF12346 /* PeriodicSharedTimer.mm */,
 				BCD8FA442F28010600B42872 /* PlatformMediaEngineConfigurationFactoryCocoa.cpp */,
@@ -48458,6 +48468,7 @@
 				5CA126B928DBA6EC00B65AD3 /* PCMTokens.h in Headers */,
 				F066E451167A913CB086D5DD /* PDFDocumentBuffer.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
+				2C6A282FDB134A3AC040F85D /* PDFKitDocument.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
 				BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */,
@@ -49351,6 +49362,7 @@
 				51FA2EDF27506FDE0011C15D /* SharedBufferChunkReader.h in Headers */,
 				510A91DC24CF46FE00BFD89C /* SharedGamepadValue.h in Headers */,
 				4688C4B92B6B06F2003533C9 /* SharedMemory.h in Headers */,
+				63EFD0086C6283FB3741C81C /* SharedPDFDocument.h in Headers */,
 				CD36C16B260A65CC00C8C529 /* SharedRoutingArbitrator.h in Headers */,
 				834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */,
 				8B3C8739E3CFAB0D42937C95 /* SharedTimebase.h in Headers */,
