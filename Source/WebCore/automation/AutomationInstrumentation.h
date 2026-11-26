@@ -30,6 +30,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
@@ -46,15 +47,19 @@ class ConsoleMessage;
 
 namespace WebCore {
 
+class DOMWindow;
 class DOMWrapperWorld;
+class LocalFrame;
 
 class WEBCORE_EXPORT AutomationInstrumentationClient : public AbstractRefCountedAndCanMakeWeakPtr<AutomationInstrumentationClient> {
 public:
     virtual ~AutomationInstrumentationClient() = default;
 
     virtual void addMessageToConsole(FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
-    virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
-    virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
+    // The window identifies the realm: a frame gets a new window with each new document, and the window's JS global object
+    // may not exist yet.
+    virtual void scriptRealmCreated(FrameIdentifier, const GlobalWindowIdentifier&, const SecurityOriginData&) = 0;
+    virtual void scriptRealmDestroyed(FrameIdentifier, const GlobalWindowIdentifier&) = 0;
     virtual void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier) = 0;
 };
@@ -71,8 +76,10 @@ public:
     // but shared and service workers need another way to tell whether a page that is controlled by automation uses them.
     // https://bugs.webkit.org/show_bug.cgi?id=330988
     static void addMessageToConsole(FrameIdentifier, const std::unique_ptr<Inspector::ConsoleMessage>&);
-    static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
-    static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
+    // A window's realm exists while the window's document is its frame's document, whether or not script has created the
+    // window's JS global object. Reporting a realm again, or the end of a realm that a frame no longer has, is harmless.
+    static void scriptRealmCreated(LocalFrame&, DOMWindow&, DOMWrapperWorld&);
+    static void scriptRealmDestroyed(LocalFrame&, DOMWindow&, DOMWrapperWorld&);
     static void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData&);
     static void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier);
 };

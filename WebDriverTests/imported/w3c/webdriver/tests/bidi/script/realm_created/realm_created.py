@@ -7,6 +7,8 @@ from webdriver.bidi.modules.script import (
 )
 from webdriver.error import TimeoutException
 
+from tests.support.sync import AsyncPoll
+
 from ... import any_string, recursive_compare
 from .. import create_sandbox
 
@@ -106,6 +108,31 @@ async def test_navigate_cross_origin(bidi_session, subscribe_events, inline, new
     remove_listener()
 
 
+@pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
+async def test_navigate_without_script(
+    bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, inline, new_tab, domain
+):
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline("<div>foo</div><script>0</script>"), wait="complete"
+    )
+
+    await subscribe_events(events=[REALM_CREATED_EVENT], contexts=[new_tab["context"]])
+
+    on_realm_created = wait_for_event(REALM_CREATED_EVENT)
+
+    # The new document has a realm even though it doesn't run script, and the
+    # event comes without anything asking for the realm.
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline("<div>bar</div>", domain=domain), wait="complete"
+    )
+
+    event = await wait_for_future_safe(on_realm_created)
+
+    result = await bidi_session.script.get_realms(context=new_tab["context"])
+
+    assert event == result[0]
+
+
 async def test_reload(bidi_session, subscribe_events, new_tab, inline):
     await bidi_session.browsing_context.navigate(
         context=new_tab["context"], url=inline("<div>foo</div>"), wait="complete"
@@ -186,6 +213,64 @@ async def test_iframe(bidi_session, subscribe_events, top_context, inline, domai
         assert event[0] == realm
 
     remove_listener()
+
+
+@pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
+async def test_iframe_without_script(
+    bidi_session, subscribe_events, wait_for_bidi_events, new_tab, inline, iframe, domain
+):
+    await subscribe_events(events=[REALM_CREATED_EVENT], contexts=[new_tab["context"]])
+
+    frame_events = []
+
+    async def on_event(method, data):
+        if data["context"] != new_tab["context"]:
+            frame_events.append(data)
+
+    remove_listener = bidi_session.add_event_listener(
+        REALM_CREATED_EVENT, on_event)
+
+    # Neither document runs script.
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline(iframe("<div>foo</div>", domain=domain)), wait="complete"
+    )
+
+    # The frame's realm is reported without anything asking for it.
+    await wait_for_bidi_events(frame_events, 1, equal_check=False)
+
+    contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
+    frame_context = contexts[0]["children"][0]["context"]
+    result = await bidi_session.script.get_realms(context=frame_context)
+
+    assert frame_events[-1] == result[0]
+
+    remove_listener()
+
+
+@pytest.mark.parametrize("domain", ["", "alt"], ids=["same_origin", "cross_origin"])
+async def test_iframe_navigate(
+    bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, new_tab, inline, iframe, domain
+):
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline(iframe("<div>foo</div><script>0</script>")), wait="complete"
+    )
+
+    contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
+    frame_context = contexts[0]["children"][0]["context"]
+
+    await subscribe_events(events=[REALM_CREATED_EVENT], contexts=[new_tab["context"]])
+
+    on_realm_created = wait_for_event(REALM_CREATED_EVENT)
+
+    await bidi_session.browsing_context.navigate(
+        context=frame_context, url=inline("<div>bar</div>", domain=domain), wait="complete"
+    )
+
+    event = await wait_for_future_safe(on_realm_created)
+
+    result = await bidi_session.script.get_realms(context=frame_context)
+
+    assert event == result[0]
 
 
 async def test_subscribe_to_one_context(
@@ -484,6 +569,49 @@ async def test_existing_realm(bidi_session, wait_for_event, wait_for_future_safe
         },
         realm,
     )
+
+
+async def test_existing_realms_after_traverse_history(
+    bidi_session, configuration, subscribe_events, wait_for_bidi_events, new_tab, inline
+):
+    frame_url = inline("<script>1</script>", domain="alt")
+    url = inline(f"<div>first</div><script>0</script><iframe src='{frame_url}'></iframe>")
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=url, wait="complete"
+    )
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline("<div>second</div><script>2</script>", domain="alt"), wait="complete"
+    )
+    await bidi_session.browsing_context.traverse_history(context=new_tab["context"], delta=-1)
+
+    # traverseHistory doesn't wait for the traversal yet: https://github.com/w3c/webdriver-bidi/issues/94
+    async def check_traversed(_):
+        contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
+        assert contexts[0]["url"] == url
+        assert [child["url"] for child in contexts[0]["children"]] == [frame_url]
+        return contexts
+
+    wait = AsyncPoll(bidi_session, timeout=2 * configuration["timeout_multiplier"])
+    contexts = await wait.until(check_traversed)
+    frame_context = contexts[0]["children"][0]["context"]
+
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener(REALM_CREATED_EVENT, on_event)
+
+    # The subscription reports the realms of the documents that are in the tab
+    # now, and no others.
+    await subscribe_events(events=[REALM_CREATED_EVENT], contexts=[new_tab["context"]])
+    await wait_for_bidi_events(events, 2)
+
+    for context in [new_tab["context"], frame_context]:
+        result = await bidi_session.script.get_realms(context=context)
+        assert [event for event in events if event["context"] == context] == result
+
+    remove_listener()
 
 
 async def test_dedicated_worker_subscribe_to_one_context(

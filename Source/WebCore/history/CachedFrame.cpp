@@ -61,6 +61,11 @@
 #include "ChromeClient.h"
 #endif
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "AutomationInstrumentation.h"
+#include "DOMWrapperWorld.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedFrame);
@@ -122,8 +127,14 @@ void CachedFrameBase::restore()
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         NavigationDisabler disableNavigation { nullptr }; // Disable navigation globally.
 
-        if (localFrame)
+        if (localFrame) {
             m_cachedFrameScriptData->restore(*localFrame);
+#if ENABLE(WEBDRIVER_BIDI)
+            // The window gets a new realm, as it would if the frame loaded the document again. Report it before the
+            // document resumes and its script can run.
+            AutomationInstrumentation::scriptRealmCreated(*localFrame, *protect(document->window()), mainThreadNormalWorldSingleton());
+#endif
+        }
 
         if (CheckedPtr svgExtensions = document->svgExtensionsIfExists())
             svgExtensions->unpauseAnimations();
@@ -191,6 +202,12 @@ CachedFrame::CachedFrame(Frame& frame)
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     m_cachedFrameScriptData = localFrame ? makeUnique<ScriptCachedFrameData>(*localFrame) : nullptr;
+#if ENABLE(WEBDRIVER_BIDI)
+    // The document leaves the frame, and so does its realm. The back/forward cache keeps its JS global object, but a
+    // restore reports a new realm.
+    if (localFrame && document)
+        AutomationInstrumentation::scriptRealmDestroyed(*localFrame, *protect(document->window()), mainThreadNormalWorldSingleton());
+#endif
     if (localFrame && m_isMainFrame)
         localFrame->incrementCachedPageCount();
 

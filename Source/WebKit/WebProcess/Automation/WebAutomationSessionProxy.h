@@ -52,6 +52,7 @@ struct Cookie;
 class AccessibilityObject;
 class Element;
 class HTMLInputElement;
+class LocalFrame;
 class Node;
 class ShareableBitmapHandle;
 }
@@ -134,11 +135,13 @@ private:
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    std::optional<RealmIdentifier> realmIdentifierForFrame(WebCore::FrameIdentifier) const;
+    std::optional<RealmIdentifier> realmIdentifierForFrame(WebCore::LocalFrame&) const;
+    std::optional<RealmIdentifier> ensureRealmForFrame(WebCore::LocalFrame&);
+    void removeRealm(WebCore::FrameIdentifier);
     void getBidiRealmInfo(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
     void addMessageToConsole(WebCore::FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
-    void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
-    void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
+    void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::GlobalWindowIdentifier&, const WebCore::SecurityOriginData&) override;
+    void scriptRealmDestroyed(WebCore::FrameIdentifier, const WebCore::GlobalWindowIdentifier&) override;
     void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
@@ -169,7 +172,14 @@ private:
 
     using DedicatedWorkerRealmKey = std::pair<WebCore::FrameIdentifier, String>;
 
-    HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
+    // A frame's realm belongs to one of its windows, which may not have a JS global object yet, and to the origin of the
+    // window's document.
+    struct WindowRealm {
+        RealmIdentifier realmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
+        WebCore::GlobalWindowIdentifier windowIdentifier { WTF::HashTraits<WebCore::GlobalWindowIdentifier>::emptyValue() };
+        WebCore::SecurityOriginData origin;
+    };
+    HashMap<WebCore::FrameIdentifier, WindowRealm> m_frameRealms;
     HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
 #endif
 };

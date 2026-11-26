@@ -70,6 +70,28 @@ async def test_navigate(
     assert event == {"realm": result[0]["realm"]}
 
 
+async def test_navigate_cross_origin(
+    bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, inline, new_tab
+):
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline("<div>foo</div>"), wait="complete"
+    )
+
+    await subscribe_events(events=[REALM_DESTROYED_EVENT], contexts=[new_tab["context"]])
+
+    result = await bidi_session.script.get_realms(context=new_tab["context"])
+
+    on_realm_destroyed = wait_for_event(REALM_DESTROYED_EVENT)
+
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline("<div>bar</div>", domain="alt"), wait="complete"
+    )
+
+    event = await wait_for_future_safe(on_realm_destroyed)
+
+    assert event == {"realm": result[0]["realm"]}
+
+
 async def test_reload_context(
     bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, top_context
 ):
@@ -157,6 +179,31 @@ async def test_iframe(
 
     await bidi_session.browsing_context.navigate(
         context=frame_context, url=inline("<div>foo</div>"), wait="complete"
+    )
+
+    event = await wait_for_future_safe(on_realm_destroyed)
+
+    assert event == {"realm": result[0]["realm"]}
+
+
+async def test_iframe_navigate_cross_origin(
+    bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, new_tab, inline, iframe
+):
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=inline(iframe("<div>foo</div>")), wait="complete"
+    )
+
+    contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
+    frame_context = contexts[0]["children"][0]["context"]
+
+    await subscribe_events(events=[REALM_DESTROYED_EVENT], contexts=[new_tab["context"]])
+
+    result = await bidi_session.script.get_realms(context=frame_context)
+
+    on_realm_destroyed = wait_for_event(REALM_DESTROYED_EVENT)
+
+    await bidi_session.browsing_context.navigate(
+        context=frame_context, url=inline("<div>bar</div>", domain="alt"), wait="complete"
     )
 
     event = await wait_for_future_safe(on_realm_destroyed)
