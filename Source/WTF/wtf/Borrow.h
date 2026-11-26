@@ -30,28 +30,13 @@
 #include <wtf/Compiler.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
-
-#if OS(DARWIN)
-#include <pthread.h>
-#endif
+#include <wtf/Threading.h>
 
 namespace WTF {
 
 inline void assertIsOnStack(const void* object)
 {
-#if OS(DARWIN) && ASSERT_ENABLED
-    auto self = pthread_self();
-    void* origin = pthread_get_stackaddr_np(self);
-    rlim_t size = pthread_get_stacksize_np(self);
-    ASSERT(origin);
-    ASSERT(size);
-    auto top = reinterpret_cast<uintptr_t>(origin);
-    auto address = reinterpret_cast<uintptr_t>(object);
-    ASSERT(address < top);
-    ASSERT(top - address < size);
-#else
-    UNUSED_PARAM(object);
-#endif
+    ASSERT_UNUSED(object, Thread::currentSingleton().stack().contains(object));
 }
 
 /**
