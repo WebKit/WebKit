@@ -2920,6 +2920,11 @@ void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase* webkitWebViewBase, 
     webkitWebViewBase->priv->inputMethodFilter.setState(WTF::move(state));
 }
 
+void webkitWebViewBaseDiscardComposition(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBase->priv->inputMethodFilter.discardComposition();
+}
+
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase* webkitWebViewBase)
 {
     const auto& editorState = webkitWebViewBase->priv->pageProxy->editorState();
