@@ -29,6 +29,7 @@
 #if HAVE(WINDOW_CAPTURE)
 
 #import "Logging.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <wtf/TZoneMallocInlines.h>
@@ -86,6 +87,7 @@ TabCaptureWindow::TabCaptureWindow(WebPageProxy& page, RetainPtr<NSWindow>&& win
     : m_pageIdentifier(page.identifier())
     , m_page(page)
     , m_window(WTF::move(window))
+    , m_mirrorRequest(NativePromiseRequest::create())
 {
     attachLayer(page);
     updateSize();
@@ -93,7 +95,20 @@ TabCaptureWindow::TabCaptureWindow(WebPageProxy& page, RetainPtr<NSWindow>&& win
 
 TabCaptureWindow::~TabCaptureWindow()
 {
+    [m_layer removeFromSuperlayer];
     [m_window close];
+
+    bool isMirrorRequestPending = m_mirrorRequest->hasCallback();
+    if (isMirrorRequestPending)
+        m_mirrorRequest->disconnect();
+
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(page->drawingArea());
+    if (drawingArea && (isMirrorRequestPending || drawingArea->isMirrorLayer(m_layer)))
+        drawingArea->disableMirrorLayerTree();
 }
 
 uint32_t TabCaptureWindow::windowID() const
@@ -103,8 +118,54 @@ uint32_t TabCaptureWindow::windowID() const
 
 void TabCaptureWindow::attachLayer(WebPageProxy& page)
 {
-    UNUSED_PARAM(page);
-    // FIXME: Insert a mirror of the page layer tree.
+    RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(page.drawingArea());
+    if (!drawingArea) {
+        RELEASE_LOG_ERROR(WebRTC, "TabCaptureWindow::attachLayer - drawing area is not a RemoteLayerTreeDrawingAreaProxy; mirror unavailable.");
+        m_isInvalidated = true;
+        m_readyPromiseProducer.reject();
+        return;
+    }
+
+    drawingArea->enableMirrorLayerTree()->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }](auto&& result) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_mirrorRequest->complete();
+        if (!result) {
+            RELEASE_LOG_ERROR(WebRTC, "TabCaptureWindow::attachLayer - could not mirror the layer tree; aborting.");
+            protectedThis->m_isInvalidated = true;
+            protectedThis->m_readyPromiseProducer.reject();
+            return;
+        }
+
+        // Set the layer first so that the destructor disables the mirror even if we fail to use it.
+        protectedThis->m_layer = result->layer;
+        RetainPtr contentViewLayer = [[protectedThis->m_window contentView] layer];
+        if (!contentViewLayer) {
+            RELEASE_LOG_ERROR(WebRTC, "TabCaptureWindow::attachLayer - no content view layer; aborting.");
+            protectedThis->m_isInvalidated = true;
+            protectedThis->m_readyPromiseProducer.reject();
+            return;
+        }
+
+        [contentViewLayer insertSublayer:result->layer.get() atIndex:0];
+        protectedThis->updateSize();
+        protectedThis->m_readyPromiseProducer.resolve();
+
+        result->invalidationPromise->whenSettled(RunLoop::mainSingleton(), [weakThis] {
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->invalidate();
+        });
+    })->track(m_mirrorRequest);
+}
+
+void TabCaptureWindow::invalidate()
+{
+    RELEASE_LOG(WebRTC, "TabCaptureWindow::invalidate - the mirror of the page layer tree went away, closing the window to stop capture.");
+    m_isInvalidated = true;
+    [std::exchange(m_layer, nullptr) removeFromSuperlayer];
+    [std::exchange(m_window, nullptr) close];
 }
 
 void TabCaptureWindow::updateSize()

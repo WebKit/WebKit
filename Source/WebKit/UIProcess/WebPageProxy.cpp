@@ -9444,7 +9444,7 @@ void WebPageProxy::setDevicePostureType(WebCore::DevicePostureType type)
 RefPtr<TabCaptureWindow> WebPageProxy::tabCaptureWindow()
 {
     RefPtr tabCaptureWindow = m_tabCaptureWindow;
-    if (!tabCaptureWindow) {
+    if (!tabCaptureWindow || tabCaptureWindow->isInvalidated()) {
         tabCaptureWindow = TabCaptureWindow::create(*this);
         m_tabCaptureWindow = tabCaptureWindow.get();
     }

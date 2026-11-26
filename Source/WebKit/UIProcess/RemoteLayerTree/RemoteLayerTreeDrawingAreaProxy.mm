@@ -876,6 +876,11 @@ void RemoteLayerTreeDrawingAreaProxy::disableMirrorLayerTree()
         invalidationProducer->resolve();
 }
 
+bool RemoteLayerTreeDrawingAreaProxy::isMirrorLayer(CALayer *layer) const
+{
+    return layer && m_mirror && m_mirror->layer() == layer;
+}
+
 void RemoteLayerTreeDrawingAreaProxy::initializeSlowFrameIndicator()
 {
     lazyInitialize(m_slowFrameIndicatorLayer, adoptNS([[_WKSlowFrameHUDLayer alloc] initWithDrawingArea:this]));

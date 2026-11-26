@@ -98,8 +98,8 @@ struct ProcessState {
 };
 
 struct MirrorLayerTree {
-    RetainPtr<CALayer> layer;
-    Ref<GenericPromise> invalidationPromise;
+    const RetainPtr<CALayer> layer;
+    const Ref<GenericPromise> invalidationPromise;
 };
 using MirrorLayerTreePromise = NativePromise<MirrorLayerTree, void, PromiseOption::Default | PromiseOption::WithoutCrossThreadCopy>;
 
@@ -169,6 +169,7 @@ public:
     Ref<MirrorLayerTreePromise> enableMirrorLayerTree();
     void disableMirrorLayerTree();
     bool hasMirrorLayerTree() const { return !!m_mirror; }
+    bool isMirrorLayer(CALayer *) const;
 
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 

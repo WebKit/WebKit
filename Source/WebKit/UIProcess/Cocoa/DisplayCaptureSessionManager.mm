@@ -150,11 +150,26 @@ void DisplayCaptureSessionManager::startTabCapture(UserMediaPermissionRequestPro
     }
 
     auto windowID = window->windowID();
+    Ref readyPromise = window->readyPromise();
     request.setTabCaptureWindow(window.releaseNonNull());
 
-    Ref gpuProcess = protect(requestingPage->configuration().processPool())->ensureGPUProcess();
-    gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
-    gpuProcess->selectWindowForCapture(windowID, WTF::move(completionHandler));
+    readyPromise->whenSettled(RunLoop::mainSingleton(), [request = Ref { request }, windowID, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        if (!result) {
+            RELEASE_LOG_ERROR(WebRTC, "DisplayCaptureSessionManager::startTabCapture - the tab capture window has no content; aborting.");
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        RefPtr requestingPage = request->page();
+        if (!requestingPage) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        Ref gpuProcess = protect(requestingPage->configuration().processPool())->ensureGPUProcess();
+        gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
+        gpuProcess->selectWindowForCapture(windowID, WTF::move(completionHandler));
+    });
 }
 #endif // HAVE(WINDOW_CAPTURE)
 
