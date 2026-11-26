@@ -155,6 +155,9 @@ void PacedMediaSamplesDecoder::pump()
 {
     assertIsCurrent(m_dispatcher.get());
 
+    // Calling the provider can destroy its owner, which may flush this decoder.
+    auto position = m_currentTimeProvider();
+
     while (!m_isDecoding && !m_error && !m_pending.isEmpty()) {
         auto& entry = m_pending.first();
         if (entry.isDrain) {
@@ -169,8 +172,8 @@ void PacedMediaSamplesDecoder::pump()
         }
 
         if (!entry.block.isEmpty()) {
-            if (auto waitTime = m_isVideo ? videoWaitTime(entry) : audioWaitTime()) {
-                scheduleWake(*waitTime);
+            if (auto waitTime = m_isVideo ? videoWaitTime(entry, position.time) : audioWaitTime(position.time)) {
+                scheduleWake(*waitTime, position.rate);
                 return;
             }
             --m_queuedBlockCount;
@@ -180,11 +183,10 @@ void PacedMediaSamplesDecoder::pump()
     }
 }
 
-std::optional<Seconds> PacedMediaSamplesDecoder::audioWaitTime()
+std::optional<Seconds> PacedMediaSamplesDecoder::audioWaitTime(const MediaTime& currentTime)
 {
     assertIsCurrent(m_dispatcher.get());
 
-    MediaTime currentTime = m_currentTimeProvider().time;
     if (!currentTime.isValid() || !m_decodedAudioEndTime.isValid()) {
         m_idledAtHighWaterMark = false;
         return { };
@@ -204,11 +206,10 @@ std::optional<Seconds> PacedMediaSamplesDecoder::audioWaitTime()
     return { };
 }
 
-std::optional<Seconds> PacedMediaSamplesDecoder::videoWaitTime(const Entry& entry)
+std::optional<Seconds> PacedMediaSamplesDecoder::videoWaitTime(const Entry& entry, const MediaTime& currentTime)
 {
     assertIsCurrent(m_dispatcher.get());
 
-    MediaTime currentTime = m_currentTimeProvider().time;
     if (!currentTime.isValid()) {
         m_decodedPresentationTimes.clear();
         m_idledAtHighWaterMark = false;
@@ -329,16 +330,15 @@ void PacedMediaSamplesDecoder::clearPending()
     ++m_wakeId;
 }
 
-void PacedMediaSamplesDecoder::scheduleWake(Seconds waitHint)
+void PacedMediaSamplesDecoder::scheduleWake(Seconds waitHint, double rate)
 {
     assertIsCurrent(m_dispatcher.get());
 
     // The time isn't advancing; currentTimeDidChange() resumes the work.
-    auto position = m_currentTimeProvider();
-    if (position.rate <= 0)
+    if (rate <= 0)
         return;
 
-    Seconds delay { std::clamp(waitHint.seconds() / position.rate, MinimumWakeDelay, MaximumWakeDelay) };
+    Seconds delay { std::clamp(waitHint.seconds() / rate, MinimumWakeDelay, MaximumWakeDelay) };
     auto wakeTime = MonotonicTime::now() + delay;
     if (m_wakeTime && *m_wakeTime <= wakeTime)
         return;

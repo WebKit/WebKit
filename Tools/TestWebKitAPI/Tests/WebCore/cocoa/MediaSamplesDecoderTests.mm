@@ -1808,6 +1808,111 @@ TEST(PacedMediaSamplesDecoder, DecodeRejectsChangedFormat)
     EXPECT_EQ(result.error(), PlatformMediaError::InvalidState);
 }
 
+class DecoderOwner : public ThreadSafeRefCounted<DecoderOwner> {
+public:
+    static Ref<DecoderOwner> create(PacedMediaSamplesDecoder& decoder) { return adoptRef(*new DecoderOwner(decoder)); }
+
+    ~DecoderOwner()
+    {
+        if (RefPtr decoder = m_decoder)
+            decoder->flush();
+    }
+
+private:
+    explicit DecoderOwner(PacedMediaSamplesDecoder& decoder)
+        : m_decoder(decoder)
+    {
+    }
+
+    ThreadSafeWeakPtr<PacedMediaSamplesDecoder> m_decoder;
+};
+
+struct OwnerReleasingTimeProvider {
+    Ref<TestClock> clock { TestClock::create() };
+    // Dropped by the next time query.
+    RefPtr<DecoderOwner> owner;
+};
+
+static Ref<PacedMediaSamplesDecoder> createPacedReleasingOwner(const TrackInfo& info, const std::shared_ptr<OwnerReleasingTimeProvider>& provider)
+{
+    auto promise = PacedMediaSamplesDecoder::create(info, allowedFilters, RunLoop::mainSingleton(), [provider] {
+        RefPtr owner = std::exchange(provider->owner, nullptr);
+        return provider->clock->position();
+    });
+    auto result = settle(promise.get());
+    RELEASE_ASSERT(result);
+    return WTF::move(*result);
+}
+
+static void testOwnerDestroyedDuringTimeQueryAfterDecode(Vector<UniqueRef<MediaSamplesBlock>>&& blocks)
+{
+    ASSERT_GE(blocks.size(), 2u);
+    ASSERT_TRUE(blocks[0]->info());
+
+    auto provider = std::make_shared<OwnerReleasingTimeProvider>();
+    provider->clock->set(blocks[0]->presentationTime());
+    Ref decoder = createPacedReleasingOwner(*blocks[0]->info(), provider);
+
+    // The second block waits for the first to be decoded; the time query that follows flushes both.
+    auto collected = std::make_shared<Collected>();
+    collect(decoder->decode(WTF::move(blocks[0].get())), collected);
+    collect(decoder->decode(WTF::move(blocks[1].get())), collected);
+    provider->owner = DecoderOwner::create(decoder);
+
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == 2;
+    }));
+    EXPECT_FALSE(provider->owner);
+    EXPECT_EQ(collected->rejected, 2u);
+    for (auto error : collected->errors)
+        EXPECT_EQ(error, PlatformMediaError::Cancelled);
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+}
+
+TEST(PacedMediaSamplesDecoder, AudioOwnerDestroyedDuringTimeQueryAfterDecode)
+{
+    testOwnerDestroyedDuringTimeQueryAfterDecode(splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio")));
+}
+
+TEST(PacedMediaSamplesDecoder, VideoOwnerDestroyedDuringTimeQueryAfterDecode)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    testOwnerDestroyedDuringTimeQueryAfterDecode(parseWebMVideoFile(@"test-vp8", vp8ContentType));
+}
+
+TEST(PacedMediaSamplesDecoder, OwnerDestroyedDuringTimeQueryOnCurrentTimeChange)
+{
+    auto blocks = splitIntoSingleItemBlocks(parseWebMAudioFile(@"test-mse-audio"));
+    ASSERT_FALSE(blocks.isEmpty());
+    ASSERT_TRUE(blocks[0]->info());
+
+    auto provider = std::make_shared<OwnerReleasingTimeProvider>();
+    Ref decoder = createPacedReleasingOwner(*blocks[0]->info(), provider);
+
+    auto collected = std::make_shared<Collected>();
+    size_t blockCount = blocks.size();
+    for (auto& block : blocks)
+        collect(decoder->decode(WTF::move(block.get())), collected);
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled > 0;
+    }));
+    sleepWhilePumping(settleTime);
+    ASSERT_LT(collected->settled, blockCount);
+
+    provider->owner = DecoderOwner::create(decoder);
+    decoder->currentTimeDidChange();
+    ASSERT_TRUE(waitUntil([&] {
+        return collected->settled == blockCount;
+    }));
+    EXPECT_FALSE(provider->owner);
+    EXPECT_GT(collected->rejected, 0u);
+    for (auto error : collected->errors)
+        EXPECT_EQ(error, PlatformMediaError::Cancelled);
+    EXPECT_TRUE(decoder->isReadyForMoreMediaData());
+}
+
 struct ExpectedAlpha {
     size_t x;
     size_t y;

@@ -147,7 +147,7 @@ AudioVideoRendererRemote::~AudioVideoRendererRemote() WTF_IGNORES_THREAD_SAFETY_
     m_videoLayerManager->didDestroyVideoLayer();
 #endif
 
-    ensureOnDispatcher([prepareSeekRequest = WTF::move(m_prepareSeekRequest), prepareSeekPromise = WTF::move(m_prepareSeekPromise), finishSeekRequest = WTF::move(m_finishSeekRequest), finishSeekPromise = WTF::move(m_finishSeekPromise), stallRequest = WTF::move(m_stallRequest), stallProducer = WTF::move(m_stallProducer), audioTrackStates = std::exchange(m_audioTrackStates, { }), videoTrackState = std::exchange(m_videoTrackState, nullptr)] mutable {
+    queueSingleton().dispatch([prepareSeekRequest = WTF::move(m_prepareSeekRequest), prepareSeekPromise = WTF::move(m_prepareSeekPromise), finishSeekRequest = WTF::move(m_finishSeekRequest), finishSeekPromise = WTF::move(m_finishSeekPromise), stallRequest = WTF::move(m_stallRequest), stallProducer = WTF::move(m_stallProducer), audioTrackStates = std::exchange(m_audioTrackStates, { }), videoTrackState = std::exchange(m_videoTrackState, nullptr)] mutable {
         if (prepareSeekRequest->hasCallback())
             prepareSeekRequest->disconnect();
         if (auto promise = std::exchange(prepareSeekPromise, std::nullopt))
@@ -167,7 +167,7 @@ AudioVideoRendererRemote::~AudioVideoRendererRemote() WTF_IGNORES_THREAD_SAFETY_
     });
 
     if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && !m_gpuProcessConnectionShutDown) {
-        ensureOnDispatcher([gpuProcessConnection, identifier = m_identifier] {
+        queueSingleton().dispatch([gpuProcessConnection, identifier = m_identifier] {
             gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Destroy(identifier), 0);
             gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), identifier.toUInt64());
         });

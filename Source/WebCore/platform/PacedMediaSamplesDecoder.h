@@ -88,14 +88,14 @@ private:
     Ref<DecodePromise> enqueue(Entry&&);
     void pump();
     // How long to wait before decoding the next block, nullopt to decode it now.
-    std::optional<Seconds> audioWaitTime();
-    std::optional<Seconds> videoWaitTime(const Entry&);
+    std::optional<Seconds> audioWaitTime(const MediaTime& currentTime);
+    std::optional<Seconds> videoWaitTime(const Entry&, const MediaTime& currentTime);
     void submit(Ref<DecodePromise>&&);
     void didSettle(uint32_t flushId, DecodePromise::Result&&);
     void recordOutput(const Vector<MediaSamplesBlock>&);
     void fail(PlatformMediaError);
     void clearPending();
-    void scheduleWake(Seconds waitHint);
+    void scheduleWake(Seconds waitHint, double rate);
     void wake(uint32_t wakeId);
     void updateReadiness();
 
