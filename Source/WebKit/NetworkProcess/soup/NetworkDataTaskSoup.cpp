@@ -914,7 +914,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
     clearRequest();
 
     auto response = ResourceResponse(m_response);
-    m_client->willPerformHTTPRedirection(WTF::move(response), WTF::move(request), [this, protectedThis = protect(*this), wasBlockingCookies, userAgent = WTF::move(userAgent)](const ResourceRequest& newRequest) {
+    m_client->willPerformHTTPRedirection(WTF::move(response), WTF::move(request), [this, protectedThis = protect(*this), wasBlockingCookies, isCrossOrigin, userAgent = WTF::move(userAgent)](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
             return;
 
@@ -932,6 +932,12 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 #if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
         // A redirect is followed here rather than in NetworkResourceLoader, so the best match has to
         // be recomputed for the new URL. https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+        // To be added with https://github.com/whatwg/fetch/pull/1854
+        // 3. If request's mode is "no-cors", then return the result of running fallback.
+        // Only same-origin no-cors loads get here, and one that has left its origin stays opaque.
+        if (m_compressionDictionary && m_compressionDictionary->isNoCors && isCrossOrigin)
+            m_compressionDictionary = std::nullopt;
+
         if (m_compressionDictionary) {
             m_compressionDictionary->match = std::nullopt;
             if (m_session && request.url().protocolIs("https"_s) && !shouldBlockCookies(request, wasBlockingCookies)) {
@@ -941,6 +947,8 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
                 }
             }
         }
+#else
+        UNUSED_VARIABLE(isCrossOrigin);
 #endif
 
         createRequest(WTF::move(request), wasBlockingCookies);
