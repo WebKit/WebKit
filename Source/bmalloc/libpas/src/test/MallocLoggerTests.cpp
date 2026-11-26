@@ -48,8 +48,9 @@ namespace {
 // The callouts only exist on the slow paths. libpas forces (almost) all allocation requests
 // to the slow path (via pas_thread_local_cache_can_set()).
 //
-// Enablement is currently also gated by the MallocStackLogging environment variable, except
-// for MallocStackLogging=lite, for which we switch to the system allocator.
+// Enablement is decided once, on the first pas_msl_is_enabled() call: callouts are enabled
+// if malloc_logger is installed or the MallocStackLogging environment variable is set (except
+// for MallocStackLogging=lite, for which we switch to the system allocator).
 //
 // Currently Darwin-only:
 // pas_thread_local_cache_can_set() only consults pas_msl_is_enabled() under PAS_OS(DARWIN),
@@ -152,10 +153,11 @@ void stopRecording()
     CHECK_LESS(recordedEventCount, maxEvents);
 }
 
-// Enable malloc_logger callouts (forcing on the slow path) without needing to enable
-// MallocStackLogging in the tests.
+// Enable malloc_logger callouts (forcing on the slow path) without needing to set
+// MallocStackLogging or install malloc_logger before the first pas_msl_is_enabled() call.
 void enableMallocLoggerCallouts()
 {
+    CHECK(!malloc_logger);
     CHECK(!getenv("MallocStackLogging"));
     CHECK(!pas_msl_is_enabled());
 
