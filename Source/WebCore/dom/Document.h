@@ -236,8 +236,10 @@ class Range;
 class RealtimeMediaSource;
 class Region;
 class RenderBlockFlow;
+class RenderLayerModelObject;
 class RenderTreeBuilder;
 class RenderView;
+class RenderViewTransitionCapture;
 class DeferredFetchRegistry;
 class ReportingScope;
 class RequestAnimationFrameCallback;
@@ -1893,8 +1895,17 @@ public:
     void resetObservationSizeForContainIntrinsicSize(Element&);
 
     using StartViewTransitionCallbackOptions = Variant<RefPtr<JSViewTransitionUpdateCallback>, StartViewTransitionOptions>;
-    RefPtr<ViewTransition> startViewTransition(StartViewTransitionCallbackOptions&&);
+    RefPtr<ViewTransition> startViewTransition(StartViewTransitionCallbackOptions&&, Element* scopeElement = nullptr);
     NODELETE WEBCORE_EXPORT ViewTransition* activeViewTransition() const;
+    NODELETE ViewTransition* activeViewTransitionForScope(const Element&) const;
+    RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
+    void addActiveScopedViewTransition(ViewTransition&);
+    void removeActiveScopedViewTransition(ViewTransition&);
+    NODELETE ViewTransition* viewTransitionHostedOn(const Element&) const;
+    void registerViewTransitionPseudoTreeHost(Element&);
+    void unregisterViewTransitionPseudoTreeHost(Element&);
+    bool elementMayHostViewTransitionPseudoTree(const Element&) const;
+    void reinstallActiveViewTransitionStyles();
     bool activeViewTransitionCapturedDocumentElement() const;
     void setActiveViewTransition(RefPtr<ViewTransition>&&);
 
@@ -2629,6 +2640,8 @@ private:
     Vector<WeakPtr<ResizeObserver>> m_resizeObservers;
 
     RefPtr<ViewTransition> m_activeViewTransition;
+    Vector<Ref<ViewTransition>> m_activeScopedViewTransitions;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_viewTransitionPseudoTreeHosts;
     Vector<Ref<ViewTransition>> m_viewTransitionUpdateCallbackQueue;
 
     std::optional<std::pair<QualifiedName, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_cachedFirstElementWithAttribute;

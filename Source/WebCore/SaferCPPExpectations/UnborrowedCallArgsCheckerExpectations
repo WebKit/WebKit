@@ -317,7 +317,6 @@ style/RuleSetBuilder.cpp
 style/StyleDocumentScope.cpp
 style/StyleExtractorCustom.h
 style/StyleInterpolation.cpp
-style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleSubstitutionResolver.cpp
 style/StyleTreeResolver.cpp

@@ -410,6 +410,7 @@ PASS view-timeline-inset
 PASS view-timeline-name
 PASS view-transition-class
 PASS view-transition-name
+PASS view-transition-scope
 PASS visibility
 PASS white-space-collapse
 PASS white-space-trim

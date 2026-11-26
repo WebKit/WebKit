@@ -1084,6 +1084,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+PointerLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+PointerLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+Typedom.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+Typedom.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+ViewTransition.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+ViewTransition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+VolumetricScene.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+VolumetricScene.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement.cpp

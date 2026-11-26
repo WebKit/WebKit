@@ -16585,6 +16585,7 @@
 		93EEC1E809C2877700C515D1 /* DocumentType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentType.idl; sourceTree = "<group>"; };
 		93EEC1E909C2877700C515D1 /* DOMImplementation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMImplementation.idl; sourceTree = "<group>"; };
 		93EEC1EA09C2877700C515D1 /* Element.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Element.idl; sourceTree = "<group>"; };
+		8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+ViewTransition.idl"; sourceTree = "<group>"; };
 		93EEC1F309C2877700C515D1 /* MutationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationEvent.idl; sourceTree = "<group>"; };
 		93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProcessingInstruction.idl; sourceTree = "<group>"; };
 		93EEC1F609C2877700C515D1 /* Text.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Text.idl; sourceTree = "<group>"; };
@@ -43172,6 +43173,7 @@
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
+				8C3CA7F81B1EAA73B5408DF6 /* Element+ViewTransition.idl */,
 				E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */,
 				CD814C2C2996BAD2005A780A /* ElementAncestorIteratorInlines.h */,
 				E440AA951C68420800A265CC /* ElementAndTextDescendantIterator.h */,
