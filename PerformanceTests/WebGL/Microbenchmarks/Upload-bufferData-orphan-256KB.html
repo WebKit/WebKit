@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 16 pairs of a bufferData that re-specifies the same 256 KB vertex buffer with new data and a
+// drawArrays of 65536 points that uses all of it, each into one 256x256 tile of a 1024x1024
+// framebuffer. The buffer holds the RGBA color of each point as normalized bytes. Each draw reads
+// the storage that the next bufferData orphans.
+const tileSize = 256;
+const width = 1024;
+const height = 1024;
+const tilesPerRow = width / tileSize;
+const drawCount = tilesPerRow * (height / tileSize);
+const vertexCount = tileSize * tileSize;
+const bufferSize = vertexCount * 4;
+// One pattern more than draws, so that the draws of a run differ from each other and from the
+// draws into the same tiles in the previous run.
+const patternCount = drawCount + 1;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec4 aColor;
+uniform vec2 uTileOrigin;
+varying vec4 vColor;
+void main() {
+    vColor = aColor;
+    gl_PointSize = 1.0;
+    gl_Position = vec4((aPosition + uTileOrigin) * vec2(${2 / width}, ${2 / height}) - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+let tileOriginLocation;
+const patterns = [];
+
+function patternFor(n, draw)
+{
+    return patterns[(n + draw) % patternCount];
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const pattern = patternFor(n, Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize));
+    const offset = ((y % tileSize) * tileSize + x % tileSize) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = pattern[offset + c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 16 pairs of bufferData of 256 KB that re-specifies the same vertex buffer and a drawArrays of 65536 points that uses all of it, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor"]);
+        tileOriginLocation = gl.getUniformLocation(program, "uTileOrigin");
+        for (let i = 0; i < patternCount; ++i)
+            patterns.push(WebGLBench.createPattern(bufferSize, i));
+
+        // Vertex i is a point at the center of pixel (i % tileSize, i / tileSize) of the tile.
+        const positions = new Float32Array(vertexCount * 2);
+        for (let y = 0; y < tileSize; ++y) {
+            for (let x = 0; x < tileSize; ++x) {
+                positions[(y * tileSize + x) * 2] = x + 0.5;
+                positions[(y * tileSize + x) * 2 + 1] = y + 0.5;
+            }
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+        // The color buffer stays bound to ARRAY_BUFFER for the bufferData calls.
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl.STREAM_DRAW);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 0, 0);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            gl.bufferData(gl.ARRAY_BUFFER, patternFor(n, i), gl.STREAM_DRAW);
+            gl.uniform2f(tileOriginLocation, (i % tilesPerRow) * tileSize, Math.floor(i / tilesPerRow) * tileSize);
+            gl.drawArrays(gl.POINTS, 0, vertexCount);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % width;
+        const y = WebGLBench.hash(n + 1) % height;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 0, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

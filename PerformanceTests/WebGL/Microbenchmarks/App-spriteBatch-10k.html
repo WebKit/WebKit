@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 2;
+
+// A sprite batcher: each run writes 10,000 sprites into one vertex buffer with a single
+// bufferSubData and draws them with a single drawElements from a 256x256 texture atlas of 16x16
+// sprites, into a 1024x1024 framebuffer. The sprites are pixel-aligned and drawn at 1:1 with NEAREST
+// sampling, and later sprites cover earlier ones, so the result is exact. 40,000 vertices need
+// OES_element_index_uint.
+const size = 1024;
+const spriteCount = 10000;
+const spriteSize = 16;
+const atlasSize = 256;
+const spritesPerAtlasRow = atlasSize / spriteSize;
+const floatsPerVertex = 4;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform sampler2D uAtlas;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = texture2D(uAtlas, vTexCoord);
+}`;
+
+let target;
+let atlas;
+const vertices = new Float32Array(spriteCount * 4 * floatsPerVertex);
+
+// Sprite i of iteration n: its bottom-left pixel and its cell in the atlas.
+function sprite(n, i)
+{
+    const value = WebGLBench.hash(n * spriteCount + i);
+    return [value % (size - spriteSize + 1), WebGLBench.hash(value) % (size - spriteSize + 1), (value >>> 16) % (spritesPerAtlasRow * spritesPerAtlasRow)];
+}
+
+function clearColor(n)
+{
+    return WebGLBench.color(n, spriteCount);
+}
+
+function fillVertices(n)
+{
+    const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
+    for (let i = 0; i < spriteCount; ++i) {
+        const [x, y, cell] = sprite(n, i);
+        const u = (cell % spritesPerAtlasRow) * spriteSize;
+        const v = Math.floor(cell / spritesPerAtlasRow) * spriteSize;
+        for (let vertex = 0; vertex < 4; ++vertex) {
+            const [cornerX, cornerY] = corners[vertex];
+            const offset = (i * 4 + vertex) * floatsPerVertex;
+            vertices[offset] = (x + cornerX * spriteSize) / (size / 2) - 1;
+            vertices[offset + 1] = (y + cornerY * spriteSize) / (size / 2) - 1;
+            vertices[offset + 2] = (u + cornerX * spriteSize) / atlasSize;
+            vertices[offset + 3] = (v + cornerY * spriteSize) / atlasSize;
+        }
+    }
+}
+
+// Paints the sprites in draw order.
+function expectedImage(n)
+{
+    const pixels = new Uint8Array(size * size * 4);
+    const background = clearColor(n);
+    for (let offset = 0; offset < pixels.length; offset += 4)
+        pixels.set(background, offset);
+    for (let i = 0; i < spriteCount; ++i) {
+        const [x, y, cell] = sprite(n, i);
+        const u = (cell % spritesPerAtlasRow) * spriteSize;
+        const v = Math.floor(cell / spritesPerAtlasRow) * spriteSize;
+        for (let row = 0; row < spriteSize; ++row) {
+            const source = ((v + row) * atlasSize + u) * 4;
+            pixels.set(atlas.subarray(source, source + spriteSize * 4), ((y + row) * size + x) * 4);
+        }
+    }
+    return pixels;
+}
+
+function expectedPixel(n, x, y)
+{
+    for (let i = spriteCount - 1; i >= 0; --i) {
+        const [spriteX, spriteY, cell] = sprite(n, i);
+        if (x < spriteX || x >= spriteX + spriteSize || y < spriteY || y >= spriteY + spriteSize)
+            continue;
+        const u = (cell % spritesPerAtlasRow) * spriteSize + x - spriteX;
+        const v = Math.floor(cell / spritesPerAtlasRow) * spriteSize + y - spriteY;
+        const offset = (v * atlasSize + u) * 4;
+        return atlas.subarray(offset, offset + 4);
+    }
+    return clearColor(n);
+}
+
+WebGLBench.run({
+    description: "Measures a bufferSubData of 10,000 sprites of 16x16 pixels and one drawElements of them with UNSIGNED_INT indices and a texture atlas into a 1024x1024 framebuffer, followed by a 1x1 readPixels.",
+    setup(gl) {
+        if (!gl.getExtension("OES_element_index_uint"))
+            throw new Error("OES_element_index_uint is not available");
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aTexCoord"]);
+
+        atlas = WebGLBench.createPattern(atlasSize * atlasSize * 4, 0);
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, atlasSize, atlasSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices.byteLength, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, floatsPerVertex * 4, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, floatsPerVertex * 4, 8);
+
+        const indices = new Uint32Array(spriteCount * 6);
+        for (let i = 0; i < spriteCount; ++i)
+            indices.set([0, 1, 2, 2, 1, 3].map(corner => i * 4 + corner), i * 6);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    },
+    iteration(gl, n) {
+        fillVertices(n);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+        const background = clearColor(n);
+        gl.clearColor(background[0] / 255, background[1] / 255, background[2] / 255, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+        gl.drawElements(gl.TRIANGLES, spriteCount * 6, gl.UNSIGNED_INT, 0);
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y));
+    },
+    verify(gl, n) {
+        const pixels = WebGLBench.readPixels(gl, target, 0, 0, size, size);
+        WebGLBench.verifyPixels("Sprites", pixels, expectedImage(n), size, 0);
+    }
+});
+
+</script>
+</body>
+</html>

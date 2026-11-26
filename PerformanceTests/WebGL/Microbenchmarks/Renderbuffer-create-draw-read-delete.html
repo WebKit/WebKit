@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 16 times: create a 256x256 RGBA8 renderbuffer and a framebuffer for it, draw a color into it,
+// read back one pixel and delete both. RGBA8 renderbuffers need WebGL 2.
+const size = 256;
+const loopCount = 16;
+
+const vertexShader = `
+attribute vec2 aPosition;
+void main() {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+void main() {
+    gl_FragColor = uColor;
+}`;
+
+let colorLocation;
+const pixels = new Uint8Array(loopCount * 4);
+
+function verifyPixels(n)
+{
+    const expected = new Uint8Array(loopCount * 4);
+    for (let i = 0; i < loopCount; ++i)
+        expected.set(WebGLBench.color(n, i), i * 4);
+    WebGLBench.verifyPixels("Renderbuffer pixels", pixels, expected, loopCount, 1);
+}
+
+WebGLBench.run({
+    description: "Measures 16 times creating a 256x256 RGBA8 renderbuffer and a framebuffer for it, drawing into it, reading back 1 pixel and deleting both. Uses WebGL 2.",
+    contextType: "webgl2",
+    setup(gl) {
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        colorLocation = gl.getUniformLocation(program, "uColor");
+        WebGLBench.bindFullscreenQuad(gl);
+        gl.viewport(0, 0, size, size);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < loopCount; ++i) {
+            const renderbuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+            gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA8, size, size);
+            const framebuffer = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, renderbuffer);
+            const color = WebGLBench.color(n, i);
+            gl.uniform4f(colorLocation, color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.readPixels(size - 1, size - 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels.subarray(i * 4, i * 4 + 4));
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.deleteFramebuffer(framebuffer);
+            gl.deleteRenderbuffer(renderbuffer);
+        }
+    },
+    probe(gl, n) {
+        verifyPixels(n);
+    },
+    verify(gl, n) {
+        verifyPixels(n);
+    }
+});
+
+</script>
+</body>
+</html>

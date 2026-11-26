@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const drawCount = 128;
+
+const fragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+void main() {
+    gl_FragColor = uColor;
+}`;
+
+let colorLocation;
+const color = [0, 0, 0, 0];
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that writes a constant color from a uniform, followed by a 1x1 readPixels. The color changes with every run.",
+    fragmentShader,
+    drawCount,
+    tolerance: 0,
+    setup(gl, program) {
+        colorLocation = gl.getUniformLocation(program, "uColor");
+    },
+    update(gl, n) {
+        WebGLBench.colorInto(n, 0, color);
+        gl.uniform4f(colorLocation, color[0] / 255, color[1] / 255, color[2] / 255, 1);
+    },
+    expectedPixel(n, x, y, out) {
+        return WebGLBench.colorInto(n, 0, out);
+    }
+});
+
+</script>
+</body>
+</html>

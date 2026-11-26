@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+const size = 2048;
+const drawCount = 4;
+const loopCount = 64;
+const sampleCount = 256;
+
+const vertexShader = `
+attribute vec2 aPosition;
+void main() {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+// Each term is bounded and does not feed back into the next iteration, so differences in the
+// precision of the builtins stay well below one 8-bit step.
+const fragmentShader = `
+precision highp float;
+uniform float uSeed;
+uniform float uOutputScale;
+void main() {
+    vec2 p = gl_FragCoord.xy / ${size}.0;
+    vec4 sum = vec4(0.0);
+    for (int i = 0; i < ${loopCount}; i++) {
+        float k = float(i) + uSeed;
+        sum += vec4(sin(p.x * k * 0.1), cos(p.y * k * 0.1), exp(-p.x * k * 0.05), sqrt(p.y * k + 1.0));
+    }
+    vec4 average = sum * (1.0 / ${loopCount}.0);
+    gl_FragColor = vec4(average.x * 0.5 + 0.5, average.y * 0.5 + 0.5, average.z, average.w / 9.0) * uOutputScale;
+}`;
+
+let target;
+let seedLocation;
+let outputScaleLocation;
+
+function seedFor(n)
+{
+    return (n % 16) * 0.25;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const f = Math.fround;
+    const seed = seedFor(n);
+    const px = f(f(x + 0.5) / size);
+    const py = f(f(y + 0.5) / size);
+    const sum = [0, 0, 0, 0];
+    for (let i = 0; i < loopCount; ++i) {
+        const k = f(i + seed);
+        sum[0] += Math.sin(f(f(px * k) * f(0.1)));
+        sum[1] += Math.cos(f(f(py * k) * f(0.1)));
+        sum[2] += Math.exp(f(f(-px * k) * f(0.05)));
+        sum[3] += Math.sqrt(f(py * k) + 1);
+    }
+    const average = sum.map(value => value / loopCount);
+    const color = [average[0] * 0.5 + 0.5, average[1] * 0.5 + 0.5, average[2], average[3] / 9];
+    for (let c = 0; c < 4; ++c)
+        out[c] = Math.round(Math.min(Math.max(color[c], 0), 1) * 255);
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 4 fullscreen draws into a 2048x2048 framebuffer of a fragment shader that runs a 64-iteration loop of sin, cos, exp and sqrt, followed by a 1x1 readPixels. Additive blending of draws whose color is multiplied by zero, except the last, keeps the GPU from skipping covered draws.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+        outputScaleLocation = gl.getUniformLocation(program, "uOutputScale");
+        WebGLBench.bindFullscreenQuad(gl);
+        // Tile-based GPUs skip opaque draws that a later opaque draw covers. With additive blending
+        // onto a cleared target and the color of every draw but the last multiplied by zero, the
+        // result is the last draw's color, but every draw reads the framebuffer, so every draw is
+        // shaded. Blend constants are not used, because ANGLE's WebGPU backend ignores them.
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);
+    },
+    iteration(gl, n) {
+        gl.uniform1f(seedLocation, seedFor(n));
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        for (let i = 0; i < drawCount; ++i) {
+            gl.uniform1f(outputScaleLocation, i == drawCount - 1 ? 1 : 0);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]), 2);
+    },
+    verify(gl, n) {
+        const pixels = WebGLBench.readPixels(gl, target, 0, 0, size, size);
+        const expected = [0, 0, 0, 0];
+        for (let i = 0; i < sampleCount; ++i) {
+            const x = WebGLBench.hash(i * 2) % size;
+            const y = WebGLBench.hash(i * 2 + 1) % size;
+            WebGLBench.verifyPixels("Pixel (" + x + ", " + y + ")", pixels.subarray((y * size + x) * 4), expectedPixel(n, x, y, expected), 1, 2);
+        }
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const layerCount = 8;
+const batchCount = 4;
+const drawCount = layerCount * batchCount;
+
+// Discards half of the pixels in a checkerboard of uCell x uCell squares, uCell a power of two.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform vec4 uColor;
+uniform float uCell;
+uniform float uParity;
+void main() {
+    vec2 cell = floor(vPixel / uCell);
+    if (mod(cell.x + cell.y + uParity, 2.0) < 0.5)
+        discard;
+    gl_FragColor = uColor;
+}`;
+
+let colorLocation;
+let cellLocation;
+let parityLocation;
+const color = [0, 0, 0, 0];
+
+function cellFor(n, i)
+{
+    return 1 << ((i + n) % 4);
+}
+
+function parityFor(n, i)
+{
+    return ((i >> 2) + n) & 1;
+}
+
+function clearColorFor(n)
+{
+    return WebGLBench.color(n, 1000);
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + batchCount + " batches of " + layerCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that discards half of the pixels in a checkerboard pattern, followed by a 1x1 readPixels.",
+    size,
+    // Each layer discards half of the pixels, so it does not cover the layers below it.
+    allowHiddenSurfaceRemoval: true,
+    fragmentShader,
+    drawCount,
+    tolerance: 0,
+    setup(gl, program) {
+        colorLocation = gl.getUniformLocation(program, "uColor");
+        cellLocation = gl.getUniformLocation(program, "uCell");
+        parityLocation = gl.getUniformLocation(program, "uParity");
+    },
+    clearColor: clearColorFor,
+    draw(gl, n, i) {
+        WebGLBench.colorInto(n, i, color);
+        gl.uniform4f(colorLocation, color[0] / 255, color[1] / 255, color[2] / 255, 1);
+        gl.uniform1f(cellLocation, cellFor(n, i));
+        gl.uniform1f(parityLocation, parityFor(n, i));
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    },
+    // The color of the last layer that does not discard the pixel.
+    expectedPixel(n, x, y, out) {
+        for (let i = drawCount - 1; i >= 0; --i) {
+            const cell = cellFor(n, i);
+            if ((Math.floor(x / cell) + Math.floor(y / cell) + parityFor(n, i)) % 2)
+                return WebGLBench.colorInto(n, i, out);
+        }
+        const clear = clearColorFor(n);
+        for (let c = 0; c < 4; ++c)
+            out[c] = clear[c];
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

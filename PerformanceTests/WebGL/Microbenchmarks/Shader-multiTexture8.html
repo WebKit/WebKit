@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const textureSize = 512;
+const textureCount = 8;
+const drawCount = 8;
+
+function fetches()
+{
+    let source = "";
+    for (let k = 0; k < textureCount; ++k)
+        source += `    sum += texture2D(uTexture${k}, (texel + uOffset[${k}]) * (1.0 / ${textureSize}.0));\n`;
+    return source;
+}
+
+// Each unit holds a different random texture, sampled at a different offset with REPEAT.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+${Array.from({ length: textureCount }, (_, k) => `uniform sampler2D uTexture${k};`).join("\n")}
+uniform vec2 uOffset[${textureCount}];
+void main() {
+    vec2 texel = floor(vPixel) + vec2(0.5);
+    vec4 sum = vec4(0.0);
+${fetches()}    gl_FragColor = sum * (1.0 / ${textureCount}.0);
+}`;
+
+let offsetLocation;
+const contents = [];
+const offsets = new Float32Array(textureCount * 2);
+
+function offsetsFor(n)
+{
+    for (let i = 0; i < textureCount * 2; ++i)
+        offsets[i] = WebGLBench.hash(n * 16 + i + 77) % textureSize;
+    return offsets;
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that averages NEAREST fetches from " + textureCount + " 512x512 RGBA8 textures on " + textureCount + " texture units, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 1,
+    setup(gl, program) {
+        offsetLocation = gl.getUniformLocation(program, "uOffset");
+        for (let k = 0; k < textureCount; ++k) {
+            const data = WebGLBench.createPattern(textureSize * textureSize * 4, 100 + k);
+            contents.push(data);
+            gl.uniform1i(gl.getUniformLocation(program, "uTexture" + k), k);
+            gl.activeTexture(gl.TEXTURE0 + k);
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+        }
+        gl.activeTexture(gl.TEXTURE0);
+    },
+    update(gl, n) {
+        gl.uniform2fv(offsetLocation, offsetsFor(n));
+    },
+    expectedPixel(n, x, y, out) {
+        const offsets = offsetsFor(n);
+        const sum = [0, 0, 0, 0];
+        for (let k = 0; k < textureCount; ++k) {
+            const tx = (x + offsets[k * 2]) % textureSize;
+            const ty = (y + offsets[k * 2 + 1]) % textureSize;
+            const offset = (ty * textureSize + tx) * 4;
+            for (let c = 0; c < 4; ++c)
+                sum[c] += contents[k][offset + c];
+        }
+        for (let c = 0; c < 4; ++c)
+            out[c] = Math.round(sum[c] / textureCount);
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 3;
+
+// 200 pairs of a bufferSubData of 96 indices into the same index buffer and a drawElements of
+// them, one per 16x16 tile of a 320x160 framebuffer. A tile is 4x4 cells of 4x4 pixels. The
+// static vertex buffer has a quad in each of 4 palette colors for every cell, and the uploaded
+// indices pick one of them per cell, so the colors in the image depend only on the indices.
+// Each draw reads the indices that the next upload replaces.
+const width = 320;
+const height = 160;
+const tileSize = 16;
+const tilesPerRow = width / tileSize;
+const drawCount = tilesPerRow * (height / tileSize);
+const cellSize = 4;
+const cellsPerRow = tileSize / cellSize;
+const cellsPerTile = cellsPerRow * cellsPerRow;
+const indicesPerDraw = cellsPerTile * 6;
+const vertexSize = 12; // vec2 position as floats, then RGBA as normalized bytes.
+const patternCount = 5;
+const palette = [[255, 0, 0, 255], [0, 255, 0, 255], [0, 0, 255, 255], [255, 255, 255, 255]];
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main() {
+    vColor = aColor;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+// indexViews[pattern][draw] holds the indices of tile draw for that pattern.
+const indexViews = [];
+
+function paletteIndex(pattern, draw, cell)
+{
+    return WebGLBench.hash((pattern * drawCount + draw) * cellsPerTile + cell) % palette.length;
+}
+
+function patternFor(n, draw)
+{
+    return (n + draw) % patternCount;
+}
+
+function firstVertex(draw, cell, color)
+{
+    return ((draw * cellsPerTile + cell) * palette.length + color) * 4;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const draw = Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize);
+    const cell = Math.floor((y % tileSize) / cellSize) * cellsPerRow + Math.floor((x % tileSize) / cellSize);
+    const color = palette[paletteIndex(patternFor(n, draw), draw, cell)];
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 200 pairs of bufferSubData of 96 16-bit indices into the same index buffer and a drawElements of them, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor"]);
+
+        // 4 vertices, the corners of the cell, per cell and palette color.
+        const vertices = new ArrayBuffer(firstVertex(drawCount, 0, 0) * vertexSize);
+        const positions = new Float32Array(vertices);
+        const bytes = new Uint8Array(vertices);
+        const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
+        for (let draw = 0; draw < drawCount; ++draw) {
+            for (let cell = 0; cell < cellsPerTile; ++cell) {
+                const cellX = (draw % tilesPerRow) * tileSize + (cell % cellsPerRow) * cellSize;
+                const cellY = Math.floor(draw / tilesPerRow) * tileSize + Math.floor(cell / cellsPerRow) * cellSize;
+                for (let color = 0; color < palette.length; ++color) {
+                    corners.forEach(([x, y], corner) => {
+                        const offset = (firstVertex(draw, cell, color) + corner) * vertexSize;
+                        positions[offset / 4] = (cellX + x * cellSize) / (width / 2) - 1;
+                        positions[offset / 4 + 1] = (cellY + y * cellSize) / (height / 2) - 1;
+                        bytes.set(palette[color], offset + 8);
+                    });
+                }
+            }
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, vertexSize, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, vertexSize, 8);
+
+        for (let pattern = 0; pattern < patternCount; ++pattern) {
+            const indices = new Uint16Array(drawCount * indicesPerDraw);
+            const views = [];
+            for (let draw = 0; draw < drawCount; ++draw) {
+                for (let cell = 0; cell < cellsPerTile; ++cell) {
+                    const first = firstVertex(draw, cell, paletteIndex(pattern, draw, cell));
+                    indices.set([first, first + 1, first + 2, first + 2, first + 1, first + 3], (draw * cellsPerTile + cell) * 6);
+                }
+                views.push(indices.subarray(draw * indicesPerDraw, (draw + 1) * indicesPerDraw));
+            }
+            indexViews.push(views);
+        }
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indicesPerDraw * 2, gl.DYNAMIC_DRAW);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indexViews[patternFor(n, i)][i]);
+            gl.drawElements(gl.TRIANGLES, indicesPerDraw, gl.UNSIGNED_SHORT, 0);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % width;
+        const y = WebGLBench.hash(n + 1) % height;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Cells", 0, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

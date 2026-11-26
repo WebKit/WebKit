@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 3;
+
+// 1024 draws, one per 8x8 tile of a 256x256 framebuffer.
+const size = 256;
+const tileSize = 8;
+const tilesPerRow = size / tileSize;
+const drawCount = tilesPerRow * tilesPerRow;
+
+const vertexShader = `
+attribute vec2 aPosition;
+uniform vec2 uOffset;
+void main() {
+    gl_Position = vec4((aPosition * ${tileSize}.0 + uOffset) / ${size / 2}.0 - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+void main() {
+    gl_FragColor = uColor;
+}`;
+
+let target;
+let offsetLocation;
+let colorLocation;
+const color = [0, 0, 0, 0];
+
+WebGLBench.run({
+    description: "Measures 1024 drawArrays calls of 2 triangles each, with uniform2f and uniform4f before each draw, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        offsetLocation = gl.getUniformLocation(program, "uOffset");
+        colorLocation = gl.getUniformLocation(program, "uColor");
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            WebGLBench.colorInto(n, i, color);
+            gl.uniform2f(offsetLocation, (i % tilesPerRow) * tileSize, Math.floor(i / tilesPerRow) * tileSize);
+            gl.uniform4f(colorLocation, color[0] / 255, color[1] / 255, color[2] / 255, 1);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, size - tileSize / 2, size - tileSize / 2, WebGLBench.color(n, drawCount - 1), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => {
+            WebGLBench.colorInto(n, Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize), out);
+        });
+    }
+});
+
+</script>
+</body>
+</html>

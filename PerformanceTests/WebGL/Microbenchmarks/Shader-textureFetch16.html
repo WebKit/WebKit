@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const textureSize = 1024;
+const textureCount = 4;
+const drawCount = 8;
+
+// A 4x4 box filter whose taps fall on the texel corners, so each LINEAR fetch averages 2x2
+// texels with weights of exactly 1/2. The blur of a linear ramp is the ramp, so the result is the
+// texel at the center.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform sampler2D uTexture;
+uniform vec2 uShift;
+void main() {
+    vec2 center = floor(vPixel * 0.5) + uShift + vec2(0.5);
+    vec4 sum = vec4(0.0);
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++)
+            sum += texture2D(uTexture, (center + vec2(float(i) - 1.5, float(j) - 1.5)) * (1.0 / ${textureSize}.0));
+    }
+    gl_FragColor = sum * (1.0 / 16.0);
+}`;
+
+const textures = [];
+let shiftLocation;
+
+// Texture t holds ramps that wrap every 256 texels: red along x, green along y, blue along x + y.
+function rampOffsets(t)
+{
+    return [61 * t + 17, 113 * t + 5, 29 * t + 101];
+}
+
+function shiftFor(n)
+{
+    return [(n * 7) % 32 - 16, (n * 13) % 32 - 16];
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that blurs a 1024x1024 RGBA8 texture with 16 LINEAR fetches, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 1,
+    setup(gl, program) {
+        shiftLocation = gl.getUniformLocation(program, "uShift");
+        gl.uniform1i(gl.getUniformLocation(program, "uTexture"), 0);
+        const data = new Uint8Array(textureSize * textureSize * 4);
+        for (let t = 0; t < textureCount; ++t) {
+            const offsets = rampOffsets(t);
+            for (let y = 0; y < textureSize; ++y) {
+                for (let x = 0; x < textureSize; ++x) {
+                    const offset = (y * textureSize + x) * 4;
+                    data[offset] = (x + offsets[0]) & 255;
+                    data[offset + 1] = (y + offsets[1]) & 255;
+                    data[offset + 2] = (x + y + offsets[2]) & 255;
+                    data[offset + 3] = 255;
+                }
+            }
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+            textures.push(texture);
+        }
+    },
+    update(gl, n) {
+        gl.bindTexture(gl.TEXTURE_2D, textures[n % textureCount]);
+        const shift = shiftFor(n);
+        gl.uniform2f(shiftLocation, shift[0], shift[1]);
+    },
+    expectedPixel(n, x, y, out) {
+        const shift = shiftFor(n);
+        const offsets = rampOffsets(n % textureCount);
+        const cx = Math.floor(x / 2) + shift[0];
+        const cy = Math.floor(y / 2) + shift[1];
+        // The filter reads texels center - 2 to center + 2. They have to be inside the texture
+        // and on one period of each ramp.
+        if (cx < 2 || cy < 2 || cx > textureSize - 3 || cy > textureSize - 3)
+            return null;
+        if (((cx - 2 + offsets[0]) & 255) > 251 || ((cy - 2 + offsets[1]) & 255) > 251 || ((cx + cy - 4 + offsets[2]) & 255) > 247)
+            return null;
+        out[0] = (cx + offsets[0]) & 255;
+        out[1] = (cy + offsets[1]) & 255;
+        out[2] = (cx + cy + offsets[2]) & 255;
+        out[3] = 255;
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 3;
+
+// blitFramebuffer is WebGL 2 only. The blits are the only kind that ANGLE's WebGPU backend
+// implements: same size and same format, RGBA8 to RGBA8, with NEAREST filtering.
+const size = 1024;
+const blitCount = 8;
+const sourceCount = 4;
+const sources = [];
+const destinations = [];
+const patterns = [];
+
+function sourceFor(n, blit)
+{
+    return (n + blit) % sourceCount;
+}
+
+WebGLBench.run({
+    description: "Measures 8 blitFramebuffer calls that copy 1024x1024 RGBA8 framebuffers to other 1024x1024 RGBA8 framebuffers with NEAREST filtering, followed by a 1x1 readPixels. Uses WebGL 2.",
+    contextType: "webgl2",
+    setup(gl) {
+        for (let i = 0; i < sourceCount; ++i) {
+            patterns.push(WebGLBench.createPattern(size * size * 4, i));
+            const source = WebGLBench.createRenderTarget(gl, size, size);
+            gl.bindTexture(gl.TEXTURE_2D, source.texture);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, size, size, gl.RGBA, gl.UNSIGNED_BYTE, patterns[i]);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            sources.push(source);
+        }
+        for (let i = 0; i < blitCount; ++i)
+            destinations.push(WebGLBench.createRenderTarget(gl, size, size));
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < blitCount; ++i) {
+            gl.bindFramebuffer(gl.READ_FRAMEBUFFER, sources[sourceFor(n, i)].framebuffer);
+            gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, destinations[i].framebuffer);
+            gl.blitFramebuffer(0, 0, size, size, 0, 0, size, size, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        const offset = (y * size + x) * 4;
+        WebGLBench.probe(gl, destinations[blitCount - 1], x, y, patterns[sourceFor(n, blitCount - 1)].subarray(offset, offset + 4));
+    },
+    verify(gl, n) {
+        for (let i = 0; i < blitCount; ++i) {
+            const pixels = WebGLBench.readPixels(gl, destinations[i], 0, 0, size, size);
+            WebGLBench.verifyPixels("Destination " + i, pixels, patterns[sourceFor(n, i)], size, 0);
+        }
+    }
+});
+
+</script>
+</body>
+</html>

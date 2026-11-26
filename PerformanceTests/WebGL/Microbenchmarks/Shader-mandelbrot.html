@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const drawCount = 4;
+const maxIterations = 256;
+
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform vec2 uCenter;
+uniform float uScale;
+void main() {
+    vec2 c = uCenter + (vPixel - vec2(${size / 2}.0)) * uScale;
+    vec2 z = vec2(0.0);
+    float k = 0.0;
+    for (int i = 0; i < ${maxIterations}; i++) {
+        if (dot(z, z) > 4.0)
+            break;
+        z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+        k += 1.0;
+    }
+    gl_FragColor = vec4(k / ${maxIterations}.0, fract(k / 16.0), fract(k / 4.0), 1.0);
+}`;
+
+let centerLocation;
+let scaleLocation;
+
+function viewFor(n)
+{
+    const f = Math.fround;
+    return {
+        centerX: f(-0.75 + 0.02 * (n % 8)),
+        centerY: f(0.01 * ((n % 5) - 2)),
+        scale: f((3 / size) * (1 - 0.03 * (n % 4))),
+    };
+}
+
+// The escape iteration count, in single precision when f is Math.fround.
+function escapeCount(cx, cy, f)
+{
+    let zx = 0;
+    let zy = 0;
+    let k = 0;
+    for (let i = 0; i < maxIterations; ++i) {
+        if (f(f(zx * zx) + f(zy * zy)) > 4)
+            break;
+        const x = f(f(f(zx * zx) - f(zy * zy)) + cx);
+        zy = f(f(f(2 * zx) * zy) + cy);
+        zx = x;
+        ++k;
+    }
+    return k;
+}
+
+const identity = value => value;
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that iterates the Mandelbrot set up to " + maxIterations + " times with an early break, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 1,
+    setup(gl, program) {
+        centerLocation = gl.getUniformLocation(program, "uCenter");
+        scaleLocation = gl.getUniformLocation(program, "uScale");
+    },
+    update(gl, n) {
+        const view = viewFor(n);
+        gl.uniform2f(centerLocation, view.centerX, view.centerY);
+        gl.uniform1f(scaleLocation, view.scale);
+    },
+    expectedPixel(n, x, y, out) {
+        const f = Math.fround;
+        const view = viewFor(n);
+        const cx = f(view.centerX + f(f(x + 0.5 - size / 2) * view.scale));
+        const cy = f(view.centerY + f(f(y + 0.5 - size / 2) * view.scale));
+        const k = escapeCount(cx, cy, f);
+        // The count has to be the same in double precision and half a pixel away, so that
+        // rounding differences cannot change it.
+        const delta = view.scale * 0.5;
+        if (escapeCount(cx, cy, identity) != k
+            || escapeCount(cx + delta, cy, identity) != k
+            || escapeCount(cx - delta, cy, identity) != k
+            || escapeCount(cx, cy + delta, identity) != k
+            || escapeCount(cx, cy - delta, identity) != k)
+            return null;
+        out[0] = Math.round(k / maxIterations * 255);
+        out[1] = Math.round((k / 16 - Math.floor(k / 16)) * 255);
+        out[2] = Math.round((k / 4 - Math.floor(k / 4)) * 255);
+        out[3] = 255;
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

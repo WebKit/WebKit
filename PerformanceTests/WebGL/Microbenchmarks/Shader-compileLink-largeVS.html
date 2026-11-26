@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// Each run compiles, links and draws once with 4 programs that have a skinning vertex shader: a
+// uniform array of 64 bone matrices, 8 attributes, 4 bones per vertex for the position, normal and
+// tangent, and per-vertex lighting. Each program draws a quad into its own 16x16 tile.
+//
+// The bones are translations by multiples of 1/16 and the vertex positions are offset by minus the
+// weighted bone translation, so the skinned positions are exact. The lighting is multiplied by a
+// uniform that is zero, and the color comes from constants unique to the run and the program, so
+// no shader or pipeline cache can be hit.
+const tileSize = 16;
+const tilesPerRow = 2;
+const size = tileSize * tilesPerRow;
+const programCount = 4;
+const boneCount = 64;
+const floatsPerVertex = 4 + 4 + 4 + 3 + 3 + 2 + 4 + 4;
+const attributeNames = ["aPosition", "aBoneIndices", "aBoneWeights", "aNormal", "aTangent", "aTexCoord", "aColor", "aMorph"];
+const attributeSizes = [4, 4, 4, 3, 3, 2, 4, 4];
+const boneWeights = [0.5, 0.25, 0.125, 0.125];
+
+let target;
+let vertexBuffer;
+const bones = new Float32Array(boneCount * 16);
+
+function seedColor(n, program)
+{
+    return [n & 0xff, (n >> 8) & 0xff, 64 + program * 32, 255];
+}
+
+function vertexShaderFor(n, program)
+{
+    const color = seedColor(n, program);
+    return `
+uniform mat4 uBones[${boneCount}];
+uniform mat4 uViewProjection;
+uniform vec3 uLightDirection;
+uniform vec3 uEyePosition;
+uniform vec4 uMorphWeights;
+uniform float uLightingScale;
+attribute vec4 aPosition;
+attribute vec4 aBoneIndices;
+attribute vec4 aBoneWeights;
+attribute vec3 aNormal;
+attribute vec3 aTangent;
+attribute vec2 aTexCoord;
+attribute vec4 aColor;
+attribute vec4 aMorph;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vNormal;
+varying vec3 vTangent;
+const vec4 kColor = vec4(${color.map(value => value.toFixed(1)).join(", ")}) / 255.0;
+const float kSeed = ${n.toFixed(1)};
+const float kProgram = ${program.toFixed(1)};
+
+mat4 skinMatrix() {
+    return uBones[int(aBoneIndices.x)] * aBoneWeights.x
+        + uBones[int(aBoneIndices.y)] * aBoneWeights.y
+        + uBones[int(aBoneIndices.z)] * aBoneWeights.z
+        + uBones[int(aBoneIndices.w)] * aBoneWeights.w;
+}
+
+vec3 morphNormal(vec3 normal) {
+    vec3 morphed = normal + aMorph.xyz * dot(aMorph, uMorphWeights);
+    return normalize(morphed + vec3(0.0, 0.0, 0.001));
+}
+
+float specular(vec3 normal, vec3 worldPosition, float shininess) {
+    vec3 toEye = normalize(uEyePosition - worldPosition + vec3(0.0, 0.0, 0.001));
+    vec3 halfVector = normalize(toEye + uLightDirection);
+    return pow(max(dot(normal, halfVector), 0.0), shininess);
+}
+
+vec4 lighting(vec3 normal, vec3 tangent, vec3 worldPosition) {
+    float diffuse = max(dot(normal, uLightDirection), 0.0);
+    float rim = 1.0 - max(dot(normal, normalize(uEyePosition + vec3(0.0, 0.0, 0.001))), 0.0);
+    float tangentDotLight = dot(tangent, uLightDirection);
+    float anisotropic = sqrt(max(1.0 - tangentDotLight * tangentDotLight, 0.0));
+    vec3 color = aColor.rgb * (0.2 + diffuse) + vec3(specular(normal, worldPosition, 16.0 + kSeed * 0.001));
+    color += vec3(rim * rim * 0.5 + anisotropic * 0.25);
+    color *= 0.5 + 0.5 * sin(aTexCoord.x * 6.2831853 + kProgram);
+    return clamp(vec4(color, aColor.a), 0.0, 1.0);
+}
+
+void main() {
+    mat4 skin = skinMatrix();
+    vec4 worldPosition = skin * aPosition;
+    vec3 normal = morphNormal(normalize((skin * vec4(aNormal, 0.0)).xyz + vec3(0.0, 0.0, 0.001)));
+    vec3 tangent = normalize((skin * vec4(aTangent, 0.0)).xyz + vec3(0.001, 0.0, 0.0));
+    tangent = normalize(tangent - normal * dot(normal, tangent) + vec3(0.001, 0.0, 0.0));
+    vNormal = normal;
+    vTangent = tangent;
+    vTexCoord = aTexCoord;
+    vColor = kColor + lighting(normal, tangent, worldPosition.xyz) * uLightingScale;
+    gl_Position = uViewProjection * worldPosition;
+}`;
+}
+
+function fragmentShaderFor(n, program)
+{
+    return `
+precision highp float;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+varying vec3 vNormal;
+varying vec3 vTangent;
+uniform float uLightingScale;
+void main() {
+    gl_FragColor = vColor + vec4(vNormal + vTangent, vTexCoord.x) * uLightingScale;
+}`;
+}
+
+function boneTranslation(n, bone)
+{
+    const value = WebGLBench.hash(n * boneCount + bone);
+    return [(value % 33 - 16) / 16, ((value >>> 8) % 33 - 16) / 16];
+}
+
+// The vertices of the quad of each program, with the bones for iteration n.
+function fillVertices(n, vertices)
+{
+    const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+    for (let program = 0; program < programCount; ++program) {
+        const tileX = (program % tilesPerRow) * tileSize;
+        const tileY = Math.floor(program / tilesPerRow) * tileSize;
+        corners.forEach(([x, y], vertex) => {
+            const index = program * 6 + vertex;
+            const boneIndices = [0, 1, 2, 3].map(k => (index * 5 + k * 17 + n) % boneCount);
+            const offset = [0, 0];
+            boneIndices.forEach((bone, k) => {
+                const translation = boneTranslation(n, bone);
+                offset[0] += translation[0] * boneWeights[k];
+                offset[1] += translation[1] * boneWeights[k];
+            });
+            const position = [(tileX + x * tileSize) / (size / 2) - 1 - offset[0], (tileY + y * tileSize) / (size / 2) - 1 - offset[1], 0, 1];
+            vertices.set([...position, ...boneIndices, ...boneWeights, 0, 0, 1, 1, 0, 0, x, y, 0.8, 0.6, 0.4, 1, 0.1, 0.2, 0.3, 0.4], index * floatsPerVertex);
+        });
+    }
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const color = seedColor(n, Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize));
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+const vertices = new Float32Array(programCount * 6 * floatsPerVertex);
+
+WebGLBench.run({
+    description: "Measures compiling, linking and drawing once with each of 4 programs whose vertex shader does 4-bone skinning with 64 uniform bone matrices and 8 attributes, with sources unique to each run, program and page load, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices.byteLength, gl.DYNAMIC_DRAW);
+        let offset = 0;
+        attributeSizes.forEach((attributeSize, location) => {
+            gl.enableVertexAttribArray(location);
+            gl.vertexAttribPointer(location, attributeSize, gl.FLOAT, false, floatsPerVertex * 4, offset * 4);
+            offset += attributeSize;
+        });
+    },
+    iteration(gl, n) {
+        fillVertices(n, vertices);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+        for (let bone = 0; bone < boneCount; ++bone) {
+            const translation = boneTranslation(n, bone);
+            bones.set([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, translation[0], translation[1], 0, 1], bone * 16);
+        }
+        for (let i = 0; i < programCount; ++i) {
+            const program = WebGLBench.createProgram(gl, WebGLBench.uniqueToPageLoad(vertexShaderFor(n, i), false), WebGLBench.uniqueToPageLoad(fragmentShaderFor(n, i), true), attributeNames);
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "uBones"), false, bones);
+            gl.uniformMatrix4fv(gl.getUniformLocation(program, "uViewProjection"), false, [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+            gl.uniform3f(gl.getUniformLocation(program, "uLightDirection"), 0, 0.6, 0.8);
+            gl.uniform3f(gl.getUniformLocation(program, "uEyePosition"), 0, 0, 5);
+            gl.uniform4f(gl.getUniformLocation(program, "uMorphWeights"), 0.1, 0.2, 0.3, 0.4);
+            gl.uniform1f(gl.getUniformLocation(program, "uLightingScale"), 0);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+            gl.deleteProgram(program);
+        }
+    },
+    probe(gl, n) {
+        const program = programCount - 1;
+        const x = (program % tilesPerRow) * tileSize + tileSize / 2;
+        const y = Math.floor(program / tilesPerRow) * tileSize + tileSize / 2;
+        WebGLBench.probe(gl, target, x, y, seedColor(n, program), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Program tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

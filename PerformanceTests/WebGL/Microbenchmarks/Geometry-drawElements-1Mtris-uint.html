@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/geometry-benchmark.js"></script>
+<script>
+
+// 4 passes over a 1024x1024 framebuffer, each one drawElements of a grid of 1M triangles with
+// UNSIGNED_INT indices into 525k vertices.
+let target;
+let seedLocation;
+let indexCount;
+
+WebGLBench.run({
+    description: "Measures 4 drawElements calls of 1M triangles each with UNSIGNED_INT indices, covering a 1024x1024 framebuffer with additive blending, followed by a 1x1 readPixels.",
+    setup(gl) {
+        if (!gl.getExtension("OES_element_index_uint"))
+            throw new Error("OES_element_index_uint is not supported");
+        target = GeometryBench.createTarget(gl);
+        const program = WebGLBench.createProgram(gl, GeometryBench.vertexShader, GeometryBench.fragmentShader, ["aPosition"]);
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, GeometryBench.gridVertices(0, GeometryBench.rows), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        const indices = GeometryBench.gridIndices(GeometryBench.rows, Uint32Array);
+        indexCount = indices.length;
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    },
+    iteration(gl, n) {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        for (let pass = 0; pass < GeometryBench.passCount; ++pass) {
+            GeometryBench.setSeed(gl, seedLocation, n, pass);
+            gl.drawElements(gl.TRIANGLES, indexCount, gl.UNSIGNED_INT, 0);
+        }
+    },
+    probe(gl, n) {
+        GeometryBench.probe(gl, target, n);
+    },
+    verify(gl, n) {
+        GeometryBench.verify(gl, target, n);
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 4 textures, each a texSubImage2D of 1024x1024 RGBA8 data into mip level 0, then generateMipmap,
+// then a draw of a 16x16 tile of a 64x16 framebuffer that maps the whole texture to the tile. That
+// is 64 texels per pixel, so the draw samples mip level 6 (16x16) with NEAREST_MIPMAP_NEAREST.
+//
+// The data is constant per 64x64 block, plus or minus 16 in a checkerboard of single texels. Each
+// aligned 2x2 group of level 0 averages to the block's value, so with the 2x2 box filter that
+// generateMipmap uses, levels 1 to 6 are exactly the block values. Sampling level 0 instead would
+// hit a texel that is off by 16. The check allows a difference of 1 for rounding in the filter.
+const textureSize = 1024;
+const levelSize = 16;
+const blockSize = textureSize / levelSize;
+const textureCount = 4;
+const width = levelSize * textureCount;
+const height = levelSize;
+const patternCount = textureCount + 1;
+const checkerDelta = 16;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform sampler2D uTexture;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = texture2D(uTexture, vTexCoord);
+}`;
+
+let target;
+const textures = [];
+// blockColors[i] is the levelSize x levelSize image of the block values of levels[i].
+const blockColors = [];
+const levels = [];
+
+function patternIndex(n, texture)
+{
+    return (n + texture) % patternCount;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const colors = blockColors[patternIndex(n, Math.floor(x / levelSize))];
+    const offset = (y * levelSize + x % levelSize) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = colors[offset + c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 4 pairs of texSubImage2D of 1024x1024 RGBA8 data and generateMipmap, each followed by a draw sampling mip level 6, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        for (let i = 0; i < patternCount; ++i) {
+            // Block values in [checkerDelta, 255 - checkerDelta], so that the checkerboard does not clamp.
+            const colors = WebGLBench.createPattern(levelSize * levelSize * 4, i).map(value => checkerDelta + value % (256 - 2 * checkerDelta));
+            const level = new Uint8Array(textureSize * textureSize * 4);
+            for (let y = 0; y < textureSize; ++y) {
+                for (let x = 0; x < textureSize; ++x) {
+                    const block = (Math.floor(y / blockSize) * levelSize + Math.floor(x / blockSize)) * 4;
+                    const sign = (x ^ y) & 1 ? -1 : 1;
+                    for (let c = 0; c < 4; ++c)
+                        level[(y * textureSize + x) * 4 + c] = colors[block + c] + sign * checkerDelta;
+                }
+            }
+            blockColors.push(colors);
+            levels.push(level);
+        }
+
+        for (let i = 0; i < textureCount; ++i) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            textures.push(texture);
+        }
+
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aTexCoord"]);
+        const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+        const vertices = new Float32Array(textureCount * 6 * 4);
+        for (let i = 0; i < textureCount; ++i) {
+            corners.forEach(([x, y], vertex) => {
+                const offset = (i * 6 + vertex) * 4;
+                vertices[offset] = (i + x) * levelSize / (width / 2) - 1;
+                vertices[offset + 1] = y * 2 - 1;
+                vertices[offset + 2] = x;
+                vertices[offset + 3] = y;
+            });
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 16, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 16, 8);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < textureCount; ++i) {
+            gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, textureSize, textureSize, gl.RGBA, gl.UNSIGNED_BYTE, levels[patternIndex(n, i)]);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        const x = width - levelSize + WebGLBench.hash(n) % levelSize;
+        const y = WebGLBench.hash(n + 1) % levelSize;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Mip level 6", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

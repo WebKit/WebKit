@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/draw-call-benchmark.js"></script>
+<script>
+WebGLBench.repeatCount = 2;
+
+// 1024 draws, one per 8x8 tile of a 256x256 framebuffer, cycling through 8 programs that differ
+// only in a constant color. Each program has its own uniform color, set once per iteration.
+const size = DrawCallBench.size;
+const tileSize = DrawCallBench.tileSize;
+const drawCount = DrawCallBench.tileCount;
+const programCount = 8;
+
+// Channels of the tile color are below 128, of the uniform color below 64 and of the constant
+// at most 56, so the sum does not saturate.
+function programConstant(p)
+{
+    return [p * 8, 56 - p * 8, p * 4];
+}
+
+function fragmentShader(p)
+{
+    return `
+precision highp float;
+uniform vec4 uColor;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vec4(vColor.rgb + uColor.rgb + vec3(${programConstant(p).map(c => c + ".0").join(", ")}) / 255.0, 1.0);
+}`;
+}
+
+let target;
+const programs = [];
+const colorLocations = [];
+const iterationColor = [0, 0, 0, 0];
+const tileColor = [0, 0, 0, 0];
+
+function expectedTileInto(n, i, out)
+{
+    const p = i % programCount;
+    DrawCallBench.iterationColorInto(n, p, iterationColor, 6);
+    DrawCallBench.tileColorInto(i, tileColor);
+    const constant = programConstant(p);
+    for (let c = 0; c < 3; ++c)
+        out[c] = tileColor[c] + iterationColor[c] + constant[c];
+    out[3] = 255;
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 1024 drawArrays calls of 2 triangles each, cycling through 8 programs with useProgram before each draw, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        for (let p = 0; p < programCount; ++p) {
+            programs.push(WebGLBench.createProgram(gl, DrawCallBench.vertexShader, fragmentShader(p), ["aPosition", "aColor"]));
+            colorLocations.push(gl.getUniformLocation(programs[p], "uColor"));
+        }
+        DrawCallBench.bindTileVertices(gl, DrawCallBench.createTileVertices(DrawCallBench.allTiles(), DrawCallBench.quadCorners));
+    },
+    iteration(gl, n) {
+        for (let p = 0; p < programCount; ++p) {
+            DrawCallBench.iterationColorInto(n, p, iterationColor, 6);
+            gl.useProgram(programs[p]);
+            gl.uniform4f(colorLocations[p], iterationColor[0] / 255, iterationColor[1] / 255, iterationColor[2] / 255, 1);
+        }
+        for (let i = 0; i < drawCount; ++i) {
+            gl.useProgram(programs[i % programCount]);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, size - tileSize / 2, size - tileSize / 2, expectedTileInto(n, drawCount - 1, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => expectedTileInto(n, DrawCallBench.tileAt(x, y), out));
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 5;
+
+// 1000 overlapping pixel-aligned rectangles in one draw, into a 512x512 RGBA8 framebuffer with a
+// DEPTH_COMPONENT16 renderbuffer and depth testing on. Each rectangle has its own depth, a
+// permutation of 1000 values that are distinct in 16 bits, so the draw order does not decide the
+// result: each pixel shows the nearest rectangle that covers it.
+const size = 512;
+const quadCount = 1000;
+const depthLevels = 1024;
+const minQuadSize = 32;
+const maxQuadSize = 256;
+const verticesPerQuad = 6;
+const bytesPerVertex = 16;
+
+const vertexShader = `
+attribute vec3 aPosition;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main() {
+    vColor = aColor;
+    gl_Position = vec4(aPosition, 1.0);
+}`;
+
+const fragmentShader = `
+precision mediump float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+const vertexData = new ArrayBuffer(quadCount * verticesPerQuad * bytesPerVertex);
+const vertexFloats = new Float32Array(vertexData);
+const vertexBytes = new Uint8Array(vertexData);
+const color = [0, 0, 0, 0];
+
+function clearColor(n)
+{
+    return WebGLBench.color(n, quadCount);
+}
+
+// Rectangle i of iteration n: [x0, y0, x1, y1] in pixels and its depth rank. Rank 0 is nearest.
+// The ranks are i * stride + offset modulo 1000, a permutation because stride is coprime with 1000.
+function quad(n, i)
+{
+    const value = WebGLBench.hash(n * quadCount + i);
+    const width = minQuadSize + value % (maxQuadSize - minQuadSize + 1);
+    const height = minQuadSize + (value >>> 8) % (maxQuadSize - minQuadSize + 1);
+    const x0 = (value >>> 16) % (size - width + 1);
+    const y0 = WebGLBench.hash(value) % (size - height + 1);
+    const strides = [3, 7, 11, 13, 17, 19, 21, 23];
+    const rank = (i * strides[n % strides.length] + n * 37) % quadCount;
+    return [x0, y0, x0 + width, y0 + height, rank];
+}
+
+function fillVertices(n)
+{
+    const corners = [[0, 1], [2, 1], [0, 3], [0, 3], [2, 1], [2, 3]];
+    for (let i = 0; i < quadCount; ++i) {
+        const rect = quad(n, i);
+        const z = (rect[4] + 0.5) / depthLevels * 2 - 1;
+        WebGLBench.colorInto(n, i, color);
+        corners.forEach(([xIndex, yIndex], vertex) => {
+            const offset = (i * verticesPerQuad + vertex) * bytesPerVertex;
+            vertexFloats[offset / 4] = rect[xIndex] / (size / 2) - 1;
+            vertexFloats[offset / 4 + 1] = rect[yIndex] / (size / 2) - 1;
+            vertexFloats[offset / 4 + 2] = z;
+            vertexBytes.set(color, offset + 12);
+        });
+    }
+}
+
+// Paints the rectangles from the farthest to the nearest.
+function expectedImage(n)
+{
+    const pixels = new Uint8Array(size * size * 4);
+    const background = clearColor(n);
+    for (let offset = 0; offset < pixels.length; offset += 4)
+        pixels.set(background, offset);
+    const rects = [];
+    for (let i = 0; i < quadCount; ++i)
+        rects.push([...quad(n, i), i]);
+    rects.sort((a, b) => b[4] - a[4]);
+    for (const [x0, y0, x1, y1, , i] of rects) {
+        WebGLBench.colorInto(n, i, color);
+        for (let y = y0; y < y1; ++y) {
+            for (let x = x0; x < x1; ++x)
+                pixels.set(color, (y * size + x) * 4);
+        }
+    }
+    return pixels;
+}
+
+function expectedPixel(n, x, y)
+{
+    let nearest = -1;
+    let nearestRank = quadCount;
+    for (let i = 0; i < quadCount; ++i) {
+        const [x0, y0, x1, y1, rank] = quad(n, i);
+        if (x >= x0 && x < x1 && y >= y0 && y < y1 && rank < nearestRank) {
+            nearest = i;
+            nearestRank = rank;
+        }
+    }
+    return nearest < 0 ? clearColor(n) : WebGLBench.color(n, nearest);
+}
+
+WebGLBench.run({
+    description: "Measures a color and depth clear, a bufferSubData of 1000 rectangles and one draw of them with depth testing into a 512x512 RGBA8 framebuffer with a DEPTH_COMPONENT16 renderbuffer, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const depthBuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+        const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (status != gl.FRAMEBUFFER_COMPLETE)
+            throw new Error("Framebuffer with a depth renderbuffer is not complete: 0x" + status.toString(16));
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LESS);
+
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor"]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertexData.byteLength, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, bytesPerVertex, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, bytesPerVertex, 12);
+    },
+    iteration(gl, n) {
+        fillVertices(n);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+        const background = clearColor(n);
+        gl.clearColor(background[0] / 255, background[1] / 255, background[2] / 255, 1);
+        gl.clearDepth(1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertexData);
+        gl.drawArrays(gl.TRIANGLES, 0, quadCount * verticesPerQuad);
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y));
+    },
+    verify(gl, n) {
+        const pixels = WebGLBench.readPixels(gl, target, 0, 0, size, size);
+        WebGLBench.verifyPixels("Rectangles", pixels, expectedImage(n), size, 0);
+    }
+});
+
+</script>
+</body>
+</html>

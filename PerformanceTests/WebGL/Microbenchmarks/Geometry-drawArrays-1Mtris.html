@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 4 passes over a 1024x1024 framebuffer, each one drawArrays of 1M triangles, 2 per cell of 2x1
+// pixels, so each triangle covers one pixel center. Each vertex is a vec2 position in pixels as
+// floats and the color of its triangle as normalized bytes, 36 MB in all. With additive blending,
+// a pixel is 4 times the color of its triangle plus the seeds of the 4 passes. Both are below 32
+// per channel, so the sum does not saturate.
+const size = 1024;
+const columns = size / 2;
+const triangleCount = columns * size * 2;
+const vertexSize = 12;
+const passCount = 4;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main() {
+    vColor = aColor;
+    gl_Position = vec4(aPosition / ${size / 2}.0 - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform vec4 uSeed;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor + uSeed;
+}`;
+
+let target;
+let seedLocation;
+const triangleColors = new Uint8Array(triangleCount * 4);
+const seeds = Array.from({ length: passCount }, () => [0, 0, 0, 0]);
+
+function seedInto(n, pass, out)
+{
+    const value = WebGLBench.hash(n * passCount + pass);
+    for (let c = 0; c < 4; ++c)
+        out[c] = (value >>> (c * 8)) & 31;
+    return out;
+}
+
+// The triangle of cell x / 2 that covers pixel x is the first one for even x.
+function expectedPixel(n, x, y, out)
+{
+    const offset = ((y * columns + (x >> 1)) * 2 + (x & 1)) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = triangleColors[offset + c] * passCount;
+    for (let pass = 0; pass < passCount; ++pass) {
+        seedInto(n, pass, seeds[pass]);
+        for (let c = 0; c < 4; ++c)
+            out[c] += seeds[pass][c];
+    }
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 4 drawArrays calls of 1M triangles each, with a position and a color attribute, covering a 1024x1024 framebuffer with additive blending, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor"]);
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+        gl.clearColor(0, 0, 0, 0);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);
+
+        // The first triangle of a cell is above its diagonal and the second below it.
+        const triangles = [[[0, 0], [2, 1], [0, 1]], [[0, 0], [2, 0], [2, 1]]];
+        const vertices = new ArrayBuffer(triangleCount * 3 * vertexSize);
+        const positions = new Float32Array(vertices);
+        const colors = new Uint32Array(vertices);
+        for (let t = 0; t < triangleCount; ++t) {
+            const value = WebGLBench.hash(t) & 0x1f1f1f1f;
+            triangleColors[t * 4] = value & 0xff;
+            triangleColors[t * 4 + 1] = (value >>> 8) & 0xff;
+            triangleColors[t * 4 + 2] = (value >>> 16) & 0xff;
+            triangleColors[t * 4 + 3] = value >>> 24;
+            const cell = t >> 1;
+            const cellX = (cell % columns) * 2;
+            const cellY = Math.floor(cell / columns);
+            triangles[t & 1].forEach(([x, y], vertex) => {
+                const offset = (t * 3 + vertex) * vertexSize / 4;
+                positions[offset] = cellX + x;
+                positions[offset + 1] = cellY + y;
+                colors[offset + 2] = value;
+            });
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, vertexSize, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, vertexSize, 8);
+    },
+    iteration(gl, n) {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        for (let pass = 0; pass < passCount; ++pass) {
+            seedInto(n, pass, seeds[pass]);
+            gl.uniform4f(seedLocation, seeds[pass][0] / 255, seeds[pass][1] / 255, seeds[pass][2] / 255, seeds[pass][3] / 255);
+            gl.drawArrays(gl.TRIANGLES, 0, triangleCount * 3);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Triangles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

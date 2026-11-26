@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// Draws a gradient that depends on the iteration into the default framebuffer of a 1024x1024
+// canvas, then reads all of it back with readPixels. This is the only benchmark that uses the
+// drawing buffer of the canvas, so it uses its own context instead of the harness's 16x16 one.
+// The canvas is not in the document. The readback happens in the same task as the draw, so
+// preserveDrawingBuffer is not needed, but the drawing buffer may be cleared after the task, so
+// verify() checks the pixels that the iteration read back rather than reading them again.
+const size = 1024;
+
+const vertexShader = `
+attribute vec2 aPosition;
+varying vec2 vPixel;
+void main() {
+    vPixel = (aPosition * 0.5 + 0.5) * ${size}.0;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform float uSeed;
+varying vec2 vPixel;
+void main() {
+    vec2 p = floor(vPixel);
+    gl_FragColor = vec4(mod(p.x, 256.0), mod(p.y, 256.0), uSeed, 255.0) / 255.0;
+}`;
+
+let canvasGL;
+let seedLocation;
+const pixels = new Uint8Array(size * size * 4);
+
+function expectedPixel(n, x, y, out)
+{
+    out[0] = x & 0xff;
+    out[1] = y & 0xff;
+    out[2] = n & 0xff;
+    out[3] = 255;
+    return out;
+}
+
+function expectNoCanvasError()
+{
+    const error = canvasGL.getError();
+    if (error != canvasGL.NO_ERROR)
+        throw new Error("Canvas context: GL error 0x" + error.toString(16));
+}
+
+WebGLBench.run({
+    description: "Measures a draw into the default framebuffer of a 1024x1024 canvas followed by a readPixels of all of it.",
+    setup(gl) {
+        canvasGL = WebGLBench.createContext("webgl", size, size);
+        const program = WebGLBench.createProgram(canvasGL, vertexShader, fragmentShader, ["aPosition"]);
+        seedLocation = canvasGL.getUniformLocation(program, "uSeed");
+        WebGLBench.bindFullscreenQuad(canvasGL);
+        canvasGL.viewport(0, 0, size, size);
+        expectNoCanvasError();
+    },
+    iteration(gl, n) {
+        canvasGL.uniform1f(seedLocation, n & 0xff);
+        canvasGL.drawArrays(canvasGL.TRIANGLES, 0, 6);
+        canvasGL.readPixels(0, 0, size, size, canvasGL.RGBA, canvasGL.UNSIGNED_BYTE, pixels);
+    },
+    probe(gl, n) {
+        const expected = [0, 0, 0, 0];
+        for (let i = 0; i < 4; ++i) {
+            const x = WebGLBench.hash(n * 4 + i) % size;
+            const y = WebGLBench.hash(n * 4 + i + 1) % size;
+            WebGLBench.verifyPixels("Pixel (" + x + ", " + y + ")", pixels.subarray((y * size + x) * 4), expectedPixel(n, x, y, expected), 1, 0);
+        }
+    },
+    verify(gl, n) {
+        expectNoCanvasError();
+        const expected = new Uint8Array(size * size * 4);
+        for (let y = 0; y < size; ++y) {
+            for (let x = 0; x < size; ++x)
+                expected.set(expectedPixel(n, x, y, [0, 0, 0, 0]), (y * size + x) * 4);
+        }
+        WebGLBench.verifyPixels("Gradient", pixels, expected, size, 0);
+    }
+});
+
+</script>
+</body>
+</html>

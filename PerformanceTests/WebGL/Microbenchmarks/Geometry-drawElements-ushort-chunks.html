@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/geometry-benchmark.js"></script>
+<script>
+
+// 4 passes over a 1024x1024 framebuffer, each drawing the grid of 1M triangles of
+// Geometry-drawElements-1Mtris-uint in 16 chunks of 64 rows of cells, the way WebGL 1 content
+// splits meshes for UNSIGNED_SHORT indices. Each chunk has its own vertex buffer of 33k vertices,
+// and all of them share one index buffer.
+const chunkCount = 16;
+const rowsPerChunk = GeometryBench.rows / chunkCount;
+
+let target;
+let seedLocation;
+let indexCount;
+const vertexBuffers = [];
+
+WebGLBench.run({
+    description: "Measures 4 passes of 16 drawElements calls of 65k triangles each with UNSIGNED_SHORT indices, each pass covering a 1024x1024 framebuffer with additive blending, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = GeometryBench.createTarget(gl);
+        const program = WebGLBench.createProgram(gl, GeometryBench.vertexShader, GeometryBench.fragmentShader, ["aPosition"]);
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+        for (let chunk = 0; chunk < chunkCount; ++chunk) {
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, GeometryBench.gridVertices(chunk * rowsPerChunk, rowsPerChunk), gl.STATIC_DRAW);
+            vertexBuffers.push(buffer);
+        }
+        gl.enableVertexAttribArray(0);
+        const indices = GeometryBench.gridIndices(rowsPerChunk, Uint16Array);
+        indexCount = indices.length;
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    },
+    iteration(gl, n) {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        for (let pass = 0; pass < GeometryBench.passCount; ++pass) {
+            GeometryBench.setSeed(gl, seedLocation, n, pass);
+            for (let chunk = 0; chunk < chunkCount; ++chunk) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffers[chunk]);
+                gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+                gl.drawElements(gl.TRIANGLES, indexCount, gl.UNSIGNED_SHORT, 0);
+            }
+        }
+    },
+    probe(gl, n) {
+        GeometryBench.probe(gl, target, n);
+    },
+    verify(gl, n) {
+        GeometryBench.verify(gl, target, n);
+    }
+});
+
+</script>
+</body>
+</html>

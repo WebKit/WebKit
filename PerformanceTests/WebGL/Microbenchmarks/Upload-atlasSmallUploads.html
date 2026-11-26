@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 5;
+
+// 256 texSubImage2D uploads of 16x16 RGBA8 data, one into each 16x16 slot of a 256x256 atlas
+// texture, then one draw that copies the whole atlas, at 1:1 with NEAREST sampling, to a 256x256
+// framebuffer.
+const atlasSize = 256;
+const slotSize = 16;
+const slotsPerRow = atlasSize / slotSize;
+const uploadCount = slotsPerRow * slotsPerRow;
+// One pattern more than uploads, so that the slots of a run differ from each other and from the
+// same slots in the previous run.
+const patternCount = uploadCount + 1;
+
+const vertexShader = `
+attribute vec2 aPosition;
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = aPosition * 0.5 + 0.5;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform sampler2D uTexture;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = texture2D(uTexture, vTexCoord);
+}`;
+
+let target;
+const patterns = [];
+
+function patternFor(n, upload)
+{
+    return patterns[(n + upload) % patternCount];
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const pattern = patternFor(n, Math.floor(y / slotSize) * slotsPerRow + Math.floor(x / slotSize));
+    const offset = ((y % slotSize) * slotSize + x % slotSize) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = pattern[offset + c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 256 texSubImage2D calls of 16x16 RGBA8 data into the slots of a 256x256 atlas texture and one draw sampling all of it, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, atlasSize, atlasSize);
+        for (let i = 0; i < patternCount; ++i)
+            patterns.push(WebGLBench.createPattern(slotSize * slotSize * 4, i));
+
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, atlasSize, atlasSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        WebGLBench.bindFullscreenQuad(gl);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < uploadCount; ++i)
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, (i % slotsPerRow) * slotSize, Math.floor(i / slotsPerRow) * slotSize, slotSize, slotSize, gl.RGBA, gl.UNSIGNED_BYTE, patternFor(n, i));
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % atlasSize;
+        const y = WebGLBench.hash(n + 1) % atlasSize;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Atlas", 0, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 4;
+
+// 200 draws, one per 16x16 tile of a 320x160 framebuffer. Before each draw, uniformMatrix4fv
+// uploads an array of 64 matrices, 4 KB, like the bone matrices of a skinned mesh. The vertex
+// shader multiplies a vector of ones by each matrix and sums the results, so the color of a tile
+// is the sum of each row of all 64 matrices.
+const width = 320;
+const height = 160;
+const tileSize = 16;
+const tilesPerRow = width / tileSize;
+const drawCount = tilesPerRow * (height / tileSize);
+const matrixCount = 64;
+const floatsPerDraw = matrixCount * 16;
+
+// The draws take their matrices from a pool of precomputed arrays. The pool size is a prime
+// larger than the number of draws, so a tile uses a different array in consecutive iterations.
+const poolSize = 211;
+
+const vertexShader = `
+attribute vec2 aPosition;
+uniform mat4 uMatrices[${matrixCount}];
+varying vec4 vColor;
+void main() {
+    vec4 sum = vec4(0.0);
+    for (int i = 0; i < ${matrixCount}; ++i)
+        sum += uMatrices[i] * vec4(1.0);
+    vColor = sum;
+    gl_Position = vec4(aPosition / vec2(${width / 2}.0, ${height / 2}.0) - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+let matricesLocation;
+const pool = [];
+const poolColors = [];
+
+function poolIndex(n, i)
+{
+    return (n * drawCount + i) % poolSize;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const color = poolColors[poolIndex(n, Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize))];
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 200 pairs of uniformMatrix4fv of an array of 64 matrices and a drawArrays of 2 triangles, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        matricesLocation = gl.getUniformLocation(program, "uMatrices");
+
+        // Each element is a multiple of 1/4096 below 1/256, so each sum of 256 of them is exact
+        // and below 1. Column-major element k contributes to channel k % 4.
+        for (let p = 0; p < poolSize; ++p) {
+            const bytes = WebGLBench.createPattern(floatsPerDraw, p);
+            const matrices = new Float32Array(floatsPerDraw);
+            const sums = [0, 0, 0, 0];
+            for (let k = 0; k < floatsPerDraw; ++k) {
+                const value = bytes[k] & 15;
+                matrices[k] = value / 4096;
+                sums[k % 4] += value;
+            }
+            pool.push(matrices);
+            poolColors.push(sums.map(sum => Math.round(sum / 4096 * 255)));
+        }
+
+        const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+        const vertices = new Float32Array(drawCount * 6 * 2);
+        for (let i = 0; i < drawCount; ++i) {
+            const tileX = i % tilesPerRow;
+            const tileY = Math.floor(i / tilesPerRow);
+            corners.forEach(([x, y], vertex) => vertices.set([(tileX + x) * tileSize, (tileY + y) * tileSize], (i * 6 + vertex) * 2));
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            gl.uniformMatrix4fv(matricesLocation, false, pool[poolIndex(n, i)]);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, width - tileSize / 2, height - tileSize / 2, expectedPixel(n, width - 1, height - 1, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 32 times: create a 64x64 texture and a framebuffer for it, draw a color into it, draw it at 1:1
+// with NEAREST sampling to one 64x64 tile of a 512x256 framebuffer, and delete it.
+const textureSize = 64;
+const width = 512;
+const height = 256;
+const tilesPerRow = width / textureSize;
+const drawCount = tilesPerRow * (height / textureSize);
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec2 aTexCoord;
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const colorFragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+void main() {
+    gl_FragColor = uColor;
+}`;
+
+const copyFragmentShader = `
+precision highp float;
+uniform sampler2D uTexture;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = texture2D(uTexture, vTexCoord);
+}`;
+
+let target;
+let colorProgram;
+let colorLocation;
+let copyProgram;
+const color = [0, 0, 0, 0];
+
+WebGLBench.run({
+    description: "Measures 32 times creating a 64x64 texture and a framebuffer for it, drawing into it, drawing with it into another framebuffer and deleting both, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        colorProgram = WebGLBench.createProgram(gl, vertexShader, colorFragmentShader, ["aPosition", "aTexCoord"]);
+        colorLocation = gl.getUniformLocation(colorProgram, "uColor");
+        copyProgram = WebGLBench.createProgram(gl, vertexShader, copyFragmentShader, ["aPosition", "aTexCoord"]);
+
+        // A fullscreen quad, then one quad per tile.
+        const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+        const vertices = new Float32Array((drawCount + 1) * 6 * 4);
+        corners.forEach(([x, y], vertex) => vertices.set([x * 2 - 1, y * 2 - 1, x, y], vertex * 4));
+        for (let i = 0; i < drawCount; ++i) {
+            const tileX = i % tilesPerRow;
+            const tileY = Math.floor(i / tilesPerRow);
+            corners.forEach(([x, y], vertex) => {
+                const position = [(tileX + x) * textureSize / (width / 2) - 1, (tileY + y) * textureSize / (height / 2) - 1];
+                vertices.set([...position, x, y], ((i + 1) * 6 + vertex) * 4);
+            });
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 16, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 16, 8);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            const framebuffer = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+            gl.viewport(0, 0, textureSize, textureSize);
+            gl.useProgram(colorProgram);
+            WebGLBench.colorInto(n, i, color);
+            gl.uniform4f(colorLocation, color[0] / 255, color[1] / 255, color[2] / 255, 1);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+            gl.viewport(0, 0, width, height);
+            gl.useProgram(copyProgram);
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.drawArrays(gl.TRIANGLES, (i + 1) * 6, 6);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            gl.deleteFramebuffer(framebuffer);
+            gl.deleteTexture(texture);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, width - textureSize / 2, height - textureSize / 2, WebGLBench.color(n, drawCount - 1), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => {
+            WebGLBench.colorInto(n, Math.floor(y / textureSize) * tilesPerRow + Math.floor(x / textureSize), out);
+        });
+    }
+});
+
+</script>
+</body>
+</html>

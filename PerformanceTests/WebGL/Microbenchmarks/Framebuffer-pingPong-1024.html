@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 16 fullscreen passes between two 1024x1024 framebuffers, like a post-processing chain. The first
+// pass reads a pattern texture, each later pass reads the output of the previous one. Each pass
+// shifts the image by a whole number of texels, with REPEAT wrapping and NEAREST sampling, and adds
+// a byte value to each channel modulo 256, so the result is exact.
+const size = 1024;
+const passCount = 16;
+
+const vertexShader = `
+attribute vec2 aPosition;
+varying vec2 vTexCoord;
+void main() {
+    vTexCoord = aPosition * 0.5 + 0.5;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform sampler2D uTexture;
+uniform vec2 uShift;
+uniform vec4 uAdd;
+varying vec2 vTexCoord;
+void main() {
+    vec4 bytes = floor(texture2D(uTexture, vTexCoord + uShift / ${size}.0) * 255.0 + 0.5);
+    gl_FragColor = mod(bytes + uAdd, 256.0) / 255.0;
+}`;
+
+let pattern;
+let patternTexture;
+const targets = [];
+let shiftLocation;
+let addLocation;
+
+function passShift(n, pass)
+{
+    const value = WebGLBench.hash(n * passCount + pass);
+    return [value % size, (value >>> 10) % size];
+}
+
+function passAdd(n, pass)
+{
+    return WebGLBench.color(n, pass + 1000).map((value, c) => c == 3 ? (n + pass) & 0xff : value);
+}
+
+// The pattern texel that pixel (x, y) of the last pass comes from, and the sum of the additions.
+function totalTransform(n)
+{
+    const shift = [0, 0];
+    const add = [0, 0, 0, 0];
+    for (let pass = 0; pass < passCount; ++pass) {
+        const passShiftValue = passShift(n, pass);
+        const passAddValue = passAdd(n, pass);
+        shift[0] = (shift[0] + passShiftValue[0]) % size;
+        shift[1] = (shift[1] + passShiftValue[1]) % size;
+        for (let c = 0; c < 4; ++c)
+            add[c] = (add[c] + passAddValue[c]) & 0xff;
+    }
+    return { shift, add };
+}
+
+function expectedPixel(transform, x, y, out)
+{
+    const offset = (((y + transform.shift[1]) % size) * size + (x + transform.shift[0]) % size) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = (pattern[offset + c] + transform.add[c]) & 0xff;
+    return out;
+}
+
+function createRepeatTexture(gl, pixels)
+{
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return texture;
+}
+
+WebGLBench.run({
+    description: "Measures 16 fullscreen passes that each sample one 1024x1024 RGBA8 framebuffer texture into another and then swap them, followed by a 1x1 readPixels.",
+    setup(gl) {
+        pattern = WebGLBench.createPattern(size * size * 4, 0);
+        patternTexture = createRepeatTexture(gl, pattern);
+        for (let i = 0; i < 2; ++i) {
+            const target = WebGLBench.createRenderTarget(gl, size, size);
+            gl.bindTexture(gl.TEXTURE_2D, target.texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            targets.push(target);
+        }
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        shiftLocation = gl.getUniformLocation(program, "uShift");
+        addLocation = gl.getUniformLocation(program, "uAdd");
+        WebGLBench.bindFullscreenQuad(gl);
+    },
+    iteration(gl, n) {
+        for (let pass = 0; pass < passCount; ++pass) {
+            const source = pass ? targets[(pass - 1) % 2].texture : patternTexture;
+            gl.bindFramebuffer(gl.FRAMEBUFFER, targets[pass % 2].framebuffer);
+            gl.bindTexture(gl.TEXTURE_2D, source);
+            const shift = passShift(n, pass);
+            const add = passAdd(n, pass);
+            gl.uniform2f(shiftLocation, shift[0], shift[1]);
+            gl.uniform4f(addLocation, add[0], add[1], add[2], add[3]);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, targets[(passCount - 1) % 2], x, y, expectedPixel(totalTransform(n), x, y, [0, 0, 0, 0]));
+    },
+    verify(gl, n) {
+        const transform = totalTransform(n);
+        WebGLBench.verifyTarget(gl, targets[(passCount - 1) % 2], "Last pass", 0, (x, y, out) => expectedPixel(transform, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>
