@@ -4480,7 +4480,7 @@ String Internals::counterValue(Element& element)
 
 int Internals::pageNumber(Element& element, float pageWidth, float pageHeight)
 {
-    return PrintContext::pageNumberForElement(&element, { pageWidth, pageHeight });
+    return PrintContext::pageNumberForElementForTesting(&element, { pageWidth, pageHeight });
 }
 
 Vector<String> Internals::shortcutIconURLs() const
