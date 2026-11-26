@@ -69,6 +69,8 @@ public:
     virtual void highlightFrame(LocalFrame&) { highlight(); }
     virtual void hideHighlightForFrame(LocalFrame&) { hideHighlight(); }
 
+    virtual void setFrameHighlightsNeedDisplay() { }
+
     virtual void showInspectorIndication() { }
     virtual void hideInspectorIndication() { }
 
