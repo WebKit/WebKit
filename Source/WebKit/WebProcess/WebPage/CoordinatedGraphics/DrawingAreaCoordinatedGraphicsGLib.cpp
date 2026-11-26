@@ -38,12 +38,14 @@
 #include "WebPageInlines.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
+#include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>
+#include <WebCore/ScrollingTree.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/WindowEventLoop.h>
@@ -181,6 +183,28 @@ void DrawingAreaCoordinatedGraphics::setDeviceScaleFactor(float deviceScaleFacto
     if (m_renderer && !webPage->size().isEmpty())
         m_renderer->sizeDidChange();
     completionHandler();
+}
+
+void DrawingAreaCoordinatedGraphics::adoptLayersFromDrawingArea(DrawingArea& oldDrawingArea)
+{
+    // This is called when the page replaces its DrawingArea, e.g. when going back to a page suspended
+    // for a process swap. The layers are not adopted: the client of the layers, the renderer of the old
+    // DrawingArea, is destroyed here, while the page and its scrolling tree, whose nodes keep references
+    // to the layers, stay alive. The scrolling thread uses the client of the layers in
+    // applyLayerPositionsInternal() with the tree lock held, so hold it while the client is invalidated.
+    auto& oldCoordinatedDrawingArea = downcast<DrawingAreaCoordinatedGraphics>(oldDrawingArea);
+    Ref webPage = m_webPage;
+    RefPtr<ScrollingTree> scrollingTree;
+    if (RefPtr scrollingCoordinator = dynamicDowncast<AsyncScrollingCoordinator>(webPage->scrollingCoordinator()))
+        scrollingTree = scrollingCoordinator->scrollingTree();
+
+    if (!scrollingTree) {
+        oldCoordinatedDrawingArea.m_renderer = nullptr;
+        return;
+    }
+
+    Locker locker { scrollingTree->treeLock() };
+    oldCoordinatedDrawingArea.m_renderer = nullptr;
 }
 
 bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling() const
