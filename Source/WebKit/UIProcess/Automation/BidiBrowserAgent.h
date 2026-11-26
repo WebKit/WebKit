@@ -46,6 +46,8 @@ class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
 
+const String& defaultUserContextID();
+
 class BidiBrowserAgent final : public Inspector::BidiBrowserBackendDispatcherHandler {
     WTF_MAKE_TZONE_ALLOCATED(BidiBrowserAgent);
 public:

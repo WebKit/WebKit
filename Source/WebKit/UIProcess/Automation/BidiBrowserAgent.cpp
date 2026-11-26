@@ -57,13 +57,13 @@ String toUserContextIDProtocolString(const PAL::SessionID& sessionID)
     return builder.toString();
 }
 
+} // namespace
+
 const String& defaultUserContextID()
 {
     static NeverDestroyed<const String> contextID(MAKE_STATIC_STRING_IMPL("default"));
     return contextID;
 }
-
-} // namespace
 
 struct BidiBrowserAgent::BidiUserContextDeletionRecord {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(BidiUserContextDeletionRecord);

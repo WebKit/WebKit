@@ -2577,10 +2577,10 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/create/invalid.py": {
         "subtests": {
             "test_params_reference_context_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/286790"}}
             },
             "test_params_reference_context_non_top_level": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/286790"}}
             },
             "test_params_user_context_removed_context": {
                 "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["SKIP"], "note": "Test passes but fixture teardown fails trying to remove already-removed user context"}}
@@ -6033,7 +6033,7 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/create/user_context_tentative.py": {
         "subtests": {
             "test_create_result_custom_user_context[default]": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/321603", "note": "Events and results don't include userContext yet"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/326991"}}
+                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/321603", "note": "Events and results don't include userContext yet"}}
             },
             "test_create_result_custom_user_context[new]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/326991"}}
