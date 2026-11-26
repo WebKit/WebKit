@@ -48,6 +48,12 @@ struct RegExpKey {
     {
     }
 
+    RegExpKey(OptionSet<Yarr::Flags> flags, StringImpl* pattern)
+        : flagsValue(flags)
+        , pattern(pattern)
+    {
+    }
+
     RegExpKey(OptionSet<Yarr::Flags> flags, const String& pattern)
         : flagsValue(flags)
         , pattern(pattern.impl())

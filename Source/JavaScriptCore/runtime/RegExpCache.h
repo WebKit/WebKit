@@ -62,6 +62,7 @@ public:
     DECLARE_VISIT_AGGREGATE;
 
     RegExp* lookup(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags>);
+    RegExp* lookup(VM&, StringImpl* patternString, OptionSet<Yarr::Flags>);
 
 private:
     static constexpr unsigned maxStrongCacheablePatternLength = 256;

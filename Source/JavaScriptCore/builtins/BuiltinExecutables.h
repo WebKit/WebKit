@@ -76,9 +76,9 @@ SourceCode name##Source();
 #undef EXPOSE_BUILTIN_EXECUTABLES
 
     static SourceCode defaultConstructorSourceCode(ConstructorKind);
-    UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name, NeedsClassFieldInitializer, PrivateBrandRequirement);
+    UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, UniquedStringImpl* name, NeedsClassFieldInitializer, PrivateBrandRequirement);
 
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement = PrivateBrandRequirement::None);
+    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, UniquedStringImpl* name, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement = PrivateBrandRequirement::None);
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -87,7 +87,7 @@ SourceCode name##Source();
 private:
     VM& m_vm;
 
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const BuiltinSourceMetadata&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement);
+    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const BuiltinSourceMetadata&, UniquedStringImpl* name, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement);
 
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const BuiltinSourceMetadata&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute);
 

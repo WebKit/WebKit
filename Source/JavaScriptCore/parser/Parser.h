@@ -127,30 +127,30 @@ struct ScopeLabelInfo {
     bool isLoop;
 };
 
-ALWAYS_INLINE static bool isArguments(const VM& vm, const Identifier* ident)
+ALWAYS_INLINE static bool isArguments(const VM& vm, UniquedStringImpl* ident)
 {
-    return vm.propertyNames->arguments == *ident;
+    return vm.propertyNames->arguments.impl() == ident;
 }
-ALWAYS_INLINE static bool isEval(const VM& vm, const Identifier* ident)
+ALWAYS_INLINE static bool isEval(const VM& vm, UniquedStringImpl* ident)
 {
-    return vm.propertyNames->eval == *ident;
+    return vm.propertyNames->eval.impl() == ident;
 }
-ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM& vm, const Identifier* ident)
+ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM& vm, UniquedStringImpl* ident)
 {
     return isEval(vm, ident) || isArguments(vm, ident);
 }
-ALWAYS_INLINE static bool isStrictModeReservedWord(const VM& vm, const Identifier* ident)
+ALWAYS_INLINE static bool isStrictModeReservedWord(const VM& vm, UniquedStringImpl* ident)
 {
     auto& propertyNames = *vm.propertyNames;
-    return propertyNames.implementsKeyword == *ident
-        || propertyNames.interfaceKeyword == *ident
-        || propertyNames.letKeyword == *ident
-        || propertyNames.packageKeyword == *ident
-        || propertyNames.privateKeyword == *ident
-        || propertyNames.protectedKeyword == *ident
-        || propertyNames.publicKeyword == *ident
-        || propertyNames.staticKeyword == *ident
-        || propertyNames.yieldKeyword == *ident;
+    return propertyNames.implementsKeyword.impl() == ident
+        || propertyNames.interfaceKeyword.impl() == ident
+        || propertyNames.letKeyword.impl() == ident
+        || propertyNames.packageKeyword.impl() == ident
+        || propertyNames.privateKeyword.impl() == ident
+        || propertyNames.protectedKeyword.impl() == ident
+        || propertyNames.publicKeyword.impl() == ident
+        || propertyNames.staticKeyword.impl() == ident
+        || propertyNames.yieldKeyword.impl() == ident;
 }
 ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
 {
@@ -203,11 +203,11 @@ public:
     bool breakIsValid() { return m_loopDepth || m_switchDepth; }
     bool continueIsValid() { return m_loopDepth; }
 
-    void pushLabel(const Identifier* label, bool isLoop)
+    void pushLabel(UniquedStringImpl* label, bool isLoop)
     {
         if (!m_labels)
             m_labels = makeUnique<LabelStack>();
-        m_labels->append(ScopeLabelInfo { label->impl(), isLoop });
+        m_labels->append(ScopeLabelInfo { label, isLoop });
     }
 
     void popLabel()
@@ -217,12 +217,12 @@ public:
         m_labels->removeLast();
     }
 
-    ScopeLabelInfo* getLabel(const Identifier* label)
+    ScopeLabelInfo* getLabel(UniquedStringImpl* label)
     {
         if (!m_labels)
             return nullptr;
         for (int i = m_labels->size(); i > 0; i--) {
-            if (m_labels->at(i - 1).uid == label->impl())
+            if (m_labels->at(i - 1).uid == label)
                 return &m_labels->at(i - 1);
         }
         return nullptr;
@@ -379,9 +379,9 @@ public:
         }
     }
 
-    DeclarationResultMask declareCallee(const Identifier* ident)
+    DeclarationResultMask declareCallee(UniquedStringImpl* ident)
     {
-        auto addResult = m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident);
         // We want to track if callee is captured, but we don't want to act like it's a 'var'
         // because that would cause the BytecodeGenerator to emit bad code.
         addResult.iterator->value.clearIsVar();
@@ -392,20 +392,20 @@ public:
         return result;
     }
 
-    DeclarationResultMask declareVariable(const Identifier* ident)
+    DeclarationResultMask declareVariable(UniquedStringImpl* ident)
     {
         ASSERT(m_allowsVarDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        auto addResult = m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident);
         addResult.iterator->value.setIsVar();
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
         return result;
     }
 
-    DeclarationResultMask declareFunctionAsVar(const Identifier* ident)
+    DeclarationResultMask declareFunctionAsVar(UniquedStringImpl* ident)
     {
         ASSERT(m_allowsVarDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
@@ -414,16 +414,16 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
 
-        auto addResult = m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident);
         addResult.iterator->value.setIsVar();
         addResult.iterator->value.setIsFunction();
 
-        if (m_lexicalVariables.contains(ident->impl()))
+        if (m_lexicalVariables.contains(ident))
             result |= DeclarationResult::InvalidDuplicateDeclaration;
         return result;
     }
 
-    DeclarationResultMask declareFunctionAsLet(const Identifier* ident, bool isFunctionDeclaration)
+    DeclarationResultMask declareFunctionAsLet(UniquedStringImpl* ident, bool isFunctionDeclaration)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
@@ -432,12 +432,12 @@ public:
             result |= DeclarationResult::InvalidStrictMode;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
 
-        auto addResult = m_lexicalVariables.add(ident->impl());
+        auto addResult = m_lexicalVariables.add(ident);
         if (!addResult.isNewEntry) {
             if (strictMode() || !addResult.iterator->value.isFunctionDeclaration() || !isFunctionDeclaration)
                 result |= DeclarationResult::InvalidDuplicateDeclaration;
         }
-        if (m_declaredVariables.contains(ident->impl()) || m_variablesBeingHoisted.contains(ident->impl()))
+        if (m_declaredVariables.contains(ident) || m_variablesBeingHoisted.contains(ident))
             result |= DeclarationResult::InvalidDuplicateDeclaration;
 
         addResult.iterator->value.setIsLet();
@@ -448,10 +448,10 @@ public:
         return result;
     }
 
-    void addVariableBeingHoisted(const Identifier* ident)
+    void addVariableBeingHoisted(UniquedStringImpl* ident)
     {
         ASSERT(!m_allowsVarDeclarations);
-        m_variablesBeingHoisted.add(ident->impl());
+        m_variablesBeingHoisted.add(ident);
     }
 
     enum class NeedsDuplicateDeclarationCheck : bool { No, Yes };
@@ -471,13 +471,13 @@ public:
     DeclarationStacks::FunctionStack takeFunctionDeclarations() { return WTF::move(m_functionDeclarations); }
     
 
-    DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported, bool isUsing = false, bool isAwaitUsing = false)
+    DeclarationResultMask declareLexicalVariable(UniquedStringImpl* ident, bool isConstant, DeclarationImportType importType = DeclarationImportType::NotImported, bool isUsing = false, bool isAwaitUsing = false)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        auto addResult = m_lexicalVariables.add(ident->impl());
+        auto addResult = m_lexicalVariables.add(ident);
         if (isConstant)
             addResult.iterator->value.setIsConst();
         else
@@ -494,7 +494,7 @@ public:
             addResult.iterator->value.setIsImportedNamespace();
         }
 
-        if (!addResult.isNewEntry || m_variablesBeingHoisted.contains(ident->impl()))
+        if (!addResult.isNewEntry || m_variablesBeingHoisted.contains(ident))
             result |= DeclarationResult::InvalidDuplicateDeclaration;
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
@@ -504,13 +504,8 @@ public:
 
     ALWAYS_INLINE bool hasDeclaredGlobalArguments()
     {
-        const Identifier& ident = m_vm.propertyNames->arguments;
+        UniquedStringImpl* ident = m_vm.propertyNames->arguments.impl();
         return hasLexicallyDeclaredVariable(ident) || hasDeclaredVariable(ident) || shadowsArguments();
-    }
-
-    ALWAYS_INLINE bool hasDeclaredVariable(const Identifier& ident)
-    {
-        return hasDeclaredVariable(ident.impl());
     }
 
     bool hasDeclaredVariable(const UniquedStringImpl* ident)
@@ -520,11 +515,6 @@ public:
             return false;
         VariableEnvironmentEntry entry = iter->value;
         return entry.isVar(); // The callee isn't a "var".
-    }
-
-    ALWAYS_INLINE bool hasLexicallyDeclaredVariable(const Identifier& ident)
-    {
-        return hasLexicallyDeclaredVariable(ident.impl());
     }
 
     bool hasLexicallyDeclaredVariable(const UniquedStringImpl* ident) const
@@ -537,16 +527,17 @@ public:
         return m_variablesBeingHoisted.contains(ident);
     }
 
-    bool hasPrivateName(const Identifier& ident)
+    bool hasPrivateName(UniquedStringImpl* ident)
     {
         return m_lexicalVariables.hasPrivateName(ident);
     }
 
-    DeclarationResultMask declarePrivateMethod(const Identifier& ident, ClassElementTag tag)
+    DeclarationResultMask declarePrivateMethod(UniquedStringImpl* ident, ClassElementTag tag)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
-        bool addResult = tag == ClassElementTag::Static ? m_lexicalVariables.declareStaticPrivateMethod(ident) : m_lexicalVariables.declarePrivateMethod(ident);
+        auto staticTraits = tag == ClassElementTag::Static ? PrivateNameEntry::Traits::IsStatic : PrivateNameEntry::Traits::None;
+        bool addResult = m_lexicalVariables.declarePrivateMethod(ident, staticTraits);
 
         if (!addResult) {
             result |= DeclarationResult::InvalidDuplicateDeclaration;
@@ -558,14 +549,15 @@ public:
 
     enum class PrivateAccessorType { Setter, Getter };
 
-    DeclarationResultMask declarePrivateAccessor(const Identifier& ident, ClassElementTag tag, PrivateAccessorType accessorType)
+    DeclarationResultMask declarePrivateAccessor(UniquedStringImpl* ident, ClassElementTag tag, PrivateAccessorType accessorType)
     {
         DeclarationResultMask result = DeclarationResult::Valid;
         VariableEnvironment::PrivateDeclarationResult addResult;
+        auto staticTraits = tag == ClassElementTag::Static ? PrivateNameEntry::Traits::IsStatic : PrivateNameEntry::Traits::None;
         if (accessorType == PrivateAccessorType::Setter)
-            addResult = tag == ClassElementTag::Static ? m_lexicalVariables.declareStaticPrivateSetter(ident) : m_lexicalVariables.declarePrivateSetter(ident);
+            addResult = m_lexicalVariables.declarePrivateSetter(RefPtr<UniquedStringImpl>(ident), staticTraits);
         else
-            addResult = tag == ClassElementTag::Static ? m_lexicalVariables.declareStaticPrivateGetter(ident) : m_lexicalVariables.declarePrivateGetter(ident);
+            addResult = m_lexicalVariables.declarePrivateGetter(RefPtr<UniquedStringImpl>(ident), staticTraits);
 
         if (addResult == VariableEnvironment::PrivateDeclarationResult::DuplicatedName)
             result |= DeclarationResult::InvalidDuplicateDeclaration;
@@ -576,38 +568,33 @@ public:
         return result;
     }
 
-    DeclarationResultMask declarePrivateSetter(const Identifier& ident, ClassElementTag tag)
+    DeclarationResultMask declarePrivateSetter(UniquedStringImpl* ident, ClassElementTag tag)
     {
         ASSERT(m_allowsLexicalDeclarations);
         return declarePrivateAccessor(ident, tag, PrivateAccessorType::Setter);
     }
 
-    DeclarationResultMask declarePrivateGetter(const Identifier& ident, ClassElementTag tag)
+    DeclarationResultMask declarePrivateGetter(UniquedStringImpl* ident, ClassElementTag tag)
     {
         ASSERT(m_allowsLexicalDeclarations);
         return declarePrivateAccessor(ident, tag, PrivateAccessorType::Getter);
     }
 
-    DeclarationResultMask declarePrivateField(const Identifier& ident)
+    DeclarationResultMask declarePrivateField(UniquedStringImpl* ident)
     {
         ASSERT(m_allowsLexicalDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
-        auto addResult = m_lexicalVariables.declarePrivateField(ident);
+        auto addResult = m_lexicalVariables.declarePrivateField(RefPtr<UniquedStringImpl>(ident));
         if (!addResult.isNewEntry)
             result |= DeclarationResult::InvalidDuplicateDeclaration;
         return result;
     }
 
-    ALWAYS_INLINE bool hasDeclaredParameter(const Identifier& ident)
-    {
-        return hasDeclaredParameter(ident.impl());
-    }
-
-    bool hasDeclaredParameter(UniquedStringImpl* ident)
+    ALWAYS_INLINE bool hasDeclaredParameter(UniquedStringImpl* ident)
     {
         return m_declaredParameters.contains(ident) || hasDeclaredVariable(ident);
     }
-    
+
     void preventAllVariableDeclarations()
     {
         m_allowsVarDeclarations = false; 
@@ -617,18 +604,18 @@ public:
     bool allowsVarDeclarations() const { return m_allowsVarDeclarations; }
     bool allowsLexicalDeclarations() const { return m_allowsLexicalDeclarations; }
 
-    DeclarationResultMask declareParameter(const Identifier* ident)
+    DeclarationResultMask declareParameter(UniquedStringImpl* ident)
     {
         ASSERT(m_allowsVarDeclarations);
         DeclarationResultMask result = DeclarationResult::Valid;
         bool isArgumentsIdent = isArguments(m_vm, ident);
-        auto addResult = m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident);
         bool isDuplicateParameter = !addResult.isNewEntry && addResult.iterator->value.isParameter();
-        bool isValidStrictMode = !isDuplicateParameter && m_vm.propertyNames->eval != *ident && !isArgumentsIdent && !isStrictModeReservedWord(m_vm, ident);
+        bool isValidStrictMode = !isDuplicateParameter && m_vm.propertyNames->eval.impl() != ident && !isArgumentsIdent && !isStrictModeReservedWord(m_vm, ident);
         addResult.iterator->value.clearIsVar();
         addResult.iterator->value.setIsParameter();
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        m_declaredParameters.add(ident->impl());
+        m_declaredParameters.add(ident);
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
         if (isArgumentsIdent)
@@ -657,10 +644,6 @@ public:
             }
         }
     }
-    void useVariable(const Identifier* ident, bool isEval)
-    {
-        useVariable(ident->impl(), isEval);
-    }
     void useVariable(UniquedStringImpl* impl, bool isEval)
     {
         m_usesEval |= isEval;
@@ -673,9 +656,9 @@ public:
         m_lastAddedUsedVariable = impl;
         m_usedVariables.last().add(impl);
     }
-    void usePrivateName(const Identifier& ident)
+    void usePrivateName(UniquedStringImpl* ident)
     {
-        useVariable(&ident, false);
+        useVariable(ident, false);
     }
 
     void setUsesImportMeta() { m_usesImportMeta = true; }
@@ -835,7 +818,7 @@ public:
             // that function's name. Note that we would only cause a syntax error if we had a let/const/class
             // variable with the same name.
             FunctionMetadataNode* metadata = iter.key;
-            auto* function = metadata->ident().impl();
+            auto* function = metadata->ident();
             if (!m_lexicalVariables.contains(function)) {
                 auto addResult = m_declaredVariables.add(function);
                 if (addResult.isNewEntry)
@@ -854,7 +837,7 @@ public:
         for (const auto& iter : m_sloppyModeFunctionHoistingCandidates) {
             FunctionMetadataNode* metadata = iter.key;
             bool needsCheck = iter.value == NeedsDuplicateDeclarationCheck::Yes;
-            if (!needsCheck || !m_lexicalVariables.contains(metadata->ident().impl()) || isSimpleCatchParameterScope())
+            if (!needsCheck || !m_lexicalVariables.contains(metadata->ident()) || isSimpleCatchParameterScope())
                 parentScope->addSloppyModeFunctionHoistingCandidate<NeedsDuplicateDeclarationCheck::Yes>(metadata);
         }
     }
@@ -1282,7 +1265,7 @@ private:
 
     ALWAYS_INLINE SourceParseMode sourceParseMode() const { return m_parseMode; }
     ALWAYS_INLINE FunctionMode functionMode() const { return m_functionMode; }
-    ALWAYS_INLINE bool isEvalOrArguments(const Identifier* ident) { return isEvalOrArgumentsIdentifier(m_vm, ident); }
+    ALWAYS_INLINE bool isEvalOrArguments(UniquedStringImpl* ident) { return isEvalOrArgumentsIdentifier(m_vm, ident); }
 
     Scope* upperScope(int n)
     {
@@ -1456,12 +1439,12 @@ private:
         return popScopeInternal(scope, shouldTrackClosedVariables);
     }
 
-    NEVER_INLINE DeclarationResultMask declareHoistedVariable(const Identifier* ident)
+    NEVER_INLINE DeclarationResultMask declareHoistedVariable(UniquedStringImpl* ident)
     {
         Scope* scope = currentScope();
         while (true) {
             // Annex B.3.5 exempts `try {} catch (e) { var e; }` from being a syntax error.
-            if (scope->hasLexicallyDeclaredVariable(*ident) && !scope->isSimpleCatchParameterScope())
+            if (scope->hasLexicallyDeclaredVariable(ident) && !scope->isSimpleCatchParameterScope())
                 return DeclarationResult::InvalidDuplicateDeclaration;
 
             if (scope->allowsVarDeclarations())
@@ -1471,19 +1454,19 @@ private:
             scope = scope->containingScope();
         }
     }
-    
-    DeclarationResultMask declareVariable(const Identifier* ident, DeclarationType type = DeclarationType::VarDeclaration, DeclarationImportType importType = DeclarationImportType::NotImported)
+
+    DeclarationResultMask declareVariable(UniquedStringImpl* ident, DeclarationType type = DeclarationType::VarDeclaration, DeclarationImportType importType = DeclarationImportType::NotImported)
     {
         if (type == DeclarationType::VarDeclaration)
             return declareHoistedVariable(ident);
 
         ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration || type == DeclarationType::UsingDeclaration || type == DeclarationType::AwaitUsingDeclaration);
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.
-        if (!m_lexer->isReparsingFunction() && m_statementDepth == 1 && (hasDeclaredParameter(*ident) || hasDeclaredVariable(*ident)))
+        if (!m_lexer->isReparsingFunction() && m_statementDepth == 1 && (hasDeclaredParameter(ident) || hasDeclaredVariable(ident)))
             return DeclarationResult::InvalidDuplicateDeclaration;
 
         Scope* scope = currentLexicalDeclarationScope();
-        if (scope->isCatchBlockScope() && scope->containingScope()->hasLexicallyDeclaredVariable(*ident))
+        if (scope->isCatchBlockScope() && scope->containingScope()->hasLexicallyDeclaredVariable(ident))
             return DeclarationResult::InvalidDuplicateDeclaration;
 
         bool isAwaitUsing = type == DeclarationType::AwaitUsingDeclaration;
@@ -1491,7 +1474,7 @@ private:
         return scope->declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration || isUsing, importType, isUsing, isAwaitUsing);
     }
 
-    std::pair<DeclarationResultMask, Scope*> declareFunction(const Identifier* ident)
+    std::pair<DeclarationResultMask, Scope*> declareFunction(UniquedStringImpl* ident)
     {
         if (m_statementDepth == 1 && !currentScope()->isModuleCode()) {
             // Functions declared at the top-most scope (both in sloppy and strict mode) are declared as vars
@@ -1502,14 +1485,14 @@ private:
         }
 
         Scope* lexicalVariableScope = currentLexicalDeclarationScope();
-        if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope->containingScope()->hasLexicallyDeclaredVariable(*ident))
+        if (lexicalVariableScope->isCatchBlockScope() && lexicalVariableScope->containingScope()->hasLexicallyDeclaredVariable(ident))
             return std::make_pair(DeclarationResult::InvalidDuplicateDeclaration, lexicalVariableScope);
 
         bool isFunctionDeclaration = m_parseMode == SourceParseMode::NormalFunctionMode;
         return std::make_pair(lexicalVariableScope->declareFunctionAsLet(ident, isFunctionDeclaration), lexicalVariableScope);
     }
 
-    NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
+    NEVER_INLINE bool hasDeclaredVariable(UniquedStringImpl* ident)
     {
         Scope* scope = currentScope();
         while (!scope->allowsVarDeclarations())
@@ -1517,7 +1500,7 @@ private:
         return scope->hasDeclaredVariable(ident);
     }
 
-    NEVER_INLINE bool hasDeclaredParameter(const Identifier& ident)
+    NEVER_INLINE bool hasDeclaredParameter(UniquedStringImpl* ident)
     {
         // FIXME: hasDeclaredParameter() is not valid during reparsing of generator or async function bodies, because their formal
         // parameters are declared in a scope unavailable during reparsing. Note that it is redundant to call this function during
@@ -1536,8 +1519,8 @@ private:
         }
         return scope->hasDeclaredParameter(ident);
     }
-    
-    bool exportName(const Identifier& ident)
+
+    bool exportName(UniquedStringImpl* ident)
     {
         ASSERT(!currentScope()->containingScope());
         ASSERT(m_moduleScopeData);
@@ -1571,9 +1554,9 @@ private:
         int returnStatementCount { 0 };
         int unaryTokenStackDepth { 0 };
         FunctionParsePhase functionParsePhase { FunctionParsePhase::Body };
-        const Identifier* lastIdentifier { nullptr };
-        const Identifier* lastFunctionName { nullptr };
-        const Identifier* lastPrivateName { nullptr };
+        UniquedStringImpl* lastIdentifier { nullptr };
+        UniquedStringImpl* lastFunctionName { nullptr };
+        UniquedStringImpl* lastPrivateName { nullptr };
         bool allowAwait { true };
         bool isParsingClassFieldInitializer { false };
         bool classFieldInitMasksAsync { false };
@@ -1660,10 +1643,10 @@ private:
 
         return false;
     }
-    
-    ALWAYS_INLINE bool matchContextualKeyword(const Identifier& identifier)
+
+    ALWAYS_INLINE bool matchContextualKeyword(UniquedStringImpl* identifier)
     {
-        return m_token.m_type == IDENT && *m_token.m_data.ident == identifier && !m_token.m_data.escaped;
+        return m_token.m_type == IDENT && m_token.m_data.ident == identifier && !m_token.m_data.escaped;
     }
 
     ALWAYS_INLINE bool matchIdentifierOrKeyword()
@@ -1738,8 +1721,8 @@ private:
             return m_currentScope->containingScope()->isValidStrictMode();
         return true;
     }
-    DeclarationResultMask declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
-    bool declareRestOrNormalParameter(const Identifier&, const Identifier**);
+    DeclarationResultMask declareParameter(UniquedStringImpl* ident) { return currentScope()->declareParameter(ident); }
+    bool declareRestOrNormalParameter(UniquedStringImpl*, UniquedStringImpl**);
 
     bool breakIsValid()
     {
@@ -1761,9 +1744,9 @@ private:
         }
         return true;
     }
-    void pushLabel(const Identifier* label, bool isLoop) { currentScope()->pushLabel(label, isLoop); }
+    void pushLabel(UniquedStringImpl* label, bool isLoop) { currentScope()->pushLabel(label, isLoop); }
     void popLabel(Scope* scope) { scope->popLabel(); }
-    ScopeLabelInfo* getLabel(const Identifier* label)
+    ScopeLabelInfo* getLabel(UniquedStringImpl* label)
     {
         Scope* current = currentScope();
         ScopeLabelInfo* result = nullptr;
@@ -1792,13 +1775,13 @@ private:
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
-    template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, const Identifier& name, SourceElementsMode);
-    template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, const Identifier& calleeName, bool isArrowFunctionBodyExpression, SourceElementsMode);
-    template <class TreeBuilder> TreeSourceElements parseAsyncGeneratorFunctionSourceElements(TreeBuilder&, const Identifier& calleeName, bool isArrowFunctionBodyExpression, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, UniquedStringImpl* name, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, UniquedStringImpl* calleeName, bool isArrowFunctionBodyExpression, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseAsyncGeneratorFunctionSourceElements(TreeBuilder&, UniquedStringImpl* calleeName, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseSingleFunction(TreeBuilder&, std::optional<int> functionConstructorParametersEndPosition);
     template <class TreeBuilder> TreeSourceElements parseClassFieldInitializerSourceElements(TreeBuilder&, const FixedVector<UnlinkedFunctionExecutable::ClassElementDefinition>&);
-    template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
-    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = nullptr);
+    template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, UniquedStringImpl*& directive, unsigned* directiveLiteralLength);
+    template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, UniquedStringImpl*& directive, unsigned* directiveLiteralLength = nullptr);
     enum class ExportType { Exported, NotExported };
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
     enum class FunctionDeclarationType { Declaration, Statement };
@@ -1848,7 +1831,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArgument(TreeBuilder&, ArgumentType&);
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&);
-    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, unsigned functionStart);
+    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, UniquedStringImpl* methodName, unsigned functionStart);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind, ClassElementTag);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, SyntaxChecker&, const JSTokenLocation&, unsigned functionStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, bool isArrowFunction, bool isMethod, unsigned&);
@@ -1856,14 +1839,14 @@ private:
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer, bool isLetKeywordConsumed);
     template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&, bool isAsync, const JSTokenLocation&);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier&, const JSToken&, AssignmentContext, const Identifier** duplicateIdentifier);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, ExportType, UniquedStringImpl*, const JSToken&, AssignmentContext, UniquedStringImpl** duplicateIdentifier);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createAssignmentElement(TreeBuilder&, TreeExpression&, const JSTextPosition&, const JSTextPosition&);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseObjectRestBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, AssignmentContext bindingContext);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseObjectRestBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, UniquedStringImpl** duplicateIdentifier, AssignmentContext bindingContext);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, UniquedStringImpl** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseObjectRestAssignmentElement(TreeBuilder& context);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseObjectRestElement(TreeBuilder&, DestructuringKind, ExportType, const Identifier** duplicateIdentifier = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, ExportType, const Identifier** duplicateIdentifier = nullptr, bool* hasDestructuringPattern = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseAssignmentElement(TreeBuilder& context, DestructuringKind, ExportType, UniquedStringImpl** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseObjectRestElement(TreeBuilder&, DestructuringKind, ExportType, UniquedStringImpl** duplicateIdentifier = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, ExportType, UniquedStringImpl** duplicateIdentifier = nullptr, bool* hasDestructuringPattern = nullptr, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&, AssignmentContext);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseDefaultValueForDestructuringPattern(TreeBuilder&);
     template <class TreeBuilder> TreeSourceElements parseModuleSourceElements(TreeBuilder&);
@@ -1872,10 +1855,10 @@ private:
     template <class TreeBuilder> typename TreeBuilder::ModuleName parseModuleName(TreeBuilder&);
     template <class TreeBuilder> typename TreeBuilder::ImportAttributesList parseImportAttributes(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseImportDeclaration(TreeBuilder&);
-    template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<const Identifier*, const Identifier*>, 8>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings, bool& hasReferencedModuleExportNames);
+    template <class TreeBuilder> typename TreeBuilder::ExportSpecifier parseExportSpecifier(TreeBuilder& context, Vector<std::pair<UniquedStringImpl*, UniquedStringImpl*>, 8>& maybeExportedLocalNames, bool& hasKeywordForLocalBindings, bool& hasReferencedModuleExportNames);
     template <class TreeBuilder> TreeStatement parseExportDeclaration(TreeBuilder&);
 
-    template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, const Identifier*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, UniquedStringImpl*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, bool nameIsInContainingScope, ConstructorKind, SuperBinding, unsigned functionStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
@@ -1930,7 +1913,7 @@ private:
     {
         if (token.m_type == LET)
             return true;
-        if (token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->letKeyword) [[unlikely]]
+        if (token.m_type == ESCAPED_KEYWORD && token.m_data.ident == m_vm.propertyNames->letKeyword.impl()) [[unlikely]]
             return true;
         return false;
     }
@@ -1949,7 +1932,7 @@ private:
     {
         if (token.m_type == AWAIT)
             return true;
-        if (token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->awaitKeyword) [[unlikely]]
+        if (token.m_type == ESCAPED_KEYWORD && token.m_data.ident == m_vm.propertyNames->awaitKeyword.impl()) [[unlikely]]
             return true;
         return false;
     }
@@ -1973,7 +1956,7 @@ private:
     {
         if (token.m_type == YIELD)
             return true;
-        if (token.m_type == ESCAPED_KEYWORD && *token.m_data.ident == m_vm.propertyNames->yieldKeyword) [[unlikely]]
+        if (token.m_type == ESCAPED_KEYWORD && token.m_data.ident == m_vm.propertyNames->yieldKeyword.impl()) [[unlikely]]
             return true;
         return false;
     }
@@ -1986,9 +1969,9 @@ private:
     bool matchAllowedEscapedContextualKeyword()
     {
         ASSERT(m_token.m_type == ESCAPED_KEYWORD);
-        return (*m_token.m_data.ident == m_vm.propertyNames->letKeyword && !strictMode())
-            || (*m_token.m_data.ident == m_vm.propertyNames->awaitKeyword && canUseIdentifierAwait())
-            || (*m_token.m_data.ident == m_vm.propertyNames->yieldKeyword && canUseIdentifierYield());
+        return (m_token.m_data.ident == m_vm.propertyNames->letKeyword.impl() && !strictMode())
+            || (m_token.m_data.ident == m_vm.propertyNames->awaitKeyword.impl() && canUseIdentifierAwait())
+            || (m_token.m_data.ident == m_vm.propertyNames->yieldKeyword.impl() && canUseIdentifierYield());
     }
 
     const char* disallowedIdentifierLetReason()
@@ -2021,7 +2004,7 @@ private:
 
     ALWAYS_INLINE bool isArgumentsIdentifier()
     {
-        return *m_token.m_data.ident == m_vm.propertyNames->arguments;
+        return m_token.m_data.ident == m_vm.propertyNames->arguments.impl();
     }
 
     // If you're using this directly, you probably should be using

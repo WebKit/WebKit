@@ -38,10 +38,15 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RegExpCache);
 
-RegExp* RegExpCache::lookup(VM&, const WTF::String& patternString, OptionSet<Yarr::Flags> flags)
+RegExp* RegExpCache::lookup(VM& vm, const WTF::String& patternString, OptionSet<Yarr::Flags> flags)
+{
+    return lookup(vm, patternString.impl(), flags);
+}
+
+RegExp* RegExpCache::lookup(VM&, StringImpl* patternString, OptionSet<Yarr::Flags> flags)
 {
     Locker locker { m_lock };
-    RegExpKey key(flags, patternString);
+    SUPPRESS_UNCOUNTED_ARG RegExpKey key(flags, patternString);
     return m_weakCache.get(key);
 }
 

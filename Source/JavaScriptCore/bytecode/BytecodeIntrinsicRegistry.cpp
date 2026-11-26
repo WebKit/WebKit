@@ -111,11 +111,11 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_InternalMicrotaskAsyncFromSyncIteratorDone.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncFromSyncIteratorDone)));
 }
 
-std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const
+std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(UniquedStringImpl* uid) const
 {
-    if (!ident.isPrivateName())
+    if (!uid->isSymbol() || !static_cast<const SymbolImpl*>(uid)->isPrivate())
         return std::nullopt;
-    auto iterator = m_bytecodeIntrinsicMap.find(ident.impl());
+    auto iterator = m_bytecodeIntrinsicMap.find(uid);
     if (iterator == m_bytecodeIntrinsicMap.end())
         return std::nullopt;
     return iterator->value;

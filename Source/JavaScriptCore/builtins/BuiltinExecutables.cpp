@@ -66,7 +66,7 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
     return SourceCode();
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, const Identifier& name, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
+UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(ConstructorKind constructorKind, UniquedStringImpl* name, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
 {
     switch (constructorKind) {
     case ConstructorKind::None:
@@ -74,7 +74,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, ImplementationVisibility::Public, constructorKind, ConstructAbility::CanConstruct, InlineAttribute::Always, needsClassFieldInitializer, privateBrandRequirement);
+        SUPPRESS_UNCOUNTED_ARG return createExecutable(m_vm, defaultConstructorSourceCode(constructorKind), name, ImplementationVisibility::Public, constructorKind, ConstructAbility::CanConstruct, InlineAttribute::Always, needsClassFieldInitializer, privateBrandRequirement);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -82,7 +82,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
 
 UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const BuiltinSourceMetadata& metadata, const Identifier& name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute)
 {
-    return createExecutable(m_vm, code, metadata, name, implementationVisibility, constructorKind, constructAbility, inlineAttribute, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
+    return createExecutable(m_vm, code, metadata, name.impl(), implementationVisibility, constructorKind, constructAbility, inlineAttribute, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
 }
 
 // FIXME: Can we just make MetaData computation be constexpr and have the compiler do this for us?
@@ -174,15 +174,15 @@ static BuiltinSourceMetadata computeBuiltinSourceMetadata(std::span<const Latin1
     return result;
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, UniquedStringImpl* name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
 {
     StringView view = source.view();
     RELEASE_ASSERT(!view.isNull());
     RELEASE_ASSERT(view.is8Bit());
-    return createExecutable(vm, source, computeBuiltinSourceMetadata(view.span8()), name, implementationVisibility, constructorKind, constructAbility, inlineAttribute, needsClassFieldInitializer, privateBrandRequirement);
+    SUPPRESS_UNCOUNTED_ARG return createExecutable(vm, source, computeBuiltinSourceMetadata(view.span8()), name, implementationVisibility, constructorKind, constructAbility, inlineAttribute, needsClassFieldInitializer, privateBrandRequirement);
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const BuiltinSourceMetadata& scanned, const Identifier& name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const BuiltinSourceMetadata& scanned, UniquedStringImpl* name, ImplementationVisibility implementationVisibility, ConstructorKind constructorKind, ConstructAbility constructAbility, InlineAttribute inlineAttribute, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement)
 {
     StringView view = source.view();
     RELEASE_ASSERT(scanned.sourceLength == view.length());
@@ -211,8 +211,8 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         scanned.isInStrictContext ? StrictModeLexicallyScopedFeature : NoLexicallyScopedFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         scanned.parameterCount, parseMode, isArrowFunctionBodyExpression);
 
-    metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);
-    metadata.overrideName(name);
+    metadata.finishParsing(newSource, nullptr, FunctionMode::FunctionExpression);
+    SUPPRESS_UNCOUNTED_ARG metadata.overrideName(name);
 
     if (ASSERT_ENABLED || Options::validateBytecode()) [[unlikely]] {
         ParserError error;
@@ -233,11 +233,11 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             RELEASE_ASSERT(!program->hasCapturedVariables());
             
             RELEASE_ASSERT(metadataFromParser);
-            RELEASE_ASSERT(metadataFromParser->ident().isNull());
+            RELEASE_ASSERT(!metadataFromParser->ident());
             
             // This function assumes an input string that would result in a single anonymous function expression.
             RELEASE_ASSERT(metadataFromParser);
-            metadataFromParser->overrideName(name);
+            SUPPRESS_UNCOUNTED_ARG metadataFromParser->overrideName(name);
             if (metadata != *metadataFromParser) {
                 dataLogLn("Expected Metadata:\n", metadata);
                 dataLogLn("Metadata from parser:\n", *metadataFromParser);
