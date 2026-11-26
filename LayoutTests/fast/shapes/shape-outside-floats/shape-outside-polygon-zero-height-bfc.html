@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<title>A zero-height box that establishes a new block formatting context avoids a float's polygon shape-outside, as it does an inset() one</title>
+<style>
+.container {
+  display: flow-root;
+  width: 200px;
+  height: 20px;
+  margin-bottom: 5px;
+  background-color: lightgray;
+}
+
+.float {
+  float: right;
+  width: 100px;
+  height: 20px;
+}
+
+.polygon {
+  shape-outside: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+}
+
+.inset {
+  shape-outside: inset(0 0 0 50%);
+}
+
+.zero-height {
+  display: flow-root;
+  height: 0;
+}
+
+.content {
+  height: 10px;
+  background-color: green;
+}
+</style>
+<div class="container"><div class="float polygon"></div><div class="zero-height"><div class="content"></div></div></div>
+<div class="container" dir="rtl"><div class="float polygon"></div><div class="zero-height"><div class="content"></div></div></div>
+<div class="container"><div class="float inset"></div><div class="zero-height"><div class="content"></div></div></div>
+<div class="container" dir="rtl"><div class="float inset"></div><div class="zero-height"><div class="content"></div></div></div>

@@ -409,7 +409,10 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
         LayoutUnit floatMarginBoxWidth = std::max<LayoutUnit>(0_lu, containingBlock.logicalWidthForFloat(floatingObject));
 
         if (protect(computedShape())->lineOverlapsShapeMarginBounds(borderBoxLineTop, lineHeight)) {
-            LineSegment segment = protect(computedShape())->getExcludedInterval(borderBoxLineTop, std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop));
+            // A polygon finds no excluded interval for a zero-height line at a vertex, so such a line is measured 1px tall, the way
+            // FloatingContext does (see computeShapeEdge()).
+            auto excludedIntervalHeight = lineHeight ? std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop) : 1_lu;
+            LineSegment segment = protect(computedShape())->getExcludedInterval(borderBoxLineTop, excludedIntervalHeight);
             if (segment.isValid) {
                 // The segment is relative to the inline start edge of the border box (see FloatingContext's computeShapeEdge()),
                 // the deltas to its logical left edge.
