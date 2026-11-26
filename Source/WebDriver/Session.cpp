@@ -1084,30 +1084,58 @@ void Session::fullscreenWindow(Function<void(CommandResult&&)>&& completionHandl
         }
 
         auto parameters = JSON::Object::create();
-        parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
-        parameters->setString("function"_s, StringImpl::createWithoutCopying(EnterFullscreenJavaScript));
-        parameters->setArray("arguments"_s, JSON::Array::create());
-        parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
-            if (response.isError || !response.responseObject) {
+        parameters->setString("handle"_s, uncheckedTopLevelBrowsingContext());
+        m_host->sendCommandToBackend("restoreWindowOfBrowsingContext"_s, WTF::move(parameters), [this, protectedThis, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+            if (response.isError) {
                 completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
                 return;
             }
-
-            auto valueString = response.responseObject->getString("result"_s);
-            if (!valueString) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve fullscreen information from browsing context"_s));
-                return;
-            }
-
-            auto resultValue = JSON::Value::parseJSON(valueString);
-            if (!resultValue) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not parse fullscreen information"_s));
-                return;
-            }
-
-            getToplevelBrowsingContextRect(WTF::move(completionHandler));
+            enterToplevelBrowsingContextFullscreen(WTF::move(completionHandler));
         });
+    });
+}
+
+void Session::enterToplevelBrowsingContextFullscreen(Function<void(CommandResult&&)>&& completionHandler)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, uncheckedTopLevelBrowsingContext());
+    parameters->setString("function"_s, StringImpl::createWithoutCopying(EnterFullscreenJavaScript));
+    parameters->setArray("arguments"_s, JSON::Array::create());
+    parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
+    parameters->setBoolean("forceUserGesture"_s, true);
+    m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTF::move(parameters), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTF::move(response.responseObject)));
+            return;
+        }
+
+        auto valueString = response.responseObject->getString("result"_s);
+        if (!valueString) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not retrieve fullscreen information from browsing context"_s));
+            return;
+        }
+
+        auto resultValue = JSON::Value::parseJSON(valueString);
+        if (!resultValue) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, "Could not parse fullscreen information"_s));
+            return;
+        }
+
+        // EnterFullscreen.js reports a result of "entered", "unsupported" or "failed", and a reason when it failed.
+        auto resultObject = resultValue->asObject();
+        auto fullscreenResult = resultObject ? resultObject->getString("result"_s) : String();
+        if (fullscreenResult == "unsupported"_s) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnsupportedOperation));
+            return;
+        }
+
+        if (fullscreenResult != "entered"_s) {
+            auto reason = resultObject ? resultObject->getString("reason"_s) : String();
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, reason.isEmpty() ? String { "Could not enter fullscreen"_s } : makeString("Could not enter fullscreen: "_s, reason)));
+            return;
+        }
+
+        getToplevelBrowsingContextRect(WTF::move(completionHandler));
     });
 }
 

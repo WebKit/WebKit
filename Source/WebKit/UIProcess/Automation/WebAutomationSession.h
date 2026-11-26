@@ -280,6 +280,7 @@ public:
     void setPageZoomFactorOfBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, double zoomFactor, Inspector::CommandCallback<void>&&) override;
     void maximizeWindowOfBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     void hideWindowOfBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
+    void restoreWindowOfBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     void navigateBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& url, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void goBackInBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void goForwardInBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;

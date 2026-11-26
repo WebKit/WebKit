@@ -25,18 +25,26 @@
 
 function enterFullscreen() {
 
+    // Session::fullscreenWindow maps result "entered", "unsupported" and "failed" (with a reason) to WebDriver results.
     let callback = arguments[0];
+
+    // This is also false when Permissions-Policy disallows fullscreen, which we report as unsupported too.
     if (!document.fullscreenEnabled) {
-        callback(false);
+        callback({ result: "unsupported" });
         return;
     }
 
     if (document.fullscreenElement) {
-        callback(true);
+        callback({ result: "entered" });
         return;
     }
 
     let fullscreenChangeListener, fullscreenErrorListener;
+    let finish = (result, reason) => {
+        document.removeEventListener("fullscreenchange", fullscreenChangeListener);
+        document.documentElement.removeEventListener("fullscreenerror", fullscreenErrorListener);
+        callback({ result, reason });
+    };
     fullscreenChangeListener = (e) => {
         // Some other element went fullscreen, we didn't request it.
         if (e.target !== document.documentElement)
@@ -45,22 +53,37 @@ function enterFullscreen() {
         if (!document.fullscreenElement)
             return;
 
-        document.removeEventListener("fullscreenchange", fullscreenChangeListener);
-        document.documentElement.removeEventListener("fullscreenerror", fullscreenErrorListener);
-        callback(true);
+        finish("entered");
     };
     fullscreenErrorListener = (e) => {
         // Some other element caused an error, we didn't request it.
         if (e.target !== document.documentElement)
             return;
 
-        document.removeEventListener("fullscreenchange", fullscreenChangeListener);
-        document.documentElement.removeEventListener("fullscreenerror", fullscreenErrorListener);
-        callback(!!document.fullscreenElement);
+        finish("failed", "fullscreenerror event");
     };
 
-    // The document fires change events, but the fullscreen element fires error events.
-    document.addEventListener("fullscreenchange", fullscreenChangeListener);
-    document.documentElement.addEventListener("fullscreenerror", fullscreenErrorListener);
-    document.documentElement.requestFullscreen();
+    let requested = false;
+    let request = () => {
+        if (requested)
+            return;
+        requested = true;
+
+        // The document fires change events, but the fullscreen element fires error events.
+        document.addEventListener("fullscreenchange", fullscreenChangeListener);
+        document.documentElement.addEventListener("fullscreenerror", fullscreenErrorListener);
+        // Events can be missed (a refusal without an error event, or an enter and exit before the listener runs),
+        // so settle on the promise too.
+        document.documentElement.requestFullscreen().then(
+            () => finish(document.fullscreenElement ? "entered" : "failed", "requestFullscreen() resolved without entering fullscreen"),
+            (error) => finish("failed", error.message));
+    };
+
+    // A hidden document can't go fullscreen, and a restored window's page can still be hidden for a moment.
+    // Don't wait long, since the forced user activation expires.
+    if (document.hidden) {
+        document.addEventListener("visibilitychange", request, { once: true });
+        setTimeout(request, 2000);
+    } else
+        request();
 }

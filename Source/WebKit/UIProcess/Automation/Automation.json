@@ -549,6 +549,14 @@
             "async": true
         },
         {
+            "name": "restoreWindowOfBrowsingContext",
+            "description": "Restores the window of the specified browsing context if it is hidden/minimized/iconified. Unlike the other window commands, this doesn't exit fullscreen mode.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose window should be restored." }
+            ],
+            "async": true
+        },
+        {
             "name": "navigateBrowsingContext",
             "description": "Navigates a browsing context to a specified URL.",
             "parameters": [
