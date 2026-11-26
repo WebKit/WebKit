@@ -21,42 +21,44 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-// This is more-or-less duplicate of WebKit/StdLibExtras.swift. Remove this file once that is in WTF.
-
-import wtf
+private import CxxStdlib
+private import wtf.Core.EscapableByteSpan
+private import wtf.Core.text.CString
+private import wtf.Core.text.StringView
+public import wtf.Core.text.WTFString
 
 extension WTF.String: LosslessStringConvertible {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    /// Construct a `WTF.String` from a `Swift.String`.
+    ///
+    /// - Parameter string: The string to copy.
     public init(_ string: Swift.String) {
-        let ns = string as NSString
-        let cf: CFString = ns as CFString
-        self = WTF.String(cf)
+        var string = string
+        // rdar://167712240 prevents us from passing a Span to WTF.String.fromUTF8.
+        // Safety: the buffer is valid for the duration of the closure, and the WTF::String takes a copy of it.
+        #if compiler(>=6.4)
+        self = string.withUTF8 { buffer in
+            unsafe WTF.String.fromUTF8(WTF.SpanUInt8(buffer))
+        }
+        #else
+        self = unsafe string.withUTF8 { buffer in
+            unsafe WTF.String.fromUTF8(WTF.SpanUInt8(buffer))
+        }
+        #endif
     }
 
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    /// Return a `Swift.String` from this `WTF.String`.
     public var description: Swift.String {
-        #if compiler(>=6.4)
-        createNSString().get()
-        #else
-        unsafe createNSString().get()
-        #endif
+        // We could possibly make this quicker by treating a C++ span as
+        // a Sequence. For now, we want to avoid unsafe as much as possible.
+        Swift.String(WTF.makeUTF8CString(self).toStdString())
     }
 }
 
 extension WTF.String: ExpressibleByStringLiteral {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    /// Construct a `WTF.String` from a string literal.
+    ///
+    /// - Parameter stringLiteral: The string literal to copy.
     public init(stringLiteral: Swift.String) {
         self.init(stringLiteral)
-    }
-}
-
-extension WTF.String: ExpressibleByNilLiteral {
-    // Protocol requirement; no documentation needed.
-    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
-    public init(nilLiteral: ()) {
-        self = unsafe WTF.nullString().pointee
     }
 }

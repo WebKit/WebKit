@@ -738,7 +738,6 @@
 				"cocoa/Recap+Extras.swift",
 				cocoa/SafeBrowsingTestUtilities.swift,
 				cocoa/SiteIsolationTestUtilities.swift,
-				cocoa/StdLibExtras.swift,
 				"cocoa/SwiftUI+Extras.swift",
 				cocoa/TestCocoaImageAndCocoaColor.mm,
 				cocoa/TestCocoaImageUtilities.swift,

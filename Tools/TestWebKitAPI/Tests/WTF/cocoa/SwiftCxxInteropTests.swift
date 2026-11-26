@@ -783,6 +783,32 @@ struct SwiftCxxInteropTests {
 
         #expect(Cxx.liveCopyCountingProbeCount() == baseline, "every probe should be destroyed")
     }
+
+    @Test
+    func stringsConvertBetweenSwiftAndWTF() {
+        let ascii = WTF.String("hello")
+        #expect(ascii.length() == 5)
+        #expect(ascii.description == "hello")
+
+        let nonASCII = WTF.String("caf\u{E9} \u{1F389}")
+        #expect(nonASCII.length() == 7)
+        #expect(nonASCII.description == "caf\u{E9} \u{1F389}")
+
+        let literal: WTF.String = "literal"
+        #expect(literal.description == "literal")
+
+        let empty = WTF.String("")
+        #expect(empty.isEmpty())
+        #expect(empty.description.isEmpty)
+    }
+
+    @Test
+    func stringsAreLosslessStringConvertible() {
+        func roundTrip<T: LosslessStringConvertible>(_ string: Swift.String, as type: T.Type) -> Swift.String? {
+            T(string)?.description
+        }
+        #expect(roundTrip("round trip", as: WTF.String.self) == "round trip")
+    }
 }
 
 #endif // compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN

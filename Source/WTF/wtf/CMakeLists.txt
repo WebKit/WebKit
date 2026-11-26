@@ -860,11 +860,14 @@ endif ()
 
 if (SWIFT_REQUIRED)
     target_sources(WTF PRIVATE
+        ${WTF_DIR}/wtf/StdLibExtras.swift
         ${WTF_DIR}/wtf/WTFCompletionHandler+Extras.swift
+        ${WTF_DIR}/wtf/WTFString+Extras.swift
         ${WTF_DIR}/wtf/wtf.swift
     )
     if (APPLE)
         target_sources(WTF PRIVATE
+            ${WTF_DIR}/wtf/WTFEscapableByteSpan+Extras.swift
             ${WTF_DIR}/wtf/cocoa/SoftLinking.swift
         )
     endif ()

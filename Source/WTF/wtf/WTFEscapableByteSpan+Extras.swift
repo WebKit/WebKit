@@ -23,7 +23,7 @@
 
 private import CxxStdlib
 public import Foundation
-import wtf
+public import wtf.Core.EscapableByteSpan
 
 // EscapableByteSpan exposes borrowed C++ bytes to Foundation/CryptoKit consumers with
 // no copy. The remaining `unsafe` uses are the UnsafeRawBufferPointer that
@@ -133,6 +133,7 @@ extension WTF.EscapableByteSpan {
 /// Vector<uint8_t> emits unparseable synthesized names (`_CUnsignedLong_0`) into
 /// the verified module interface (rdar://181593806). A function that merely
 /// *returns* the type prints the `VectorUInt8` typealias and verifies cleanly.
+@_alwaysEmitIntoClient
 public func makeVectorUInt8(copying bytes: some ContiguousBytes) -> WTF.VectorUInt8 {
     // Safe: bytes borrows its own storage for the duration of this call, and source never escapes the closure.
     unsafe bytes.withUnsafeBytes { source in

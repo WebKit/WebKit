@@ -103,7 +103,6 @@ if (SWIFT_REQUIRED AND APPLE)
         ${PAL_DIR}/pal/pal.swift
         ${PAL_DIR}/pal/system/cocoa/RegexHelper.swift
         ${PAL_DIR}/pal/crypto/CryptoKitShim.swift
-        ${PAL_DIR}/pal/crypto/WTFExtras.swift
     )
 
     WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(PAL pal
@@ -119,6 +118,8 @@ if (SWIFT_REQUIRED AND APPLE)
         "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${CMAKE_BINARY_DIR}"
         "-Xcc -I${PAL_DERIVED_SOURCES_DIR}"
+        # WTF's Swift module, which shadows the wtf Clang module.
+        "-I$<TARGET_PROPERTY:WTF,BINARY_DIR>"
     )
     if (NOT APPLE)
         # On Apple platforms the interop macro already adds this; elsewhere PAL's

@@ -1038,6 +1038,10 @@ if (SWIFT_REQUIRED)
     # One batch per core repeats that work for each core and competes with the
     # C++ compiles for memory, so use fewer, larger batches.
     webkit_target_add_swift_options(WebKit "-driver-batch-count 4")
+    if (NOT APPLE)
+        # WTF's Swift module, which shadows the wtf Clang module. PlatformCocoa.cmake adds it on Apple platforms.
+        webkit_target_add_swift_options(WebKit "-I$<TARGET_PROPERTY:WTF,BINARY_DIR>")
+    endif ()
 endif ()
 
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)

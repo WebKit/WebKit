@@ -25,6 +25,7 @@
 
 import Foundation
 import WebKit_Internal
+import wtf
 
 enum JavaScriptEvaluationCodableValue<ID: Hashable & Sendable>: Hashable, Sendable {
     enum EmptyType: Hashable, Sendable {
