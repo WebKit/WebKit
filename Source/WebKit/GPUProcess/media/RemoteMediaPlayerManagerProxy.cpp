@@ -155,18 +155,6 @@ void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::Medi
     completionHandler(result);
 }
 
-void RemoteMediaPlayerManagerProxy::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const String&& keySystem, const String&& mimeType, CompletionHandler<void(bool)>&& completionHandler)
-{
-    CheckedPtr engine = playbackEngineForConnection(engineIdentifier);
-    if (!engine) {
-        WTFLogAlways("Failed to find media engine.");
-        return;
-    }
-
-    auto result = engine->supportsKeySystem(keySystem, mimeType);
-    completionHandler(result);
-}
-
 void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     RELEASE_ASSERT(RunLoop::isMain());
