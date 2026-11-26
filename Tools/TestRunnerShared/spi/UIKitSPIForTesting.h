@@ -247,6 +247,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @class RVItem;
 @protocol UIWKInteractionViewProtocol
+- (CGRect)textFirstRect;
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;

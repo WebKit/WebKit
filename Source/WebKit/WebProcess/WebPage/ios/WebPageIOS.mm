@@ -500,9 +500,10 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     // root-view coordinates. Map them to main-frame coordinates -- applying the frame's offset within
     // the top-level page as well as any CSS transforms on the remote ancestor frames -- so UIKit reads
     // the correct location synchronously without a UI-process round-trip. A plain translation offset
-    // could not represent a scale on an ancestor iframe.
+    // could not represent a scale on an ancestor iframe. This also applies to a frame that is in the
+    // main frame's process under a cross-origin iframe, whose local root isn't the main frame.
     RefPtr localRootView = frame.rootFrame().view();
-    if (!frame.localMainFrame() && localRootView) {
+    if (!frame.rootFrame().isMainFrame() && localRootView) {
         auto frameClipRect = view->convertToRootView(IntRect { { }, view->size() });
         for (RefPtr ancestor = dynamicDowncast<LocalFrameView>(view->parent()); ancestor; ancestor = dynamicDowncast<LocalFrameView>(ancestor->parent()))
             frameClipRect.intersect(ancestor->convertToRootView(IntRect { { }, ancestor->size() }));
