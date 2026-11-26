@@ -7,6 +7,13 @@ PASS: Added target should have Frame type.
 PASS: Main page should have screen styles (blue).
 PASS: Cross-origin iframe should have screen styles (blue).
 
+-- Running test case: SiteIsolation.Page.SetEmulatedMedia.EmulateExistingFrame
+PASS: Existing cross-origin iframe should start with screen styles (blue).
+Setting emulated media to print (no reload)...
+PASS: Existing cross-origin iframe should switch to print styles (green).
+Resetting emulated media...
+PASS: Existing cross-origin iframe should return to screen styles (blue).
+
 -- Running test case: SiteIsolation.Page.SetEmulatedMedia.EmulateAndReload
 Setting emulated media to print...
 Reloading...

@@ -1,0 +1,13 @@
+Test that the Web Inspector Print Styles toggle sets emulated media on the page target when there are no frame targets.
+
+
+== Running test suite: CSSManager.setEmulatedMediaForPrintStyles
+-- Running test case: CSSManager.setEmulatedMediaForPrintStyles.PageTargetWithoutFrameTargets
+PASS: There should be no frame targets.
+PASS: The web-page target should have Page.setEmulatedMedia.
+Toggling Print Styles on...
+PASS: Print Styles toggle should set emulated media on the page target only.
+PASS: Page should match print media.
+Toggling Print Styles off...
+PASS: Page should not match print media.
+

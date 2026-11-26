@@ -17657,6 +17657,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     parameters.imageAnimationEnabledOverride = m_imageAnimationEnabledOverride;
 #endif
+    parameters.emulationOverrides = inspectorController().emulationOverrides();
 
     // Each SharedMemoryHandle serializes as a Mach port descriptor; the shared-memory send fallback cannot
     // reduce the descriptor count, so log when it grows large (see MACH_SEND_TOO_LARGE CreateWebPage crashes).

@@ -136,6 +136,10 @@ public:
 private:
     double timestamp();
 
+    enum class DisableReason : bool { Command, FrontendTeardown };
+    void disableInternal(DisableReason);
+    void setEmulatedMediaInternal(const String&, InspectorBackendClient::EmulatedMediaRelay);
+
     NODELETE InspectorOverlay& overlay() const;
 
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);

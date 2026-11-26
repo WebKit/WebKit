@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSSManager.setEmulatedMediaForPrintStyles");
+
+    suite.addTestCase({
+        name: "CSSManager.setEmulatedMediaForPrintStyles.PageTargetWithoutFrameTargets",
+        description: "Without frame targets, the Print Styles toggle should set emulated media on the page target, although the web-page target has the command too.",
+        async test() {
+            InspectorTest.expectFalse(WI.targets.some((target) => target.type === WI.TargetType.Frame), "There should be no frame targets.");
+            InspectorTest.expectTrue(WI.backendTarget.hasCommand("Page.setEmulatedMedia"), "The web-page target should have Page.setEmulatedMedia.");
+
+            // Record the type of each target that is sent Page.setEmulatedMedia.
+            let writes = [];
+            let replies = [];
+            let restores = [];
+            for (let candidate of [WI.backendTarget, ...WI.targets]) {
+                if (!candidate.hasCommand("Page.setEmulatedMedia"))
+                    continue;
+                let agent = candidate.PageAgent;
+                let setEmulatedMedia = agent.setEmulatedMedia;
+                agent.setEmulatedMedia = (media) => {
+                    writes.push(candidate.type);
+                    let reply = setEmulatedMedia.call(agent, media).catch(() => { });
+                    replies.push(reply);
+                    return reply;
+                };
+                restores.push(() => { agent.setEmulatedMedia = setEmulatedMedia; });
+            }
+
+            InspectorTest.log("Toggling Print Styles on...");
+            WI.cssManager.setEmulatedMediaForPrintStyles("print");
+            InspectorTest.expectEqual(writes.join(","), "page", "Print Styles toggle should set emulated media on the page target only.");
+
+            // The page target applies the media type before it replies.
+            await Promise.all(replies);
+            let printMatches = await InspectorTest.evaluateInPage(`matchMedia("print").matches`);
+            InspectorTest.expectEqual(printMatches, true, "Page should match print media.");
+
+            InspectorTest.log("Toggling Print Styles off...");
+            WI.cssManager.setEmulatedMediaForPrintStyles("");
+            await Promise.all(replies);
+            printMatches = await InspectorTest.evaluateInPage(`matchMedia("print").matches`);
+            InspectorTest.expectEqual(printMatches, false, "Page should not match print media.");
+
+            for (let restore of restores)
+                restore();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the Web Inspector Print Styles toggle sets emulated media on the page target when there are no frame targets.</p>
+</body>
+</html>

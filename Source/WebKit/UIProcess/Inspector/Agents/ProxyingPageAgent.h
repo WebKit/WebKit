@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InspectorBackendSyncState.h"
 #include "MessageReceiver.h"
 #include "Untrusted.h"
 #include "WebPageInspectorAgentBase.h"
@@ -68,6 +69,12 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     bool isEnabled() const { return m_enabled; }
+    const Inspector::EmulationOverrides& emulationOverrides() const { return m_syncState.overrides(); }
+    // Page-target writers: a page-target Page.setEmulatedMedia, relayed from the main-frame process, which already
+    // applied it, so it is sent to every other instrumented process. Web Inspector sets emulated media with this agent's
+    // own setEmulatedMedia() once there are frame targets (and replays the Print Styles toggle then), so only other
+    // page-target clients use this path.
+    void pageTargetEmulatedMediaChanged(const String&, WebCore::ProcessIdentifier relayingProcess);
     void enableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
     void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
 
@@ -124,6 +131,9 @@ private:
 
     void removeAllRegisteredReceivers();
 
+    // Store the override, then send it to every instrumented process except skippedProcess.
+    void applyEmulatedMedia(const String&, std::optional<WebCore::ProcessIdentifier> skippedProcess);
+
     // Use this, not WebPageProxy::forEachWebContentProcess(): that misses registered processes the page has swapped out of, and
     // includes processes holding only a remote page that were never registered, so state sent there outlives disable().
     void forEachInstrumentedProcess(NOESCAPE const Function<void(WebKit::WebProcessProxy&, WebCore::PageIdentifier)>&);
@@ -142,6 +152,15 @@ private:
     bool m_showPaintRects { false };
     String m_bootstrapScript;
     HashMap<String, bool> m_settingOverrides;
+
+    // The page's emulation overrides: sent to every instrumented process, and to each process that registers later.
+    InspectorBackendSyncState m_syncState;
+
+    // The main-frame process that relayed a page-target override, or that this agent sent an override to while the Page
+    // domain was disabled, since the last disable(). It can hold a value this replica does not (a relayed media type other
+    // than "", "screen" or "print" is stored as a clear), so setEmulatedMedia() sends it the stored overrides even when
+    // they did not change, and disable() while disabled sends its clear only there, if it still hosts the main frame.
+    std::optional<WebCore::ProcessIdentifier> m_mainFrameProcessWithEmulatedMedia;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

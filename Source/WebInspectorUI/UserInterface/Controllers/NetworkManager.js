@@ -270,6 +270,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             // Replay the Page setting overrides to the ProxyingPageAgent, which fans them out to every process.
             WI.layerTreeManager?.initializeBackendTargetForSiteIsolation(WI.backendTarget);
             WI.deviceSettingsManager?.initializeBackendTargetForSiteIsolation(WI.backendTarget);
+            WI.cssManager?.initializeBackendTargetForSiteIsolation(WI.backendTarget);
 
             if (this._bootstrapScript && this._bootstrapScriptEnabledSetting.value && WI.backendTarget?.hasCommand("Page.setBootstrapScript"))
                 WI.backendTarget.PageAgent.setBootstrapScript(this._bootstrapScript.content);

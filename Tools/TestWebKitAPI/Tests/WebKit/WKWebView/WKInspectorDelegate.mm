@@ -27,7 +27,9 @@
 
 #import "Helpers/Test.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/SiteIsolationTestUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
@@ -440,6 +442,73 @@ TEST(WKInspectorDelegate, NoSiteIsolationBannerWithoutSiteIsolation)
     }));
     EXPECT_FALSE(frontendDetectedSiteIsolation(webView.get()));
     EXPECT_FALSE(frontendHasElement(webView.get(), siteIsolationBannerSelector));
+}
+
+static bool childFrameMatchesPrint(TestWKWebView *webView, WKFrameInfo *childFrame)
+{
+    return [[webView objectByEvaluatingJavaScript:@"matchMedia('print').matches" inFrame:childFrame] boolValue];
+}
+
+TEST(WKInspectorDelegate, SiteIsolationEmulatedMediaClearedWhenInspectorCloses)
+{
+    resetInspectorGlobalState();
+
+    TestWebKitAPI::HTTPServer server({
+        { "/parent"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/child'></iframe>"_s } },
+        { "/child"_s, { "<!DOCTYPE html><p>Cross-origin frame</p>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    auto [webView, navigationDelegate] = TestWebKitAPI::siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/parent"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr<WKFrameInfo> childFrame;
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        childFrame = [webView firstChildFrame];
+        return childFrame && [[webView objectByEvaluatingJavaScript:@"document.readyState" inFrame:childFrame.get()] isEqualToString:@"complete"];
+    }));
+    ASSERT_TRUE(childFrame.get());
+    EXPECT_TRUE([childFrame.get().securityOrigin.host isEqualToString:@"webkit.org"]);
+    EXPECT_FALSE(childFrameMatchesPrint(webView.get(), childFrame.get()));
+
+    RetainPtr inspectorDelegate = adoptNS([InspectorDelegate new]);
+    [webView _inspector].delegate = inspectorDelegate.get();
+    [[webView _inspector] show];
+    TestWebKitAPI::Util::run(&inspectorFrontendLoadedCalled);
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [evaluateInFrontend(webView.get(), @"WI.targetsAvailable()") boolValue];
+    }));
+
+    // The Elements tab clears emulated media when it shows the page's DOM tree, which would hide an override left
+    // over from this session. Switch to the Console tab, which the next session restores.
+    evaluateInFrontend(webView.get(), @"WI.showConsoleTab(); true");
+
+    evaluateInFrontend(webView.get(), @"WI.backendTarget.PageAgent.setEmulatedMedia('print'); true");
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return childFrameMatchesPrint(webView.get(), childFrame.get());
+    })) << "The cross-origin iframe did not match print media while the inspector was open.";
+
+    // With no frontend connected, the cross-origin iframe's process does not apply emulated media at all.
+    inspectorFrontendLoadedCalled = false;
+    [[webView _inspector] close];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !childFrameMatchesPrint(webView.get(), childFrame.get());
+    })) << "The cross-origin iframe still matched print media after the inspector closed.";
+
+    // Reopening the inspector instruments that process again, so an override it still held would apply again.
+    // Closing the inspector must have cleared it there, and nothing sets emulated media in this session.
+    [[webView _inspector] show];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&inspectorFrontendLoadedCalled, 10_s));
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [evaluateInFrontend(webView.get(), @"WI.targetsAvailable() && Array.from(WI.targets).some((target) => target.type === WI.TargetType.Frame)") boolValue];
+    }));
+    EXPECT_TRUE([evaluateInFrontend(webView.get(), @"WI.isShowingConsoleTab()") boolValue]) << "The reopened inspector did not show the Console tab.";
+    EXPECT_FALSE(childFrameMatchesPrint(webView.get(), childFrame.get())) << "The cross-origin iframe matched print media again after the inspector reopened.";
+
+    // Leave the default tab selected for later inspector sessions.
+    evaluateInFrontend(webView.get(), @"WI.showElementsTab(); true");
 }
 
 #endif // PLATFORM(MAC)

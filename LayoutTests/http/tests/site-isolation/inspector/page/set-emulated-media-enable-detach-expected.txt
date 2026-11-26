@@ -1,0 +1,12 @@
+Test that removing a frame from a media query change listener while page instrumentation is enabled does not crash under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaEnableDetach
+-- Running test case: SiteIsolation.Page.SetEmulatedMediaEnableDetach.ListenerRemovesLaterFrame
+Disabling the Page domain on both targets...
+PASS: Page should start with two same-origin iframes.
+Enabling the Page domain on the web-page target...
+PASS: Listener should have removed the later iframe.
+PASS: Page should survive enabling Page instrumentation while a frame is removed.
+

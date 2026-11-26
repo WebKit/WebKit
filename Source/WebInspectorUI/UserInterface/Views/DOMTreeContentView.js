@@ -673,11 +673,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         this._showPrintStylesButtonNavigationItem.activated = WI.printStylesEnabled;
 
-        let mediaType = WI.printStylesEnabled ? "print" : "";
-        for (let target of WI.targets) {
-            if (target.hasCommand("Page.setEmulatedMedia"))
-                target.PageAgent.setEmulatedMedia(mediaType);
-        }
+        WI.cssManager.setEmulatedMediaForPrintStyles(WI.printStylesEnabled ? "print" : "");
 
         WI.cssManager.mediaTypeChanged();
     }

@@ -66,6 +66,13 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
     }
 
+    initializeBackendTargetForSiteIsolation(target)
+    {
+        // A Print Styles toggle made before the first frame target was set on the page targets only.
+        if (WI.printStylesEnabled && target.hasCommand("Page.setEmulatedMedia"))
+            target.PageAgent.setEmulatedMedia("print");
+    }
+
     initializeCSSPropertyNameCompletions(target)
     {
         console.assert(target.hasDomain("CSS"));
@@ -502,6 +509,18 @@ WI.CSSManager = class CSSManager extends WI.Object
         });
     }
 
+    setEmulatedMediaForPrintStyles(mediaType)
+    {
+        // With frame targets, the WebPage target sends the media type to every process hosting a frame of the page.
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Page.setEmulatedMedia did not support the WebPage target yet.
+        if (WI.networkManager.enabledPageForSiteIsolation && WI.backendTarget?.hasCommand("Page.setEmulatedMedia")) {
+            WI.backendTarget.PageAgent.setEmulatedMedia(mediaType);
+            return;
+        }
+
+        this._setEmulatedMediaForPrintStylesWithoutFrameTargets(mediaType);
+    }
+
     mediaTypeChanged()
     {
         // Act the same as if media queries changed.
@@ -637,6 +656,15 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (target instanceof WI.FrameTarget)
             return `${target.identifier}:${rawId}`;
         return rawId;
+    }
+
+    _setEmulatedMediaForPrintStylesWithoutFrameTargets(mediaType)
+    {
+        // Each page target applies the media type in its own process. Remove this once every page has frame targets.
+        for (let target of WI.targets) {
+            if (target.hasCommand("Page.setEmulatedMedia"))
+                target.PageAgent.setEmulatedMedia(mediaType);
+        }
     }
 
     _setLayoutContextTypeChangedModeForTarget(target, mode)

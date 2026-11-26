@@ -689,6 +689,11 @@ bool WebPageInspectorController::isPageInstrumentationEnabled() const
     return m_pageAgent && m_pageAgent->isEnabled();
 }
 
+Inspector::EmulationOverrides WebPageInspectorController::emulationOverrides() const
+{
+    return m_pageAgent ? m_pageAgent->emulationOverrides() : Inspector::EmulationOverrides { };
+}
+
 void WebPageInspectorController::setShowPaintRects(bool show)
 {
     if (m_pageAgent)
@@ -745,7 +750,7 @@ void WebPageInspectorController::takeTimelineScreenshot(const WebCore::IntRect& 
             return;
 
         if (image)
-            controller.sendTimelineScreenshotRecord(timestamp, encodeDataURL(image, "image/png"_s));
+            controller.sendTimelineScreenshotRecord(timestamp, WebCore::encodeDataURL(image, "image/png"_s));
         controller.finishTimelineScreenshot();
     });
 #else
@@ -788,6 +793,14 @@ void WebPageInspectorController::sendTimelineScreenshotRecord(double timestamp, 
     // Resolve the page target now: the main frame may have moved to another process since the page target asked.
     // Under Site Isolation all page and frame targets share one clock, so the time still fits.
     sendMessageToInspectorFrontend(PageInspectorTarget::toTargetID(protect(m_inspectedPage)->webPageIDInMainFrameProcess()), message->toJSONString());
+}
+
+void WebPageInspectorController::pageTargetEmulatedMediaChanged(const String& media, WebCore::ProcessIdentifier relayingProcess)
+{
+    if (!m_pageAgent)
+        return;
+
+    m_pageAgent->pageTargetEmulatedMediaChanged(media, relayingProcess);
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
