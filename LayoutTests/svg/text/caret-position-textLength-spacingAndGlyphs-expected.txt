@@ -1,0 +1,17 @@
+Tests that caret positions in SVG text with lengthAdjust='spacingAndGlyphs' match the stretched character positions, on both text code paths. Clicking on the left or right quarter of a character should place the caret before or after it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS squeezed: all caret positions match the character positions
+PASS stretched: all caret positions match the character positions
+PASS squeezedComplex: all caret positions match the character positions
+PASS stretchedComplex: all caret positions match the character positions
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text to Squeeze
+Text to Stretch
+Téxt to Squeeze
+Téxt to Stretch
+

@@ -50,9 +50,6 @@ svg/filters/svg-gaussianblur-edgeMode-duplicate.svg                             
 svg/custom/pattern-content-inheritance-cycle.svg             [ ImageOnlyFailure ]
 svg/transforms/transformed-text-decoration-fill-pattern.html [ ImageOnlyFailure ]
 
-# Text selection problems
-svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg [ Failure ]
-
 # Failing WPT reftests
 imported/w3c/web-platform-tests/svg/painting/marker-009.svg                                            [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/scripted/marker-element-added.html                        [ ImageOnlyFailure ]

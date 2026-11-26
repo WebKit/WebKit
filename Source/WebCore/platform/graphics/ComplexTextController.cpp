@@ -874,6 +874,10 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 advance.setWidth(font->widthForGlyph(glyph));
             }
 
+            // Like WidthIterator::applyHorizontalGlyphStretch(), stretch the shaped advance before any spacing is added.
+            if (m_run.horizontalGlyphStretch() != 1 && character != tabCharacter)
+                advance.setWidth(advance.width() * m_run.horizontalGlyphStretch());
+
             if (!glyphIndex) {
                 advance.expand(complexTextRun->initialAdvance().width(), complexTextRun->initialAdvance().height());
                 advanceAdjustmentExcludedFromMarkCompensation = complexTextRun->initialAdvance().width();

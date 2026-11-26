@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+<style>
+text {
+    font-family: Times;
+    font-size: 40px;
+}
+</style>
+</head>
+<body>
+<svg width="800" height="300">
+    <text id="squeezed" x="10" y="50" textLength="250" lengthAdjust="spacingAndGlyphs">Text to Squeeze</text>
+    <text id="stretched" x="10" y="120" textLength="600" lengthAdjust="spacingAndGlyphs">Text to Stretch</text>
+    <!-- The combining acute accent makes these runs take the complex text code path. -->
+    <text id="squeezedComplex" x="10" y="190" textLength="250" lengthAdjust="spacingAndGlyphs">Te&#x301;xt to Squeeze</text>
+    <text id="stretchedComplex" x="10" y="260" textLength="600" lengthAdjust="spacingAndGlyphs">Te&#x301;xt to Stretch</text>
+</svg>
+<script>
+description("Tests that caret positions in SVG text with lengthAdjust='spacingAndGlyphs' match the stretched character positions, on both text code paths. Clicking on the left or right quarter of a character should place the caret before or after it.");
+
+function isCombiningMark(character)
+{
+    return /\p{M}/u.test(character);
+}
+
+function clientPoint(element, x, y)
+{
+    const point = new DOMPoint(x, y).matrixTransform(element.getScreenCTM());
+    return { x: point.x - window.scrollX, y: point.y - window.scrollY };
+}
+
+function checkCaretPositions(element)
+{
+    const text = element.firstChild;
+    const failures = [];
+    for (let i = 0; i < text.length; ++i) {
+        if (isCombiningMark(text.data[i]))
+            continue;
+        let clusterEnd = i + 1;
+        while (clusterEnd < text.length && isCombiningMark(text.data[clusterEnd]))
+            ++clusterEnd;
+        const extent = element.getExtentOfChar(i);
+        const y = extent.y + extent.height / 2;
+        const before = clientPoint(element, extent.x + extent.width / 4, y);
+        const after = clientPoint(element, extent.x + extent.width * 3 / 4, y);
+        const offsetBefore = document.caretRangeFromPoint(before.x, before.y)?.startOffset ?? null;
+        const offsetAfter = document.caretRangeFromPoint(after.x, after.y)?.startOffset ?? null;
+        if (offsetBefore != i || offsetAfter != clusterEnd)
+            failures.push(`${element.id}: character ${i} '${text.data[i]}' gave offsets ${offsetBefore} and ${offsetAfter}, expected ${i} and ${clusterEnd}`);
+    }
+    return { id: element.id, failures };
+}
+
+// Measure everything before printing, since the output moves the content.
+function report(results)
+{
+    for (const { id, failures } of results) {
+        if (!failures.length)
+            testPassed(`${id}: all caret positions match the character positions`);
+        for (const failure of failures)
+            testFailed(failure);
+    }
+}
+
+report(["squeezed", "stretched", "squeezedComplex", "stretchedComplex"].map(id => checkCaretPositions(document.getElementById(id))));
+</script>
+</body>
+</html>
