@@ -43,6 +43,7 @@ namespace WebKit {
 
 struct FrameTreeNodeData;
 class WebAutomationSession;
+class WebFrameProxy;
 class WebPageProxy;
 
 class BidiBrowsingContextAgent final : public Inspector::BidiBrowsingContextBackendDispatcherHandler, public RefCountedAndCanMakeWeakPtr<BidiBrowsingContextAgent> {
@@ -63,6 +64,8 @@ public:
     void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, const String& optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
     void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, double delta, Inspector::CommandCallback<void>&&) override;
     void setViewport(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, RefPtr<JSON::Object>&&, std::optional<double>&&, RefPtr<JSON::Array>&&, Inspector::CommandCallback<void>&&) override;
+
+    Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>> recordDestroyedChildNavigables(const WebFrameProxy&, HashSet<WebCore::FrameIdentifier>& framesReportedDestroyed);
 
 private:
     BidiBrowsingContextAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
