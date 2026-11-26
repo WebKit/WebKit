@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/text/canvas.2d.direction.inherit.canvas-expected.html

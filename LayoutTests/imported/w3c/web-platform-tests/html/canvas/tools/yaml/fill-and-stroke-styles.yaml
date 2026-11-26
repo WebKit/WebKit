@@ -295,7 +295,7 @@
 
 - name: 2d.fillStyle.parse.current.notcached
   desc: Setting fillStyle to currentColor always re-computes it
-  canvasType: ['HtmlCanvas']
+  canvas_types: ['HtmlCanvas']
   code: |
     canvas.setAttribute('style', 'color: #f00');
     ctx.fillStyle = 'currentColor';
@@ -400,7 +400,7 @@
 
 - name: 2d.strokeStyle.parse.current.notcached
   desc: Setting strokeStyle to currentColor always re-computes it
-  canvasType: ['HtmlCanvas']
+  canvas_types: ['HtmlCanvas']
   code: |
     canvas.setAttribute('style', 'color: #f00');
     ctx.strokeStyle = 'currentColor';

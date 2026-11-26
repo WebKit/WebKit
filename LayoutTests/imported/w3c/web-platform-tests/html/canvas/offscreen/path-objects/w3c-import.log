@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.1.html
@@ -26,6 +24,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.5.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.6.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.7.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.7.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.angle.8.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.default.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.default.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.empty.html
@@ -64,6 +66,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.3.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.4.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.5.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.5.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.6.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.6.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.zero.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.zero.1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.zero.2.html
@@ -84,6 +90,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.ensuresubpath.1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.ensuresubpath.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.ensuresubpath.2.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.ensuresubpath.3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.ensuresubpath.3.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.negative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.negative.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arcTo.nonfinite.html
@@ -126,18 +134,29 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.empty.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.intersect.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.intersect.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.scale.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.scale.w-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.scale.w.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.unaffected.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.2.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.evenodd.1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.evenodd.1.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.evenodd.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.clip.winding.evenodd.2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.empty.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.newline.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.newline.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.nextpoint.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closePath.nextpoint.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closed.arc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.closed.arc.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.ellipse.basics.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.ellipse.basics.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.closed.basic.html
@@ -145,10 +164,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.closed.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.closed.unaffected.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.overlap.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.overlap.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.overlap.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.add.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.evenodd.1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.evenodd.1.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.evenodd.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.evenodd.2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.subtract.1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.subtract.1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.fill.winding.subtract.2.html
@@ -173,6 +195,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.edge.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.empty.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.path2d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.path2d.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.transform.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.transform.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.winding.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.winding.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nobitmap.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nonfinite.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.nonfinite.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.outside.html
@@ -193,6 +223,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.winding.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.path2d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.path2d.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.transform.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.transform.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.nobitmap.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInpath.invalid.html
@@ -219,6 +255,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.moveTo.newsubpath.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.moveTo.nonfinite.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.moveTo.nonfinite.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.open.arc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.open.arc.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.quadraticCurveTo.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.quadraticCurveTo.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.quadraticCurveTo.ensuresubpath.1.html
@@ -262,8 +300,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.rect.zero.6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.rect.zero.6.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.single argument.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.single argument.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.single.argument.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.single.argument.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit.single.argument.html
@@ -376,7 +414,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.empty.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.overlap.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.overlap.png
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.overlap.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.prune.arc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.stroke.prune.arc.worker.js
@@ -406,3 +443,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.transformation.changing.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.transformation.multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.transformation.multiple.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/WEB_FEATURES.yml

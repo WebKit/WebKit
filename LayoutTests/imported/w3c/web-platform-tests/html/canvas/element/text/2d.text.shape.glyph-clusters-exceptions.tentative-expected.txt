@@ -1,0 +1,6 @@
+2d.text.shape.glyph-clusters-exceptions.tentative
+Check that ShapedText::glyphClusters() throws when using invalid indexes.
+Actual output:
+
+FAIL Check that ShapedText::glyphClusters() throws when using invalid indexes. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

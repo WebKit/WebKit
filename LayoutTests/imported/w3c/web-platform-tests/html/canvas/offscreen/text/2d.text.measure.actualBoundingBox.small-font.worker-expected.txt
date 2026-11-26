@@ -1,0 +1,3 @@
+
+PASS Testing that actualBoundingBox metrics are precise at small font sizes
+

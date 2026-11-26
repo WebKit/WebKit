@@ -1,3 +1,0 @@
-
-PASS Getting/setting width/height IDL attributes
-

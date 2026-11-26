@@ -1,0 +1,6 @@
+2d.path.fill.winding.evenodd.2
+evenodd winding number rule works in fill
+Actual output:
+
+PASS evenodd winding number rule works in fill
+

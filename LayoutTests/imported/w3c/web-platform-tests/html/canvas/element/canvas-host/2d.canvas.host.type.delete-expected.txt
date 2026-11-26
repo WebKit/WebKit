@@ -1,0 +1,6 @@
+2d.canvas.host.type.delete
+window.HTMLCanvasElement interface object is [[Configurable]]
+Actual output:
+
+PASS window.HTMLCanvasElement interface object is [[Configurable]]
+

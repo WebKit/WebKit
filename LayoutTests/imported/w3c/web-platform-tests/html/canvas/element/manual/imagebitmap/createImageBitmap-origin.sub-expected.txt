@@ -2,6 +2,12 @@
 PASS cross-origin HTMLImageElement: origin unclear getImageData
 PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
 PASS cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to cross-origin HTMLImageElement: origin unclear getImageData
+PASS redirected to cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
+PASS redirected to cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to same-origin HTMLImageElement: origin unclear getImageData
+PASS redirected to same-origin HTMLImageElement: origin unclear 2dContext.drawImage
+PASS redirected to same-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
 PASS cross-origin SVGImageElement: origin unclear getImageData
 PASS cross-origin SVGImageElement: origin unclear 2dContext.drawImage
 PASS cross-origin SVGImageElement: origin unclear bitmaprenderer.transferFromImageBitmap

@@ -1,0 +1,3 @@
+
+FAIL Test that getTextClusters() splits the input correctly into the minimal clusters, keeping emojis together. ctx.measureText(text).getTextClusters is not a function. (In 'ctx.measureText(text).getTextClusters()', 'ctx.measureText(text).getTextClusters' is undefined)
+

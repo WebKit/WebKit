@@ -1,0 +1,6 @@
+2d.canvas.host.initial.reset.clip
+Resetting the canvas state resets the current clip region
+Actual output:
+
+PASS Resetting the canvas state resets the current clip region
+

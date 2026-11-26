@@ -1,0 +1,3 @@
+
+PASS evenodd winding number rule works in clip
+

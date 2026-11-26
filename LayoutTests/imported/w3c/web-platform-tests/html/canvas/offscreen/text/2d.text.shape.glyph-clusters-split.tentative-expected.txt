@@ -1,0 +1,7 @@
+2d.text.shape.glyph-clusters-split.tentative
+
+Test that glyphClusters() splits the input correctly into the minimal clusters, keeping emojis together.
+
+
+FAIL Test that glyphClusters() splits the input correctly into the minimal clusters, keeping emojis together. ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

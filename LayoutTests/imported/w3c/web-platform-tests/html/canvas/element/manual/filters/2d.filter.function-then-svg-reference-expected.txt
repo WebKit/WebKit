@@ -1,0 +1,4 @@
+
+FAIL url() alone renders correctly assert_array_equals: url() alone should render the SVG filter's output expected property 0 to be 0 but got 255 (expected array [0, 255, 0, 255] got object "255,0,0,255")
+FAIL brightness() chained before url() renders correctly assert_array_equals: chaining a CSS filter function before a url() SVG filter should still render the SVG filter's output, not a blank canvas expected property 0 to be 0 but got 255 (expected array [0, 255, 0, 255] got object "255,0,0,255")
+

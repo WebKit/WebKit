@@ -1,6 +1,7 @@
 2d.state.saverestore.textBaseline
-save()/restore() works for textBaseline
-Actual output:
 
-PASS save()/restore() works for textBaseline
+PASS save()/restore() restores textBaseline, for a canvas of size (300, 150).
+PASS save() does not modify textBaseline, for a canvas of size (300, 150).
+PASS save()/restore() restores textBaseline, for a canvas of size (0, 0).
+PASS save() does not modify textBaseline, for a canvas of size (0, 0).
 

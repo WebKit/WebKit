@@ -1,0 +1,8 @@
+2d.layer.exceptions-are-no-op.tentative
+
+Checks that the context state is left unchanged if beginLayer throws.
+
+
+FAIL Checks that the context state is left unchanged if beginLayer throws. assert_throws_js: function "() => ctx.beginLayer({filter: {name: 'colorMatrix',
+                                                  values: 'foo'}})" did not throw
+

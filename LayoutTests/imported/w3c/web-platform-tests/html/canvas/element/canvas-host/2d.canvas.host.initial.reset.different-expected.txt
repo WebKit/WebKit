@@ -1,0 +1,6 @@
+2d.canvas.host.initial.reset.different
+Changing size resets canvas to transparent black
+Actual output:
+
+PASS Changing size resets canvas to transparent black
+

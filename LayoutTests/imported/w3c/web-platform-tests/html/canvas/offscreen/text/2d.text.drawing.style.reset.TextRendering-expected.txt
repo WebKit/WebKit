@@ -1,0 +1,7 @@
+2d.text.drawing.style.reset.TextRendering
+
+TextRendering stays the same after font change.
+
+
+PASS TextRendering stays the same after font change.
+

@@ -1,0 +1,12 @@
+
+PASS createImageBitmap snapshot isolation (alpha=true)
+PASS CanvasPattern snapshot isolation (alpha=true)
+PASS drawImage into other canvas snapshot isolation (alpha=true)
+PASS WebCodecs VideoFrame drawImage snapshot isolation (alpha=true)
+PASS Same-origin snapshot immutability across fillRect and putImageData (alpha=true)
+PASS createImageBitmap snapshot isolation (alpha=false)
+PASS CanvasPattern snapshot isolation (alpha=false)
+PASS drawImage into other canvas snapshot isolation (alpha=false)
+PASS WebCodecs VideoFrame drawImage snapshot isolation (alpha=false)
+PASS Same-origin snapshot immutability across fillRect and putImageData (alpha=false)
+

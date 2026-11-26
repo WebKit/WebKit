@@ -1,3 +1,0 @@
-
-PASS Setting IDL attributes updates IDL and content attributes
-

@@ -1,0 +1,3 @@
+
+FAIL line caps should be drawn on open arcs assert_approx_equals: Alpha channel of the pixel at (209, 148) expected 255 +/- 1 but got 248
+

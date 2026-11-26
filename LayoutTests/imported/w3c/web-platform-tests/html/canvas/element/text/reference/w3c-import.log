@@ -10,9 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/reference/direction-default-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/reference/direction-rtl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/reference/fillText-bidi-ltr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/text/reference/fillText-bidi-rtl-ref.html

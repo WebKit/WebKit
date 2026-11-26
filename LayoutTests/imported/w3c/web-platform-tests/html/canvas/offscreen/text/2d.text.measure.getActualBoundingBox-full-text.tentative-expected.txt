@@ -1,0 +1,8 @@
+2d.text.measure.getActualBoundingBox-full-text.tentative
+
+
+FAIL Test TextMetrics::getActualBoundingBox() for the full length of the string for some edge cases, with direction ltr and no-directional-override tm.getActualBoundingBox is not a function. (In 'tm.getActualBoundingBox(0, text.length)', 'tm.getActualBoundingBox' is undefined)
+FAIL Test TextMetrics::getActualBoundingBox() for the full length of the string for some edge cases, with direction rtl and no-directional-override tm.getActualBoundingBox is not a function. (In 'tm.getActualBoundingBox(0, text.length)', 'tm.getActualBoundingBox' is undefined)
+FAIL Test TextMetrics::getActualBoundingBox() for the full length of the string for some edge cases, with direction ltr and directional-override tm.getActualBoundingBox is not a function. (In 'tm.getActualBoundingBox(0, text.length)', 'tm.getActualBoundingBox' is undefined)
+FAIL Test TextMetrics::getActualBoundingBox() for the full length of the string for some edge cases, with direction rtl and directional-override tm.getActualBoundingBox is not a function. (In 'tm.getActualBoundingBox(0, text.length)', 'tm.getActualBoundingBox' is undefined)
+

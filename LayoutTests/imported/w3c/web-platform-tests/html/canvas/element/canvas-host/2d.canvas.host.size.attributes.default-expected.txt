@@ -1,0 +1,6 @@
+2d.canvas.host.size.attributes.default
+Default width/height when attributes are missing
+Actual output:
+
+PASS Default width/height when attributes are missing
+

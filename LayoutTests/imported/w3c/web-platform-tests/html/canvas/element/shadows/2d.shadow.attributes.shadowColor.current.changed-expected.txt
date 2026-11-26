@@ -1,0 +1,6 @@
+2d.shadow.attributes.shadowColor.current.changed
+currentColor is computed when the attribute is set, not when it is painted
+Actual output:
+
+PASS currentColor is computed when the attribute is set, not when it is painted
+

@@ -850,6 +850,11 @@ imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never
 # Passing since 325836@main.
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/shadow-dom-slotted-moveBefore.tentative.html [ Pass ]
 
+# ASSERTION FAILED: threadLikeAssertion.isCurrent() in ~CoordinatedPlatformLayer() in the second test,
+# probably from a layer the offscreen test, which runs before it, leaves behind.
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry-offscreen.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/hit-test/elementsFromPoint-update-element-geometry.tentative.html [ Skip ]
+
 # Passing since 325849@main.
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-calc-angle-percentage.html [ Pass ]
 
@@ -865,7 +870,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/can
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Pass ]
@@ -3187,6 +3191,9 @@ webkit.org/b/227660 imported/w3c/web-platform-tests/wasm/webapi/instantiateStrea
 
 webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
 webkit.org/b/232346 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-svg-resize.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-premultiplyAlpha.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-resolves-in-task.any.html [ Skip ]
 webkit.org/b/232346 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 webkit.org/b/232346 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 webkit.org/b/232346 media/video-canvas-createPattern.html [ Failure Timeout ]

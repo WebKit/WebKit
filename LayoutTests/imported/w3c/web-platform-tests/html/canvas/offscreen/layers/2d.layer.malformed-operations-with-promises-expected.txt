@@ -1,0 +1,6 @@
+2d.layer.malformed-operations-with-promises
+
+
+FAIL Throws if convertToBlob is called while layers are open. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Throws if createImageBitmap is called while layers are open. assert_unreached: Should have rejected: undefined Reached unreachable code
+

@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.3arg.html
@@ -27,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.clip.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.composite.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.detachedcanvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.floatsource.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.incomplete.emptysrc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.incomplete.immediate.html
@@ -50,3 +49,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.zerocanvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.zerosource.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/WEB_FEATURES.yml

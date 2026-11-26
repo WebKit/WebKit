@@ -1,0 +1,7 @@
+2d.path.open.arc
+
+line caps should be drawn on open arcs
+
+
+PASS line caps should be drawn on open arcs
+

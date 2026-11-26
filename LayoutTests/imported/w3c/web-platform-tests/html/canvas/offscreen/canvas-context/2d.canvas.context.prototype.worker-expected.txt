@@ -1,0 +1,3 @@
+
+PASS checks OffscreenCanvasRenderingContext2D prototype
+

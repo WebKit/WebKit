@@ -1,0 +1,8 @@
+2d.text.shape.actualBoundingBox-full-text.tentative
+
+
+FAIL Test ShapedText::actualBoundingBox() for the full length of the string for some edge cases, with direction ltr and no-directional-override ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Test ShapedText::actualBoundingBox() for the full length of the string for some edge cases, with direction rtl and no-directional-override ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Test ShapedText::actualBoundingBox() for the full length of the string for some edge cases, with direction ltr and directional-override ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+FAIL Test ShapedText::actualBoundingBox() for the full length of the string for some edge cases, with direction rtl and directional-override ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)
+

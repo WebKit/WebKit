@@ -10,11 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/ImageData-fidelity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-color-space-settings.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html
@@ -26,6 +26,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/encode-hdr.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/imagedata-no-color-settings-crash.html

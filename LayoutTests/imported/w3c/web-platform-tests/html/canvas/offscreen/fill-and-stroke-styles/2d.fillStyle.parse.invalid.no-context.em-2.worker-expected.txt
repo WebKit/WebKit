@@ -1,0 +1,3 @@
+
+PASS Colors depending on a style context are invalid in OffscreenCanvas
+

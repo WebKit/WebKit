@@ -1,0 +1,7 @@
+2d.fillStyle.parse.invalid.no-context.em-4
+
+Colors depending on a style context are invalid in OffscreenCanvas
+
+
+PASS Colors depending on a style context are invalid in OffscreenCanvas
+

@@ -1,0 +1,3 @@
+
+PASS Interface methods can be overridden
+

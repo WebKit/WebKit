@@ -1,0 +1,7 @@
+
+PASS base sRGB, use base primaries
+PASS base sRGB, alternate Rec2020, use alternate primaries
+PASS base Rec2100 PQ, use base primaries
+PASS base Rec2100 PQ, alternate has no profile, use alternate primaries
+PASS base Rec2100 HLG, use base primaries
+

@@ -6,4 +6,5 @@ PASS Test that convertToBlob with webp produces correct result
 PASS Test that call convertToBlob on a detached OffscreenCanvas throws exception
 PASS Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception
 PASS Test that call convertToBlob on a OffscreenCanvas with tainted origin throws exception
+PASS Test that call convertToBlob with quality set to NaN on a OffscreenCanvas is the same as unspecified
 

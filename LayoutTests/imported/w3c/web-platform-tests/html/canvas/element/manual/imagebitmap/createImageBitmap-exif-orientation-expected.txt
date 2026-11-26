@@ -3,4 +3,7 @@ PASS createImageBitmap with EXIF rotation, imageOrientation from-image, and no c
 PASS createImageBitmap with EXIF rotation, imageOrientation flipY, and no cropping
 PASS createImageBitmap with EXIF rotation, imageOrientation from-image, and cropping
 PASS createImageBitmap with EXIF rotation, imageOrientation flipY, and cropping
+PASS createImageBitmap with EXIF rotation, imageOrientation from-image, no cropping, and resize
+PASS createImageBitmap with EXIF rotation, imageOrientation flipY, cropping, and resize
+PASS createImageBitmap with EXIF rotation, imageOrientation flipY, cropping, and nonuniform resize
 

@@ -1,0 +1,6 @@
+2d.canvas.host.size.invalid.attributes.idl
+Getting/setting width/height IDL attributes
+Actual output:
+
+PASS Getting/setting width/height IDL attributes
+

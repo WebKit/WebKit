@@ -1,0 +1,4 @@
+
+
+PASS Tainting check for cross origin image in canvas pattern
+

@@ -1,0 +1,3 @@
+
+FAIL Test ShapedText::positionToAdvance() and its symmetry with advanceToPosition() and glyphClusters(). promise_test: Unhandled rejection with value: object "TypeError: ctx.shapeText is not a function. (In 'ctx.shapeText(text)', 'ctx.shapeText' is undefined)"
+

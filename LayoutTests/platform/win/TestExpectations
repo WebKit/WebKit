@@ -1561,6 +1561,9 @@ imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/html/canvas/historical.any.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/historical.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/global-hdr-headroom/attribute.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/global-hdr-headroom/clli-mdcv-png.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/global-hdr-headroom/iso21496-1-jpg.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/semantics/rellist-feature-detection.html [ Skip ] # Failure
 
@@ -2380,7 +2383,6 @@ imported/w3c/web-platform-tests/html/canvas/element/color-type [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/compositing [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/drawing-rectangles-to-the-canvas [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/filters [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/layers [ Skip ]
@@ -2389,10 +2391,8 @@ imported/w3c/web-platform-tests/html/canvas/element/manual [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/path-objects [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/reset [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/scroll [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/shadows [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/text [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/text-styles [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/transformations [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/video [ Skip ]

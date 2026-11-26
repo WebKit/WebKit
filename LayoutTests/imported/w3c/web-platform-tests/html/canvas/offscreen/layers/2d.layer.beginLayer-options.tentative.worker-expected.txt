@@ -1,0 +1,3 @@
+
+FAIL Checks beginLayer works for different option parameter values assert_throws_js: function "function() { ctx.beginLayer(''); }" did not throw
+

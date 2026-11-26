@@ -10,10 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText-FontFace-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText-FontFace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.direction-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.direction-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.direction.html
@@ -42,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.inherit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.offscreen.worker.lang.inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/empty-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/text-direction-worker-inherit.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/text-direction-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/text-lang-worker-en.js

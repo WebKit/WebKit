@@ -1,0 +1,6 @@
+
+FAIL No CLLI or MDCV promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL CLLI 100, MDCV 5000 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL CLLI 500 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL MDCV 5000 promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

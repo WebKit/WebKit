@@ -2,5 +2,5 @@
 No exception raised on lone beginLayer() calls.
 Actual output:
 
-FAIL No exception raised on lone beginLayer() calls. ctx.beginLayer is not a function. (In 'ctx.beginLayer()', 'ctx.beginLayer' is undefined)
+PASS No exception raised on lone beginLayer() calls.
 

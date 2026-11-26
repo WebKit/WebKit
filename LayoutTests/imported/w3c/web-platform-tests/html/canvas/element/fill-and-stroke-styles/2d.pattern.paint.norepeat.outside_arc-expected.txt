@@ -1,0 +1,7 @@
+2d.pattern.paint.norepeat.outside_arc
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.pattern.paint.norepeat.outside_arc
+

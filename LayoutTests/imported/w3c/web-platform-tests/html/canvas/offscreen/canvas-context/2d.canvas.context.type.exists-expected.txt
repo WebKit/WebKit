@@ -1,0 +1,9 @@
+2d.canvas.context.type.exists
+
+The 2D context interface is a property of 'window'
+
+Defined in "Web IDL" (draft)
+
+
+PASS The 2D context interface is a property of 'window'
+

@@ -1,0 +1,6 @@
+2d.path.clip.winding.evenodd.1
+evenodd winding number rule works in clip
+Actual output:
+
+PASS evenodd winding number rule works in clip
+

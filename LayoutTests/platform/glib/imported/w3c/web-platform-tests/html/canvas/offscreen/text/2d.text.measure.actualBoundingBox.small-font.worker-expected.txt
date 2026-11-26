@@ -1,0 +1,3 @@
+
+FAIL Testing that actualBoundingBox metrics are precise at small font sizes assert_true: m.actualBoundingBoxRight < 1.75 expected true got false
+

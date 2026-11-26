@@ -1,0 +1,7 @@
+
+FAIL base sRGB, use base primaries promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL base sRGB, alternate Rec2020, use alternate primaries promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL base Rec2100 PQ, use base primaries promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL base Rec2100 PQ, alternate has no profile, use alternate primaries promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL base Rec2100 HLG, use base primaries promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

@@ -1,0 +1,7 @@
+2d.layer.ctm.getTransform
+
+Tests getTransform inside layers.
+
+
+PASS Tests getTransform inside layers.
+
