@@ -1805,15 +1805,6 @@ static bool isValidHostedLayer(const WebCore::PortalHostedLayer& layer)
         && std::isfinite(layer.childOriginInPortal.x()) && std::isfinite(layer.childOriginInPortal.y()) && isFinite(layer.transform);
 }
 
-// The portal clips whatever comes out in front of its plane, like the near side of a child turned toward the viewer,
-// which the scene the GPU process draws on macOS and iOS still shows. So the layers of promoted children cross the
-// portal plane, while the models stay clipped by it. RealityKit's Core Animation bridge sets portal crossing on the
-// entity of a layer from this option, inherited by the entities of its sublayers, and removes it otherwise.
-static void allowCrossingPortal(CALayer *layer)
-{
-    [layer setValue:@YES forKeyPath:@"separatedOptions.isPortalCrossingEnabled"];
-}
-
 static RetainPtr<CALayer> makePortalSceneLayer()
 {
     RetainPtr layer = adoptNS([[CALayer alloc] init]);
@@ -1833,7 +1824,6 @@ static RetainPtr<CALayer> makePortalSceneLayer()
     [layer setValue:@YES forKeyPath:@"separatedOptions.updates.mesh"];
     [layer setValue:@YES forKeyPath:@"separatedOptions.updates.material"];
     [layer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
-    allowCrossingPortal(layer.get());
     return layer;
 }
 
@@ -1879,7 +1869,6 @@ void ModelProcessModelPlayerProxy::setPortalHostedLayers(Vector<WebCore::PortalH
         [m_portalSceneLayerContainer setDelegate:[WebActionDisablingCALayerDelegate shared]];
         [m_portalSceneLayerContainer setAnchorPoint:CGPointZero];
         [m_portalSceneLayerContainer setSeparatedState:kCALayerSeparatedStateTracked];
-        allowCrossingPortal(m_portalSceneLayerContainer.get());
         [m_layer addSublayer:m_portalSceneLayerContainer.get()];
     }
 
@@ -2069,7 +2058,6 @@ static RetainPtr<CALayer> makeAnchoredPortalChildGroupLayer()
     [layer setPosition:CGPointZero];
     [layer setValue:@NO forKeyPath:@"separatedOptions.updates.transform"];
     [layer setSeparatedState:kCALayerSeparatedStateTracked];
-    allowCrossingPortal(layer.get());
     return layer;
 }
 
