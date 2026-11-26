@@ -99,6 +99,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/MarkedVector.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Page.h>
@@ -596,6 +597,7 @@ static String toStringIgnoringExceptions(JSContextRef context, JSValueRef value)
     return string ? string->string() : String();
 }
 
+template<bool isBidi>
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
     // This is using the JSC C API so we cannot take a std::span in argument directly.
@@ -641,6 +643,8 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidElementState);
         else if (exceptionName == "InvalidParameter"_s)
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidParameter);
+        else if (isBidi && (exceptionName == "NoSuchHandle"_s || exceptionName == "FrameNotFound"_s))
+            errorType = exceptionName;
         else if (exceptionName == "InvalidSelector"_s)
             errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidSelector);
         else if (exceptionName == "ElementNotInteractable"_s)
@@ -852,8 +856,23 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
     willDestroyGlobalObjectForFrame(frame.frameID());
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+static void clearBidiHandles(JSC::JSObject* scriptObject)
+{
+    if (!scriptObject)
+        return;
+
+    JSValueRef exception = nullptr;
+    callPropertyFunction(toGlobalRef(scriptObject->realm()), toRef(scriptObject), "clearBidiHandles"_s, 0, nullptr, &exception);
+}
+#endif
+
 void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    clearBidiHandles(m_bidiHandleOwners.take(frameID).get());
+#endif
+
     // The observer is no longer needed, let it become GC'd and unregister itself from LocalDOMWindow.
     if (m_frameObservers.contains(frameID))
         m_frameObservers.remove(frameID);
@@ -866,8 +885,15 @@ void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameId
         callback(String(errorMessage), String(errorType));
 }
 
-void WebAutomationSessionProxy::cancelPendingEvaluateJavaScriptCallbacks()
+void WebAutomationSessionProxy::endAutomationSession()
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    // Invalidate outstanding evaluations before completing them.
+    auto bidiHandleOwners = std::exchange(m_bidiHandleOwners, { });
+    for (auto& scriptObject : bidiHandleOwners.values())
+        clearBidiHandles(scriptObject.get());
+#endif
+
     // A script can still be pending at session teardown (e.g. one blocked on an open user prompt). Each
     // completion handler is the evaluate message's async reply and must be called exactly once, so invoke
     // any remaining ones with an error before they are destroyed.
@@ -879,6 +905,8 @@ void WebAutomationSessionProxy::cancelPendingEvaluateJavaScriptCallbacks()
         for (auto& callback : frameCallbacks.values())
             callback(String(errorMessage), String(errorType));
     }
+
+    m_frameObservers.clear();
 }
 
 void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
@@ -914,7 +942,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         JSValueMakeBoolean(context, forceUserGesture),
         JSValueMakeNumber(context, frameID.toUInt64()),
         JSValueMakeNumber(context, callbackID.toUInt64()),
-        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback<false>),
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
 
@@ -952,17 +980,18 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIden
         callback(String(result), String(errorType));
 }
 
-void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, std::optional<RealmIdentifier>, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
-        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
+        return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
 
     RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
     RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
     RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
     if (!window || !window->frame())
-        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+        return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
     // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
     if (!coreLocalFrame->isMainFrame())
@@ -972,12 +1001,22 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
     ASSERT(scriptObject);
 
     auto frameID = frame->frameID();
+    auto executionRealmIdentifier = realmIdentifierForFrame(frameID);
+    if (!executionRealmIdentifier)
+        return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
+
     JSValueRef exception = nullptr;
     JSGlobalContextRef context = frame->jsContext();
+    if (resultOwnershipRoot) {
+        JSC::JSLockHolder locker(toJS(context));
+        m_bidiHandleOwners.set(frameID, JSC::Weak<JSC::JSObject> { toJS(scriptObject) });
+    }
     auto callbackID = JSCallbackIdentifier::generate();
 
     auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
-    result.iterator->value.set(callbackID, WTF::move(completionHandler));
+    result.iterator->value.set(callbackID, [completionHandler = WTF::move(completionHandler), executionRealmIdentifier](String&& result, String&& errorType) mutable {
+        completionHandler(WTF::move(result), executionRealmIdentifier, WTF::move(errorType));
+    });
 
     JSValueRef functionArguments[] = {
         toJSValue(context, expression),
@@ -985,9 +1024,10 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
         maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
         maxDomDepth ? JSValueMakeNumber(context, *maxDomDepth) : JSValueMakeNull(context),
         toJSValue(context, includeShadowTree),
+        JSValueMakeBoolean(context, resultOwnershipRoot),
         JSValueMakeNumber(context, frameID.toUInt64()),
         JSValueMakeNumber(context, callbackID.toUInt64()),
-        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback<true>),
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
 
@@ -1007,6 +1047,42 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
 
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
+
+void WebAutomationSessionProxy::releaseBidiHandles(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, std::optional<RealmIdentifier> expectedRealmIdentifier, Vector<String>&& handles, CompletionHandler<void(std::optional<String>&&)>&& completionHandler)
+{
+    using ErrorMessage = Inspector::Protocol::Automation::ErrorMessage;
+    using Inspector::Protocol::AutomationHelpers::getEnumConstantValue;
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    if (!page)
+        return completionHandler(getEnumConstantValue(ErrorMessage::WindowNotFound));
+
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
+    if (!window || !window->frame())
+        return completionHandler(getEnumConstantValue(ErrorMessage::FrameNotFound));
+    if (expectedRealmIdentifier && realmIdentifierForFrame(frame->frameID()) != expectedRealmIdentifier)
+        return completionHandler(getEnumConstantValue(ErrorMessage::FrameNotFound));
+
+    // A realm that has never retained a value has no handles to release.
+    if (!m_bidiHandleOwners.contains(frame->frameID()))
+        return completionHandler(emptyString());
+
+    JSGlobalContextRef context = frame->jsContext();
+    JSObjectRef scriptObject = this->scriptObject(context);
+    if (!scriptObject)
+        return completionHandler(emptyString());
+
+    JSValueRef exception = nullptr;
+    JSValueRef functionArguments[] = { toJSArray(context, handles, toJSValue, &exception) };
+    if (!exception)
+        callPropertyFunction(context, scriptObject, "releaseBidiHandles"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception)
+        return completionHandler(getEnumConstantValue(ErrorMessage::InternalError));
+    completionHandler(emptyString());
+}
+#endif
 
 void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
@@ -1115,7 +1191,7 @@ void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier
         JSValueMakeBoolean(context, userActivation),
         JSValueMakeNumber(context, frameID.toUInt64()),
         JSValueMakeNumber(context, callbackID.toUInt64()),
-        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
+        JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback<true>),
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
 
@@ -1933,6 +2009,8 @@ void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier fram
 
 void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID)
 {
+    clearBidiHandles(m_bidiHandleOwners.take(frameID).get());
+
     auto realmIterator = m_frameToRealmIdentifier.find(frameID);
     if (realmIterator == m_frameToRealmIdentifier.end())
         return;

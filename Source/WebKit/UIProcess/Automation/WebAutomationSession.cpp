@@ -2190,7 +2190,7 @@ void WebAutomationSession::evaluateJavaScriptFunctionForBidi(const Inspector::Pr
 
 HashMap<uint64_t, Inspector::CommandCallback<String>>& WebAutomationSession::evaluateJavaScriptFunctionCallbacks(UserPromptEndsEvaluation userPromptEndsEvaluation)
 {
-    return userPromptEndsEvaluation == UserPromptEndsEvaluation::Yes ? m_evaluateJavaScriptFunctionCallbacks : m_evaluateBidiScriptCallbacks;
+    return userPromptEndsEvaluation == UserPromptEndsEvaluation::Yes ? m_evaluateJavaScriptFunctionCallbacks : m_evaluateJavaScriptFunctionForBidiCallbacks;
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, UserPromptEndsEvaluation userPromptEndsEvaluation, Inspector::CommandCallback<String>&& callback)
@@ -3518,7 +3518,8 @@ static String normalizedBidiScriptEvaluationError(const String& errorType, const
     return STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, details);
 }
 
-void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double>&& callbackTimeout, CommandCallbackOf<String, RealmIdentifier>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, FrameNotFound, "The browsing context is no longer available."_s);
@@ -3527,10 +3528,10 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(frameNotFound, FrameNotFound, "The browsing context is no longer available."_s);
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
-    m_evaluateBidiScriptCallbacks.set(callbackID, WTF::move(callback));
+    m_bidiScriptResultCallbacks.set(callbackID, WTF::move(callback));
 
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiScript(page->webPageIDInProcessForFrame(frameID), frameID, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, String&& errorType) {
-        auto callback = protectedThis->m_evaluateBidiScriptCallbacks.take(callbackID);
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiScript(page->webPageIDInProcessForFrame(frameID), frameID, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, resultOwnershipRoot, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, std::optional<RealmIdentifier>&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, std::optional<RealmIdentifier>&& realmIdentifier, String&& errorType) {
+        auto callback = protectedThis->m_bidiScriptResultCallbacks.take(callbackID);
         if (!callback)
             return;
 
@@ -3539,9 +3540,27 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
             return;
         }
 
-        callback(WTF::move(result));
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmIdentifier, InternalError);
+        callback({ { WTF::move(result), WTF::move(*realmIdentifier) } });
     } });
 }
+
+void WebAutomationSession::releaseBidiHandles(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, std::optional<RealmIdentifier> expectedRealmIdentifier, Vector<String>&& handles, CommandCallback<void>&& callback)
+{
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ReleaseBidiHandles(page->webPageIDInProcessForFrame(frameID), frameID, expectedRealmIdentifier, WTF::move(handles)), CompletionHandler<void(std::optional<String>&&)> { [callback = WTF::move(callback)](std::optional<String>&& errorType) mutable {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!errorType, FrameNotFound);
+        if (!errorType->isEmpty())
+            return callback(makeUnexpected(WTF::move(*errorType)));
+        callback({ });
+    } });
+}
+#endif
 
 void WebAutomationSession::locateNodesForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, CommandCallback<String>&& callback)
 {
@@ -3591,15 +3610,17 @@ void WebAutomationSession::evaluateBidiCallFunction(const Inspector::Protocol::A
     });
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
-    m_evaluateBidiCallFunctionCallbacks.set(callbackID, WTF::move(callback));
+    m_bidiScriptResultCallbacks.set(callbackID, WTF::move(callback));
 
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiCallFunction(page->webPageIDInProcessForFrame(frameID), frameID, expectedRealmIdentifier, functionDeclaration, argumentsVector, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, std::optional<RealmIdentifier>&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, std::optional<RealmIdentifier>&& realmIdentifier, String&& errorType) {
-        auto callback = protectedThis->m_evaluateBidiCallFunctionCallbacks.take(callbackID);
+        auto callback = protectedThis->m_bidiScriptResultCallbacks.take(callbackID);
         if (!callback)
             return;
 
         if (!errorType.isEmpty()) {
-            callback(makeUnexpected(errorType));
+            if ((errorType == "NoSuchHandle"_s || errorType == "NodeNotFound"_s) && !result.isEmpty())
+                return callback(makeUnexpected(makeString(errorType, ';', result)));
+            callback(makeUnexpected(WTF::move(errorType)));
             return;
         }
 

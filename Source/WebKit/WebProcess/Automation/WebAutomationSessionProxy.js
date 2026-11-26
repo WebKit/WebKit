@@ -33,8 +33,15 @@ const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 // script has replaced them.
 const convertToString = String;
 const dateToISOString = Date.prototype.toISOString;
+const defineProperty = Object.defineProperty;
+const hasOwn = Object.hasOwn;
+const jsonParse = JSON.parse;
 const jsonStringify = JSON.stringify;
+const mapClear = Map.prototype.clear;
+const mapDelete = Map.prototype.delete;
 const mapForEach = Map.prototype.forEach;
+const mapGet = Map.prototype.get;
+const mapSet = Map.prototype.set;
 const promiseThen = Promise.prototype.then;
 const reflectApply = Reflect.apply;
 const regExpTest = RegExp.prototype.test;
@@ -103,6 +110,15 @@ class InvalidArgumentError extends Error
     }
 }
 
+class RemoteReferenceError extends Error
+{
+    constructor(name, message)
+    {
+        super(message);
+        this.name = name;
+    }
+}
+
 let AutomationSessionProxy = class AutomationSessionProxy
 {
     constructor()
@@ -111,6 +127,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
         this._nodeToIdMap = new Map;
         this._idToNodeMap = new Map;
         this._staleIdentifiers = new Set;
+        this._bidiHandles = new Map;
+        this._bidiHandleGeneration = 0;
     }
 
     // Public
@@ -128,12 +146,21 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, resultOwnershipRoot, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(result => {
+        let handleGeneration = this._bidiHandleGeneration;
+        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(({ result, value }) => {
+            let handle;
             let serializedResult;
             let serializationError;
             try {
+                let canHaveHandle = value !== undefined && value !== null
+                    && typeof value !== "boolean" && typeof value !== "number" && typeof value !== "string" && typeof value !== "bigint";
+                if (resultOwnershipRoot && canHaveHandle && handleGeneration === this._bidiHandleGeneration) {
+                    handle = "handle-" + createUUID();
+                    let remoteValue = result.success ? result.result : result.error.exception;
+                    defineProperty(remoteValue, "handle", { value: handle, enumerable: true });
+                }
                 serializedResult = jsonStringify(result);
             } catch (error) {
                 serializationError = createBidiScriptError(error, "InternalError", "Script result serialization failed.");
@@ -149,6 +176,15 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 return;
             }
 
+            // Serialization can run page code. Check the generation again before retaining the value.
+            if (resultOwnershipRoot && handleGeneration !== this._bidiHandleGeneration) {
+                resultCallback(frameID, callbackID, { name: "FrameNotFound", message: "The script realm is no longer available." });
+                return;
+            }
+            // FIXME: <https://webkit.org/b/333032> The WebProcess needs to release this handle
+            // if the UIProcess rejects the reply.
+            if (handle)
+                reflectApply(mapSet, this._bidiHandles, [handle, value]);
             resultCallback(frameID, callbackID, serializedResult);
         }, error => {
             let name = safelyReadStringProperty(error, "name");
@@ -157,6 +193,18 @@ let AutomationSessionProxy = class AutomationSessionProxy
             let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script evaluation failed.";
             resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
         });
+    }
+
+    releaseBidiHandles(handles)
+    {
+        for (let i = 0; i < handles.length; ++i)
+            reflectApply(mapDelete, this._bidiHandles, [handles[i]]);
+    }
+
+    clearBidiHandles()
+    {
+        ++this._bidiHandleGeneration;
+        reflectApply(mapClear, this._bidiHandles, []);
     }
 
     // https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes
@@ -219,7 +267,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             resultCallback(frameID, callbackID, serializedResult);
         }, error => {
             let name = safelyReadStringProperty(error, "name");
-            if (name !== "JavaScriptTimeout" && name !== "InvalidParameter")
+            if (name !== "JavaScriptTimeout" && name !== "InvalidParameter" && name !== "NoSuchHandle" && name !== "NodeNotFound")
                 name = "InternalError";
             let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script call failed.";
             resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
@@ -320,13 +368,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
             this._clearStaleNodes();
 
             let resolveWithExceptionResult = error => {
-                resolve(this._bidiExceptionResult(error));
+                resolve({ result: this._bidiExceptionResult(error), value: error });
             };
 
             let serializeAndResolveResult = value => {
                 try {
                     let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth, maxDomDepth, includeShadowTree);
-                    resolve({ success: true, result: serializedValue });
+                    resolve({ result: { success: true, result: serializedValue }, value });
                 } catch (error) {
                     reject(createBidiScriptError(error, "InternalError", "Script result serialization failed."));
                 }
@@ -418,7 +466,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             this._clearStaleNodes();
             // FIXME: <https://webkit.org/b/328581> Prevent page-defined globals and array iterators from affecting
             // argument deserialization and the call.
-            let argumentValues = argumentStrings.map(argument => this._deserializeBidiLocalValue(JSON.parse(argument)));
+            let argumentValues = argumentStrings.map(argument => this._deserializeBidiLocalValue(jsonParse(argument)));
 
             let lines = functionDeclaration.split("\n");
             let prefixLines = [];
@@ -446,7 +494,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 }
             }
         } catch (error) {
-            if (error instanceof InvalidArgumentError)
+            if (error instanceof InvalidArgumentError || error instanceof RemoteReferenceError)
                 executionPromise = Promise.reject(error);
             else
                 executionPromise = Promise.resolve(this._bidiExceptionResult(error));
@@ -470,6 +518,22 @@ let AutomationSessionProxy = class AutomationSessionProxy
     {
         if (!localValue || typeof localValue !== "object")
             throw new InvalidArgumentError("LocalValue must be an object.");
+
+        // A complete RemoteValue can also be a RemoteReference. When both fields are present,
+        // the shared identifier takes precedence.
+        if (hasOwn(localValue, "sharedId") && typeof localValue.sharedId === "string") {
+            try {
+                return this._nodeForIdentifier(localValue.sharedId);
+            } catch (error) {
+                throw new RemoteReferenceError("NodeNotFound", safelyReadStringProperty(error, "message"));
+            }
+        }
+        if (hasOwn(localValue, "handle") && typeof localValue.handle === "string") {
+            let value = reflectApply(mapGet, this._bidiHandles, [localValue.handle]);
+            if (value === undefined)
+                throw new RemoteReferenceError("NoSuchHandle", `No such handle: ${localValue.handle}`);
+            return value;
+        }
 
         switch (localValue.type) {
         case "undefined":

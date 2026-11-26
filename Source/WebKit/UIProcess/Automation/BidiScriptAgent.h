@@ -135,7 +135,6 @@ private:
     void removeDedicatedWorkerRealm(RealmIdentifier);
     void removeDedicatedWorkerRealmsForOwnerRealm(RealmIdentifier);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
-    String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
     struct ParsedStackTrace {

@@ -43,9 +43,14 @@
 #if ENABLE(WEBDRIVER_BIDI)
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/Weak.h>
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #endif
+
+namespace JSC {
+class JSObject;
+}
 
 namespace WebCore {
 struct Cookie;
@@ -85,7 +90,7 @@ public:
 
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
 
-    void cancelPendingEvaluateJavaScriptCallbacks();
+    void endAutomationSession();
 
     bool isKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
     void addKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
@@ -108,9 +113,10 @@ private:
 
     // Called by WebAutomationSessionProxy messages
     void evaluateJavaScriptFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
-    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&&);
     void locateNodesForBidi(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, CompletionHandler<void(String&&, String&&)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
+    void evaluateBidiScript(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, std::optional<RealmIdentifier>, String&&)>&&);
+    void releaseBidiHandles(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<RealmIdentifier> expectedRealmIdentifier, Vector<String>&& handles, CompletionHandler<void(std::optional<String>&&)>&&);
     void evaluateBidiCallFunction(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<RealmIdentifier>, const String& functionDeclaration, Vector<String> arguments, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, std::optional<RealmIdentifier>, String&&)>&&);
 #endif
     void resolveChildFrameWithOrdinal(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&&);
@@ -171,6 +177,8 @@ private:
 
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
     HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
+    // Keep a reference to the exact realm's proxy for cleanup, without keeping the realm alive.
+    HashMap<WebCore::FrameIdentifier, JSC::Weak<JSC::JSObject>> m_bidiHandleOwners;
 #endif
 };
 
