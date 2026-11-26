@@ -2204,6 +2204,23 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
     # framework after the seal, which breaks codesign verification at sim
     # runtime.
 
+    set(_text_extraction_filter_model_outputs
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/analytics/coremldata.bin
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/coremldata.bin
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodelc/metadata.json
+    )
+    WEBKIT_XCRUN(_coremlc -f coremlc)
+    add_custom_command(OUTPUT ${_text_extraction_filter_model_outputs}
+        COMMAND ${_coremlc} compile ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
+            --deployment-target ${CMAKE_OSX_DEPLOYMENT_TARGET} --sdkroot ${CMAKE_OSX_SYSROOT} --platform ios
+            --container bundle-resources
+        DEPENDS ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
+        COMMENT "Compiling TextExtractionFilter.mlmodel"
+        VERBATIM)
+    add_custom_target(WebKitTextExtractionFilterModel ALL DEPENDS
+        ${_text_extraction_filter_model_outputs})
+    add_dependencies(WebKit WebKitTextExtractionFilterModel)
+
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework")
 
