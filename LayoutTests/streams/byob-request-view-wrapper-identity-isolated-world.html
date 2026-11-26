@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+function messageFromIsolatedWorld(name)
+{
+    return new Promise(resolve => {
+        window.addEventListener("message", function listener(event) {
+            if (typeof event.data != "string" || !event.data.startsWith(name + ":"))
+                return;
+            window.removeEventListener("message", listener);
+            resolve(event.data.substring(name.length + 1));
+        });
+    });
+}
+
+promise_test(async () => {
+    const result = messageFromIsolatedWorld("ready");
+    testRunner.evaluateScriptInIsolatedWorld(1, `
+        const stream = new ReadableStream({
+            type: "bytes",
+            pull(controller) {
+                window.request = controller.byobRequest;
+                window.request.view.customProperty = 42;
+                window.postMessage("ready:" + (window.request.view === window.request.view), "*");
+            },
+        });
+        stream.getReader({ mode: "byob" }).read(new Uint8Array(8));
+    `);
+    assert_equals(await result, "true");
+
+    gc();
+
+    const afterGC = messageFromIsolatedWorld("after-gc");
+    testRunner.evaluateScriptInIsolatedWorld(1, `window.postMessage("after-gc:" + window.request.view.customProperty, "*");`);
+    assert_equals(await afterGC, "42");
+}, "ReadableStreamBYOBRequest.view keeps its identity and properties through garbage collection in an isolated world");
+
+promise_test(async () => {
+    const result = messageFromIsolatedWorld("image-data");
+    testRunner.evaluateScriptInIsolatedWorld(1, `
+        const array = new Uint8ClampedArray(4 * 2 * 2);
+        window.postMessage("image-data:" + (new ImageData(array, 2).data === array), "*");
+    `);
+    assert_equals(await result, "true");
+}, "ImageData constructed from an array in an isolated world returns that array as its data");
+</script>

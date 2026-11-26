@@ -1,0 +1,4 @@
+
+PASS ReadableStreamBYOBRequest.view returns the same object each time
+PASS ReadableStreamBYOBRequest.view keeps its properties through garbage collection
+

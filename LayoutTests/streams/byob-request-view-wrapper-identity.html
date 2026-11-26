@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+function byobRequest()
+{
+    return new Promise(resolve => {
+        const stream = new ReadableStream({
+            type: "bytes",
+            pull(controller) {
+                resolve(controller.byobRequest);
+            },
+        });
+        stream.getReader({ mode: "byob" }).read(new Uint8Array(8));
+    });
+}
+
+function setCustomProperty(request)
+{
+    request.view.customProperty = 42;
+}
+
+promise_test(async () => {
+    const request = await byobRequest();
+    assert_equals(request.view, request.view);
+}, "ReadableStreamBYOBRequest.view returns the same object each time");
+
+promise_test(async () => {
+    const request = await byobRequest();
+    setCustomProperty(request);
+    gc();
+    assert_equals(request.view.customProperty, 42);
+}, "ReadableStreamBYOBRequest.view keeps its properties through garbage collection");
+</script>

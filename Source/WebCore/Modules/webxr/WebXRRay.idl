@@ -29,6 +29,7 @@
     EnabledBySetting=WebXREnabled&WebXRHitTestModuleEnabled,
     SecureContext,
     Exposed=Window,
+    GenerateAddOpaqueRoot,
     InterfaceName=XRRay
 ] interface WebXRRay {
     constructor(optional DOMPointInit origin = {}, optional XRRayDirectionInit direction = {});
