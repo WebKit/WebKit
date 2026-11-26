@@ -294,9 +294,7 @@ void StyleOriginatedTimelinesController::updateCSSAnimationsAssociatedWithNamedT
 
 void StyleOriginatedTimelinesController::removePendingOperationsForCSSAnimation(const CSSAnimation& animation)
 {
-    m_cssAnimationsPendingAttachment.removeAllMatching([&] (const auto& pendingAnimation) {
-        return pendingAnimation.ptr() == &animation;
-    });
+    m_cssAnimationsPendingAttachment.remove(animation);
 }
 
 void StyleOriginatedTimelinesController::documentDidResolveStyle()
@@ -439,7 +437,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
     // just register a pending timeline attachment operation so we can try again
     // when style has resolved.
     if (!hasNamedTimeline && allowsDeferral == AllowsDeferral::Yes) {
-        m_cssAnimationsPendingAttachment.append(animation);
+        m_cssAnimationsPendingAttachment.add(animation);
         return;
     }
 
@@ -455,7 +453,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         // once style resolution completes as further updates may occur that would yield a different timeline
         // and possibly also mark that animation's target as dirty to update the animated style.
         if (allowsDeferral == AllowsDeferral::Yes && timeline && timeline->isInactiveStyleOriginatedTimeline())
-            m_cssAnimationsPendingAttachment.append(animation);
+            m_cssAnimationsPendingAttachment.add(animation);
         protectedAnimation->setTimeline(WTF::move(timeline));
     }
 
@@ -463,7 +461,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
     // to mark this animation as pending attachment in case this name
     // resolves in the future.
     if (!protectedAnimation->timeline())
-        m_cssAnimationsPendingAttachment.append(animation);
+        m_cssAnimationsPendingAttachment.add(animation);
 }
 
 void StyleOriginatedTimelinesController::updateTimelinesForTimelineScope(Vector<Ref<ScrollTimeline>> entries, const Styleable& styleable)
@@ -539,11 +537,8 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
 
 bool StyleOriginatedTimelinesController::isPendingTimelineAttachment(const WebAnimation& animation) const
 {
-    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation)) {
-        return m_cssAnimationsPendingAttachment.containsIf([&](auto& pendingAnimation) {
-            return pendingAnimation.ptr() == cssAnimation.get();
-        });
-    }
+    if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation))
+        return m_cssAnimationsPendingAttachment.contains(*cssAnimation);
     return false;
 }
 
