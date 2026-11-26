@@ -1,0 +1,74 @@
+{
+    "version": 4,
+    "include": ["cocoa.json"],
+    "configurePresets": [
+        {
+            "name": "tvos",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "appletvos.internal;appletvos"
+                }
+            }
+        },
+        {
+            "name": "tvos-release",
+            "displayName": "tvOS Release",
+            "inherits": ["tvos", "release"],
+            "binaryDir": "WebKitBuild/cmake-appletvos/Release"
+        },
+        {
+            "name": "tvos-debug",
+            "displayName": "tvOS Debug",
+            "inherits": ["tvos", "debug"],
+            "binaryDir": "WebKitBuild/cmake-appletvos/Debug"
+        },
+        {
+            "name": "tvos-sim",
+            "hidden": true,
+            "inherits": ["cocoa"],
+            "cacheVariables": {
+                "CMAKE_OSX_SYSROOT": {
+                    "type": "STRING",
+                    "value": "appletvsimulator.internal;appletvsimulator"
+                }
+            }
+        },
+        {
+            "name": "tvos-sim-release",
+            "displayName": "tvOS Simulator Release",
+            "inherits": ["tvos-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Release"
+        },
+        {
+            "name": "tvos-sim-debug",
+            "displayName": "tvOS Simulator Debug",
+            "inherits": ["tvos-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "tvos-release",
+            "displayName": "tvOS Release",
+            "configurePreset": "tvos-release"
+        },
+        {
+            "name": "tvos-debug",
+            "displayName": "tvOS Debug",
+            "configurePreset": "tvos-debug"
+        },
+        {
+            "name": "tvos-sim-release",
+            "displayName": "tvOS Simulator Release",
+            "configurePreset": "tvos-sim-release"
+        },
+        {
+            "name": "tvos-sim-debug",
+            "displayName": "tvOS Simulator Debug",
+            "configurePreset": "tvos-sim-debug"
+        }
+    ]
+}
