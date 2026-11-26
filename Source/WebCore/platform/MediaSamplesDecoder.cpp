@@ -40,6 +40,10 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include "PlanarImageConverterCV.h"
+#endif
+
 #if PLATFORM(COCOA) && ENABLE(AV1)
 #include "AV1UtilitiesCocoa.h"
 #endif
@@ -58,11 +62,10 @@ static constexpr uint32_t microsecondsTimeScale = 1000000;
 static constexpr FourCC lpcmCodecName { "lpcm" };
 static constexpr FourCC avc1CodecName { "avc1" };
 static constexpr FourCC avc3CodecName { "avc3" };
-static constexpr FourCC i420CodecName { "I420" };
 static constexpr FourCC vpcCAtomType { "vpcC" };
+static constexpr FourCC vp9CodecName { "vp09" };
 #if ENABLE(VP9)
 static constexpr FourCC vp8CodecName { "vp08" };
-static constexpr FourCC vp9CodecName { "vp09" };
 #endif
 #if ENABLE(AV1)
 static constexpr FourCC av1CodecName { "av01" };
@@ -177,7 +180,8 @@ static std::optional<VideoDecoderConfiguration> videoDecoderConfiguration(const 
 #if ENABLE(VP9)
     if (codecName == vp8CodecName)
         return videoDecoderConfiguration(info, "vp8"_s, vpcCAtomType);
-    if (codecName == vp9CodecName && vp9Profile(info) == 0u)
+    // FIXME: Use the track's actual VP9 codec string once VideoDecoder::create supports profiles other than 0.
+    if (codecName == vp9CodecName && vp9Profile(info))
         return videoDecoderConfiguration(info, "vp09.00"_s, vpcCAtomType);
 #endif
 #if ENABLE(AV1)
@@ -194,8 +198,8 @@ static std::optional<VideoDecoderConfiguration> decoderConfiguration(const Video
     if (!canUseInProcessDecoder(info, filters))
         return { };
 
-    // FIXME: bit depths above 8 need VideoFrame::copyTo to produce 10 and 12-bit planar output.
-    if (info.isDecoded() || info.size().isEmpty() || info.bitDepth() != 8)
+    // VP8 is 8-bit only, and the AV1 decoder only outputs 8-bit frames.
+    if (info.isDecoded() || info.size().isEmpty() || (info.bitDepth() != 8 && info.codecName() != vp9CodecName))
         return { };
 
     auto configuration = videoDecoderConfiguration(info);
@@ -206,20 +210,54 @@ static std::optional<VideoDecoderConfiguration> decoderConfiguration(const Video
     return configuration;
 }
 
-static Ref<VideoInfo> outputVideoInfo(const VideoInfo& inputInfo, FloatSize size)
+static Ref<AudioInfo> outputAudioInfo(const AudioInfo& inputInfo, MediaChannelLayout channelLayout)
 {
+    return AudioInfo::create({
+        {
+            .codecName = lpcmCodecName,
+            .trackID = inputInfo.trackID()
+        }, {
+            .rate = inputInfo.rate(),
+            .channels = inputInfo.channels(),
+            .framesPerPacket = 1,
+            .bitDepth = 32,
+            .sampleFormat = AudioSampleFormat::F32,
+            .channelLayout = channelLayout
+        }
+    });
+}
+
+static Ref<VideoInfo> outputVideoInfo(const VideoInfo& inputInfo, FloatSize size, VideoPixelFormat format)
+{
+    auto layout = planarYUVFormatLayout(format);
     return VideoInfo::create({
         {
-            .codecName = i420CodecName,
             .trackID = inputInfo.trackID()
         }, {
             .size = size,
             .displaySize = inputInfo.displaySize(),
-            .bitDepth = 8,
+            .bitDepth = layout ? layout->format.bitDepth : PlanarImageConverter::eightBit.bitDepth,
             .colorSpace = inputInfo.colorSpace(),
-            .pixelFormat = inputInfo.hasSeparateAlphaStream() ? VideoPixelFormat::I420A : VideoPixelFormat::I420
+            .pixelFormat = format
         }
     });
+}
+
+static std::optional<VideoPixelFormat> outputFormat(const VideoFrame& frame, bool hasAlpha)
+{
+#if PLATFORM(COCOA)
+    auto description = PlanarImageConverter::pixelFormatDescription(frame.pixelFormat());
+    if (!description || description->alpha)
+        return { };
+    // FIXME: output frames above 8 bits with alpha at their bit depth (webkit.org/b/331780).
+    if (hasAlpha)
+        return VideoPixelFormat::I420A;
+    return planarYUVVideoPixelFormat(description->subsampling, description->color.bitDepth, false);
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(hasAlpha);
+    return { };
+#endif
 }
 
 static std::optional<uint64_t> durationInMicroseconds(const MediaSamplesBlock::MediaSampleItem& item)
@@ -241,10 +279,9 @@ static bool isAlphaKeyframe(const VideoInfo&, std::span<const uint8_t>)
 }
 #endif
 
-MediaSamplesDecoder::MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Ref<const TrackInfo>&& outputInfo, Filters filters)
+MediaSamplesDecoder::MediaSamplesDecoder(Ref<const TrackInfo>&& inputInfo, Filters filters)
     : m_queue(WorkQueue::create("MediaSamplesDecoder queue"_s))
     , m_inputInfo(WTF::move(inputInfo))
-    , m_outputInfo(WTF::move(outputInfo))
     , m_filters(filters)
 {
 }
@@ -282,20 +319,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createAudio(const A
     if (!canDecodeAudio(audioInfo, filters))
         return CreatePromise::createAndReject(isProtected(audioInfo) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
 
-    Ref outputInfo = AudioInfo::create({
-        {
-            .codecName = lpcmCodecName,
-            .trackID = audioInfo.trackID()
-        }, {
-            .rate = audioInfo.rate(),
-            .channels = audioInfo.channels(),
-            .framesPerPacket = 1,
-            .bitDepth = 32,
-            .sampleFormat = AudioSampleFormat::F32
-        }
-    });
-
-    Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { audioInfo }, WTF::move(outputInfo), filters));
+    Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { audioInfo }, filters));
 
     auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<AudioDecoder::DecodedData, String>&& result) {
         RefPtr protectedDecoder = weakDecoder;
@@ -325,7 +349,7 @@ Ref<MediaSamplesDecoder::CreatePromise> MediaSamplesDecoder::createVideo(const V
     if (!configuration)
         return CreatePromise::createAndReject(isProtected(videoInfo) ? PlatformMediaError::ProtectedContent : PlatformMediaError::NotSupportedError);
 
-    Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { videoInfo }, outputVideoInfo(videoInfo, videoInfo.size()), filters));
+    Ref decoder = adoptRef(*new MediaSamplesDecoder(Ref<const TrackInfo> { videoInfo }, filters));
 
     auto outputCallback = [weakDecoder = ThreadSafeWeakPtr { decoder.get() }](std::expected<VideoDecoder::DecodedFrame, String>&& result) {
         RefPtr protectedDecoder = weakDecoder;
@@ -645,8 +669,10 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::settleWithPendingOu
         return DecodePromise::createAndReject(*m_error);
 
     auto blocks = std::exchange(m_completedOutput, { });
-    if (!m_pendingOutput.isEmpty())
-        blocks.append({ m_outputInfo.ptr(), std::exchange(m_pendingOutput, { }) });
+    if (!m_pendingOutput.isEmpty()) {
+        ASSERT(m_audioOutputInfo);
+        blocks.append({ m_audioOutputInfo, std::exchange(m_pendingOutput, { }) });
+    }
     if (m_discontinuity && !blocks.isEmpty())
         blocks.first().setDiscontinuity(*std::exchange(m_discontinuity, std::nullopt));
     return DecodePromise::createAndResolve(WTF::move(blocks));
@@ -679,13 +705,11 @@ void MediaSamplesDecoder::didDecodeAudio(Ref<PlatformRawAudioData>&& data)
 
     // The output info changes only with the channel layout; the frames decoded until then keep the previous info.
     auto channelLayout = data->channelLayout();
-    Ref outputInfo = downcast<AudioInfo>(m_outputInfo);
-    if (outputInfo->channelLayout() != channelLayout) {
+    RefPtr outputInfo = m_audioOutputInfo;
+    if (!outputInfo || outputInfo->channelLayout() != channelLayout) {
         if (!m_pendingOutput.isEmpty())
-            m_completedOutput.append({ m_outputInfo.ptr(), std::exchange(m_pendingOutput, { }) });
-        auto outputInfoData = outputInfo->toAudioInfoData();
-        outputInfoData.second.channelLayout = channelLayout;
-        m_outputInfo = AudioInfo::create(WTF::move(outputInfoData));
+            m_completedOutput.append({ m_audioOutputInfo, std::exchange(m_pendingOutput, { }) });
+        m_audioOutputInfo = outputAudioInfo(downcast<AudioInfo>(m_inputInfo), channelLayout);
     }
 
     auto startTime = MediaTime(data->timestamp(), microsecondsTimeScale);
@@ -781,20 +805,19 @@ void MediaSamplesDecoder::emitDecodedVideo(int64_t firstSequence, int64_t endSeq
         }
 
         Ref inputInfo = downcast<VideoInfo>(m_inputInfo);
-        if (FloatSize { size } != downcast<VideoInfo>(m_outputInfo).size())
-            m_outputInfo = outputVideoInfo(inputInfo, size);
-
-        RefPtr alpha = alphaFrame;
-        if (alpha && alpha->presentationSize() != size)
-            alpha = nullptr;
-        // FIXME: add vp9 profile greater than 0 support
-        ASSERT(inputInfo->bitDepth() == 8);
-        auto pixelFormat = downcast<VideoInfo>(m_outputInfo).pixelFormat();
+        auto pixelFormat = outputFormat(color, inputInfo->hasSeparateAlphaStream());
         auto byteSize = pixelFormat ? VideoFrame::planarBufferSize(size, *pixelFormat) : std::nullopt;
         if (!byteSize) {
             didFailDecoding();
             return;
         }
+        RefPtr outputInfo = m_videoOutputInfo;
+        if (!outputInfo || FloatSize { size } != outputInfo->size() || pixelFormat != outputInfo->pixelFormat())
+            m_videoOutputInfo = outputVideoInfo(inputInfo, size, *pixelFormat);
+
+        RefPtr alpha = alphaFrame;
+        if (alpha && alpha->presentationSize() != size)
+            alpha = nullptr;
         RefPtr<SharedBuffer> buffer;
         if (m_filters.contains(Filter::UseSharedMemory)) {
             RefPtr memory = SharedMemory::allocate(*byteSize);
@@ -819,7 +842,7 @@ void MediaSamplesDecoder::emitDecodedVideo(int64_t firstSequence, int64_t endSeq
         item.data = WTF::move(buffer);
         MediaSamplesBlock::SamplesVector items;
         items.append(WTF::move(item));
-        m_completedOutput.append({ m_outputInfo.ptr(), WTF::move(items) });
+        m_completedOutput.append({ m_videoOutputInfo, WTF::move(items) });
         return;
     }
 }

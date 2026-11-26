@@ -207,6 +207,8 @@ inline std::optional<PlanarYUVFormatLayout> planarYUVFormatLayout(VideoPixelForm
     return { };
 }
 
+std::optional<VideoPixelFormat> planarYUVVideoPixelFormat(PlanarImageConverter::ChromaSubsampling, uint8_t bitDepth, bool hasAlpha);
+
 WEBCORE_EXPORT String convertVideoPixelFormatToString(VideoPixelFormat);
 
 } // namespace WebCore

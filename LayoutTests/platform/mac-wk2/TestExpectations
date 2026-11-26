@@ -1230,6 +1230,9 @@ webkit.org/b/325612 [ x86_64 ] http/wpt/webcodecs/webgl-texImage2D-videoFrame-I4
 # Corner-shape box-shadow exceeds its fuzzy pixel count on Intel Mac Pro.
 webkit.org/b/332403 [ x86_64 ] compositing/corner-shape-box-shadow-composited.html [ ImageOnlyFailure ]
 
+# The expected results record the format null of the hardware decoder's compressed frames; the software decoder's are I420P10.
+webkit.org/b/332757 [ x86_64 ] webgl/video-formats/upload-path-vp9-p2-420-10bit-pq-videorange.html [ Failure ]
+
 # WebGPU render bundle replay with dynamic offsets and frag_depth produces wrong results on Intel GPUs.
 webkit.org/b/332407 [ x86_64 ] fast/webgpu/render-bundle-dynamic-offsets-persist-across-draws.html [ Failure ]
 webkit.org/b/332407 [ x86_64 ] fast/webgpu/render-bundle-fragment-depth-after-dynamic-offsets.html [ Failure ]
