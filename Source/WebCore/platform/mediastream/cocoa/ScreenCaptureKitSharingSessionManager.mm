@@ -295,6 +295,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
         return;
     }
 #else
+    UNUSED_PARAM(isTab);
     device = CaptureDevice("1"_str, CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
 #endif
 
