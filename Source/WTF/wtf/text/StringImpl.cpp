@@ -156,6 +156,14 @@ StringImpl::~StringImpl()
 
 void StringImpl::destroy(StringImpl* stringImpl)
 {
+    // Pairs with the release decrement in deref() on other threads, so ~StringImpl() sees their final
+    // writes to the flags (e.g. isAtom) and they are done reading the characters before we free them.
+    // ThreadSanitizer does not model fences, so use an equivalent acquire load there.
+#if TSAN_ENABLED
+    [[maybe_unused]] auto refCount = stringImpl->m_refCount.load(std::memory_order_acquire);
+#else
+    std::atomic_thread_fence(std::memory_order_acquire);
+#endif
     stringImpl->~StringImpl();
     StringImplMalloc::free(stringImpl);
 }

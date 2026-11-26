@@ -1180,7 +1180,11 @@ ALWAYS_INLINE unsigned StringImpl::setMutableFlags(unsigned bits) const
     // (hashing, atomization, JSString creation). If the caller holds the only reference, no other thread
     // can be mutating m_hashAndFlags, so a plain load and store cannot lose an update. Threads that read
     // the string without holding a ref (GC marking, concurrent JIT) never write these bits.
-    if (hasOneRef()) {
+    //
+    // The refcount load must be an acquire, pairing with the release in deref(): a thread that wrote the
+    // flags and then dropped its reference must have its write visible to us before we read the flags,
+    // or our store could erase it.
+    if (m_refCount.load(std::memory_order_acquire) == s_refCountIncrement) {
         unsigned oldFlags = mutableFlags();
         atomicStore<MemoryOrder::Relaxed>(&m_hashAndFlags, oldFlags | bits);
         return oldFlags;
@@ -1239,7 +1243,10 @@ inline void StringImpl::deref()
         return;
 #endif
 
-    auto oldRefCount = m_refCount.fetch_sub(s_refCountIncrement, std::memory_order_relaxed);
+    // Release so that this thread's earlier accesses to the string happen before whatever the thread that
+    // ends up holding the last reference does next (see setMutableFlags() and destroy()). The matching
+    // acquire is in destroy(), which is out of line, to keep this inlined code as small as possible.
+    auto oldRefCount = m_refCount.fetch_sub(s_refCountIncrement, std::memory_order_release);
     if (oldRefCount != s_refCountIncrement)
         return;
 
