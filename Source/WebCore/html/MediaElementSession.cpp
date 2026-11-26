@@ -1176,10 +1176,7 @@ bool MediaElementSession::allowsAutomaticMediaDataLoading() const
     if (pageExplicitlyAllowsElementToAutoplayInline(*element))
         return true;
 
-    if (element->document().settings().mediaDataLoadsAutomatically())
-        return true;
-
-    return false;
+    return !(m_restrictions & AutoPreloadingNotPermitted);
 }
 
 void MediaElementSession::mediaEngineUpdated()
