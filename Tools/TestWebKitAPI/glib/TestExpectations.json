@@ -254,6 +254,9 @@
             "WebKit.GeolocationWatchMultiprocess": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
             },
+            "WebKit.GeolocationTransitionToHighAccuracy": {
+                "expected": {"wpe": {"status": ["TIMEOUT"], "bug": "webkit.org/b/333222"}}
+            },
             "WebKit.LoadPageAfterCrash": {
                 "expected": {"wpe": {"slow": true}}
             },
