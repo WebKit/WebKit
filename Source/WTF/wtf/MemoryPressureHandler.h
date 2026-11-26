@@ -267,6 +267,7 @@ private:
 
 #if (OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(QNX)) && !OS(ANDROID)
     RunLoop::Timer m_holdOffTimer;
+    bool m_holdOffDueToCritical { false };
     void holdOffTimerFired();
 #endif
 
