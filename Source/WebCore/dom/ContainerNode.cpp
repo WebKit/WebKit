@@ -1586,6 +1586,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ChildListMutationScope(*oldParent).willRemoveChild(node);
+        node.notifyMutationObserversNodeWillDetach();
         nodeDocument->nodeWillBeMoved(node);
 
         {
