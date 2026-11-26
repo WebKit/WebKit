@@ -413,6 +413,11 @@ void RemoteAudioSessionProxyManager::sampleRateDidChange(const AudioSession& ses
     configurationDidChange(session);
 }
 
+void RemoteAudioSessionProxyManager::defaultOutputDeviceDidChange(const AudioSession& session)
+{
+    configurationDidChange(session);
+}
+
 void RemoteAudioSessionProxyManager::configurationDidChange(const WebCore::AudioSession&)
 {
     m_proxies.forEach([](auto& proxy) {

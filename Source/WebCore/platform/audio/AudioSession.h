@@ -70,6 +70,7 @@ public:
     virtual void bufferSizeDidChange(const AudioSession&) { }
     virtual void sampleRateDidChange(const AudioSession&) { }
     virtual void routingContextUIDDidChange(const AudioSession&) { }
+    virtual void defaultOutputDeviceDidChange(const AudioSession&) { }
 };
 
 class WEBCORE_EXPORT AudioSession : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
