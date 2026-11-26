@@ -234,10 +234,8 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
     // FIXME: This non-virtual function can't possibly be doing the correct thing for
     // any derived class that overrides the virtual namedItem function.
 
-    Vector<Ref<Element>> elements;
-
     if (name.isEmpty())
-        return elements;
+        return { };
 
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
@@ -245,7 +243,7 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
     auto* elementsWithId = m_namedElementCache->findElementsWithId(name);
     auto* elementsWithName = m_namedElementCache->findElementsWithName(name);
 
-    elements.reserveInitialCapacity((elementsWithId ? elementsWithId->size() : 0) + (elementsWithName ? elementsWithName->size() : 0));
+    Vector<Ref<Element>> elements(ReserveCapacityTag { }, (elementsWithId ? elementsWithId->size() : 0) + (elementsWithName ? elementsWithName->size() : 0));
 
     if (elementsWithId) {
         elements.appendContainerWithMapping(*elementsWithId, [](auto& element) {

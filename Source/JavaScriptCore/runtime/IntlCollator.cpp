@@ -119,8 +119,7 @@ Vector<String> IntlCollator::searchLocaleData(const String&, RelevantExtensionKe
     switch (key) {
     case RelevantExtensionKey::Co:
         // 10.2.3 "The first element of [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co must be null for all locale values."
-        keyLocaleData.reserveInitialCapacity(1);
-        keyLocaleData.append({ });
+        keyLocaleData = Vector<String>::from(String { });
         break;
     case RelevantExtensionKey::Kf:
         keyLocaleData = Vector<String>::from("false"_str, "lower"_str, "upper"_str);
