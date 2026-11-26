@@ -1949,6 +1949,7 @@ public:
 #if HAVE(WINDOW_CAPTURE)
     RefPtr<TabCaptureWindow> tabCaptureWindow();
     void updateTabCaptureWindowSize();
+    void tabCaptureWindowStateDidChange();
 #endif
 
     float headerHeightForPrinting(WebFrameProxy&);

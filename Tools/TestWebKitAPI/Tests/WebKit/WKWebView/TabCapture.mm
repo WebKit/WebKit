@@ -83,6 +83,18 @@ protected:
         return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.stream.getVideoTracks()[0].%@", expression]];
     }
 
+    static NSString *visibilityState(TestWKWebView *webView)
+    {
+        return [webView stringByEvaluatingJavaScript:@"document.visibilityState"];
+    }
+
+    static bool waitForVisibilityState(TestWKWebView *webView, NSString *expectedVisibilityState)
+    {
+        return Util::waitFor([&] {
+            return [visibilityState(webView) isEqualToString:expectedVisibilityState];
+        });
+    }
+
     RetainPtr<WKWebViewConfiguration> m_configuration;
     RetainPtr<TestWKWebView> m_capturedWebView;
     Vector<RetainPtr<TestWKWebView>> m_capturingWebViews;
@@ -95,6 +107,19 @@ TEST_F(TabCaptureTest, PicksTab)
 
     EXPECT_WK_STREQ(@"Mock tab device 1", videoTrackProperty(webView, @"label"));
     EXPECT_WK_STREQ(@"browser", videoTrackProperty(webView, @"getSettings().displaySurface"));
+}
+
+TEST_F(TabCaptureTest, CapturedTabStaysVisibleInHiddenWindow)
+{
+    RetainPtr webView = createCapturingWebView();
+    startCapture(webView.get());
+
+    [m_capturedWebView setVisibility:NO];
+    TestWebKitAPI::Util::runFor(0.01_s);
+    EXPECT_WK_STREQ(@"visible", visibilityState(m_capturedWebView));
+
+    [webView stringByEvaluatingJavaScript:@"window.stream.getTracks().forEach(track => track.stop())"];
+    EXPECT_TRUE(waitForVisibilityState(m_capturedWebView.get(), @"hidden"));
 }
 
 } // namespace TestWebKitAPI

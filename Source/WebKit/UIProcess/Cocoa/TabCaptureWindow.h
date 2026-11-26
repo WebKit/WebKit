@@ -49,7 +49,10 @@ public:
     WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
     uint32_t windowID() const;
     Ref<GenericNonExclusivePromise> readyPromise() const { return m_readyPromiseProducer.promise(); }
+
+    void invalidate();
     bool isInvalidated() const { return m_isInvalidated; }
+    bool shouldKeepPageVisible() const { return !m_isInvalidated; }
 
     void updateSize();
 
@@ -57,7 +60,6 @@ private:
     TabCaptureWindow(WebPageProxy&, RetainPtr<NSWindow>&&);
 
     void attachLayer(WebPageProxy&);
-    void invalidate();
 
     WebPageProxyIdentifier m_pageIdentifier;
     WeakPtr<WebPageProxy> m_page;

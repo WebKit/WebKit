@@ -3905,6 +3905,10 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState> flagsToUpdate)
         internals().activityState.add(ActivityState::IsVisibleOrOccluded);
     if (flagsToUpdate & ActivityState::IsInWindow && pageClient->isViewInWindow())
         internals().activityState.add(ActivityState::IsInWindow);
+#if HAVE(WINDOW_CAPTURE)
+    if (m_tabCaptureWindow && m_tabCaptureWindow->shouldKeepPageVisible())
+        internals().activityState.add({ ActivityState::IsInWindow, ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded });
+#endif
     bool isVisuallyIdle = pageClient->isVisuallyIdle();
 #if PLATFORM(COCOA) && !HAVE(CGS_FIX_FOR_RADAR_97530095) && ENABLE(MEDIA_USAGE)
     if (pageClient->isMainViewVisible() && m_mediaUsageManager && m_mediaUsageManager->isPlayingVideoInViewport())
@@ -9447,6 +9451,7 @@ RefPtr<TabCaptureWindow> WebPageProxy::tabCaptureWindow()
     if (!tabCaptureWindow || tabCaptureWindow->isInvalidated()) {
         tabCaptureWindow = TabCaptureWindow::create(*this);
         m_tabCaptureWindow = tabCaptureWindow.get();
+        tabCaptureWindowStateDidChange();
     }
     return tabCaptureWindow;
 }
@@ -9455,6 +9460,12 @@ void WebPageProxy::updateTabCaptureWindowSize()
 {
     if (RefPtr window = m_tabCaptureWindow)
         window->updateSize();
+}
+
+void WebPageProxy::tabCaptureWindowStateDidChange()
+{
+    WEBPAGEPROXY_RELEASE_LOG(WebRTC, "tabCaptureWindowStateDidChange: shouldKeepPageVisible %d", m_tabCaptureWindow && m_tabCaptureWindow->shouldKeepPageVisible());
+    activityStateDidChange({ ActivityState::IsInWindow, ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded, ActivityState::WindowIsActive });
 }
 #endif
 
