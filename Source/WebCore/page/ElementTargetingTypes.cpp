@@ -94,6 +94,9 @@ void mergeRemoteFrameContent(TargetedElementInfo& info, const TargetedFrameConte
     info.hasAudibleMedia |= content.hasAudibleMedia;
     info.mediaAndLinkURLs.addAll(content.mediaAndLinkURLs);
 
+    info.renderedText = makeString(info.renderedText, ' ', content.renderedText).trim(isASCIIWhitespace);
+    info.screenReaderText = makeString(info.screenReaderText, ' ', content.screenReaderText).trim(isASCIIWhitespace);
+
     if (!info.hasLargeReplacedDescendant) {
         info.hasLargeReplacedDescendant = std::ranges::any_of(content.largestReplacedContentSizes, [&](auto& size) {
             return TextExtraction::isLargeReplacedContent(size, info.sizeInDocument);
