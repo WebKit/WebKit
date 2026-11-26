@@ -1339,7 +1339,7 @@ void WebAnimation::runPendingPlayTask()
         // 2. Apply any pending playback rate on animation.
         applyPendingPlaybackRate();
         // 3. If animation's playback rate is zero, let animation's hold time be current time to match.
-        if (m_playbackRate)
+        if (!m_playbackRate)
             m_holdTime = currentTimeToMatch;
         // 4. Let new start time be the result of evaluating ready time - current time to match / playback rate for animation.
         // If the playback rate is zero, let new start time be simply ready time.

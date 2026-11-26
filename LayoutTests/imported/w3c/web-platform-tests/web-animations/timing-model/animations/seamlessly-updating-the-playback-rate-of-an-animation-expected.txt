@@ -1,5 +1,6 @@
 
 PASS Updating the playback rate maintains the current time
+PASS Updating the playback rate to zero on a running animation maintains the current time
 PASS Updating the playback rate while running makes the animation pending
 PASS Updating the playback rate on a play-pending animation maintains the current time
 PASS Updating the playback rate on a pause-pending animation maintains the current time

@@ -43,6 +43,28 @@ promise_test(async t => {
   const animation = createDiv(t).animate(null, 100 * MS_PER_SEC);
   await animation.ready;
 
+  animation.currentTime = 50 * MS_PER_SEC;
+
+  animation.updatePlaybackRate(0);
+  await animation.ready;
+  assert_equals(animation.playbackRate, 0);
+  // The current time should be held at (or just past) 50s rather than being
+  // re-calculated as (timeline time - start time) * 0, which would be 0s.
+  const heldTime = animation.currentTime;
+  assert_greater_than_equal(heldTime, 50 * MS_PER_SEC,
+    'Setting the playback rate to zero should not change the current time ' +
+    'of a playing animation');
+
+  await waitForAnimationFrames(2);
+  assert_time_equals_literal(animation.currentTime, heldTime,
+    'The current time should not advance once the playback rate is zero');
+}, 'Updating the playback rate to zero on a running animation maintains'
+   + ' the current time');
+
+promise_test(async t => {
+  const animation = createDiv(t).animate(null, 100 * MS_PER_SEC);
+  await animation.ready;
+
   assert_false(animation.pending);
   animation.updatePlaybackRate(2);
   assert_true(animation.pending);
