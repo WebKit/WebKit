@@ -296,8 +296,6 @@ public:
     using OwnerCallback = std::function<void(RealtimeMediaSource&, bool isNewClonedSource)>;
     void registerOwnerCallback(OwnerCallback&&);
 
-    virtual bool isPowerEfficient() const { return false; }
-
 #if USE(GSTREAMER)
     virtual std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const;
 #endif

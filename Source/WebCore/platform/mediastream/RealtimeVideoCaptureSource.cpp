@@ -614,11 +614,6 @@ void RealtimeVideoCaptureSource::ensureIntrinsicSizeMaintainsAspectRatio()
     setSize(intrinsicSize);
 }
 
-bool RealtimeVideoCaptureSource::isPowerEfficient() const
-{
-    return m_currentPreset->isEfficient();
-}
-
 #if !RELEASE_LOG_DISABLED
 Ref<JSON::Object> SizeFrameRateAndZoom::toJSONObject() const
 {

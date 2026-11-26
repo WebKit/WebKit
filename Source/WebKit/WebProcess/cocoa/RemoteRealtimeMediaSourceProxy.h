@@ -90,8 +90,6 @@ public:
 
     void updateConnection();
 
-    bool isPowerEfficient() const;
-
 private:
     struct PromiseConverter;
 

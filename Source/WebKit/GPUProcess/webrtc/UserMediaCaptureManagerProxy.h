@@ -98,7 +98,6 @@ public:
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     NODELETE bool hasSourceProxies() const;
     void reapplyCaptureEnvironment(WebCore::PageIdentifier);
@@ -124,7 +123,6 @@ private:
     void endProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier);
     void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
-    void isPowerEfficient(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(bool)>&&);
 
     using TakePhotoCallback = CompletionHandler<void(std::expected<std::pair<Vector<uint8_t>, String>, String>&&)>;
     void takePhoto(WebCore::RealtimeMediaSourceIdentifier, WebCore::PhotoSettings&&, TakePhotoCallback&&);

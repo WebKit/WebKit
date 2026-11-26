@@ -197,13 +197,6 @@ void RemoteRealtimeMediaSourceProxy::didFail(CaptureSourceError&& reason)
         m_callback(WebCore::CaptureSourceError(m_failureReason));
 }
 
-bool RemoteRealtimeMediaSourceProxy::isPowerEfficient() const
-{
-    auto syncResult = protect(m_connection)->sendSync(Messages::UserMediaCaptureManagerProxy::IsPowerEfficient { identifier() }, 0, GPUProcessConnection::defaultTimeout);
-    auto [isPowerEfficient] = syncResult.takeReplyOr(false);
-    return isPowerEfficient;
-}
-
 }
 
 #endif

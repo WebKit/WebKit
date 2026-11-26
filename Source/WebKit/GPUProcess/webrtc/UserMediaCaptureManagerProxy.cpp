@@ -176,11 +176,6 @@ public:
     void setShouldApplyRotation() { m_source->setShouldApplyRotation(); }
     void setIsInBackground(bool value) { m_source->setIsInBackground(value); }
 
-    bool isPowerEfficient()
-    {
-        return m_source->isPowerEfficient();
-    }
-
     bool updateVideoConstraints(const WebCore::MediaConstraints& constraints)
     {
         m_videoConstraints = constraints;
@@ -864,12 +859,6 @@ void UserMediaCaptureManagerProxy::setIsInBackground(RealtimeMediaSourceIdentifi
 {
     if (RefPtr proxy = m_proxies.get(sourceID))
         proxy->setIsInBackground(isInBackground);
-}
-
-void UserMediaCaptureManagerProxy::isPowerEfficient(WebCore::RealtimeMediaSourceIdentifier sourceID, CompletionHandler<void(bool)>&& callback)
-{
-    RefPtr proxy = m_proxies.get(sourceID);
-    callback(proxy && proxy->isPowerEfficient());
 }
 
 void UserMediaCaptureManagerProxy::clear()
