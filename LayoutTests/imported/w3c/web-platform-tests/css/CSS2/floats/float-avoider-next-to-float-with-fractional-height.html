@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<title>CSS Test: A box that establishes a new block formatting context does not overlap a float with a fractional height</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#floats">
+<link rel="match" href="float-avoider-next-to-float-with-fractional-height-ref.html">
+<meta name="assert" content="The green floats are 10.5px tall, so a blue box that starts at 10px or 10.25px overlaps them unless it is moved down to 10.5px or, when it has an auto width, made narrow enough to sit next to them.">
+<style>
+.container {
+  display: flow-root;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 10px;
+  background-color: lightgray;
+}
+
+.left {
+  float: left;
+  width: 150px;
+  height: 10.5px;
+  background-color: green;
+}
+
+.right {
+  float: right;
+  width: 150px;
+  height: 10.5px;
+  background-color: green;
+}
+
+.tall-right {
+  float: right;
+  width: 10px;
+  height: 30px;
+  background-color: orange;
+}
+
+.spacer {
+  height: 10px;
+}
+
+.avoider {
+  overflow: hidden;
+  width: 100px;
+  height: 10px;
+  background-color: blue;
+}
+
+.auto-width {
+  width: auto;
+}
+</style>
+<div class="container">
+  <div class="left"></div>
+  <div class="spacer"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="tall-right"></div>
+  <div class="spacer"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="spacer"></div>
+  <div class="avoider auto-width"></div>
+</div>
+<div class="container">
+  <div class="right"></div>
+  <div class="spacer"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="spacer" style="height: 10.25px"></div>
+  <div class="avoider"></div>
+</div>

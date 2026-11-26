@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<style>
+.container {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 10px;
+  background-color: lightgray;
+}
+
+.container > div {
+  position: absolute;
+}
+
+.left {
+  top: 0;
+  left: 0;
+  width: 150px;
+  height: 10.5px;
+  background-color: green;
+}
+
+.right {
+  top: 0;
+  left: 50px;
+  width: 150px;
+  height: 10.5px;
+  background-color: green;
+}
+
+.tall-right {
+  top: 0;
+  left: 190px;
+  width: 10px;
+  height: 30px;
+  background-color: orange;
+}
+
+.avoider {
+  top: 10.5px;
+  left: 0;
+  width: 100px;
+  height: 10px;
+  background-color: blue;
+}
+
+.next-to-float {
+  top: 10px;
+  left: 150px;
+  width: 50px;
+}
+</style>
+<div class="container">
+  <div class="left"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="tall-right"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="avoider next-to-float"></div>
+</div>
+<div class="container">
+  <div class="right"></div>
+  <div class="avoider"></div>
+</div>
+<div class="container">
+  <div class="left"></div>
+  <div class="avoider"></div>
+</div>
