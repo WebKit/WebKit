@@ -1,0 +1,10 @@
+
+PASS WebGL hardware upload of a 0 degrees rotated camera VideoFrame
+PASS WebGL hardware upload of a 90 degrees rotated camera VideoFrame
+PASS WebGL hardware upload of a 180 degrees rotated camera VideoFrame
+PASS WebGL hardware upload of a 270 degrees rotated camera VideoFrame
+PASS WebGL software upload of a 0 degrees rotated camera VideoFrame
+PASS WebGL software upload of a 90 degrees rotated camera VideoFrame
+PASS WebGL software upload of a 180 degrees rotated camera VideoFrame
+PASS WebGL software upload of a 270 degrees rotated camera VideoFrame
+

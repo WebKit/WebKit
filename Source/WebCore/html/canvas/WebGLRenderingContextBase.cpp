@@ -3749,7 +3749,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
     }
 
-    RefPtr internalFrame = source.internalFrameForRendering(*protect(scriptExecutionContext()));
+    RefPtr internalFrame = source.internalFrame();
 
     // The texture has the size of the frame once rotated.
     auto frameSize = internalFrame->rotatedSize();
