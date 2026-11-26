@@ -297,7 +297,7 @@ TEST(WTF, StringViewSplitEmptyAndNullStrings)
     auto splitResult = a.split('b');
     EXPECT_TRUE(splitResult.begin() == splitResult.end());
 
-    a = { String { } };
+    a = nullString();
     splitResult = a.split('b');
     EXPECT_TRUE(splitResult.begin() == splitResult.end());
 

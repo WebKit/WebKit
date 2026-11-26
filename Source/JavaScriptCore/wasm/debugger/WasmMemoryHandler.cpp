@@ -73,8 +73,10 @@ void MemoryHandler::read(StringView packet)
         return;
     }
 
-    auto parsedAddress = parseHexStrict(parts[0]);
-    auto parsedLength = parseHexStrict(parts[1]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedAddress = parseHexStrict(parts[0]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedLength = parseHexStrict(parts[1]);
     if (!parsedAddress || !parsedLength) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;
@@ -313,15 +315,18 @@ void MemoryHandler::write(StringView packet)
         return;
     }
 
-    auto parsedAddress = parseHexStrict(parts[0]);
-    auto parsedLength = parseHexStrict(parts[1]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedAddress = parseHexStrict(parts[0]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedLength = parseHexStrict(parts[1]);
     if (!parsedAddress || !parsedLength) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;
     }
     VirtualAddress address = VirtualAddress(*parsedAddress);
     size_t length = static_cast<size_t>(*parsedLength);
-    StringView hexData = parts[2];
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_LOCAL StringView hexData = parts[2];
 
     // Validate hex data length (2 hex chars per byte)
     if (hexData.length() != length * 2) {

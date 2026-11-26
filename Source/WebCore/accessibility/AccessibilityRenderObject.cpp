@@ -1612,11 +1612,13 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         if (text.isEmpty())
             return;
 
+        String untransformedText;
         CheckedRef textBoxStyle = textBox->style();
         if (textBoxStyle->textTransform().contains(Style::TextTransformValue::FullSizeKana)) {
             // We don't want to serve transformed kana text to AT since it is a visual affordance.
             // Using the original text from the renderer provides the untransformed string.
-            text = protect(textBox->renderer())->originalText().substring(textBox->start(), textBox->length());
+            untransformedText = protect(textBox->renderer())->originalText().substring(textBox->start(), textBox->length());
+            text = untransformedText;
         }
 
         bool collapseTabs = textBoxStyle->collapseWhiteSpace();

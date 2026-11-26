@@ -185,8 +185,10 @@ bool QueryHandler::parseLibrariesReadPacket(StringView packet, size_t& offset, s
     if (parts.size() != 2)
         return false;
 
-    auto parsedOffset = parseHexStrict(parts[0]);
-    auto parsedMaxSize = parseHexStrict(parts[1]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedOffset = parseHexStrict(parts[0]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedMaxSize = parseHexStrict(parts[1]);
     if (!parsedOffset || !parsedMaxSize)
         return false;
 
@@ -371,8 +373,10 @@ void QueryHandler::handleWasmLocal(StringView packet)
     }
 
     // Reject a non-numeric field rather than defaulting it to 0, which would answer for frame 0.
-    auto parsedFrameIndex = parseInteger<uint32_t>(parts[1]);
-    auto parsedLocalIndex = parseInteger<uint32_t>(parts[2]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedFrameIndex = parseInteger<uint32_t>(parts[1]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedLocalIndex = parseInteger<uint32_t>(parts[2]);
     if (!parsedFrameIndex || !parsedLocalIndex) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;
@@ -489,7 +493,8 @@ void QueryHandler::handleWasmGlobal(StringView packet)
         instanceOrFrameField = parts[2].left(parts[2].length() - 1).substring(instanceKey.length());
     }
 
-    auto globalIndex = parseInteger<uint32_t>(namesInstance ? parts[1] : parts[2]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto globalIndex = parseInteger<uint32_t>(namesInstance ? parts[1] : parts[2]);
     auto instanceOrFrameIndex = parseInteger<uint32_t>(instanceOrFrameField);
     if (!globalIndex || !instanceOrFrameIndex) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
@@ -628,8 +633,10 @@ void QueryHandler::handleWasmStackValue(StringView packet)
         return;
     }
 
-    auto parsedFrameIndex = parseInteger<uint32_t>(parts[1]);
-    auto parsedStackIndex = parseInteger<uint32_t>(parts[2]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedFrameIndex = parseInteger<uint32_t>(parts[1]);
+    // FIXME: Remove the suppression once the checker stops treating a copied StringView element as a loan on the Vector (rdar://193641147).
+    SUPPRESS_UNBORROWED_ARG auto parsedStackIndex = parseInteger<uint32_t>(parts[2]);
     if (!parsedFrameIndex || !parsedStackIndex) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;

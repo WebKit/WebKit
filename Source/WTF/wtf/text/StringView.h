@@ -51,7 +51,7 @@ template<typename T> class ValueOrReference;
 
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
 
-class StringView final {
+class WTF_VIEW_TYPE StringView final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringView);
 public:
     StringView();
