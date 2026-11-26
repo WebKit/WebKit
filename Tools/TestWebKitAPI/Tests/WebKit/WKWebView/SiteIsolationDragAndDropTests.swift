@@ -102,6 +102,79 @@ struct SiteIsolationDragAndDropTests {
         }
     }
 
+    @Test(.timeLimit(.minutes(1)))
+    func dragAndDropOnCrossOriginIframeInSameSiteIframeHaveLocationsInCrossOriginIframe() async throws {
+        var server = try HTTPServer(protocol: .httpsProxy) {
+            Route("/mainframe") {
+                """
+                <body style='margin: 0'>
+                <iframe src='https://example.com/same-site-iframe'
+                    style='position: absolute; left: 100px; top: 50px; width: 300px; height: 250px; border: none'></iframe>
+                <script>
+                var events = [];
+                addEventListener('message', event => events.push(event.data));
+                </script>
+                </body>
+                """
+            }
+
+            Route("/same-site-iframe") {
+                """
+                <body style='margin: 0'>
+                <iframe src='https://webkit.org/cross-site-iframe'
+                    style='position: absolute; left: 50px; top: 30px; width: 200px; height: 150px; border: none'></iframe>
+                </body>
+                """
+            }
+
+            Route("/cross-site-iframe") {
+                """
+                <body style='margin: 0; width: 200px; height: 150px'>
+                <script>
+                for (const type of ['dragenter', 'drop']) {
+                    addEventListener(type, event => {
+                        event.preventDefault();
+                        top.postMessage(`${event.type} ${event.clientX},${event.clientY}`, '*');
+                    });
+                }
+                addEventListener('dragover', event => event.preventDefault());
+                alert('iframe loaded');
+                </script>
+                </body>
+                """
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(
+                configuration: .init(httpsProxyFor: serverConfiguration),
+                frame: CGRect(x: 0, y: 0, width: 400, height: 300)
+            )
+            let alerts = AlertRecorder()
+            webView.uiDelegate = alerts
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/mainframe"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+            #expect(try await alerts.nextAlert() == "iframe loaded")
+            await webView.nextPresentationUpdate()
+
+            let point = CGPoint(x: 170, y: 90)
+            let drag = ExternalDrag(over: webView, string: "dragged text")
+            drag.enter(at: point)
+            try await waitForCondition("the cross-site iframe to get dragenter") {
+                try await !webView.dragEvents().isEmpty
+            }
+            #expect(try await webView.dragEvents() == ["dragenter 20,10"])
+
+            drag.move(to: point)
+            drag.drop()
+            try await waitForCondition("the cross-site iframe to get drop") {
+                try await webView.dragEvents().contains { $0.hasPrefix("drop") }
+            }
+            #expect(try await webView.dragEvents().last == "drop 20,10")
+        }
+    }
+
     private func withMainFrameAndCrossOriginIframe(
         siteIsolationEnabled: Bool,
         _ body: (WKWebView, WKFrameInfo) async throws -> Void

@@ -62,6 +62,12 @@ public struct ExternalDrag {
     public func exit() {
         webView.draggingExited(draggingInfo)
     }
+
+    /// Drops the drag at its current location.
+    public func drop() {
+        _ = webView.prepareForDragOperation(draggingInfo)
+        _ = webView.performDragOperation(draggingInfo)
+    }
 }
 
 #endif // ENABLE_DRAG_SUPPORT && WTF_PLATFORM_MAC
