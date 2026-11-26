@@ -11,6 +11,7 @@ set(WebGPU_PRIVATE_FRAMEWORK_HEADERS
     ${WebGPU_CPP_API_HEADERS}
     CxxBridgingPublic.h
     WebGPU.h
+    WebGPUCAPIHandles.h
 )
 
 set(WebGPU_PRIVATE_INCLUDE_DIRECTORIES

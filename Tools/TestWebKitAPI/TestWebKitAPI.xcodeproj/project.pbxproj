@@ -1587,6 +1587,7 @@
 		07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebGPU/CAPIHandleTests.cpp,
 				WebGPU/DeviceLostTests.cpp,
 				WebGPU/FutureTests.cpp,
 				WebGPU/InstanceDestroyTests.cpp,

@@ -36,6 +36,7 @@ CAPI/CAPIComputePipeline.mm
 CAPI/CAPIDevice.mm
 CAPI/CAPIExternalTexture.mm
 CAPI/CAPIFutures.mm
+CAPI/CAPIHandles.mm
 CAPI/CAPIInstanceFunctions.mm
 CAPI/CAPIPipelineLayout.mm
 CAPI/CAPIPresentationContext.mm
