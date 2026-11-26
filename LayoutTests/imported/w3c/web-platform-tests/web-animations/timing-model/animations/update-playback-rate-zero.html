@@ -25,7 +25,7 @@
     const box = document.getElementById('box');
     const duration = 2000;
     const anim =
-        box.animate({ bacground: [ 'green', 'red' ] },
+        box.animate({ background: [ 'green', 'red' ] },
                     { duration: duration, easing: 'steps(2, jump-none)' });
     anim.ready.then(() => {
       const startTime = anim.timeline.currentTime;
