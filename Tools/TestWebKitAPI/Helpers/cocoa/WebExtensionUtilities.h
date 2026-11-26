@@ -94,9 +94,7 @@ NS_SWIFT_UI_ACTOR
 - (void)unload;
 
 - (void)run NS_SWIFT_UNAVAILABLE("Spins the run loop; use run() async instead.");
-- (void)runForTimeInterval:(NSTimeInterval)interval NS_SWIFT_UNAVAILABLE("Spins the run loop; add an async variant instead.");
 - (id)runUntilTestMessage:(NSString *)message NS_SWIFT_UNAVAILABLE("Spins the run loop; use waitForTestMessage(_:) async instead.");
-- (void)runUntilContextError NS_SWIFT_UNAVAILABLE("Spins the run loop; use waitForContextError() async instead.");
 
 - (void)runWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 - (void)waitForTestMessage:(NSString *)message completionHandler:(void (^)(id _Nullable argument, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(waitForTestMessage(_:completionHandler:));
