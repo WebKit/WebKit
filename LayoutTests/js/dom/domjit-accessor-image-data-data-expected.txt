@@ -1,0 +1,14 @@
+Test DOMJIT ImageData.data accessor works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS failed is false
+PASS getData(imageData) === data is true
+PASS failed is false
+PASS getData({ data: 42 }) is 42
+PASS getData(Object.create(ImageData.prototype)) threw exception TypeError: The ImageData.data getter can only be used on instances of ImageData.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test DOMJIT ImageData.data accessor works.");
+
+function getData(imageData)
+{
+    return imageData.data;
+}
+window.testRunner?.neverInlineFunction(getData);
+
+function fill(imageData, value)
+{
+    for (let i = 0; i < imageData.data.length; ++i)
+        imageData.data[i] = value;
+}
+window.testRunner?.neverInlineFunction(fill);
+
+function sumAlpha(imageData)
+{
+    let sum = 0;
+    for (let i = 3; i < imageData.data.length; i += 4)
+        sum += imageData.data[i];
+    return sum;
+}
+window.testRunner?.neverInlineFunction(sumAlpha);
+
+var failed = false;
+for (let i = 0; i < 1e4; ++i) {
+    let imageData = new ImageData(2, 2);
+    let data = getData(imageData);
+    if (!(data instanceof Uint8ClampedArray) || data.length !== 16 || getData(imageData) !== data || imageData.data !== data) {
+        failed = true;
+        break;
+    }
+}
+shouldBeFalse("failed");
+
+var imageData = new ImageData(2, 2);
+var data = imageData.data;
+shouldBeTrue("getData(imageData) === data");
+
+failed = false;
+for (let i = 0; i < 1e4; ++i) {
+    fill(imageData, i % 256);
+    if (sumAlpha(imageData) !== 4 * (i % 256) || data[3] !== i % 256) {
+        failed = true;
+        break;
+    }
+}
+shouldBeFalse("failed");
+
+shouldBe("getData({ data: 42 })", "42");
+shouldThrowErrorName("getData(Object.create(ImageData.prototype))", "TypeError");
+</script>
+</body>
+</html>

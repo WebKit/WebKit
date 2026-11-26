@@ -801,7 +801,6 @@ bindings/js/JSIDBRecordCustom.cpp
 bindings/js/JSIDBRequestCustom.cpp @cost:3
 bindings/js/JSIDBSerializationGlobalObject.cpp
 bindings/js/JSIDBTransactionCustom.cpp
-bindings/js/JSImageDataCustom.cpp
 bindings/js/JSIntersectionObserverCustom.cpp @cost:3
 bindings/js/JSIntersectionObserverEntryCustom.cpp
 bindings/js/JSKeyframeEffectCustom.cpp
@@ -1557,6 +1556,7 @@ domjit/JSDocumentDOMJIT.cpp
 domjit/JSDocumentFragmentDOMJIT.cpp
 domjit/JSElementDOMJIT.cpp
 domjit/JSEventDOMJIT.cpp
+domjit/JSImageDataDOMJIT.cpp
 domjit/JSNodeDOMJIT.cpp
 editing/AlternativeTextController.cpp @cost:3
 editing/AppendNodeCommand.cpp

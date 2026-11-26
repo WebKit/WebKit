@@ -7798,6 +7798,7 @@
 		86CFA5D131AA05AA716D0512 /* DOMWindow+DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "DOMWindow+DocumentPictureInPicture.idl"; sourceTree = "<group>"; };
 		995B9A9688FE73824BE0085A /* DocumentPictureInPictureEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPictureEvent.idl; sourceTree = "<group>"; };
 		A72BABAD95B13D76675E99DB /* DocumentPictureInPictureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPictureEvent.cpp; sourceTree = "<group>"; };
+		B5DD6607340C81D7E8B9964A /* JSImageDataDOMJIT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataDOMJIT.cpp; sourceTree = "<group>"; };
 		CA598F5455BC441BACFC465F /* DocumentPictureInPictureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentPictureInPictureEvent.h; sourceTree = "<group>"; };
 		333D094E1DE73959720F5197 /* DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPicture.idl; sourceTree = "<group>"; };
 		91FEDEADB12F6D50CDCECE52 /* DocumentPictureInPicture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPicture.cpp; sourceTree = "<group>"; };
@@ -17925,7 +17926,6 @@
 		A7CAEDA32CB740E200FE4677 /* StyleViewTransitionName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleViewTransitionName.h; sourceTree = "<group>"; };
 		A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DragImage.cpp; sourceTree = "<group>"; };
 		A7CFB3D00B7ED10A0070C32D /* DragImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DragImage.h; sourceTree = "<group>"; };
-		A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageDataCustom.cpp; sourceTree = "<group>"; };
 		A7D20F3B107F373800A80392 /* WebGLActiveInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLActiveInfo.idl; sourceTree = "<group>"; };
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
 		A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLActiveInfo.h; sourceTree = "<group>"; };
@@ -32710,7 +32710,6 @@
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
-				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				5868C7D52546E0B300BF9DF3 /* JSIntersectionObserverCustom.cpp */,
 				77C13F042165658A002D9C5F /* JSIntersectionObserverEntryCustom.cpp */,
 				71601718279F2D7E005A25AE /* JSKeyframeEffectCustom.cpp */,
@@ -41673,6 +41672,7 @@
 				E3975B761EC9AF3900847717 /* JSDocumentFragmentDOMJIT.cpp */,
 				E3975B771EC9AF3900847717 /* JSElementDOMJIT.cpp */,
 				E3975B781EC9AF3900847717 /* JSEventDOMJIT.cpp */,
+				B5DD6607340C81D7E8B9964A /* JSImageDataDOMJIT.cpp */,
 				E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */,
 			);
 			path = domjit;
