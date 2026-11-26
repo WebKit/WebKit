@@ -48,6 +48,7 @@
 #include "DisplayCaptureSourceCocoa.h"
 #include "MockAudioCaptureUnit.h"
 #include "MockRealtimeVideoSourceCocoa.h"
+#include "ScreenCaptureKitSharingSessionManager.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -144,13 +145,20 @@ class MockDisplayCapturer final
     : public DisplayCaptureSourceCocoa::Capturer
     , public CanMakeWeakPtr<MockDisplayCapturer> {
 public:
-    MockDisplayCapturer(CapturerObserver&, const CaptureDevice&, std::optional<PageIdentifier>);
+    MockDisplayCapturer(CapturerObserver&, const CaptureDevice&, std::optional<PageIdentifier>
+#if HAVE(SCREEN_CAPTURE_KIT)
+    , std::unique_ptr<ScreenCaptureKitSelection>&&
+#endif
+    );
 
     void triggerMockCaptureConfigurationChange();
 
 private:
     bool start() final;
     void stop() final;
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void end() final;
+#endif
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
@@ -168,13 +176,23 @@ private:
     bool m_isRunning { false };
     CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
     const CaptureDevice::DeviceType m_deviceType;
+#if HAVE(SCREEN_CAPTURE_KIT)
+    std::unique_ptr<ScreenCaptureKitSelection> m_selection;
+#endif
 };
 
-MockDisplayCapturer::MockDisplayCapturer(CapturerObserver& observer, const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
+MockDisplayCapturer::MockDisplayCapturer(CapturerObserver& observer, const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier
+#if HAVE(SCREEN_CAPTURE_KIT)
+    , std::unique_ptr<ScreenCaptureKitSelection>&& selection
+#endif
+)
     : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
     , m_readyTimer(*this, &MockDisplayCapturer::readyTimerFired)
     , m_deviceType(device.type())
+#if HAVE(SCREEN_CAPTURE_KIT)
+    , m_selection(WTF::move(selection))
+#endif
 {
 }
 
@@ -197,6 +215,15 @@ void MockDisplayCapturer::stop()
     m_isRunning = false;
     protect(m_source)->stop();
 }
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+void MockDisplayCapturer::end()
+{
+    stop();
+    if (m_selection)
+        m_selection->unregister();
+}
+#endif
 
 void MockDisplayCapturer::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
 {
@@ -277,7 +304,16 @@ public:
         case CaptureDevice::DeviceType::BrowserTab: {
 #if PLATFORM(COCOA)
             return DisplayCaptureSourceCocoa::create([this, &device, pageIdentifier] (auto& observer) {
-                auto capturer = makeUniqueRefWithoutRefCountedCheck<MockDisplayCapturer>(observer, device, pageIdentifier);
+#if HAVE(SCREEN_CAPTURE_KIT)
+                std::unique_ptr<ScreenCaptureKitSelection> selection;
+                if (device.type() == CaptureDevice::DeviceType::BrowserTab)
+                    selection = ScreenCaptureKitSharingSessionManager::singleton().takeContentSelection(device);
+#endif
+                auto capturer = makeUniqueRefWithoutRefCountedCheck<MockDisplayCapturer>(observer, device, pageIdentifier
+#if HAVE(SCREEN_CAPTURE_KIT)
+                    , WTF::move(selection)
+#endif
+                );
                 m_capturer = capturer.get();
                 return capturer;
             }, device, WTF::move(hashSalts), constraints, pageIdentifier);

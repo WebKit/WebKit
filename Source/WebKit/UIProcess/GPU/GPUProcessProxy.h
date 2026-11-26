@@ -34,6 +34,7 @@
 #include "ProcessThrottler.h"
 #include <WebCore/ColorSpace.h>
 #include "RemoteSnapshotIdentifier.h"
+#include "TabCaptureWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntDegrees.h>
@@ -143,7 +144,7 @@ public:
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void selectWindowForCapture(uint32_t windowID, TabCaptureWindowIdentifier, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt();
 #endif
 
@@ -268,6 +269,10 @@ private:
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     void nowPlayingOwnerDidChange(std::optional<WebCore::QualifiedPageIdentifier>);
+#endif
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void tabCaptureDidEnd(TabCaptureWindowIdentifier);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

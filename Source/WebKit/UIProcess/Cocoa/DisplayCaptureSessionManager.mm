@@ -151,10 +151,11 @@ void DisplayCaptureSessionManager::startTabCapture(UserMediaPermissionRequestPro
     }
 
     auto windowID = window->windowID();
+    auto tabCaptureWindowIdentifier = window->identifier();
     Ref readyPromise = window->readyPromise();
     request.setTabCaptureWindow(window.releaseNonNull());
 
-    readyPromise->whenSettled(RunLoop::mainSingleton(), [request = Ref { request }, windowID, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+    readyPromise->whenSettled(RunLoop::mainSingleton(), [request = Ref { request }, windowID, tabCaptureWindowIdentifier, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
         if (!result) {
             RELEASE_LOG_ERROR(WebRTC, "DisplayCaptureSessionManager::startTabCapture - the tab capture window has no content; aborting.");
             completionHandler(std::nullopt);
@@ -169,7 +170,13 @@ void DisplayCaptureSessionManager::startTabCapture(UserMediaPermissionRequestPro
 
         Ref gpuProcess = protect(requestingPage->configuration().processPool())->ensureGPUProcess();
         gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
-        gpuProcess->selectWindowForCapture(windowID, WTF::move(completionHandler));
+        // Each successful selection in a GPU process sends one TabCaptureDidEnd when it goes away.
+        DisplayCaptureSessionManager::singleton().m_tabCaptureCounts.add(tabCaptureWindowIdentifier);
+        gpuProcess->selectWindowForCapture(windowID, tabCaptureWindowIdentifier, [completionHandler = WTF::move(completionHandler), tabCaptureWindowIdentifier](auto&& device) mutable {
+            if (!device)
+                DisplayCaptureSessionManager::singleton().tabCaptureDidEnd(tabCaptureWindowIdentifier);
+            completionHandler(WTF::move(device));
+        });
     });
 }
 #endif // HAVE(WINDOW_CAPTURE)
@@ -190,7 +197,21 @@ void DisplayCaptureSessionManager::showWindowOrScreenPicker(WebPageProxy& reques
     gpuProcess->updateSandboxAccess(CaptureSandboxAccess::Display);
     gpuProcess->promptForGetDisplayMedia(WebCore::DisplayCapturePromptType::UserChoose, WTF::move(completionHandler));
 }
+
 #endif // HAVE(SCREEN_CAPTURE_KIT)
+
+#if HAVE(WINDOW_CAPTURE)
+void DisplayCaptureSessionManager::tabCaptureDidEnd(TabCaptureWindowIdentifier identifier)
+{
+    // FIXME: We should end all tab captures of a GPU process in case it crashes.
+    if (!m_tabCaptureCounts.remove(identifier))
+        return;
+
+    UserMediaPermissionRequestManagerProxy::forEach([identifier](auto& manager) {
+        manager.removeTabCaptureWindow(identifier);
+    });
+}
+#endif
 
 std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType deviceType, unsigned indexOfDeviceSelectedForTesting)
 {
@@ -361,7 +382,6 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
     UNUSED_PARAM(request);
     completionHandler(std::nullopt);
 #endif // HAVE(WINDOW_CAPTURE)
-
 #endif // HAVE(SCREEN_CAPTURE_KIT)
 }
 

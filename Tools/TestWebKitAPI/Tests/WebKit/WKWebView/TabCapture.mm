@@ -78,6 +78,12 @@ protected:
         EXPECT_WK_STREQ(@"live", readyState);
     }
 
+    static void startSecondCapture(TestWKWebView *webView)
+    {
+        id readyState = [webView objectByCallingAsyncFunction:@"window.stream2 = await navigator.mediaDevices.getDisplayMedia({ video: true }); return window.stream2.getVideoTracks()[0].readyState;" withArguments:nil];
+        EXPECT_WK_STREQ(@"live", readyState);
+    }
+
     static NSString *videoTrackProperty(TestWKWebView *webView, NSString *expression)
     {
         return [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.stream.getVideoTracks()[0].%@", expression]];
@@ -112,14 +118,31 @@ TEST_F(TabCaptureTest, PicksTab)
 TEST_F(TabCaptureTest, CapturedTabStaysVisibleInHiddenWindow)
 {
     RetainPtr webView = createCapturingWebView();
-    startCapture(webView.get());
+    startCapture(webView);
 
     [m_capturedWebView setVisibility:NO];
     TestWebKitAPI::Util::runFor(0.01_s);
     EXPECT_WK_STREQ(@"visible", visibilityState(m_capturedWebView));
 
     [webView stringByEvaluatingJavaScript:@"window.stream.getTracks().forEach(track => track.stop())"];
-    EXPECT_TRUE(waitForVisibilityState(m_capturedWebView.get(), @"hidden"));
+    EXPECT_TRUE(waitForVisibilityState(m_capturedWebView, @"hidden"));
+}
+
+TEST_F(TabCaptureTest, CapturedTabBackToHiddenWhenNoLongerCaptured)
+{
+    RetainPtr webView = createCapturingWebView();
+    startCapture(webView);
+
+    [m_capturedWebView setVisibility:NO];
+    TestWebKitAPI::Util::runFor(0.01_s);
+    EXPECT_WK_STREQ(@"visible", visibilityState(m_capturedWebView));
+
+    [webView _setTabPickedForGetDisplayMediaForTesting:webView];
+    startSecondCapture(webView);
+
+    // We stop capturing m_capturedWebView while capturing webView. We expect m_capturedWebView to be hidden.
+    [webView stringByEvaluatingJavaScript:@"window.stream.getTracks().forEach(track => track.stop())"];
+    EXPECT_TRUE(waitForVisibilityState(m_capturedWebView, @"hidden"));
 }
 
 } // namespace TestWebKitAPI

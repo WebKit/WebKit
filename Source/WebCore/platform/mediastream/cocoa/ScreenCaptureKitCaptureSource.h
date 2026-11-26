@@ -59,7 +59,7 @@ class ScreenCaptureKitCaptureSource final
     WTF_MAKE_TZONE_ALLOCATED(ScreenCaptureKitCaptureSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScreenCaptureKitCaptureSource);
 public:
-    ScreenCaptureKitCaptureSource(CapturerObserver&, const CaptureDevice&, ScreenCaptureKitSelection&&);
+    ScreenCaptureKitCaptureSource(CapturerObserver&, const CaptureDevice&, UniqueRef<ScreenCaptureKitSelection>&&);
     virtual ~ScreenCaptureKitCaptureSource();
 
     WEBCORE_EXPORT static bool isAvailable();
@@ -119,7 +119,7 @@ private:
     std::optional<Content> m_content;
 #endif
     const RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
-    ScreenCaptureKitSelection m_contentSelection;
+    UniqueRef<ScreenCaptureKitSelection> m_contentSelection;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RefPtr<ScreenCaptureSessionSource> m_sessionSource;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;

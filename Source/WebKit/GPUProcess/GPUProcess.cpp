@@ -1124,9 +1124,12 @@ void GPUProcess::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType type
     WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(type, WTF::move(completionHandler));
 }
 
-void GPUProcess::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void GPUProcess::selectWindowForCapture(uint32_t windowID, TabCaptureWindowIdentifier tabCaptureWindowIdentifier, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().selectWindowForCapture(windowID, WTF::move(completionHandler));
+    auto unregisterHandler = [tabCaptureWindowIdentifier] {
+        protect(GPUProcess::singleton().parentProcessConnection())->send(Messages::GPUProcessProxy::TabCaptureDidEnd { tabCaptureWindowIdentifier }, 0);
+    };
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().selectWindowForCapture(windowID, WTF::move(completionHandler), WTF::move(unregisterHandler));
 }
 
 void GPUProcess::cancelGetDisplayMediaPrompt()

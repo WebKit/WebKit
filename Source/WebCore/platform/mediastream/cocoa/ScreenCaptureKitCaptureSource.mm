@@ -137,12 +137,12 @@ bool ScreenCaptureKitCaptureSource::isAvailable()
     return PAL::isScreenCaptureKitFrameworkAvailable();
 }
 
-ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, ScreenCaptureKitSelection&& selection)
+ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, UniqueRef<ScreenCaptureKitSelection>&& selection)
     : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_contentSelection(WTF::move(selection))
     , m_captureDevice(device)
 {
-    RetainPtr contentFilter = m_contentSelection.contentFilter();
+    RetainPtr contentFilter = m_contentSelection->contentFilter();
     m_contentSize = FloatSize { [contentFilter contentRect].size };
     if (m_contentSize.isEmpty())
         m_contentSize = defaultIntrinsicSize;
@@ -222,12 +222,13 @@ void ScreenCaptureKitCaptureSource::stop()
 
     // We do not nullify m_sessionSource to keep the picker active since it is helping capture for some fullscreen cases.
     if (m_sessionSource)
-        m_contentSelection.setFilter(m_sessionSource->contentFilter());
+        m_contentSelection->setFilter(m_sessionSource->contentFilter());
 }
 
 void ScreenCaptureKitCaptureSource::end()
 {
     stop();
+    m_contentSelection->unregister();
 }
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
@@ -366,14 +367,14 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         lazyInitialize(m_captureHelper, adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]));
 
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "contentFilter.contentRect = ", m_contentSize, ", contentFilter.pointPixelScale = ", [protect(m_contentSelection.contentFilter()) pointPixelScale]);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "contentFilter.contentRect = ", m_contentSize, ", contentFilter.pointPixelScale = ", [protect(m_contentSelection->contentFilter()) pointPixelScale]);
 
-    if (!m_contentSelection) {
+    if (!m_contentSelection->contentFilter()) {
         sessionFailedWithError(nil, "Unknown display device - no content filter"_s);
         return;
     }
 
-    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, protect(m_contentSelection.contentFilter()), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
+    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, protect(m_contentSelection->contentFilter()), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
         sessionFailedWithError(nil, "Failed to allocate stream"_s);
         return;
@@ -456,10 +457,10 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
         }
     );
 #else
-    if (!m_contentSelection)
+    if (!m_contentSelection->contentFilter())
         return defaultIntrinsicSize;
 
-    CGRect frame = [m_contentSelection.contentFilter() contentRect];
+    CGRect frame = [m_contentSelection->contentFilter() contentRect];
     if (!frame.size.width || !frame.size.height)
         return defaultIntrinsicSize;
 #endif

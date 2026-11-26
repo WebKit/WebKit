@@ -27,10 +27,12 @@
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
+#include "TabCaptureWindowIdentifier.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -53,6 +55,10 @@ public:
     void cancelGetDisplayMediaPrompt(WebPageProxy&);
     void pageVisibilityDidChange();
     void pageObscuredContentRectDidChange();
+#if HAVE(WINDOW_CAPTURE)
+    bool hasTabCapture(TabCaptureWindowIdentifier identifier) const { return m_tabCaptureCounts.contains(identifier); }
+    void tabCaptureDidEnd(TabCaptureWindowIdentifier);
+#endif
     bool canRequestDisplayCapturePermission();
     void setIndexOfDeviceSelectedForTesting(std::optional<unsigned> index) { m_indexOfDeviceSelectedForTesting = index; }
 
@@ -81,6 +87,7 @@ private:
     PromptOverride m_systemCanPromptForTesting { PromptOverride::Default };
 
 #if HAVE(WINDOW_CAPTURE)
+    HashCountedSet<TabCaptureWindowIdentifier> m_tabCaptureCounts;
     RefPtr<TabCapturePicker> m_tabCapturePicker;
 #endif
 };

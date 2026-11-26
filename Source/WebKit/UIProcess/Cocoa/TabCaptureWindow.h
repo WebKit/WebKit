@@ -27,7 +27,7 @@
 
 #if HAVE(WINDOW_CAPTURE)
 
-#include "WebPageProxyIdentifier.h"
+#include "TabCaptureWindowIdentifier.h"
 #include <wtf/NativePromise.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
@@ -46,7 +46,7 @@ public:
     static RefPtr<TabCaptureWindow> create(WebPageProxy&);
     ~TabCaptureWindow();
 
-    WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
+    TabCaptureWindowIdentifier identifier() const { return m_identifier; }
     uint32_t windowID() const;
     Ref<GenericNonExclusivePromise> readyPromise() const { return m_readyPromiseProducer.promise(); }
 
@@ -61,7 +61,7 @@ private:
 
     void attachLayer(WebPageProxy&);
 
-    WebPageProxyIdentifier m_pageIdentifier;
+    const TabCaptureWindowIdentifier m_identifier { TabCaptureWindowIdentifier::generate() };
     WeakPtr<WebPageProxy> m_page;
     RetainPtr<NSWindow> m_window;
     RetainPtr<CALayer> m_layer;

@@ -178,6 +178,7 @@ template: struct WebKit::RemoteMediaResourceLoaderIdentifierType
 template: struct WebKit::RemoteRemoteCommandListenerIdentifierType
 template: struct WebKit::SampleBufferDisplayLayerIdentifierType
 template: struct WebKit::ScriptMessageHandlerIdentifierType
+template: struct WebKit::TabCaptureWindowIdentifierType
 template: struct WebKit::TapIdentifierType
 template: struct WebKit::TextCheckerRequestType
 template: struct WebKit::TransactionIDType
