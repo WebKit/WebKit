@@ -49,7 +49,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringBuilderJSON.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/StringImplMallocWithBackgroundPrefault.h>
 
 // Turn this on to log information about fastStringify usage, with a focus on why it failed.
 #define FAST_STRINGIFY_LOG_USAGE 0
@@ -708,9 +707,22 @@ static uint64_t& dynamicBufferLengths(VM& vm)
         return vm.recentUTF16JSONStringifyLengths();
 }
 
-// Bounds how much memory a stale hint can reserve, and have faulted in, up front.
+// Bounds how much memory a stale hint can reserve up front.
 static constexpr unsigned maxDynamicBufferLengthHint = 32 * MB;
 static constexpr unsigned dynamicBufferLengthHintSlack = 256;
+
+// Once a dynamic buffer outgrows this many bytes, it is regrown into a reservation many times larger
+// instead of being doubled: its pages are faulted in only as the writes approach them, and result() gives
+// the unused tail back without copying. Doubling would copy the output, into freshly faulted pages, at
+// every step. The reservation is still bounded because allocating it commits all of it, and memory the
+// heap had decommitted counts against the footprint again until the tail is decommitted once more.
+static constexpr size_t dynamicBufferReservationThresholdBytes = 128 * KB;
+static constexpr size_t dynamicBufferReservationGrowthFactor = 64;
+static constexpr size_t maxDynamicBufferReservationBytes = 32 * MB;
+// A buffer at least this large has a helper thread fault its pages in, up to this far ahead of the writes.
+static constexpr size_t dynamicBufferPrefaultMinimumBytes = 1 * MB;
+static constexpr size_t dynamicBufferPrefaultWindowBytes = 4 * MB;
+static constexpr size_t dynamicBufferMinimumReservationPrefaultWindowBytes = 64 * KB;
 
 // A zero length means no result was recorded, since a successful result is never empty.
 static unsigned smallerRecentDynamicBufferLength(uint64_t recentLengths)
@@ -768,8 +780,10 @@ private:
     explicit FastStringifier(JSGlobalObject&);
     template<HasGap hasGap> void append(JSValue);
     void appendInt32(int32_t);
+    void appendFiniteDouble(double);
     template<HasGap hasGap> void appendArray(JSArray&);
     template<HasGap hasGap> void appendInt32Array(JSArray&);
+    template<HasGap hasGap> void appendDoubleArray(JSArray&);
     template<HasGap hasGap> bool appendPreparedObjectKey(const PreparedProperty&, bool& wroteProperty, unsigned newLineAndIndent, unsigned valueCapacity, CharType*& out, unsigned& length, unsigned& capacity);
     template<HasGap hasGap, bool inlineNestedObjects> bool appendPreparedObjectImpl(JSObject&, unsigned structureSlot, CharType*& out, unsigned& length, unsigned& capacity);
     template<HasGap hasGap> void appendPreparedObject(JSObject&, unsigned structureSlot);
@@ -848,6 +862,7 @@ private:
     bool haveFailure() const;
     bool hasRemainingCapacity(unsigned size = 1);
     bool hasRemainingCapacitySlow(unsigned size);
+    void setCapacityWithinDynamicBuffer(size_t requiredLength);
     bool mayHaveToJSON(JSObject&) const;
 
     static void logOutcome(ASCIILiteral);
@@ -860,23 +875,27 @@ private:
     JSGlobalObject& m_globalObject;
     VM& m_vm;
     unsigned m_length { 0 }; // length of content already filled into m_buffer.
+    // At most the buffer's size. A large dynamic buffer stops short of it, so that the slow path runs, and asks
+    // for the next pages to be faulted in, as the writes progress.
     unsigned m_capacity { 0 };
     unsigned m_depth { 0 };
     unsigned m_gapLength { 0 };
     std::array<Latin1Character, maxGapLength> m_gap;
     bool m_checkedObjectPrototype { false };
     bool m_checkedArrayPrototype { false };
+    bool m_dynamicBufferIsReservation { false };
     uint16_t m_preparedStructureCount { 0 };
     uint16_t m_preparedPropertyCount { 0 };
     uint16_t m_preparedPropertyScratchCount { 0 };
     std::optional<FailureReason> m_failureReason;
     std::array<StructureID, preparedStructureTableSize> m_preparedStructureIDs { };
-    Vector<CharType, dynamicBufferInlineCapacity, CrashOnOverflow, 16, StringImplMallocWithBackgroundPrefault> m_dynamicBuffer;
+    Vector<CharType, dynamicBufferInlineCapacity, CrashOnOverflow, 16, WTF::StringImplMalloc> m_dynamicBuffer;
     uint8_t* m_stackLimit { nullptr };
     std::array<PreparedStructureRange, preparedStructureTableSize> m_preparedStructureRanges;
     std::array<PreparedProperty, maxPreparedProperties> m_preparedProperties;
     std::array<PreparedProperty, maxPreparedPropertyScratch> m_preparedPropertyScratch;
     std::array<PreparedString, preparedStringTableSize> m_preparedStrings { };
+    unsigned m_prefaultedLength { 0 }; // How much of the dynamic buffer the helper thread has been asked to fault in.
 
     CharType m_buffer[staticBufferSize];
 };
@@ -964,7 +983,7 @@ inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& gl
         unsigned initialSize = lengthHint > dynamicBufferInlineCapacity ? lengthHint + dynamicBufferLengthHintSlack : dynamicBufferInlineCapacity;
         if (initialSize == dynamicBufferInlineCapacity || !m_dynamicBuffer.tryGrow(initialSize))
             m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
-        m_capacity = m_dynamicBuffer.size();
+        setCapacityWithinDynamicBuffer(0);
     }
 }
 
@@ -991,7 +1010,9 @@ inline String FastStringifier<CharType, bufferMode>::result()
         m_dynamicBuffer.shrink(m_length);
         uint64_t& recentLengths = dynamicBufferLengths<CharType>(m_vm);
         recentLengths = (recentLengths << 32) | m_length;
-        if (m_dynamicBuffer.capacity() > dynamicBufferInlineCapacity && m_dynamicBuffer.capacity() > 2 * static_cast<size_t>(m_length))
+        size_t capacity = m_dynamicBuffer.capacity();
+        size_t unusedBytes = (capacity - m_length) * sizeof(CharType);
+        if (capacity > dynamicBufferInlineCapacity && (capacity > 2 * static_cast<size_t>(m_length) || unusedBytes >= dynamicBufferReservationThresholdBytes))
             m_dynamicBuffer.shrinkToFit();
         return StringImpl::adopt(WTF::move(m_dynamicBuffer));
     }
@@ -1031,17 +1052,66 @@ bool FastStringifier<CharType, bufferMode>::hasRemainingCapacitySlow(unsigned si
         UNUSED_PARAM(size);
         return false;
     } else {
-        size_t newSize = std::max<size_t>(m_dynamicBuffer.size() * 2, m_dynamicBuffer.size() + size);
-        if (!StringImpl::isValidLength<CharType>(newSize)) [[unlikely]]
-            return false;
+        size_t requiredLength = static_cast<size_t>(m_length) + size;
+        size_t bufferSize = m_dynamicBuffer.size();
+        if (requiredLength > bufferSize) {
+            size_t newSize = std::max<size_t>(bufferSize * 2, requiredLength);
+            bool isReservation = bufferSize * sizeof(CharType) >= dynamicBufferReservationThresholdBytes;
+            if (isReservation)
+                newSize = std::max(newSize, std::min(bufferSize * dynamicBufferReservationGrowthFactor, maxDynamicBufferReservationBytes / sizeof(CharType)));
+            if (!StringImpl::isValidLength<CharType>(newSize)) [[unlikely]]
+                return false;
 
-        if (!m_dynamicBuffer.tryGrow(newSize)) [[unlikely]]
-            return false;
+            // Only the part within the capacity needs to move. That is more than what m_length covers: the caller may
+            // have already written a character there that it counts only once it has the room for the rest.
+            size_t copyLength = m_capacity;
+            decltype(m_dynamicBuffer) newBuffer;
+            if (!newBuffer.tryGrow(newSize)) [[unlikely]]
+                return false;
+            // Asked for before copying, so that the helper thread faults in the pages the copy writes ahead of it.
+            WTF::fastRequestBackgroundPrefault(newBuffer.mutableSpan().data(), newSize * sizeof(CharType), 0, copyLength * sizeof(CharType));
+            memcpySpan(newBuffer.mutableSpan().first(copyLength), m_dynamicBuffer.span().first(copyLength));
+            m_dynamicBuffer = WTF::move(newBuffer);
+            m_dynamicBufferIsReservation = isReservation;
+            m_prefaultedLength = copyLength;
+        }
 
-        m_capacity = m_dynamicBuffer.size();
+        setCapacityWithinDynamicBuffer(requiredLength);
         ASSERT(m_capacity - m_length >= size);
         return true;
     }
+}
+
+template<typename CharType, BufferMode bufferMode>
+void FastStringifier<CharType, bufferMode>::setCapacityWithinDynamicBuffer(size_t requiredLength)
+{
+    static_assert(bufferMode == BufferMode::DynamicBuffer);
+    size_t bufferSize = m_dynamicBuffer.size();
+    size_t bufferBytes = bufferSize * sizeof(CharType);
+    if (bufferBytes < dynamicBufferPrefaultMinimumBytes) {
+        m_capacity = bufferSize;
+        return;
+    }
+    // Once the pages up to the end of the buffer have been asked for, the slow path has nothing left to do until
+    // the buffer is full.
+    if (m_prefaultedLength == bufferSize) {
+        m_capacity = bufferSize;
+        return;
+    }
+    // Most of a reservation is never written, so its pages are faulted in no further ahead than what has been
+    // written so far, as doubling the buffer would have. Only pages not asked for yet are asked for: the helper
+    // thread adds them to whatever it has not reached of the earlier ones.
+    constexpr size_t maxWindow = dynamicBufferPrefaultWindowBytes / sizeof(CharType);
+    size_t window = maxWindow;
+    if (m_dynamicBufferIsReservation)
+        window = std::clamp<size_t>(m_length, dynamicBufferMinimumReservationPrefaultWindowBytes / sizeof(CharType), maxWindow);
+    size_t prefaultBegin = std::max<size_t>(m_length, m_prefaultedLength);
+    size_t prefaultEnd = std::min(bufferSize, requiredLength + 2 * window);
+    if (prefaultEnd > prefaultBegin) {
+        WTF::fastRequestBackgroundPrefault(m_dynamicBuffer.mutableSpan().data(), bufferBytes, prefaultBegin * sizeof(CharType), (prefaultEnd - prefaultBegin) * sizeof(CharType));
+        m_prefaultedLength = prefaultEnd;
+    }
+    m_capacity = m_prefaultedLength == bufferSize ? bufferSize : requiredLength + window;
 }
 
 #if !FAST_STRINGIFY_LOG_USAGE
@@ -1192,6 +1262,21 @@ template<typename CharType, BufferMode bufferMode>
 ALWAYS_INLINE void FastStringifier<CharType, bufferMode>::appendInt32(int32_t number)
 {
     m_length += writeIntegerToBuffer(number, std::span<CharType> { buffer() + m_length, maxInt32StringLength });
+}
+
+template<typename CharType, BufferMode bufferMode>
+ALWAYS_INLINE void FastStringifier<CharType, bufferMode>::appendFiniteDouble(double number)
+{
+    ASSERT(std::isfinite(number));
+    std::span<CharType, numberToShortestStringBufferSize> output { buffer() + m_length, numberToShortestStringBufferSize };
+    if constexpr (sizeof(CharType) == 1)
+        m_length += WTF::numberToShortestString(number, byteCast<char>(output));
+    else {
+        std::array<char, numberToShortestStringBufferSize> temporary;
+        size_t length = WTF::numberToShortestString(number, temporary);
+        WTF::copyElements(spanReinterpretCast<uint16_t>(output).first(length), byteCast<uint8_t>(std::span { temporary }).first(length));
+        m_length += length;
+    }
 }
 
 static ALWAYS_INLINE bool eightByteRangeNeedsJSONEscape(uint64_t word)
@@ -2042,14 +2127,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        if constexpr (sizeof(CharType) == 1)
-            m_length += WTF::numberToShortestString(number, byteCast<char>(bufferSpan().subspan(m_length)).template first<numberToShortestStringBufferSize>());
-        else {
-            std::array<char, numberToShortestStringBufferSize> temporary;
-            size_t length = WTF::numberToShortestString(number, temporary);
-            WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), byteCast<uint8_t>(std::span { temporary }).first(length));
-            m_length += length;
-        }
+        appendFiniteDouble(number);
         return;
     }
 
@@ -2235,6 +2313,13 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendArray(JSArray& ar
         closeArray();
         return;
     }
+    if (hasDouble(indexingType)) {
+        appendDoubleArray<hasGap>(array);
+        if (haveFailure()) [[unlikely]]
+            return;
+        closeArray();
+        return;
+    }
     const unsigned newLineAndIndent = hasGap == HasGap::Yes ? newLineAndIndentSize() : 0;
     for (unsigned i = 0, length = array.length(); i < length; ++i) {
         if (i || hasGap == HasGap::Yes) {
@@ -2286,6 +2371,41 @@ NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendInt32Array(JSArra
         if constexpr (hasGap == HasGap::Yes)
             appendNewLineAndIndentUnchecked();
         appendInt32(element.asInt32());
+    }
+}
+
+template<typename CharType, BufferMode bufferMode>
+template<HasGap hasGap>
+NEVER_INLINE void FastStringifier<CharType, bufferMode>::appendDoubleArray(JSArray& array)
+{
+    auto* butterfly = array.butterfly();
+    unsigned length = butterfly->publicLength();
+    if (length > butterfly->vectorLength()) [[unlikely]] {
+        recordFailure("!lengthBeyondVector"_s);
+        return;
+    }
+    auto data = butterfly->contiguousDouble();
+    const unsigned newLineAndIndent = hasGap == HasGap::Yes ? newLineAndIndentSize() : 0;
+    for (unsigned i = 0; i < length; ++i) {
+        double number = data.at(&array, i);
+        // A double array holds no NaN, so a NaN is a hole.
+        if (number != number) [[unlikely]] {
+            recordFailure("!canGetIndexQuickly"_s);
+            return;
+        }
+        if (!hasRemainingCapacity(1 + newLineAndIndent + numberToShortestStringBufferSize)) [[unlikely]] {
+            recordBufferFull();
+            return;
+        }
+        if (i)
+            buffer()[m_length++] = ',';
+        if constexpr (hasGap == HasGap::Yes)
+            appendNewLineAndIndentUnchecked();
+        if (!std::isfinite(number)) [[unlikely]] {
+            append('n', 'u', 'l', 'l');
+            continue;
+        }
+        appendFiniteDouble(number);
     }
 }
 

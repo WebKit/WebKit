@@ -366,6 +366,11 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
                    pas_heap_for_large_heap(heap)->config_kind)
                == heap_config);
 
+    if (new_size >= map_entry.end - map_entry.begin) {
+        pas_large_map_add(&pas_large_maps[map_entry.heap->variant], map_entry);
+        return true;
+    }
+
     if (heap_config->aligned_allocator_talks_to_sharing_pool) {
         pas_large_sharing_pool_free(
             pas_range_create(map_entry.begin + new_size, map_entry.end),

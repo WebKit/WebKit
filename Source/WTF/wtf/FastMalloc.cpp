@@ -609,6 +609,19 @@ PRESERVE_MOST TryMallocReturnValue tryFastMallocWithBackgroundPrefault(size_t si
     return result;
 }
 
+void fastRequestBackgroundPrefault(void* allocation, size_t allocationSize, size_t offset, size_t length)
+{
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    // The memory may not come from bmalloc, which is the only allocator that withdraws a fault-in on free.
+    UNUSED_PARAM(allocation);
+    UNUSED_PARAM(allocationSize);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(length);
+#else
+    bmalloc::api::requestBackgroundPrefault(allocation, allocationSize, offset, length);
+#endif
+}
+
 TryMallocReturnValue tryFastCompactCalloc(size_t numElements, size_t elementSize)
 {
     FAIL_IF_EXCEEDS_LIMIT(numElements * elementSize);

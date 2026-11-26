@@ -637,8 +637,25 @@ void* bmalloc_prefault_supply_try_allocate(void)
         &bmalloc_compact_primitive_heap_ref, supply_block_size, supply_block_size);
 }
 
-/* Queues the pages that lie wholly inside the allocation. */
-static void request_fault_in(uintptr_t allocation, size_t size)
+/* Caller holds supply_lock. The slot already queued for allocation, if any. It stays put while the
+   lock is held: only a cancellation clears a slot without it, and the caller is not freeing
+   allocation. */
+static fault_in_request* fault_in_request_for_allocation(uintptr_t allocation)
+{
+    unsigned index;
+
+    for (index = 0; index < MAX_FAULT_IN_REQUESTS; ++index) {
+        fault_in_request* request = fault_in_requests + index;
+        if (__atomic_load_n(&request->allocation, __ATOMIC_ACQUIRE) == allocation)
+            return request;
+    }
+    return NULL;
+}
+
+/* Queues the pages that lie wholly inside [range_begin, range_begin + size). A range still queued for
+   allocation is widened to cover both instead, so that a cancellation, which clears one slot, withdraws
+   them all, and so that pages it has not reached yet are still served. */
+static void request_fault_in(uintptr_t allocation, uintptr_t range_begin, size_t size)
 {
     uintptr_t page_size;
     uintptr_t begin;
@@ -655,19 +672,26 @@ static void request_fault_in(uintptr_t allocation, size_t size)
         return;
 
     page_size = pas_page_malloc_alignment();
-    begin = pas_round_up_to_power_of_2(allocation, page_size);
-    end = pas_round_down_to_power_of_2(allocation + size, page_size);
+    begin = pas_round_up_to_power_of_2(range_begin, page_size);
+    end = pas_round_down_to_power_of_2(range_begin + size, page_size);
     if (end <= begin)
         return;
 
     pthread_mutex_lock(&supply_lock);
-    request = free_fault_in_request();
-    request->begin = begin;
-    request->end = end;
-    request->sequence = next_fault_in_sequence++;
-    /* Counted before the slot is visible, so the count never falls short of the slots in use. */
-    __atomic_fetch_add(&bmalloc_prefault_supply_num_active_fault_ins.value, 1, __ATOMIC_RELAXED);
-    __atomic_store_n(&request->allocation, allocation, __ATOMIC_RELEASE);
+    request = fault_in_request_for_allocation(allocation);
+    if (request) {
+        request->begin = PAS_MIN(request->begin, begin);
+        request->end = PAS_MAX(request->end, end);
+        request->sequence = next_fault_in_sequence++;
+    } else {
+        request = free_fault_in_request();
+        request->begin = begin;
+        request->end = end;
+        request->sequence = next_fault_in_sequence++;
+        /* Counted before the slot is visible, so the count never falls short of the slots in use. */
+        __atomic_fetch_add(&bmalloc_prefault_supply_num_active_fault_ins.value, 1, __ATOMIC_RELAXED);
+        __atomic_store_n(&request->allocation, allocation, __ATOMIC_RELEASE);
+    }
     fault_in_request_count++;
     should_create = claim_filling_thread();
     pthread_cond_broadcast(&supply_cond);
@@ -688,10 +712,18 @@ static bool fault_in_is_enabled(void)
 
 void bmalloc_prefault_supply_request_fault_in(void* allocation, size_t size)
 {
+    bmalloc_prefault_supply_request_fault_in_range(allocation, size, 0, size);
+}
+
+void bmalloc_prefault_supply_request_fault_in_range(void* allocation, size_t allocation_size, size_t offset, size_t size)
+{
     pas_heap_lock_testing_assert_not_held();
 
-    if (!allocation || size < BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE)
+    if (!allocation || allocation_size < BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE)
         return;
+    if (offset >= allocation_size)
+        return;
+    size = PAS_MIN(size, allocation_size - offset);
     if (!fault_in_is_enabled())
         return;
 
@@ -705,13 +737,13 @@ void bmalloc_prefault_supply_request_fault_in(void* allocation, size_t size)
         PAS_ASSERT(is_large);
     }
 
-    request_fault_in((uintptr_t)allocation, size);
+    request_fault_in((uintptr_t)allocation, (uintptr_t)allocation + offset, size);
 }
 
 void bmalloc_prefault_supply_request_fault_in_for_testing(void* base, size_t size)
 {
     pas_heap_lock_testing_assert_not_held();
-    request_fault_in((uintptr_t)base, size);
+    request_fault_in((uintptr_t)base, (uintptr_t)base, size);
 }
 
 void bmalloc_prefault_supply_cancel_fault_in_slow(void* allocation)

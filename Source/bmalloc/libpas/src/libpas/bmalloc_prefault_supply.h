@@ -100,6 +100,12 @@ PAS_API extern bool bmalloc_prefault_supply_fault_in_is_enabled;
    is about to write, if it is at least BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE. */
 PAS_API void bmalloc_prefault_supply_request_fault_in(void* allocation, size_t size);
 
+/* Like bmalloc_prefault_supply_request_fault_in, for a client that writes a large allocation from
+   start to end in steps and asks for the part ahead of each step, rather than for all of it at once.
+   allocation_size is the size the caller allocated. A range still queued for allocation is widened to
+   cover the new one too. */
+PAS_API void bmalloc_prefault_supply_request_fault_in_range(void* allocation, size_t allocation_size, size_t offset, size_t size);
+
 /* How many fault-ins are queued, plus one while the thread is faulting in a chunk. Read without a
    lock so that freeing a large object stays cheap when nothing is outstanding. The thread writes it
    on every chunk, so it is padded to a cache line of its own: otherwise each chunk would also evict
