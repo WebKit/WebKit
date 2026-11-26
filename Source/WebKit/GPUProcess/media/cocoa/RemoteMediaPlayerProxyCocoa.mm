@@ -38,7 +38,6 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/FloatSize.h>
 #import <WebCore/HostingContext.h>
-#import <WebCore/IOSurface.h>
 #import <WebCore/VideoFrameCV.h>
 #import <WebCore/VideoFrameMetadata.h>
 #import <wtf/MachSendRightAnnotated.h>
@@ -114,36 +113,6 @@ void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFr
 WebCore::FloatSize RemoteMediaPlayerProxy::mediaPlayerVideoLayerSize() const
 {
     return m_layerHostingContextManager->videoLayerSize();
-}
-
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::ColorSpace)>&& completionHandler)
-{
-    using namespace WebCore;
-
-    if (!m_player) {
-        completionHandler(std::nullopt, ColorSpace::SRGB());
-        return;
-    }
-
-    auto nativeImage = m_player->nativeImageForCurrentTime();
-    if (!nativeImage) {
-        completionHandler(std::nullopt, ColorSpace::SRGB());
-        return;
-    }
-
-    auto platformImage = nativeImage->platformImage();
-    if (!platformImage) {
-        completionHandler(std::nullopt, ColorSpace::SRGB());
-        return;
-    }
-
-    auto surface = WebCore::IOSurface::createFromImage(nullptr, platformImage.get());
-    if (!surface) {
-        completionHandler(std::nullopt, ColorSpace::SRGB());
-        return;
-    }
-
-    completionHandler(surface->createSendRight(), nativeImage->colorSpace());
 }
 
 void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::ColorSpace)>&& completionHandler)

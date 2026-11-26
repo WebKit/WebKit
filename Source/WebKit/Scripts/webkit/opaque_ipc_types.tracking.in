@@ -318,8 +318,6 @@
 [SafeWrapper] StructureParam IPC::ConnectionHandle.m_handle MachSendRight
 
 [UnsafeWrapper] std::optional<MachSendRight> {
-    [Legacy] MessageParamReply RemoteMediaPlayerProxy.NativeImageForCurrentTime sendRight
-
     [NotSentFromWebContent] MessageParamReply RemoteImageBufferSet.FrontBufferForExternalRead surface
 }
 
