@@ -28,8 +28,12 @@ import json
 import sys
 import re
 
+from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk
+maybe_enter_webkit_container_sdk()
+
 from webkitpy.results.upload import Upload
 from webkitpy.results.options import upload_args
+from webkitpy.safer_cpp.analyzer import find_scan_build
 from webkitpy.safer_cpp.checkers import Checker
 from libraries.webkitscmpy.webkitscmpy import Commit
 from libraries.webkitscmpy.webkitscmpy import local, log, remote
@@ -74,7 +78,7 @@ def parser():
     parser.add_argument(
         '--scan-build-path',
         dest='scan_build',
-        help='Path to scan-build executable',
+        help='Path to scan-build executable (default: the newest one in PATH)',
         required='--generate-results-only' in sys.argv
     )
     parser.add_argument(
@@ -398,6 +402,7 @@ def generate_filtered_results(args):
 
 def main():
     args = parser()
+    args.scan_build = args.scan_build or find_scan_build()
 
     if not args.generate_filtered_results:
         results_for_upload = compare_results(args)
