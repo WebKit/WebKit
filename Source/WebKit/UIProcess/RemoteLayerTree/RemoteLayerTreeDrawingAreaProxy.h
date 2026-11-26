@@ -149,6 +149,9 @@ public:
 
     NODELETE TransactionID nextMainFrameLayerTreeTransactionID() const;
     NODELETE TransactionID lastCommittedMainFrameLayerTreeTransactionID() const;
+    // The first main frame transaction whose DisplayDidRefresh hasn't been sent yet. The web process can only
+    // start that rendering update after it has received every message sent before now.
+    TransactionID nextUnrequestedMainFrameLayerTreeTransactionID() const { return m_webPageProxyProcessState.nextLayerTreeTransactionID; }
 
     virtual void didRefreshDisplay();
     virtual bool displayLinkWantsHighFrameRateForTesting() const { return false; };

@@ -322,9 +322,9 @@ bool RemoteScrollingCoordinatorProxy::isPointInScrollbar(FloatPoint p)
     return m_scrollingTree->isPointInScrollbar(p);
 }
 
-void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale)
+void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale, DeferViewportConstrainedLayerRepositioning deferViewportConstrainedLayerRepositioning)
 {
-    m_scrollingTree->mainFrameViewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
+    m_scrollingTree->mainFrameViewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale, deferViewportConstrainedLayerRepositioning);
 }
 
 void RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit()

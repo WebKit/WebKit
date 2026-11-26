@@ -799,9 +799,9 @@ void RemoteScrollingCoordinatorProxyIOS::displayDidRefresh(PlatformDisplayID dis
 #endif
 }
 
-void RemoteScrollingCoordinatorProxyIOS::viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale)
+void RemoteScrollingCoordinatorProxyIOS::viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale, WebCore::DeferViewportConstrainedLayerRepositioning deferViewportConstrainedLayerRepositioning)
 {
-    RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
+    RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale, deferViewportConstrainedLayerRepositioning);
 #if ENABLE(THREADED_ANIMATIONS)
     animatedContentGeometryMayHaveChanged();
 #endif

@@ -40,7 +40,7 @@ public:
     void computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValues&) const;
 
     LayoutRect replacedContentRect(NaturalDimensions zoomedNaturalDimensions) const;
-    LayoutRect replacedContentRect() const;
+    WEBCORE_EXPORT LayoutRect replacedContentRect() const;
     LayoutRect replacedContentPaintRect() const;
     LayoutRect replacedContentPaintRect(const LayoutRect& replacedContentRect, NaturalDimensions zoomedNaturalDimensions) const;
 

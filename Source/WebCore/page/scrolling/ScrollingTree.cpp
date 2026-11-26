@@ -373,12 +373,14 @@ void ScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node,
         setMainFrameScrollPosition(node.currentScrollPosition());
 }
 
-void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale)
+void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale, DeferViewportConstrainedLayerRepositioning deferViewportConstrainedLayerRepositioning)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport << " scale " << scale);
 
     // repositionScrollingLayers() requires the tree lock, and the scrolling thread may be reading the tree.
     Locker locker { m_treeLock };
+
+    bool wasDeferring = std::exchange(m_deferMainFrameViewportConstrainedLayerRepositioning, deferViewportConstrainedLayerRepositioning == DeferViewportConstrainedLayerRepositioning::Yes);
 
     if (RefPtr rootNode = m_rootNode) {
         // Whenever we hold m_treeLock we expect to be holding the m_rootNode->scrollingTree()->treeLock() as well,
@@ -392,6 +394,8 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
         rootNode->wasScrolledByDelegatedScrolling(scrollPosition, layoutViewport);
         if (scaleChanged)
             rootNode->repositionScrollingLayersForDelegatedScaleChange();
+        if (wasDeferring && !m_deferMainFrameViewportConstrainedLayerRepositioning)
+            notifyRelatedNodesAfterScrollPositionChange(*rootNode);
     }
 }
 
@@ -692,6 +696,7 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
 
 void ScrollingTree::removeAllNodes()
 {
+    m_deferMainFrameViewportConstrainedLayerRepositioning = false;
     auto nodes = std::exchange(m_nodeMap, { });
 
     // Every node is going away, so no entry in the active sets can still be resolved via nodeForID().
@@ -725,9 +730,28 @@ void ScrollingTree::applyLayerPositionsInternal()
         applyLayerPositionsRecursive(*rootNode);
 }
 
+bool ScrollingTree::shouldDeferLayerPositionForNode(const ScrollingTreeNode& node) const
+{
+    if (!m_deferMainFrameViewportConstrainedLayerRepositioning)
+        return false;
+
+    bool isSticky = node.isStickyNode();
+    if (!node.isFixedNode() && !isSticky)
+        return false;
+
+    for (RefPtr ancestor = node.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (isSticky && (ancestor->isOverflowScrollingNode() || ancestor->isOverflowScrollProxyNode()))
+            return false;
+        if (ancestor->isFrameScrollingNode())
+            return ancestor == m_rootNode;
+    }
+    return false;
+}
+
 void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& node)
 {
-    node.applyLayerPositions();
+    if (!shouldDeferLayerPositionForNode(node))
+        node.applyLayerPositions();
 
     for (auto& child : node.children())
         applyLayerPositionsRecursive(child.get());
@@ -744,12 +768,12 @@ ScrollingTreeNode* ScrollingTree::nodeForID(std::optional<ScrollingNodeID> nodeI
 void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode)
 {
     Vector<ScrollingNodeID> additionalUpdateRoots;
-    
+
     if (is<ScrollingTreeOverflowScrollingNode>(changedNode))
         additionalUpdateRoots = overflowRelatedNodes().get(changedNode.scrollingNodeID());
 
     notifyRelatedNodesRecursive(changedNode);
-    
+
     for (auto positionedNodeID : additionalUpdateRoots) {
         if (RefPtr positionedNode = nodeForID(positionedNodeID))
             notifyRelatedNodesRecursive(*positionedNode);
@@ -758,7 +782,8 @@ void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScr
 
 void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeNode& node)
 {
-    node.applyLayerPositions();
+    if (!shouldDeferLayerPositionForNode(node))
+        node.applyLayerPositions();
 
     for (auto& child : node.children()) {
         // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.

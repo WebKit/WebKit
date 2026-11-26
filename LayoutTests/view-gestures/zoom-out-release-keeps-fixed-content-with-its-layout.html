@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>When a delegated zoom out finishes easing back, fixed content stays with its layout until the web process lays it out again</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            width: 3000px;
+            height: 3000px;
+            background-color: white;
+            background-image: linear-gradient(45deg, orange 25%, transparent 25%, transparent 75%, orange 75%);
+            background-size: 100px 100px;
+        }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(0, 0, 128);
+        }
+
+        #marker {
+            width: 40px;
+            height: 40px;
+            background-color: rgb(0, 255, 0);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Zooming out below the minimum scale grows the layout viewport, and the web process lays the overlay out to
+        // fill it. Once the release has eased back, the overlay has to be laid out again for the smaller viewport.
+        // Moving its layer to that viewport before the layout arrives puts the overlay's top at the top of the view
+        // while it is still the zoomed out height, so the marker centered in it drops for a frame, then jumps back.
+        const markerColor = [0, 255, 0];
+        const tolerance = 3;
+
+        function delegatedZoomOverrideImmediately()
+        {
+            return new Promise(resolve => testRunner.runUIScriptImmediately('uiController.uiScriptComplete(uiController.delegatedZoomOverrideAsText)', resolve));
+        }
+
+        function uiProcessTick()
+        {
+            return new Promise(resolve => testRunner.runUIScriptImmediately('uiController.doAsyncTask(() => uiController.uiScriptComplete())', resolve));
+        }
+
+        async function waitUntilEaseEnds()
+        {
+            if (!UIHelper.isWebKit2() || !UIHelper.isMac())
+                return;
+
+            while (/holding the web process update until the ease ends/.test(await delegatedZoomOverrideImmediately()))
+                await new Promise(resolve => setTimeout(resolve, 16));
+            await uiProcessTick();
+        }
+
+        async function pixels(dataURL)
+        {
+            const image = new Image;
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = dataURL;
+            });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0);
+            return context.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        async function markerCenter(dataURL)
+        {
+            const { width, height, data } = await pixels(dataURL);
+
+            let rect = null;
+            for (let y = 0; y < height; ++y) {
+                for (let x = 0; x < width; ++x) {
+                    const index = (y * width + x) * 4;
+                    if (!markerColor.every((component, offset) => Math.abs(data[index + offset] - component) <= 16))
+                        continue;
+
+                    if (!rect)
+                        rect = { left: x, top: y, right: x + 1, bottom: y + 1 };
+                    rect.left = Math.min(rect.left, x);
+                    rect.top = Math.min(rect.top, y);
+                    rect.right = Math.max(rect.right, x + 1);
+                    rect.bottom = Math.max(rect.bottom, y + 1);
+                }
+            }
+
+            if (!rect)
+                return null;
+
+            // Measured against the snapshot, which is the view. window.innerWidth and innerHeight follow the zoom.
+            return {
+                x: (rect.left + rect.right) / 2 / window.devicePixelRatio,
+                y: (rect.top + rect.bottom) / 2 / window.devicePixelRatio,
+                middle: { x: width / 2 / window.devicePixelRatio, y: height / 2 / window.devicePixelRatio },
+            };
+        }
+
+        function takeViewPortSnapshot()
+        {
+            return new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+        }
+
+        function result(description, center)
+        {
+            if (!center)
+                return `  ${description}: FAIL (the marker isn't in the view)`;
+
+            const middle = center.middle;
+            if (Math.abs(center.x - middle.x) <= tolerance && Math.abs(center.y - middle.y) <= tolerance)
+                return `  ${description}: PASS (the marker is in the middle of the view)`;
+
+            return `  ${description}: FAIL (the marker is at (${center.x.toFixed(1)}, ${center.y.toFixed(1)}) instead of (${middle.x}, ${middle.y}))`;
+        }
+
+        async function doTest()
+        {
+            const output = ['A marker centered in a full size fixed overlay:'];
+
+            window.scrollTo(1000, 1000);
+            await UIHelper.ensurePresentationUpdate();
+            output.push(result('Before zooming', await markerCenter(await takeViewPortSnapshot())));
+
+            // Pinch out around the middle of the view, into the elastic range below the minimum scale.
+            const middleOfTheView = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+            await UIHelper.beginMagnifyGestureAt(middleOfTheView.x, middleOfTheView.y, -0.9);
+            await UIHelper.continueMagnifyGesture(-0.9);
+            await UIHelper.continueMagnifyGesture(-0.9);
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            output.push(result('Held zoom out', await markerCenter(await takeViewPortSnapshot())));
+
+            // Release while visual updates are frozen so the web process can't commit the relayout yet, then wait
+            // deterministically for the snap-back ease to hand over to the deferred viewport-constrained hold.
+            internals.setVisualUpdatesAllowed(false);
+            try {
+                eventSender.scaleGestureEnd(0);
+                await waitUntilEaseEnds();
+                output.push(result('When the ease ends, before the web process lays out again', await markerCenter(await takeViewPortSnapshot())));
+            } finally {
+                internals.setVisualUpdatesAllowed(true);
+            }
+
+            await UIHelper.waitForZoomScaleToSettle();
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            output.push(result('After the web process lays out again', await markerCenter(await takeViewPortSnapshot())));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="overlay"><div id="marker"></div></div>
+    <pre id="output"></pre>
+</body>
+</html>

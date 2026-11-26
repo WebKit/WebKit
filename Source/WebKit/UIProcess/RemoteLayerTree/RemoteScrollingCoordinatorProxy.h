@@ -105,7 +105,7 @@ public:
     bool isPointInScrollbar(WebCore::FloatPoint);
 
     // Called externally when native views move around.
-    virtual void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
+    virtual void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale, WebCore::DeferViewportConstrainedLayerRepositioning = WebCore::DeferViewportConstrainedLayerRepositioning::No);
 
     virtual void applyScrollingTreeLayerPositionsAfterCommit();
     virtual void flushMainThreadTransactionIfNeeded() { }

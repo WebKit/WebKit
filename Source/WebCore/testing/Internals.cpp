@@ -693,6 +693,7 @@ void Internals::resetToConsistentState(Page& page)
         return;
 
     localMainFrame->setTextZoomFactor(1.0f);
+    localMainFrame->loader().setDocumentVisualUpdatesAllowed(true);
 
     page.setCompositingPolicyOverride(WebCore::CompositingPolicy::Normal);
 
@@ -4568,6 +4569,16 @@ ExceptionOr<void> Internals::setFixedLayoutSize(int width, int height)
         return Exception { ExceptionCode::InvalidAccessError };
 
     protect(document->view())->setFixedLayoutSize(IntSize(width, height));
+    return { };
+}
+
+ExceptionOr<void> Internals::setVisualUpdatesAllowed(bool allowed)
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    protect(document->frame())->loader().setDocumentVisualUpdatesAllowed(allowed);
     return { };
 }
 

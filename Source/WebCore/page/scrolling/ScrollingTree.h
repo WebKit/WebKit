@@ -67,6 +67,7 @@ using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
+enum class DeferViewportConstrainedLayerRepositioning : bool { No, Yes };
 
 enum class RequestsScrollHandling : uint8_t {
     Unhandled,
@@ -158,7 +159,7 @@ public:
     virtual void didHandleScrollRequestForNode(ScrollingNodeID, ScrollRequestType, FloatPoint, ShouldFireScrollEnd, Markable<ScrollRequestIdentifier>) { }
 
     // Delegated scrolling/zooming has caused the viewport to change, so update viewport-constrained layers
-    WEBCORE_EXPORT void mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
+    WEBCORE_EXPORT void mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale, DeferViewportConstrainedLayerRepositioning = DeferViewportConstrainedLayerRepositioning::No);
 
     void notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode);
 
@@ -441,11 +442,14 @@ protected:
     bool m_allowLatching { true };
 
 private:
+    bool shouldDeferLayerPositionForNode(const ScrollingTreeNode&) const;
+
     ThreadSafeWeakHashSet<ScrollingTreeNode> m_fixedOrStickyNodes;
     std::atomic<bool> m_isHandlingProgrammaticScroll { false };
     std::atomic<bool> m_isApplyingDeltaScroll { false };
     std::atomic<bool> m_needsApplyLayerPositions { false };
     std::atomic<bool> m_isIgnoringMomentumScrollsDuringRubberBand { false };
+    bool m_deferMainFrameViewportConstrainedLayerRepositioning { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_scrollingPerformanceTestingEnabled { false };
     bool m_overlayScrollbarsEnabled { false };

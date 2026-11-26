@@ -2720,7 +2720,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (RefPtr gestureController = impl->gestureController(); gestureController && gestureController->hasActiveMagnificationGesture()) {
             gestureDelta = { };
             gestureController->moveMagnificationOrigin(locationInView);
-        }
+        } else if ([_magnificationGestureRecognizer state] == NSGestureRecognizerStateEnded)
+            gestureDelta = { };
     }
 
     auto pinnedState = [webView _protectedPage]->pinnedStateIncludingAncestorsAtPoint(locationInView);

@@ -125,6 +125,7 @@ private:
 
     enum class IsStableState : bool { No, Yes };
     void sendVisibleContentRectUpdate(double scale, IsStableState);
+    void adjustLayersForLayoutViewportAwaitingLayout();
 
     // Scrolling has to refresh the web process's layout viewport override, or fixed and sticky layers stay placed
     // against the rect from the last zoom. iOS does this from -[WKContentView didUpdateVisibleRect:].
@@ -217,6 +218,10 @@ private:
         std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID;
     };
     std::optional<VisibleContentRectUpdateAfterSnapBack> m_visibleContentRectUpdateAfterSnapBack;
+
+    // The first commit that can reflect the layout viewport we sent. This is tracked in the UI process rather
+    // than reported by the web process, since commit transaction IDs are validated as they arrive.
+    std::optional<TransactionID> m_layoutViewportUpdateAwaitingLayout;
 };
 
 } // namespace WebKit

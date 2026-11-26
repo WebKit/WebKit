@@ -91,7 +91,7 @@ public:
     void updateAnimatedContentVisibilityIfNeeded() override;
 #endif
 
-    void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale) override;
+    void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale, WebCore::DeferViewportConstrainedLayerRepositioning = WebCore::DeferViewportConstrainedLayerRepositioning::No) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 

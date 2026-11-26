@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Double tapping a letterboxed image zooms to fit what the image draws, not its whole box</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+        }
+
+        /* Like a photo viewer with a sidebar: the box is nearly as tall as the view, and a wide photo only fills a
+           band across the middle of it. */
+        #photo {
+            position: absolute;
+            left: 0;
+            top: 5vh;
+            width: 70vw;
+            height: 90vh;
+            object-fit: contain;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // ViewGestureController pads the target by 5% on each side and fits the whole of an image in both dimensions.
+        const padding = 1.1;
+        const photoAspectRatio = 16 / 9;
+        const tolerance = 0.02;
+
+        function expectedScaleToFit(width, height)
+        {
+            return Math.max(1, Math.min(window.innerWidth / (width * padding), window.innerHeight / (height * padding)));
+        }
+
+        function result(description, scale, expectedScale)
+        {
+            if (Math.abs(scale - expectedScale) <= tolerance)
+                return `  ${description}: PASS`;
+            return `  ${description}: FAIL (zoomed to ${scale.toFixed(3)} instead of ${expectedScale.toFixed(3)})`;
+        }
+
+        async function doubleTapAndSettle(x, y)
+        {
+            await UIHelper.smartMagnifyAt(x, y);
+            await UIHelper.waitForZoomScaleToSettle();
+            for (let i = 0; i < 4; ++i)
+                await UIHelper.ensurePresentationUpdate();
+            return window.visualViewport.scale;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1600;
+            canvas.height = 1600 / photoAspectRatio;
+            const context = canvas.getContext('2d');
+            context.fillStyle = 'rgb(0, 128, 0)';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            const photo = document.getElementById('photo');
+            await new Promise(resolve => {
+                photo.onload = resolve;
+                photo.src = canvas.toDataURL();
+            });
+
+            await UIHelper.setWebViewAllowsMagnification(true);
+            await UIHelper.renderingUpdate();
+
+            const box = photo.getBoundingClientRect();
+            const center = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+            const drawnWidth = Math.min(box.width, box.height * photoAspectRatio);
+            const drawnHeight = drawnWidth / photoAspectRatio;
+            const scaleToFitTheDrawnPhoto = expectedScaleToFit(drawnWidth, drawnHeight);
+            const scaleToFitTheBox = expectedScaleToFit(box.width, box.height);
+
+            output.push('A photo that object-fit: contain letterboxes in a box nearly as tall as the view:');
+            output.push(result('A double tap zooms to fit the drawn photo', await doubleTapAndSettle(center.x, center.y), scaleToFitTheDrawnPhoto));
+
+            await doubleTapAndSettle(center.x, center.y);
+
+            // A cover fit draws past the box, so the box is what can be seen.
+            photo.style.objectFit = 'cover';
+            await UIHelper.renderingUpdate();
+            output.push('The same photo with object-fit: cover:');
+            output.push(result('A double tap zooms to fit the box', await doubleTapAndSettle(center.x, center.y), scaleToFitTheBox));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <img id="photo">
+    <pre id="output" style="position: absolute; right: 0; top: 0; color: white;"></pre>
+</body>
+</html>

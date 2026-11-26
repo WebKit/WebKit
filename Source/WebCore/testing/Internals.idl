@@ -984,6 +984,7 @@ enum LayerType {
 
     undefined setUseFixedLayout(boolean useFixedLayout);
     undefined setFixedLayoutSize(long width, long height);
+    undefined setVisualUpdatesAllowed(boolean allowed);
     undefined setPrinting(long width, long height);
 
     undefined setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
