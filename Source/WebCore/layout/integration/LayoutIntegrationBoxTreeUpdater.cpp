@@ -113,6 +113,9 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
         return font;
     };
 
+    CheckedPtr blockContainer = textRenderer.containingBlock();
+    CheckedRef blockContainerStyle = blockContainer ? blockContainer->style() : style.get();
+
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
     auto measure = [&](const FontCascade& font) {
@@ -121,7 +124,7 @@ static std::unique_ptr<Layout::InlineTextBox::CombinedText> computeCombinedText(
             return font.widthOfSpaceString();
         auto run = RenderBlock::constructTextRun(content, style);
         run.setCharacterScanForCodePath(!textRenderer.canUseSimpleFontCodePath());
-        run.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+        Layout::TextUtil::setTabSize(run, style, blockContainerStyle);
         return font.width(run, nullptr, &glyphOverflow);
     };
     auto combinedText = [&](FontCascade&& font, float width) {

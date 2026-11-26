@@ -110,6 +110,9 @@ public:
     static std::optional<TextDirection> overridingDirection(const InlineTextBox&);
     static std::optional<TextDirection> overridingDirection(const RenderText&);
 
+    static void setTabSize(TextRun&, const Style::ComputedStyle&, const Style::ComputedStyle& blockContainerStyle);
+    static void setTabSize(TextRun&, const InlineTextBox&);
+
     static AtomString ellipsisText();
     // For the <string> values of text-overflow and block-ellipsis.
     static AtomString ellipsisStringWithCollapsedForcedLineBreaks(const String&);

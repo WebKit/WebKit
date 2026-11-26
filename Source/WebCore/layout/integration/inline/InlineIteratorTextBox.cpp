@@ -31,7 +31,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBoxInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleTabSize.h"
+#include "TextUtil.h"
 
 namespace WebCore::InlineIterator {
 
@@ -63,7 +63,8 @@ TextRun TextBox::textRun(TextRunMode mode) const
     };
     auto characterScanForCodePath = isText() && !renderer().canUseSimpleFontCodePath();
     auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : displayBox().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style->rtlOrdering() == Order::Visual, characterScanForCodePath };
-    textRun.setTabSize(!style->collapseWhiteSpace(), Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
+    CheckedRef blockContainerStyle = formattingContextRoot().style();
+    Layout::TextUtil::setTabSize(textRun, style, blockContainerStyle);
     return textRun;
 }
 
