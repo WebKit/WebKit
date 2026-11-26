@@ -45,7 +45,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingObjects);
 struct SameSizeAsFloatingObject {
     SingleThreadWeakPtr<RenderBox> renderer;
     LayoutRect rect;
-    int paginationStrut;
     LayoutSize size;
     uint32_t bitfields : 8;
 };
@@ -93,7 +92,6 @@ std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
     ASSERT(renderer());
     auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_isDescendant);
-    cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
 }
@@ -214,13 +212,11 @@ public:
     void collectIfNeeded(const IntervalType&);
 
     NODELETE LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-    NODELETE LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
     std::optional<LayoutUnit> m_nextLogicalBottom;
-    std::optional<LayoutUnit> m_nextShapeLogicalBottom;
 };
 
 inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)
@@ -239,12 +235,6 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
     if (!floatingObject.renderer())
         return;
 
-    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer()->shapeOutsideInfo()) {
-        LayoutUnit shapeBottom = m_renderer->logicalTopForFloat(floatingObject) + m_renderer->marginBeforeForChild(*floatingObject.renderer()) + shapeOutside->shapeLogicalBottom();
-        // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
-        m_nextShapeLogicalBottom = std::min(shapeBottom, floatBottom);
-    } else
-        m_nextShapeLogicalBottom = floatBottom;
     m_nextLogicalBottom = floatBottom;
 }
 

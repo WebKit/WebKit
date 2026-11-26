@@ -2884,16 +2884,6 @@ void RenderBlockFlow::createFloatingObjects()
     m_floatingObjects = makeUnique<FloatingObjects>(*this);
 }
 
-void RenderBlockFlow::removeFloatingObjects()
-{
-    if (!m_floatingObjects)
-        return;
-
-    markSiblingsWithFloatsForLayout();
-
-    m_floatingObjects->clear();
-}
-
 void RenderBlockFlow::insertFloatingBoxAndMarkForLayout(RenderBox& floatBox)
 {
     // Our location is irrelevant if we're unsplittable or no pagination is in effect. Just lay out the float.
@@ -3182,7 +3172,6 @@ bool RenderBlockFlow::positionNewFloats()
             }
             
             if (newLogicalTop != logicalTop) {
-                floatingObject.setPaginationStrut(newLogicalTop - logicalTop);
                 computeLogicalLocationForFloat(floatingObject, newLogicalTop);
                 if (childBlock)
                     childBlock->setChildNeedsLayout(MarkingBehavior::OnlyThis);

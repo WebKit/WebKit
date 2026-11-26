@@ -305,7 +305,6 @@ public:
     NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
     NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
-    void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
 

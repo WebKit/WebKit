@@ -86,9 +86,6 @@ public:
     const LayoutRect& frameRect() const LIFETIME_BOUND { ASSERT(isPlaced()); return m_frameRect; }
     void setFrameRect(const LayoutRect& frameRect) { ASSERT(!isInPlacedTree()); m_frameRect = frameRect; }
 
-    LayoutUnit paginationStrut() const { return m_paginationStrut; }
-    void setPaginationStrut(LayoutUnit strut) { m_paginationStrut = strut; }
-
 #if ASSERT_ENABLED
     bool isInPlacedTree() const { return m_isInPlacedTree; }
     void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
@@ -109,7 +106,6 @@ private:
 
     SingleThreadWeakPtr<RenderBox> m_renderer;
     LayoutRect m_frameRect;
-    LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;
     unsigned m_type : 2; // Type (left or right aligned)
     unsigned m_isDescendant : 1 { false };
