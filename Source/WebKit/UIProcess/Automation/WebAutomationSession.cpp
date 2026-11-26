@@ -70,6 +70,7 @@
 #include <algorithm>
 #include <cmath>
 #include <wtf/Borrow.h>
+#include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -133,6 +134,8 @@ static Seconds pageLoadTimeoutFromProtocol(std::optional<double> optionalPageLoa
 
 // How long Close Window waits for the client to close the page before completing anyway.
 static constexpr Seconds closeBrowsingContextTimeout = 5_s;
+// How long switching to a page waits for its web processes to get its new activity state before completing anyway.
+static constexpr Seconds switchToBrowsingContextTimeout = 2_s;
 // https://www.w3.org/TR/webdriver/#dfn-page-loading-strategy
 static const Inspector::Protocol::Automation::PageLoadStrategy defaultPageLoadStrategy = Inspector::Protocol::Automation::PageLoadStrategy::Normal;
 
@@ -745,7 +748,7 @@ void WebAutomationSession::switchToBrowsingContext(const Inspector::Protocol::Au
         page->setFocus(true);
 
         if (!frameID) {
-            callback({ });
+            completeSwitchToPage(page, WTF::move(callback));
             return;
         }
 
@@ -759,6 +762,65 @@ void WebAutomationSession::switchToBrowsingContext(const Inspector::Protocol::Au
         page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::FocusFrame(page->webPageIDInProcessForFrame(frameID), frameID.value()), WTF::CompletionHandler<void(Inspector::CommandResult<void>&&)> { [callback = WTF::move(callback)] (auto result) mutable {
             callback(WTF::move(result));
         } });
+    });
+}
+
+static bool isWindowComingToFront(const WebPageProxy& page)
+{
+#if PLATFORM(MAC)
+    // AppKit reports a window that has come to the front as no longer occluded some time after it becomes key,
+    // and the page is hidden until then.
+    return page.isViewWindowActive() && !page.isViewVisible();
+#else
+    UNUSED_PARAM(page);
+    return false;
+#endif
+}
+
+static void completeSwitchAfterActivityStateUpdate(WebPageProxyIdentifier pageID, Box<CommandCallback<void>> callback)
+{
+    RefPtr page = WebProcessProxy::webPage(pageID);
+    if (!page || !page->hasRunningProcess()) {
+        if (auto completion = std::exchange(*callback, nullptr))
+            completion({ });
+        return;
+    }
+
+    // This also runs when the page is destroyed, so it looks the page up again.
+    page->installActivityStateChangeCompletionHandler([pageID, callback] {
+        if (!*callback)
+            return;
+        if (RefPtr updatedPage = WebProcessProxy::webPage(pageID); updatedPage && isWindowComingToFront(*updatedPage)) {
+            completeSwitchAfterActivityStateUpdate(pageID, callback);
+            return;
+        }
+        std::exchange(*callback, nullptr)({ });
+    });
+}
+
+void WebAutomationSession::completeSwitchToPage(WebPageProxy& page, CommandCallback<void>&& callback)
+{
+    // Don't wait when the web processes already know that the page is visible and focused, or can't take a new
+    // activity state because the page shows a JavaScript dialog.
+    if ((page.isViewVisible() && page.isViewFocused() && page.isViewWindowActive()) || m_client->isShowingJavaScriptDialogOnPage(*this, page)) {
+        callback({ });
+        return;
+    }
+
+    // Scripts that run after the switch should see the page visible and focused, but WebPageProxy tells the web
+    // processes some time after the client has switched. The update or the timeout completes the command.
+    auto sharedCallback = Box<CommandCallback<void>>::create(WTF::move(callback));
+    completeSwitchAfterActivityStateUpdate(page.identifier(), sharedCallback);
+    // There's an update to wait for even if the switch changed nothing.
+    page.activityStateDidChange({ ActivityState::IsVisible, ActivityState::IsFocused, ActivityState::WindowIsActive });
+
+    // A window stays occluded while the display is asleep, for example.
+    RunLoop::mainSingleton().dispatchAfter(switchToBrowsingContextTimeout, [sessionIdentifier = sessionIdentifier(), pageID = page.identifier(), sharedCallback] {
+        auto callback = std::exchange(*sharedCallback, nullptr);
+        if (!callback)
+            return;
+        RELEASE_LOG(Automation, "[s:%s] switchToBrowsingContext completed after %.0f s, before the web processes of page %" PRIu64 " got its new activity state", sessionIdentifier.utf8(), switchToBrowsingContextTimeout.seconds(), pageID.toUInt64());
+        callback({ });
     });
 }
 

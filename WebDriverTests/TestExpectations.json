@@ -2304,8 +2304,17 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/activate/activate.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288324"}},
         "subtests": {
+            "test_keeps_element_focused": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_multiple_activation": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_switch_between_contexts[tab]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
             "test_switch_between_contexts[window]": {
-                "expected": {"mac-site-isolation": {"status": ["FAIL"], "note": "Fails on Mac, not investigated yet"}}
+                "expected": {"mac": {"status": ["PASS"]}}
             }
         }
     },
@@ -2541,11 +2550,23 @@
             "test_background[True-window]": {
                 "expected": { "wpe": { "status": ["FAIL"], "bug": "webkit.org/b/328000"} }
             },
+            "test_background[False-tab]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
             "test_background[False-window]": {
-                "expected": {"glib": {"status": ["PASS"]}}
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_background_default_false[tab]": {
+                "expected": {"mac": {"status": ["PASS"]}}
             },
             "test_background_default_false[window]": {
-                "expected": {"glib": {"status": ["PASS"]}}
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_create_in_parallel[False-tab]": {
+                "expected": {"mac": {"status": ["PASS"]}}
+            },
+            "test_create_in_parallel[False-window]": {
+                "expected": {"mac": {"status": ["PASS"]}}
             },
             "test_create_in_parallel[True-tab]": {
                 "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/328000"}}
@@ -4053,7 +4074,7 @@
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/287928"}},
         "subtests": {
             "test_release_mouse_sequence_resets_dblclick_state": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
+                "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },

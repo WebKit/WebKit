@@ -439,6 +439,7 @@ private:
     void startLoadTimer(Seconds);
     void loadTimerFired();
 
+    void completeSwitchToPage(WebPageProxy&, Inspector::CommandCallback<void>&&);
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void restoreWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void maximizeWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
