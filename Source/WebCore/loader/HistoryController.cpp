@@ -687,6 +687,10 @@ void HistoryController::updateForCommit()
     Ref frameLoader = m_frame->loader();
     LOG_WITH_STREAM(History, stream << "HistoryController "_s << this << " updateForCommit: Updating History for commit in frame "_s << m_frame.ptr() << " (main frame "_s << m_frame->isMainFrame() << ") "_s << (m_frame->loader().documentLoader() ? m_frame->loader().documentLoader()->url().string() : emptyString()));
 
+    // Whatever path the commit takes, it sets or updates the current item
+    // again if the committed load has an entry of its own.
+    m_currentItemIsForCommittedLoad = false;
+
     FrameLoadType type = frameLoader->loadType();
     if (isBackForwardLoadType(type)
         || isMultipartReplaceLoadTypeWithProvisionalItem(type)
@@ -824,6 +828,7 @@ void HistoryController::setCurrentItem(Ref<HistoryItem>&& item)
 {
     m_frameLoadComplete = false;
     m_previousItem = std::exchange(m_currentItem, WTF::move(item));
+    m_currentItemIsForCommittedLoad = true;
 }
 
 void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
@@ -860,7 +865,18 @@ void HistoryController::setProvisionalItem(RefPtr<HistoryItem>&& item)
     m_provisionalItem = WTF::move(item);
 }
 
-void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader> documentLoader)
+// The parts of an entry's document state that sticky activation carry-over
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#document-state-2
+static void initializeDocumentState(HistoryItem& item, DocumentLoader& documentLoader)
+{
+    std::optional<SecurityOriginData> initiatorOrigin;
+    if (auto& requester = documentLoader.triggeringAction().requester())
+        initiatorOrigin = requester->securityOrigin->data();
+    item.setInitiatorOrigin(initiatorOrigin);
+    item.setWasEverPopulatedViaCrossOriginRedirects(documentLoader.hasCrossOriginRedirect());
+}
+
+void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader> documentLoader, DocumentStateHandling documentStateHandling)
 {
     ASSERT(documentLoader);
 
@@ -902,6 +918,9 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
     item.setShouldOpenExternalURLsPolicy(documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
     item.setIsInitialAboutBlank(documentLoader->isInitialAboutBlank());
+
+    if (documentStateHandling == DocumentStateHandling::CreateNew)
+        initializeDocumentState(item, *documentLoader);
 
     // Save form state if this is a POST
     item.setFormInfoFromRequest(documentLoader->request());
@@ -954,6 +973,8 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
                 item->setStateObject(RefPtr { previousItem->stateObject() });
             }
             item->setDocumentSequenceNumber(previousItem->documentSequenceNumber());
+            item->setInitiatorOrigin(previousItem->initiatorOrigin());
+            item->setWasEverPopulatedViaCrossOriginRedirects(previousItem->wasEverPopulatedViaCrossOriginRedirects());
         }
 
         for (RefPtr child = m_frame->tree().firstLocalDescendant(); child; child = child->tree().nextLocalSibling())
@@ -1065,6 +1086,12 @@ void HistoryController::updateCurrentItem()
     if (!documentLoader || !documentLoader->unreachableURL().isEmpty())
         return;
 
+    // A reload or a traversal populates the entry's existing document state
+    // again, which keeps its initiator origin and never resets its "was
+    // created via cross-origin redirects".
+    auto loadType = m_frame->loader().loadType();
+    bool keepsDocumentState = isReloadNavigation(loadType, *documentLoader) || isBackForwardLoadType(loadType);
+
     if (currentItem->url() != documentLoader->url()) {
         // We ended up on a completely different URL this time, so the HistoryItem
         // needs to be re-initialized. Preserve the isTargetItem flag as it is a
@@ -1074,14 +1101,21 @@ void HistoryController::updateCurrentItem()
         auto navigationAPIKey = currentItem->navigationAPIKey();
         bool sameOrigin = SecurityOrigin::create(currentItem->url())->isSameOriginAs(SecurityOrigin::create(documentLoader->url()));
         currentItem->reset();
-        initializeItem(*currentItem, documentLoader);
+        initializeItem(*currentItem, documentLoader, keepsDocumentState ? DocumentStateHandling::Keep : DocumentStateHandling::CreateNew);
         if (sameOrigin)
             currentItem->setNavigationAPIKey(navigationAPIKey);
         currentItem->setIsTargetItem(isTargetItem);
     } else {
         // Even if the final URL didn't change, the form data may have changed.
         currentItem->setFormInfoFromRequest(documentLoader->request());
+        if (!keepsDocumentState)
+            initializeDocumentState(*currentItem, *documentLoader);
     }
+
+    if (keepsDocumentState && documentLoader->hasCrossOriginRedirect())
+        currentItem->setWasEverPopulatedViaCrossOriginRedirects(true);
+
+    m_currentItemIsForCommittedLoad = true;
 }
 
 void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, const String& urlString)

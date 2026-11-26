@@ -54,6 +54,7 @@ public:
     const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
     bool containsFrame(const Frame&) const;
+    bool documentWasCreatedViaCrossOriginRedirects() const;
 
 protected:
     CachedFrameBase(Frame&);

@@ -88,6 +88,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPParsers.h"
 #include "History.h"
+#include "HistoryItem.h"
 #include "IdleRequestOptions.h"
 #include "InputEvent.h"
 #include "InspectorInstrumentation.h"
@@ -1697,6 +1698,38 @@ void LocalDOMWindow::revokeForcedActivation(UserGestureTokenIdentifier grantingT
     m_forcedActivations.removeFirstMatching([&](auto& forcedActivation) {
         return forcedActivation.grantingToken == grantingToken;
     });
+}
+
+void LocalDOMWindow::carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const StickyActivationCarryOverTarget& target)
+{
+    if (&previousWindow == this || !previousWindow.hasStickyActivation())
+        return;
+
+    RefPtr frame = this->frame();
+    if (!frame || !frame->settings().stickyUserActivationAcrossSameOriginNavigationsEnabled())
+        return;
+
+    RefPtr document = this->document();
+    if (!document)
+        return;
+
+    Ref targetOrigin = document->securityOrigin();
+    if (!previousOrigin.isSameOriginAs(targetOrigin))
+        return;
+
+    if (target.documentWasCreatedViaCrossOriginRedirects)
+        return;
+
+    if (!target.isReload) {
+        RefPtr entry = target.entry;
+        if (!entry || entry->wasEverPopulatedViaCrossOriginRedirects())
+            return;
+        auto& initiatorOrigin = entry->initiatorOrigin();
+        if (!initiatorOrigin || !initiatorOrigin->securityOrigin()->isSameOriginAs(targetOrigin))
+            return;
+    }
+
+    m_hasStickyActivation = true;
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#consume-history-action-user-activation

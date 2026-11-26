@@ -237,6 +237,11 @@ bool isBackForwardLoadType(FrameLoadType type)
     return false;
 }
 
+bool isReloadNavigation(FrameLoadType loadType, const DocumentLoader& documentLoader)
+{
+    return isReload(loadType) || documentLoader.triggeringAction().navigationAPIType() == NavigationNavigationType::Reload;
+}
+
 bool isReload(FrameLoadType type)
 {
     switch (type) {
@@ -3031,6 +3036,11 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     Ref document = *cachedFrame.document();
     ASSERT(document->window());
 
+    RefPtr previousWindow = m_frame->window();
+    RefPtr<SecurityOrigin> previousOrigin;
+    if (RefPtr previousDocument = m_frame->document())
+        previousOrigin = &previousDocument->securityOrigin();
+
     detachCurrentDocument(document.ptr(), ClearWindowProperties::Yes, ClearScriptObjects::Yes, cachedFrame.isMainFrame() ? ClearFrameView::Yes : ClearFrameView::No);
 
     document->attachToCachedFrame(cachedFrame);
@@ -3067,6 +3077,13 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     frame->setDocument(document.copyRef());
 
     protect(document->window())->resumeFromBackForwardCache();
+
+    if (previousWindow && previousOrigin) {
+        protect(document->window())->carryOverStickyActivationFromPreviousWindow(*previousWindow, *previousOrigin, {
+            .entry = history().currentItemForCommittedLoad(),
+            .documentWasCreatedViaCrossOriginRedirects = cachedFrame.documentWasCreatedViaCrossOriginRedirects(),
+        });
+    }
 
     updateFirstPartyForCookies();
 

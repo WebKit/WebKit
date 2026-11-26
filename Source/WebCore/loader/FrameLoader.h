@@ -119,6 +119,7 @@ struct DelegatedBackForwardLoadDecision {
 
 NODELETE WEBCORE_EXPORT bool isBackForwardLoadType(FrameLoadType);
 NODELETE WEBCORE_EXPORT bool isReload(FrameLoadType);
+bool isReloadNavigation(FrameLoadType, const DocumentLoader&);
 
 using ContentPolicyDecisionFunction = CompletionHandler<void(PolicyAction)>;
 
