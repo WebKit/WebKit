@@ -65,6 +65,13 @@
         "PreserveNull": {
             "contextsAllowed": ["dictionary-member"]
         },
+        "EnumObject": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
+        "ExistingType": {
+            "contextsAllowed": ["enum"]
+        },
         "FalseIsDefault": {
             "contextsAllowed": ["dictionary-member"]
         },

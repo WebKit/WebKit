@@ -126,6 +126,17 @@ template<> struct WebExtensionValueParser<WebExtensionTestNode> : WebExtensionOb
     static std::expected<WebExtensionTestNode, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path) { return parseWebExtensionTestNode(context, value, path); }
 };
 
+struct WebExtensionTestReport {
+    String title;
+    std::optional<WebExtensionTestMode> mode;
+};
+
+std::expected<WebExtensionTestReport, WebExtensionValueError> parseWebExtensionTestReport(JSContextRef, JSValueRef, const String& path = { });
+
+template<> struct WebExtensionValueParser<WebExtensionTestReport> : WebExtensionObjectParserBase {
+    static std::expected<WebExtensionTestReport, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path) { return parseWebExtensionTestReport(context, value, path); }
+};
+
 class WebExtensionAPITestDictionaries;
 
 class JSWebExtensionAPITestDictionaries : public JSWebExtensionWrapper {

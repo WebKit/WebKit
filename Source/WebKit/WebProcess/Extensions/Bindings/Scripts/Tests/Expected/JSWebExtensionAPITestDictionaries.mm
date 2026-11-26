@@ -355,6 +355,35 @@ std::expected<WebExtensionTestNode, WebExtensionValueError> parseWebExtensionTes
     return WebExtensionTestNode { .children = WTF::move(childrenValue), .id = WTF::move(*idValue) };
 }
 
+std::expected<WebExtensionTestReport, WebExtensionValueError> parseWebExtensionTestReport(JSContextRef context, JSValueRef value, const String& path)
+{
+    if (!isDictionary(context, value))
+        return makeUnexpected(WebExtensionValueError { constructExpectedMessage(path, "an object"_s, describeValueType(context, value)) });
+
+    auto object = JSValueToObject(context, value, nullptr);
+    Vector<String> missingRequiredKeys;
+
+    auto titleRead = readDictionaryMember<String>(context, object, "title"_s, path);
+    if (!titleRead)
+        return makeUnexpected(WTF::move(titleRead.error()));
+
+    std::optional<String> titleValue = WTF::move(*titleRead);
+
+    if (!titleValue)
+        missingRequiredKeys.append("title"_s);
+
+    auto modeRead = readDictionaryMember<WebExtensionTestMode>(context, object, "mode"_s, path);
+    if (!modeRead)
+        return makeUnexpected(WTF::move(modeRead.error()));
+
+    std::optional<WebExtensionTestMode> modeValue = WTF::move(*modeRead);
+
+    if (!missingRequiredKeys.isEmpty())
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString("it is missing required keys: "_s, formatList(missingRequiredKeys)) });
+
+    return WebExtensionTestReport { .title = WTF::move(*titleValue), .mode = WTF::move(modeValue) };
+}
+
 JSClassRef JSWebExtensionAPITestDictionaries::testDictionariesClassSingleton()
 {
     SUPPRESS_UNCOUNTED_LOCAL static JSClassRef jsClass;

@@ -96,6 +96,81 @@ sub _expectedTypeDescription
     return "an object";
 }
 
+# The IDL files next to this one, as text, keyed by the interface each declares. A dictionary or enumeration that is not
+# declared in this file but in one of them is shared: this interface includes the header of the one that declares it, and
+# the one that declares it generates what other interfaces need from it.
+sub _siblingInterfaces
+{
+    my ($self) = @_;
+
+    return $$self{siblingInterfaces} if $$self{siblingInterfaces};
+
+    my %siblings;
+    my $ownPath = File::Spec->rel2abs($$self{idlFilePath});
+
+    foreach my $path (glob(File::Spec->catfile(dirname($ownPath), "*.idl"))) {
+        next if File::Spec->rel2abs($path) eq $ownPath;
+
+        open(my $handle, "<", $path) or next;
+        local $/;
+        my $text = <$handle>;
+        close($handle);
+
+        my ($interface) = $text =~ /^\s*\]?\s*interface\s+(\w+)\s*(?::\s*\w+\s*)?\{/m;
+        $interface = $interface // ($text =~ /\binterface\s+(\w+)\s*(?::\s*\w+\s*)?\{/ ? $1 : undef);
+        next unless $interface;
+
+        my %declarations;
+        while ($text =~ /^(?:\[([^\]]*)\]\s*)?(dictionary|enum)\s+(\w+)/mg) {
+            my ($attributes, $kind, $name) = ($1 // "", $2, $3);
+            my ($implementedAs) = $attributes =~ /\bImplementedAs=(\w+)/;
+
+            $declarations{$name} = { kind => $kind, implementedAs => $implementedAs };
+        }
+
+        $siblings{$interface} = { text => $text, declarations => \%declarations };
+    }
+
+    $$self{siblingInterfaces} = \%siblings;
+
+    return \%siblings;
+}
+
+# The interface in a sibling IDL file that declares a dictionary or enumeration with this name, and which of the two it is.
+sub _sharedDeclaration
+{
+    my ($self, $name) = @_;
+
+    my %matches;
+
+    foreach my $interface (sort keys %{$self->_siblingInterfaces}) {
+        my $declaration = $self->_siblingInterfaces->{$interface}{declarations}{$name};
+        $matches{$interface} = $declaration if $declaration;
+    }
+
+    my @owners = sort keys %matches;
+    die "'$name' is declared in more than one IDL file: " . join(", ", @owners) . "\n" if scalar(@owners) > 1;
+
+    return undef unless @owners;
+
+    return { owner => $owners[0], kind => $matches{$owners[0]}{kind}, implementedAs => $matches{$owners[0]}{implementedAs} };
+}
+
+# Whether another IDL file in the directory mentions the name, so the code for it has to be generated here.
+sub _isUsedElsewhere
+{
+    my ($self, $name) = @_;
+
+    foreach my $interface (keys %{$self->_siblingInterfaces}) {
+        my $sibling = $self->_siblingInterfaces->{$interface};
+        next if $sibling->{declarations}{$name};
+
+        return 1 if $sibling->{text} =~ /\b\Q$name\E\b/;
+    }
+
+    return 0;
+}
+
 sub _isDictionaryType
 {
     my ($self, $idlType) = @_;
@@ -103,7 +178,11 @@ sub _isDictionaryType
     return 0 unless ref($idlType) eq "IDLType";
     return 0 if $idlType->isUnion;
 
-    return $$self{codeGenerator}->IsDictionaryType($idlType) ? 1 : 0;
+    return 1 if $$self{codeGenerator}->IsDictionaryType($idlType);
+
+    my $shared = $self->_sharedDeclaration($idlType->name);
+
+    return $shared && $shared->{kind} eq "dictionary" ? 1 : 0;
 }
 
 sub _isEnumerationType
@@ -113,7 +192,11 @@ sub _isEnumerationType
     return 0 unless ref($idlType) eq "IDLType";
     return 0 if $idlType->isUnion;
 
-    return $$self{codeGenerator}->IsEnumType($idlType) ? 1 : 0;
+    return 1 if $$self{codeGenerator}->IsEnumType($idlType);
+
+    my $shared = $self->_sharedDeclaration($idlType->name);
+
+    return $shared && $shared->{kind} eq "enum" ? 1 : 0;
 }
 
 # Type names with their own handling, which a custom IDL type must not claim.
@@ -246,7 +329,9 @@ sub _cppTypeName
     my ($enumeration) = grep { $_->type->name eq $name } @{$$self{enumerations}};
     return $enumeration->extendedAttributes->{"ImplementedAs"} // $name if $enumeration;
 
-    return $name;
+    my $shared = $self->_sharedDeclaration($name);
+
+    return $shared && $shared->{implementedAs} ? $shared->{implementedAs} : $name;
 }
 
 sub _cppEnumerationName
@@ -348,11 +433,22 @@ sub _parsedTypeDependencies
         push(@$list, $name);
     };
 
+    # Dictionaries that another interface declares, which this interface includes the header of instead of declaring again.
+    my @importedFrom = ();
+
     my $visitDictionary;
     my $visitDependencies = sub {
         my ($dependencies) = @_;
 
-        $addUnique->(\@enumerations, "enumeration", $_) foreach @{$$dependencies{enumerations} || []};
+        foreach my $enumerationName (@{$$dependencies{enumerations} || []}) {
+            if (grep { $_->type->name eq $enumerationName } @{$$self{enumerations}}) {
+                $addUnique->(\@enumerations, "enumeration", $enumerationName);
+                next;
+            }
+
+            my $shared = $self->_sharedDeclaration($enumerationName) or die "Enumeration '$enumerationName' is not declared in this IDL file or one next to it\n";
+            push(@importedFrom, $shared->{owner}) unless grep { $_ eq $shared->{owner} } @importedFrom;
+        }
         $addUnique->(\@customTypes, "custom", $_) foreach @{$$dependencies{customTypes} || []};
         $visitDictionary->($_) foreach @{$$dependencies{dictionaries} || []};
     };
@@ -363,7 +459,14 @@ sub _parsedTypeDependencies
         return if $seen{"dictionary:$name"};
         $seen{"dictionary:$name"} = 1;
 
-        my $dictionary = $self->_dictionaryByName($name) or die "Dictionary '$name' is not declared in this IDL file\n";
+        my $dictionary = $self->_dictionaryByName($name);
+
+        unless ($dictionary) {
+            my $shared = $self->_sharedDeclaration($name) or die "Dictionary '$name' is not declared in this IDL file or one next to it\n";
+
+            push(@importedFrom, $shared->{owner}) unless grep { $_ eq $shared->{owner} } @importedFrom;
+            return;
+        }
 
         foreach my $member ($self->_dictionaryMembers($dictionary)) {
             my %dependencies;
@@ -386,10 +489,36 @@ sub _parsedTypeDependencies
         }
     }
 
+    # What another interface in the directory uses from this one is generated here, with the code to parse it. Only an
+    # interface that parses arguments includes the parser header that the code needs.
+    my $parsesArguments = grep { $self->_isParsedArgumentType($_->type, $_) } map { @{$_->arguments} } @{$interface->operations};
+
+    foreach my $dictionary (@{$$self{dictionaries}}) {
+        my $name = $dictionary->type->name;
+        next unless $parsesArguments && $self->_isUsedElsewhere($name);
+
+        $visitDictionary->($name);
+    }
+
+    foreach my $enumeration (@{$$self{enumerations}}) {
+        my $name = $enumeration->type->name;
+        next unless $parsesArguments && $self->_isUsedElsewhere($name);
+
+        $visitDependencies->({ enumerations => [ $name ] });
+    }
+
+    foreach my $owner (@importedFrom) {
+        my $ownerText = $self->_siblingInterfaces->{$owner}{text};
+        foreach my $name (map { $_->type->name } @{$$self{dictionaries}}, @{$$self{enumerations}}) {
+            die "The interfaces " . $interface->type->name . " and $owner use each other's dictionaries or enumerations ('$name'), which includes each header from the other\n" if $ownerText =~ /\b\Q$name\E\b/;
+        }
+    }
+
     my $result = {
         dictionaries => [ map { $self->_dictionaryByName($_) } @dictionaries ],
         enumerations => [ map { my $name = $_; my ($enumeration) = grep { $_->type->name eq $name } @{$$self{enumerations}}; die "Enumeration '$name' must be declared in the same IDL file as the interface\n" unless $enumeration; $enumeration } @enumerations ],
         customTypes => \@customTypes,
+        importedFrom => \@importedFrom,
     };
 
     $$self{parsedTypeDependencies}{$interface->type->name} = $result;
@@ -458,6 +587,27 @@ sub _enumerationValueName
     return join("", map { $keepsCase ? ucfirst($_) : ucfirst(lc($_)) } grep { length($_) } split(/[_\-\s]+/, $value));
 }
 
+# The object an API exposes for an enumeration, like windows.WindowState. Each value is a property named in upper case with
+# underscores, such as NO_RESTRICTION, whose value is what the API returns for it.
+sub _enumerationObjectExpression
+{
+    my ($self, $enumerationName) = @_;
+
+    my ($enumeration) = grep { $_->type->name eq $enumerationName } @{$$self{enumerations}};
+    die "EnumObject names unknown enumeration '$enumerationName'\n" unless $enumeration;
+
+    my @entries = map {
+        my $key = $_;
+        $key =~ s/([a-z])([A-Z])/$1_$2/g;
+        $key =~ s/-/_/g;
+        $key = "_$key" if $key =~ /^[0-9]/;
+
+        "{ \"" . uc($key) . "\"_s, \"" . $_ . "\"_s }"
+    } @{$enumeration->values};
+
+    return "makeEnumObject(context, { " . join(", ", @entries) . " })";
+}
+
 sub _enumerationValuesName
 {
     my ($self, $enumeration) = @_;
@@ -471,11 +621,17 @@ sub _enumerationDeclaration
 
     my $name = $self->_cppEnumerationName($enumeration);
 
-    my $result = "enum class ${name} : uint8_t {\n";
-    foreach my $value (@{$enumeration->values}) {
-        $result .= "    " . $self->_enumerationValueName($value) . ",\n";
+    # An enumeration marked ExistingType is declared elsewhere, such as in Shared, with the same enumerators in the same
+    # order, so it isn't declared again.
+    my $result = "";
+
+    unless ($enumeration->extendedAttributes->{"ExistingType"}) {
+        $result = "enum class ${name} : uint8_t {\n";
+        foreach my $value (@{$enumeration->values}) {
+            $result .= "    " . $self->_enumerationValueName($value) . ",\n";
+        }
+        $result .= "};\n\n";
     }
-    $result .= "};\n\n";
 
     $result .= <<EOF;
 template<> struct WebExtensionValueParser<${name}> : WebExtensionStringParserBase {
@@ -495,7 +651,19 @@ sub _enumerationImplementation
     my $valuesName = $self->_enumerationValuesName($enumeration);
     my @values = map { "\"" . lc($_) . "\"_s" } @{$enumeration->values};
 
-    return <<EOF;
+    # The parser converts the index of the matching value, so an existing enumeration has to list its enumerators in the
+    # order that the IDL does.
+    my $orderChecks = "";
+    if ($enumeration->extendedAttributes->{"ExistingType"}) {
+        foreach my $index (0 .. $#{$enumeration->values}) {
+            my $valueName = $self->_enumerationValueName($enumeration->values->[$index]);
+            $orderChecks .= "static_assert(static_cast<size_t>(${name}::${valueName}) == ${index}, \"${name}::${valueName} has to be enumerator ${index}\");\n";
+        }
+
+        $orderChecks .= "\n";
+    }
+
+    return $orderChecks . <<EOF;
 static constexpr std::array<ASCIILiteral, @{[scalar(@values)]}> ${valuesName} { @{[join(", ", @values)]} };
 
 std::expected<${name}, WebExtensionValueError> WebExtensionValueParser<${name}>::parse(JSContextRef context, JSValueRef value, const String& path)
@@ -1030,6 +1198,10 @@ EOF
 EOF
 
     push(@contents, "#include \"JSWebExtensionValueParser.h\"\n") if $self->_usesParsedTypes($interface);
+    push(@contents, map { "#include \"JS${_}.h\"\n" } @{$self->_parsedTypeDependencies($interface)->{importedFrom}});
+    # Custom types are declared by the parser header, which includes what each one needs, and an existing enumeration
+    # comes from its own header.
+    push(@contents, map { "#include \"" . $self->_cppEnumerationName($_) . ".h\"\n" } grep { $_->extendedAttributes->{"ExistingType"} } @{$self->_parsedTypeDependencies($interface)->{enumerations}});
 
     push(@contents, "#include \"${className}Custom.h\"\n") if $interface->extendedAttributes->{"CustomHeader"};
     push(@contents, <<EOF);
@@ -1866,9 +2038,11 @@ EOF
                 push(@contents, "    }\n");
             }
 
+            my $returnExpression = $attribute->extendedAttributes->{"EnumObject"} ? $self->_enumerationObjectExpression($attribute->extendedAttributes->{"EnumObject"}) : $self->_returnExpression($attribute, $getterExpression, $interface);
+
             push(@contents, <<EOF);
 
-    SUPPRESS_UNCOUNTED_ARG return @{[$self->_returnExpression($attribute, $getterExpression, $interface)]};
+    SUPPRESS_UNCOUNTED_ARG return ${returnExpression};
 }
 EOF
 

@@ -80,6 +80,12 @@ dictionary WebExtensionTestNode {
     required DOMString id;
 };
 
+// Not used by this interface, but by the interface in TestImport.idl, so the code for it is generated here.
+dictionary WebExtensionTestReport {
+    required DOMString title;
+    WebExtensionTestMode mode;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,
