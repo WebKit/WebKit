@@ -77,6 +77,8 @@ private:
 
     std::unique_ptr<BidiUserContext> platformCreateUserContext(String& error);
     void resolveUserContextRemovalIfComplete(const String& userContextID);
+    void closePageOfUserContextBeingRemoved(WebPageProxy&, const String& userContextID);
+    void didCompleteCloseForUserContextBeingRemoved(const String& userContextID);
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;

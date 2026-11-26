@@ -69,6 +69,9 @@
         "subtests": {
             "/webkit/WebKitAutomationSession/request-session": {
                 "expected": {"all": {"slow": true }}
+            },
+            "/webkit/WebKitAutomationSession/bidi-remove-user-context-keeps-owner-of-pages-left-open": {
+                "expected": {"all": {"slow": true }}
             }
         }
     },

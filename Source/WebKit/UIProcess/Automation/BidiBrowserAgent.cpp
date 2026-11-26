@@ -32,6 +32,7 @@
 #include "BidiUserContext.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
@@ -74,10 +75,15 @@ public:
     BidiUserContextDeletionRecord(std::unique_ptr<BidiUserContext>&& userContext, size_t pageCount, CommandCallback<void>&& callback)
         : userContext(WTF::move(userContext))
         , pageCount(pageCount)
+        , pendingCloseCount(pageCount)
         , callback(WTF::move(callback)) { }
 
     std::unique_ptr<BidiUserContext> userContext;
+    // Pages that have not closed. The user context stays their owner until the last one has.
     size_t pageCount;
+    // Closes that have not completed. A close completes after closeBrowsingContextTimeout if the client keeps the page.
+    size_t pendingCloseCount;
+    // Null once the command has replied.
     CommandCallback<void> callback;
 };
 
@@ -99,10 +105,17 @@ bool BidiBrowserAgent::didCreatePage(WebPageProxy& page)
         return true;
 
     ++it->value->pageCount;
+    ++it->value->pendingCloseCount;
     // Inside the page's constructor the embedder has not attached the client that closes views yet.
-    RunLoop::mainSingleton().dispatch([weakPage = WeakPtr { page }] {
+    RunLoop::mainSingleton().dispatch([weakSession = m_session, weakPage = WeakPtr { page }, userContextID] {
+        RefPtr session = weakSession;
+        if (!session)
+            return;
+        auto& browserAgent = session->bidiProcessor().browserAgent();
         if (RefPtr page = weakPage)
-            page->askClientToClose();
+            browserAgent.closePageOfUserContextBeingRemoved(*page, userContextID);
+        else
+            browserAgent.didCompleteCloseForUserContextBeingRemoved(userContextID);
     });
     return false;
 }
@@ -114,7 +127,37 @@ void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
     if (it == m_userContextsPendingDeletion.end())
         return;
 
+    ASSERT(it->value->pageCount);
     --it->value->pageCount;
+    resolveUserContextRemovalIfComplete(userContextID);
+}
+
+void BidiBrowserAgent::closePageOfUserContextBeingRemoved(WebPageProxy& page, const String& userContextID)
+{
+    RefPtr session = m_session;
+    if (!session)
+        return;
+
+    // Closing one page can close another one of the user context before its own close is requested.
+    if (page.isClosed()) {
+        didCompleteCloseForUserContextBeingRemoved(userContextID);
+        return;
+    }
+
+    session->closePage(page, [weakSession = m_session, userContextID](CommandResult<void>&&) {
+        if (RefPtr session = weakSession)
+            session->bidiProcessor().browserAgent().didCompleteCloseForUserContextBeingRemoved(userContextID);
+    });
+}
+
+void BidiBrowserAgent::didCompleteCloseForUserContextBeingRemoved(const String& userContextID)
+{
+    auto it = m_userContextsPendingDeletion.find(userContextID);
+    if (it == m_userContextsPendingDeletion.end())
+        return;
+
+    ASSERT(it->value->pendingCloseCount);
+    --it->value->pendingCloseCount;
     resolveUserContextRemovalIfComplete(userContextID);
 }
 
@@ -148,11 +191,16 @@ void BidiBrowserAgent::resolveUserContextRemovalIfComplete(const String& userCon
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
         return;
-    if (it->value->pageCount || it->value->userContext->pendingPageCreationCount())
+    auto& record = *it->value;
+    if (record.pendingCloseCount || record.userContext->pendingPageCreationCount())
         return;
 
-    auto record = m_userContextsPendingDeletion.take(it);
-    record->callback({ });
+    // The command replies once every close has completed, even for a page the client keeps open.
+    auto callback = std::exchange(record.callback, nullptr);
+    if (!record.pageCount)
+        m_userContextsPendingDeletion.remove(it);
+    if (callback)
+        callback({ });
 }
 
 BidiUserContext* BidiBrowserAgent::userContext(const String& userContextID) const
@@ -243,11 +291,11 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
         return;
     }
 
-    // The record resolves once every page has closed and every creation in flight has settled; a page may
-    // already close inside askClientToClose().
+    // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 5. The record goes first, because a
+    // close may complete before closePage() returns.
     m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTF::move(userContext), pages.size(), WTF::move(callback)));
     for (auto& page : borrow(pages))
-        page->askClientToClose();
+        closePageOfUserContextBeingRemoved(page.get(), userContextID);
 }
 
 #if !USE(GLIB)

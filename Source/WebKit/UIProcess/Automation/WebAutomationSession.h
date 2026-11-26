@@ -281,6 +281,8 @@ public:
     void createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&) override;
     void createBrowsingContextInWebsiteDataStore(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, WebsiteDataStore*, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&);
     void closeBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
+    // Completes once the page has closed, or after closeBrowsingContextTimeout if the client does not close it.
+    void closePage(WebPageProxy&, Inspector::CommandCallback<void>&&);
     Inspector::CommandResult<void> deleteSession() override;
     void resolveBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<void>&&) override;
     void switchToBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<void>&&) override;

@@ -1426,6 +1426,51 @@ static Ref<JSON::Object> createBrowsingContext(BrowsingContextCreation& creation
     return response.releaseNonNull();
 }
 
+static String userContextInTree(AutomationTest& test, int commandIdentifier, const String& browsingContext)
+{
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "browsingContext.getTree"_s, JSON::Object::create());
+    auto contexts = response->getObject("result"_s)->getArray("contexts"_s);
+    g_assert_nonnull(contexts.get());
+    for (auto& context : *contexts) {
+        auto object = context->asObject();
+        if (object && object->getString("context"_s) == browsingContext)
+            return object->getString("userContext"_s);
+    }
+    return { };
+}
+
+static void testBidiRemoveUserContextKeepsOwnerOfPagesLeftOpen(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    g_assert_nonnull(test->requestSession(createVersion4UUIDString().utf8()));
+    auto initialWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(initialWebView.get()));
+    subscribeToEvents(*test, 1, { "browsingContext.contextDestroyed"_s });
+
+    auto userContext = createUserContext(*test, 2);
+    BrowsingContextCreation creation { *test, nullptr };
+    auto pageHandle = createBrowsingContext(creation, 3, userContext)->getObject("result"_s)->getString("context"_s);
+
+    // The client does not close the view when asked to, so the command completes after the fallback timeout. The user
+    // context is gone, yet it still owns the page.
+    auto parameters = JSON::Object::create();
+    parameters->setString("userContext"_s, userContext);
+    test->sendBidiCommandAndWait(4, "browser.removeUserContext"_s, WTF::move(parameters));
+    auto userContexts = test->sendBidiCommandAndWait(5, "browser.getUserContexts"_s, JSON::Object::create())->getObject("result"_s)->getArray("userContexts"_s);
+    g_assert_cmpuint(userContexts->length(), ==, 1);
+    g_assert_true(userContextInTree(*test, 6, pageHandle) == userContext);
+
+    test->m_bidiMessages.clear();
+    creation.webView = nullptr;
+    test->waitUntil([&] {
+        return !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+    auto destroyedEvents = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(destroyedEvents.size(), ==, 1);
+    g_assert_true(destroyedEvents[0]->getString("context"_s) == pageHandle);
+    g_assert_true(destroyedEvents[0]->getString("userContext"_s) == userContext);
+}
+
 static void testBidiCreateFailsForPageOfAnotherUserContext(AutomationTest* test, gconstpointer)
 {
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
@@ -1676,6 +1721,7 @@ void beforeAll()
     AutomationTest::add("WebKitAutomationSession", "bidi-call-function-navigation-cancels-pending-command", testBidiCallFunctionNavigationCancelsPendingCommand);
     AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-subtree", testBidiContextDestroyedReportsSubtree);
     AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-closed-original-opener", testBidiContextDestroyedReportsClosedOriginalOpener);
+    AutomationTest::add("WebKitAutomationSession", "bidi-remove-user-context-keeps-owner-of-pages-left-open", testBidiRemoveUserContextKeepsOwnerOfPagesLeftOpen);
     AutomationTest::add("WebKitAutomationSession", "bidi-create-fails-for-page-of-another-user-context", testBidiCreateFailsForPageOfAnotherUserContext);
     AutomationTest::add("WebKitAutomationSession", "bidi-popup-keeps-storage-of-opener", testBidiPopupKeepsStorageOfOpener);
 #if OS(LINUX)

@@ -713,19 +713,25 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
     auto page = webPageProxyForHandle(handle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
+    closePage(*page, WTF::move(callback));
+}
+
+void WebAutomationSession::closePage(WebPageProxy& page, CommandCallback<void>&& callback)
+{
     // The client closes the page, and some clients do that later than the next run loop iteration
     // (GTK MiniBrowser destroys the view's window, which GTK disposes of later). The reply to the
     // WebDriver Close Window command lists the remaining windows, so the command completes from
     // willClosePage(), once the page has really gone.
-    // A close that is already pending for the page (BiDi can send two, and a Classic and a BiDi close can overlap)
-    // gets the same reply; the client is not asked again, since it may be partway through closing the page.
-    auto pageID = page->identifier();
+    // A close that is already pending for the page (BiDi can send two, a Classic and a BiDi close can overlap, and
+    // browser.removeUserContext closes the pages of the user context) gets the same reply; the client is not asked
+    // again, since it may be partway through closing the page.
+    auto pageID = page.identifier();
     auto addResult = m_pendingCloseBrowsingContextCallbacksPerPage.add(pageID, Vector<Inspector::CommandCallback<void>> { });
     addResult.iterator->value.append(WTF::move(callback));
     if (!addResult.isNewEntry)
         return;
 
-    page->askClientToClose();
+    page.askClientToClose();
 
     // A client that closes the page synchronously (e.g. MiniBrowser on Mac) has already completed the command.
     if (!m_pendingCloseBrowsingContextCallbacksPerPage.contains(pageID))
@@ -740,7 +746,7 @@ void WebAutomationSession::closeBrowsingContext(const Inspector::Protocol::Autom
         auto callbacks = protectedThis->m_pendingCloseBrowsingContextCallbacksPerPage.take(pageID);
         if (callbacks.isEmpty())
             return;
-        RELEASE_LOG(Automation, "[s:%s] closeBrowsingContext completed after %.0f s although the client did not close page %" PRIu64, protectedThis->sessionIdentifier().utf8(), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
+        RELEASE_LOG(Automation, "[s:%s] closePage completed after %.0f s although the client did not close page %" PRIu64, protectedThis->sessionIdentifier().utf8(), closeBrowsingContextTimeout.seconds(), pageID.toUInt64());
         for (auto& callback : borrow(callbacks))
             callback({ });
     });
