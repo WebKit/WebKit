@@ -1,0 +1,37 @@
+<body>
+PASS if this does not crash.
+<div id="target"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const animation = document.getElementById("target").animate({ opacity: [0, 1] }, 1000);
+animation.pause();
+
+// Accessing the ready promise ensures it is backed by a JS promise, so resolving it
+// with the animation looks up a "then" property synchronously.
+animation.ready;
+
+let didReenter = false;
+Object.defineProperty(animation, "then", {
+    get() {
+        if (!didReenter) {
+            didReenter = true;
+            animation.timeline = null;
+            animation.play();
+        }
+        return undefined;
+    }
+});
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        window.testRunner?.notifyDone();
+    });
+});
+
+</script>
+</body>
