@@ -1323,7 +1323,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr<UIImage> result;
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    NSArray *icons = [documentInteractionController icons];
+    NSArray<UIImage *> *icons = [documentInteractionController icons];
     if (!icons.count)
         return IconAndSize { nil, FloatSize() };
 

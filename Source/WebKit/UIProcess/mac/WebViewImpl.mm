@@ -6141,9 +6141,9 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
         WebCore::collectDictationTextAlternatives(attributedString, dictationAlternatives);
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(attributedString);
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
-        text = [string string];
+        text = [attributedString string];
     } else
-        text = string;
+        text = checked_objc_cast<NSString>(string);
 
     m_isTextInsertionReplacingSoftSpace = false;
     if (m_softSpaceRange.location != NSNotFound && (replacementRange.location == NSMaxRange(m_softSpaceRange) || replacementRange.location == NSNotFound) && !replacementRange.length && [[NSSpellChecker sharedSpellChecker] deletesAutospaceBeforeString:text.get() language:nil]) {
@@ -6607,9 +6607,9 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     RetainPtr<NSString> text;
 
     if (isAttributedString) {
-        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
-        text = [string string];
         RetainPtr attributedString = checked_objc_cast<NSAttributedString>(string);
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [attributedString string];
 #if HAVE(REDESIGNED_TEXT_CURSOR)
         if (shouldUseHighlightsForMarkedText(attributedString))
             highlights = compositionHighlights(attributedString);
@@ -6617,7 +6617,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 #endif
             underlines = compositionUnderlines(attributedString);
     } else {
-        text = string;
+        text = checked_objc_cast<NSString>(string);
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
     }
 

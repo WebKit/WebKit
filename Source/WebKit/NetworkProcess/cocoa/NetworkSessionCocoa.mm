@@ -783,11 +783,11 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 
         RetainPtr<NSData> resumeData;
         if (RetainPtr userInfo = dynamic_objc_cast<NSDictionary>(updatedError.get().userInfo)) {
-            resumeData = userInfo.get()[@"NSURLSessionDownloadTaskResumeData"];
-            if (resumeData && ![resumeData isKindOfClass:[NSData class]]) {
-                RELEASE_LOG(NetworkSession, "Download task %llu finished with resume data of wrong class: %s", (unsigned long long)task.taskIdentifier, NSStringFromClass([resumeData class]).UTF8String);
+            RetainPtr<id> resumeDataObject = userInfo.get()[@"NSURLSessionDownloadTaskResumeData"];
+            resumeData = dynamic_objc_cast<NSData>(resumeDataObject.get());
+            if (resumeDataObject && !resumeData) {
+                RELEASE_LOG(NetworkSession, "Download task %llu finished with resume data of wrong class: %s", (unsigned long long)task.taskIdentifier, NSStringFromClass([resumeDataObject class]).UTF8String);
                 ASSERT_NOT_REACHED();
-                resumeData = nil;
             }
         }
 

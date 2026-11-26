@@ -425,7 +425,7 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
                 NSString *faceName = [fontName substringFromIndex:(dividingRange.location + dividingRange.length)];
                 NSArray *familyMemberArrays = [fontManager availableMembersOfFontFamily:familyName];
                 NSEnumerator *familyMemberArraysEnum = [familyMemberArrays objectEnumerator];
-                while ((familyMemberArray = [familyMemberArraysEnum nextObject])) {
+                while ((familyMemberArray = checked_objc_cast<NSArray>([familyMemberArraysEnum nextObject]))) {
                     NSString *familyMemberFaceName = [familyMemberArray objectAtIndex:1];
                     if ([familyMemberFaceName compare:faceName options:NSCaseInsensitiveSearch] == NSOrderedSame) {
                         NSFontTraitMask traits = [[familyMemberArray objectAtIndex:3] integerValue];
@@ -2284,14 +2284,14 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range, NSPresent
         return;
     if (NSMaxRange(range) > textLength)
         range.length = textLength - range.location;
-    paragraphStyle = [_attrStr attribute:NSParagraphStyleAttributeName atIndex:range.location effectiveRange:NULL];
+    paragraphStyle = dynamic_objc_cast<NSParagraphStyle>([_attrStr attribute:NSParagraphStyleAttributeName atIndex:range.location effectiveRange:NULL]);
     if (paragraphStyle) {
         textLists = [paragraphStyle textLists];
         listIndex = [textLists indexOfObject:list];
         if (textLists && listIndex != NSNotFound) {
             for (NSUInteger idx = range.location; idx < NSMaxRange(range);) {
                 paragraphRange = [string paragraphRangeForRange:NSMakeRange(idx, 0)];
-                paragraphStyle = [_attrStr attribute:NSParagraphStyleAttributeName atIndex:idx effectiveRange:&styleRange];
+                paragraphStyle = dynamic_objc_cast<NSParagraphStyle>([_attrStr attribute:NSParagraphStyleAttributeName atIndex:idx effectiveRange:&styleRange]);
                 if ([[paragraphStyle textLists] count] == listIndex + 1) {
                     if (m_readsAllPresentationIntents) {
                         // Each block in a list item is its own paragraph, but only the item's first paragraph gets a marker.
@@ -2404,7 +2404,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
             rowArray = [NSMutableArray array];
             count = [previousRowArray count];
             for (i = 0; i < count; i++) {
-                block = [previousRowArray objectAtIndex:i];
+                block = checked_objc_cast<NSTextTableBlock>([previousRowArray objectAtIndex:i]);
                 if ([block startingColumn] + [block columnSpan] > static_cast<NSInteger>(numberOfColumns))
                     numberOfColumns = [block startingColumn] + [block columnSpan];
 
@@ -2414,7 +2414,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
             count = [rowArray count];
             openColumn = 0;
             for (i = 0; i < count; i++) {
-                block = [rowArray objectAtIndex:i];
+                block = checked_objc_cast<NSTextTableBlock>([rowArray objectAtIndex:i]);
                 if (openColumn >= [block startingColumn] && openColumn < [block startingColumn] + [block columnSpan]) openColumn = [block startingColumn] + [block columnSpan];
             }
         } while (openColumn >= static_cast<NSInteger>(numberOfColumns));

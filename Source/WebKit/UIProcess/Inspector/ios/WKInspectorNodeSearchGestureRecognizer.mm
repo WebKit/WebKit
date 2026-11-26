@@ -47,7 +47,7 @@
         self.state = newState;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     if (self.state != UIGestureRecognizerStatePossible)
         return;

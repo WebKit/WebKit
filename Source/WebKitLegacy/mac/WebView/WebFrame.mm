@@ -915,7 +915,7 @@ static RetainPtr<NSURL> createUniqueWebDataURL();
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     Vector<RefPtr<WebCore::Node>> nodesVector;
     RetainPtr<DOMNode> node;
-    while ((node = [nodeEnum nextObject]))
+    while ((node = checked_objc_cast<DOMNode>([nodeEnum nextObject])))
         nodesVector.append(core(node));
 
     auto fragment = document->createDocumentFragment();

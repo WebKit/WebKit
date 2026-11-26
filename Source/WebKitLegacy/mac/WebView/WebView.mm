@@ -1743,7 +1743,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     NSArray *MIMETypes = [self _supportedMIMETypes];
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
     RetainPtr<NSString> MIMEType;
-    while ((MIMEType = [enumerator nextObject])) {
+    while ((MIMEType = checked_objc_cast<NSString>([enumerator nextObject]))) {
         NSArray *extensionsForType = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:MIMEType];
         if (extensionsForType) {
             [extensions addObjectsFromArray:extensionsForType];
@@ -2781,7 +2781,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // to distinguish between using defaultMenuItems or the delegate really returning nil to say "no context menu".
     SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
     if (_private->UIDelegate && [protect(_private->UIDelegate) respondsToSelector:selector]) {
-        menuItems = CallUIDelegate(self, selector, element, defaultMenuItems);
+        menuItems = dynamic_objc_cast<NSArray>(CallUIDelegate(self, selector, element, defaultMenuItems));
         if (!menuItems)
             return nil;
     }
@@ -5417,18 +5417,18 @@ static bool needsWebViewInitThreadWorkaround()
         [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
         if ([decoder allowsKeyedCoding]) {
-            frameName = [decoder decodeObjectForKey:@"FrameName"];
-            groupName = [decoder decodeObjectForKey:@"GroupName"];
-            preferences = [decoder decodeObjectForKey:@"Preferences"];
+            frameName = dynamic_objc_cast<NSString>([decoder decodeObjectForKey:@"FrameName"]);
+            groupName = dynamic_objc_cast<NSString>([decoder decodeObjectForKey:@"GroupName"]);
+            preferences = dynamic_objc_cast<WebPreferences>([decoder decodeObjectForKey:@"Preferences"]);
             useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
             if ([decoder containsValueForKey:@"AllowsUndo"])
                 allowsUndo = [decoder decodeBoolForKey:@"AllowsUndo"];
         } else {
             int version;
             [decoder decodeValueOfObjCType:@encode(int) at:&version size:sizeof(int)];
-            frameName = [decoder decodeObject];
-            groupName = [decoder decodeObject];
-            preferences = [decoder decodeObject];
+            frameName = dynamic_objc_cast<NSString>([decoder decodeObject]);
+            groupName = dynamic_objc_cast<NSString>([decoder decodeObject]);
+            preferences = dynamic_objc_cast<WebPreferences>([decoder decodeObject]);
             if (version > 1)
                 [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
             // The allowsUndo field is no longer written out in encodeWithCoder, but since there are
@@ -5436,13 +5436,6 @@ static bool needsWebViewInitThreadWorkaround()
             if (version == 3)
                 [decoder decodeValuesOfObjCTypes:"c", &allowsUndo];
         }
-
-        if (![frameName isKindOfClass:[NSString class]])
-            frameName = nil;
-        if (![groupName isKindOfClass:[NSString class]])
-            groupName = nil;
-        if (![preferences isKindOfClass:[WebPreferences class]])
-            preferences = nil;
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName.get(), groupName.get(), (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];

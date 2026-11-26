@@ -121,9 +121,8 @@ RetainPtr<id> CoreIPCError::toID() const
 
 
 #define EXTRACT_TYPED_VALUE(key, type, target) { \
-    RetainPtr<id> extractedValue = [userInfo objectForKey:key];\
-    if ([extractedValue isKindOfClass:[type class]])\
-        target = extractedValue.get();\
+    if (RetainPtr extractedValue = dynamic_objc_cast<type>([userInfo objectForKey:key]))\
+        target = WTF::move(extractedValue);\
 }
 
 #define EXTRACT_STRING_VALUE(key, target) { \

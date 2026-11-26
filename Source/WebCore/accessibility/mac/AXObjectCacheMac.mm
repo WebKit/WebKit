@@ -333,11 +333,11 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         macNotification = NSAccessibilitySortDirectionChangedNotification;
         break;
     case AXNotification::MenuClosed:
-        macNotification = (id)kAXMenuClosedNotification;
+        macNotification = bridge_cast(kAXMenuClosedNotification);
         break;
     case AXNotification::MenuListItemSelected:
     case AXNotification::MenuListValueChanged:
-        macNotification = (id)kAXMenuItemSelectedNotification;
+        macNotification = bridge_cast(kAXMenuItemSelectedNotification);
         break;
     case AXNotification::PressDidSucceed:
         macNotification = NSAccessibilityPressDidSucceedNotification;
@@ -346,22 +346,22 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         macNotification = NSAccessibilityPressDidFailNotification;
         break;
     case AXNotification::MenuOpened:
-        macNotification = (id)kAXMenuOpenedNotification;
+        macNotification = bridge_cast(kAXMenuOpenedNotification);
         break;
     case AXNotification::DraggingStarted:
-        macNotification = (id)NSAccessibilityDraggingSourceDragBeganNotification;
+        macNotification = NSAccessibilityDraggingSourceDragBeganNotification;
         break;
     case AXNotification::DraggingEnded:
-        macNotification = (id)NSAccessibilityDraggingSourceDragEndedNotification;
+        macNotification = NSAccessibilityDraggingSourceDragEndedNotification;
         break;
     case AXNotification::DraggingEnteredDropZone:
-        macNotification = (id)NSAccessibilityDraggingDestinationDropAllowedNotification;
+        macNotification = NSAccessibilityDraggingDestinationDropAllowedNotification;
         break;
     case AXNotification::DraggingDropped:
-        macNotification = (id)NSAccessibilityDraggingDestinationDragAcceptedNotification;
+        macNotification = NSAccessibilityDraggingDestinationDragAcceptedNotification;
         break;
     case AXNotification::DraggingExitedDropZone:
-        macNotification = (id)NSAccessibilityDraggingDestinationDragNotAcceptedNotification;
+        macNotification = NSAccessibilityDraggingDestinationDragNotAcceptedNotification;
         break;
     case AXNotification::TextCompositionBegan:
         macNotification = NSAccessibilityTextInputMarkingSessionBeganNotification;

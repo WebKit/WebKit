@@ -97,9 +97,10 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
 
     RetainPtr<NSDictionary> dictionary;
     @try {
-        dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"];
-        if (![dictionary isKindOfClass:[NSDictionary class]]) {
-            RELEASE_LOG_ERROR(Process, "InjectedBundle::decodeBundleParameters failed - Resulting object was not an NSDictionary (was %{public}s)", dictionary ? object_getClassName(dictionary.get()) : "nil");
+        RetainPtr<id> decodedObject = [unarchiver.get() decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"];
+        dictionary = dynamic_objc_cast<NSDictionary>(decodedObject.get());
+        if (!dictionary) {
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::decodeBundleParameters failed - Resulting object was not an NSDictionary (was %{public}s)", decodedObject ? object_getClassName(decodedObject.get()) : "nil");
             return false;
         }
     } @catch (NSException *exception) {
@@ -275,15 +276,13 @@ void InjectedBundle::setBundleParameters(std::span<const uint8_t> value)
     RetainPtr<NSDictionary> parameters;
     auto unarchiver = createUnarchiver(value);
     @try {
-        parameters = [unarchiver decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"];
+        parameters = checked_objc_cast<NSDictionary>([unarchiver decodeObjectOfClasses:classesForCoder().get() forKey:@"parameters"]);
     } @catch (NSException *exception) {
         RELEASE_LOG_ERROR(Process, "InjectedBundle::setBundleParameters failed to decode bundle parameters: %{public}s -- %{public}s", exception.name.UTF8String, exception.reason.UTF8String);
     }
 
     if (!parameters)
         return;
-
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION([parameters isKindOfClass:[NSDictionary class]]);
 
     if (!m_bundleParameters) {
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters.get()]);

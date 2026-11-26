@@ -107,6 +107,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -316,11 +317,11 @@ RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, 
         if (features.dialog)
             [dictFeatures setObject:@(*features.dialog) forKey:@"dialog"];
 
-        newWebView = CallUIDelegate(webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures.get());
+        newWebView = dynamic_objc_cast<WebView>(CallUIDelegate(webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures.get()));
     } else if (features.dialog && [delegate.get() respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
-        newWebView = CallUIDelegate(webView, @selector(webView:createWebViewModalDialogWithRequest:), nil);
+        newWebView = dynamic_objc_cast<WebView>(CallUIDelegate(webView, @selector(webView:createWebViewModalDialogWithRequest:), nil));
     else
-        newWebView = CallUIDelegate(webView, @selector(webView:createWebViewWithRequest:), nil);
+        newWebView = dynamic_objc_cast<WebView>(CallUIDelegate(webView, @selector(webView:createWebViewWithRequest:), nil));
 
     RefPtr newPage = core(newWebView.get());
     if (newPage) {

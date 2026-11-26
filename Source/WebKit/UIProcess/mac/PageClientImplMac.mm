@@ -1253,7 +1253,7 @@ bool PageClientImpl::appUsesCustomAccentColor()
         if ([accentColorName length])
             usesCustomAppAccentColor = !![NSColor colorNamed:accentColorName.get() bundle:bundleForAccentColor.get()];
 
-        if (!usesCustomAppAccentColor && [(accentColorName = info.get()[@"NSAppAccentColorName"]) length])
+        if (!usesCustomAppAccentColor && [(accentColorName = dynamic_objc_cast<NSString>(info.get()[@"NSAppAccentColorName"])) length])
             usesCustomAppAccentColor = !![NSColor colorNamed:accentColorName.get() bundle:bundleForAccentColor.get()];
         return usesCustomAppAccentColor;
     }();

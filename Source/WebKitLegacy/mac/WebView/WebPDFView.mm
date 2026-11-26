@@ -683,10 +683,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSEnumerator *matchEnumerator = [matches objectEnumerator];
     RetainPtr<PDFSelection> match;
 
-    while ((match = [matchEnumerator nextObject])) {
+    while ((match = checked_objc_cast<PDFSelection>([matchEnumerator nextObject]))) {
         NSEnumerator *pages = [[match pages] objectEnumerator];
         RetainPtr<PDFPage> page;
-        while ((page = [pages nextObject])) {
+        while ((page = checked_objc_cast<PDFPage>([pages nextObject]))) {
             
             // Skip pages that aren't visible (needed for non-continuous modes, see 5362989)
             if (![visiblePages containsObject:page])
@@ -856,7 +856,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     PDFSelection *selection = [pdfSubview currentSelection];
     NSEnumerator *pages = [[selection pages] objectEnumerator];
     RetainPtr<PDFPage> page;
-    while ((page = [pages nextObject])) {
+    while ((page = checked_objc_cast<PDFPage>([pages nextObject]))) {
         NSRect selectionOnPageInPDFViewCoordinates = [pdfSubview convertRect:[selection boundsForPage:page] fromPage:page];
         if (NSIsEmptyRect(result))
             result = selectionOnPageInPDFViewCoordinates;

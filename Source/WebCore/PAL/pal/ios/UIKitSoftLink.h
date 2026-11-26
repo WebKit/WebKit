@@ -97,6 +97,7 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIGraphicsPushContext, void, (CGContex
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIImagePNGRepresentation, NSData *, (UIImage *image), (image))
 #define UIImagePNGRepresentation PAL::softLink_UIKit_UIImagePNGRepresentation
 
+SPECIALIZE_OBJC_TYPE_TRAITS(NSParagraphStyle, PAL::getNSParagraphStyleClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(UIColor, PAL::getUIColorClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(UIImageSymbolConfiguration, PAL::getUIImageSymbolConfigurationClassSingleton())
 

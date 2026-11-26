@@ -41,9 +41,8 @@ CoreIPCStringSet::CoreIPCStringSet(NSSet *stringSet)
     if (![stringSet isKindOfClass:[NSSet class]])
         return;
     for (id value in stringSet) {
-        if (![value isKindOfClass:[NSString class]])
-            continue;
-        m_stringSet.append(value);
+        if (RetainPtr string = dynamic_objc_cast<NSString>(value))
+            m_stringSet.append(string.get());
     }
 }
 

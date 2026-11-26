@@ -46,7 +46,7 @@ static RetainPtr<CFURLResponseRef> createCFURLResponseFromResponseData(CFDataRef
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
-        response = [unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+        response = checked_objc_cast<NSURLResponse>([unarchiver decodeObjectOfClass:[NSURLResponse class] forKey:@"WebResourceResponse"]); // WebResourceResponseKey in WebResource.m
         [unarchiver finishDecoding];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);

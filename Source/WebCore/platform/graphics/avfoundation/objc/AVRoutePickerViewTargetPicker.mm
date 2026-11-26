@@ -86,7 +86,7 @@ AVRoutePickerViewTargetPicker::~AVRoutePickerViewTargetPicker()
 AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal()
 {
     if (!m_outputContext) {
-        m_outputContext = [PAL::getAVOutputContextClassSingleton() iTunesAudioContext];
+        m_outputContext = checked_objc_cast<AVOutputContext>([PAL::getAVOutputContextClassSingleton() iTunesAudioContext]);
         ASSERT(m_outputContext);
         if (m_outputContext)
             [[NSNotificationCenter defaultCenter] addObserver:m_routePickerViewDelegate.get() selector:@selector(notificationHandler:) name:PAL::AVOutputContextOutputDevicesDidChangeNotification object:m_outputContext.get()];

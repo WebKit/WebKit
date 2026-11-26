@@ -29,6 +29,8 @@
 #import "config.h"
 #import "LegacyWebArchive.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 namespace WebCore {
 
 static NSString * const LegacyWebArchiveResourceResponseKey = @"WebResourceResponse";
@@ -45,7 +47,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:(__bridge NSData *)responseData error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
     @try {
-        response = [unarchiver decodeObjectOfClass:NSURLResponse.class forKey:LegacyWebArchiveResourceResponseKey];
+        response = checked_objc_cast<NSURLResponse>([unarchiver decodeObjectOfClass:NSURLResponse.class forKey:LegacyWebArchiveResourceResponseKey]);
         [unarchiver finishDecoding];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode NS(HTTP)URLResponse: %@", exception);

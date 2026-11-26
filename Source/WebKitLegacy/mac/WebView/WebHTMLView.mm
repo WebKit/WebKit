@@ -6548,7 +6548,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if PLATFORM(MAC)
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
-        text = [string string];
+        text = [checked_objc_cast<NSAttributedString>(string) string];
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         // The AppKit adds a 'secret' property to the string that contains the replacement range.
@@ -6664,7 +6664,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(checked_objc_cast<NSAttributedString>(string));
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
-        text = [string string];
+        text = [checked_objc_cast<NSAttributedString>(string) string];
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         if (rangeString) {

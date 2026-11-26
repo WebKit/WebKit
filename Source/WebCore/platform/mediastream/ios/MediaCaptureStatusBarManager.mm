@@ -40,6 +40,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(SpringBoardServices)
 SOFT_LINK_CLASS_OPTIONAL(SpringBoardServices, SBSStatusBarStyleOverridesAssertion)
 SOFT_LINK_CLASS_OPTIONAL(SpringBoardServices, SBSStatusBarStyleOverridesCoordinator)
 
+SPECIALIZE_OBJC_TYPE_TRAITS(SBSStatusBarStyleOverridesAssertion, getSBSStatusBarStyleOverridesAssertionClassSingleton())
+
 using namespace WebCore;
 
 @interface WebCoreMediaCaptureStatusBarHandler : NSObject<SBSStatusBarStyleOverridesCoordinatorDelegate>
@@ -78,7 +80,7 @@ using namespace WebCore;
     ASSERT(!m_coordinator);
 
     UIStatusBarStyleOverrides overrides = UIStatusBarStyleOverrideWebRTCAudioCapture;
-    m_statusBarStyleOverride = [getSBSStatusBarStyleOverridesAssertionClassSingleton() assertionWithStatusBarStyleOverrides:overrides forPID:legacyPresentingApplicationPID() exclusive:YES showsWhenForeground:YES];
+    m_statusBarStyleOverride = checked_objc_cast<SBSStatusBarStyleOverridesAssertion>([getSBSStatusBarStyleOverridesAssertionClassSingleton() assertionWithStatusBarStyleOverrides:overrides forPID:legacyPresentingApplicationPID() exclusive:YES showsWhenForeground:YES]);
     m_coordinator = adoptNS([[getSBSStatusBarStyleOverridesCoordinatorClassSingleton() alloc] init]);
     m_coordinator.get().delegate = self;
 

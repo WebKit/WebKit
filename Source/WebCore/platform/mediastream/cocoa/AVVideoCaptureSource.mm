@@ -735,10 +735,10 @@ RetainPtr<AVCapturePhotoSettings> AVVideoCaptureSource::photoConfiguration(const
     RetainPtr<AVCapturePhotoSettings> avPhotoSettings;
 
     @try {
-        avPhotoSettings = [PAL::getAVCapturePhotoSettingsClassSingleton() photoSettingsWithFormat:@{
+        avPhotoSettings = checked_objc_cast<AVCapturePhotoSettings>([PAL::getAVCapturePhotoSettingsClassSingleton() photoSettingsWithFormat:@{
             AVVideoCodecKey : AVVideoCodecTypeJPEG,
             AVVideoCompressionPropertiesKey : @{ AVVideoQualityKey : @(1) }
-        }];
+        }]);
 
 #if PLATFORM(IOS_FAMILY)
         if (photoSettings.fillLightMode) {

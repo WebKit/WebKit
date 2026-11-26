@@ -353,7 +353,7 @@ String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(const AVMedi
     // RFC 4646 language tag so extendedLanguageTag returns NULL. In this case languageCode will return the
     // ISO 639-2/T language code so check it.
     if (!language)
-        language = [[option locale] objectForKey:NSLocaleLanguageCode];
+        language = dynamic_objc_cast<NSString>([[option locale] objectForKey:NSLocaleLanguageCode]);
 
     // Some legacy tracks have "und" as a language, treat that the same as no language at all.
     if (!language || [language isEqualToString:@"und"])

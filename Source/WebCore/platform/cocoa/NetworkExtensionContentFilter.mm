@@ -97,8 +97,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     BinarySemaphore semaphore;
     RetainPtr<NSString> modifiedRequestURLString;
     [m_neFilterSource willSendRequest:protect(request.nsURLRequest(DoNotUpdateHTTPBody)).get() decisionHandler:[this, protectedThis = Ref { *this }, &modifiedRequestURLString, &semaphore](NEFilterSourceStatus status, NSDictionary *decisionInfo) {
-        modifiedRequestURLString = decisionInfo[NEFilterSourceOptionsRedirectURL];
-        ASSERT(!modifiedRequestURLString || [modifiedRequestURLString isKindOfClass:[NSString class]]);
+        modifiedRequestURLString = dynamic_objc_cast<NSString>(decisionInfo[NEFilterSourceOptionsRedirectURL]);
         handleDecision(status, replacementDataFromDecisionInfo(decisionInfo));
         semaphore.signal();
     }];

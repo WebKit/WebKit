@@ -459,6 +459,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVContentKeyRequestSho
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVContentKeyRequestRandomDeviceIdentifierSeedKey, NSString *)
 #define AVContentKeyRequestRandomDeviceIdentifierSeedKey PAL::get_AVFoundation_AVContentKeyRequestRandomDeviceIdentifierSeedKeySingleton()
 
+SPECIALIZE_OBJC_TYPE_TRAITS(AVAssetImageGenerator, PAL::getAVAssetImageGeneratorClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferAudioRenderer, PAL::getAVSampleBufferAudioRendererClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferDisplayLayer, PAL::getAVSampleBufferDisplayLayerClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSampleBufferVideoRenderer, PAL::getAVSampleBufferVideoRendererClassSingleton())
@@ -468,6 +469,10 @@ SPECIALIZE_OBJC_TYPE_TRAITS(AVContentKeySession, PAL::getAVContentKeySessionClas
 SPECIALIZE_OBJC_TYPE_TRAITS(AVMetadataItem, PAL::getAVMetadataItemClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVPlayerItem, PAL::getAVPlayerItemClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(AVSpeechUtterance, PAL::getAVSpeechUtteranceClassSingleton())
+
+#if HAVE(AVCAPTUREDEVICE)
+SPECIALIZE_OBJC_TYPE_TRAITS(AVCapturePhotoSettings, PAL::getAVCapturePhotoSettingsClassSingleton())
+#endif
 
 #endif // USE(AVFOUNDATION)
 

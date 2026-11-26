@@ -216,15 +216,13 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     RetainPtr<NSArray> subframeArchives;
 
     @try {
-        id object = [decoder decodeObjectForKey:WebMainResourceKey];
-        if ([object isKindOfClass:[WebResource class]])
-            mainResource = object;
-        object = [decoder decodeObjectForKey:WebSubresourcesKey];
+        mainResource = dynamic_objc_cast<WebResource>([decoder decodeObjectForKey:WebMainResourceKey]);
+        id object = [decoder decodeObjectForKey:WebSubresourcesKey];
         if (isArrayOfClass(object, [WebResource class]))
-            subresources = object;
+            subresources = checked_objc_cast<NSArray>(object);
         object = [decoder decodeObjectForKey:WebSubframeArchivesKey];
         if (isArrayOfClass(object, [WebArchive class]))
-            subframeArchives = object;
+            subframeArchives = checked_objc_cast<NSArray>(object);
     } @catch(id) {
         [self release];
         return nil;

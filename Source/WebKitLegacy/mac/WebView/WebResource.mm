@@ -129,24 +129,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     RetainPtr<NSURLResponse> response;
 
     @try {
-        id object = [decoder decodeObjectForKey:WebResourceDataKey];
-        if ([object isKindOfClass:[NSData class]])
-            data = object;
-        object = [decoder decodeObjectForKey:WebResourceURLKey];
-        if ([object isKindOfClass:[NSURL class]])
-            url = object;
-        object = [decoder decodeObjectForKey:WebResourceMIMETypeKey];
-        if ([object isKindOfClass:[NSString class]])
-            mimeType = object;
-        object = [decoder decodeObjectForKey:WebResourceTextEncodingNameKey];
-        if ([object isKindOfClass:[NSString class]])
-            textEncoding = object;
-        object = [decoder decodeObjectForKey:WebResourceFrameNameKey];
-        if ([object isKindOfClass:[NSString class]])
-            frameName = object;
-        object = [decoder decodeObjectForKey:WebResourceResponseKey];
-        if ([object isKindOfClass:[NSURLResponse class]])
-            response = object;
+        data = dynamic_objc_cast<NSData>([decoder decodeObjectForKey:WebResourceDataKey]);
+        url = dynamic_objc_cast<NSURL>([decoder decodeObjectForKey:WebResourceURLKey]);
+        mimeType = dynamic_objc_cast<NSString>([decoder decodeObjectForKey:WebResourceMIMETypeKey]);
+        textEncoding = dynamic_objc_cast<NSString>([decoder decodeObjectForKey:WebResourceTextEncodingNameKey]);
+        frameName = dynamic_objc_cast<NSString>([decoder decodeObjectForKey:WebResourceFrameNameKey]);
+        response = dynamic_objc_cast<NSURLResponse>([decoder decodeObjectForKey:WebResourceResponseKey]);
     } @catch(id) {
         [self release];
         return nil;
