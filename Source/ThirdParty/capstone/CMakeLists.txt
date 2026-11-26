@@ -178,7 +178,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         -Wno-unused-parameter
         -Wno-ignored-qualifiers
         -Wno-implicit-fallthrough
-        -Wno-missing-field-initializers
         -Wno-missing-format-attribute
         -Wno-discarded-qualifiers
         -Wno-cast-align
