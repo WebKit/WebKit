@@ -2680,34 +2680,6 @@ unsigned RenderGrid::numTracks(Style::GridTrackSizingDirection direction) const
         : Style::GridPositionsResolver::explicitGridCount(*this, Style::GridTrackSizingDirection::Columns);
 }
 
-bool RenderGrid::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
-{
-    ASSERT(!currentGrid().needsItemsPlacement());
-
-    if (hitTestAction == HitTestAction::Foreground) {
-        LayoutPoint scrolledOffset = hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
-
-        auto hitTestGridItem = [&](RenderBox& gridItem) {
-            if (gridItem.hasSelfPaintingLayer())
-                return false;
-            auto location = blockStartRelativeToPhysicalForChild(gridItem, scrolledOffset);
-            if (!gridItem.hitTest(request, result, locationInContainer, location))
-                return false;
-            updateHitTestResult(result, physicalToBlockStartRelative(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
-            return true;
-        };
-
-        // Hit-testing visits grid items front-to-back, i.e. the reverse of paint order.
-        for (CheckedRef gridItem : currentGrid().orderIterator().gridItems() | std::views::reverse) {
-            if (hitTestGridItem(gridItem))
-                return true;
-        }
-    }
-
-    // A fieldset's legend is not a grid item and paints beneath them, so it is hit-tested in every phase, after the items.
-    return hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction);
-}
-
 ASCIILiteral RenderGrid::renderName() const
 {
     if (isFloating())

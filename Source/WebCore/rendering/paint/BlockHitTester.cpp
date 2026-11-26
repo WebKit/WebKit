@@ -29,9 +29,10 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "PaintOrderIterator.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -61,6 +62,27 @@ static bool isBackgroundAction(HitTestAction action)
     return action == HitTestAction::BlockBackground || action == HitTestAction::ChildBlockBackground;
 }
 
+// A fieldset's legend is not a grid or flex item. It paints beneath them, so it is hit tested after them.
+bool BlockHitTester::hitTestLegendAfterItems(RenderBlock& container, HitTestAction action, const LayoutPoint& adjustedLocation)
+{
+    if (is<RenderGrid>(container))
+        return container.hitTestExcludedChildrenInBorder(m_request, m_result, m_location, adjustedLocation, action);
+
+    // FIXME: Grid and flex containers hit test the legend differently. Grid does it in every action, without the
+    // scroll offset. Flex does it below. They should do the same.
+    // A flex container hits its legend in the foreground action, with all actions at once.
+    if (action != HitTestAction::Foreground || !container.isFieldset())
+        return false;
+    CheckedPtr legend = container.findFieldsetLegend();
+    if (!legend || !legend->isExcludedFromNormalLayout() || legend->hasSelfPaintingLayer())
+        return false;
+    auto scrolledOffset = container.hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(container.scrollPosition()) : adjustedLocation;
+    if (!legend->hitTest(m_request, m_result, m_location, container.blockStartRelativeToPhysicalForChild(*legend, scrolledOffset)))
+        return false;
+    container.updateHitTestResult(m_result, container.physicalToBlockStartRelative(toLayoutPoint(m_location.point() - adjustedLocation)));
+    return true;
+}
+
 bool BlockHitTester::hitTest()
 {
     using Event = PaintOrderIterator::Event;
@@ -72,7 +94,7 @@ bool BlockHitTester::hitTest()
     auto updateEnclosingBlocks = [&](size_t count) {
         for (size_t index = count; index--;) {
             CheckedRef block = iterator.blockAt(index);
-            if (index + 1 < iterator.depth() && iterator.isStackingContainerAt(index + 1)) {
+            if (index + 1 < iterator.depth() && iterator.isStackingContainerAt(index + 1) && is<RenderBlockFlow>(block)) {
                 // A float without a node for the hit leaves it to its enclosing block, with the location relative
                 // to the float. The first update to set a node wins, so this comes before the one below.
                 CheckedRef floatBox = iterator.blockAt(index + 1);
@@ -97,8 +119,14 @@ bool BlockHitTester::hitTest()
             if (iterator.isStackingContainer()) {
                 bool isFirstWalk = m_stackingContainerStack.isEmpty() || m_stackingContainerStack.last().depth != depth;
                 if (isFirstWalk) {
-                    // Floats are hit tested in the float action of their enclosing block flow. Line-clamp hides the ones after the clamp point.
-                    if (action != HitTestAction::Float || !is<RenderBlockFlow>(iterator.enclosingBlock()) || block->isForceHiddenByLineClamp()) {
+                    auto shouldHitTest = [&] {
+                        // Floats are hit tested in the float action of their enclosing block flow. Line-clamp hides the ones after the clamp point.
+                        if (is<RenderBlockFlow>(iterator.enclosingBlock()))
+                            return action == HitTestAction::Float && !block->isForceHiddenByLineClamp();
+                        // Grid and flex items are hit tested in the foreground action of their container.
+                        return action == HitTestAction::Foreground;
+                    };
+                    if (!shouldHitTest()) {
                         iterator.skipBlock();
                         break;
                     }
@@ -108,7 +136,7 @@ bool BlockHitTester::hitTest()
             }
 
             auto skipBlock = [&] {
-                // Every walk of a float would be skipped the same way.
+                // Every walk would be skipped the same way.
                 if (iterator.isStackingContainer())
                     m_stackingContainerStack.removeLast();
                 iterator.skipBlock();
@@ -155,19 +183,20 @@ bool BlockHitTester::hitTest()
                 return true;
             }
             break;
-        case Event::Children:
-            // Grid and flex containers hit test their items themselves.
-            if (block->hitTestChildren(m_request, m_result, m_location, adjustedLocation, parent().action)) {
-                updateEnclosingBlocks(depth - 1);
-                return true;
-            }
-            break;
         case Event::Child: {
             CheckedRef child = iterator.child();
             auto action = parent().action;
+            if (!is<RenderBlockFlow>(block)) {
+                // Grid and flex items that aren't entered are hit tested all actions at once, in the foreground action of their container.
+                if (action == HitTestAction::Foreground && child->hitTest(m_request, m_result, m_location, iterator.childPaintOffset())) {
+                    updateEnclosingBlocks(depth);
+                    return true;
+                }
+                break;
+            }
             if (child->isFloating()) {
                 // Like the painting, in reverse.
-                if (action == HitTestAction::Float && is<RenderBlockFlow>(block) && block->hitTestFloat(child, m_request, m_result, m_location, iterator.childPaintOffset())) {
+                if (action == HitTestAction::Float && block->hitTestFloat(child, m_request, m_result, m_location, iterator.childPaintOffset())) {
                     updateEnclosingBlocks(depth);
                     return true;
                 }
@@ -183,6 +212,10 @@ bool BlockHitTester::hitTest()
             // In reverse order this comes last: the block's own background.
             auto entered = parent();
             if (entered.shouldHitTestContent && !entered.checkChildren && block->hitTestExcludedChildrenInBorder(m_request, m_result, m_location, adjustedLocation, entered.action)) {
+                updateEnclosingBlocks(depth - 1);
+                return true;
+            }
+            if (entered.shouldHitTestContent && entered.checkChildren && !is<RenderBlockFlow>(block) && hitTestLegendAfterItems(block, entered.action, adjustedLocation)) {
                 updateEnclosingBlocks(depth - 1);
                 return true;
             }

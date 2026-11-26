@@ -54,6 +54,8 @@ private:
         bool checkChildren;
     };
 
+    bool hitTestLegendAfterItems(RenderBlock& container, HitTestAction, const LayoutPoint& adjustedLocation);
+
     // A stacking container being hit tested, one walk per action.
     struct StackingContainer {
         size_t depth;

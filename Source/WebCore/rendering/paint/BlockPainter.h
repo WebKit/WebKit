@@ -59,7 +59,7 @@ public:
     static void paintInlineChildren(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset);
     static void paintChildren(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset, PaintInfo& paintInfoForChildren);
 
-    enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
+    enum PaintBlockType { PaintAsBlock, PaintAsStackingContainer };
     static void paintChild(RenderBlock&, PaintInfo&, const LayoutPoint& scrolledOffset, RenderBox&, PaintInfo& paintInfoForChild, PaintBlockType = PaintAsBlock);
     static void paintFloat(PaintInfo&, RenderBox&, const LayoutPoint& floatBoxLocation);
 
@@ -116,7 +116,7 @@ private:
         std::optional<uint8_t> phaseIndex;
         bool savedContext { false };
     };
-    bool beginStackingContainer(RenderBlock& floatBox, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth);
+    bool beginStackingContainer(RenderBlock&, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth);
     void endStackingContainer();
 
     const CheckedRef<RenderBlock> m_root;

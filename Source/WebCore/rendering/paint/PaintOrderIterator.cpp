@@ -28,6 +28,8 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
+#include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 
 namespace WebCore {
 namespace Paint {
@@ -118,8 +120,7 @@ void PaintOrderIterator::beginContents()
         return;
     }
     if (!is<RenderBlockFlow>(block)) {
-        // Grid and flex items, in their containers' order.
-        parent().event = Event::Children;
+        advanceToGridOrFlexItem();
         return;
     }
     // Forward, the floats come in the second pass, in reverse in the first.
@@ -154,20 +155,7 @@ void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
             continue;
         }
 
-        parent().child = child;
-
-        CheckedPtr childBlock = dynamicDowncast<RenderBlock>(*child);
-        if (!childBlock || !isIterableBlockType(*childBlock)) {
-            parent().event = Event::Child;
-            return;
-        }
-
-        CheckedRef block = parent().block;
-        auto childPaintOffset = block->blockStartRelativeToPhysicalForChild(*child, scrolledOffset()) + toLayoutSize(child->location());
-        // May reallocate the parent stack.
-        m_parentStack.append({ *childBlock, childPaintOffset });
-        // Floats paint all their phases at once.
-        parent().isStackingContainer = child->isFloating();
+        visitChild(*child);
         return;
     }
     if (m_floatOrder == FloatOrder::AfterOtherChildren) {
@@ -184,8 +172,64 @@ void PaintOrderIterator::advanceToChild(CheckedPtr<RenderBox> candidate)
     parent().event = lastSelfEvent();
 }
 
+// Grid and flex items in their containers' order, which can differ from the tree order.
+static size_t gridOrFlexItemCount(const RenderBlock& container)
+{
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(container)) {
+        ASSERT(!grid->currentGrid().needsItemsPlacement());
+        return std::ranges::size(grid->currentGrid().orderIterator().gridItems());
+    }
+    return downcast<RenderFlexibleBox>(container).flexLayout().flexItems().size();
+}
+
+static RenderBox* gridOrFlexItemAt(const RenderBlock& container, size_t index)
+{
+    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(container))
+        return &grid->currentGrid().orderIterator().gridItems()[index];
+    return downcast<RenderFlexibleBox>(container).flexLayout().flexItems()[index].get();
+}
+
+void PaintOrderIterator::advanceToGridOrFlexItem()
+{
+    CheckedRef container = parent().block;
+    auto count = gridOrFlexItemCount(container);
+    while (parent().gridOrFlexItemPosition < count) {
+        auto position = parent().gridOrFlexItemPosition++;
+        CheckedPtr item = gridOrFlexItemAt(container, m_direction == Direction::Forward ? position : count - 1 - position);
+        if (!item || item->hasSelfPaintingLayer())
+            continue;
+        visitChild(*item);
+        return;
+    }
+    parent().child = nullptr;
+    parent().event = lastSelfEvent();
+}
+
+void PaintOrderIterator::visitChild(RenderBox& child)
+{
+    parent().child = &child;
+
+    CheckedPtr childBlock = dynamicDowncast<RenderBlock>(child);
+    if (!childBlock || !isIterableBlockType(*childBlock)) {
+        parent().event = Event::Child;
+        return;
+    }
+
+    CheckedRef block = parent().block;
+    auto childPaintOffset = block->blockStartRelativeToPhysicalForChild(child, scrolledOffset()) + toLayoutSize(child.location());
+    // Floats and grid and flex items paint all their phases at once.
+    bool isStackingContainer = child.isFloating() || !is<RenderBlockFlow>(block);
+    // May reallocate the parent stack.
+    m_parentStack.append({ *childBlock, childPaintOffset });
+    parent().isStackingContainer = isStackingContainer;
+}
+
 void PaintOrderIterator::continueAfterChild()
 {
+    if (!is<RenderBlockFlow>(parent().block)) {
+        advanceToGridOrFlexItem();
+        return;
+    }
     // The current child was either entered as a parent or reported as an opaque item.
     CheckedPtr child = parent().child;
     advanceToChild(child ? nextChild(*child) : nullptr);
@@ -234,7 +278,6 @@ PaintOrderIterator& PaintOrderIterator::traverseNext()
     }
     switch (event) {
     case Event::InlineContent:
-    case Event::Children:
         parent().event = lastSelfEvent();
         break;
     case Event::Child:

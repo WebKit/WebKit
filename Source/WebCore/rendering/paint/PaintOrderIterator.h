@@ -44,16 +44,17 @@ namespace Paint {
 // such as the contents clip and the paint phase. Within a parent, it reports the block's own
 // painting before and after its contents, and the contents themselves: inline content, or the
 // children in paint order. Child blocks painted by the generic code are entered. Anything else
-// (replaced content, tables, children of grid and flex containers) is an opaque item that the
-// consumer paints with the existing per-renderer code. Floats are reported in tree order, or
-// after the other children. Excluded children (fieldset legends, outside list markers) and
-// skipped content are reported too, and the consumer decides what to do with them.
+// (replaced content, tables) is an opaque item that the consumer paints with the existing
+// per-renderer code. Floats are reported in tree order, or after the other children. Grid and
+// flex items are reported in their containers' order. Excluded children of block flows (fieldset
+// legends, outside list markers) and skipped content are reported too, and the consumer decides
+// what to do with them.
 //
-// A float paints as a stacking container (css-position-4 "paint a stacking container"): as if it
-// created a stacking context, so all its phases (backgrounds, floats, foreground, outlines) paint
-// before whatever follows it, but its layers belong to the enclosing stacking context. A float
-// painted by the generic code is entered as a stacking container, which the consumer walks once
-// for each of those phases.
+// Floats and grid and flex items paint as stacking containers (css-position-4 "paint a stacking
+// container"): as if they created a stacking context, so all their phases (backgrounds, floats,
+// foreground, outlines) paint before whatever follows them, but their layers belong to the
+// enclosing stacking context. Those painted by the generic code are entered as stacking
+// containers, which the consumer walks once for each of those phases.
 //
 // The iterator only knows the tree and the geometry. Paint state such as PaintInfo belongs to
 // the consumer.
@@ -63,7 +64,6 @@ public:
         EnterBlock,
         BeforeContents,
         InlineContent,
-        Children,
         Child,
         AfterContents,
         LeaveBlock,
@@ -123,6 +123,8 @@ private:
         bool isFloatsPass { false };
         bool hasChildForOtherPass { false };
         bool isStackingContainer { false };
+        // For grid and flex containers, the number of items visited.
+        size_t gridOrFlexItemPosition { 0 };
     };
 
     const Parent& parent() const { return m_parentStack.last(); }
@@ -136,6 +138,9 @@ private:
 
     void beginContents();
     void advanceToChild(CheckedPtr<RenderBox> candidate);
+    void advanceToGridOrFlexItem();
+    // Enters the child as a parent, or reports it as an opaque Event::Child item.
+    void visitChild(RenderBox&);
     void continueAfterChild();
     void popParent();
 

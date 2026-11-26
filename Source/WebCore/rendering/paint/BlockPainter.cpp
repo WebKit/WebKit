@@ -169,25 +169,38 @@ void BlockPainter::popParent()
 // A stacking container is painted one phase per walk.
 static constexpr std::array stackingContainerPhases { PaintPhase::BlockBackground, PaintPhase::ChildBlockBackgrounds, PaintPhase::Float, PaintPhase::Foreground, PaintPhase::Outline };
 
-bool BlockPainter::beginStackingContainer(RenderBlock& floatBox, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth)
+bool BlockPainter::beginStackingContainer(RenderBlock& block, const RenderBlock& enclosingBlock, const LayoutPoint& paintOffset, size_t depth)
 {
-    ASSERT(floatBox.isFloating() && !floatBox.hasSelfPaintingLayer());
+    ASSERT(!block.hasSelfPaintingLayer());
+
+    auto preservePhase = isNonPaintingTraversalPhase(m_paintInfo.phase);
+    auto stackingContainer = StackingContainer { depth, { m_paintInfo.phase, m_paintInfo.subtreePaintRoot, m_paintInfo.paintBehavior }, { } };
+
+    if (!is<RenderBlockFlow>(enclosingBlock)) {
+        // Grid and flex items paint in the foreground phase of their container, with the paint info
+        // for its children. The non-painting traversal phases walk them once with the phase unchanged.
+        if (m_paintInfo.phase != PaintPhase::Foreground && !preservePhase)
+            return false;
+        adjustPaintInfoForBlockChildren(enclosingBlock, m_paintInfo);
+        if (!preservePhase) {
+            stackingContainer.phaseIndex = 0;
+            m_paintInfo.phase = stackingContainerPhases[0];
+        }
+        m_stackingContainerStack.append(WTF::move(stackingContainer));
+        return true;
+    }
 
     // Floats paint in the float phase of their enclosing block flow. The non-painting traversal phases
     // walk them once with the phase unchanged.
-    if (!is<RenderBlockFlow>(enclosingBlock))
-        return false;
-    auto preservePhase = isNonPaintingTraversalPhase(m_paintInfo.phase);
+    ASSERT(block.isFloating());
     if (m_paintInfo.phase != PaintPhase::Float && !preservePhase)
         return false;
     // Layout skips the floats that line-clamp hides after the clamp point.
-    if (floatBox.isForceHiddenByLineClamp())
+    if (block.isForceHiddenByLineClamp())
         return false;
 
-    auto stackingContainer = StackingContainer { depth, { m_paintInfo.phase, m_paintInfo.subtreePaintRoot, m_paintInfo.paintBehavior }, { } };
-
     // The clip rect in the float's own coordinates, moved to where the float's border box paints.
-    if (auto clipRect = LineClampUpdater::blockEndClipRect(floatBox, floatBox)) {
+    if (auto clipRect = LineClampUpdater::blockEndClipRect(block, block)) {
         clipRect->moveBy(paintOffset);
         // Like the layer clip rects, this is within the area being painted (and so it is finite, which the conversion to float needs).
         clipRect->intersect(m_paintInfo.rect);
@@ -228,6 +241,10 @@ void BlockPainter::paintSubtree()
         if (iterator.event() == Event::EnterBlock) {
             ASSERT(m_parentStack.size() == iterator.depth() - 1);
             CheckedPtr enclosingBlock = iterator.enclosingBlock();
+            if (enclosingBlock && isExcludedFromNormalFlowPainting(block)) {
+                iterator.skipBlock();
+                continue;
+            }
             if (iterator.isStackingContainer()) {
                 // On a repeated walk the stacking container's own entry is on top. Nested ones are gone by then.
                 bool isFirstWalk = m_stackingContainerStack.isEmpty() || m_stackingContainerStack.last().depth != iterator.depth();
@@ -235,18 +252,13 @@ void BlockPainter::paintSubtree()
                     iterator.skipBlock();
                     continue;
                 }
-                // A float gets the paint info of its enclosing block, with the phase of the walk.
+                // The paint info was set up by beginStackingContainer(), with the phase of the walk.
                 pushParent(nullptr);
-            } else {
-                if (enclosingBlock && isExcludedFromNormalFlowPainting(block)) {
-                    iterator.skipBlock();
-                    continue;
-                }
+            } else
                 pushParent(enclosingBlock.get());
-            }
             if (isVisualContentClippedOut(block, paintInfo, paintOffset)) {
                 popParent();
-                // Every walk of a float would be clipped out the same way.
+                // Every walk would be clipped out the same way.
                 if (iterator.isStackingContainer())
                     endStackingContainer();
                 iterator.skipBlock();
@@ -278,23 +290,10 @@ void BlockPainter::paintSubtree()
             // Inline content gets the block's own paint info. It adjusts it for blocks-in-inline itself.
             paintInlineChildren(block, paintInfo, iterator.scrolledOffset());
             break;
-        case Event::Children: {
-            auto paintInfoForChildren = paintInfoForBlockChildren(block, paintInfo);
-            paintChildren(block, paintInfo, iterator.scrolledOffset(), paintInfoForChildren);
-            break;
-        }
         case Event::Child: {
-            CheckedRef child = iterator.child();
-            if (isExcludedFromNormalFlowPainting(child))
-                break;
-            if (child->isFloating()) {
-                // Only a RenderBlockFlow places floats.
-                if (is<RenderBlockFlow>(block))
-                    paintFloat(paintInfo, child, iterator.childPaintOffset());
-                break;
-            }
             auto paintInfoForChild = paintInfoForBlockChildren(block, paintInfo);
-            child->paint(paintInfoForChild, iterator.childPaintOffset());
+            auto paintType = is<RenderBlockFlow>(block) ? PaintAsBlock : PaintAsStackingContainer;
+            paintChild(block, paintInfo, iterator.scrolledOffset(), protect(iterator.child()), paintInfoForChild, paintType);
             break;
         }
         case Event::AfterContents:
@@ -367,18 +366,14 @@ void BlockPainter::paintChildren(RenderBlock& block, PaintInfo& paintInfo, const
 {
     ASSERT(!isSkippedContentRoot(block));
 
-    if (CheckedPtr grid = dynamicDowncast<RenderGrid>(block)) {
-        ASSERT(!grid->currentGrid().needsItemsPlacement());
-        for (CheckedRef gridItem : grid->currentGrid().orderIterator().gridItems())
-            paintChild(block, paintInfo, scrolledOffset, gridItem, paintInfoForChild, PaintAsInlineBlock);
-        return;
-    }
+    // Grids paint with PaintOrderIterator.
+    ASSERT(!is<RenderGrid>(block));
 
     if (CheckedPtr flexBox = dynamicDowncast<RenderFlexibleBox>(block)) {
         for (auto& renderer : flexBox->flexLayout().flexItems()) {
             CheckedPtr flexItem = renderer;
             if (flexItem)
-                paintChild(block, paintInfo, scrolledOffset, *flexItem, paintInfoForChild, PaintAsInlineBlock);
+                paintChild(block, paintInfo, scrolledOffset, *flexItem, paintInfoForChild, PaintAsStackingContainer);
         }
         return;
     }
@@ -420,7 +415,7 @@ void BlockPainter::paintChild(RenderBlock& block, PaintInfo& paintInfo, const La
             // Only a RenderBlockFlow places floats.
             if (is<RenderBlockFlow>(block))
                 paintFloat(paintInfo, child, childPoint);
-        } else if (paintType == PaintAsInlineBlock)
+        } else if (paintType == PaintAsStackingContainer)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
         else
             child.paint(paintInfoForChild, childPoint);
