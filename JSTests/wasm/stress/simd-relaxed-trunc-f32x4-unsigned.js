@@ -33,6 +33,8 @@ async function test() {
             assert.eq(relaxed(value) >>> 0, sat(value) >>> 0)
             assert.eq(relaxed(value) >>> 0, value >>> 0)
         }
+        for (let value of [NaN, -0, -1, -100, -Infinity, Infinity, 4294967296, 1e10, 1e20])
+            assert.eq(relaxed(value) >>> 0, sat(value) >>> 0)
         assert.eq(mixed_low(), 1)
         assert.eq(mixed_high() >>> 0, 3000000000)
     }

@@ -8350,16 +8350,22 @@ ipintOp(_simd_i32x4_relaxed_trunc_f32x4_u, macro()
     if ARM64 or ARM64E
         emit "fcvtzu v16.4s, v16.4s"
     elsif X86_64
-        # cvttps2dq is signed. Lanes in [2^31, 2^32) are 0x80000000 plus trunc(x - 2^31).
-        emit "vcvttps2dq %xmm0, %xmm1"
+        # Same saturating sequence as i32x4.trunc_sat_f32x4_u. NaN and
+        # negatives become 0. Values at or above 2^32 become 0xFFFFFFFF.
+        emit "vxorps %xmm1, %xmm1, %xmm1"
+        emit "vmaxps %xmm1, %xmm0, %xmm0"
         emit "movl $0x4f000000, %eax"
         emit "vmovd %eax, %xmm2"
         emit "vshufps $0, %xmm2, %xmm2, %xmm2"
-        emit "vsubps %xmm2, %xmm0, %xmm0"
+        emit "vmovaps %xmm0, %xmm3"
+        emit "vsubps %xmm2, %xmm3, %xmm3"
+        emit "vcmpnltps %xmm2, %xmm3, %xmm1"
+        emit "vcvttps2dq %xmm3, %xmm3"
+        emit "vpxor %xmm1, %xmm3, %xmm3"
+        emit "vpxor %xmm4, %xmm4, %xmm4"
+        emit "vpmaxsd %xmm4, %xmm3, %xmm3"
         emit "vcvttps2dq %xmm0, %xmm0"
-        emit "vxorps %xmm2, %xmm2, %xmm2"
-        emit "vpmaxsd %xmm2, %xmm0, %xmm0"
-        emit "vpaddd %xmm0, %xmm1, %xmm0"
+        emit "vpaddd %xmm3, %xmm0, %xmm0"
     else
         break # Not implemented
     end

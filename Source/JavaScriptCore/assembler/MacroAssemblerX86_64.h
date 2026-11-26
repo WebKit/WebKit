@@ -8911,20 +8911,8 @@ public:
 
     void vectorRelaxedTruncUnsignedFloat32(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR1, FPRegisterID scratchFPR2)
     {
-        ASSERT(supportsAVX());
-
-        // cvttps2dq is signed. Lanes in [2^31, 2^32) are 0x80000000 plus trunc(x - 2^31).
-        m_assembler.vcvttps2dq_rr(src, scratchFPR1);
-
-        move(TrustedImm32(0x4f000000), scratchGPR);
-        m_assembler.vmovd_rr(scratchGPR, scratchFPR2);
-        m_assembler.vshufps_i8rrr(0, scratchFPR2, scratchFPR2, scratchFPR2);
-
-        m_assembler.vsubps_rrr(scratchFPR2, src, dest);
-        m_assembler.vcvttps2dq_rr(dest, dest);
-        m_assembler.vxorps_rrr(scratchFPR2, scratchFPR2, scratchFPR2);
-        m_assembler.vpmaxsd_rrr(scratchFPR2, dest, dest);
-        m_assembler.vpaddd_rrr(dest, scratchFPR1, dest);
+        // NaN and out-of-range lanes saturate, same as i32x4.trunc_sat_f32x4_u.
+        vectorTruncSatUnsignedFloat32(src, dest, scratchGPR, scratchFPR1, scratchFPR2);
     }
 
     void vectorTruncSatSignedFloat64(FPRegisterID src, FPRegisterID dest, RegisterID scratchGPR, FPRegisterID scratchFPR)
