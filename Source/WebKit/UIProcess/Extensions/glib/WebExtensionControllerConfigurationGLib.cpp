@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Igalia S.L.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,20 +22,31 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include <WebCore/NotImplemented.h>
+#include <wtf/glib/Application.h>
 
 namespace WebKit {
 
-String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID>)
+String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID> identifier)
 {
-    notImplemented();
-    return { };
+    String dataPath = WebsiteDataStore::defaultBaseDataDirectory();
+    RELEASE_ASSERT(!dataPath.isEmpty());
+
+    String identifierPath = identifier ? identifier->toString().convertToASCIIUppercase() : "Default"_s;
+
+    String appDirectoryName = String::fromUTF8(WTF::applicationID().legacyCStringPointer());
+    return FileSystem::pathByAppendingComponents(dataPath, std::initializer_list<StringView>({ "WebExtensions"_s, identifierPath }));
 }
 
 String WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
 {
-    notImplemented();
-    return { };
+    return FileSystem::createTemporaryDirectory("WebExtensions"_s);
+}
+
+WebKitSettings* WebExtensionControllerConfiguration::webViewConfiguration()
+{
+    if (!m_webViewConfiguration)
+        m_webViewConfiguration = adoptGRef(webkit_settings_new());
+    return m_webViewConfiguration.get();
 }
 
 } // namespace WebKit

@@ -231,6 +231,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebResource.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebView.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebViewSessionState.h.in
