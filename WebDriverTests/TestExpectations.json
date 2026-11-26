@@ -6092,9 +6092,12 @@
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             },
             "test_wheel_scroll_dispatches_multiple_events": {
-                "expected": {"mac": {"status": ["FAIL"], "bug": "webkit.org/b/332566"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331469"}}
             },
             "test_pointer_moves_in_one_tick_are_dispatched_concurrently": {
+                "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/281949"}}
+            },
+            "test_scroll_and_pointer_move_in_one_tick_are_interspersed": {
                 "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/281949"}}
             }
         }

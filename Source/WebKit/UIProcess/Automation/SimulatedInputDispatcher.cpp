@@ -167,6 +167,9 @@ SimulatedInputDispatcher::SimulatedInputDispatcher(WebPageProxy& page, Simulated
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     , m_pointerMoveInterpolationTimer(RunLoop::currentSingleton(), "SimulatedInputDispatcher::PointerMoveInterpolationTimer"_s, this, &SimulatedInputDispatcher::pointerMoveInterpolationTimerFired)
 #endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    , m_scrollInterpolationTimer(RunLoop::currentSingleton(), "SimulatedInputDispatcher::ScrollInterpolationTimer"_s, this, &SimulatedInputDispatcher::scrollInterpolationTimerFired)
+#endif
 {
 }
 
@@ -176,6 +179,9 @@ SimulatedInputDispatcher::~SimulatedInputDispatcher()
     ASSERT(!m_keyFrameTransitionDurationTimer.isActive());
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     ASSERT(!m_pointerMoveInterpolationTimer.isActive());
+#endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    ASSERT(!m_scrollInterpolationTimer.isActive());
 #endif
 }
 
@@ -210,6 +216,11 @@ bool SimulatedInputDispatcher::isKeyFrameTransitionComplete() const
         return false;
 #endif
 
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    if (!m_scrollInterpolations.isEmpty() || m_isDispatchingWheelInteraction || !m_pendingWheelInteractions.isEmpty())
+        return false;
+#endif
+
     return true;
 }
 
@@ -234,6 +245,10 @@ void SimulatedInputDispatcher::failKeyFrameTransition(AutomationCommandError err
     auto interpolations = std::exchange(m_pointerMoveInterpolations, { });
     for (auto& interpolation : borrow(interpolations))
         interpolation.inputSource->state.location = interpolation.lastDeliveredLocation;
+#endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    m_scrollInterpolationTimer.stop();
+    m_scrollInterpolations.clear();
 #endif
 
     finish(WTF::move(error));
@@ -586,7 +601,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #if !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
-        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, protectedThis = Ref { *this }, &a, &b, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+        resolveLocation(currentLocationOfSource(a), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, protectedThis = Ref { *this }, inputSource = Ref { inputSource }, &a, &b, runCompletionCount = m_runCompletionCount, eventDispatchFinished = WTF::move(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
             if (error || runCompletionCount != m_runCompletionCount) {
                 eventDispatchFinished(error);
                 return;
@@ -605,12 +620,20 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             if (!m_options.scrollDeltasArePerAction && !aScrollDelta.isZero())
                 usedScrollDelta.contract(aScrollDelta.width(), aScrollDelta.height());
 
-            if (!usedScrollDelta.isZero()) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel by (%d, %d) for transition to %d.%d", this, usedScrollDelta.width(), usedScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
-                // FIXME: This does not interpolate mouse scrolls per the "perform a scroll" algorithm (§15.4.4 Wheel actions). <https://webkit.org/b/332566>
-                m_client.simulateWheelInteraction(protect(m_page), b.location.value(), usedScrollDelta, WTF::move(eventDispatchFinished));
-            } else
+            if (usedScrollDelta.isZero()) {
                 eventDispatchFinished(std::nullopt);
+                return;
+            }
+
+            // https://w3c.github.io/webdriver/#dfn-perform-a-scroll
+            if (m_options.interpolateScrolls && b.duration && *b.duration > 0_s) {
+                startScrollInterpolation(inputSource, b.location.value(), usedScrollDelta, *b.duration);
+                eventDispatchFinished(std::nullopt);
+                return;
+            }
+
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel by (%d, %d) for transition to %d.%d", this, usedScrollDelta.width(), usedScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
+            enqueueWheelInteraction(b.location.value(), usedScrollDelta, WTF::move(eventDispatchFinished));
         });
 #endif // !ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
         break;
@@ -639,19 +662,21 @@ void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInter
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) || ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+static constexpr Seconds interpolationStepInterval = 16_ms;
+static constexpr unsigned maximumInterpolationSteps = 50;
+#endif
+
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 // https://w3c.github.io/webdriver/#dfn-perform-a-pointer-move
-static constexpr Seconds pointerMoveInterpolationInterval = 16_ms;
-static constexpr unsigned maximumPointerMoveInterpolationSteps = 50;
-
 void SimulatedInputDispatcher::startPointerMoveInterpolation(SimulatedInputSource& inputSource, const WebCore::IntPoint& start, const WebCore::IntPoint& end, MouseButton button, const String& pointerType, Seconds duration)
 {
-    auto stepInterval = std::max(pointerMoveInterpolationInterval, duration / maximumPointerMoveInterpolationSteps);
+    auto stepInterval = std::max(interpolationStepInterval, duration / maximumInterpolationSteps);
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: interpolating pointer move from (%d, %d) to (%d, %d) over %.3f seconds", this, start.x(), start.y(), end.x(), end.y(), duration.value());
 
     if (m_pointerMoveInterpolations.isEmpty())
-        m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+        m_pointerMoveInterpolationTimer.startOneShot(interpolationStepInterval);
 
     m_pointerMoveInterpolations.append(PointerMoveInterpolation {
         inputSource,
@@ -697,7 +722,7 @@ void SimulatedInputDispatcher::pointerMoveInterpolationTimerFired()
     }
 
     if (moves.isEmpty()) {
-        m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+        m_pointerMoveInterpolationTimer.startOneShot(interpolationStepInterval);
         return;
     }
 
@@ -727,7 +752,7 @@ void SimulatedInputDispatcher::pointerMoveInterpolationTimerFired()
             });
 
             if (!m_pointerMoveInterpolations.isEmpty()) {
-                m_pointerMoveInterpolationTimer.startOneShot(pointerMoveInterpolationInterval);
+                m_pointerMoveInterpolationTimer.startOneShot(interpolationStepInterval);
                 return;
             }
 
@@ -764,6 +789,125 @@ void SimulatedInputDispatcher::dispatchNextMouseInteraction()
     });
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+void SimulatedInputDispatcher::startScrollInterpolation(SimulatedInputSource& inputSource, const WebCore::IntPoint& location, const WebCore::IntSize& totalDelta, Seconds duration)
+{
+    auto stepInterval = std::max(interpolationStepInterval, duration / maximumInterpolationSteps);
+
+    LOG(Automation, "SimulatedInputDispatcher[%p]: interpolating scroll by (%d, %d) @ (%d, %d) over %.3f seconds", this, totalDelta.width(), totalDelta.height(), location.x(), location.y(), duration.value());
+
+    if (m_scrollInterpolations.isEmpty())
+        m_scrollInterpolationTimer.startOneShot(interpolationStepInterval);
+
+    m_scrollInterpolations.append(ScrollInterpolation {
+        inputSource,
+        location,
+        totalDelta,
+        m_keyFrameStartTime,
+        duration,
+        stepInterval,
+        { },
+        m_keyFrameStartTime,
+        { },
+    });
+}
+
+void SimulatedInputDispatcher::scrollInterpolationTimerFired()
+{
+    auto now = MonotonicTime::now();
+    Vector<std::tuple<Ref<SimulatedInputSource>, WebCore::IntPoint, WebCore::IntSize>> steps;
+    for (auto& interpolation : borrow(m_scrollInterpolations)) {
+        auto elapsed = now - interpolation.startTime;
+        bool isFinalStep = elapsed >= interpolation.duration;
+        if (!isFinalStep && now - interpolation.lastDispatchTime < interpolation.stepInterval)
+            continue;
+
+        auto target = interpolation.totalDelta;
+        if (!isFinalStep) {
+            double ratio = elapsed / interpolation.duration;
+            target = { static_cast<int>(std::lround(ratio * interpolation.totalDelta.width())), static_cast<int>(std::lround(ratio * interpolation.totalDelta.height())) };
+        }
+
+        auto delta = target - interpolation.dispatchedDelta;
+        ASSERT(!isFinalStep || !delta.isZero());
+        if (delta.isZero() || (!isFinalStep && target == interpolation.totalDelta))
+            continue;
+
+        interpolation.dispatchedDelta = target;
+        interpolation.lastDispatchTime = now;
+
+        LOG(Automation, "SimulatedInputDispatcher[%p]: simulating interpolated Wheel by (%d, %d) for transition to %d.%d", this, delta.width(), delta.height(), m_keyframeIndex, m_inputSourceStateIndex);
+
+        steps.append({ interpolation.inputSource, interpolation.location, delta });
+    }
+
+    if (steps.isEmpty()) {
+        m_scrollInterpolationTimer.startOneShot(interpolationStepInterval);
+        return;
+    }
+
+    auto runCompletionCount = m_runCompletionCount;
+    for (size_t i = 0; i < steps.size() && runCompletionCount == m_runCompletionCount; ++i) {
+        auto [inputSource, location, delta] = steps[i];
+        enqueueWheelInteraction(location, delta, [this, protectedThis = Ref { *this }, runCompletionCount, inputSource = WTF::move(inputSource), delta, isLastStep = i == steps.size() - 1](std::optional<AutomationCommandError> error) {
+            if (runCompletionCount != m_runCompletionCount)
+                return;
+
+            if (error) {
+                failKeyFrameTransition(WTF::move(*error));
+                return;
+            }
+
+            auto index = m_scrollInterpolations.findIf([&](auto& interpolation) {
+                return interpolation.inputSource.ptr() == inputSource.ptr();
+            });
+            if (index != notFound)
+                m_scrollInterpolations[index].deliveredDelta += delta;
+
+            if (!isLastStep)
+                return;
+
+            m_scrollInterpolations.removeAllMatching([](auto& interpolation) {
+                return interpolation.deliveredDelta == interpolation.totalDelta;
+            });
+
+            if (!m_scrollInterpolations.isEmpty()) {
+                m_scrollInterpolationTimer.startOneShot(interpolationStepInterval);
+                return;
+            }
+
+            finishKeyFrameTransitionIfComplete();
+        });
+    }
+}
+
+void SimulatedInputDispatcher::enqueueWheelInteraction(const WebCore::IntPoint& location, const WebCore::IntSize& delta, AutomationCompletionHandler&& completionHandler)
+{
+    m_pendingWheelInteractions.append(PendingWheelInteraction { location, delta, WTF::move(completionHandler) });
+    dispatchNextWheelInteraction();
+}
+
+void SimulatedInputDispatcher::dispatchNextWheelInteraction()
+{
+    if (m_isDispatchingWheelInteraction || m_pendingWheelInteractions.isEmpty())
+        return;
+
+    m_isDispatchingWheelInteraction = true;
+
+    auto location = m_pendingWheelInteractions.first().location;
+    auto delta = m_pendingWheelInteractions.first().delta;
+    m_client.simulateWheelInteraction(protect(m_page), location, delta, [this, protectedThis = Ref { *this }, runCompletionCount = m_runCompletionCount](std::optional<AutomationCommandError> error) {
+        if (runCompletionCount != m_runCompletionCount)
+            return;
+
+        m_isDispatchingWheelInteraction = false;
+        auto completed = m_pendingWheelInteractions.takeFirst();
+        completed.completionHandler(error);
+        dispatchNextWheelInteraction();
+    });
+}
+#endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
 void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions options, AutomationCompletionHandler&& completionHandler)
 {
@@ -813,6 +957,10 @@ void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommand
     m_pointerMoveInterpolationTimer.stop();
     ASSERT(m_pointerMoveInterpolations.isEmpty());
 #endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    m_scrollInterpolationTimer.stop();
+    ASSERT(m_scrollInterpolations.isEmpty());
+#endif
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: finished all input simulation at [%u.%u]", this, m_keyframeIndex, m_inputSourceStateIndex);
 
@@ -832,6 +980,13 @@ void SimulatedInputDispatcher::finishDispatching(std::optional<AutomationCommand
     // It is unclear if this is desirable; see
     // https://github.com/w3c/webdriver/issues/1772 for ongoing discussion:
     m_client.clearDoubleClicks();
+#endif
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    m_isDispatchingWheelInteraction = false;
+    while (!m_pendingWheelInteractions.isEmpty()) {
+        auto pending = m_pendingWheelInteractions.takeFirst();
+        pending.completionHandler(AUTOMATION_COMMAND_ERROR_WITH_NAME(InternalError));
+    }
 #endif
     finish(error);
 }

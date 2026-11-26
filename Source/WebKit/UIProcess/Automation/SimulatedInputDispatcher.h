@@ -159,6 +159,8 @@ struct SimulatedInputRunOptions {
     NodeHandleKind elementOriginHandleKind { };
     // FIXME: Classic sends each scroll's own delta too, so it shouldn't diff consecutive states either. <https://webkit.org/b/332993>
     bool scrollDeltasArePerAction { false };
+    // FIXME: Classic should spread a scroll over its duration too. <https://webkit.org/b/333196>
+    bool interpolateScrolls { false };
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
@@ -246,6 +248,32 @@ private:
     void dispatchNextMouseInteraction();
 #endif
 
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    struct ScrollInterpolation {
+        Ref<SimulatedInputSource> inputSource;
+        WebCore::IntPoint location;
+        WebCore::IntSize totalDelta;
+        MonotonicTime startTime;
+        Seconds duration;
+        Seconds stepInterval;
+        WebCore::IntSize dispatchedDelta;
+        MonotonicTime lastDispatchTime;
+        WebCore::IntSize deliveredDelta;
+    };
+
+    void startScrollInterpolation(SimulatedInputSource&, const WebCore::IntPoint& location, const WebCore::IntSize& totalDelta, Seconds duration);
+    void scrollInterpolationTimerFired();
+
+    struct PendingWheelInteraction {
+        WebCore::IntPoint location;
+        WebCore::IntSize delta;
+        AutomationCompletionHandler completionHandler;
+    };
+
+    void enqueueWheelInteraction(const WebCore::IntPoint&, const WebCore::IntSize& delta, AutomationCompletionHandler&&);
+    void dispatchNextWheelInteraction();
+#endif
+
     WeakRef<WebPageProxy> m_page;
     SimulatedInputDispatcher::Client& m_client;
 
@@ -261,6 +289,13 @@ private:
     Vector<PointerMoveInterpolation> m_pointerMoveInterpolations;
     Deque<PendingMouseInteraction> m_pendingMouseInteractions;
     bool m_isDispatchingMouseInteraction { false };
+#endif
+
+#if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
+    RunLoop::Timer m_scrollInterpolationTimer;
+    Vector<ScrollInterpolation> m_scrollInterpolations;
+    Deque<PendingWheelInteraction> m_pendingWheelInteractions;
+    bool m_isDispatchingWheelInteraction { false };
 #endif
 
     Vector<SimulatedInputKeyFrame> m_keyframes;
