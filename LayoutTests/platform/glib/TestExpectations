@@ -606,6 +606,11 @@ fast/events/keyboardevent-modifier.html [ Pass ]
 # glcolorconvert's planar YUVA to YUVA shader does not apply the bit depth factor to alpha, so 10-bit alpha comes out 64 times too small.
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12679
 media/video-with-alpha-10bit.html [ Failure ]
+media/video-with-alpha-10bit-full-range.html [ Failure ]
+
+# Playback of a VP9 4:2:2 colour stream with a separate alpha stream times out.
+media/video-with-alpha-422.html [ Timeout ]
+media/video-with-alpha-422-10bit.html [ Timeout ]
 
 # MSE text track support for formats other than WebVTT
 media/media-source/media-source-mp4ttsimple.html [ Pass ]

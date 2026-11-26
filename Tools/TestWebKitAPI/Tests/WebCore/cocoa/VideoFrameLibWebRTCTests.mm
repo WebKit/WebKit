@@ -126,8 +126,8 @@ TEST(VideoFrameLibWebRTC, CopyI010)
     ASSERT_TRUE(frame);
 
     expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I420P10), VideoPixelFormat::I420P10, *buffer, chromaHeight420, 2, 0);
-    // Narrowed to 8 bits.
-    expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I420), VideoPixelFormat::I420, *buffer, chromaHeight420, 1, 2);
+    // 10-bit samples are not narrowed to 8 bits.
+    EXPECT_FALSE(copyToPlanarBuffer(*frame, VideoPixelFormat::I420).has_value());
 }
 
 TEST(VideoFrameLibWebRTC, CopyI422)

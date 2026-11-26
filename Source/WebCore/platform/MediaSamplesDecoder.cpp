@@ -249,10 +249,7 @@ static std::optional<VideoPixelFormat> outputFormat(const VideoFrame& frame, boo
     auto description = PlanarImageConverter::pixelFormatDescription(frame.pixelFormat());
     if (!description || description->alpha)
         return { };
-    // FIXME: output frames above 8 bits with alpha at their bit depth (webkit.org/b/331780).
-    if (hasAlpha)
-        return VideoPixelFormat::I420A;
-    return planarYUVVideoPixelFormat(description->subsampling, description->color.bitDepth, false);
+    return planarYUVVideoPixelFormat(description->subsampling, description->color.bitDepth, hasAlpha);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(hasAlpha);
@@ -805,7 +802,7 @@ void MediaSamplesDecoder::emitDecodedVideo(int64_t firstSequence, int64_t endSeq
         }
 
         Ref inputInfo = downcast<VideoInfo>(m_inputInfo);
-        auto pixelFormat = outputFormat(color, inputInfo->hasSeparateAlphaStream());
+        auto pixelFormat = outputFormat(color, inputInfo->hasSeparateAlphaStream() && m_alphaDecoder);
         auto byteSize = pixelFormat ? VideoFrame::planarBufferSize(size, *pixelFormat) : std::nullopt;
         if (!byteSize) {
             didFailDecoding();

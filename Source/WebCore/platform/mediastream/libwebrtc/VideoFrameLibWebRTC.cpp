@@ -138,7 +138,7 @@ static bool copyBufferPlanes(const Buffer& buffer, std::span<uint8_t> destinatio
         && copyBufferPlane(bufferPlane(buffer.DataV(), buffer.StrideV(), chromaWidth, chromaHeight, source.format), destination, borrowedLayouts[2], layout->format);
 }
 
-// Each buffer is copied in its own format; I010 can also be narrowed to I420.
+// A buffer already in the requested format is copied directly.
 bool VideoFrameLibWebRTC::copyToPlanarYUV(std::span<uint8_t> destination, VideoPixelFormat format)
 {
     switch (m_buffer->type()) {
@@ -147,7 +147,7 @@ bool VideoFrameLibWebRTC::copyToPlanarYUV(std::span<uint8_t> destination, VideoP
             return copyBufferPlanes(*m_buffer->GetI420(), destination, format);
         break;
     case webrtc::VideoFrameBuffer::Type::kI010:
-        if (format == VideoPixelFormat::I420P10 || format == VideoPixelFormat::I420)
+        if (format == VideoPixelFormat::I420P10)
             return copyBufferPlanes(*m_buffer->GetI010(), destination, format);
         break;
     case webrtc::VideoFrameBuffer::Type::kI422:

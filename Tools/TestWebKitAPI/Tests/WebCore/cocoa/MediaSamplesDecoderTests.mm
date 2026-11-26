@@ -43,6 +43,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SourceBufferParser.h>
 #import <WebCore/TrackInfo.h>
+#import <WebCore/VideoFrame.h>
 #import <WebCore/VideoPixelFormat.h>
 #if ENABLE(VP9)
 #import <WebCore/VP9UtilitiesCocoa.h>
@@ -863,13 +864,19 @@ static DecodedVideo decodeVideoBlocks(MediaSamplesDecoder& decoder, Vector<Uniqu
 
 static constexpr auto vp8ContentType = "video/webm; codecs=vp8"_s;
 
-// The I420A alpha plane follows the Y, U and V planes.
-static uint8_t alphaAt(const Vector<uint8_t>& frame, const FloatSize& size, size_t x, size_t y)
+// The alpha plane follows the Y, U and V planes. Alpha above 8 bits is scaled to 8 bits.
+static uint8_t alphaAt(const Vector<uint8_t>& frame, const FloatSize& size, size_t x, size_t y, VideoPixelFormat format = VideoPixelFormat::I420A)
 {
-    size_t width = size.width();
-    size_t height = size.height();
-    size_t alphaOffset = width * height + 2 * ((width + 1) / 2) * ((height + 1) / 2);
-    return frame[alphaOffset + y * width + x];
+    auto layout = planarYUVFormatLayout(pixelFormatWithoutAlpha(format));
+    auto layouts = VideoFrame::planarBufferLayout({ static_cast<int>(size.width()), static_cast<int>(size.height()) }, format);
+    if (!layout || layouts.size() != 4) {
+        ADD_FAILURE() << "no alpha plane";
+        return 0;
+    }
+    size_t index = layouts[3].destinationOffset + y * layouts[3].destinationStride + x * layout->format.sampleSize();
+    if (layout->format.sampleSize() == 1)
+        return frame[index];
+    return (frame[index] | (frame[index + 1] << 8)) >> (layout->format.bitDepth - 8);
 }
 
 static size_t i420AFrameSize(const FloatSize& size)
@@ -1929,7 +1936,7 @@ struct ExpectedAlpha {
     uint8_t alpha;
 };
 
-static void testDecodeAlpha(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, FloatSize expectedSize, std::initializer_list<ExpectedAlpha> expectedAlphas)
+static void testDecodeAlpha(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, FloatSize expectedSize, std::initializer_list<ExpectedAlpha> expectedAlphas, VideoPixelFormat expectedFormat = VideoPixelFormat::I420A)
 {
     ASSERT_FALSE(blocks.isEmpty());
     RefPtr inputInfo = dynamicDowncast<VideoInfo>(blocks[0]->info());
@@ -1941,22 +1948,24 @@ static void testDecodeAlpha(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, Float
     auto decoded = decodeVideoBlocks(decoder, blocks);
     RefPtr info = dynamicDowncast<VideoInfo>(decoded.outputInfo);
     ASSERT_TRUE(info);
-    EXPECT_EQ(info->pixelFormat(), VideoPixelFormat::I420A);
+    EXPECT_EQ(info->pixelFormat(), expectedFormat);
     EXPECT_EQ(info->size(), expectedSize);
 
+    auto frameSize = VideoFrame::planarBufferSize({ static_cast<int>(expectedSize.width()), static_cast<int>(expectedSize.height()) }, expectedFormat);
+    ASSERT_TRUE(frameSize);
     ASSERT_EQ(decoded.frames.size(), decoded.inputPresentationTimes.size());
     for (auto& frame : decoded.frames)
-        EXPECT_EQ(frame.size(), i420AFrameSize(info->size()));
+        EXPECT_EQ(frame.size(), *frameSize);
 
     auto& frame = decoded.frames.last();
     for (auto [x, y, alpha] : expectedAlphas)
-        EXPECT_NEAR(alphaAt(frame, info->size(), x, y), alpha, 3) << "at " << x << "," << y;
+        EXPECT_NEAR(alphaAt(frame, info->size(), x, y, expectedFormat), alpha, 3) << "at " << x << "," << y;
 }
 
 // The video is one colour in four vertical stripes at 0, 10%, 50% and 100% opacity.
-static void testDecodeAlphaStripes(Vector<UniqueRef<MediaSamplesBlock>>&& blocks)
+static void testDecodeAlphaStripes(Vector<UniqueRef<MediaSamplesBlock>>&& blocks, VideoPixelFormat expectedFormat = VideoPixelFormat::I420A)
 {
-    testDecodeAlpha(WTF::move(blocks), FloatSize(200, 200), { { 25, 100, 0 }, { 75, 100, 26 }, { 125, 100, 128 }, { 175, 100, 255 } });
+    testDecodeAlpha(WTF::move(blocks), FloatSize(200, 200), { { 25, 100, 0 }, { 75, 100, 26 }, { 125, 100, 128 }, { 175, 100, 255 } }, expectedFormat);
 }
 
 TEST(MediaSamplesDecoder, DecodeVP8WithAlpha)
@@ -2016,7 +2025,6 @@ TEST(MediaSamplesDecoder, DecodeVP9WithAlphaFullRange)
     testDecodeAlphaStripes(WTF::move(blocks));
 }
 
-// The 10-bit colour stream is output as 8-bit I420A.
 TEST(MediaSamplesDecoder, DecodeVP9Profile2WithAlpha)
 {
     if (!isVPXDecodingAvailable())
@@ -2024,7 +2032,37 @@ TEST(MediaSamplesDecoder, DecodeVP9Profile2WithAlpha)
 
     auto blocks = parseWebMVP9File(@"video-with-alpha-10bit");
     ScopedVP9HardwareDecoder noHardwareDecoder { false };
-    testDecodeAlphaStripes(WTF::move(blocks));
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I420AP10);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile2WithAlphaFullRange)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-10bit-full-range");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I420AP10);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile1WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-422");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I422A);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile3WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-422-10bit");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I422AP10);
 }
 
 // Colour keyframes are at 0s, 1s and 2s, alpha keyframes only at 0s and 1.5s. The video is transparent on the left
