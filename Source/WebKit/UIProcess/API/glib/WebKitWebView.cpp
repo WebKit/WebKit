@@ -1380,6 +1380,10 @@ static void webkitWebViewDispose(GObject* object)
     webView->priv->view->close();
 #endif
 
+    // The main resource retains a WebFrameProxy, keeping its FrameProcess alive.
+    // Release it during dispose rather than waiting for finalize.
+    webView->priv->mainResource = nullptr;
+
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 
