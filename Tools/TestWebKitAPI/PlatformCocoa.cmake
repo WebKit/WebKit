@@ -453,8 +453,6 @@ if (WEBKIT_PLATFORM_MAC)
     )
 else ()
     list(APPEND TestWebKit_SOURCES
-        Helpers/cocoa/TestContextMenuDriver.mm
-
         Helpers/ios/DragAndDropSimulatorIOS.mm
         Helpers/ios/PreferredContentMode.mm
         Helpers/ios/TestUIMenuBuilder.mm
@@ -771,6 +769,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/StdLibExtras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SwiftUI+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestCocoaImageUtilities.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestContextMenuDriver.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestPDFDocument.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebExtensionUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+Extras.swift
@@ -867,6 +866,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/TimeZoneOverride.swift
     Tests/WebKit/WKWebView/ViewportFitEdges.swift
     Tests/WebKit/WKWebView/WKBackForwardListTests.swift
+    Tests/WebKit/WKWebView/WKContentViewSelectorContractTests.swift
     Tests/WebKit/WKWebView/WKWebExtension.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAction.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.swift

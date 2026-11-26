@@ -516,23 +516,6 @@ typedef enum {
 @end
 #endif
 
-typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
-    _UIClickInteractionEventBegan = 0,
-    _UIClickInteractionEventClickedDown,
-    _UIClickInteractionEventClickedUp,
-    _UIClickInteractionEventEnded,
-};
-
-typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
-    _UIClickInteractionShouldBeginResultBegin
-};
-
-@protocol _UIClickInteractionDriving;
-@protocol _UIClickInteractionDriverDelegate <NSObject>
-- (void)clickDriver:(id<_UIClickInteractionDriving>)driver shouldBegin:(void(^)(_UIClickInteractionShouldBeginResult))completion;
-- (void)clickDriver:(id<_UIClickInteractionDriving>)driver didPerformEvent:(_UIClickInteractionEvent)event;
-@end
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
