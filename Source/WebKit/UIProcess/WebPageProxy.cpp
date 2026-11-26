@@ -2246,6 +2246,9 @@ void WebPageProxy::close()
 
     stopAllURLSchemeTasks();
 
+    if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->cancelPreconnectTasks(sessionID(), identifier());
+
 #if ENABLE(GAMEPAD)
     m_internals->recentGamepadAccessHysteresis.cancel();
 #endif
@@ -2932,6 +2935,9 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
 void WebPageProxy::stopLoading()
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "stopLoading:");
+
+    if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->cancelPreconnectTasks(sessionID(), identifier());
 
     if (!hasRunningProcess()) {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "stopLoading: page is not valid");
@@ -7393,7 +7399,12 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     // Defer shutting down old process as it might lead WebPageProxy to be closed and removeWebPage to be invoked again.
     auto preventProcessShutdownScope = protect(legacyMainFrameProcess())->shutdownPreventingScope();
-    protect(legacyMainFrameProcess())->removeWebPage(*this, &websiteDataStore() == provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
+    bool endsUsingDataStore = &websiteDataStore() != provisionalPage->process().websiteDataStore();
+    if (endsUsingDataStore) {
+        if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+            networkProcess->cancelPreconnectTasks(sessionID(), identifier());
+    }
+    protect(legacyMainFrameProcess())->removeWebPage(*this, endsUsingDataStore ? WebProcessProxy::EndsUsingDataStore::Yes : WebProcessProxy::EndsUsingDataStore::No);
 
     if (RefPtr mainFrameWebsitePolicies = provisionalPage->mainFrameWebsitePolicies())
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
@@ -9893,6 +9904,9 @@ void WebPageProxy::updateOpener(IPC::Connection& connection, WebCore::FrameIdent
 
 void WebPageProxy::preconnectTo(ResourceRequest&& request, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
+    if (m_isClosed)
+        return;
+
     Ref websiteDataStore = this->websiteDataStore();
     if (!websiteDataStore->configuration().allowsServerPreconnect())
         return;

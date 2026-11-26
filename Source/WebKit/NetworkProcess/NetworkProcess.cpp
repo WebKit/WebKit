@@ -2001,7 +2001,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     protect(session->networkLoadScheduler())->startedPreconnectForMainResource(url, userAgent);
     Ref task = PreconnectTask::create(*session, WTF::move(parameters));
     task->start([weakSession = WeakPtr { *session }, url, userAgent, parametersForAdditionalPreconnect = WTF::move(parametersForAdditionalPreconnect)](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) mutable {
-        if (CheckedPtr session = weakSession.get()) {
+        if (CheckedPtr session = weakSession; session && !session->isInvalidated()) {
             protect(session->networkLoadScheduler())->finishedPreconnectForMainResource(url, userAgent, error);
 #if ENABLE(ADDITIONAL_PRECONNECT_ON_HTTP_1X)
             if (equalLettersIgnoringASCIICase(metrics.protocol, "http/1.1"_s)) {
@@ -2017,6 +2017,17 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     UNUSED_PARAM(userAgent);
     UNUSED_PARAM(storedCredentialsPolicy);
     UNUSED_PARAM(advancedPrivacyProtections);
+#endif
+}
+
+void NetworkProcess::cancelPreconnectTasks(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    if (CheckedPtr session = networkSession(sessionID))
+        session->cancelPreconnectTasksForPage(webPageProxyID);
+#else
+    UNUSED_PARAM(sessionID);
+    UNUSED_PARAM(webPageProxyID);
 #endif
 }
 
@@ -2926,6 +2937,20 @@ void NetworkProcess::loadersAwaitingWebProcessTransferCountForTesting(PAL::Sessi
     completionHandler(session->loadersAwaitingWebProcessTransferCount());
 }
 
+void NetworkProcess::activePreconnectTaskCountForTesting(PAL::SessionID sessionID, CompletionHandler<void(uint64_t)>&& completionHandler) const
+{
+#if ENABLE(SERVER_PRECONNECT)
+    CheckedPtr session = networkSession(sessionID);
+    if (!session)
+        return completionHandler(0);
+
+    completionHandler(session->activePreconnectTaskCountForTesting());
+#else
+    UNUSED_PARAM(sessionID);
+    completionHandler(0);
+#endif
+}
+
 void NetworkProcess::isStorageSuspendedForTesting(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
 {
     CheckedPtr session = networkSession(sessionID);
@@ -3751,6 +3776,9 @@ void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, We
         return;
 
     session->removeWebPageNetworkParameters(pageID);
+#if ENABLE(SERVER_PRECONNECT)
+    session->cancelPreconnectTasksForPage(pageID);
+#endif
     session->storageManager().clearStorageForWebPage(pageID);
 
     if (RefPtr resourceLoadStatistics = session->resourceLoadStatistics()) {

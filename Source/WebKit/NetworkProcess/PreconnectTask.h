@@ -28,7 +28,9 @@
 #if ENABLE(SERVER_PRECONNECT)
 
 #include "NetworkLoadClient.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/Timer.h>
+#include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
@@ -52,10 +54,14 @@ public:
 
     void setH2PingCallback(const URL&, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void start(CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&& = { }, Seconds timeout = 60_s);
+    void cancel();
+    NODELETE std::optional<WebPageProxyIdentifier> webPageProxyID() const;
 
 private:
     PreconnectTask(NetworkSession&, NetworkLoadParameters&&);
 
+    void cancel(const WebCore::ResourceError&);
+    void finish(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
     void didTimeout();
 
     // NetworkLoadClient.
@@ -68,6 +74,7 @@ private:
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
 
+    const WeakPtr<NetworkSession> m_networkSession;
     const Ref<NetworkLoad> m_networkLoad;
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)> m_completionHandler;
     const std::unique_ptr<WebCore::Timer> m_timeoutTimer;

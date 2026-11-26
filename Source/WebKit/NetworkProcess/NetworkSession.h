@@ -91,6 +91,7 @@ class NetworkResourceLoader;
 struct NetworkResourceLoadParameters;
 class NetworkSocketChannel;
 class NetworkStorageManager;
+class PreconnectTask;
 class ServiceWorkerFetchTask;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
@@ -202,6 +203,13 @@ public:
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
+
+#if ENABLE(SERVER_PRECONNECT)
+    void registerPreconnectTask(PreconnectTask&);
+    void unregisterPreconnectTask(PreconnectTask&);
+    void cancelPreconnectTasksForPage(WebPageProxyIdentifier);
+    size_t activePreconnectTaskCountForTesting() const;
+#endif
 
     void addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&&);
     void setParkedLoaderDestinationAndResolvePendingClaims(NetworkResourceLoadIdentifier, WebCore::ProcessIdentifier destinationWebProcess);
@@ -401,6 +409,9 @@ protected:
     bool m_isRunningEphemeralMeasurementTest { false };
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
+#if ENABLE(SERVER_PRECONNECT)
+    HashSet<Ref<PreconnectTask>> m_preconnectTasks;
+#endif
 
     class CachedNetworkResourceLoader : public RefCountedAndCanMakeWeakPtr<CachedNetworkResourceLoader> {
         WTF_MAKE_TZONE_ALLOCATED(CachedNetworkResourceLoader);

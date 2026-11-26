@@ -43,6 +43,7 @@
 #include "NetworkSessionCreationParameters.h"
 #include "NetworkStorageManager.h"
 #include "NotificationManagerMessageHandlerMessages.h"
+#include "PreconnectTask.h"
 #include "PrivateClickMeasurementClientImpl.h"
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
@@ -331,6 +332,11 @@ NetworkSession::~NetworkSession()
     destroyResourceLoadStatistics([] { });
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
+    m_isInvalidated = true;
+#if ENABLE(SERVER_PRECONNECT)
+    for (auto& task : std::exchange(m_preconnectTasks, { }))
+        task->cancel();
+#endif
 }
 
 void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
@@ -409,7 +415,12 @@ void NetworkSession::invalidateAndCancel()
     });
     if (auto* resourceLoadStatistics = m_resourceLoadStatistics.get())
         resourceLoadStatistics->invalidateAndCancel();
+
     m_isInvalidated = true;
+#if ENABLE(SERVER_PRECONNECT)
+    for (auto& task : std::exchange(m_preconnectTasks, { }))
+        task->cancel();
+#endif
 
     if (m_cache) {
         auto networkCacheDirectory = m_cache->storageDirectory();
@@ -786,6 +797,34 @@ void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
     ASSERT(m_keptAliveLoads.contains(loader));
     m_keptAliveLoads.remove(loader);
 }
+
+#if ENABLE(SERVER_PRECONNECT)
+void NetworkSession::registerPreconnectTask(PreconnectTask& task)
+{
+    m_preconnectTasks.add(task);
+}
+
+void NetworkSession::unregisterPreconnectTask(PreconnectTask& task)
+{
+    m_preconnectTasks.remove(task);
+}
+
+void NetworkSession::cancelPreconnectTasksForPage(WebPageProxyIdentifier pageID)
+{
+    Vector<Ref<PreconnectTask>> tasksToCancel;
+    for (auto& task : m_preconnectTasks) {
+        if (task->webPageProxyID() == pageID)
+            tasksToCancel.append(task.copyRef());
+    }
+    for (auto& task : borrow(tasksToCancel))
+        task->cancel();
+}
+
+size_t NetworkSession::activePreconnectTaskCountForTesting() const
+{
+    return m_preconnectTasks.size();
+}
+#endif
 
 Ref<NetworkSession::CachedNetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::create(Ref<NetworkResourceLoader>&& loader)
 {

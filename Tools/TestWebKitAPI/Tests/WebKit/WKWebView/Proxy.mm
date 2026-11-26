@@ -33,13 +33,16 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/Utilities.h"
 #import <WebKit/WKHTTPCookieStorePrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/MakeString.h>
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
@@ -840,6 +843,127 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
     };
     runTest(true);
     runTest(false);
+}
+
+static RetainPtr<nw_proxy_config_t> httpConnectProxyConfiguration(const HTTPServer& proxy)
+{
+    RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxy.port()).c_str()));
+    return adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+}
+
+static uint64_t activePreconnectTaskCount(WKWebsiteDataStore *dataStore)
+{
+    __block uint64_t count = 0;
+    __block bool done = false;
+    [dataStore _activePreconnectTaskCountForTesting:^(NSUInteger result) {
+        count = result;
+        done = true;
+    }];
+    Util::run(&done);
+    return count;
+}
+
+// Reads the CONNECT request and then never answers it, so the client's connection stays in the
+// proxy handshake until the client gives up on it.
+static ConnectionTask holdHTTPConnectOpen(Connection connection, bool& receivedConnect, size_t& openConnections)
+{
+    ++openConnections;
+    auto decrement = makeScopeExit([&] {
+        --openConnections;
+    });
+    if (!co_await receiveHTTPRequestUnlessClosed(connection))
+        co_return;
+    receivedConnect = true;
+    while (true) {
+        auto bytes = co_await connection.awaitableReceiveBytes();
+        if (bytes.isEmpty())
+            co_return;
+    }
+}
+
+static HTTPServer httpConnectProxyThatNeverResponds(bool& receivedConnect, size_t& openConnections)
+{
+    return HTTPServer(HTTPServer::UseCoroutines::Yes, [&receivedConnect, &openConnections](Connection connection) {
+        return holdHTTPConnectOpen(connection, receivedConnect, openConnections);
+    });
+}
+
+TEST(WebKit, ProxyPreconnectCancelledOnWebViewDeallocation)
+{
+    bool receivedConnect = false;
+    size_t openConnections = 0;
+    auto proxy = httpConnectProxyThatNeverResponds(receivedConnect, openConnections);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ httpConnectProxyConfiguration(proxy).get() ];
+
+    WeakObjCPtr<WKWebView> weakWebView;
+    @autoreleasepool {
+        RetainPtr webView = webViewWithDataStore(dataStore.get());
+        weakWebView = webView.get();
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+        Util::run(&receivedConnect);
+        EXPECT_GE(activePreconnectTaskCount(dataStore.get()), 1u);
+    }
+    while (weakWebView)
+        Util::spinRunLoop();
+
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    EXPECT_EQ(activePreconnectTaskCount(dataStore.get()), 0u);
+    while (openConnections)
+        Util::spinRunLoop();
+    proxy.cancel();
+}
+
+TEST(WebKit, ProxyPreconnectCancelledOnStopLoading)
+{
+    bool receivedConnect = false;
+    size_t openConnections = 0;
+    auto proxy = httpConnectProxyThatNeverResponds(receivedConnect, openConnections);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ httpConnectProxyConfiguration(proxy).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    Util::run(&receivedConnect);
+    EXPECT_GE(activePreconnectTaskCount(dataStore.get()), 1u);
+
+    [webView stopLoading];
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    EXPECT_EQ(activePreconnectTaskCount(dataStore.get()), 0u);
+    while (openConnections)
+        Util::spinRunLoop();
+    proxy.cancel();
+}
+
+TEST(WebKit, ProxyPreconnectCancelledOnClose)
+{
+    bool receivedConnect = false;
+    size_t openConnections = 0;
+    auto proxy = httpConnectProxyThatNeverResponds(receivedConnect, openConnections);
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    dataStore.get().proxyConfigurations = @[ httpConnectProxyConfiguration(proxy).get() ];
+    RetainPtr webView = webViewWithDataStore(dataStore.get());
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    Util::run(&receivedConnect);
+    EXPECT_GE(activePreconnectTaskCount(dataStore.get()), 1u);
+
+    // The view stays alive, so closing the page is the only thing that can cancel the preconnect.
+    [webView _close];
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    EXPECT_EQ(activePreconnectTaskCount(dataStore.get()), 0u);
+
+    // A closed page has nothing left to cancel a preconnect, so it must not start one.
+    [webView _preconnectToServer:[NSURL URLWithString:@"https://example.com/"]];
+    waitForNetworkProcessToHandleEarlierMessages(dataStore.get());
+    EXPECT_EQ(activePreconnectTaskCount(dataStore.get()), 0u);
+
+    while (openConnections)
+        Util::spinRunLoop();
+    proxy.cancel();
 }
 
 } // namespace TestWebKitAPI
