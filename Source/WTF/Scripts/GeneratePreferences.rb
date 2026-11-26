@@ -68,8 +68,8 @@ KEYS = %w{
   category comment condition defaultValue defaultsOverridable disableInLockdownMode
   excludeFrom getter hidden humanReadableDescription humanReadableName
   inspectorOverride jscOptionName mediaPlaybackRelated refinedType richJavaScript
-  sharedPreferenceForWebProcess status type webKitLegacyBinding webKitLegacyExposed
-  webKitLegacyPreferenceKey webcoreDeprecatedGlobalSettings
+  securityOverridableValues sharedPreferenceForWebProcess status type webKitLegacyBinding
+  webKitLegacyExposed webKitLegacyPreferenceKey webcoreDeprecatedGlobalSettings
   webcoreExcludeFromInternalSettings webcoreGetter webcoreImplementation webcoreName
   webcoreOnChange
 }
@@ -99,6 +99,22 @@ def validate(path, parsed)
   parsed.each do |name, opts|
     (opts.keys - KEYS).each { |key| reject.call name, "\"#{key}\" is not a known key." }
     reject.call name, "\"webcoreDeprecatedGlobalSettings\" is only ever true, so leave it out instead." if opts.key?("webcoreDeprecatedGlobalSettings") && opts["webcoreDeprecatedGlobalSettings"] != true
+
+    if opts.key?("securityOverridableValues")
+      allowed = opts["securityOverridableValues"]
+      valid = case opts["type"]
+        when "bool" then ->(v) { [true, false].include?(v) }
+        when "uint32_t" then ->(v) { v.is_a?(Integer) && v >= 0 && v <= 0xFFFFFFFF }
+        when "double" then ->(v) { v.is_a?(Numeric) }
+        when "String" then ->(v) { v.is_a?(String) }
+        else nil
+      end
+      if valid.nil?
+        reject.call name, "\"securityOverridableValues\" is not supported for type #{opts["type"]}."
+      elsif !allowed.is_a?(Array) || allowed.empty? || !allowed.all?(&valid) || allowed.uniq.size != allowed.size
+        reject.call name, "\"securityOverridableValues\" must be a non-empty list of distinct #{opts["type"]} values."
+      end
+    end
 
     excluded = opts["excludeFrom"]
     if excluded
@@ -188,6 +204,7 @@ class Preference
   attr_accessor :status
   attr_accessor :category
   attr_accessor :defaultsOverridable
+  attr_accessor :securityOverridableValues
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
   attr_accessor :webcoreDeprecatedGlobalSettings
@@ -209,6 +226,7 @@ class Preference
     @status = opts["status"]
     @category = opts["category"] || "none"
     @defaultsOverridable = opts["defaultsOverridable"] || false
+    @securityOverridableValues = opts["securityOverridableValues"]
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
         @humanReadableName = '"' + humanReadableName + '"'
@@ -338,6 +356,24 @@ class Preference
 
   def defaultsOverridable?
     @defaultsOverridable
+  end
+
+  # The SecurityOverrides mechanism may only override this preference, and only
+  # to one of these values. Absent unless a preference opts in.
+  def securityOverridable?
+    !@securityOverridableValues.nil?
+  end
+
+  # The allowed values as C++ expressions of the preference's type.
+  def securityOverridableValuesCpp
+    @securityOverridableValues.map do |v|
+      case @type
+      when "String" then "String(#{v.to_s.inspect}_s)"
+      when "uint32_t" then "uint32_t(#{v})"
+      when "double" then "double(#{v.to_f})"
+      else v.to_s
+      end
+    end.join(", ")
   end
 
   # FIXME: These names correspond to the "experimental features" and "internal

@@ -46,6 +46,7 @@
 #include "FrameInfoData.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxy.h"
+#include "GlobalPreferenceOverridesController.h"
 #include "ITPThirdPartyData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadedWebArchive.h"
@@ -259,6 +260,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->beginResponsivenessChecks();
     });
+
+#if HAVE(SECURITY_OVERRIDES)
+    m_isSecurityOverridesEnabled = parameters.enableSecurityOverrides;
+#endif
 }
 
 static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
@@ -2339,6 +2344,23 @@ void NetworkProcessProxy::receivedQualifiedServerTrust(WebKit::WebPageProxyIdent
     if (RefPtr page = WebPageProxy::fromIdentifier(webPageID))
         page->receivedQualifiedServerTrust(WTF::move(serverTrust), WTF::move(qualifiedServerTrust));
 }
+
+#if HAVE(SECURITY_OVERRIDES) && defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+void NetworkProcessProxy::setSecurityOverridesForTesting(std::optional<HashMap<String, String>>&& overrides, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetSecurityOverridesForTesting { WTF::move(overrides) }, WTF::move(completionHandler));
+}
+#endif
+
+#if HAVE(SECURITY_OVERRIDES)
+void NetworkProcessProxy::setSecurityOverrides(HashMap<String, String>&& overrides)
+{
+    // Only a network process launched to observe the overrides may deliver them.
+    MESSAGE_CHECK(m_isSecurityOverridesEnabled);
+
+    GlobalPreferenceOverridesController::singleton().setOverrides(overrides);
+}
+#endif
 
 } // namespace WebKit
 
