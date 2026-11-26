@@ -137,9 +137,9 @@ Property MathMLOperatorElement::computeDictionaryProperty()
     else {
         // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).
         explicitForm = false;
-        if (!previousSibling() && nextSibling())
+        if (!previousElementSibling() && nextElementSibling())
             dictionaryProperty.form = Form::Prefix;
-        else if (previousSibling() && !nextSibling())
+        else if (previousElementSibling() && !nextElementSibling())
             dictionaryProperty.form = Form::Postfix;
         else
             dictionaryProperty.form = Form::Infix;

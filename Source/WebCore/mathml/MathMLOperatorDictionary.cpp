@@ -99,7 +99,7 @@ static constexpr std::array<Entry, dictionarySize> dictionary {
     Entry { 0x5F, Postfix, 0, 0, Accent | Stretchy }, // LOW LINE
     Entry { 0x60, Postfix, 0, 0, Accent }, // GRAVE ACCENT
     Entry { 0x7B, Prefix, 0, 0, Symmetric | Fence | Stretchy }, // LEFT CURLY BRACKET
-    Entry { 0x7C, Infix, 2, 2, Stretchy | Symmetric | Fence }, // VERTICAL LINE
+    Entry { 0x7C, Infix, 5, 5, Fence }, // VERTICAL LINE
     Entry { 0x7C, Prefix, 0, 0, Symmetric | Fence | Stretchy }, // VERTICAL LINE
     Entry { 0x7C, Postfix, 0, 0, Symmetric | Fence | Stretchy }, // VERTICAL LINE
     Entry { 0x7D, Postfix, 0, 0, Symmetric | Fence | Stretchy }, // RIGHT CURLY BRACKET
