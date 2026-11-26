@@ -5,6 +5,7 @@ import sys
 from typing import Any, Callable, Optional, Sequence
 
 from .analyze import analyze
+from .boot import analyze_boot
 from .dump import dump
 from .histogram import delta_histogram
 from .summary import summary
@@ -181,6 +182,33 @@ def build_parser() -> argparse.ArgumentParser:
         "--explain",
         action="store_true",
         help="Explain the terms the timeline uses, after it",
+    )
+
+    boot_parser = _add_subcommand(
+        subparsers,
+        "analyze-boot",
+        "Find the boot milestones of a WPE application and time the phases"
+        " between them",
+        analyze_boot,
+    )
+    boot_parser.add_argument(
+        "capture_file", metavar="CAPTURE_FILE", help="Path to a .capture file"
+    )
+    boot_parser.add_argument(
+        "-f",
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Type of report to be printed to STDOUT",
+    )
+    boot_parser.add_argument(
+        "--user-defined-milestones",
+        type=str,
+        default=None,
+        metavar="MARK:MESSAGE[,MARK:MESSAGE...]",
+        help="Also report the time from t0 of the first mark of each name whose"
+        " message is exactly the given one, e.g."
+        ' "WebKitPerformanceMark:app-ready". These are no phase boundaries',
     )
 
     histogram_parser = _add_subcommand(

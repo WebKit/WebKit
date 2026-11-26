@@ -47,13 +47,20 @@ _MOUNTINFO_PATH_RE = re.compile(r"^/proc/(\d+)/mountinfo(\.gz)?$")
 
 
 def parse(
-    file_path: str, marks: bool, counters: bool, stacktraces: bool = False
+    file_path: str,
+    marks: bool,
+    counters: bool,
+    stacktraces: bool = False,
+    processes: bool = False,
 ) -> Dict[str, Any]:
-    assert marks or counters or stacktraces
+    """Stack traces bring the processes along, as their stacks are named by them."""
+    assert marks or counters or stacktraces or processes
 
     with open(file_path, "rb") as fileobj:
         with mmap.mmap(fileobj.fileno(), 0, access=mmap.ACCESS_READ) as data:
-            return _parse_capture(data, file_path, marks, counters, stacktraces)
+            return _parse_capture(
+                data, file_path, marks, counters, stacktraces, processes
+            )
 
 
 def _parse_capture(
@@ -62,6 +69,7 @@ def _parse_capture(
     marks: bool,
     counters: bool,
     stacktraces: bool = False,
+    processes: bool = False,
 ) -> Dict[str, Any]:
     logging.info("Parsing .syscap file...")
     magic, version_bits = struct.unpack_from("<II", data, 0)
@@ -82,7 +90,7 @@ def _parse_capture(
     counter_order: List[int] = []
     parsed_stacktraces: List[Dict[str, Any]] = []
     maps_by_pid: Dict[int, List[Dict[str, Any]]] = {}
-    processes: Dict[int, str] = {}
+    parsed_processes: Dict[int, str] = {}
     bundled_chunks: Dict[str, List[bytes]] = {}
     completed_bundled_chunks: set = set()
 
@@ -107,8 +115,8 @@ def _parse_capture(
             parsed_stacktraces.append(_parse_sample(data, offset, length, time))
         elif frame_type == _FRAME_MAP and stacktraces:
             _parse_map(data, offset, length, maps_by_pid)
-        elif frame_type == _FRAME_PROCESS and stacktraces:
-            _parse_process(data, offset, length, processes)
+        elif frame_type == _FRAME_PROCESS and (stacktraces or processes):
+            _parse_process(data, offset, length, parsed_processes)
         elif frame_type == _FRAME_FILE_CHUNK and stacktraces:
             _accumulate_bundled_file_chunk(
                 data, offset, length, bundled_chunks, completed_bundled_chunks
@@ -142,7 +150,7 @@ def _parse_capture(
         "counters": parsed_counters,
         "stacktraces": parsed_stacktraces,
         "maps": maps_by_pid,
-        "processes": processes,
+        "processes": parsed_processes,
         "symbols": bundled_symbols_by_pid,
         "kernel_symbols": kernel_symbols,
         "host_mount_devices": host_mount_devices,

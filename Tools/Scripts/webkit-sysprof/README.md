@@ -338,6 +338,91 @@ whatever part of a truncated one did not fit in its bar. Several activities aggr
 more than one mark, so that list is what says exactly what a color covers. It also
 makes clear that `idle` is the absence of any mark rather than a mark of its own.
 
+### `analyze-boot`
+
+Find the boot milestones of a WPE application from WebKit's marks and time the phases
+between them. Only the marks and the process records are read, not the stack samples.
+
+The report starts with the WebKit processes and their pids: those that emitted WebKit marks,
+named by their mark group (`WebKit (UI)` is `UI`), and those named like a WPE
+auxiliary process (`WPEWebProcess`, `WPENetworkProcess`, `WPEGPUProcess`), which may
+emit no marks. The boot web process is marked `boot`.
+
+```
+webkit-sysprof analyze-boot CAPTURE_FILE [-f text|json]
+                            [--user-defined-milestones MARK:MESSAGE[,MARK:MESSAGE...]]
+```
+
+Each milestone comes from one specific mark, or a fixed rule over marks, with no
+thresholds. Times are given from the 1st mark: the UI process's
+`InitJITPageReservation`, or the first `ProcessLaunch` without it, never the capture
+start, which depends on when the recording began.
+
+| # | Milestone | Rule |
+|---|---|---|
+| M0 | WebKit starts in the app | UI process `InitJITPageReservation` |
+| M1 | Web process alive | Begin of `ProcessInitialize` |
+| M2 | Web process initialized | End of `InitializeWebProcess` |
+| M3 | Navigation starts | Begin of the first `MainResourceLoad` after M2 |
+| M4 | Main document loading | `NavigationAndPaintTiming` `Loading <url> \| isMainFrame: 1`, the first one not of `about:blank` |
+| M5 | HTML parsed | End of the last `ParseHTML` before M6 |
+| M6 | DOM interactive | `domInteractive` |
+| M7 | First contentful paint | `firstContentfulPaint` |
+| M8 | First contentful paint on screen | First `WaylandFramePresented` after the document's first `DidRenderFrame` after M7 |
+| M9 | Module graph evaluation begins | Begin of the document's first `ExecuteScriptElement` `executing module script` |
+| M10 | Module graph evaluation ends | End of the document's last module script ending by M11 |
+| M11 | DOMContentLoaded | `domContentLoadedEventEnd` |
+| M12 | Load event done | `loadEventEnd` |
+
+The boot web process is the one holding M4. `NavigationAndPaintTiming` marks name no
+document, so the document milestones are the ones that process emits after M4, up to
+its next main-frame `Loading` mark. The phases are the intervals between consecutive
+milestones found, in time order, so they add up to the boot. The milestones table lists
+the milestones in that order, each with the time from the previous one (the phase it
+ends) and that phase's share of the boot. The missing milestones come last. The report
+warns about ambiguous loads, document milestones repeated by iframes, milestones out of
+order, and a missing `loadEventEnd`.
+
+`--user-defined-milestones` also reports, for each `MARK:MESSAGE` pair, the time from
+the 1st mark of the first mark of that name whose message is exactly `MESSAGE`, e.g. a
+User Timing mark, and the time from the previous one. They are listed in time order,
+whatever order they are given in. These are no phase boundaries. A pair not found shows
+`-` and comes last, and one before the 1st mark or after the capture ends is warned
+about. A pair given twice is reported once.
+
+`-f json` prints the same three sections as one JSON object. `processes` is a list of
+`{"pid", "name", "role"}`. `milestones` is keyed by the milestone's title and
+`user_defined_milestones` by `MARK:MESSAGE`, both in time order, each holding
+`from_1st_mark` and `from_previous` in milliseconds, `null` when there is none. The
+mark a milestone comes from, its share of the boot and the warnings are left out.
+
+```
+$ webkit-sysprof analyze-boot -f json capture.syscap
+{"processes": [{"pid": 1377, "name": "wpe-bare-app", "role": "UI"}, ...],
+ "milestones": {"WebKit starts in the app": {"from_1st_mark": 0.0, "from_previous": null},
+                "Web process alive": {"from_1st_mark": 159.210732, "from_previous": 159.210732}, ...},
+ "user_defined_milestones": {}}
+```
+
+```
+$ webkit-sysprof analyze-boot capture.syscap --user-defined-milestones=WebKitPerformanceMark:app-ready
+Processes:
+  |  pid | process         | role      |
+  | ---- | --------------- | --------- |
+  | 1377 | wpe-bare-app    | UI        |
+  | 1386 | WPENetworkProce | Network   |
+  | 1388 | WPEWebProcess   | Web, boot |
+
+Milestones:
+  | #   | milestone                    | from 1st mark [ms] | from previous [ms] | share | source                              |
+  | --- | ---------------------------- | ------------------ | ------------------ | ----- | ----------------------------------- |
+  | M0  | WebKit starts in the app     |                0.0 |                  - |     - | InitJITPageReservation (pid 1377)   |
+  | M1  | Web process alive            |              159.2 |              159.2 |  7.7% | ProcessInitialize (pid 1388)        |
+  ...
+  | M10 | Module graph evaluation ends |             2071.4 |             1010.1 | 48.7% | ExecuteScriptElement (pid 1388) end |
+  ...
+```
+
 ### `delta-histogram`
 
 Plot a histogram of the time between consecutive occurrences of a given mark (e.g. to

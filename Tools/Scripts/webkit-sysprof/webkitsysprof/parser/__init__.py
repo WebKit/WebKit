@@ -5,9 +5,15 @@ from . import direct_parser
 
 
 def parse(
-    file_path: str, marks: bool, counters: bool, stacktraces: bool = False
+    file_path: str,
+    marks: bool,
+    counters: bool,
+    stacktraces: bool = False,
+    processes: bool = False,
 ) -> Dict[str, Any]:
-    parsed_data = direct_parser.parse(file_path, marks, counters, stacktraces)
+    parsed_data = direct_parser.parse(
+        file_path, marks, counters, stacktraces, processes
+    )
 
     logging.info("Post-processing parsed data...")
     _make_parsed_data_timestamps_relative_to_0(parsed_data)

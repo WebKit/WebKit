@@ -202,6 +202,20 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(result["maps"], {})
         self.assertEqual(result["processes"], {})
 
+    def test_processes_can_be_read_without_the_stack_traces(self):
+        frames = _sample_frame(1, 1, 0, [0x10])
+        frames += _map_frame(1, 0, 0x100, 0, 0, "/lib/x.so")
+        frames += _process_frame(1, "/bin/x")
+        capture = self._build(frames)
+
+        result = direct_parser.parse(
+            capture.path, marks=False, counters=False, processes=True
+        )
+
+        self.assertEqual(result["processes"], {1: "/bin/x"})
+        self.assertEqual(result["stacktraces"], [])
+        self.assertEqual(result["maps"], {})
+
     def test_stacktrace_times_are_made_relative_to_the_capture_start(self):
         frames = _sample_frame(1, 1, 1500, [0x10])
         capture = self._build(frames, header_time=1000, header_end_time=2000)
