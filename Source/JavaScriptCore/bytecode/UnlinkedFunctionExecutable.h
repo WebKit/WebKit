@@ -231,6 +231,7 @@ public:
             FieldWithComputedPropertyKey = 1,
             FieldWithPrivatePropertyKey = 2,
             StaticInitializationBlock = 3,
+            StaticFieldWithComputedPropertyKey = 4,
         };
 
         Identifier ident { };

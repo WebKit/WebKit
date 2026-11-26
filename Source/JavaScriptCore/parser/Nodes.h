@@ -2426,7 +2426,7 @@ namespace JSC {
 
     class DefineFieldNode final : public StatementNode {
     public:
-        enum class Type { Name, PrivateName, ComputedName };
+        enum class Type { Name, PrivateName, ComputedName, StaticComputedName };
         DefineFieldNode(const JSTokenLocation&, const Identifier&, ExpressionNode*, Type);
 
     private:
