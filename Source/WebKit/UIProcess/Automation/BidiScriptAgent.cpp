@@ -200,8 +200,6 @@ static bool parseLocalValue(const JSON::Value& jsonValue, RefPtr<JSON::Value>* d
         auto remoteReference = WebDriverBidiProcessor::parseRemoteReference(*object);
         if (!remoteReference)
             return false;
-        if (usesUnsupportedType)
-            *usesUnsupportedType = true;
         if (usesHandle && remoteReference->sharedId.isNull())
             *usesHandle = true;
         if (deserializedValue)
@@ -446,19 +444,19 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     else
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
-    bool argumentsUseUnsupportedType = false;
-    bool argumentsUseHandle = false;
+    bool usesUnsupportedType = false;
+    bool usesHandle = false;
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
         for (size_t i = 0; i < arguments->length(); ++i) {
             Ref argument = arguments->get(i);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validateLocalValue(argument.get(), &argumentsUseUnsupportedType, &argumentsUseHandle), InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validateLocalValue(argument.get(), &usesUnsupportedType, &usesHandle), InvalidParameter);
             argumentsArray->pushValue(WTF::move(argument));
         }
     }
 
     if (optionalThis)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validateLocalValue(*optionalThis), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validateLocalValue(*optionalThis, &usesUnsupportedType, &usesHandle), InvalidParameter);
 
     if (optionalSerializationOptions) {
         auto result = WebDriverBidiProcessor::validateSerializationOptions(*optionalSerializationOptions);
@@ -497,16 +495,14 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     }
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sandbox.isEmpty(), NotImplemented, "Sandbox targets are not supported yet."_s);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(argumentsUseHandle, NoSuchHandle);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(argumentsUseUnsupportedType, NotImplemented, "Remote references and channels are not supported yet."_s);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalThis, NotImplemented, "Custom this values are not supported yet."_s);
+    // FIXME: Fail on a handle when it's deserialized, so that errors from earlier values come first. <https://webkit.org/b/328254>
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(usesHandle, NoSuchHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(usesUnsupportedType, NotImplemented, "Channels are not supported yet."_s);
 
     // FIXME: Handle the `resultOwnership` option.
     // https://bugs.webkit.org/show_bug.cgi?id=328254
-    // FIXME: Handle the custom `this` option.
-    // https://bugs.webkit.org/show_bug.cgi?id=328207
 
-    session->evaluateBidiCallFunction(topLevelContextHandle, frameHandle, targetRealmIdentifier, functionDeclaration, WTF::move(argumentsArray), awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, optionalUserActivation.value_or(false), std::nullopt,
+    session->evaluateBidiCallFunction(topLevelContextHandle, frameHandle, targetRealmIdentifier, functionDeclaration, WTF::move(argumentsArray), WTF::move(optionalThis), awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, optionalUserActivation.value_or(false), std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](Inspector::CommandResultOf<String, RealmIdentifier>&& result) mutable {
             CheckedPtr protectedThis = weakThis;
             if (!protectedThis) {

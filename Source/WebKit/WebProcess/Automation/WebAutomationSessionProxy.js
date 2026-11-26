@@ -35,6 +35,7 @@ const convertToString = String;
 const dateToISOString = Date.prototype.toISOString;
 const jsonStringify = JSON.stringify;
 const mapForEach = Map.prototype.forEach;
+const objectHasOwn = Object.hasOwn;
 const promiseThen = Promise.prototype.then;
 const reflectApply = Reflect.apply;
 const regExpTest = RegExp.prototype.test;
@@ -101,6 +102,11 @@ class InvalidArgumentError extends Error
         super(message);
         this.name = "InvalidParameter";
     }
+}
+
+class NoSuchNodeError extends Error
+{
+    name = "NodeNotFound";
 }
 
 let AutomationSessionProxy = class AutomationSessionProxy
@@ -173,7 +179,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             this._clearStaleNodes();
 
             let locator = JSON.parse(locatorString);
-            let contextNodes = startNodeIdentifiers ? startNodeIdentifiers.map(identifier => this._bidiLocateNodesStartNode(identifier)) : [document];
+            let contextNodes = startNodeIdentifiers ? startNodeIdentifiers.map(identifier => this._deserializeBidiSharedReference(identifier)) : [document];
             let nodes;
             if (locator.type === "context") {
                 // The UI process checked that the context is a child of this one, and the web process found its container element.
@@ -194,10 +200,10 @@ let AutomationSessionProxy = class AutomationSessionProxy
         }
     }
 
-    evaluateBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiCallFunction(functionDeclaration, argumentStrings, thisString, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, frameID, callbackID, resultCallback, callbackTimeout)
     {
         // Chain with the built-in then, since page script can replace Promise.prototype.then.
-        reflectApply(promiseThen, this._executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout), [result => {
+        reflectApply(promiseThen, this._executeBidiCallFunction(functionDeclaration, argumentStrings, thisString, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout), [result => {
             let serializedResult;
             let serializationError;
             try {
@@ -219,7 +225,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             resultCallback(frameID, callbackID, serializedResult);
         }, error => {
             let name = safelyReadStringProperty(error, "name");
-            if (name !== "JavaScriptTimeout" && name !== "InvalidParameter")
+            if (name !== "JavaScriptTimeout" && name !== "InvalidParameter" && name !== "NodeNotFound")
                 name = "InternalError";
             let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script call failed.";
             resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
@@ -390,7 +396,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
         return { success: false, error: errorProperties };
     }
 
-    _executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout)
+    _executeBidiCallFunction(functionDeclaration, argumentStrings, thisString, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, callbackTimeout)
     {
         let timeoutPromise;
         let timeoutIdentifier = 0;
@@ -419,6 +425,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             // FIXME: <https://webkit.org/b/328581> Prevent page-defined globals and array iterators from affecting
             // argument deserialization and the call.
             let argumentValues = argumentStrings.map(argument => this._deserializeBidiLocalValue(JSON.parse(argument)));
+            let thisValue = thisString === null ? null : this._deserializeBidiLocalValue(JSON.parse(thisString));
 
             let lines = functionDeclaration.split("\n");
             let prefixLines = [];
@@ -433,7 +440,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (typeof functionValue !== "function")
                 throw new InvalidArgumentError("Function declaration did not evaluate to a callable value.");
 
-            let result = callFunctionWithUserActivation(userActivation, functionValue, null, ...argumentValues);
+            let result = callFunctionWithUserActivation(userActivation, functionValue, thisValue, ...argumentValues);
 
             if (awaitPromise && isPromise(result))
                 // Await with the built-in then, which ECMAScript Await uses, not one that page script installed.
@@ -446,7 +453,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 }
             }
         } catch (error) {
-            if (error instanceof InvalidArgumentError)
+            if (error instanceof InvalidArgumentError || error instanceof NoSuchNodeError)
                 executionPromise = Promise.reject(error);
             else
                 executionPromise = Promise.resolve(this._bidiExceptionResult(error));
@@ -470,6 +477,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
     {
         if (!localValue || typeof localValue !== "object")
             throw new InvalidArgumentError("LocalValue must be an object.");
+
+        if (objectHasOwn(localValue, "sharedId"))
+            return this._deserializeBidiSharedReference(localValue.sharedId);
 
         switch (localValue.type) {
         case "undefined":
@@ -696,13 +706,17 @@ let AutomationSessionProxy = class AutomationSessionProxy
             throw { name: "InvalidParameter", message: "startNodes must be elements, documents or document fragments." };
     }
 
-    _bidiLocateNodesStartNode(identifier)
+    _deserializeBidiSharedReference(identifier)
     {
         // https://w3c.github.io/webdriver-bidi/#deserialize-shared-reference
+        if (typeof identifier !== "string")
+            throw new InvalidArgumentError("sharedId must be a string.");
+
+        // FIXME: Look up nodes serialized in other same origin-domain frames of the browsing context group too. <https://webkit.org/b/333203>
         try {
             return this._nodeForIdentifier(identifier);
         } catch {
-            throw { name: "NodeNotFound", message: `No node with sharedId '${identifier}' was found in this browsing context.` };
+            throw new NoSuchNodeError(`No node with sharedId '${identifier}' was found in this browsing context.`);
         }
     }
 

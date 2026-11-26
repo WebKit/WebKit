@@ -3678,18 +3678,6 @@
         "subtests": {
             "test_key_down_closes_browsing_context": {
                 "expected": {"mac-site-isolation": {"status": ["FAIL"], "bug": "webkit.org/b/331698"}, "mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_key_shadow_tree[outer-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_key_shadow_tree[outer-closed]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_key_shadow_tree[inner-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_key_shadow_tree[inner-closed]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             }
         }
     },
@@ -3704,60 +3692,6 @@
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/pointer_mouse_drag.py": {
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
-            "test_drag_and_drop[20-0-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[20-0-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[20-0-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[0-15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[0-15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[0-15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10-15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10-15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10-15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-20-0-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-20-0-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-20-0-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10--15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10--15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[10--15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-10--15-0]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-10--15-300]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
-            "test_drag_and_drop[-10--15-800]": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            },
             "test_drag_and_drop_with_draggable_element[0]": {
                 "expected": {"mac": {"status": ["SKIP"], "bug": "webkit.org/b/331482"}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
@@ -3811,12 +3745,7 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/pointer_mouse_multiclick.py": {
-        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
-        "subtests": {
-            "test_tripleclick_at_coordinates": {
-                "expected": {"all": {"status": ["FAIL"], "note": "get_element_rect() passes an element to script.callFunction, which doesn't support remote reference arguments yet"}}
-            }
-        }
+        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}}
     },
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/pointer_mouse.py": {
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
@@ -3830,38 +3759,14 @@
             "test_params_actions_origin_outside_viewport[element]": {
                 "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
-            "test_click_element_center": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_click_element_in_shadow_tree[outer-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_click_element_in_shadow_tree[outer-closed]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_click_element_in_shadow_tree[inner-open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
-            "test_click_element_in_shadow_tree[inner-closed]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
-            },
             "test_click_navigation": {
                 "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_move_to_position_in_viewport[default value]": {
                 "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}}
             },
-            "test_move_to_origin_position_within_frame[viewport]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288061"}}
-            },
-            "test_move_to_origin_position_within_frame[pointer]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288061"}}
-            },
-            "test_move_to_origin_position_within_frame[element]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288061"}}
-            },
             "test_move_to_inline_block_child": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/331860"}}
             }
         }
     },
@@ -3873,21 +3778,6 @@
             },
             "test_pointer_inside": {
                 "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/313656"}}
-            },
-            "test_element_center_point_with_offset[10-15-element fully visible]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_element_center_point_with_offset[10-15-element partly visible]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_element_center_point_with_offset[0-0-element fully visible]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_element_center_point_with_offset[0-0-element partly visible]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_element_larger_than_viewport": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
             },
             "test_params_actions_origin_no_such_element[attribute]": {
                 "expected": {"mac": {"status": ["PASS"]}, "all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
@@ -3937,7 +3827,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_pen_pointer_properties": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
             }
         }
     },
@@ -3969,7 +3859,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
             },
             "test_touch_pointer_properties": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/270895"}}
             },
             "test_touch_pointer_properties_altitude_and_azimuth_angle": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/328806"}}
@@ -3993,29 +3883,14 @@
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/wheel.py": {
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/281949"}},
         "subtests": {
-            "test_scroll_direction[delta-x]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_scroll_direction[delta-y]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_scroll_direction[delta-x-and-y]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_scroll_element_in_shadow_tree[open]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
-            "test_scroll_element_in_shadow_tree[closed]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            },
             "test_scroll_position_for_scaled_layout_viewport[0.5]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/333067"}}
             },
             "test_scroll_position_for_scaled_layout_viewport[1.0]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/333067"}}
             },
             "test_scroll_position_for_scaled_layout_viewport[1.5]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
+                "expected": {"mac": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/333067"}}
             }
         }
     },
@@ -4034,12 +3909,7 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/input/release_actions/release.py": {
-        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/287928"}},
-        "subtests": {
-            "test_release_no_actions_sends_no_events": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/327875"}}
-            }
-        }
+        "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/287928"}}
     },
     "imported/w3c/webdriver/tests/bidi/input/release_actions/sequence.py": {
         "expected": { "glib": { "status": ["SKIP"], "bug": "webkit.org/b/287928"}},
@@ -4695,7 +4565,54 @@
         "expected": { "all": { "status": ["PASS"] }}
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/remote_reference.py": {
-        "expected": { "all": { "status": ["FAIL"], "note": "script.callFunction doesn't support remote reference arguments yet"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}},
+        "subtests": {
+            "test_remote_reference_node_argument[element]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[text node]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[comment]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[document]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[doctype]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[shadow root]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_nested[array]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_nested[object]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_nested[map]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_nested[set]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_unknown_shared_id": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_remote_reference_node_argument[attribute]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/333066"}}
+            },
+            "test_remote_reference_node_argument[processing instruction]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/333066"}}
+            },
+            "test_remote_reference_node_argument[document fragment]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/333066"}}
+            },
+            "test_remote_reference_node_cdata": {
+                "expected": { "all": { "status": ["FAIL"], "note": "Fails with developer extras on, as in every MiniBrowser: WebKit replaces a top-level XML document with its tree view"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/remote_values.py": {
         "expected": { "all": { "status": ["PASS"] }},
@@ -4767,23 +4684,20 @@
     "imported/w3c/webdriver/tests/bidi/script/call_function/this.py": {
         "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
-            "test_this": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
-            },
             "test_remote_value_deserialization[<lambda>-function() { return this === window.SOME_OBJECT; }]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}}
             },
             "test_remote_value_deserialization[<lambda>-function() { return this.nested === window.SOME_OBJECT; }]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}}
             },
             "test_remote_value_deserialization[<lambda>-function() { return this[0] === window.SOME_OBJECT; }]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}}
             },
             "test_remote_value_deserialization[<lambda>-function() { return this.get('foobar') === window.SOME_OBJECT; }]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}}
             },
             "test_remote_value_deserialization[<lambda>-function() { return this.has(window.SOME_OBJECT); }]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328207"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/328254"}}
             },
             "test_channel[default]": {
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288057"}}
@@ -5548,7 +5462,13 @@
     "imported/w3c/webdriver/tests/interop/shared_id_node.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/303212"}},
         "subtests": {
+            "test_web_element_reference_created_in_classic": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
             "test_web_element_reference_created_in_bidi": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_shadow_root_reference_created_in_classic[open]": {
                 "expected": {"all": {"status": ["PASS"]}}
             }
         }

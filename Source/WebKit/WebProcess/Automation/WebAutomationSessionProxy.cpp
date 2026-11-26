@@ -1066,7 +1066,7 @@ void WebAutomationSessionProxy::locateNodesForBidi(WebCore::PageIdentifier pageI
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, std::optional<RealmIdentifier> expectedRealmIdentifier, const String& functionDeclaration, Vector<String> arguments, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, std::optional<RealmIdentifier>, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, std::optional<RealmIdentifier> expectedRealmIdentifier, const String& functionDeclaration, Vector<String> arguments, std::optional<String> thisValue, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, std::optional<RealmIdentifier>, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -1108,6 +1108,7 @@ void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier
     JSValueRef functionArguments[] = {
         toJSValue(context, functionDeclaration),
         toJSArray(context, arguments, toJSValue, &exception),
+        thisValue ? toJSValue(context, *thisValue) : JSValueMakeNull(context),
         JSValueMakeBoolean(context, awaitPromise),
         maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
         maxDomDepth ? JSValueMakeNumber(context, *maxDomDepth) : JSValueMakeNull(context),

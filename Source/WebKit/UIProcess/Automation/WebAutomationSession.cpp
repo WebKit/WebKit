@@ -3578,7 +3578,7 @@ void WebAutomationSession::getBidiRealmInfo(const Inspector::Protocol::Automatio
 #endif
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSession::evaluateBidiCallFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, std::optional<RealmIdentifier> expectedRealmIdentifier, const String& functionDeclaration, Ref<JSON::Array>&& arguments, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double>&& callbackTimeout, CommandCallbackOf<String, RealmIdentifier>&& callback)
+void WebAutomationSession::evaluateBidiCallFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, std::optional<RealmIdentifier> expectedRealmIdentifier, const String& functionDeclaration, Ref<JSON::Array>&& arguments, RefPtr<JSON::Object>&& thisValue, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double>&& callbackTimeout, CommandCallbackOf<String, RealmIdentifier>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
@@ -3589,11 +3589,12 @@ void WebAutomationSession::evaluateBidiCallFunction(const Inspector::Protocol::A
     auto argumentsVector = WTF::map(arguments.get(), [](auto& argument) {
         return argument->toJSONString();
     });
+    auto thisString = thisValue ? std::optional { thisValue->toJSONString() } : std::nullopt;
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateBidiCallFunctionCallbacks.set(callbackID, WTF::move(callback));
 
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiCallFunction(page->webPageIDInProcessForFrame(frameID), frameID, expectedRealmIdentifier, functionDeclaration, argumentsVector, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, std::optional<RealmIdentifier>&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, std::optional<RealmIdentifier>&& realmIdentifier, String&& errorType) {
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiCallFunction(page->webPageIDInProcessForFrame(frameID), frameID, expectedRealmIdentifier, functionDeclaration, argumentsVector, thisString, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, userActivation, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, std::optional<RealmIdentifier>&&, String&&)> { [protectedThis = Ref { *this }, callbackID](String&& result, std::optional<RealmIdentifier>&& realmIdentifier, String&& errorType) {
         auto callback = protectedThis->m_evaluateBidiCallFunctionCallbacks.take(callbackID);
         if (!callback)
             return;
