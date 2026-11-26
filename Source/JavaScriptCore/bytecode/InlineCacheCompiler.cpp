@@ -4733,6 +4733,9 @@ static void ensureReferenceAndAddWatchpoint(VM&, WatchpointSet& additionalWatchp
 template<typename Container>
 RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBlock, const Container& cases)
 {
+    if (m_propertyCache.throwIfNotFound)
+        return nullptr;
+
     // Accidentally, it already includes megamorphic case. Then we just return it.
     for (auto accessCase : cases) {
         if (isMegamorphic(accessCase->m_type))

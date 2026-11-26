@@ -399,6 +399,15 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdGaveUp, EncodedJSValue, (EncodedJSValue
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
     CacheableIdentifier identifier = propertyCache->identifier();
+    if (propertyCache->throwIfNotFound) [[unlikely]] {
+        OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, identifier, [&](bool found, PropertySlot& foundSlot) -> JSValue {
+            if (!found) {
+                throwException(globalObject, scope, createUndefinedVariableError(globalObject, Identifier::fromUid(vm, identifier.uid())));
+                return jsUndefined();
+            }
+            return foundSlot.getValue(globalObject, identifier);
+        })));
+    }
     JSValue result = baseValue.get(globalObject, identifier, slot);
 
     LOG_IC((ICEvent::OperationGetByIdGaveUp, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
@@ -442,7 +451,12 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdOptimize, EncodedJSValue, (EncodedJSVal
     OPERATION_RETURN(scope, JSValue::encode(baseValue.getPropertySlot(globalObject, identifier, [&] (bool found, PropertySlot& slot) -> JSValue {
         
         LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(), baseValue == slot.slotBase()));
-        
+
+        if (!found && propertyCache->throwIfNotFound) [[unlikely]] {
+            throwException(globalObject, scope, createUndefinedVariableError(globalObject, Identifier::fromUid(vm, identifier.uid())));
+            return jsUndefined();
+        }
+
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (propertyCache->considerRepatchingCacheBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
             repatchGetBy(globalObject, codeBlock, baseValue, identifier, slot, *propertyCache, GetByKind::ById, /* isNonStringPrimitiveKey */ false);

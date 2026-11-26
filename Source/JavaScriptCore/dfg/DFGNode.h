@@ -324,6 +324,7 @@ struct CallCustomAccessorData {
 struct GetByIdData {
     CacheableIdentifier m_identifier;
     CacheType m_cacheType;
+    bool m_throwIfNotFound { false };
 };
 
 enum class BucketOwnerType : uint32_t {

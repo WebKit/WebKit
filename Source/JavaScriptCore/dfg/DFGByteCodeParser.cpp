@@ -10757,7 +10757,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.state() != GetByStatus::Simple
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
-                    auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf });
+                    auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, CacheType::GetByIdSelf, getPutInfo.resolveMode() == ThrowIfNotFound });
                     set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(data), OpInfo(prediction), get(bytecode.m_scope)));
                     break;
                 }
@@ -10931,6 +10931,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.numVariants() != 1
                     || status[0].kind() != PutByVariant::Replace
                     || status[0].structure().size() != 1) {
+                    if (getPutInfo.resolveMode() == ThrowIfNotFound && identifierNumber != UINT_MAX) {
+                        uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
+                        addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(getPutInfo.ecmaMode()), get(bytecode.m_scope), get(bytecode.m_value));
+                        break;
+                    }
                     addToGraph(PutById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(bytecode.m_getPutInfo.ecmaMode()), get(bytecode.m_scope), get(bytecode.m_value));
                     break;
                 }
