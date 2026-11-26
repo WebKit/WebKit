@@ -281,6 +281,10 @@ public:
     void setHasStylusDevice(bool);
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+    bool supportsPictureInPicture() const { return m_supportsPictureInPicture; }
+#endif
+
     void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
 
     NODELETE WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>) const;
@@ -857,6 +861,10 @@ private:
 
 #if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool m_hasStylusDevice { false };
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+    bool m_supportsPictureInPicture { false };
 #endif
 
     HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrame>> m_frameMap;
