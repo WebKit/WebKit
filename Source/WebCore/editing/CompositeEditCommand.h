@@ -71,6 +71,7 @@ private:
 enum class ApplyStylePropertyLevel : bool { Default, ForceBlock };
 
 class EditCommandComposition : public UndoStep {
+    WTF_MAKE_TZONE_ALLOCATED(EditCommandComposition);
 public:
     enum class AddToUndoStack : bool {
         No, Yes
@@ -115,6 +116,7 @@ private:
 };
 
 class CompositeEditCommand : public EditCommand, public CanMakeWeakPtr<CompositeEditCommand> {
+    WTF_MAKE_TZONE_ALLOCATED(CompositeEditCommand);
 public:
     virtual ~CompositeEditCommand();
 

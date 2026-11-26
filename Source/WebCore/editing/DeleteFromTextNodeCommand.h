@@ -26,12 +26,14 @@
 #pragma once
 
 #include "EditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Text;
 
 class DeleteFromTextNodeCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(DeleteFromTextNodeCommand);
 public:
     static Ref<DeleteFromTextNodeCommand> create(Ref<Text>&& node, unsigned offset, unsigned count, EditAction editingAction = EditAction::Delete)
     {

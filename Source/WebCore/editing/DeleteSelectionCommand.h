@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EditingStyle;
 
 class DeleteSelectionCommand : public CompositeEditCommand { 
+    WTF_MAKE_TZONE_ALLOCATED(DeleteSelectionCommand);
 public:
     static Ref<DeleteSelectionCommand> create(Ref<Document>&& document, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false, bool sanitizeMarkup = true, EditAction editingAction = EditAction::Delete)
     {

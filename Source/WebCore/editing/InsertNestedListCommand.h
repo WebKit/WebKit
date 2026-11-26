@@ -27,10 +27,12 @@
 
 #include "CompositeEditCommand.h"
 #include "EditAction.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InsertNestedListCommand final : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertNestedListCommand);
 public:
     static void insertUnorderedList(Document&);
     static void insertOrderedList(Document&);

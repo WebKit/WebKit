@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CompositeEditCommand.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EditingStyle;
 
 class InsertParagraphSeparatorCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertParagraphSeparatorCommand);
 public:
     static Ref<InsertParagraphSeparatorCommand> create(Ref<Document>&& document, bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false, EditAction editingAction = EditAction::Insert)
     {

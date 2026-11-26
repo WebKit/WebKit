@@ -27,8 +27,11 @@
 #include "UnlinkCommand.h"
 
 #include "HTMLAnchorElement.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UnlinkCommand);
 
 UnlinkCommand::UnlinkCommand(Ref<Document>&& document)
     : CompositeEditCommand(WTF::move(document))

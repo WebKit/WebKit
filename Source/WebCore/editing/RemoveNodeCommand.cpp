@@ -32,8 +32,11 @@
 #include "NodeDocument.h"
 #include "RenderElement.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoveNodeCommand);
 
 RemoveNodeCommand::RemoveNodeCommand(Ref<Node>&& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     : SimpleEditCommand(node->document(), editingAction)

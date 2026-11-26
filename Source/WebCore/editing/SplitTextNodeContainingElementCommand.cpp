@@ -32,8 +32,11 @@
 #include "RenderElement.h"
 #include "Text.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SplitTextNodeContainingElementCommand);
 
 SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(Ref<Text>&& text, int offset)
     : CompositeEditCommand(text->document())

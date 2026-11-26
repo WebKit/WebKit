@@ -27,10 +27,12 @@
 
 #include "EditCommand.h"
 #include "QualifiedName.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SetNodeAttributeCommand : public SimpleEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(SetNodeAttributeCommand);
 public:
     static Ref<SetNodeAttributeCommand> create(Ref<Element>&& element, const QualifiedName& attribute, const AtomString& value)
     {

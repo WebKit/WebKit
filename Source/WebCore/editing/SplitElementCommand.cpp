@@ -31,8 +31,11 @@
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SplitElementCommand);
 
 SplitElementCommand::SplitElementCommand(Ref<Element>&& element, Ref<Node>&& atChild)
     : SimpleEditCommand(element->document())

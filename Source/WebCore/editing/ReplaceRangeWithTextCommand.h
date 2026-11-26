@@ -27,12 +27,14 @@
 
 #include "CompositeEditCommand.h"
 #include "SimpleRange.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DocumentFragment;
 
 class ReplaceRangeWithTextCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(ReplaceRangeWithTextCommand);
 public:
     static Ref<ReplaceRangeWithTextCommand> create(const SimpleRange& rangeToBeReplaced, const String& text)
     {

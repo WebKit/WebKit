@@ -27,6 +27,7 @@
 
 #include "CompositeEditCommand.h"
 #include "StyleListStyleType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -34,6 +35,7 @@ class HTMLElement;
 class HTMLQualifiedName;
 
 class InsertListCommand final : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(InsertListCommand);
 public:
     enum class Type : uint8_t { OrderedList, UnorderedList };
 

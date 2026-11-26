@@ -32,8 +32,11 @@
 #include "FrameSelection.h"
 #include "LocalFrameInlines.h"
 #include "Node.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextInsertionBaseCommand);
 
 TextInsertionBaseCommand::TextInsertionBaseCommand(Ref<Document>&& document, EditAction editingAction)
     : CompositeEditCommand(WTF::move(document), editingAction)

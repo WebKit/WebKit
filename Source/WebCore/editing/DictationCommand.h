@@ -28,10 +28,12 @@
 #include "DictationAlternative.h"
 #include "TextInsertionBaseCommand.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class DictationCommand : public TextInsertionBaseCommand {
+    WTF_MAKE_TZONE_ALLOCATED(DictationCommand);
     friend class DictationCommandLineOperation;
 public:
     static void insertText(Ref<Document>&&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);

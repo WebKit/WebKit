@@ -33,8 +33,11 @@
 #include "NodeDocument.h"
 #include "RenderElement.h"
 #include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InsertNodeBeforeCommand);
 
 InsertNodeBeforeCommand::InsertNodeBeforeCommand(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable, EditAction editingAction)
     : SimpleEditCommand(refChild.document(), editingAction)

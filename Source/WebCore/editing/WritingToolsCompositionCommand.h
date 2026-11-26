@@ -27,6 +27,7 @@
 
 #include "CompositeEditCommand.h"
 #include "SimpleRange.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ struct AttributedString;
 //
 // It also maintains an associated context range that persists after each constituent command.
 class WritingToolsCompositionCommand : public CompositeEditCommand {
+    WTF_MAKE_TZONE_ALLOCATED(WritingToolsCompositionCommand);
 public:
     enum class MatchStyle: bool {
         No, Yes
