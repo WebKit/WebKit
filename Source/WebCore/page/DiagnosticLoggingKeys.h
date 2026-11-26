@@ -166,6 +166,9 @@ public:
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
     WEBCORE_EXPORT static String webViewKey();
+#if ENABLE(WEBXR)
+    static String webXRKey();
+#endif
     static String yesKey();
 
     static String mediaSourceTypeWatchTimeKey();

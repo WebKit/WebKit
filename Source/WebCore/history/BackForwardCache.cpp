@@ -274,6 +274,13 @@ static bool canCachePage(Page& page, LoadWillContinueInAnotherProcess loadWillCo
         isCacheable = false;
     }
 #endif
+#if ENABLE(WEBXR)
+    if (page.hasActiveImmersiveSession()) {
+        PCLOG("   -Page has an active immersive WebXR session"_s);
+        logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::webXRKey());
+        isCacheable = false;
+    }
+#endif
 
     // In iframe processes with Site Isolation, the main frame is a RemoteFrame.
     // The checks below (loadType, Clear-Site-Data) are only meaningful for main

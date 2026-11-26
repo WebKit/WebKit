@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<head>
+<script src="/webkit-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('Tests that pages with an active immersive WebXR session are not put in the back/forward cache.');
+window.jsTestIsAsync = true;
+
+var pageOneShowCount = 0;
+function reportPageOneShown() {
+    ++pageOneShowCount;
+    debug('resources/no-back-forward-cache-1.html pageshow fired, count = ' + pageOneShowCount);
+    if (pageOneShowCount == 2) {
+        testPassed('resources/no-back-forward-cache-1.html was loaded again instead of restored from the back/forward cache');
+        finishJSTest();
+    }
+    return pageOneShowCount;
+}
+
+debug("Main page opening resources/no-back-forward-cache-1.html");
+window.open("resources/no-back-forward-cache-1.html");
+</script>
+</body>
+</html>
