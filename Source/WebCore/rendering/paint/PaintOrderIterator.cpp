@@ -41,6 +41,7 @@ static bool isIterableBlockType(const RenderObject& renderer)
     case RenderObject::Type::BlockFlow:
     case RenderObject::Type::FlexibleBox:
     case RenderObject::Type::Grid:
+    case RenderObject::Type::ListItem:
         return true;
     default:
         return false;

@@ -104,9 +104,6 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
 
-    void paint(PaintInfo&, const LayoutPoint&) final;
-    void paintObject(PaintInfo&, const LayoutPoint&) final;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
     bool hasLineIfEmpty() const final;
 
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;

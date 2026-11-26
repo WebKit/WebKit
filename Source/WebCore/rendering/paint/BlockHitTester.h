@@ -55,6 +55,7 @@ private:
     };
 
     bool hitTestLegendAfterItems(RenderBlock& container, HitTestAction, const LayoutPoint& adjustedLocation);
+    bool hitTestOutsideListMarker(RenderBlock&, HitTestAction, const LayoutPoint& adjustedLocation);
 
     // A stacking container being hit tested, one walk per action.
     struct StackingContainer {

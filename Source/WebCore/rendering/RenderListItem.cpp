@@ -723,43 +723,12 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 }
 
-void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!logicalHeight() && hasNonVisibleOverflow())
-        return;
-
-    RenderBlockFlow::paint(paintInfo, paintOffset);
-}
-
-void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (CheckedPtr outsideMarker = markerBox(); outsideMarker && !outsideMarker->hasSelfPaintingLayer())
-        outsideMarker->paintAsInlineBlock(paintInfo, blockStartRelativeToPhysicalForChild(*outsideMarker, paintOffset));
-
-    RenderBlockFlow::paintObject(paintInfo, paintOffset);
-}
-
 bool RenderListItem::hasLineIfEmpty() const
 {
     if (markerBox())
         return true;
 
     return RenderBlockFlow::hasLineIfEmpty();
-}
-
-bool RenderListItem::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    if (RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
-        return true;
-
-    CheckedPtr outsideMarker = markerBox();
-    if (!outsideMarker || outsideMarker->hasSelfPaintingLayer())
-        return false;
-
-    // The marker's own location is relative to us, so it needs our adjusted one, the way hitTestChildren gets it.
-    auto adjustedLocation = accumulatedOffset + location();
-    // This is the virtual RenderBlock::nodeAtPoint: RenderBlock declares it protected, so call it through RenderBox, where it is public.
-    return static_cast<RenderBox&>(*outsideMarker).nodeAtPoint(request, result, locationInContainer, blockStartRelativeToPhysicalForChild(*outsideMarker, adjustedLocation), hitTestAction);
 }
 
 RenderBlockFlow* RenderListItem::markerBox() const

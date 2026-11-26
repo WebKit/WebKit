@@ -54,6 +54,7 @@
 #include "RenderGrid.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderListItem.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -242,6 +243,10 @@ void BlockPainter::paintSubtree()
             ASSERT(m_parentStack.size() == iterator.depth() - 1);
             CheckedPtr enclosingBlock = iterator.enclosingBlock();
             if (enclosingBlock && isExcludedFromNormalFlowPainting(block)) {
+                iterator.skipBlock();
+                continue;
+            }
+            if (CheckedPtr listItem = dynamicDowncast<RenderListItem>(block); listItem && !listItem->logicalHeight() && listItem->hasNonVisibleOverflow()) {
                 iterator.skipBlock();
                 continue;
             }
@@ -508,8 +513,20 @@ LayoutPoint BlockPainter::scrolledPaintOffset(const RenderBlock& block, const La
     return scrolledOffset;
 }
 
+// The outside marker of a list item is excluded from its normal flow. It paints as a stacking container before the list item's own painting.
+static void paintOutsideListMarker(RenderBlock& block, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    CheckedPtr listItem = dynamicDowncast<RenderListItem>(block);
+    CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
+    if (!marker || marker->hasSelfPaintingLayer())
+        return;
+    marker->paintAsInlineBlock(paintInfo, listItem->blockStartRelativeToPhysicalForChild(*marker, paintOffset));
+}
+
 BlockPainter::ContentsAction BlockPainter::paintBeforeContents(RenderBlock& block, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    paintOutsideListMarker(block, paintInfo, paintOffset);
+
     PaintPhase paintPhase = paintInfo.phase;
     auto shouldPaintContent = !isSkippedContentRoot(block);
 

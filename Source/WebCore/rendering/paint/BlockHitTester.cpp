@@ -34,6 +34,7 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderLayer.h"
+#include "RenderListItem.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -81,6 +82,18 @@ bool BlockHitTester::hitTestLegendAfterItems(RenderBlock& container, HitTestActi
         return false;
     container.updateHitTestResult(m_result, container.physicalToBlockStartRelative(toLayoutPoint(m_location.point() - adjustedLocation)));
     return true;
+}
+
+// The outside marker of a list item is excluded from its normal flow and from its visual overflow. It is hit tested
+// after the list item, with the same action, also when the list item itself is skipped.
+bool BlockHitTester::hitTestOutsideListMarker(RenderBlock& block, HitTestAction action, const LayoutPoint& adjustedLocation)
+{
+    CheckedPtr listItem = dynamicDowncast<RenderListItem>(block);
+    CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
+    if (!marker || marker->hasSelfPaintingLayer())
+        return false;
+    CheckedRef<RenderBox> markerBox = *marker;
+    return markerBox->nodeAtPoint(m_request, m_result, m_location, listItem->blockStartRelativeToPhysicalForChild(*marker, adjustedLocation), action);
 }
 
 bool BlockHitTester::hitTest()
@@ -135,15 +148,20 @@ bool BlockHitTester::hitTest()
                 action = stackingContainerActions[m_stackingContainerStack.last().actionIndex];
             }
 
+            // Returns true on a hit on the outside list marker.
             auto skipBlock = [&] {
                 // Every walk would be skipped the same way.
                 if (iterator.isStackingContainer())
                     m_stackingContainerStack.removeLast();
                 iterator.skipBlock();
+                return hitTestOutsideListMarker(block, action, adjustedLocation);
             };
 
             if (!block->hitTestVisualOverflow(m_location, accumulatedOffset)) {
-                skipBlock();
+                if (skipBlock()) {
+                    updateEnclosingBlocks(depth - 1);
+                    return true;
+                }
                 break;
             }
 
@@ -157,7 +175,10 @@ bool BlockHitTester::hitTest()
             }
 
             if (!block->hitTestClipPath(m_location, accumulatedOffset)) {
-                skipBlock();
+                if (skipBlock()) {
+                    updateEnclosingBlocks(depth - 1);
+                    return true;
+                }
                 break;
             }
 
@@ -233,8 +254,13 @@ bool BlockHitTester::hitTest()
             }
             break;
         }
-        case Event::LeaveBlock:
+        case Event::LeaveBlock: {
+            auto action = parent().action;
             popParent();
+            if (hitTestOutsideListMarker(block, action, adjustedLocation)) {
+                updateEnclosingBlocks(depth - 1);
+                return true;
+            }
             if (iterator.isStackingContainer()) {
                 ASSERT(m_stackingContainerStack.last().depth == depth);
                 if (++m_stackingContainerStack.last().actionIndex < stackingContainerActions.size()) {
@@ -244,6 +270,7 @@ bool BlockHitTester::hitTest()
                 m_stackingContainerStack.removeLast();
             }
             break;
+        }
         }
     }
     return false;
