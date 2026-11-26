@@ -344,7 +344,7 @@ public:
         return IntHash<uintptr_t>::hash(value);
     }
     
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         iterator() = default;

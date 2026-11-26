@@ -89,7 +89,7 @@ template <typename T, typename RawNode = T> class SentinelLinkedList {
     WTF_MAKE_NONCOPYABLE(SentinelLinkedList);
     WTF_MAKE_NONMOVABLE(SentinelLinkedList);
 public:
-    template<typename RawNodeType, typename NodeType> class BaseIterator {
+    template<typename RawNodeType, typename NodeType> class WTF_VIEW_TYPE BaseIterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BaseIterator);
     public:
         explicit BaseIterator(RawNodeType* node)

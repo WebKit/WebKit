@@ -40,13 +40,13 @@ public:
     using ValueTraits = HashTraits<ValueType>;
     using MapType = HashMap<WeakKeyType, ValueType>;
 
-    struct PeekType {
+    struct WTF_VIEW_TYPE PeekType {
         // PeekType is a short-lived view created during iteration and never stored, so a raw reference is safe.
         SUPPRESS_UNCOUNTED_MEMBER SUPPRESS_UNCHECKED_MEMBER KeyType& key;
         ValueType& value;
     };
 
-    struct PeekPtrType {
+    struct WTF_VIEW_TYPE PeekPtrType {
         PeekPtrType(const PeekType& peek)
             : m_peek(peek)
         { }

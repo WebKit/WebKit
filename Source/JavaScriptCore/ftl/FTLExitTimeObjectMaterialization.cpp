@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGGraph.h"
+#include <wtf/Borrow.h>
 
 namespace JSC { namespace FTL {
 
@@ -66,7 +67,7 @@ void ExitTimeObjectMaterialization::accountForLocalsOffset(int offset)
 
 void ExitTimeObjectMaterialization::dump(PrintStream& out) const
 {
-    out.print(RawPointer(this), ":", Graph::opName(m_type), "(", listDump(m_properties), ")");
+    out.print(RawPointer(this), ":", Graph::opName(m_type), "(", listDump(borrow(m_properties)), ")");
 }
 
 void ExitTimeObjectMaterialization::validateReferences(const TrackedReferences& trackedReferences) const

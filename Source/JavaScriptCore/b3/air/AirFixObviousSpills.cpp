@@ -35,6 +35,7 @@
 #include "AirPhaseScope.h"
 #include "Options.h"
 #include "RegisterSet.h"
+#include <wtf/Borrow.h>
 #include <wtf/GraphOrdering.h>
 #include <wtf/IndexMap.h>
 #include <wtf/ListDump.h>
@@ -720,8 +721,8 @@ private:
             for (Reg reg : constRegs)
                 out.print(comma, reg, "->", constants[reg.index()]);
             out.print(
-                "], slotConst = [", listDump(slotConst),
-                "], regSlot = [", listDump(regSlot), "]}");
+                "], slotConst = [", listDump(borrow(slotConst)),
+                "], regSlot = [", listDump(borrow(regSlot)), "]}");
         }
 
         ScalarRegisterSet constRegs;

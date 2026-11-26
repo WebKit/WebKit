@@ -38,7 +38,7 @@ namespace WTF {
 // By default, the output is truncated past the DefaultSizeLimit number of bytes (4K).
 // To change the limit, pass the desired limit value to HexDump() as an additional parameter.
 
-class MemoryDump {
+class WTF_VIEW_TYPE MemoryDump {
 public:
     static constexpr size_t DefaultSizeLimit = 4 * 1024;
 

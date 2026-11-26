@@ -33,7 +33,7 @@
 namespace WTF {
 
 template<typename CharacterType>
-class CodePointIterator {
+class WTF_VIEW_TYPE CodePointIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodePointIterator);
 public:
     ALWAYS_INLINE CodePointIterator() = default;

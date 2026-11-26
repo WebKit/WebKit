@@ -867,7 +867,7 @@ inline bool equalIgnoringASCIICase(StringView a, ASCIILiteral b)
     return equalIgnoringASCIICaseCommon(a, b.characters());
 }
 
-class StringView::SplitResult {
+class WTF_VIEW_TYPE StringView::SplitResult {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SplitResult);
 public:
     SplitResult(StringView view LIFETIME_BOUND, char16_t separator, bool allowEmptyEntries);
@@ -882,7 +882,7 @@ private:
     bool m_allowEmptyEntries;
 };
 
-class StringView::GraphemeClusters {
+class WTF_VIEW_TYPE StringView::GraphemeClusters {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(GraphemeClusters);
 public:
     explicit GraphemeClusters(StringView view LIFETIME_BOUND);
@@ -895,7 +895,7 @@ private:
     StringView m_stringView;
 };
 
-class StringView::CodePoints {
+class WTF_VIEW_TYPE StringView::CodePoints {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodePoints);
 public:
     explicit CodePoints(StringView view LIFETIME_BOUND);
@@ -909,7 +909,7 @@ private:
     StringView m_stringView;
 };
 
-class StringView::CodeUnits {
+class WTF_VIEW_TYPE StringView::CodeUnits {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CodeUnits);
 public:
     explicit CodeUnits(StringView view LIFETIME_BOUND);
@@ -922,7 +922,7 @@ private:
     StringView m_stringView;
 };
 
-class StringView::SplitResult::Iterator {
+class WTF_VIEW_TYPE StringView::SplitResult::Iterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     using iterator_category = std::forward_iterator_tag;
@@ -952,7 +952,7 @@ private:
     bool m_isDone;
 };
 
-class StringView::GraphemeClusters::Iterator {
+class WTF_VIEW_TYPE StringView::GraphemeClusters::Iterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     Iterator() = delete;
@@ -975,7 +975,7 @@ private:
     std::unique_ptr<Impl> m_impl;
 };
 
-class StringView::CodePoints::Iterator {
+class WTF_VIEW_TYPE StringView::CodePoints::Iterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     using iterator_category = std::bidirectional_iterator_tag;
@@ -1002,7 +1002,7 @@ private:
 #endif
 };
 
-class StringView::CodeUnits::Iterator {
+class WTF_VIEW_TYPE StringView::CodeUnits::Iterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
 public:
     Iterator(StringView view LIFETIME_BOUND, unsigned index);

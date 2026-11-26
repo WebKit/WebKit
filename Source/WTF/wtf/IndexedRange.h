@@ -34,7 +34,7 @@
 
 namespace WTF {
 
-template<typename Iterator> class BoundsCheckedIterator {
+template<typename Iterator> class WTF_VIEW_TYPE BoundsCheckedIterator {
 public:
     // We require the caller to ask for 'begin' or 'end', rather than passing
     // us arbitrary 'it' and 'end' iterators, because that way we can prove by
@@ -94,7 +94,7 @@ template<typename Collection> auto boundsCheckedEnd(Collection&& collection)
     return BoundsCheckedIterator<decltype(std::end(collection))>::end(std::forward<Collection>(collection));
 }
 
-template<typename Iterator> class IndexedRangeIterator {
+template<typename Iterator> class WTF_VIEW_TYPE IndexedRangeIterator {
 public:
     IndexedRangeIterator(Iterator&& iterator)
         : m_iterator(WTF::move(iterator))
@@ -124,7 +124,7 @@ private:
 };
 
 template<typename Iterator>
-class IndexedRange {
+class WTF_VIEW_TYPE IndexedRange {
 public:
     template<typename Collection>
     IndexedRange(Collection&& collection)

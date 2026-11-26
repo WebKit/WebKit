@@ -30,6 +30,7 @@
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "JSCInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -437,7 +438,7 @@ void CallLinkStatus::dump(PrintStream& out) const
         out.print(comma, "Based On Stub"_s);
     
     if (!m_variants.isEmpty())
-        out.print(comma, listDump(m_variants));
+        out.print(comma, listDump(borrow(m_variants)));
     
     if (m_maxArgumentCountIncludingThisForVarargs)
         out.print(comma, "maxArgumentCountIncludingThisForVarargs = "_s, m_maxArgumentCountIncludingThisForVarargs);

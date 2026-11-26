@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "StackAlignment.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -53,7 +54,7 @@ void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collecti
 
 void assign(StackSlot* slot, const Vector<StackSlot*>& otherSlots)
 {
-    dataLogLnIf(AirStackAllocationInternal::verbose, "Attempting to assign ", pointerDump(slot), " with interference ", pointerListDump(otherSlots));
+    dataLogLnIf(AirStackAllocationInternal::verbose, "Attempting to assign ", pointerDump(slot), " with interference ", pointerListDump(borrow(otherSlots)));
 
     // Start candidate at the top of the frame and push it down past any overlapping slot.
     intptr_t offsetFromFP = -static_cast<intptr_t>(slot->byteSize());

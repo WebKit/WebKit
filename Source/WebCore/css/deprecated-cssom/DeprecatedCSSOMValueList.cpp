@@ -27,6 +27,7 @@
 #include "DeprecatedCSSOMValueList.h"
 
 #include "CSSValueList.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ DeprecatedCSSOMValueList::DeprecatedCSSOMValueList(DeprecatedCSSOMValueListBuild
 
 String DeprecatedCSSOMValueList::cssText() const
 {
-    return makeString(interleave(m_values, [](auto& value) { return value.get().cssText(); }, CSSValueList::separatorCSSText(m_valueSeparator)));
+    return makeString(interleave(borrow(m_values), [](auto& value) { return value.get().cssText(); }, CSSValueList::separatorCSSText(m_valueSeparator)));
 }
 
 unsigned short DeprecatedCSSOMValueList::cssValueType() const

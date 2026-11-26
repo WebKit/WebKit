@@ -82,7 +82,7 @@ public:
         node->append(newNode(newValue));
     }
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
     public:
         iterator()
         {

@@ -312,7 +312,7 @@ public:
         return list()->lengthSpan().back();
     }
     
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
     public:
         iterator()
             : m_set(nullptr)

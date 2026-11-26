@@ -153,7 +153,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, MemoryDump);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
 template<typename... Values>
-class ConditionalDump {
+class WTF_VIEW_TYPE ConditionalDump {
 public:
     explicit ConditionalDump(bool shouldPrint, const Values&... values)
         : m_shouldPrint(shouldPrint)
@@ -244,7 +244,7 @@ void printInternal(PrintStream& out, const Dumpable auto& value)
     }
 
 #define MAKE_PRINT_METHOD_ADAPTOR(Name, Type, method) \
-    class Name {                                 \
+    class WTF_VIEW_TYPE Name {                   \
     public:                                      \
         Name(const Type& value)                  \
             : m_value(value)                     \
@@ -269,7 +269,7 @@ WTF_EXPORT_PRIVATE void dumpCharacter(PrintStream&, char);
 MAKE_PRINT_ADAPTOR(CharacterDump, char, dumpCharacter);
 
 template<typename T>
-class PointerDump {
+class WTF_VIEW_TYPE PointerDump {
 public:
     PointerDump(const T* ptr)
         : m_ptr(ptr)
@@ -309,7 +309,7 @@ void printInternal(PrintStream& out, const Ref<T>& value)
 }
 
 template<typename T, typename U>
-class ValueInContext {
+class WTF_VIEW_TYPE ValueInContext {
 public:
     ValueInContext(const T& value, U* context)
         : m_value(&value)
@@ -334,7 +334,7 @@ ValueInContext<T, U> inContext(const T& value, U* context)
 }
 
 template<typename T, typename U>
-class PointerDumpInContext {
+class WTF_VIEW_TYPE PointerDumpInContext {
 public:
     PointerDumpInContext(const T* ptr, U* context)
         : m_ptr(ptr)
@@ -362,7 +362,7 @@ PointerDumpInContext<T, U> pointerDumpInContext(const T* ptr, U* context)
 }
 
 template<typename T, typename U>
-class ValueIgnoringContext {
+class WTF_VIEW_TYPE ValueIgnoringContext {
 public:
     ValueIgnoringContext(const U& value)
         : m_value(&value)

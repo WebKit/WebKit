@@ -36,7 +36,7 @@ namespace WTF {
 
     // An iterator for SegmentedVector. It supports only the pre ++ operator
     template <typename T, size_t SegmentSize, size_t InlineCapacity, SegmentedVectorGrowthPolicy GrowthPolicy, typename Malloc> class SegmentedVector;
-    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 0, SegmentedVectorGrowthPolicy GrowthPolicy = SegmentedVectorGrowthPolicy::Constant, typename Malloc = SegmentedVectorMalloc> class SegmentedVectorIterator {
+    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 0, SegmentedVectorGrowthPolicy GrowthPolicy = SegmentedVectorGrowthPolicy::Constant, typename Malloc = SegmentedVectorMalloc> class WTF_VIEW_TYPE SegmentedVectorIterator {
         WTF_MAKE_CONFIGURABLE_ALLOCATED(FastMalloc);
     private:
         friend class SegmentedVector<T, SegmentSize, InlineCapacity, GrowthPolicy, Malloc>;

@@ -30,6 +30,7 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3ValueInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 {
@@ -102,7 +103,7 @@ void SwitchValue::dumpSuccessors(const BasicBlock* block, PrintStream& out) cons
 
 void SwitchValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "cases = [", listDump(m_values), "]");
+    out.print(comma, "cases = [", listDump(borrow(m_values)), "]");
 }
 
 SwitchValue::SwitchValue(Origin origin, Value* child)

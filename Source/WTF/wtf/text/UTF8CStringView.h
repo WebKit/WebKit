@@ -44,7 +44,7 @@ class PrintStream;
 
 // This is a class designed to contain a null terminated UTF8 string, untouched. It contains char8_t to avoid mixing
 // incompatible encodings at compile time.
-class UTF8CStringView final {
+class WTF_VIEW_TYPE UTF8CStringView final {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
     static UTF8CStringView unsafeFromUTF8(const char* string)

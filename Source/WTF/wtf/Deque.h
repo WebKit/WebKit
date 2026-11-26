@@ -152,7 +152,7 @@ private:
 };
 
 template<typename T, size_t inlineCapacity = 0>
-class DequeIteratorBase {
+class WTF_VIEW_TYPE DequeIteratorBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeIteratorBase);
 protected:
     DequeIteratorBase();
@@ -189,7 +189,7 @@ private:
 };
 
 template<typename T, size_t inlineCapacity = 0>
-class DequeIterator : public DequeIteratorBase<T, inlineCapacity> {
+class WTF_VIEW_TYPE DequeIterator : public DequeIteratorBase<T, inlineCapacity> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeIterator);
 private:
     typedef DequeIteratorBase<T, inlineCapacity> Base;
@@ -227,7 +227,7 @@ public:
 };
 
 template<typename T, size_t inlineCapacity = 0>
-class DequeConstIterator : public DequeIteratorBase<T, inlineCapacity> {
+class WTF_VIEW_TYPE DequeConstIterator : public DequeIteratorBase<T, inlineCapacity> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DequeConstIterator);
 private:
     typedef DequeIteratorBase<T, inlineCapacity> Base;

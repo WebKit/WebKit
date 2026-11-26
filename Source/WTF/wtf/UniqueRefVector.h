@@ -31,7 +31,7 @@
 namespace WTF {
 
 template<typename T>
-class UniqueRefVectorIterator {
+class WTF_VIEW_TYPE UniqueRefVectorIterator {
     using Iterator = UniqueRefVectorIterator<T>;
 
 public:
@@ -67,7 +67,7 @@ private:
 };
 
 template<typename T>
-class UniqueRefVectorConstIterator {
+class WTF_VIEW_TYPE UniqueRefVectorConstIterator {
     using Iterator = UniqueRefVectorConstIterator<T>;
 
 public:
