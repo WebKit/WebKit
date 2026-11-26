@@ -40,12 +40,17 @@ enum class Change : uint8_t {
     Inherited = 1 << 1,
     FastPathInherited = 1 << 2,
     Container = 1 << 3,
-    Renderer = 1 << 4
+    Renderer = 1 << 4,
+    // effectiveInert changed. It propagates via the fast path even through styles that
+    // disallow fast-path inheritance, since no declaration can override it.
+    InertInherited = 1 << 5
 };
 
-constexpr OptionSet<Change> inheritedChanges() { return { Change::Inherited, Change::FastPathInherited }; }
+constexpr OptionSet<Change> inheritedChanges() { return { Change::Inherited, Change::FastPathInherited, Change::InertInherited }; }
 
 WEBCORE_EXPORT OptionSet<Change> determineChanges(const Style::ComputedStyle&, const Style::ComputedStyle&);
+// For styles produced by ComputedStyle::fastPathInheritFrom(), where only fast-path inherited properties and effectiveInert can differ.
+OptionSet<Change> determineFastPathChanges(const Style::ComputedStyle&, const Style::ComputedStyle&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, Change);
 WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<Change>);

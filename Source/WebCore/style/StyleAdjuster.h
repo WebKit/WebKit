@@ -60,6 +60,7 @@ public:
     NODELETE static void adjustFirstLineStyle(Style::ComputedStyle&);
     static void adjustSVGElementStyle(Style::ComputedStyle&, const SVGElement&);
     static bool adjustEventListenerRegionTypesForRootStyle(Style::ComputedStyle&, const Document&);
+    static bool mayOverrideEffectiveInert(const Document&, const Element&);
     static void adjustColumnStylesForPaginationMode(Style::ComputedStyle&, PaginationMode);
     static void propagateToDocumentElementAndInitialContainingBlock(Update&, const Document&);
     static std::unique_ptr<Style::ComputedStyle> restoreUsedDocumentElementStyleToComputed(const Style::ComputedStyle&);

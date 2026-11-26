@@ -190,9 +190,11 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     if (resolutionType == ResolutionType::FastPathInherit && !styleable.hasKeyframeEffects()) {
         // If the only reason we are computing the style is that some parent inherited properties changed, we can just copy them.
         auto style = Style::ComputedStyle::clonePtr(*existingStyle);
-        style->fastPathInheritFrom(parent().style);
+        RefPtr parentElement = parent().element;
+        auto* oldParentStyle = parentElement ? parentElement->renderOrDisplayContentsStyle() : nullptr;
+        style->fastPathInheritFrom(parent().style, oldParentStyle);
         m_document->styleScope().matchResultCache().updateForFastPathInherit(element, parent().style);
-        return { WTF::move(style) };
+        return { .style = WTF::move(style), .relations = { }, .matchResult = { }, .isFastPathInherit = true };
     }
 
     auto unadjustedStyle = [&] {
@@ -898,6 +900,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     }
 
     auto unanimatedDisplay = resolvedStyle.style->display();
+    auto isFastPathInherit = resolvedStyle.isFastPathInherit;
+    bool styleUnchangedByAnimations = false;
 
     WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
 
@@ -944,6 +948,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             // FIXME: Push after-change style into parent stack instead.
             styleable.setLastStyleChangeEventStyle(resolveAfterChangeStyleForNonAnimated(resolvedStyle, styleable, resolutionContext));
             styleable.setHasPropertiesOverridenAfterAnimation(false);
+            styleUnchangedByAnimations = true;
             return { WTF::move(resolvedStyle.style), OptionSet<AnimationImpact> { } };
         }
 
@@ -1002,7 +1007,14 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     if (currentStyle)
         newStyle->deduplicateCustomProperties(*currentStyle);
 
-    auto changes = currentStyle ? determineChanges(*currentStyle, *newStyle) : Change::Renderer;
+    auto changes = [&] -> OptionSet<Change> {
+        if (!currentStyle)
+            return Change::Renderer;
+        // A fast-path inherited style that animations left untouched can only differ in fast-path properties; skip the full diff.
+        if (isFastPathInherit && styleUnchangedByAnimations)
+            return determineFastPathChanges(*currentStyle, *newStyle);
+        return determineChanges(*currentStyle, *newStyle);
+    }();
 
     if (element->hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
         changes.add(Change::Renderer);
@@ -1282,12 +1294,18 @@ auto TreeResolver::determineResolutionType(const Element& element, const Style::
         auto canFastPathInherit = [&] {
             if (parentChanges.contains(Change::Inherited))
                 return false;
-            if (!parentChanges.contains(Change::FastPathInherited))
+            if (!parentChanges.containsAny({ Change::FastPathInherited, Change::InertInherited }))
                 return false;
-            if (!existingStyle || existingStyle->disallowsFastPathInheritance())
+            if (!existingStyle)
+                return false;
+            if (parentChanges.contains(Change::FastPathInherited) && existingStyle->disallowsFastPathInheritance())
                 return false;
             // Some non-inherited property changed along with a fast-path property and we may need to inherit it too.
             if (parentChanges.contains(Change::NonInherited) && existingStyle->hasExplicitlyInheritedProperties())
+                return false;
+            // The adjuster would compute effectiveInert for these elements; fastPathInheritFrom() would propagate it blindly.
+            Ref document = element.document();
+            if (Adjuster::mayOverrideEffectiveInert(document, element))
                 return false;
             return true;
         };

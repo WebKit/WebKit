@@ -63,7 +63,7 @@ public:
     void inheritIgnoringCustomPropertiesFrom(const ComputedStyle&);
     NODELETE void inheritUnicodeBidiFrom(const ComputedStyle&);
     inline void inheritColumnPropertiesFrom(const ComputedStyle&);
-    void fastPathInheritFrom(const ComputedStyle&);
+    void fastPathInheritFrom(const ComputedStyle& inheritParent, const ComputedStyle* oldInheritParent = nullptr);
     void copyNonInheritedFrom(const ComputedStyle&);
     void copyContentFrom(const ComputedStyle&);
     void copyPseudoElementsFrom(const ComputedStyle&);
