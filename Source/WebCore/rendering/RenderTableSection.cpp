@@ -1568,16 +1568,20 @@ void RenderTableSection::recalcCells()
     m_cRow = 0;
     m_grid.clear();
 
+    // Insert every row before any cell, so that rowCount() is the final row
+    // count when addCell() asks a rowspan="0" cell for its span.
     for (CheckedPtr row = firstRow(); row; row = row->nextRow()) {
         unsigned insertionRow = m_cRow;
         m_cRow++;
-        m_cCol = 0;
         ensureRows(m_cRow);
 
         m_grid[insertionRow].rowRenderer = row.get();
         row->setRowIndex(insertionRow);
         setRowLogicalHeightToRowStyleLogicalHeight(m_grid[insertionRow]);
+    }
 
+    for (CheckedPtr row = firstRow(); row; row = row->nextRow()) {
+        m_cCol = 0;
         for (CheckedPtr cell = row->firstCell(); cell; cell = cell->nextCell())
             addCell(cell.get(), row.get());
     }
