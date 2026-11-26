@@ -55,8 +55,13 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WKWPE {
 using namespace WebKit;
 
+static constexpr Seconds longPressTimeoutDelay = 500_ms;
+
 ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& configuration)
     : m_wpeView(adoptGRef(wpe_view_new(display)))
+#if ENABLE(CONTEXT_MENUS)
+    , m_longPressTimeout(RunLoop::mainSingleton(), "WPEWebViewPlatform::LongPressTimeout"_s, [this] { handleLongPress(); })
+#endif // ENABLE(CONTEXT_MENUS)
 {
     ASSERT(m_wpeView);
     g_object_set_data(G_OBJECT(m_wpeView.get()), "wk-view", this);
@@ -494,52 +499,58 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     if (!gestureController)
         return;
 
-    if (!wpe_gesture_controller_handle_event(gestureController, event))
+    if (!wpe_gesture_controller_handle_event(gestureController, event)) {
+        cancelLongPress();
         return;
+    }
 
-    if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_DOWN)
+    WPEGesture gesture = wpe_gesture_controller_get_gesture(gestureController);
+
+    bool longPressFired = m_longPressFired;
+    switch (wpe_event_get_event_type(event)) {
+    case WPE_EVENT_TOUCH_DOWN:
+#if ENABLE(CONTEXT_MENUS)
+        cancelLongPress();
+
+        // Start synthetic right-click timer on touch down.
+        if (gesture == WPE_GESTURE_TAP
+            && wpe_gesture_controller_get_gesture_position(gestureController, &m_longPressX, &m_longPressY))
+            m_longPressTimeout.startOneShot(longPressTimeoutDelay);
+#endif // ENABLE(CONTEXT_MENUS)
+
         return;
+#if ENABLE(CONTEXT_MENUS)
+    case WPE_EVENT_TOUCH_UP:
+        cancelLongPress();
 
-    switch (wpe_gesture_controller_get_gesture(gestureController)) {
+        // Ignore touch up for long press gestures.
+        if (longPressFired)
+            return;
+
+        break;
+    case WPE_EVENT_TOUCH_CANCEL:
+        cancelLongPress();
+        break;
+#endif // ENABLE(CONTEXT_MENUS)
+    default:
+        break;
+    }
+
+    switch (gesture) {
     case WPE_GESTURE_NONE:
         break;
     case WPE_GESTURE_TAP:
         if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_MOVE)
             return;
-        if (double x, y; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y)) {
-            // A tap ends the composition before it moves the caret, as a pointer press does in handleEvent().
-            // The simulated mouse events below go to the page directly and would skip that.
-            m_inputMethodFilter.cancelComposition();
-
-            // Mouse motion towards the point of the click.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
-                    WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
-            }
-
-            // Mouse down on the point of the click.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
-                    WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, WPE_MODIFIER_POINTER_BUTTON1, 1, x, y, 1
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
-            }
-
-            wpe_view_focus_in(m_wpeView.get());
-
-            // Mouse up on the same location.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
-                    WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y, 0
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
-            }
-        }
+        if (double x, y; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y))
+            simulateClick(x, y, WPE_MODIFIER_POINTER_BUTTON1, 1);
         break;
     case WPE_GESTURE_DRAG:
         if (double x, y, dx, dy; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y) && wpe_gesture_controller_get_gesture_delta(gestureController, &dx, &dy)) {
+#if ENABLE(CONTEXT_MENUS)
+            cancelLongPress();
+#endif // ENABLE(CONTEXT_MENUS)
+
             auto phase = wpe_gesture_controller_is_drag_begin(gestureController)
                 ? WebWheelEvent::Phase::Began
                 : (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_UP) ? WebWheelEvent::Phase::Ended : WebWheelEvent::Phase::Changed;
@@ -555,6 +566,56 @@ void ViewPlatform::handleGesture(WPEEvent* event)
             ));
             page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(simulatedScrollEvent.get(), phase));
         }
+        break;
+    }
+}
+
+#if ENABLE(CONTEXT_MENUS)
+void ViewPlatform::handleLongPress()
+{
+    simulateClick(m_longPressX, m_longPressY, WPE_MODIFIER_POINTER_BUTTON3, 3);
+    m_longPressFired = true;
+
+    // Prevent sequence from triggering any other gesture.
+    auto* gestureController = wpe_view_get_gesture_controller(m_wpeView.get());
+    if (gestureController)
+        wpe_gesture_controller_cancel(gestureController);
+}
+
+void ViewPlatform::cancelLongPress()
+{
+    m_longPressTimeout.stop();
+    m_longPressFired = false;
+}
+#endif // ENABLE(CONTEXT_MENUS)
+
+void ViewPlatform::simulateClick(double x, double y, WPEModifiers modifiers, guint button)
+{
+    // A tap ends the composition before it moves the caret, as a pointer press does in handleEvent().
+    // The simulated mouse events below go to the page directly and would skip that.
+    m_inputMethodFilter.cancelComposition();
+
+    // Mouse motion towards the point of the click.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
+            WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
+    }
+
+    // Mouse down on the point of the click.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+            WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, modifiers, button, x, y, 1));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
+    }
+
+    wpe_view_focus_in(m_wpeView.get());
+
+    // Mouse up on the same location.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+            WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), button, x, y, 0));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent::create(simulatedEvent.get()));
     }
 }
 

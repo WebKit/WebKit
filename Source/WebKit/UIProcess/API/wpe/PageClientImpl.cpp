@@ -240,7 +240,7 @@ WebCore::IntPoint PageClientImpl::accessibilityScreenToRootView(const WebCore::I
 
 WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::IntRect& rect)
 {
-    return rootViewToScreen(rect);    
+    return rootViewToScreen(rect);
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
@@ -271,6 +271,11 @@ void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wa
             // detected by the engine itself.
             wpe_gesture_controller_cancel(gestureController);
         }
+
+#if ENABLE(CONTEXT_MENUS)
+        // Cancel timer to open the context menu on long press with touch input.
+        static_cast<WKWPE::ViewPlatform&>(m_view).cancelLongPress();
+#endif // ENABLE(CONTEXT_MENUS)
 #endif
         return;
     }

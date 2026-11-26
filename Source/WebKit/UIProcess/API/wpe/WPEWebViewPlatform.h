@@ -34,6 +34,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#if ENABLE(CONTEXT_MENUS)
+#include <wtf/RunLoop.h>
+#endif // ENABLE(CONTEXT_MENUS)
 
 namespace WebKit {
 class AcceleratedBackingStore;
@@ -71,6 +74,10 @@ public:
 
     void handleGesture(WPEEvent*);
 
+#if ENABLE(CONTEXT_MENUS)
+    void cancelLongPress();
+#endif // ENABLE(CONTEXT_MENUS)
+
 private:
     ViewPlatform(WPEDisplay*, const API::PageConfiguration&);
 
@@ -95,6 +102,10 @@ private:
     void dispatchPendingNextPresentationUpdateCallbacks();
 
     gboolean handleEvent(WPEEvent*);
+    void simulateClick(double x, double y, WPEModifiers, guint button);
+#if ENABLE(CONTEXT_MENUS)
+    void handleLongPress();
+#endif // ENABLE(CONTEXT_MENUS)
 
     GRefPtr<WPEView> m_wpeView;
     RefPtr<WebKit::AcceleratedBackingStore> m_backingStore;
@@ -105,6 +116,12 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_viewWasAlreadyInFullScreen { false };
 #endif
+#if ENABLE(CONTEXT_MENUS)
+    RunLoop::Timer m_longPressTimeout;
+    bool m_longPressFired { false };
+    double m_longPressX { 0 };
+    double m_longPressY { 0 };
+#endif // ENABLE(CONTEXT_MENUS)
 };
 
 } // namespace WKWPE
