@@ -441,11 +441,12 @@ bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, W
     return true;
 }
 
-bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExtensionMessageTargetParameters& targetParameters, NSString *sourceKey, NSString **outExceptionString)
+bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExtensionMessageTargetParameters& targetParameters, bool& usesStructuredClone, NSString *sourceKey, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{
         frameIdKey: NSNumber.class,
         documentIdKey: NSString.class,
+        serializationKey: NSString.class,
     };
 
     if (!validateDictionary(options, sourceKey, nil, types, outExceptionString))
@@ -476,12 +477,20 @@ bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExte
         targetParameters.documentIdentifier = parsedUUID.value();
     }
 
+    if (NSString *serialization = options[serializationKey]) {
+        String errorString;
+        if (!parseMessageSerializationOption(serialization, makeString(String(sourceKey), ".serialization"_s), usesStructuredClone, errorString)) {
+            *outExceptionString = errorString.createNSString().autorelease();
+            return false;
+        }
+    }
+
     return true;
 }
 
-bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::optional<String>& name, WebExtensionMessageTargetParameters& targetParameters, NSString *sourceKey, NSString **outExceptionString)
+bool WebExtensionAPITabs::parseConnectOptions(NSDictionary *options, std::optional<String>& name, WebExtensionMessageTargetParameters& targetParameters, bool& usesStructuredClone, NSString *sourceKey, NSString **outExceptionString)
 {
-    if (!parseSendMessageOptions(options, targetParameters, sourceKey, outExceptionString))
+    if (!parseSendMessageOptions(options, targetParameters, usesStructuredClone, sourceKey, outExceptionString))
         return false;
 
     static NSDictionary<NSString *, id> *types = @{
@@ -996,7 +1005,7 @@ void WebExtensionAPITabs::captureVisibleTab(WebPageProxyIdentifier webPageProxyI
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, const WebExtensionMessage& message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPITabs::sendMessage(WebFrame& frame, JSContextRef context, double tabID, JSValue *serializableMessage, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/sendMessage
 
@@ -1004,7 +1013,19 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, const WebEx
     if (!isValid(tabIdentifer, outExceptionString))
         return;
 
-    if (message.length() > webExtensionMaxMessageLength) {
+    WebExtensionMessageTargetParameters targetParameters;
+    bool usesStructuredClone = usesStructuredCloneMessageSerialization();
+    if (!parseSendMessageOptions(options, targetParameters, usesStructuredClone, @"options", outExceptionString))
+        return;
+
+    String serializationError;
+    auto message = serializeMessage(context, serializableMessage.JSValueRef, usesStructuredClone, serializationError);
+    if (!message) {
+        *outExceptionString = serializationError.createNSString().autorelease();
+        return;
+    }
+
+    if (message->length() > webExtensionMaxMessageLength) {
         *outExceptionString = toErrorString(nullString(), @"message", @"it exceeded the maximum allowed length").createNSString().autorelease();
         return;
     }
@@ -1015,10 +1036,6 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, const WebEx
         return;
     }
 
-    WebExtensionMessageTargetParameters targetParameters;
-    if (!parseSendMessageOptions(options, targetParameters, @"options", outExceptionString))
-        return;
-
     WebExtensionMessageSenderParameters senderParameters {
         extensionContext().uniqueIdentifier(),
         std::nullopt, // tabParameters
@@ -1028,11 +1045,12 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, const WebEx
         frame.url(),
         documentIdentifier,
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
     // The message keeps any Blob it references alive, so hold it until the receiver replies.
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), message, targetParameters, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback), message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), *message, targetParameters, senderParameters, userGesture), [protectedThis = Ref { *this }, callback = WTF::move(callback), message = *message](std::expected<WebExtensionMessage, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
@@ -1058,7 +1076,8 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
 
     std::optional<String> name;
     WebExtensionMessageTargetParameters targetParameters;
-    if (!parseConnectOptions(options, name, targetParameters, @"options", outExceptionString))
+    bool usesStructuredClone = usesStructuredCloneMessageSerialization();
+    if (!parseConnectOptions(options, name, targetParameters, usesStructuredClone, @"options", outExceptionString))
         return nullptr;
 
     String resolvedName = name.value_or(nullString());
@@ -1072,9 +1091,11 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         frame.url(),
         documentIdentifier,
         std::nullopt, // windowIdentifier
+        usesStructuredClone,
     };
 
     Ref port = WebExtensionAPIPort::create(*this, frame.page()->webPageProxyIdentifier(), WebExtensionContentWorldType::ContentScript, resolvedName);
+    port->setUsesStructuredCloneMessageSerialization(usesStructuredClone);
 
     bool userGesture = WebCore::UserGestureIndicator::processingUserGesture();
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetParameters, senderParameters, userGesture), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](std::expected<void, WebExtensionError>&& result) {

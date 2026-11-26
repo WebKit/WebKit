@@ -60,8 +60,9 @@ public:
     void disconnect();
     void fireDisconnectEventIfNeeded();
 
-    // Native and web page ports carry JSON, since the other end has no structured clone support.
-    bool usesStructuredCloneMessageSerialization() const { return WebExtensionAPIObject::usesStructuredCloneMessageSerialization() && targetContentWorldType() != WebExtensionContentWorldType::Native && targetContentWorldType() != WebExtensionContentWorldType::WebPage; }
+    // Both ends of a port use the format its opener chose. Native ports always carry JSON.
+    bool usesStructuredCloneMessageSerialization() const { return m_usesStructuredCloneMessageSerialization && targetContentWorldType() != WebExtensionContentWorldType::Native; }
+    void setUsesStructuredCloneMessageSerialization(bool usesStructuredClone) { m_usesStructuredCloneMessageSerialization = usesStructuredClone; }
 
     bool isDisconnected() const { return m_disconnected; }
 #endif
@@ -125,6 +126,7 @@ private:
         , m_channelIdentifier(WebExtensionPortChannelIdentifier::generate())
         , m_name(name)
         , m_senderParameters(senderParameters)
+        , m_usesStructuredCloneMessageSerialization(senderParameters.usesStructuredCloneMessageSerialization)
     {
         add();
     }
@@ -136,6 +138,7 @@ private:
         , m_channelIdentifier(channelIdentifier)
         , m_name(name)
         , m_senderParameters(senderParameters)
+        , m_usesStructuredCloneMessageSerialization(senderParameters.usesStructuredCloneMessageSerialization)
     {
         add();
     }
@@ -155,6 +158,7 @@ private:
     String m_name;
     Protected<JSValueRef> m_error;
     std::optional<WebExtensionMessageSenderParameters> m_senderParameters;
+    bool m_usesStructuredCloneMessageSerialization { false };
 
     const RefPtr<WebExtensionAPIEvent> m_onMessage;
     const RefPtr<WebExtensionAPIEvent> m_onDisconnect;

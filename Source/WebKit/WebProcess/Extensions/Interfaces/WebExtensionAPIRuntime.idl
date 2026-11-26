@@ -75,8 +75,9 @@ dictionary WebExtensionSendMessageOptions {
     [MainWorldOnly, NeedsScriptContext, ImplementedAs=onInstalledReason] readonly attribute any OnInstalledReason;
     [MainWorldOnly, NeedsScriptContext, ImplementedAs=platformArch] readonly attribute any PlatformArch;
     [MainWorldOnly, NeedsScriptContext, ImplementedAs=platformOS] readonly attribute any PlatformOs;
+    [NeedsScriptContext, ImplementedAs=messageSerialization] readonly attribute any MessageSerialization;
 
-    [ProcessArgumentsLeftToRight, RaisesStringException, NeedsPageIdentifier, NeedsFrame] void sendMessage([Optional] DOMString extensionID, [Serialization=Message] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
+    [ProcessArgumentsLeftToRight, RaisesStringException, NeedsPageIdentifier, NeedsFrame, NeedsScriptContext] void sendMessage([Optional] DOMString extensionID, [ValuesAllowed] any message, [Optional, JSONValue] any options, [Optional, CallbackHandler] function callback);
     [RaisesStringException, NeedsPageIdentifier, NeedsFrame, NeedsScriptContext] WebExtensionAPIPort connect([Optional] DOMString extensionID, [Optional, JSONValue] any options);
 
     [MainWorldOnly, Dynamic, NeedsFrame] void sendNativeMessage([Optional] DOMString applicationID, [Serialization=JSON] any message, [Optional, CallbackHandler] function callback);

@@ -483,7 +483,7 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     }).get()];
 }
 
-void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, const WebExtensionMessage& message, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::expected<WebExtensionMessage, WebExtensionError>&&)>&& completionHandler)
 {
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
@@ -527,18 +527,16 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
             return;
         }
 
-        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<String, WebExtensionError>)>::create(WTF::move(completionHandler), { });
+        auto callbackAggregator = EagerCallbackAggregator<void(std::expected<WebExtensionMessage, WebExtensionError>)>::create(WTF::move(completionHandler), { });
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, WebExtensionMessage { messageJSON }, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](std::optional<WebExtensionMessage>&& reply) {
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, message, std::nullopt, completeSenderParameters, resolvedUserGesture), [callbackAggregator](std::optional<WebExtensionMessage>&& reply) {
                 // A missing reply means no listeners replied. Don't call the callbackAggregator
                 // to give other listeners in a different process a chance to reply.
                 if (!reply)
                     return;
 
-                // Replies to a web page are always JSON.
-                if (auto replyJSON = reply->json())
-                    callbackAggregator.get()(WTF::move(*replyJSON));
+                callbackAggregator.get()(WTF::move(*reply));
             }, identifier());
         }
     });

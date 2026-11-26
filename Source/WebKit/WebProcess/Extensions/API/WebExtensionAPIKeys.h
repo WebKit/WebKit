@@ -228,6 +228,7 @@ static NSString * const selectedKey = @"selected";
 static NSString * const selectionKey = @"selection";
 static NSString * const selectionTextKey = @"selectionText";
 static NSString * const separatorKey = @"separator";
+static NSString * const serializationKey = @"serialization";
 static NSString * const sessionKey = @"session";
 static NSString * const shortcutKey = @"shortcut";
 static NSString * const srcURLKey = @"srcUrl";
@@ -283,6 +284,7 @@ static NSString * const xmlhttprequestKey = @"xmlhttprequest";
 #else
 
 static constexpr auto nameKey = "name"_s;
+static constexpr auto serializationKey = "serialization"_s;
 
 #endif
 
