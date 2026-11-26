@@ -1,5 +1,49 @@
 
 PASS AES-KW unwrapKey with a valid wrapped key
 PASS AES-KW unwrapKey with a tampered wrapped key
-PASS AES-KW unwrapKey with a wrapped key shorter than 24 bytes
+PASS AES-KW with a 128-bit key rejects wrapped key of length 0 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 1 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 2 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 3 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 4 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 5 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 6 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 7 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 8 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 16 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 20 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 23 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 25 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 31 with OperationError
+PASS AES-KW with a 128-bit key rejects wrapped key of length 33 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 0 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 1 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 2 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 3 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 4 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 5 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 6 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 7 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 8 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 16 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 20 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 23 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 25 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 31 with OperationError
+PASS AES-KW with a 192-bit key rejects wrapped key of length 33 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 0 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 1 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 2 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 3 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 4 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 5 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 6 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 7 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 8 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 16 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 20 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 23 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 25 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 31 with OperationError
+PASS AES-KW with a 256-bit key rejects wrapped key of length 33 with OperationError
 
