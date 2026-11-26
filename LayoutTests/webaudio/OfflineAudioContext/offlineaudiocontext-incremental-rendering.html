@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("OfflineAudioContext close() and chunked startRendering.");
+jsTestIsAsync = true;
+
+var sampleRate = 44100;
+var quantum = 128;
+
+function timeout() {
+    return new Promise(function(resolve) { setTimeout(resolve, 0); });
+}
+
+function makeRamp(context, length) {
+    var buffer = context.createBuffer(1, length, sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < data.length; ++i)
+        data[i] = i;
+    var source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(context.destination);
+    source.start(0);
+    return buffer;
+}
+
+function isRamp(buffer, start) {
+    var data = buffer.getChannelData(0);
+    if (data.length != quantum)
+        return false;
+    for (var i = 0; i < data.length; ++i) {
+        if (data[i] !== start + i)
+            return false;
+    }
+    return true;
+}
+
+async function runTest() {
+    var length = 1000;
+    var oneshot = new OfflineAudioContext(1, length, sampleRate);
+    makeRamp(oneshot, length);
+    var oneshotCompletes = 0;
+    var oneshotCompleteBuffer = null;
+    oneshot.oncomplete = function(event) {
+        oneshotCompletes++;
+        oneshotCompleteBuffer = event.renderedBuffer;
+    };
+    var oneshotBuffer = await oneshot.startRendering();
+    if (oneshotBuffer.length == length)
+        testPassed("one-shot buffer length is the context length");
+    else
+        testFailed("one-shot buffer length is " + oneshotBuffer.length);
+    if (oneshot.state == "closed")
+        testPassed("one-shot context state is closed");
+    else
+        testFailed("one-shot context state is " + oneshot.state);
+    await timeout();
+    if (oneshotCompletes == 1 && oneshotCompleteBuffer == oneshotBuffer)
+        testPassed("one-shot complete event fired once with the rendered buffer");
+    else
+        testFailed("one-shot complete count is " + oneshotCompletes);
+
+    var chunked = new OfflineAudioContext(1, length, sampleRate);
+    makeRamp(chunked, length);
+    var completes = 0;
+    var lastComplete = null;
+    chunked.oncomplete = function(event) {
+        completes++;
+        lastComplete = event.renderedBuffer;
+    };
+    var firstChunk = await chunked.startRendering(300);
+    var secondChunk = await chunked.startRendering(300);
+    await timeout();
+    if (chunked.state == "running")
+        testPassed("context stays running between chunks");
+    else
+        testFailed("context state between chunks is " + chunked.state);
+    if (completes == 0)
+        testPassed("no complete event before the last chunk");
+    else
+        testFailed("complete event count before the last chunk is " + completes);
+    var thirdChunk = await chunked.startRendering(300);
+    if (chunked.state == "closed")
+        testPassed("chunked context closes after the last chunk");
+    else
+        testFailed("chunked context state is " + chunked.state);
+    await timeout();
+    var lengths = [firstChunk.length, secondChunk.length, thirdChunk.length].join(", ");
+    if (lengths == "384, 384, 232")
+        testPassed("chunk lengths are 384, 384, and 232");
+    else
+        testFailed("chunk lengths are " + lengths);
+
+    var oneshotData = oneshotBuffer.getChannelData(0);
+    var combined = new Float32Array(length);
+    combined.set(firstChunk.getChannelData(0), 0);
+    combined.set(secondChunk.getChannelData(0), firstChunk.length);
+    combined.set(thirdChunk.getChannelData(0), firstChunk.length + secondChunk.length);
+    var matched = firstChunk.length + secondChunk.length + thirdChunk.length == length;
+    for (var i = 0; matched && i < length; ++i)
+        matched = combined[i] === oneshotData[i];
+    if (matched)
+        testPassed("chunked samples match the one-shot render");
+    else
+        testFailed("chunked samples differ from the one-shot render");
+    if (completes == 1 && lastComplete == thirdChunk)
+        testPassed("complete event fires once with the last chunk");
+    else
+        testFailed("chunked complete count is " + completes);
+
+    var queued = new OfflineAudioContext(1, 512, sampleRate);
+    var queuedPromises = [];
+    for (var q = 0; q < 4; ++q)
+        queuedPromises.push(queued.startRendering(quantum));
+    var committedRejects = false;
+    try {
+        await queued.startRendering(quantum);
+    } catch (e) {
+        committedRejects = e.name == "InvalidStateError";
+    }
+    var queuedBuffers = await Promise.all(queuedPromises);
+    var queuedLengthsMatch = queuedBuffers.length == 4;
+    for (var q = 0; queuedLengthsMatch && q < queuedBuffers.length; ++q)
+        queuedLengthsMatch = queuedBuffers[q].length == quantum;
+    if (queuedLengthsMatch)
+        testPassed("queued startRendering calls render 128 frames each");
+    else
+        testFailed("queued render lengths differ");
+    if (committedRejects)
+        testPassed("startRendering rejects once the length is committed");
+    else
+        testFailed("startRendering resolved after the length was committed");
+    if (queued.state == "closed")
+        testPassed("queued render closes the context");
+    else
+        testFailed("queued context state is " + queued.state);
+
+    var suspended = new OfflineAudioContext(1, quantum * 2, sampleRate);
+    var suspendPromise = suspended.suspend(quantum / sampleRate);
+    var firstSuspendChunk = await suspended.startRendering(quantum);
+    if (suspended.state == "running" && firstSuspendChunk.length == quantum)
+        testPassed("suspend at a chunk boundary leaves the context running");
+    else
+        testFailed("state after the first chunk is " + suspended.state);
+    var secondSuspendPromise = suspended.startRendering(quantum);
+    await suspendPromise;
+    if (suspended.state == "suspended")
+        testPassed("the next chunk suspends at that boundary");
+    else
+        testFailed("state at the suspend boundary is " + suspended.state);
+    await suspended.resume();
+    var secondSuspendChunk = await secondSuspendPromise;
+    if (secondSuspendChunk.length == quantum)
+        testPassed("resume finishes the suspended chunk");
+    else
+        testFailed("suspended chunk length is " + secondSuspendChunk.length);
+    if (suspended.state == "closed")
+        testPassed("the suspended render closes the context");
+    else
+        testFailed("state after resume is " + suspended.state);
+
+    var closed = new OfflineAudioContext(1, quantum, sampleRate);
+    await closed.close();
+    if (closed.state == "closed")
+        testPassed("close() before rendering closes the context");
+    else
+        testFailed("state after close() is " + closed.state);
+    try {
+        await closed.startRendering();
+        testFailed("startRendering after close resolved");
+    } catch (e) {
+        if (e.name == "InvalidStateError")
+            testPassed("startRendering after close rejected with InvalidStateError");
+        else
+            testFailed("startRendering after close rejected with " + e.name);
+    }
+    try {
+        await closed.close();
+        testFailed("second close() resolved");
+    } catch (e) {
+        if (e.name == "InvalidStateError")
+            testPassed("second close() rejected with InvalidStateError");
+        else
+            testFailed("second close() rejected with " + e.name);
+    }
+
+    var zeroChunk = new OfflineAudioContext(1, quantum, sampleRate);
+    try {
+        await zeroChunk.startRendering(0);
+        testFailed("startRendering(0) resolved");
+    } catch (e) {
+        if (e.name == "NotSupportedError")
+            testPassed("startRendering(0) rejected with NotSupportedError");
+        else
+            testFailed("startRendering(0) rejected with " + e.name);
+    }
+    if (zeroChunk.state == "suspended")
+        testPassed("startRendering(0) leaves the context suspended");
+    else
+        testFailed("state after startRendering(0) is " + zeroChunk.state);
+
+    var closing = new OfflineAudioContext(1, quantum * 4, sampleRate);
+    var closingSuspend = closing.suspend(quantum / sampleRate);
+    var closingRender = closing.startRendering();
+    await closingSuspend;
+    var closingClose = closing.close();
+    var closingName = "";
+    try {
+        await closingRender;
+    } catch (e) {
+        closingName = e.name;
+    }
+    await closingClose;
+    if (closingName == "AbortError")
+        testPassed("close() while suspended rejects the render with AbortError");
+    else
+        testFailed("close() while suspended rejected the render with " + closingName);
+    if (closing.state == "closed")
+        testPassed("close() while suspended closes the context");
+    else
+        testFailed("state after close() while suspended is " + closing.state);
+
+    var reentered = new OfflineAudioContext(1, quantum * 2, sampleRate);
+    makeRamp(reentered, quantum * 2);
+    var observed = [];
+    var secondPromise;
+    var thirdName = "";
+    try {
+        Object.defineProperty(AudioBuffer.prototype, "then", {
+            configurable: true,
+            get: function() {
+                observed.push(reentered.state);
+                if (observed.length == 1) {
+                    secondPromise = reentered.startRendering(quantum);
+                    reentered.startRendering(quantum).then(function() {
+                        thirdName = "resolved";
+                    }, function(e) {
+                        thirdName = e.name;
+                    });
+                }
+                return undefined;
+            }
+        });
+        var firstReentered = await reentered.startRendering(quantum);
+        var secondReentered = await secondPromise;
+        await timeout();
+        if (observed.length == 2 && observed[0] == "running" && observed[1] == "running")
+            testPassed("re-entered startRendering still sees a running context");
+        else
+            testFailed("re-entered states are " + observed.join(","));
+        if (isRamp(firstReentered, 0) && isRamp(secondReentered, quantum))
+            testPassed("re-entered chunk contains the next sample frames");
+        else
+            testFailed("re-entered chunks do not continue the ramp");
+        if (thirdName == "InvalidStateError")
+            testPassed("startRendering rejects once a re-entered render commits the length");
+        else
+            testFailed("re-entered extra startRendering result is " + thirdName);
+    } finally {
+        delete AudioBuffer.prototype.then;
+    }
+}
+
+runTest().then(finishJSTest, function(e) {
+    testFailed(String(e));
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+OfflineAudioContext close() and chunked startRendering.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS one-shot buffer length is the context length
+PASS one-shot context state is closed
+PASS one-shot complete event fired once with the rendered buffer
+PASS context stays running between chunks
+PASS no complete event before the last chunk
+PASS chunked context closes after the last chunk
+PASS chunk lengths are 384, 384, and 232
+PASS chunked samples match the one-shot render
+PASS complete event fires once with the last chunk
+PASS queued startRendering calls render 128 frames each
+PASS startRendering rejects once the length is committed
+PASS queued render closes the context
+PASS suspend at a chunk boundary leaves the context running
+PASS the next chunk suspends at that boundary
+PASS resume finishes the suspended chunk
+PASS the suspended render closes the context
+PASS close() before rendering closes the context
+PASS startRendering after close rejected with InvalidStateError
+PASS second close() rejected with InvalidStateError
+PASS startRendering(0) rejected with NotSupportedError
+PASS startRendering(0) leaves the context suspended
+PASS close() while suspended rejects the render with AbortError
+PASS close() while suspended closes the context
+PASS re-entered startRendering still sees a running context
+PASS re-entered chunk contains the next sample frames
+PASS startRendering rejects once a re-entered render commits the length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
