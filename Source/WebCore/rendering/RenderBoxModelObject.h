@@ -126,6 +126,7 @@ public:
     virtual LayoutSize contentBoxSize() const;
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
     virtual std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const;
+    bool hasDefiniteLogicalHeight() const;
     virtual bool hasDefiniteLogicalHeightForPercentageResolutionFromStyle() const;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
