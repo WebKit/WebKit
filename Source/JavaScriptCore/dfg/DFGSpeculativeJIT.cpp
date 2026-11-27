@@ -13359,7 +13359,7 @@ void SpeculativeJIT::compileGetGlobalVariable(Node* node)
         FPRReg resultFPR = result.fpr();
 
         loadDouble(TrustedImmPtr(node->variablePointer()), scratch1FPR);
-        unboxRealNumberDouble(node, scratch1FPR, resultFPR, scratch2GPR);
+        unboxNumberAsDouble(node, scratch1FPR, resultFPR, scratch2GPR);
         doubleResult(resultFPR, node);
         return;
     }
@@ -13436,7 +13436,7 @@ void SpeculativeJIT::compileGetClosureVar(Node* node)
         FPRReg resultFPR = result.fpr();
 
         loadDouble(Address(baseGPR, JSLexicalEnvironment::offsetOfVariable(node->scopeOffset())), scratch1FPR);
-        unboxRealNumberDouble(node, scratch1FPR, resultFPR, scratch2GPR);
+        unboxNumberAsDouble(node, scratch1FPR, resultFPR, scratch2GPR);
         doubleResult(resultFPR, node);
         return;
     }
@@ -15216,7 +15216,7 @@ void SpeculativeJIT::compileGetByOffset(Node* node)
         FPRReg resultFPR = result.fpr();
 
         loadDouble(Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)), scratch1FPR);
-        unboxRealNumberDouble(node, scratch1FPR, resultFPR, scratch2GPR);
+        unboxNumberAsDouble(node, scratch1FPR, resultFPR, scratch2GPR);
         doubleResult(resultFPR, node);
         return;
     }

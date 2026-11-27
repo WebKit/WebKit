@@ -2427,26 +2427,31 @@ private:
         return nullptr;
     }
 
-    LValue unboxRealNumberDouble(LValue boxed, Node* node = nullptr)
+    LValue unboxNumberAsDouble(LValue boxed, Node* node)
     {
+        LBasicBlock nanCase = m_out.newBlock();
         LBasicBlock intCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(intCase);
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(nanCase);
 
         LValue doubleValue = unboxDoubleAsDouble(boxed);
         ValueFromBlock fastResult = m_out.anchor(doubleValue);
-        m_out.branch(m_out.doubleEqual(doubleValue, doubleValue), usually(continuation), rarely(intCase));
+        m_out.branch(m_out.doubleEqual(doubleValue, doubleValue), usually(continuation), rarely(nanCase));
+
+        m_out.appendTo(nanCase, intCase);
+        LValue boxedJSValue = m_out.bitCast(boxed, Int64);
+        speculate(BadType, noValue(), node, isNotNumber(boxedJSValue));
+        ValueFromBlock nanResult = m_out.anchor(doubleValue);
+        m_out.branch(isInt32(boxedJSValue), unsure(intCase), unsure(continuation));
 
         m_out.appendTo(intCase, continuation);
-        LValue boxedJSValue = m_out.bitCast(boxed, Int64);
-        speculate(BadType, noValue(), node, isNotInt32(boxedJSValue));
-        ValueFromBlock slowResult = m_out.anchor(m_out.intToDouble(unboxInt32(boxedJSValue)));
+        ValueFromBlock intResult = m_out.anchor(m_out.intToDouble(unboxInt32(boxedJSValue)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
 
-        return m_out.phi(Double, fastResult, slowResult);
+        return m_out.phi(Double, fastResult, nanResult, intResult);
     }
 
     void compileValueRep()
@@ -12915,7 +12920,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue storage = lowStorage(m_node->child1());
         if (m_node->hasDoubleResult()) {
             LValue boxed = loadDoubleProperty(storage, data.identifierNumber, data.offset);
-            LValue value = unboxRealNumberDouble(boxed, m_node);
+            LValue value = unboxNumberAsDouble(boxed, m_node);
             ensureStillAliveHere(base);
             setDouble(value);
             return;
@@ -13024,7 +13029,7 @@ IGNORE_CLANG_WARNINGS_END
         ensureStillAliveHere(base);
 
         if (m_node->hasDoubleResult())
-            setDouble(unboxRealNumberDouble(m_out.phi(Double, results), m_node));
+            setDouble(unboxNumberAsDouble(m_out.phi(Double, results), m_node));
         else
             setJSValue(m_out.phi(Int64, results));
     }
@@ -13312,7 +13317,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         if (m_node->hasDoubleResult()) {
             LValue boxed = m_out.loadDouble(m_out.absolute(m_node->variablePointer()));
-            setDouble(unboxRealNumberDouble(boxed, m_node));
+            setDouble(unboxNumberAsDouble(boxed, m_node));
             return;
         }
 
@@ -13432,7 +13437,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue base = lowCell(m_node->child1());
         if (m_node->hasDoubleResult()) {
             LValue boxed = m_out.loadDouble(base, m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]);
-            setDouble(unboxRealNumberDouble(boxed, m_node));
+            setDouble(unboxNumberAsDouble(boxed, m_node));
             return;
         }
 

@@ -4414,10 +4414,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue value = m_graph.tryGetConstantClosureVar(forNode(node->child1()), node->scopeOffset());
         if (node->hasDoubleResult()) {
             if (value && value.isNumber()) {
-                if (!std::isnan(value.asNumber())) {
-                    setConstant(node, *m_graph.freeze(value));
-                    break;
-                }
+                setConstant(node, *m_graph.freeze(value));
+                break;
             }
             setTypeForNode(node, SpecBytecodeDouble);
             break;

@@ -1909,7 +1909,7 @@ public:
     unsigned appendOSRExit(OSRExit&&, bool isExceptionHandler = false);
     unsigned appendExceptionHandlingOSRExit(ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
 
-    void unboxRealNumberDouble(Node*, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR);
+    void unboxNumberAsDouble(Node*, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR);
     void boxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR);
 
     template<bool strict>

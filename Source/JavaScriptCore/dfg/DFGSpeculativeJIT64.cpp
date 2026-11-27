@@ -8810,19 +8810,21 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::unboxRealNumberDouble(Node* node, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR)
+void SpeculativeJIT::unboxNumberAsDouble(Node* node, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR)
 {
     ASSERT(boxedFPR != resultFPR);
 
     move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(JSValue::DoubleEncodeOffset)), resultFPR);
     sub64(boxedFPR, resultFPR, resultFPR);
-    auto doneCase = branchIfNotNaN(resultFPR);
+    JumpList doneCases;
+    doneCases.append(branchIfNotNaN(resultFPR));
 
     moveDoubleTo64(boxedFPR, scratchGPR);
-    speculationCheck(BadType, JSValueSource { }, node, branchIfNotInt32(scratchGPR));
+    speculationCheck(BadType, JSValueSource { }, node, branchIfNotNumber(scratchGPR));
+    doneCases.append(branchIfNotInt32(scratchGPR));
     convertInt32ToDouble(scratchGPR, resultFPR);
 
-    doneCase.link(this);
+    doneCases.link(this);
 }
 
 void SpeculativeJIT::boxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR)
