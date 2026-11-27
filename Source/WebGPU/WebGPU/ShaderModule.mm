@@ -621,6 +621,7 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
                 populateShaderModuleState(entryPointName).usesFrontFacingInInput = true;
                 break;
             case GlobalInvocationId:
+            case GlobalInvocationIndex:
                 break;
             case InstanceIndex:
                 break;
@@ -654,6 +655,7 @@ void ShaderModule::populateFragmentInputs(const WGSL::Type& type, ShaderModule::
             case VertexIndex:
                 break;
             case WorkgroupId:
+            case WorkgroupIndex:
                 break;
             }
         }

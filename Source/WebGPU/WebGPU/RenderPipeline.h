@@ -112,6 +112,15 @@ public:
     RefPtr<RenderPipeline> recomputeLastStrideAsStride() const;
     uint64_t uniqueId() const { return m_uniqueId; }
     uint32_t vertexShaderBindingCount() const { return m_vertexShaderBindingCount; }
+    uint64_t requiredImmediateSlots() const { return m_requiredImmediateSlots; }
+    bool usesVertexImmediates() const { return m_usesVertexImmediates; }
+    bool usesFragmentImmediates() const { return m_usesFragmentImmediates; }
+    void setImmediateInfo(uint64_t requiredImmediateSlots, bool usesVertexImmediates, bool usesFragmentImmediates)
+    {
+        m_requiredImmediateSlots = requiredImmediateSlots;
+        m_usesVertexImmediates = usesVertexImmediates;
+        m_usesFragmentImmediates = usesFragmentImmediates;
+    }
 
 private:
     RenderPipeline(MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor*, uint32_t colorAttachmentCount, WebGPU::PrimitiveTopology, std::optional<WebGPU::IndexFormat> stripIndexFormat, uint32_t sampleCount, bool hasFragment, Vector<std::optional<WebGPU::TextureFormat>>&& colorTargetFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat, bool writesStencil, RequiredBufferIndicesContainer&&, BufferBindingSizesForPipeline&&, uint64_t uniqueId, uint32_t vertexShaderBindingCount, Device&);
@@ -148,6 +157,9 @@ private:
     const BufferBindingSizesForPipeline m_minimumBufferSizes;
     const uint64_t m_uniqueId { 0 };
     const uint32_t m_vertexShaderBindingCount { 0 };
+    uint64_t m_requiredImmediateSlots { 0 };
+    bool m_usesVertexImmediates { false };
+    bool m_usesFragmentImmediates { false };
     const bool m_writesStencil { false };
 };
 

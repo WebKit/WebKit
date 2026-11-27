@@ -55,7 +55,6 @@ public:
         : m_source(source)
         , m_configuration(configuration)
     {
-        initializeOverloads();
     }
 
     const String& source() const LIFETIME_BOUND { return m_source; }
@@ -162,10 +161,74 @@ public:
     bool usesZeroWorkgroupVar() const { return m_usesZeroWorkgroupVar; }
     void setUsesZeroWorkgroupVar() { m_usesZeroWorkgroupVar = true; }
 
+    bool usesBufferView() const { return m_usesBufferView; }
+    void setUsesBufferView() { m_usesBufferView = true; }
+
+    struct BufferViewCheck {
+        unsigned minBytes { 0 };
+        unsigned requiredAlign { 1 };
+        unsigned arrayOffset { 0 };
+        unsigned arrayStride { 0 };
+        bool isArrayView { false };
+        AST::Expression* offsetExpr { nullptr };
+        AST::Expression* sizeExpr { nullptr };
+        SourceSpan span { SourceSpan::empty() };
+    };
+
+    struct ParamBufferViewCheck {
+        unsigned parameterIndex { 0 };
+        BufferViewCheck check;
+    };
+
+    struct ResolvedBufferViewCheck {
+        std::optional<unsigned> fixedBufferSize;
+        AST::Expression* overrideBufferSizeExpr { nullptr };
+        BufferViewCheck check;
+    };
+
+    void addParamBufferViewCheck(const AST::Function* fn, const ParamBufferViewCheck& check)
+    {
+        m_paramBufferViewChecks.add(fn, Vector<ParamBufferViewCheck> { }).iterator->value.append(check);
+    }
+    const Vector<ParamBufferViewCheck>* paramBufferViewChecks(const AST::Function* fn) const
+    {
+        auto it = m_paramBufferViewChecks.find(fn);
+        return it == m_paramBufferViewChecks.end() ? nullptr : &it->value;
+    }
+
+    void addResolvedBufferViewCheck(const AST::Function* fn, const ResolvedBufferViewCheck& check)
+    {
+        m_resolvedBufferViewChecks.add(fn, Vector<ResolvedBufferViewCheck> { }).iterator->value.append(check);
+    }
+    const Vector<ResolvedBufferViewCheck>* resolvedBufferViewChecks(const AST::Function* fn) const
+    {
+        auto it = m_resolvedBufferViewChecks.find(fn);
+        return it == m_resolvedBufferViewChecks.end() ? nullptr : &it->value;
+    }
+
+    void addUnsizedBufferMinSize(const AST::Function* fn, const AST::Variable* globalVar, unsigned minBytes)
+    {
+        auto& map = m_unsizedBufferMinSizes.add(fn, HashMap<const AST::Variable*, unsigned> { }).iterator->value;
+        auto it = map.find(globalVar);
+        if (it == map.end())
+            map.add(globalVar, minBytes);
+        else
+            it->value = std::max(it->value, minBytes);
+    }
+    const HashMap<const AST::Variable*, unsigned>* unsizedBufferMinSizes(const AST::Function* fn) const
+    {
+        auto it = m_unsizedBufferMinSizes.find(fn);
+        return it == m_unsizedBufferMinSizes.end() ? nullptr : &it->value;
+    }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
         RELEASE_ASSERT(current->kind() == replacement.kind());
+        if (!m_activeCompilationScopes) {
+            *current = WTF::move(replacement);
+            return;
+        }
         std::swap(*current, replacement);
         m_replacements.append([current, replacement = std::forward<T>(replacement)]() mutable {
             std::exchange(*current, WTF::move(replacement));
@@ -175,6 +238,10 @@ public:
     template<typename T>
     std::enable_if_t<std::is_fundamental_v<T> || std::is_enum_v<T>, void> replace(T* current, T&& replacement)
     {
+        if (!m_activeCompilationScopes) {
+            *current = WTF::move(replacement);
+            return;
+        }
         std::swap(*current, replacement);
         m_replacements.append([current, replacement = WTF::move(replacement)]() mutable {
             std::exchange(*current, WTF::move(replacement));
@@ -184,10 +251,13 @@ public:
     template<typename CurrentType, typename ReplacementType>
     std::enable_if_t<sizeof(CurrentType) < sizeof(ReplacementType) || std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
-        m_replacements.append([&current, currentCopy = current]() mutable {
-            std::bit_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
-            new (std::bit_cast<void*>(&current)) CurrentType(WTF::move(currentCopy));
-        });
+        static_assert(sizeof(AST::IdentityExpression) <= sizeof(CurrentType));
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&current, currentCopy = current] mutable {
+                std::bit_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
+                new (std::bit_cast<void*>(&current)) CurrentType(WTF::move(currentCopy));
+            });
+        }
 
         current.~CurrentType();
         new (std::bit_cast<void*>(&current)) AST::IdentityExpression(replacement.span(), replacement);
@@ -196,10 +266,12 @@ public:
     template<typename CurrentType, typename ReplacementType>
     std::enable_if_t<sizeof(CurrentType) >= sizeof(ReplacementType) && !std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
-        m_replacements.append([&current, currentCopy = current]() mutable {
-            std::bit_cast<ReplacementType*>(&current)->~ReplacementType();
-            new (std::bit_cast<void*>(&current)) CurrentType(WTF::move(currentCopy));
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&current, currentCopy = current] mutable {
+                std::bit_cast<ReplacementType*>(&current)->~ReplacementType();
+                new (std::bit_cast<void*>(&current)) CurrentType(WTF::move(currentCopy));
+            });
+        }
 
         current.~CurrentType();
         new (std::bit_cast<void*>(&current)) ReplacementType(replacement);
@@ -210,9 +282,11 @@ public:
     {
         auto& vector = const_cast<Vector<T, size>&>(constVector);
         auto last = vector.takeLast();
-        m_replacements.append([&vector, last]() mutable {
-            vector.append(WTF::move(last));
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&vector, last] mutable {
+                vector.append(WTF::move(last));
+            });
+        }
         return last;
     }
 
@@ -221,9 +295,11 @@ public:
     {
         auto& vector = const_cast<Vector<U, size>&>(constVector);
         vector.append(std::forward<T>(value));
-        m_replacements.append([&vector]() {
-            vector.takeLast();
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&vector] {
+                vector.takeLast();
+            });
+        }
     }
 
     template<typename T, size_t size>
@@ -231,9 +307,11 @@ public:
     {
         auto& vector = const_cast<Vector<T, size>&>(constVector);
         vector.insert(position, std::forward<T>(value));
-        m_replacements.append([&vector, position]() {
-            vector.removeAt(position);
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&vector, position] {
+                vector.removeAt(position);
+            });
+        }
     }
 
     template<typename T, size_t size, typename T2, size_t size2>
@@ -241,19 +319,23 @@ public:
     {
         auto& vector = const_cast<Vector<T, size>&>(constVector);
         vector.insertVector(position, value);
-        m_replacements.append([&vector, position, length = value.size()]() {
-            vector.removeAt(position, length);
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&vector, position, length = value.size()] {
+                vector.removeAt(position, length);
+            });
+        }
     }
 
     template<typename T, size_t size>
     void remove(const Vector<T, size>& constVector, size_t position)
     {
         auto& vector = const_cast<Vector<T, size>&>(constVector);
-        auto entry = vector[position];
-        m_replacements.append([&vector, position, entry]() mutable {
-            vector.insert(position, entry);
-        });
+        if (m_activeCompilationScopes) {
+            auto entry = vector[position];
+            m_replacements.append([&vector, position, entry] mutable {
+                vector.insert(position, entry);
+            });
+        }
         vector.removeAt(position);
     }
 
@@ -261,10 +343,20 @@ public:
     void clear(const Vector<T, size>& constVector)
     {
         auto& vector = const_cast<Vector<T, size>&>(constVector);
-        m_replacements.append([&vector, contents = WTF::move(vector)]() mutable {
-            vector = contents;
-        });
+        if (m_activeCompilationScopes) {
+            m_replacements.append([&vector, contents = WTF::move(vector)] mutable {
+                vector = WTF::move(contents);
+            });
+        }
         vector.clear();
+    }
+
+    void beginCompilationScope() { ++m_activeCompilationScopes; }
+    void endCompilationScope()
+    {
+        ASSERT(m_activeCompilationScopes);
+        if (!--m_activeCompilationScopes)
+            m_replacements.shrinkCapacity(0);
     }
 
     size_t currentReplacementSize() const
@@ -276,9 +368,9 @@ public:
     {
         if (m_replacements.size() == limit)
             return;
-        for (size_t i = m_replacements.size() - 1; i >= limit; --i)
+        for (size_t i = m_replacements.size(); i-- > limit; )
             borrow(m_replacements)[i]();
-        m_replacements.shrinkCapacity(limit);
+        m_replacements.shrink(limit);
     }
 
     OptionSet<Extension>& enabledExtensions() LIFETIME_BOUND { return m_enabledExtensions; }
@@ -314,19 +406,16 @@ public:
     std::optional<Error> validateOverrides(const PrepareResult&, HashMap<String, ConstantValue>&);
 
     const OverloadedDeclaration* lookupOverload(const String&) const;
-    const Vector<OverloadCandidate>& overloadCandidates(const OverloadedDeclaration&);
-    // Only the type checker resolves overloads. Later passes look builtins up only for their
-    // constant and validation functions, which this keeps.
-    void releaseOverloadCandidates();
+    const Vector<OverloadCandidate>& overloadCandidates(const OverloadedDeclaration&) const;
+    void releaseOverloadCandidates() { }
 
     void addOverride(AST::Variable& variable) { m_overrides.append(&variable); }
     bool containsOverride(const String& key) const;
 
     Result<ConstantValue> ensureOverrideValue(const AST::Expression&, const HashMap<String, ConstantValue>&) const;
+    size_t memoryFootprint() const;
 
 private:
-    void initializeOverloads();
-
     String m_source;
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
@@ -356,6 +445,10 @@ private:
     bool m_usesFtoi { false };
     bool m_usesInsertBits { false };
     bool m_usesZeroWorkgroupVar { false };
+    bool m_usesBufferView { false };
+    HashMap<const AST::Function*, Vector<ParamBufferViewCheck>> m_paramBufferViewChecks;
+    HashMap<const AST::Function*, Vector<ResolvedBufferViewCheck>> m_resolvedBufferViewChecks;
+    HashMap<const AST::Function*, HashMap<const AST::Variable*, unsigned>> m_unsizedBufferMinSizes;
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
@@ -365,9 +458,9 @@ private:
     AST::Builder m_astBuilder;
     std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
+    unsigned m_activeCompilationScopes { 0 };
     HashSet<uint32_t> m_pipelineOverrideIds;
     Vector<OverrideValidator> m_overrideValidations;
-    HashMap<String, OverloadedDeclaration> m_overloadedOperations;
     Vector<AST::Variable*> m_overrides;
 };
 

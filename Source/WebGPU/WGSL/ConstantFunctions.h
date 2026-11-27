@@ -148,6 +148,9 @@ using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<Consta
         [&](const Types::Atomic&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
         },
+        [&](const Types::Buffer&) -> ConstantValue {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
         [&](const Types::TypeConstructor&) -> ConstantValue {
             RELEASE_ASSERT_NOT_REACHED();
         });
@@ -1914,7 +1917,7 @@ CONSTANT_FUNCTION(Bitcast)
 #undef CONSTANT_FUNCTION
 
 #define VALIDATION_FUNCTION(name) \
-    [[maybe_unused]] static std::optional<String>(validate ## name)(const FixedVector<std::optional<ConstantValue>>& arguments, const FixedVector<const Type*>& parameterTypes)
+    [[maybe_unused]] static std::optional<String>(validate ## name)(const FixedVector<std::optional<ConstantValue>>& arguments, std::span<const Type* const> parameterTypes)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \

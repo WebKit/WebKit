@@ -738,8 +738,18 @@ Result<std::optional<AST::Attribute::Ref>> Parser<Lexer>::parseAttribute()
             break;
         }
 
-        if (current().type  == TokenType::Comma)
+        if (current().type == TokenType::Comma) {
             consume();
+            if (current().type != TokenType::ParenRight) {
+                if (*builtin != Builtin::FragDepth)
+                    FAIL("Unexpected parameter for @builtin attribute"_s);
+                PARSE(depthMode, Identifier);
+                if (depthMode != "less"_s && depthMode != "greater"_s)
+                    FAIL("Unknown frag_depth mode. Expected 'less' or 'greater'"_s);
+                if (current().type == TokenType::Comma)
+                    consume();
+            }
+        }
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BuiltinAttribute, *builtin);
     }
@@ -953,6 +963,23 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseTypeName()
 template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
+    if (name == "buffer"_s) {
+        if (current().type == TokenType::TemplateArgsLeft) {
+            CHECK_COMPOSITE_TYPE_NESTING();
+            CONSUME_TYPE(TemplateArgsLeft);
+            if (current().type == TokenType::TemplateArgsRight)
+                FAIL("buffer<> requires a size expression"_s);
+            AST::Expression::List arguments;
+            PARSE(elementCount, Expression);
+            arguments.append(WTF::move(elementCount));
+            if (current().type == TokenType::Comma)
+                consume();
+            CONSUME_TYPE(TemplateArgsRight);
+            RETURN_ARENA_NODE(ElaboratedTypeExpression, WTF::move(name), WTF::move(arguments));
+        }
+        RETURN_ARENA_NODE(IdentifierExpression, WTF::move(name));
+    }
+
     if (current().type == TokenType::TemplateArgsLeft) {
         CHECK_COMPOSITE_TYPE_NESTING();
 
@@ -1118,7 +1145,7 @@ Result<AddressSpace> Parser<Lexer>::parseAddressSpace()
     if (auto* addressSpace = WGSL::parseAddressSpace(identifier.ident); addressSpace && *addressSpace != AddressSpace::Handle)
         return { *addressSpace };
 
-    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
+    FAIL("Expected one of 'function'/'immediate'/'private'/'storage'/'uniform'/'workgroup'"_s);
 }
 
 template<typename Lexer>
@@ -1655,6 +1682,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseCallOrVariableUpdatingStatement(
         PARSE(type, TypeNameAfterIdentifier, WTF::move(ident), _startOfElementPosition);
         PARSE(arguments, ArgumentExpressionList);
         auto& call = MAKE_ARENA_NODE(CallExpression, WTF::move(type), WTF::move(arguments));
+        if (current().type == TokenType::BracketLeft || current().type == TokenType::Period) {
+            AST::Expression::Ref callExpr = call;
+            PARSE(lhs, PostfixExpression, WTF::move(callExpr), _startOfElementPosition);
+            return parseVariableUpdatingStatement(WTF::move(lhs));
+        }
         RETURN_ARENA_NODE(CallStatement, call);
     }
 
@@ -1992,6 +2024,11 @@ Result<AST::Expression::Ref> Parser<Lexer>::parseCoreLHSExpression()
     }
     case TokenType::Identifier: {
         PARSE(ident, Identifier);
+        if (current().type == TokenType::TemplateArgsLeft || current().type == TokenType::ParenLeft) {
+            PARSE(type, TypeNameAfterIdentifier, WTF::move(ident), _startOfElementPosition);
+            PARSE(arguments, ArgumentExpressionList);
+            RETURN_ARENA_NODE(CallExpression, WTF::move(type), WTF::move(arguments));
+        }
         RETURN_ARENA_NODE(IdentifierExpression, WTF::move(ident));
     }
     default:

@@ -42,4 +42,9 @@ interface mixin GPUProgrammablePassEncoder {
         [AllowShared] Uint32Array dynamicOffsetsData,
         GPUSize64 dynamicOffsetsDataStart,
         GPUSize32 dynamicOffsetsDataLength);
+
+    undefined setImmediates(GPUSize32 rangeOffset,
+        AllowSharedBufferSource data,
+        optional GPUSize64 dataOffset = 0,
+        optional GPUSize64 size);
 };

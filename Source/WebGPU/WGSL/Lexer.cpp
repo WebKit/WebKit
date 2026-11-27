@@ -122,11 +122,13 @@ template<typename T>
 Vector<Token> Lexer<T>::lex()
 {
     Vector<Token> tokens;
+    tokens.reserveInitialCapacity(std::max<size_t>(32, m_code.lengthRemaining() / 4));
 
     while (true) {
         auto token = nextToken();
-        tokens.append(token);
-        switch (token.type) {
+        auto tokenType = token.type;
+        tokens.append(WTF::move(token));
+        switch (tokenType) {
         case TokenType::GtGtEq:
             tokens.append(makeToken(TokenType::Placeholder));
             [[fallthrough]];
@@ -139,7 +141,7 @@ Vector<Token> Lexer<T>::lex()
             break;
         }
 
-        if (token.type == TokenType::EndOfFile || token.type == TokenType::Invalid)
+        if (tokenType == TokenType::EndOfFile || tokenType == TokenType::Invalid)
             break;
     }
 
@@ -343,8 +345,6 @@ Token Lexer<T>::nextToken()
                 shift(consumed);
             }
 
-            String view(StringImpl::createWithoutCopying(startOfToken.subspan(0, currentTokenLength())));
-
             static constexpr SortedArrayMap keywords { WTF::toArray<std::pair<ComparableASCIILiteral, TokenType>>({
                 { "_"_s, TokenType::Underbar },
 
@@ -505,19 +505,22 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
                 "yield"_s,
             }) };
 
-            auto tokenType = keywords.get(view);
-            if (tokenType != TokenType::Invalid)
-                return makeToken(tokenType);
+            auto tokenLength = currentTokenLength();
+            auto tokenSpan = startOfToken.first(tokenLength);
+            if (tokenLength <= 16 && (isASCIIAlpha(tokenSpan[0]) || tokenSpan[0] == '_')) {
+                StringView tokenView { tokenSpan };
+                auto tokenType = keywords.get(tokenView);
+                if (tokenType != TokenType::Invalid)
+                    return makeToken(tokenType);
 
-            if (reservedWordSet.contains(view)) [[unlikely]]
-                return makeToken(TokenType::ReservedWord);
+                if (reservedWordSet.contains(tokenView)) [[unlikely]]
+                    return makeToken(TokenType::ReservedWord);
+            }
 
-
-            if (length >= 2 && startOfToken[0] == '_' && startOfToken[1] == '_') [[unlikely]]
+            if (length >= 2 && tokenSpan[0] == '_' && tokenSpan[1] == '_') [[unlikely]]
                 return makeToken(TokenType::Invalid);
 
-
-            return makeIdentifierToken(WTF::move(view));
+            return makeIdentifierToken(StringImpl::createWithoutCopying(tokenSpan));
         }
         break;
     }

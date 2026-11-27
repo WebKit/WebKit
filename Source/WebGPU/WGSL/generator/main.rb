@@ -396,8 +396,7 @@ module DSL
             out << "        return Vector<OverloadCandidate>::from("
             out << entry[:overloads].map { |function| "#{function.to_cpp(name)}" }.join(",\n")
             out << "        );"
-            out << "    },"
-            out << "    .overloads = { }"
+            out << "    }"
             out << "});"
             out << "ASSERT_UNUSED(result, result.isNewEntry);"
             out << "}"
@@ -483,6 +482,7 @@ module DSL
         texture_depth_multisampled_2d = PrimitiveType.new(:TextureDepthMultisampled2d)
 
         storage = AbstractValue.new(:"AddressSpace::Storage")
+        uniform = AbstractValue.new(:"AddressSpace::Uniform")
         workgroup = AbstractValue.new(:"AddressSpace::Workgroup")
 
         read = AbstractValue.new(:"AccessMode::Read")

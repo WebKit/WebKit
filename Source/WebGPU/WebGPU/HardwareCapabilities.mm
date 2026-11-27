@@ -329,7 +329,7 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
             .maxTextureDimension3D =    2048,
             .maxTextureArrayLayers =    2048,
             .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
+            .maxBindGroupsPlusVertexBuffers = 29,
             .maxBindingsPerBindGroup =    largeReasonableLimit(),
             // A dynamic uniform buffer is still a uniform buffer binding, so advertising more of them
             // than a single stage can hold would let the two limits contradict each other.
@@ -361,6 +361,7 @@ static HardwareCapabilities apple6(id<MTLDevice> device)
             .maxStorageTexturesInFragmentStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
+            .maxImmediateSize = maxSupportedImmediateSize,
         },
         WTF::move(features),
         baseCapabilities,
@@ -390,7 +391,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
             .maxTextureDimension3D =    2048,
             .maxTextureArrayLayers =    2048,
             .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
+            .maxBindGroupsPlusVertexBuffers = 29,
             .maxBindingsPerBindGroup =    largeReasonableLimit(),
             // A dynamic uniform buffer is still a uniform buffer binding, so advertising more of them
             // than a single stage can hold would let the two limits contradict each other.
@@ -422,6 +423,7 @@ static HardwareCapabilities apple7(id<MTLDevice> device)
             .maxStorageTexturesInFragmentStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
+            .maxImmediateSize = maxSupportedImmediateSize,
         },
         WTF::move(features),
         baseCapabilities,
@@ -451,7 +453,7 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
             .maxTextureDimension3D =    2048,
             .maxTextureArrayLayers =    2048,
             .maxBindGroups =    maxBindGroups,
-            .maxBindGroupsPlusVertexBuffers = 30,
+            .maxBindGroupsPlusVertexBuffers = 29,
             .maxBindingsPerBindGroup =  1000,
             // A dynamic uniform buffer is still a uniform buffer binding, so advertising more of them
             // than a single stage can hold would let the two limits contradict each other.
@@ -483,6 +485,7 @@ static HardwareCapabilities mac2(id<MTLDevice> device)
             .maxStorageTexturesInFragmentStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageBuffersInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
             .maxStorageTexturesInVertexStage = maxBindGroups * tier2LimitForBuffersAndTextures,
+            .maxImmediateSize = maxSupportedImmediateSize,
         },
         WTF::move(features),
         baseCapabilities,
@@ -541,6 +544,7 @@ static Limits mergeLimits(const Limits& previous, const Limits& next)
         .maxStorageTexturesInFragmentStage = mergeMaximum(previous.maxStorageTexturesInFragmentStage, next.maxStorageTexturesInFragmentStage),
         .maxStorageBuffersInVertexStage = mergeMaximum(previous.maxStorageBuffersInVertexStage, next.maxStorageBuffersInVertexStage),
         .maxStorageTexturesInVertexStage = mergeMaximum(previous.maxStorageTexturesInVertexStage, next.maxStorageTexturesInVertexStage),
+        .maxImmediateSize = mergeMaximum(previous.maxImmediateSize, next.maxImmediateSize),
     };
 };
 
@@ -704,6 +708,8 @@ bool anyLimitIsBetterThan(const Limits& target, const Limits& reference)
     if (target.maxStorageBuffersInVertexStage > reference.maxStorageBuffersInVertexStage)
         return true;
     if (target.maxStorageTexturesInVertexStage > reference.maxStorageTexturesInVertexStage)
+        return true;
+    if (target.maxImmediateSize > reference.maxImmediateSize)
         return true;
 
     return false;

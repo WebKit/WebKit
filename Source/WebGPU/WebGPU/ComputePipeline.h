@@ -52,9 +52,9 @@ class PipelineLayout;
 class ComputePipeline final : public WebGPU::ComputePipeline {
     WTF_MAKE_TZONE_ALLOCATED(ComputePipeline);
 public:
-    static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, Device& device)
+    static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device& device)
     {
-        return adoptRef(*new ComputePipeline(computePipelineState, WTF::move(pipelineLayout), threadsPerThreadgroup, WTF::move(minimumBufferSizes), uniqueId, device));
+        return adoptRef(*new ComputePipeline(computePipelineState, WTF::move(pipelineLayout), threadsPerThreadgroup, WTF::move(minimumBufferSizes), uniqueId, maxLinearIndexingWorkgroups, device));
     }
     static Ref<ComputePipeline> createInvalid(Device& device)
     {
@@ -77,8 +77,16 @@ public:
 
     NODELETE const BufferBindingSizesForBindGroup* minimumBufferSizes(uint32_t) const;
     uint64_t uniqueId() const { return m_uniqueId; }
+    uint64_t maxLinearIndexingWorkgroups() const { return m_maxLinearIndexingWorkgroups; }
+    uint64_t requiredImmediateSlots() const { return m_requiredImmediateSlots; }
+    bool usesImmediates() const { return m_usesImmediates; }
+    void setImmediateInfo(uint64_t requiredImmediateSlots, bool usesImmediates)
+    {
+        m_requiredImmediateSlots = requiredImmediateSlots;
+        m_usesImmediates = usesImmediates;
+    }
 private:
-    ComputePipeline(id<MTLComputePipelineState>, Ref<PipelineLayout>&&, MTLSize, BufferBindingSizesForPipeline&&, uint64_t uniqueId, Device&);
+    ComputePipeline(id<MTLComputePipelineState>, Ref<PipelineLayout>&&, MTLSize, BufferBindingSizesForPipeline&&, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device&);
     ComputePipeline(Device&);
 
     const id<MTLComputePipelineState> m_computePipelineState { nil };
@@ -88,6 +96,9 @@ private:
     const Ref<PipelineLayout> m_pipelineLayout;
     const BufferBindingSizesForPipeline m_minimumBufferSizes;
     const uint64_t m_uniqueId { 0 };
+    const uint64_t m_maxLinearIndexingWorkgroups { std::numeric_limits<uint64_t>::max() };
+    uint64_t m_requiredImmediateSlots { 0 };
+    bool m_usesImmediates { false };
 };
 
 } // namespace WebGPU::Metal

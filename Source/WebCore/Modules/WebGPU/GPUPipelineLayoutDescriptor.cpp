@@ -34,6 +34,7 @@ Ref<JSON::Object> GPUPipelineLayoutDescriptor::toJSON() const
 {
     Ref json = GPUObjectDescriptorBase::toJSON();
     // `GPUBindGroupLayout` is not JSON serializable.
+    json->setInteger("immediateSize"_s, immediateSize);
     return json;
 }
 

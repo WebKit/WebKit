@@ -82,6 +82,7 @@ private:
 
     void setBindGroup(uint32_t, std::optional<WebGPUBindGroupIdentifier>,
         std::optional<Vector<uint32_t>>&&);
+    void setImmediates(uint32_t rangeOffset, Vector<uint32_t>&& data);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();
