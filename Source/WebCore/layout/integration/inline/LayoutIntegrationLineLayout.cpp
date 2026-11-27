@@ -1003,11 +1003,10 @@ void LineLayout::preparePlacedFloats()
 
         auto boxGeometry = Layout::BoxGeometry { };
         auto logicalRect = [&] {
-            // FIXME: We are flooring here for legacy compatibility. See FloatingObjects::intervalForFloatingObject and RenderBlockFlow::clearFloats.
-            auto logicalTop = isHorizontalWritingMode ? LayoutUnit(visualRect.y().floor()) : visualRect.x();
-            auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : LayoutUnit(visualRect.y().floor());
-            auto logicalHeight = (isHorizontalWritingMode ? LayoutUnit(visualRect.maxY().floor()) : visualRect.maxX()) - logicalTop;
-            auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : LayoutUnit(visualRect.maxY().floor())) - logicalLeft;
+            auto logicalTop = isHorizontalWritingMode ? visualRect.y() : visualRect.x();
+            auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : visualRect.y();
+            auto logicalHeight = (isHorizontalWritingMode ? visualRect.maxY() : visualRect.maxX()) - logicalTop;
+            auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : visualRect.maxY()) - logicalLeft;
             if (!placedFloatsIsLeftToRight) {
                 auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
                 logicalLeft = rootBorderBoxWidth - (logicalLeft + logicalWidth);
