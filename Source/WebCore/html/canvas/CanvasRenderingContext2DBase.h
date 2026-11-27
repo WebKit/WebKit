@@ -249,6 +249,7 @@ public:
     ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings>) const;
     void putImageData(ImageData&, int dx, int dy);
     void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
+    RefPtr<ArrayPixelBuffer> cachedContentsImageData() const;
 
     void reset();
 
@@ -458,7 +459,7 @@ protected:
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     RefPtr<ImageBuffer> createCompatibleImageBuffer(GraphicsContext&, const FloatSize&) const;
-    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
+    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer || m_needsDeferredCachedContentsUpload; }
     ImageBuffer* buffer() const;
     RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
     RefPtr<ImageBuffer> createImageForNoiseInjection() const;
@@ -605,6 +606,7 @@ private:
     const CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
     mutable bool m_hasCreatedImageBuffer { false };
+    mutable bool m_needsDeferredCachedContentsUpload { false };
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     const bool m_canStoreEDRContent;
     const bool m_shouldShowEDRContent;

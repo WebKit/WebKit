@@ -430,6 +430,8 @@ function :arrayLength, {
 
     [T].(ptr[storage, array[T], read]) => u32,
     [T].(ptr[storage, array[T], read_write]) => u32,
+    [T].(ptr[workgroup, array[T], read_write]) => u32,
+    [T].(ptr[uniform, array[T], read]) => u32,
 }
 
 # 17.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)

@@ -1416,9 +1416,8 @@ http/tests/webgpu/webgpu-in-service-worker-separate-process.html [ Pass ]
 http/tests/webgpu/webgpu/web_platform/canvas/readbackFromWebGPUCanvas.html [ Pass DumpJSConsoleLogInStdErr ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.html [ Pass DumpJSConsoleLogInStdErr Timeout ]
 
-# 6 failures: cameraCapture color edges, where 4:2:0 chroma reconstruction is wider than canvas 2D's; Debug's edge texels differ by 2/255.
-[ Debug arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Failure Slow ]
-[ Release arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Failure Slow ]
+[ Debug arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Slow ]
+[ Release arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Slow ]
 # Fails on Intel, which was not investigated.
 [ x86_64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Skip ]
 
@@ -1510,6 +1509,9 @@ http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureGather.
 
 http/tests/webgpu/webgpu/shader/execution/robust_access.html [ Pass Slow ]
 
+# Vendored CTS predates unrestricted_aliasing; passes once CTS is re-imported.
+http/tests/webgpu/webgpu/shader/validation/functions/alias_analysis.html [ Pass Failure Slow ]
+
 # 1 failure: method_replacement leaves own EventTarget methods on GPUDevice.prototype, a CTS bug.
 http/tests/webgpu/webgpu/idl/javascript.html [ Pass ]
 
@@ -1530,7 +1532,6 @@ http/tests/webgpu/webgpu/cts-withsomeworkers.https.html [ Pass ]
 http/tests/webgpu/webgpu/examples.html [ Pass ]
 http/tests/webgpu/webgpu/print_environment.html [ Pass ]
 
-# 14 failures: the CTS asks for more than the 8192 bytes WGSL allows and does not catch the rejection.
 [ arm64 ] http/tests/webgpu/webgpu/shader/execution/zero_init.html [ Pass Slow ]
 # On Intel it times out as well as crashing, so it cannot be expected to finish there.
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/zero_init.html [ Skip ]
@@ -1554,7 +1555,6 @@ http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.html  [ Pass ]
 http/tests/webgpu/webgpu/api/validation/getBindGroupLayout.html  [ Pass ]
 http/tests/webgpu/webgpu/api/validation/image_copy/buffer_texture_copies.html [ Pass ]
 
-# 4 failures: the CTS fills the 8192-byte function address space, then adds a loop counter. CTS bug.
 [ Release ] http/tests/webgpu/webgpu/shader/execution/limits.html [ Pass ]
 # Pushing the limits trips the ASSERT in StreamClientConnectionBuffer::acquireNoWait(), Debug only.
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/limits.html [ Skip ]

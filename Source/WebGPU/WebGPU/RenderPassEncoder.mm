@@ -32,6 +32,7 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "ExternalTexture.h"
+#import "Instance.h"
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "QuerySet.h"
@@ -43,8 +44,132 @@
 #import <wtf/IndexedRange.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/Variant.h>
 
 namespace WebGPU::Metal {
+
+struct RenderPassEncoder::DeferredRenderState {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DeferredRenderState);
+    struct UseResources {
+        Vector<RetainPtr<id<MTLResource>>> retainedResources;
+        Vector<id<MTLResource>> rawResources;
+        MTLResourceUsage usage;
+        MTLRenderStages stages;
+    };
+    struct SetPipeline {
+        RetainPtr<id<MTLRenderPipelineState>> readyPSO;
+        std::shared_ptr<PendingRenderPipelineCompilation> pending;
+        RetainPtr<id<MTLDepthStencilState>> depthStencilState;
+        MTLCullMode cullMode;
+        MTLWinding frontFace;
+        MTLDepthClipMode depthClipMode;
+        float depthBias;
+        float depthBiasSlopeScale;
+        float depthBiasClamp;
+    };
+    struct SetVertexBuffer {
+        RetainPtr<id<MTLBuffer>> buffer;
+        uint32_t offset;
+        uint32_t index;
+    };
+    struct SetFragmentBuffer {
+        RetainPtr<id<MTLBuffer>> buffer;
+        uint32_t offset;
+        uint32_t index;
+    };
+    struct SetVertexBytes {
+        Vector<uint8_t, 64> bytes;
+        uint32_t index;
+    };
+    struct SetFragmentBytes {
+        Vector<uint8_t, 64> bytes;
+        uint32_t index;
+    };
+    struct SetViewport {
+        MTLViewport viewport;
+    };
+    struct SetBlendColor {
+        WebGPU::Color color;
+    };
+    struct SetStencilRef {
+        uint32_t value;
+    };
+    struct SetScissorRect {
+        MTLScissorRect rect;
+    };
+    struct Draw {
+        MTLPrimitiveType primitiveType;
+        uint32_t firstVertex;
+        uint32_t vertexCount;
+        uint32_t instanceCount;
+        uint32_t firstInstance;
+    };
+    using Command = Variant<UseResources, SetPipeline, SetVertexBuffer, SetFragmentBuffer, SetVertexBytes, SetFragmentBytes, SetViewport, SetBlendColor, SetStencilRef, SetScissorRect, Draw>;
+    Vector<Command, 16> commands;
+
+    void appendBindGroupResources(const BindGroup& group)
+    {
+        for (const auto& resource : group.resources()) {
+            if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size()) {
+                UseResources cmd;
+                cmd.usage = resource.usage;
+                cmd.stages = resource.renderStages;
+                cmd.retainedResources.reserveInitialCapacity(resource.mtlResources.size());
+                cmd.rawResources.reserveInitialCapacity(resource.mtlResources.size());
+                for (id<MTLResource> res : resource.mtlResources) {
+                    cmd.retainedResources.append(res);
+                    cmd.rawResources.append(res);
+                }
+                commands.append(WTF::move(cmd));
+            }
+        }
+    }
+
+    static void applyCommand(id<MTLRenderCommandEncoder> enc, Command& command)
+    {
+        WTF::switchOn(command,
+            [&](UseResources& cmd) {
+                if (cmd.rawResources.size())
+                    [enc useResources:borrow(cmd.rawResources)->span().data() count:cmd.rawResources.size() usage:cmd.usage stages:cmd.stages];
+            },
+            [&](SetPipeline& cmd) {
+                [enc setRenderPipelineState:cmd.readyPSO.get()];
+                if (cmd.depthStencilState)
+                    [enc setDepthStencilState:cmd.depthStencilState.get()];
+                [enc setCullMode:cmd.cullMode];
+                [enc setFrontFacingWinding:cmd.frontFace];
+                [enc setDepthClipMode:cmd.depthClipMode];
+                [enc setDepthBias:cmd.depthBias slopeScale:cmd.depthBiasSlopeScale clamp:cmd.depthBiasClamp];
+            },
+            [&](SetVertexBuffer& cmd) {
+                [enc setVertexBuffer:cmd.buffer.get() offset:cmd.offset atIndex:cmd.index];
+            },
+            [&](SetFragmentBuffer& cmd) {
+                [enc setFragmentBuffer:cmd.buffer.get() offset:cmd.offset atIndex:cmd.index];
+            },
+            [&](SetVertexBytes& cmd) {
+                [enc setVertexBytes:borrow(cmd.bytes)->span().data() length:cmd.bytes.size() atIndex:cmd.index];
+            },
+            [&](SetFragmentBytes& cmd) {
+                [enc setFragmentBytes:borrow(cmd.bytes)->span().data() length:cmd.bytes.size() atIndex:cmd.index];
+            },
+            [&](SetViewport& cmd) {
+                [enc setViewport:cmd.viewport];
+            },
+            [&](SetBlendColor& cmd) {
+                [enc setBlendColorRed:cmd.color.r green:cmd.color.g blue:cmd.color.b alpha:cmd.color.a];
+            },
+            [&](SetStencilRef& cmd) {
+                [enc setStencilReferenceValue:cmd.value];
+            },
+            [&](SetScissorRect& cmd) {
+                [enc setScissorRect:cmd.rect];
+            },
+            [&](Draw& cmd) {
+                [enc drawPrimitives:cmd.primitiveType vertexStart:cmd.firstVertex vertexCount:cmd.vertexCount instanceCount:cmd.instanceCount baseInstance:cmd.firstInstance];
+            });
+    }
+};
 
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
@@ -84,13 +209,21 @@ NODELETE static std::pair<uint64_t, uint32_t> makeKey(uint64_t bufferIdentifier,
 void RenderPassEncoder::setVertexBuffer(id<MTLRenderCommandEncoder> commandEncoder, id<MTLBuffer> buffer, uint32_t offset, uint32_t bufferIndex)
 {
     if (m_ignoreBufferCache) [[unlikely]] {
-        [commandEncoder setVertexBuffer:buffer offset:offset atIndex:bufferIndex];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetVertexBuffer { buffer, offset, bufferIndex });
+        } else
+            [commandEncoder setVertexBuffer:buffer offset:offset atIndex:bufferIndex];
         return;
     }
 
     uint64_t bufferIdentifier = buffer.gpuAddress;
     if (auto key = makeKey(bufferIdentifier, offset); m_existingVertexBuffers[bufferIndex] != key || !bufferIdentifier) {
-        [commandEncoder setVertexBuffer:buffer offset:offset atIndex:bufferIndex];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetVertexBuffer { buffer, offset, bufferIndex });
+        } else
+            [commandEncoder setVertexBuffer:buffer offset:offset atIndex:bufferIndex];
         m_existingVertexBuffers[bufferIndex] = key;
     }
 }
@@ -98,25 +231,47 @@ void RenderPassEncoder::setVertexBuffer(id<MTLRenderCommandEncoder> commandEncod
 void RenderPassEncoder::setFragmentBuffer(id<MTLRenderCommandEncoder> commandEncoder, id<MTLBuffer> buffer, uint32_t offset, uint32_t bufferIndex)
 {
     if (m_ignoreBufferCache) [[unlikely]] {
-        [commandEncoder setFragmentBuffer:buffer offset:offset atIndex:bufferIndex];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetFragmentBuffer { buffer, offset, bufferIndex });
+        } else
+            [commandEncoder setFragmentBuffer:buffer offset:offset atIndex:bufferIndex];
         return;
     }
 
     uint64_t bufferIdentifier = buffer.gpuAddress;
     if (auto key = makeKey(bufferIdentifier, offset); m_existingFragmentBuffers[bufferIndex] != key || !bufferIdentifier) {
-        [commandEncoder setFragmentBuffer:buffer offset:offset atIndex:bufferIndex];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetFragmentBuffer { buffer, offset, bufferIndex });
+        } else
+            [commandEncoder setFragmentBuffer:buffer offset:offset atIndex:bufferIndex];
         m_existingFragmentBuffers[bufferIndex] = key;
     }
 }
 
 void RenderPassEncoder::setVertexBytes(id<MTLRenderCommandEncoder> commandEncoder, std::span<const uint8_t> span, uint32_t bufferIndex)
 {
-    [commandEncoder setVertexBytes:span.data() length:span.size() atIndex:bufferIndex];
+    if (m_isDeferringEncoding && m_deferredState) {
+        if (!m_parentEncoder->submitWillBeInvalid()) {
+            Vector<uint8_t, 64> bytes;
+            bytes.append(span);
+            m_deferredState->commands.append(DeferredRenderState::SetVertexBytes { WTF::move(bytes), bufferIndex });
+        }
+    } else
+        [commandEncoder setVertexBytes:span.data() length:span.size() atIndex:bufferIndex];
     m_existingVertexBuffers[bufferIndex] = { };
 }
 void RenderPassEncoder::setFragmentBytes(id<MTLRenderCommandEncoder> commandEncoder, std::span<const uint8_t> span, uint32_t bufferIndex)
 {
-    [commandEncoder setFragmentBytes:span.data() length:span.size() atIndex:bufferIndex];
+    if (m_isDeferringEncoding && m_deferredState) {
+        if (!m_parentEncoder->submitWillBeInvalid()) {
+            Vector<uint8_t, 64> bytes;
+            bytes.append(span);
+            m_deferredState->commands.append(DeferredRenderState::SetFragmentBytes { WTF::move(bytes), bufferIndex });
+        }
+    } else
+        [commandEncoder setFragmentBytes:span.data() length:span.size() atIndex:bufferIndex];
     m_existingFragmentBuffers[bufferIndex] = { };
 }
 
@@ -227,6 +382,36 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 
     m_bindGroupDynamicOffsetsChanged.resize(m_device->limits().maxBindGroups);
     RELEASE_ASSERT(m_maxDynamicOffsetAtIndex.size() >= m_device->limits().maxBindGroups);
+
+#if PLATFORM(MAC)
+    if (metalDescriptor && !descriptor.timestampWrites.has_value() && !m_device->enableEncoderTimestamps() && !visibilityResultBuffer && !metalDescriptor.rasterizationRateMap && !m_attachmentsToClear.count && !m_clearDepthAttachment && !m_clearStencilAttachment) {
+        bool allAttachmentsStoreOnly = true;
+        for (NSUInteger i = 0; i < 8; ++i) {
+            MTLRenderPassColorAttachmentDescriptor *att = metalDescriptor.colorAttachments[i];
+            if (att.texture && (att.storeAction != MTLStoreActionStore || att.resolveTexture)) {
+                allAttachmentsStoreOnly = false;
+                break;
+            }
+        }
+        if (metalDescriptor.depthAttachment.texture && (metalDescriptor.depthAttachment.storeAction != MTLStoreActionStore || metalDescriptor.depthAttachment.resolveTexture))
+            allAttachmentsStoreOnly = false;
+        if (metalDescriptor.stencilAttachment.texture && (metalDescriptor.stencilAttachment.storeAction != MTLStoreActionStore || metalDescriptor.stencilAttachment.resolveTexture))
+            allAttachmentsStoreOnly = false;
+
+        if (allAttachmentsStoreOnly) {
+            m_replayPassDescriptor = adoptNS([metalDescriptor copy]);
+            for (NSUInteger i = 0; i < 8; ++i) {
+                if (m_replayPassDescriptor.get().colorAttachments[i].texture)
+                    m_replayPassDescriptor.get().colorAttachments[i].loadAction = MTLLoadActionLoad;
+            }
+            if (m_replayPassDescriptor.get().depthAttachment.texture)
+                m_replayPassDescriptor.get().depthAttachment.loadAction = MTLLoadActionLoad;
+            if (m_replayPassDescriptor.get().stencilAttachment.texture)
+                m_replayPassDescriptor.get().stencilAttachment.loadAction = MTLLoadActionLoad;
+            m_canDeferEncoding = true;
+        }
+    }
+#endif
 }
 
 double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WebGPU::TextureFormat pixelFormat)
@@ -281,6 +466,9 @@ bool RenderPassEncoder::occlusionQueryIsDestroyed() const
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
 
     auto initialQueryIndex = queryIndex;
     queryIndex *= sizeof(uint64_t);
@@ -309,6 +497,9 @@ void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 void RenderPassEncoder::endOcclusionQuery()
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
     if (!m_occlusionQueryActive) {
         makeInvalid(@"endOcclusionQuery - occlusion query was not active");
         return;
@@ -610,25 +801,76 @@ bool RenderPassEncoder::issuedDrawCall() const
 void RenderPassEncoder::setCachedRenderPassState(id<MTLRenderCommandEncoder> commandEncoder)
 {
     if (m_viewport && m_viewportNeedsApplying) {
-        [commandEncoder setViewport:*m_viewport];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetViewport { *m_viewport });
+        } else
+            [commandEncoder setViewport:*m_viewport];
 #if !CPU(X86_64)
         m_viewportNeedsApplying = false;
 #endif
     }
-    if (m_blendColor)
-        [commandEncoder setBlendColorRed:m_blendColor->r green:m_blendColor->g blue:m_blendColor->b alpha:m_blendColor->a];
+    if (m_blendColor) {
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetBlendColor { *m_blendColor });
+        } else
+            [commandEncoder setBlendColorRed:m_blendColor->r green:m_blendColor->g blue:m_blendColor->b alpha:m_blendColor->a];
+    }
     if (m_stencilReferenceValue) {
-        [commandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetStencilRef { *m_stencilReferenceValue });
+        } else
+            [commandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
         m_stencilReferenceValue = std::nullopt;
     }
     if (m_scissorRect) {
-        [commandEncoder setScissorRect:*m_scissorRect];
+        if (m_isDeferringEncoding && m_deferredState) {
+            if (!m_parentEncoder->submitWillBeInvalid())
+                m_deferredState->commands.append(DeferredRenderState::SetScissorRect { *m_scissorRect });
+        } else
+            [commandEncoder setScissorRect:*m_scissorRect];
         m_scissorRect = std::nullopt;
     }
 }
 
-bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer* indirectBuffer, bool needsValidationLayerWorkaround)
+void RenderPassEncoder::flushDeferredStateToMetalEncoder()
 {
+    if (!m_isDeferringEncoding)
+        return;
+
+    auto deferredState = std::exchange(m_deferredState, nullptr);
+    m_isDeferringEncoding = false;
+    m_hasEncodedToMetalEncoder = true;
+    if (!deferredState)
+        return;
+
+    id<MTLRenderCommandEncoder> enc = renderCommandEncoder();
+    for (auto& command : deferredState->commands) {
+        if (auto* setPipeline = std::get_if<DeferredRenderState::SetPipeline>(&command)) {
+            if (!setPipeline->readyPSO && setPipeline->pending) {
+                setPipeline->readyPSO = setPipeline->pending->wait();
+                if (!setPipeline->readyPSO) {
+                    if (setPipeline->pending->hadLibraryError)
+                        m_device->generateAValidationError(setPipeline->pending->errorMessage.get() ?: @"Render library failed creation");
+                    else
+                        m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+                    makeInvalid(@"Render pipeline could not compile");
+                    return;
+                }
+            }
+        }
+        if (enc)
+            DeferredRenderState::applyCommand(enc, command);
+    }
+}
+
+bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer* indirectBuffer, bool needsValidationLayerWorkaround, bool allowDeferral)
+{
+    if (!allowDeferral && m_isDeferringEncoding)
+        flushDeferredStateToMetalEncoder();
+
     auto pipeline = m_pipeline;
     if (pipeline && needsValidationLayerWorkaround)
         pipeline = pipeline->recomputeLastStrideAsStride();
@@ -647,9 +889,25 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
         return false;
 
     Ref pipelineLayout = pipeline->pipelineLayout();
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to draw");
+        return false;
+    }
+
     if (NSString* error = pipelineLayout->errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
         return false;
+    }
+
+    if (m_isDeferringEncoding && !pipeline->precompiledPipelineState() && !pipeline->pendingCompilation())
+        flushDeferredStateToMetalEncoder();
+
+    if (!m_isDeferringEncoding && allowDeferral && m_canDeferEncoding && !m_hasEncodedToMetalEncoder && !passWasSplit && !indirectBuffer && !needsValidationLayerWorkaround && !m_occlusionQueryActive && !m_debugGroupStackSize && !pipeline->isPipelineStateReady() && m_device->getQueue()->canDeferPass()) {
+        m_isDeferringEncoding = true;
+        m_deferredState = makeUnique<DeferredRenderState>();
+        for (auto& [_, bindGroup] : m_bindGroups)
+            m_deferredState->appendBindGroupResources(bindGroup);
     }
 
     if (indirectBuffer)
@@ -695,21 +953,40 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
             }
             group->validatedSuccessfully(groupIndex, pipelineIdentifier, m_maxDynamicOffsetAtIndex[groupIndex]);
         }
-        setVertexBuffer(commandEncoder, group->vertexArgumentBuffer(), 0, m_device->vertexBufferIndexForBindGroup(groupIndex));
-        setFragmentBuffer(commandEncoder, group->fragmentArgumentBuffer(), 0, groupIndex);
+        setVertexBuffer(commandEncoder, group->vertexArgumentBuffer(), group->vertexArgumentBufferOffset(), m_device->vertexBufferIndexForBindGroup(groupIndex));
+        setFragmentBuffer(commandEncoder, group->fragmentArgumentBuffer(), group->fragmentArgumentBufferOffset(), groupIndex);
     }
 
-    if (pipeline->renderPipelineState())
-        [commandEncoder setRenderPipelineState:pipeline->renderPipelineState()];
-    if (pipeline->depthStencilState())
-        [commandEncoder setDepthStencilState:pipeline->depthStencilState()];
-    [commandEncoder setCullMode:pipeline->cullMode()];
-    [commandEncoder setFrontFacingWinding:pipeline->frontFace()];
-    if (m_overrideDepthClipMode != MTLDepthClipModeClip)
-        [commandEncoder setDepthClipMode:m_overrideDepthClipMode];
-    else
-        [commandEncoder setDepthClipMode:pipeline->depthClipMode()];
-    [commandEncoder setDepthBias:pipeline->depthBias() slopeScale:pipeline->depthBiasSlopeScale() clamp:pipeline->depthBiasClamp()];
+    MTLDepthClipMode effectiveDepthClipMode = m_overrideDepthClipMode != MTLDepthClipModeClip ? m_overrideDepthClipMode : pipeline->depthClipMode();
+    if (m_isDeferringEncoding) {
+        if (!m_parentEncoder->submitWillBeInvalid()) {
+            m_deferredState->commands.append(DeferredRenderState::SetPipeline {
+                pipeline->precompiledPipelineState(),
+                pipeline->pendingCompilation(),
+                pipeline->depthStencilState(),
+                pipeline->cullMode(),
+                pipeline->frontFace(),
+                effectiveDepthClipMode,
+                pipeline->depthBias(),
+                pipeline->depthBiasSlopeScale(),
+                pipeline->depthBiasClamp(),
+            });
+        }
+    } else {
+        if (id<MTLRenderPipelineState> renderPipelineState = pipeline->renderPipelineState())
+            [commandEncoder setRenderPipelineState:renderPipelineState];
+        else {
+            makeInvalid(@"Render pipeline could not compile");
+            return false;
+        }
+        if (pipeline->depthStencilState())
+            [commandEncoder setDepthStencilState:pipeline->depthStencilState()];
+        [commandEncoder setCullMode:pipeline->cullMode()];
+        [commandEncoder setFrontFacingWinding:pipeline->frontFace()];
+        [commandEncoder setDepthClipMode:effectiveDepthClipMode];
+        [commandEncoder setDepthBias:pipeline->depthBias() slopeScale:pipeline->depthBiasSlopeScale() clamp:pipeline->depthBiasClamp()];
+        m_hasEncodedToMetalEncoder = true;
+    }
     setCachedRenderPassState(commandEncoder);
 
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
@@ -739,6 +1016,15 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
         m_priorFragmentDynamicOffsets = m_fragmentDynamicOffsets;
     }
 
+    if (pipeline->usesVertexImmediates() && m_vertexImmediatesDirty) {
+        setVertexBytes(commandEncoder, std::span<const uint8_t> { m_immediateData }, m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1);
+        m_vertexImmediatesDirty = false;
+    }
+    if (pipeline->usesFragmentImmediates() && m_fragmentImmediatesDirty) {
+        setFragmentBytes(commandEncoder, std::span<const uint8_t> { m_immediateData }, m_device->maxBuffersForFragmentStage() + 1);
+        m_fragmentImmediatesDirty = false;
+    }
+
     incrementDrawCount();
 
     return true;
@@ -756,12 +1042,21 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 
     bool needsValidationLayerWorkaround;
     computeMininumVertexInstanceCount(needsValidationLayerWorkaround);
-    if (!executePreDrawCommands(0, 0, false, nullptr, needsValidationLayerWorkaround))
+    if (!executePreDrawCommands(0, 0, false, nullptr, needsValidationLayerWorkaround, !needsValidationLayerWorkaround))
         return;
     runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance);
+    if (!isValid())
+        return;
     if (!instanceCount || !vertexCount || instanceCount + firstInstance < firstInstance || vertexCount + firstVertex < firstVertex)
         return;
 
+    if (m_isDeferringEncoding) {
+        if (m_deferredState && !m_parentEncoder->submitWillBeInvalid())
+            m_deferredState->commands.append(DeferredRenderState::Draw { m_primitiveType, firstVertex, vertexCount, instanceCount, firstInstance });
+        return;
+    }
+
+    m_hasEncodedToMetalEncoder = true;
     [renderCommandEncoder()
         drawPrimitives:m_primitiveType
         vertexStart:firstVertex
@@ -1142,6 +1437,9 @@ NODELETE static NSUInteger verticesPerPrimitive(MTLPrimitiveType primitiveType)
 void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
 
     auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
     auto firstIndexOffsetInBytes = checkedProduct<size_t>(firstIndex, indexSizeInBytes);
@@ -1201,6 +1499,9 @@ void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount,
 void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
     if (!isValidToUseWith(indirectBuffer, *this)) {
         makeInvalid(@"drawIndexedIndirect: buffer was invalid");
         return;
@@ -1257,6 +1558,7 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
 
 bool RenderPassEncoder::splitRenderPass()
 {
+    flushDeferredStateToMetalEncoder();
     if (m_memoryBarrierCount < m_device->baseCapabilities().memoryBarrierLimit || !m_renderCommandEncoder)
         return false;
 
@@ -1294,6 +1596,10 @@ bool RenderPassEncoder::splitRenderPass()
     m_existingFragmentBuffers.fill(ExistingBufferKey { });
     m_bindGroupDynamicOffsetsChanged.fill(true);
     m_maxDynamicOffsetAtIndex.fill(0);
+    if (m_setImmediateSlots) {
+        m_vertexImmediatesDirty = true;
+        m_fragmentImmediatesDirty = true;
+    }
 
     return true;
 }
@@ -1301,6 +1607,9 @@ bool RenderPassEncoder::splitRenderPass()
 void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
     if (!isValidToUseWith(indirectBuffer, *this)) {
         makeInvalid(@"drawIndirect: buffer was invalid");
         return;
@@ -1397,6 +1706,7 @@ void RenderPassEncoder::endPass()
         return;
     }
 
+    RetainPtr<NSString> encoderLabel = m_renderCommandEncoder.label;
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
@@ -1409,6 +1719,49 @@ void RenderPassEncoder::endPass()
         endEncoder();
 
     m_renderCommandEncoder = nil;
+    if (m_isDeferringEncoding && m_deferredState && !m_deferredState->commands.isEmpty() && m_replayPassDescriptor && !m_parentEncoder->submitWillBeInvalid()) {
+        auto deferredState = std::exchange(m_deferredState, nullptr);
+        m_isDeferringEncoding = false;
+        RetainPtr<MTLRenderPassDescriptor> replayDescriptor = m_replayPassDescriptor;
+        ThreadSafeWeakPtr<Instance> weakInstance = m_device->weakInstance();
+        ThreadSafeWeakPtr<Device> weakDevice { m_device };
+        m_parentEncoder->addDeferredPassReplay([deferredState = WTF::move(deferredState), replayDescriptor = WTF::move(replayDescriptor), encoderLabel = WTF::move(encoderLabel), weakInstance = WTF::move(weakInstance), weakDevice = WTF::move(weakDevice)](id<MTLCommandBuffer> deferredCommandBuffer) mutable {
+            for (auto& command : deferredState->commands) {
+                if (auto* setPipeline = std::get_if<DeferredRenderState::SetPipeline>(&command)) {
+                    if (!setPipeline->readyPSO && setPipeline->pending) {
+                        setPipeline->readyPSO = setPipeline->pending->wait();
+                        if (!setPipeline->readyPSO) {
+                            if (RefPtr protectedInstance = weakInstance) {
+                                bool hadLibErr = setPipeline->pending->hadLibraryError;
+                                RetainPtr<NSString> errMsg = setPipeline->pending->errorMessage;
+                                protectedInstance->scheduleWork([weakDevice, hadLibErr, errMsg = WTF::move(errMsg)] mutable {
+                                    if (RefPtr device = weakDevice) {
+                                        if (hadLibErr)
+                                            device->generateAValidationError(errMsg.get() ?: @"Render library failed creation");
+                                        else
+                                            device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_s);
+                                    }
+                                });
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+            id<MTLRenderCommandEncoder> enc = [deferredCommandBuffer renderCommandEncoderWithDescriptor:replayDescriptor.get()];
+            if (!enc)
+                return;
+            if (encoderLabel)
+                enc.label = encoderLabel.get();
+            for (auto& command : deferredState->commands)
+                DeferredRenderState::applyCommand(enc, command);
+            [enc endEncoding];
+        });
+    } else {
+        m_deferredState = nullptr;
+        m_isDeferringEncoding = false;
+    }
     m_parentEncoder->lock(false);
 
     if (m_queryBufferIndicesToClear.size() && !occlusionQueryIsDestroyed()) {
@@ -1442,6 +1795,9 @@ bool RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resourc
 void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>> apiBundles)
 {
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
     auto bundles = WTF::map(apiBundles, [](auto& bundle) {
         return Ref { metal(bundle.get()) };
     });
@@ -1802,6 +2158,10 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
     m_existingVertexBuffers.fill(ExistingBufferKey { });
     m_existingFragmentBuffers.fill(ExistingBufferKey { });
     m_maxDynamicOffsetAtIndex.fill(0);
+    m_immediateData.fill(0);
+    m_setImmediateSlots = 0;
+    m_vertexImmediatesDirty = false;
+    m_fragmentImmediatesDirty = false;
 }
 
 NSString* RenderPassEncoder::errorValidatingColorDepthStencilTargets(const RenderPipeline& pipeline) const
@@ -1820,6 +2180,9 @@ void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
 
     if (!prepareTheEncoderState())
         return;
@@ -1841,6 +2204,8 @@ bool RenderPassEncoder::validatePopDebugGroup() const
 void RenderPassEncoder::makeInvalid(NSString* errorString)
 {
     m_lastErrorString = errorString;
+    m_deferredState = nullptr;
+    m_isDeferringEncoding = false;
 
     Ref parentEncoder = m_parentEncoder;
 
@@ -1866,6 +2231,9 @@ void RenderPassEncoder::popDebugGroup()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
 
     if (!prepareTheEncoderState())
         return;
@@ -1883,6 +2251,9 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
     RETURN_IF_FINISHED();
+    flushDeferredStateToMetalEncoder();
+    if (!isValid())
+        return;
 
     if (!prepareTheEncoderState())
         return;
@@ -1921,6 +2292,25 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGrou
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
 }
 
+void RenderPassEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+        m_vertexImmediatesDirty = true;
+        m_fragmentImmediatesDirty = true;
+    }
+}
+
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)
 {
     RETURN_IF_FINISHED();
@@ -1930,7 +2320,8 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* group
     if (apiDynamicOffsets)
         dynamicOffsets = Vector<uint32_t> { *apiDynamicOffsets };
 
-    auto dynamicOffsetCount = (groupPtr && groupPtr->bindGroupLayout()) ? groupPtr->bindGroupLayout()->dynamicBufferCount() : 0;
+    RefPtr groupLayout = groupPtr ? groupPtr->bindGroupLayout() : nullptr;
+    auto dynamicOffsetCount = groupLayout ? groupLayout->dynamicBufferCount() : 0;
     if (groupIndex >= m_device->limits().maxBindGroups || (dynamicOffsets && dynamicOffsetCount != dynamicOffsets->size())) {
         makeInvalid(@"setBindGroup: groupIndex >= limits.maxBindGroups");
         return;
@@ -1971,8 +2362,10 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* group
     }
 
     auto parentEncoder = m_parentEncoder;
+    if (m_isDeferringEncoding && m_deferredState && !parentEncoder->submitWillBeInvalid())
+        m_deferredState->appendBindGroupResources(group);
     for (const auto& resource : group.resources()) {
-        if ((resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
+        if (!m_isDeferringEncoding && (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment)) && resource.mtlResources.size())
             [renderCommandEncoder() useResources:&borrow(resource.mtlResources)[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
 
         ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());

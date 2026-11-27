@@ -50,6 +50,38 @@ ConstantVector ConstantMatrix::operator[](unsigned index) const
     return result;
 }
 
+size_t ConstantValue::extraMemoryFootprint() const
+{
+    return WTF::switchOn(*this,
+        [](const ConstantArray& array) -> size_t {
+            size_t total = array.elements.size() * sizeof(ConstantValue);
+            for (const auto& element : array.elements)
+                total += element.extraMemoryFootprint();
+            return total;
+        },
+        [](const ConstantVector& vector) -> size_t {
+            size_t total = vector.elements.size() * sizeof(ConstantValue);
+            for (const auto& element : vector.elements)
+                total += element.extraMemoryFootprint();
+            return total;
+        },
+        [](const ConstantMatrix& matrix) -> size_t {
+            size_t total = matrix.elements.size() * sizeof(ConstantValue);
+            for (const auto& element : matrix.elements)
+                total += element.extraMemoryFootprint();
+            return total;
+        },
+        [](const ConstantStruct& constantStruct) -> size_t {
+            size_t total = constantStruct.fields.capacity() * (sizeof(String) + sizeof(ConstantValue));
+            for (const auto& entry : constantStruct.fields)
+                total += entry.value.extraMemoryFootprint();
+            return total;
+        },
+        [](const auto&) -> size_t {
+            return 0;
+        });
+}
+
 void ConstantValue::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,
@@ -278,6 +310,9 @@ bool convertValueImpl(const SourceSpan& span, const Type* type, ConstantValue& v
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Types::Atomic&) -> bool {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Buffer&) -> bool {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Types::TypeConstructor&) -> bool {

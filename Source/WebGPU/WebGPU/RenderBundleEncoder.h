@@ -120,6 +120,7 @@ public:
     void setIndexBuffer(WebGPU::Buffer&, WebGPU::IndexFormat, uint64_t offset, std::optional<uint64_t> size) final;
     void setVertexBuffer(uint32_t slot, WebGPU::Buffer*, uint64_t offset, std::optional<uint64_t> size) final;
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
+    void setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data) final;
     void makeInvalid(NSString* = nil);
     void makeInvalid(String&& error) final;
     void setLabel(String&&) final;
@@ -216,8 +217,12 @@ private:
     NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
     id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
+    id<MTLBuffer> m_immediatesBuffer { nil };
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
+    uint64_t m_immediateBufferOffset { 0 };
+    std::array<uint8_t, maxSupportedImmediateSize> m_immediateData { };
+    uint64_t m_setImmediateSlots { 0 };
     Vector<uint64_t> m_fragmentDynamicOffsetsHeaderOffsets;
 
     ThreadSafeWeakPtr<RenderPassEncoder> m_renderPassEncoder;

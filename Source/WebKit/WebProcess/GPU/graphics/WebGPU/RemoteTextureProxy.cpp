@@ -82,7 +82,8 @@ RefPtr<::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional
         return nullptr;
 
     auto result = RemoteTextureViewProxy::create(*this, identifier);
-    result->setLabel(descriptor ? String { descriptor->label } : String { });
+    if (descriptor && !descriptor->label.isEmpty())
+        result->setLabel(String { descriptor->label });
     if (!m_isCanvasBacking)
         return result;
 

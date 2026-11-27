@@ -59,7 +59,7 @@ void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint
     if (startsMapping)
         m_isMapPending = true;
     auto mapGeneration = m_mapGeneration;
-    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, offset, size, startsMapping, mapGeneration, protectedThis = protect(*this)](auto success) mutable {
+    auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTF::move(callback), mapModeFlags, offset, size, startsMapping, mapGeneration, protectedThis = protect(*this)](auto success, auto&& mappedData) mutable {
         if (!startsMapping || mapGeneration != protectedThis->m_mapGeneration)
             return callback(success);
         protectedThis->m_isMapPending = false;
@@ -68,6 +68,7 @@ void RemoteBufferProxy::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint
         protectedThis->m_mapModeFlags = mapModeFlags;
         protectedThis->m_mappedOffset = offset;
         protectedThis->m_mappedSize = size;
+        protectedThis->m_mappedData = WTF::move(mappedData);
         callback(true);
     });
     if (!sendResult && startsMapping)
@@ -116,6 +117,26 @@ NODELETE static bool offsetOrSizeExceedsBounds(size_t dataSize, uint64_t offset,
 
 void RemoteBufferProxy::getMappedRange(uint64_t offset, std::optional<uint64_t> size, NOESCAPE const Function<void(std::span<uint8_t>)>& callback)
 {
+    if (m_mappedData && offset >= m_mappedOffset) {
+        uint64_t relativeOffset = offset - m_mappedOffset;
+        if (relativeOffset <= m_mappedData->size()) {
+            uint64_t available = m_mappedData->size() - relativeOffset;
+            uint64_t rangeSize = size.value_or(available);
+            if (rangeSize <= available) {
+                if (!rangeSize) {
+                    static uint8_t emptyByte = 0;
+                    callback(std::span<uint8_t> { &emptyByte, 0 });
+                } else {
+                    bool consumesEntireRange = !relativeOffset && rangeSize == m_mappedData->size();
+                    callback(borrow(*m_mappedData)->mutableSpan().subspan(relativeOffset, rangeSize));
+                    if (consumesEntireRange)
+                        m_mappedData = std::nullopt;
+                }
+                return;
+            }
+        }
+    }
+
     // FIXME: Implement error handling.
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
     auto [data] = sendResult.takeReplyOr(std::nullopt);
@@ -164,6 +185,7 @@ void RemoteBufferProxy::unmap()
     ++m_mapGeneration;
     m_mappedOffset = 0;
     m_mappedSize = std::nullopt;
+    m_mappedData = std::nullopt;
 }
 
 void RemoteBufferProxy::destroy()
@@ -174,6 +196,7 @@ void RemoteBufferProxy::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-destroy unmaps the buffer, without writing
     // back its contents. The JavaScript API unmaps it before.
     m_persistentMappedRange = std::nullopt;
+    m_mappedData = std::nullopt;
     m_mapModeFlags = { };
     m_isMapPending = false;
     ++m_mapGeneration;

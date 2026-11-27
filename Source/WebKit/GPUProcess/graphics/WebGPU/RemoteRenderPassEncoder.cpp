@@ -146,6 +146,11 @@ void RemoteRenderPassEncoder::setBindGroup(uint32_t index, std::optional<WebGPUB
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
+void RemoteRenderPassEncoder::setImmediates(uint32_t rangeOffset, Vector<uint32_t>&& data)
+{
+    protect(m_backing)->setImmediates(rangeOffset, asByteSpan(borrow(data)->span()));
+}
+
 void RemoteRenderPassEncoder::pushDebugGroup(String&& groupLabel)
 {
     protect(m_backing)->pushDebugGroup(WTF::move(groupLabel));

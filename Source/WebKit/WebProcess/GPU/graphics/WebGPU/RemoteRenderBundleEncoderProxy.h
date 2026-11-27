@@ -60,6 +60,7 @@ public:
     void drawIndirect(::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void drawIndexedIndirect(::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void setBindGroup(uint32_t, const ::WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
+    void setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data) final;
     void pushDebugGroup(String&& groupLabel) final;
     void popDebugGroup() final;
     void insertDebugMarker(String&& markerLabel) final;

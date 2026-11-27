@@ -33,6 +33,7 @@
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <optional>
+#import <wtf/BitVector.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
@@ -89,6 +90,12 @@ public:
 
     void setCommandEncoder(CommandEncoder&) const;
     NODELETE bool isDestroyed() const;
+    bool isSlotWritten(uint32_t slot) const { return slot < m_writtenSlots.size() && m_writtenSlots.get(slot); }
+    void markSlotWritten(uint32_t slot) const
+    {
+        if (slot < m_count)
+            m_writtenSlots.set(slot);
+    }
     static void destroyQuerySet(const QuerySet&);
     static CounterSampleBuffer counterSampleBufferWithOffsetForDevice(size_t, const Device&);
     static void createContainersIfNeeded();
@@ -115,6 +122,7 @@ private:
         uint32_t otherIndex;
     };
     bool m_destroyed { false };
+    mutable BitVector m_writtenSlots;
 
     // static is intentional here as the limit is per process
     static constexpr uint32_t maxCounterSampleBuffers = 32;

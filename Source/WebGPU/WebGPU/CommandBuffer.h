@@ -85,6 +85,7 @@ public:
     bool waitForCompletion();
     bool preCommitHandler();
     void postCommitHandler();
+    bool hasPostCommitHandlers() const { return !m_postCommitHandlers.isEmpty(); }
     void addPostCommitHandler(Function<void(id<MTLCommandBuffer>)>&&);
 
     double gpuExecutionDurationSeconds() const { return m_gpuExecutionDurationSeconds.load(std::memory_order_relaxed); }

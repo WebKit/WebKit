@@ -32,6 +32,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -104,6 +105,11 @@ void RemoteComputePassEncoder::setBindGroup(uint32_t index, std::optional<WebGPU
         return;
 
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), offsets ? std::optional { offsets->span() } : std::nullopt);
+}
+
+void RemoteComputePassEncoder::setImmediates(uint32_t rangeOffset, Vector<uint32_t>&& data)
+{
+    protect(m_backing)->setImmediates(rangeOffset, asByteSpan(borrow(data)->span()));
 }
 
 void RemoteComputePassEncoder::pushDebugGroup(String&& groupLabel)

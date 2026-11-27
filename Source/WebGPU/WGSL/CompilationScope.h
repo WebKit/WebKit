@@ -43,6 +43,8 @@ private:
     AST::Builder::State m_builderState;
     size_t m_replacementsSize;
     size_t m_overrideValidationsSize;
+    size_t m_typesSize;
+    size_t m_typeCacheSize;
 };
 
 } // namespace WGSL

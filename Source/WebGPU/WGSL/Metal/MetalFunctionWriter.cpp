@@ -491,6 +491,7 @@ static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
         return "thread"_s;
     case AddressSpace::Workgroup:
         return "threadgroup"_s;
+    case AddressSpace::Immediate:
     case AddressSpace::Uniform:
         return "constant"_s;
     case AddressSpace::Storage:
@@ -1095,6 +1096,56 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_output.append(m_indent, "}\n\n"_s);
     }
 
+    if (m_shaderModule.usesBufferView()) {
+        m_output.append(
+            "using __wgsl_buffer_t = uint8_t;\n"
+            "template <size_t __N>\n"
+            "struct alignas(16) __wgsl_workgroup_buffer {\n"
+            "    uint8_t __data[__N];\n"
+            "    operator threadgroup uint8_t&() threadgroup { return __data[0]; }\n"
+            "    operator const threadgroup uint8_t&() const threadgroup { return __data[0]; }\n"
+            "};\n"
+            "template <typename __T>\n"
+            "struct __wgsl_alias_impl {\n"
+            "    typedef __T Type __attribute__((may_alias));\n"
+            "};\n"
+            "template <typename __T>\n"
+            "using __wgsl_may_alias = typename __wgsl_alias_impl<__T>::Type;\n"
+            "template <typename __T> static __attribute__((always_inline)) device __wgsl_may_alias<__T>& __wgslAliasRef(device __T& __r) { return reinterpret_cast<device __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) const device __wgsl_may_alias<__T>& __wgslAliasRef(const device __T& __r) { return reinterpret_cast<const device __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) const constant __wgsl_may_alias<__T>& __wgslAliasRef(const constant __T& __r) { return reinterpret_cast<const constant __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) threadgroup __wgsl_may_alias<__T>& __wgslAliasRef(threadgroup __T& __r) { return reinterpret_cast<threadgroup __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) const threadgroup __wgsl_may_alias<__T>& __wgslAliasRef(const threadgroup __T& __r) { return reinterpret_cast<const threadgroup __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) thread __wgsl_may_alias<__T>& __wgslAliasRef(thread __T& __r) { return reinterpret_cast<thread __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __T> static __attribute__((always_inline)) const thread __wgsl_may_alias<__T>& __wgslAliasRef(const thread __T& __r) { return reinterpret_cast<const thread __wgsl_may_alias<__T>&>(__r); }\n"
+            "template <typename __OffT>\n"
+            "static __attribute__((always_inline)) unsigned __wgslBufferViewOffset(__OffT __off, unsigned __alignMask, unsigned __bufLen, unsigned __minBytes)\n"
+            "{\n"
+            "    if (__off < 0)\n"
+            "        return 0u;\n"
+            "    unsigned __aligned = static_cast<unsigned>(__off) & __alignMask;\n"
+            "    return (__bufLen >= __minBytes && __aligned <= __bufLen - __minBytes) ? __aligned : 0u;\n"
+            "}\n"
+            "template <typename __OffT, typename __SizeT>\n"
+            "static __attribute__((always_inline)) unsigned __wgslBufferArrayViewOffset(__OffT __off, __SizeT __sz, unsigned __alignMask, unsigned __bufLen, unsigned __minBytes)\n"
+            "{\n"
+            "    if (__off < 0 || __sz < 0)\n"
+            "        return 0u;\n"
+            "    unsigned __aligned = static_cast<unsigned>(__off) & __alignMask;\n"
+            "    unsigned __usz = static_cast<unsigned>(__sz);\n"
+            "    return (__usz >= __minBytes && __bufLen >= __usz && __aligned <= __bufLen - __usz) ? __aligned : 0u;\n"
+            "}\n"
+            "template <typename __OffT, typename __SizeT>\n"
+            "static __attribute__((always_inline)) unsigned __wgslBufferArrayViewSize(__OffT __off, __SizeT __sz, unsigned __alignMask, unsigned __bufLen, unsigned __minBytes)\n"
+            "{\n"
+            "    if (__off < 0 || __sz < 0)\n"
+            "        return __minBytes;\n"
+            "    unsigned __aligned = static_cast<unsigned>(__off) & __alignMask;\n"
+            "    unsigned __usz = static_cast<unsigned>(__sz);\n"
+            "    return (__usz >= __minBytes && __bufLen >= __usz && __aligned <= __bufLen - __usz) ? __usz : __minBytes;\n"
+            "}\n\n"_s);
+    }
+
     m_shaderModule.clearUsesPackedVec3();
 }
 
@@ -1245,7 +1296,11 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
 void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 {
     m_structRole = { structDecl.role() };
-    m_body.append(m_indent, "struct "_s, structDecl.name(), " {\n"_s);
+    bool mayAliasMembers = m_shaderModule.usesBufferView()
+        && (structDecl.role() == AST::StructureRole::UserDefined
+            || structDecl.role() == AST::StructureRole::UserDefinedResource
+            || structDecl.role() == AST::StructureRole::PackedResource);
+    m_body.append(m_indent, mayAliasMembers ? "struct __attribute__((may_alias)) "_s : "struct "_s, structDecl.name(), " {\n"_s);
     {
         IndentationScope scope(m_indent);
         unsigned paddingID = 0;
@@ -1310,7 +1365,11 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                     m_body.append(*size);
                 m_body.append(']');
             } else {
+                if (mayAliasMembers)
+                    m_body.append("__wgsl_may_alias<"_s);
                 visit(member.type().inferredType());
+                if (mayAliasMembers)
+                    m_body.append('>');
                 m_body.append(' ', name);
 
                 for (auto &attribute : member.attributes()) {
@@ -1409,6 +1468,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             auto* type = member.type().inferredType();
             if (auto* reference = std::get_if<Types::Reference>(type))
                 type = reference->element;
+            if (std::holds_alternative<Types::Buffer>(*type))
+                continue;
             if (auto maybeSize = type->maybeSize(); maybeSize && *maybeSize < std::numeric_limits<unsigned>::max())
                 m_body.append(m_indent, "static_assert(sizeof("_s, structDecl.name(), "::"_s, member.name(), ") == "_s, *maybeSize, ");\n\n"_s);
         }
@@ -1595,6 +1656,24 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
         return;
     }
 
+    if (auto* qualifier = variable.maybeQualifier(); qualifier && qualifier->addressSpace() == AddressSpace::Workgroup) {
+        if (auto* bufType = std::get_if<Types::Buffer>(type)) {
+            m_body.append("threadgroup __wgsl_workgroup_buffer<"_s);
+            WTF::switchOn(bufType->size,
+                [&](unsigned size) {
+                    m_body.append(size);
+                },
+                [&](std::monostate) {
+                    m_body.append(1);
+                },
+                [&](AST::Expression* size) {
+                    visit(*size);
+                });
+            m_body.append("> "_s, variable.name(), " { }"_s);
+            return;
+        }
+    }
+
     if (auto* qualifier = variable.maybeQualifier()) {
         switch (qualifier->addressSpace()) {
         case AddressSpace::Workgroup:
@@ -1602,6 +1681,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
             break;
         case AddressSpace::Function:
         case AddressSpace::Handle:
+        case AddressSpace::Immediate:
         case AddressSpace::Private:
         case AddressSpace::Storage:
         case AddressSpace::Uniform:
@@ -1672,9 +1752,11 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     case Builtin::GlobalInvocationId:
         m_body.append("[[thread_position_in_grid]]"_s);
         break;
+    case Builtin::GlobalInvocationIndex:
+        m_body.append("[[threads_per_threadgroup]]"_s);
+        break;
     case Builtin::InstanceIndex:
         m_body.append("[[instance_id]]"_s);
-        break;
         break;
     case Builtin::LocalInvocationId:
         m_body.append("[[thread_position_in_threadgroup]]"_s);
@@ -1714,6 +1796,8 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
         break;
     case Builtin::WorkgroupId:
         m_body.append("[[threadgroup_position_in_grid]]"_s);
+        break;
+    case Builtin::WorkgroupIndex:
         break;
     }
 }
@@ -2047,15 +2131,24 @@ void FunctionDefinitionWriter::visit(const Type* type, bool shouldPack)
                 m_body.append("const "_s);
             if (addressSpace)
                 m_body.append(addressSpace, ' ');
-            bool shouldPack = pointer.addressSpace == AddressSpace::Storage || pointer.addressSpace == AddressSpace::Uniform;
+            bool shouldPack = pointer.addressSpace == AddressSpace::Storage || pointer.addressSpace == AddressSpace::Uniform || pointer.addressSpace == AddressSpace::Immediate || (pointer.addressSpace == AddressSpace::Workgroup && (pointer.element->containsRuntimeArray() || (m_shaderModule.usesBufferView() && pointer.element->isHostShareable())));
+            bool useMayAlias = m_shaderModule.usesBufferView() && !std::holds_alternative<Types::Atomic>(*pointer.element) && !std::holds_alternative<Types::Buffer>(*pointer.element);
+            if (useMayAlias)
+                m_body.append("__wgsl_may_alias<"_s);
             visit(pointer.element, shouldPack);
-            m_body.append('*');
+            if (useMayAlias)
+                m_body.append(">*"_s);
+            else
+                m_body.append('*');
         },
         [&](const Atomic& atomic) {
             if (atomic.element == m_shaderModule.types().i32Type())
                 m_body.append("atomic_int"_s);
             else
                 m_body.append("atomic_uint"_s);
+        },
+        [&](const Types::Buffer&) {
+            m_body.append("__wgsl_buffer_t"_s);
         },
         [&](const Function&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -2096,7 +2189,7 @@ void FunctionDefinitionWriter::visit(AST::Expression& expression)
 
 bool FunctionDefinitionWriter::outlineConstant(const Type* type, AST::Expression& expression)
 {
-    auto constantValue = expression.constantValue();
+    const auto& constantValue = expression.constantValue();
     if (!constantValue)
         return false;
 
@@ -2125,7 +2218,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
     if (outlineConstant(type, expression))
         return;
 
-    if (auto constantValue = expression.constantValue()) {
+    if (const auto& constantValue = expression.constantValue()) {
         serializeConstant(type, *constantValue);
         return;
     }
@@ -2982,6 +3075,19 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             emitBitcast(this, call);
             return;
         }
+        if (target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s) {
+            const auto& pointer = std::get<Types::Pointer>(*call.inferredType());
+            auto addressSpace = serializeAddressSpace(pointer.addressSpace);
+            ASCIILiteral constQualifier = pointer.accessMode == AccessMode::Read ? "const "_s : ""_s;
+            m_body.append("reinterpret_cast<"_s, constQualifier, addressSpace, " __wgsl_may_alias<"_s);
+            visit(pointer.element, true);
+            m_body.append(">*>(reinterpret_cast<"_s, constQualifier, addressSpace, " uint8_t*>("_s);
+            visit(call.arguments()[0]);
+            m_body.append(") + ("_s);
+            visit(call.arguments().last());
+            m_body.append("))"_s);
+            return;
+        }
     }
 
     auto isArray = call.isConstructor() && std::holds_alternative<Types::Array>(*type);
@@ -3196,6 +3302,17 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
         return;
     }
 
+    if (unary.operation() == AST::UnaryOperation::AddressOf && m_shaderModule.usesBufferView()) {
+        if (auto* ptr = unary.inferredType() ? std::get_if<Types::Pointer>(unary.inferredType()) : nullptr; ptr && !std::holds_alternative<Types::Atomic>(*ptr->element)) {
+            m_body.append("reinterpret_cast<"_s);
+            visit(unary.inferredType());
+            m_body.append(">(&("_s);
+            visit(unary.expression());
+            m_body.append("))"_s);
+            return;
+        }
+    }
+
     m_body.append('(');
     switch (unary.operation()) {
     case AST::UnaryOperation::Complement:
@@ -3359,27 +3476,192 @@ void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerD
     visit(pointerDereference.target());
     m_body.append(')');
 }
+
+static std::optional<unsigned> swizzleComponentIndex(char c)
+{
+    switch (c) {
+    case 'x':
+    case 'r':
+        return 0;
+    case 'y':
+    case 'g':
+        return 1;
+    case 'z':
+    case 'b':
+        return 2;
+    case 'w':
+    case 'a':
+        return 3;
+    default:
+        return std::nullopt;
+    }
+}
+
+static ASCIILiteral swizzleComponentName(unsigned index)
+{
+    switch (index) {
+    case 0:
+        return "x"_s;
+    case 1:
+        return "y"_s;
+    case 2:
+        return "z"_s;
+    case 3:
+        return "w"_s;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static AST::Expression* unwrapSwizzleBase(AST::Expression& expr, bool unwrapUnpackCall)
+{
+    AST::Expression* current = &expr;
+    while (true) {
+        if (auto* identity = dynamicDowncast<AST::IdentityExpression>(*current)) {
+            current = &identity->expression();
+            continue;
+        }
+        if (unwrapUnpackCall) {
+            if (auto* call = dynamicDowncast<AST::CallExpression>(*current)) {
+                if (auto* target = dynamicDowncast<AST::IdentifierExpression>(call->target()); target && target->identifier() == "__unpack"_s) {
+                    current = &call->arguments()[0];
+                    continue;
+                }
+            }
+        }
+        break;
+    }
+    return current;
+}
+
+static AST::Expression* resolveVectorSwizzle(AST::Expression& expr, Vector<unsigned, 4>& outComponents, bool unwrapUnpackCall = false)
+{
+    AST::Expression* current = unwrapSwizzleBase(expr, unwrapUnpackCall);
+    auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(*current);
+    if (!fieldAccess)
+        return nullptr;
+
+    auto* baseType = fieldAccess->base().inferredType();
+    if (!baseType)
+        return nullptr;
+    if (auto* ref = std::get_if<Types::Reference>(baseType))
+        baseType = ref->element;
+    else if (auto* ptr = std::get_if<Types::Pointer>(baseType))
+        baseType = ptr->element;
+    if (!std::holds_alternative<Types::Vector>(*baseType))
+        return nullptr;
+
+    Vector<unsigned, 4> currentSwizzle;
+    for (unsigned i = 0; i < fieldAccess->fieldName().id().length(); ++i) {
+        auto idx = swizzleComponentIndex(fieldAccess->fieldName().id()[i]);
+        if (!idx)
+            return nullptr;
+        currentSwizzle.append(*idx);
+    }
+
+    Vector<unsigned, 4> parentComponents;
+    if (auto* root = resolveVectorSwizzle(fieldAccess->base(), parentComponents, unwrapUnpackCall)) {
+        outComponents.clear();
+        for (auto idx : currentSwizzle)
+            outComponents.append(borrow(parentComponents)[idx]);
+        return root;
+    }
+
+    outComponents = WTF::move(currentSwizzle);
+    return unwrapSwizzleBase(fieldAccess->base(), unwrapUnpackCall);
+}
+
 void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 {
+    Vector<unsigned, 4> swizzleComponents;
+    if (auto* swizzleRoot = resolveVectorSwizzle(access.base(), swizzleComponents, true)) {
+        auto* rootType = swizzleRoot->inferredType();
+        bool isPointer = rootType && std::holds_alternative<Types::Pointer>(*rootType);
+        if (isPointer)
+            m_body.append("(*("_s);
+        visit(*swizzleRoot);
+        if (isPointer)
+            m_body.append("))"_s);
+        m_body.append("[array<unsigned, "_s, swizzleComponents.size(), ">{ "_s);
+        for (size_t i = 0; i < swizzleComponents.size(); ++i) {
+            if (i)
+                m_body.append(", "_s);
+            m_body.append(borrow(swizzleComponents)[i], "u"_s);
+        }
+        m_body.append(" }["_s);
+        visit(access.index());
+        m_body.append("]]"_s);
+        return;
+    }
+
     auto* baseType = access.base().inferredType();
     bool isPointer = std::holds_alternative<Types::Pointer>(*baseType);
 
     bool isPackedMatrix = false;
+    bool needsAliasRef = false;
     {
         const Type* elementType = nullptr;
+        auto isBufferViewExpr = [](AST::Expression& expr) {
+            AST::Expression* cur = &expr;
+            while (true) {
+                if (auto* id = dynamicDowncast<AST::IdentityExpression>(*cur)) {
+                    cur = &id->expression();
+                    continue;
+                }
+                if (auto* unary = dynamicDowncast<AST::UnaryExpression>(*cur)) {
+                    cur = &unary->expression();
+                    continue;
+                }
+                if (auto* deref = dynamicDowncast<AST::PointerDereferenceExpression>(*cur)) {
+                    cur = &deref->target();
+                    continue;
+                }
+                if (auto* field = dynamicDowncast<AST::FieldAccessExpression>(*cur)) {
+                    cur = &field->base();
+                    continue;
+                }
+                if (auto* index = dynamicDowncast<AST::IndexAccessExpression>(*cur)) {
+                    cur = &index->base();
+                    continue;
+                }
+                break;
+            }
+            if (auto* call = dynamicDowncast<AST::CallExpression>(*cur)) {
+                if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call->target()))
+                    return target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s;
+            }
+            if (auto* ptr = std::get_if<Types::Pointer>(cur->inferredType()))
+                return ptr->addressSpace == AddressSpace::Workgroup && ptr->element->containsRuntimeArray();
+            return false;
+        };
+        bool fromBufferView = m_shaderModule.usesBufferView() && isBufferViewExpr(access.base());
+        bool isPackedWorkgroup = m_shaderModule.usesBufferView() || fromBufferView;
         if (auto* ref = std::get_if<Types::Reference>(baseType)) {
-            if (ref->addressSpace == AddressSpace::Storage || ref->addressSpace == AddressSpace::Uniform)
+            if (ref->addressSpace == AddressSpace::Storage || ref->addressSpace == AddressSpace::Uniform || ref->addressSpace == AddressSpace::Immediate || (ref->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ref->element->isHostShareable()))
                 elementType = ref->element;
         } else if (auto* ptr = std::get_if<Types::Pointer>(baseType)) {
-            if (ptr->addressSpace == AddressSpace::Storage || ptr->addressSpace == AddressSpace::Uniform)
+            if (ptr->addressSpace == AddressSpace::Storage || ptr->addressSpace == AddressSpace::Uniform || ptr->addressSpace == AddressSpace::Immediate || (ptr->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ptr->element->isHostShareable()))
                 elementType = ptr->element;
         }
         if (elementType) {
             if (auto* matrix = std::get_if<Types::Matrix>(elementType))
                 isPackedMatrix = matrix->rows == 3;
         }
+        const Type* rawBaseElement = baseType;
+        if (auto* ref = std::get_if<Types::Reference>(baseType))
+            rawBaseElement = ref->element;
+        else if (auto* ptr = std::get_if<Types::Pointer>(baseType))
+            rawBaseElement = ptr->element;
+        if (m_shaderModule.usesBufferView() && rawBaseElement && std::holds_alternative<Types::Array>(*rawBaseElement)) {
+            if (auto* accessRef = access.inferredType() ? std::get_if<Types::Reference>(access.inferredType()) : nullptr) {
+                if (accessRef->addressSpace != AddressSpace::Handle && !std::holds_alternative<Types::Atomic>(*accessRef->element))
+                    needsAliasRef = true;
+            }
+        }
     }
 
+    if (needsAliasRef)
+        m_body.append("__wgslAliasRef("_s);
     if (isPointer)
         m_body.append("(*("_s);
     visit(access.base());
@@ -3390,6 +3672,8 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
     m_body.append('[');
     visit(access.index());
     m_body.append(']');
+    if (needsAliasRef)
+        m_body.append(')');
 }
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
@@ -3406,6 +3690,19 @@ void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 
 void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
 {
+    Vector<unsigned, 4> swizzleComponents;
+    if (auto* swizzleRoot = resolveVectorSwizzle(access, swizzleComponents, false)) {
+        visit(*swizzleRoot);
+        auto* baseType = swizzleRoot->inferredType();
+        if (baseType && std::holds_alternative<Types::Pointer>(*baseType))
+            m_body.append("->"_s);
+        else
+            m_body.append('.');
+        for (auto comp : swizzleComponents)
+            m_body.append(swizzleComponentName(comp));
+        return;
+    }
+
     visit(access.base());
     auto* baseType = access.base().inferredType();
     if (baseType && std::holds_alternative<Types::Pointer>(*baseType))
@@ -3461,11 +3758,92 @@ void FunctionDefinitionWriter::visit(AST::Statement& statement)
     AST::Visitor::visit(statement);
 }
 
+static bool typeHasPadding(const Type* type)
+{
+    if (!type)
+        return false;
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        auto& structDecl = structType->structure;
+        AST::Structure& layoutStruct = structDecl.original() ? *structDecl.original() : structDecl;
+        unsigned expectedOffset = 0;
+        for (auto& member : layoutStruct.members()) {
+            const Type* memberType = member.type().inferredType();
+            if (member.offset() != expectedOffset || typeHasPadding(memberType))
+                return true;
+            expectedOffset = member.offset() + memberType->size();
+        }
+        return expectedOffset != layoutStruct.size();
+    }
+    if (auto* arrayType = std::get_if<Types::Array>(type)) {
+        if (!arrayType->isCreationFixed())
+            return false;
+        if (arrayType->stride() != arrayType->element->size())
+            return true;
+        return typeHasPadding(arrayType->element);
+    }
+    return false;
+}
+
+static void emitPaddingSafeAssign(StringBuilder& body, const String& dstPath, const String& srcPath, const Type* type, unsigned depth = 0)
+{
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        AST::Structure& layoutStruct = structType->structure.original() ? *structType->structure.original() : structType->structure;
+        for (auto& member : layoutStruct.members()) {
+            String memberName = member.name().id();
+            emitPaddingSafeAssign(body, makeString(dstPath, '.', memberName), makeString(srcPath, '.', memberName), member.type().inferredType(), depth + 1);
+        }
+        return;
+    }
+    if (auto* arrayType = std::get_if<Types::Array>(type); arrayType && arrayType->isCreationFixed() && typeHasPadding(type)) {
+        unsigned count = std::get<unsigned>(arrayType->size);
+        String idxVar = makeString("__padIdx"_s, depth);
+        body.append("for (unsigned "_s, idxVar, " = 0u; "_s, idxVar, " < "_s, count, "u; ++"_s, idxVar, ") { "_s);
+        emitPaddingSafeAssign(body, makeString(dstPath, '[', idxVar, ']'), makeString(srcPath, '[', idxVar, ']'), arrayType->element, depth + 1);
+        body.append(" } "_s);
+        return;
+    }
+    body.append(dstPath, " = "_s, srcPath, "; "_s);
+}
+
 void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
+    Vector<unsigned, 4> swizzleComponents;
+    if (auto* swizzleRoot = resolveVectorSwizzle(assignment.lhs(), swizzleComponents, true); swizzleRoot && swizzleComponents.size() > 1) {
+        const auto* lhsElementType = assignment.lhs().inferredType();
+        if (auto* reference = std::get_if<Types::Reference>(lhsElementType))
+            lhsElementType = reference->element;
+        auto* rootType = swizzleRoot->inferredType();
+        bool isPointer = rootType && std::holds_alternative<Types::Pointer>(*rootType);
+
+        m_body.append(isPointer ? "{ auto __wgslSwizzleTarget = ("_s : "{ auto __wgslSwizzleTarget = &("_s);
+        visit(*swizzleRoot);
+        m_body.append("); "_s);
+        visit(lhsElementType);
+        m_body.append(" __wgslSwizzleRhs = "_s);
+        visit(lhsElementType, assignment.rhs());
+        for (size_t i = 0; i < swizzleComponents.size(); ++i)
+            m_body.append("; (*__wgslSwizzleTarget)."_s, swizzleComponentName(swizzleComponents[i]), " = __wgslSwizzleRhs["_s, i, "]"_s);
+        m_body.append("; }"_s);
+        return;
+    }
+
+    const auto* assignmentType = assignment.lhs().inferredType();
+    if (assignmentType) {
+        const auto& reference = std::get<Types::Reference>(*assignmentType);
+        if (m_shaderModule.usesBufferView() && (reference.addressSpace == AddressSpace::Storage || reference.addressSpace == AddressSpace::Workgroup) && typeHasPadding(reference.element)) {
+            m_body.append("{ auto __wgslAssignDst = &("_s);
+            visit(assignment.lhs());
+            m_body.append("); auto __wgslAssignSrc = ("_s);
+            visit(reference.element, assignment.rhs());
+            m_body.append("); "_s);
+            emitPaddingSafeAssign(m_body, "(*__wgslAssignDst)"_s, "__wgslAssignSrc"_s, reference.element);
+            m_body.append("}"_s);
+            return;
+        }
+    }
+
     visit(assignment.lhs());
     m_body.append(" = "_s);
-    const auto* assignmentType = assignment.lhs().inferredType();
     if (!assignmentType) {
         visit(assignment.rhs());
         return;
@@ -3482,6 +3860,110 @@ void FunctionDefinitionWriter::visit(AST::CallStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::CompoundAssignmentStatement& statement)
 {
+    Vector<unsigned, 4> swizzleComponents;
+    if (auto* swizzleRoot = resolveVectorSwizzle(statement.leftExpression(), swizzleComponents, true)) {
+        const auto* leftElementType = statement.leftExpression().inferredType();
+        if (auto* reference = std::get_if<Types::Reference>(leftElementType))
+            leftElementType = reference->element;
+        const auto* rhsType = statement.rightExpression().inferredType();
+        if (auto* rhsRef = std::get_if<Types::Reference>(rhsType))
+            rhsType = rhsRef->element;
+        auto* rootType = swizzleRoot->inferredType();
+        bool isPointer = rootType && std::holds_alternative<Types::Pointer>(*rootType);
+
+        m_body.append(isPointer ? "{ auto __wgslSwizzleTarget = ("_s : "{ auto __wgslSwizzleTarget = &("_s);
+        visit(*swizzleRoot);
+        m_body.append("); "_s);
+        visit(leftElementType);
+        m_body.append(" __wgslSwizzleLhs = "_s);
+        if (swizzleComponents.size() == 1)
+            m_body.append("(*__wgslSwizzleTarget)."_s, swizzleComponentName(swizzleComponents[0]));
+        else {
+            visit(leftElementType);
+            m_body.append('(');
+            for (size_t i = 0; i < swizzleComponents.size(); ++i) {
+                if (i)
+                    m_body.append(", "_s);
+                m_body.append("(*__wgslSwizzleTarget)."_s, swizzleComponentName(swizzleComponents[i]));
+            }
+            m_body.append(')');
+        }
+        m_body.append("; "_s);
+        visit(rhsType);
+        m_body.append(" __wgslSwizzleRhs = "_s);
+        visit(rhsType, statement.rightExpression());
+        m_body.append("; "_s);
+        visit(leftElementType);
+        m_body.append(" __wgslSwizzleRes = "_s);
+        auto operation = statement.operation();
+        bool isDiv = operation == AST::BinaryOperation::Divide;
+        bool isMod = !isDiv && operation == AST::BinaryOperation::Modulo;
+        ASCIILiteral helperFunction;
+        if (isDiv || isMod) {
+            auto* rightElementType = rhsType;
+            if (auto* vectorType = std::get_if<Types::Vector>(rightElementType))
+                rightElementType = vectorType->element;
+            if (satisfies(rightElementType, Constraints::Integer))
+                helperFunction = isDiv ? "__wgslDiv"_s : "__wgslMod"_s;
+            else if (isMod)
+                helperFunction = "fmod"_s;
+        } else if (isSignedIntegerArithmeticType(leftElementType) && isSignedIntegerArithmeticType(rhsType)) {
+            switch (operation) {
+            case AST::BinaryOperation::Add:
+                if (!std::exchange(m_helperGenerator.didEmitAddInt, true))
+                    m_helperGenerator.emitAddInt();
+                helperFunction = "__wgslAddInt"_s;
+                break;
+            case AST::BinaryOperation::Subtract:
+                if (!std::exchange(m_helperGenerator.didEmitSubInt, true))
+                    m_helperGenerator.emitSubInt();
+                helperFunction = "__wgslSubInt"_s;
+                break;
+            case AST::BinaryOperation::Multiply:
+                if (!std::exchange(m_helperGenerator.didEmitMulInt, true))
+                    m_helperGenerator.emitMulInt();
+                helperFunction = "__wgslMulInt"_s;
+                break;
+            default:
+                break;
+            }
+        }
+        if (!helperFunction.isNull())
+            m_body.append(helperFunction, "(__wgslSwizzleLhs, __wgslSwizzleRhs)"_s);
+        else {
+            m_body.append("(__wgslSwizzleLhs"_s);
+            switch (operation) {
+            case AST::BinaryOperation::Add: m_body.append(" + "_s); break;
+            case AST::BinaryOperation::Subtract: m_body.append(" - "_s); break;
+            case AST::BinaryOperation::Multiply: m_body.append(" * "_s); break;
+            case AST::BinaryOperation::Divide: m_body.append(" / "_s); break;
+            case AST::BinaryOperation::Modulo: m_body.append(" % "_s); break;
+            case AST::BinaryOperation::And: m_body.append(" & "_s); break;
+            case AST::BinaryOperation::Or: m_body.append(" | "_s); break;
+            case AST::BinaryOperation::Xor: m_body.append(" ^ "_s); break;
+            case AST::BinaryOperation::LeftShift: m_body.append(" << "_s); break;
+            case AST::BinaryOperation::RightShift: m_body.append(" >> "_s); break;
+            case AST::BinaryOperation::Equal: m_body.append(" == "_s); break;
+            case AST::BinaryOperation::NotEqual: m_body.append(" != "_s); break;
+            case AST::BinaryOperation::GreaterThan: m_body.append(" > "_s); break;
+            case AST::BinaryOperation::GreaterEqual: m_body.append(" >= "_s); break;
+            case AST::BinaryOperation::LessThan: m_body.append(" < "_s); break;
+            case AST::BinaryOperation::LessEqual: m_body.append(" <= "_s); break;
+            case AST::BinaryOperation::ShortCircuitAnd: m_body.append(" && "_s); break;
+            case AST::BinaryOperation::ShortCircuitOr: m_body.append(" || "_s); break;
+            }
+            m_body.append("__wgslSwizzleRhs)"_s);
+        }
+        if (swizzleComponents.size() == 1)
+            m_body.append("; (*__wgslSwizzleTarget)."_s, swizzleComponentName(swizzleComponents[0]), " = __wgslSwizzleRes"_s);
+        else {
+            for (size_t i = 0; i < swizzleComponents.size(); ++i)
+                m_body.append("; (*__wgslSwizzleTarget)."_s, swizzleComponentName(swizzleComponents[i]), " = __wgslSwizzleRes["_s, i, "]"_s);
+        }
+        m_body.append("; }"_s);
+        return;
+    }
+
     bool serialized = false;
     bool needsPack = false;
     auto* leftExpression = &statement.leftExpression();
@@ -3936,6 +4418,9 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Atomic&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Types::Buffer&) {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const TypeConstructor&) {

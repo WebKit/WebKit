@@ -85,6 +85,8 @@ private:
     // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
     static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
+    static constexpr size_t maximumSurfacesCached { 512 };
+    static constexpr size_t maximumInUseSurfaces { 256 };
 
     NODELETE bool shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
@@ -116,6 +118,7 @@ private:
 
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_inUseBytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    size_t m_surfacesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     size_t m_maximumBytesCached WTF_GUARDED_BY_LOCK(m_lock) { defaultMaximumBytesCached };
 };
 

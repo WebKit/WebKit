@@ -279,6 +279,7 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<WebGPUInteg
 
 GPUCanvasContextCocoa::~GPUCanvasContextCocoa()
 {
+    protect(m_presentationContext)->unconfigure();
     CanvasRenderingContext::updateMemoryCost(0);
 
     if (auto configuration = std::exchange(m_configuration, std::nullopt))
@@ -663,6 +664,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         std::nullopt,
         { },
     };
+    updateMemoryCost();
     if (!dueToReshape)
         InspectorInstrumentation::didChangeGPUDeviceClientNodes(m_configuration->device);
     return { };
@@ -870,12 +872,18 @@ void GPUCanvasContextCocoa::updateMemoryCost() const
 {
     // Computes only a rough ballpark figure to drive garbage collection.
     size_t newMemoryCost = 0;
+    if (m_configuration) {
+        size_t bytesPerPixel = m_configuration->format == GPUTextureFormat::Rgba16float ? 8 : 4;
+        CheckedSize surfaceBytes = CheckedSize { m_width } * m_height * bytesPerPixel;
+        size_t perBufferCost = surfaceBytes.hasOverflowed() ? std::numeric_limits<size_t>::max() / 4 : std::max<size_t>(surfaceBytes.value(), 64 * KB);
+        newMemoryCost += perBufferCost * m_configuration->renderBufferCount;
+    }
     if (RefPtr readDisplayBuffer = m_readDisplayBuffer)
         newMemoryCost += readDisplayBuffer->memoryCost();
     if (RefPtr image = m_readDisplayBufferImage)
         newMemoryCost += image->sizeInBytes();
-    if (m_currentTexture)
-        newMemoryCost += m_currentTexture->estimatedMemoryCost();
+    if (RefPtr currentTexture = m_currentTexture)
+        newMemoryCost += currentTexture->estimatedMemoryCost();
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }
 

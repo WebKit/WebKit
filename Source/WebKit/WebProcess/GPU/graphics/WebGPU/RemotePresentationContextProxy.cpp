@@ -44,7 +44,11 @@ RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& p
 {
 }
 
-RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
+RemotePresentationContextProxy::~RemotePresentationContextProxy()
+{
+    auto sendResult = send(Messages::RemotePresentationContext::Destruct());
+    UNUSED_VARIABLE(sendResult);
+}
 
 void RemotePresentationContextProxy::configure(const ::WebGPU::CanvasConfiguration& canvasConfiguration)
 {

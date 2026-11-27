@@ -220,6 +220,7 @@ static std::optional<::WebGPU::Limits> requiredLimits(const WebGPUDeviceDescript
         SET_MAX_VALUE(maxStorageTexturesInFragmentStage)
         SET_MAX_VALUE(maxStorageBuffersInVertexStage)
         SET_MAX_VALUE(maxStorageTexturesInVertexStage)
+        SET_MAX_VALUE(maxImmediateSize)
         else
             return std::nullopt;
 
