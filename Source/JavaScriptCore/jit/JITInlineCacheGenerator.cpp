@@ -149,22 +149,47 @@ JITGetByIdGenerator::JITGetByIdGenerator(
     }, propertyCache);
 }
 
+static void loadPropertyWithEncodedOffset(CCallHelpers& jit, GPRReg objectGPR, GPRReg encodedOffsetGPR, GPRReg resultGPR)
+{
+    ASSERT(noOverlap(encodedOffsetGPR, resultGPR));
+    auto isOutOfLine = jit.branch64(CCallHelpers::LessThan, encodedOffsetGPR, CCallHelpers::TrustedImm32(0));
+    jit.loadValue(CCallHelpers::BaseIndex(objectGPR, encodedOffsetGPR, CCallHelpers::TimesOne), resultGPR);
+    auto done = jit.jump();
+    isOutOfLine.link(&jit);
+    jit.loadPtr(CCallHelpers::Address(objectGPR, JSObject::butterflyOffset()), resultGPR);
+    jit.loadValue(CCallHelpers::BaseIndex(resultGPR, encodedOffsetGPR, CCallHelpers::TimesOne), resultGPR);
+    done.link(&jit);
+}
+
+static void storePropertyWithEncodedOffset(CCallHelpers& jit, GPRReg valueGPR, GPRReg objectGPR, GPRReg encodedOffsetGPR, GPRReg scratchGPR)
+{
+    ASSERT(noOverlap(encodedOffsetGPR, scratchGPR));
+    ASSERT(noOverlap(valueGPR, scratchGPR));
+    auto isOutOfLine = jit.branch64(CCallHelpers::LessThan, encodedOffsetGPR, CCallHelpers::TrustedImm32(0));
+    jit.storeValue(valueGPR, CCallHelpers::BaseIndex(objectGPR, encodedOffsetGPR, CCallHelpers::TimesOne));
+    auto done = jit.jump();
+    isOutOfLine.link(&jit);
+    jit.loadPtr(CCallHelpers::Address(objectGPR, JSObject::butterflyOffset()), scratchGPR);
+    jit.storeValue(valueGPR, CCallHelpers::BaseIndex(scratchGPR, encodedOffsetGPR, CCallHelpers::TimesOne));
+    done.link(&jit);
+}
+
 static void generateGetByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg propertyCacheGPR, GPRReg baseGPR, GPRReg scratch1GPR, GPRReg resultGPR, CacheType cacheType, CCallHelpers::JumpList& outSlowCases)
 {
     switch (cacheType) {
     case CacheType::GetByIdSelf: {
         jit.load32(CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()), scratch1GPR);
         outSlowCases.append(jit.branch32(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfInlineAccessBaseStructureID())));
-        jit.load32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfOffset()), scratch1GPR);
-        jit.loadProperty(baseGPR, scratch1GPR, resultGPR);
+        jit.load32SignedExtendTo64(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfEncodedOffset()), scratch1GPR);
+        loadPropertyWithEncodedOffset(jit, baseGPR, scratch1GPR, resultGPR);
         break;
     }
     case CacheType::GetByIdPrototype: {
         jit.load32(CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()), scratch1GPR);
         outSlowCases.append(jit.branch32(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfInlineAccessBaseStructureID())));
-        jit.load32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfOffset()), scratch1GPR);
+        jit.load32SignedExtendTo64(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfEncodedOffset()), scratch1GPR);
         jit.loadPtr(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfInlineHolder()), resultGPR);
-        jit.loadProperty(resultGPR, scratch1GPR, resultGPR);
+        loadPropertyWithEncodedOffset(jit, resultGPR, scratch1GPR, resultGPR);
         break;
     }
     case CacheType::ArrayLength: {
@@ -261,9 +286,9 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
 {
     jit.load32(CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()), scratch1GPR);
     outSlowCases.append(jit.branch32(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfInlineAccessBaseStructureID())));
-    jit.load32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfOffset()), scratch1GPR);
+    jit.load32SignedExtendTo64(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfByIdSelfEncodedOffset()), scratch1GPR);
     // The second scratch can be the same to baseGPR.
-    jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+    storePropertyWithEncodedOffset(jit, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
 }
 
 void JITPutByIdGenerator::generateDataICFastPath(CCallHelpers& jit)

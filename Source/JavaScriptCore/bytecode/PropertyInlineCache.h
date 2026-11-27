@@ -235,7 +235,7 @@ protected:
     void rewireStubAsJumpInAccess(CodeBlock*, Ref<InlineCacheHandler>&&);
 
 public:
-    static constexpr ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(PropertyInlineCache, byIdSelfOffset); }
+    static constexpr ptrdiff_t offsetOfByIdSelfEncodedOffset() { return OBJECT_OFFSETOF(PropertyInlineCache, m_byIdSelfEncodedOffset); }
     static constexpr ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(PropertyInlineCache, m_inlineAccessBaseStructureID); }
     static constexpr ptrdiff_t offsetOfInlineHolder() { return OBJECT_OFFSETOF(PropertyInlineCache, m_inlineHolder); }
     static constexpr ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(PropertyInlineCache, countdown); }
@@ -283,7 +283,16 @@ public:
     }
 
     CodeOrigin codeOrigin { };
-    PropertyOffset byIdSelfOffset;
+
+    PropertyOffset byIdSelfOffset() const { return decodeByIdSelfOffset(m_byIdSelfEncodedOffset); }
+    void setByIdSelfOffset(PropertyOffset offset) { m_byIdSelfEncodedOffset = encodeByIdSelfOffset(offset); }
+
+    // The JIT loads the cached property from base + offset when the encoding is non-negative
+    // (inline storage) and from butterfly + offset when it is negative (out-of-line storage).
+    static int32_t encodeByIdSelfOffset(PropertyOffset);
+    static PropertyOffset decodeByIdSelfOffset(int32_t);
+
+    int32_t m_byIdSelfEncodedOffset { 0 };
     WriteBarrierStructureID m_inlineAccessBaseStructureID;
     JSCell* m_inlineHolder { nullptr };
     CacheableIdentifier m_identifier;
@@ -381,7 +390,7 @@ public:
 // For simple access patterns (GetByIdSelf, PutByIdReplace, InByIdSelf, etc.) that match
 // preconfiguredCacheType, we also store the handler in m_inlinedHandler and write the
 // structure, offset, and holder into the IC's own fields (m_inlineAccessBaseStructureID,
-// byIdSelfOffset, m_inlineHolder). The JIT emits a structure check inline at the call
+// m_byIdSelfEncodedOffset, m_inlineHolder). The JIT emits a structure check inline at the call
 // site (before loading m_handler) that can succeed without touching the chain at all.
 // These fields are read from memory at runtime, so no constants are embedded in the
 // generated assembly.

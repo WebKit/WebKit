@@ -55,13 +55,27 @@ RepatchingPropertyInlineCache::RepatchingPropertyInlineCache(AccessType accessTy
 
 RepatchingPropertyInlineCache::~RepatchingPropertyInlineCache() = default;
 
+int32_t PropertyInlineCache::encodeByIdSelfOffset(PropertyOffset offset)
+{
+    if (isInlineOffset(offset))
+        return static_cast<int32_t>(JSObject::offsetOfInlineStorage() + offset * sizeof(EncodedJSValue));
+    return (static_cast<int32_t>(firstOutOfLineOffset) - 2 - offset) * static_cast<int32_t>(sizeof(EncodedJSValue));
+}
+
+PropertyOffset PropertyInlineCache::decodeByIdSelfOffset(int32_t encodedOffset)
+{
+    if (encodedOffset >= 0)
+        return (encodedOffset - static_cast<int32_t>(JSObject::offsetOfInlineStorage())) / static_cast<int32_t>(sizeof(EncodedJSValue));
+    return static_cast<int32_t>(firstOutOfLineOffset) - 2 - encodedOffset / static_cast<int32_t>(sizeof(EncodedJSValue));
+}
+
 void PropertyInlineCache::initGetByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* inlineAccessBaseStructure, PropertyOffset offset)
 {
     ASSERT(m_cacheType == CacheType::Unset);
     ASSERT(hasConstantIdentifier(accessType));
     setCacheType(locker, CacheType::GetByIdSelf);
     m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
-    byIdSelfOffset = offset;
+    setByIdSelfOffset(offset);
 }
 
 void PropertyInlineCache::initArrayLength(const ConcurrentJSLockerBase& locker)
@@ -82,7 +96,7 @@ void PropertyInlineCache::initPutByIdReplace(const ConcurrentJSLockerBase& locke
     ASSERT(hasConstantIdentifier(accessType));
     setCacheType(locker, CacheType::PutByIdReplace);
     m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
-    byIdSelfOffset = offset;
+    setByIdSelfOffset(offset);
 }
 
 void PropertyInlineCache::initInByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* inlineAccessBaseStructure, PropertyOffset offset)
@@ -91,7 +105,7 @@ void PropertyInlineCache::initInByIdSelf(const ConcurrentJSLockerBase& locker, C
     ASSERT(hasConstantIdentifier(accessType));
     setCacheType(locker, CacheType::InByIdSelf);
     m_inlineAccessBaseStructureID.set(codeBlock->vm(), codeBlock, inlineAccessBaseStructure);
-    byIdSelfOffset = offset;
+    setByIdSelfOffset(offset);
 }
 
 void PropertyInlineCache::deref()
@@ -812,23 +826,23 @@ void HandlerPropertyInlineCache::setInlinedHandler(CodeBlock* codeBlock, Ref<Inl
     switch (m_inlinedHandler->cacheType()) {
     case CacheType::GetByIdSelf: {
         m_inlineAccessBaseStructureID.set(vm, codeBlock, m_inlinedHandler->structureID().decode());
-        byIdSelfOffset = m_inlinedHandler->offset();
+        setByIdSelfOffset(m_inlinedHandler->offset());
         break;
     }
     case CacheType::GetByIdPrototype: {
         m_inlineAccessBaseStructureID.set(vm, codeBlock, m_inlinedHandler->structureID().decode());
-        byIdSelfOffset = m_inlinedHandler->offset();
+        setByIdSelfOffset(m_inlinedHandler->offset());
         m_inlineHolder = m_inlinedHandler->holder();
         break;
     }
     case CacheType::PutByIdReplace: {
         m_inlineAccessBaseStructureID.set(vm, codeBlock, m_inlinedHandler->structureID().decode());
-        byIdSelfOffset = m_inlinedHandler->offset();
+        setByIdSelfOffset(m_inlinedHandler->offset());
         break;
     }
     case CacheType::InByIdSelf: {
         m_inlineAccessBaseStructureID.set(vm, codeBlock, m_inlinedHandler->structureID().decode());
-        byIdSelfOffset = m_inlinedHandler->offset();
+        setByIdSelfOffset(m_inlinedHandler->offset());
         break;
     }
     case CacheType::ArrayLength:

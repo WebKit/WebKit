@@ -58,6 +58,7 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::propertyCacheGPR;
     using BaselineJITRegisters::GetByVal::profileGPR;
     using BaselineJITRegisters::GetByVal::scratch1GPR;
+    using BaselineJITRegisters::GetByVal::scratch2GPR;
 
     emitGetVirtualRegister(base, baseGPR);
     emitGetVirtualRegister(property, propertyGPR);
@@ -75,7 +76,31 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(baseGPR, base);
     emitArrayProfilingSiteWithCellAndProfile(baseGPR, profileGPR, scratch1GPR);
 
+    bool propertyIsConstant = property.isConstant();
+    bool emitInlineAccess = !propertyIsConstant || isOperandConstantInt(property);
+    JumpList notInlineAccess;
+    Jump inlineAccessDone;
+    if (emitInlineAccess) {
+        if (!propertyIsConstant)
+            notInlineAccess.append(branchIfNotInt32(propertyGPR));
+        load8(Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
+        and32(TrustedImm32(IndexingShapeMask), scratch1GPR);
+        sub32(TrustedImm32(Int32Shape), scratch1GPR);
+        static_assert(ContiguousShape - Int32Shape == 4);
+        notInlineAccess.append(branchTest32(NonZero, scratch1GPR, TrustedImm32(~4)));
+        loadPtr(Address(baseGPR, JSObject::butterflyOffset()), scratch1GPR);
+        zeroExtend32ToWord(propertyGPR, scratch2GPR);
+        notInlineAccess.append(branch32(AboveOrEqual, scratch2GPR, Address(scratch1GPR, Butterfly::offsetOfPublicLength())));
+        load64(BaseIndex(scratch1GPR, scratch2GPR, TimesEight), scratch2GPR);
+        notInlineAccess.append(branchIfEmpty(scratch2GPR));
+        move(scratch2GPR, resultGPR);
+        inlineAccessDone = jump();
+        notInlineAccess.link(this);
+    }
+
     gen.generateDataICFastPath(*this);
+    if (emitInlineAccess)
+        inlineAccessDone.link(this);
 
     addSlowCase();
     m_getByVals.append(gen);

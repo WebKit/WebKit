@@ -307,15 +307,15 @@ RefPtr<AccessCase> AccessCase::fromPropertyInlineCache(
     switch (propertyCache.cacheType()) {
     case CacheType::GetByIdSelf:
         RELEASE_ASSERT(hasConstantIdentifier(propertyCache.accessType));
-        return ProxyableAccessCase::create(vm, owner, Load, identifier, propertyCache.byIdSelfOffset, propertyCache.inlineAccessBaseStructure());
+        return ProxyableAccessCase::create(vm, owner, Load, identifier, propertyCache.byIdSelfOffset(), propertyCache.inlineAccessBaseStructure());
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(hasConstantIdentifier(propertyCache.accessType));
-        return AccessCase::createReplace(vm, owner, identifier, propertyCache.byIdSelfOffset, propertyCache.inlineAccessBaseStructure(), false);
+        return AccessCase::createReplace(vm, owner, identifier, propertyCache.byIdSelfOffset(), propertyCache.inlineAccessBaseStructure(), false);
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(hasConstantIdentifier(propertyCache.accessType));
-        return AccessCase::create(vm, owner, InHit, identifier, propertyCache.byIdSelfOffset, propertyCache.inlineAccessBaseStructure());
+        return AccessCase::create(vm, owner, InHit, identifier, propertyCache.byIdSelfOffset(), propertyCache.inlineAccessBaseStructure());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(hasConstantIdentifier(propertyCache.accessType));
