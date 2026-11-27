@@ -4383,7 +4383,6 @@
 		1C3BEB6D288883E200E66E38 /* WKWebExtensionInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionInternal.h; sourceTree = "<group>"; };
 		1C3BEB6E288883E200E66E38 /* WKWebExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtension.mm; sourceTree = "<group>"; };
 		1C3BEB6F288883E300E66E38 /* WKWebExtensionPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebExtensionPrivate.h; sourceTree = "<group>"; };
-		1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionControllerProxyCocoa.mm; sourceTree = "<group>"; };
 		1C4005252B2B932800F2D9EE /* WebExtensionAPICookies.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPICookies.idl; sourceTree = "<group>"; };
 		1C4005262B2B937E00F2D9EE /* WebExtensionAPICookies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPICookies.h; sourceTree = "<group>"; };
 		1C4005282B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPICookiesCocoa.mm; sourceTree = "<group>"; };
@@ -11368,7 +11367,6 @@
 				337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */,
 				337042072B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.h */,
 				337042082B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.mm */,
-				1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
