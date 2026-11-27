@@ -59,6 +59,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/MallocPtr.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h>
+#include <wtf/WeakRandom.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
 
 #if ENABLE(WEBASSEMBLY)

@@ -37,6 +37,7 @@
 #include <wtf/FixedVector.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WeakRandom.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
