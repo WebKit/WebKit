@@ -801,13 +801,6 @@ TEST(Damage, AddChangedArea)
     EXPECT_EQ(damage.size(), 2);
     EXPECT_EQ(damage[0], IntRect(10, 10, 50, 40));
     EXPECT_EQ(damage[1], IntRect(200, 10, 50, 40));
-
-    // The outset inflates each band.
-    damage = Damage(IntSize { 1024, 768 });
-    damage.addChangedArea(FloatRect { 10, 10, 50, 40 }, FloatRect { 30, 10, 50, 40 }, 1);
-    EXPECT_EQ(damage.size(), 2);
-    EXPECT_EQ(damage[0], IntRect(9, 9, 22, 42));
-    EXPECT_EQ(damage[1], IntRect(59, 9, 22, 42));
 }
 
 } // namespace TestWebKitAPI

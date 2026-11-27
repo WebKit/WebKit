@@ -329,7 +329,7 @@ public:
         // add() already unites into the grid once the rects reach the cell count, so the rects here never
         // outnumber the cells and only the overlaps have to go. The scan is quadratic, but only in a count
         // that bound keeps small.
-        if (!hasOverlappingRects(paintRects))
+        if (!hasOverlappingOrAdjacentRects(paintRects))
             return paintRects;
 
         const int columns = m_rects.gridCells.width();
@@ -429,26 +429,19 @@ public:
         return add(enclosingIntRect(rect));
     }
 
-    // Adds the area that changed between the rects, up to four bands per rect, each inflated by outset.
-    void addChangedArea(const FloatRect& previous, const FloatRect& current, float outset = 0)
+    // Adds the area that changed between the rects, up to four bands per rect.
+    void addChangedArea(const FloatRect& previous, const FloatRect& current)
     {
-        auto addBand = [&](FloatRect band) {
-            if (band.isEmpty())
-                return;
-            band.inflate(outset);
-            add(band);
-        };
-
         auto addPartOutside = [&](const FloatRect& rect, const FloatRect& other) {
             const auto overlap = intersection(rect, other);
             if (overlap.isEmpty()) {
-                addBand(rect);
+                add(rect);
                 return;
             }
-            addBand({ rect.x(), rect.y(), rect.width(), overlap.y() - rect.y() });
-            addBand({ rect.x(), overlap.maxY(), rect.width(), rect.maxY() - overlap.maxY() });
-            addBand({ rect.x(), overlap.y(), overlap.x() - rect.x(), overlap.height() });
-            addBand({ overlap.maxX(), overlap.y(), rect.maxX() - overlap.maxX(), overlap.height() });
+            add(FloatRect { rect.x(), rect.y(), rect.width(), overlap.y() - rect.y() });
+            add(FloatRect { rect.x(), overlap.maxY(), rect.width(), rect.maxY() - overlap.maxY() });
+            add(FloatRect { rect.x(), overlap.y(), overlap.x() - rect.x(), overlap.height() });
+            add(FloatRect { overlap.maxX(), overlap.y(), rect.maxX() - overlap.maxX(), overlap.height() });
         };
 
         addPartOutside(previous, current);
@@ -553,11 +546,18 @@ public:
     }
 
 private:
-    static bool hasOverlappingRects(const Rects& rects)
+    static bool hasOverlappingOrAdjacentRects(const Rects& rects)
     {
+        auto sharesEdge = [](const IntRect& a, const IntRect& b) {
+            const bool overlapsVertically = a.y() < b.maxY() && b.y() < a.maxY();
+            const bool overlapsHorizontally = a.x() < b.maxX() && b.x() < a.maxX();
+            return ((a.maxX() == b.x() || b.maxX() == a.x()) && overlapsVertically)
+                || ((a.maxY() == b.y() || b.maxY() == a.y()) && overlapsHorizontally);
+        };
+
         for (size_t i = 0; i < rects.size(); ++i) {
             for (size_t j = i + 1; j < rects.size(); ++j) {
-                if (rects[i].intersects(rects[j]))
+                if (rects[i].intersects(rects[j]) || sharesEdge(rects[i], rects[j]))
                     return true;
             }
         }

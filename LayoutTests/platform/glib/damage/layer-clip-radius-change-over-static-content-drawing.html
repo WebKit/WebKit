@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>A clip whose corner radius changes over content that does not change leaves no stale pixels behind.</title>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .clip { position: absolute; left: 30px; top: 30px; width: 60px; height: 50px; overflow: hidden; border-radius: 4px; will-change: transform; }
+      .inner { position: absolute; left: 0; top: 0; width: 60px; height: 50px; background: repeating-linear-gradient(90deg, green 0 7px, blue 7px 13px); will-change: transform; }
+    </style>
+  </head>
+  <body>
+    <div class="clip"><div class="inner"></div></div>
+    <script>
+      if (window.testRunner) {
+          testRunner.waitUntilDone();
+          // A forced repaint would repaint everything, hiding stale pixels.
+          testRunner.dontForceRepaint();
+      }
+      // Once the radius change is on screen, it must show the new corners, without pixels left over from the old ones.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.querySelector(".clip").style.borderRadius = "20px";
+          requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+              if (window.testRunner)
+                  testRunner.notifyDone();
+          })));
+      }));
+    </script>
+  </body>
+</html>

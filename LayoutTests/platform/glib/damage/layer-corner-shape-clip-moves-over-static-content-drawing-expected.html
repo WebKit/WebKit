@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .stage { position: absolute; left: 20px; top: 20px; width: 200px; height: 120px; will-change: transform; }
+      .clip { position: absolute; left: 10px; top: 10px; width: 60px; height: 50px; overflow: hidden; border-radius: 12px; corner-shape: bevel; will-change: transform; transform: translate(19.7px, 9.6px); }
+      .inner { position: absolute; left: 0; top: 0; width: 120px; height: 80px; background: repeating-linear-gradient(90deg, green 0 7px, blue 7px 13px); will-change: transform; transform: translate(-19.7px, -9.6px); }
+    </style>
+  </head>
+  <body>
+    <div class="stage"><div class="clip"><div class="inner"></div></div></div>
+  </body>
+</html>

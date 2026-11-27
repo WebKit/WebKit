@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>A rounded clip that slides over content that does not move on screen leaves no stale pixels behind.</title>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .stage { position: absolute; left: 20px; top: 20px; width: 200px; height: 120px; will-change: transform; }
+      /* The clip slides, while the opposite animation keeps the content in place on screen. */
+      .clip { position: absolute; left: 10px; top: 10px; width: 60px; height: 50px; overflow: hidden; border-radius: 12px; will-change: transform; animation: slide 0.5s linear forwards; }
+      .inner { position: absolute; left: 0; top: 0; width: 120px; height: 80px; background: repeating-linear-gradient(90deg, green 0 7px, blue 7px 13px); will-change: transform; animation: counter-slide 0.5s linear forwards; }
+      @keyframes slide { from { transform: translate(0.3px, 0.4px); } to { transform: translate(19.7px, 9.6px); } }
+      @keyframes counter-slide { from { transform: translate(-0.3px, -0.4px); } to { transform: translate(-19.7px, -9.6px); } }
+    </style>
+  </head>
+  <body>
+    <div class="stage"><div class="clip"><div class="inner"></div></div></div>
+    <script>
+      if (window.testRunner) {
+          testRunner.waitUntilDone();
+          // A forced repaint would repaint everything, hiding stale pixels.
+          testRunner.dontForceRepaint();
+      }
+      // Once the animations end, the screen must show the final state, without pixels left over from earlier frames.
+      document.querySelector(".clip").addEventListener("animationend", () => {
+          requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+              if (window.testRunner)
+                  testRunner.notifyDone();
+          })));
+      });
+    </script>
+  </body>
+</html>

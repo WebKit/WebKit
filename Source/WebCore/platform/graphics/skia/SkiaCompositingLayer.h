@@ -87,10 +87,10 @@ public:
     void setBackgroundColor(Color&& color) { m_backgroundColor = WTF::move(color); }
     void setContentsVisible(bool visible) { m_contentsVisible = visible; }
     void setContentsOpaque(bool opaque) { m_contentsOpaque = opaque; }
-    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
-    void setContentsClippingRect(const FloatRoundedRect& rect) { m_contentsClippingRect = rect; }
-    void setContentsClipPath(std::optional<SkPath>&& clipPath) { m_contentsClipPath = WTF::move(clipPath); }
-    void setContentsRectClipsDescendants(bool clips) { m_contentsRectClipsDescendants = clips; }
+    void setMasksToBounds(bool masksToBounds) { setClipGeometry(m_masksToBounds, masksToBounds); }
+    void setContentsClippingRect(const FloatRoundedRect& rect) { setClipGeometry(m_contentsClippingRect, rect); }
+    void setContentsClipPath(std::optional<SkPath>&& clipPath) { setClipGeometry(m_contentsClipPath, WTF::move(clipPath)); }
+    void setContentsRectClipsDescendants(bool clips) { setClipGeometry(m_contentsRectClipsDescendants, clips); }
     void setOpacity(float);
     void setBlendMode(BlendMode);
     void setContentsRect(const FloatRect& rect) { m_contentsRect = rect; }
@@ -303,8 +303,22 @@ private:
     void collect3DRenderingContextLayers(Vector<SkiaCompositingLayer3DRenderingContext::Layer>&);
     void recursiveCleanUpAfterPaint();
 
+    template<typename T, typename U> void setClipGeometry(T& member, U&& value)
+    {
+        if (member == value)
+            return;
+        member = std::forward<U>(value);
+#if ENABLE(DAMAGE_TRACKING)
+        m_clipGeometryChanged = true;
+#endif
+    }
+
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
-    void clipRectToDevicePixels(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix&);
+    enum class ClipAlignment : bool { NotPixelAligned, PixelAligned };
+    ClipAlignment clipRectToDevicePixels(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix&);
+#if ENABLE(DAMAGE_TRACKING)
+    void collectDescendantClipDamage(const SkCanvas&, PaintContext&, std::optional<ClipAlignment>);
+#endif
 
     enum class IncludesReplica : bool { No, Yes };
     enum class IncludesFilterOutsets : bool { No, Yes };
@@ -421,7 +435,10 @@ private:
     const std::unique_ptr<LayerRectTracker> m_layerRectTracker;
     uint64_t m_layerRectID { 0 };
     std::optional<TransformationMatrix> m_transformAtLastDamage;
+    std::optional<IntRect> m_descendantClipRectInFrame;
     bool m_groupPropertyChanged { false };
+    bool m_clipGeometryChanged { false };
+    bool m_movedOnScreen { false };
 #endif
 };
 

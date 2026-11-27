@@ -98,6 +98,9 @@ void SkiaCompositingLayer::setSize(const FloatSize& size)
 
     m_rect.setSize(size);
     damageWholeLayer();
+#if ENABLE(DAMAGE_TRACKING)
+    m_clipGeometryChanged = true;
+#endif
 }
 
 void SkiaCompositingLayer::setOpacity(float opacity)
@@ -363,10 +366,9 @@ void SkiaCompositingLayer::LayerRectTracker::damageStaleLayerRectsAndAdvanceEntr
         if (entry.previousRect != entry.currentRect) {
             // With exact rects, only the difference changed: changes to the layer itself are in its own
             // damage. A clip sliding over static content only repaints the strips it uncovered or covered.
-            if (entry.previousRectCoverage == Coverage::Exact && entry.currentRectCoverage == Coverage::Exact && entry.currentRectFullyDamaged == FullyDamaged::No) {
-                // To avoid AA clipping artifacts at the edges, inflate by one device pixel.
-                frameDamage.addChangedArea(entry.previousRect, entry.currentRect, 1);
-            } else {
+            if (entry.previousRectCoverage == Coverage::Exact && entry.currentRectCoverage == Coverage::Exact && entry.currentRectFullyDamaged == FullyDamaged::No)
+                frameDamage.addChangedArea(entry.previousRect, entry.currentRect);
+            else {
                 frameDamage.add(entry.previousRect);
                 frameDamage.add(entry.currentRect);
             }
@@ -570,9 +572,15 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMa
         futureCombinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
 #if ENABLE(DAMAGE_TRACKING)
-        // A new layer has no previous area, so the layer rect tracker damages it already.
-        if (!m_transformAtLastDamage || (combinedTransformMovedOnScreen() && damageWholeLayer()))
+        // A new layer has no previous area, so the layer rect tracker damages it already. A move is
+        // recorded even if the layer paints nothing itself, since it can still clip its descendants.
+        if (!m_transformAtLastDamage)
             m_transformAtLastDamage = m_transforms.combined;
+        else if (combinedTransformMovedOnScreen()) {
+            m_movedOnScreen = true;
+            damageWholeLayer();
+            m_transformAtLastDamage = m_transforms.combined;
+        }
 #endif
 
         m_visible = m_backfaceVisibility || !m_transforms.combined.isBackFaceVisible();
@@ -703,21 +711,22 @@ void SkiaCompositingLayer::clipRect(SkCanvas& canvas, const FloatRoundedRect& re
 // Clip to the rect rounded to device pixels, so that what is drawn under
 // the clip is what is damaged. Ganesh can draw up to fractional edges,
 // which leaves a pixel on an edge to the GPU.
-void SkiaCompositingLayer::clipRectToDevicePixels(SkCanvas& canvas, const FloatRoundedRect& rect, const TransformationMatrix& transform)
+SkiaCompositingLayer::ClipAlignment SkiaCompositingLayer::clipRectToDevicePixels(SkCanvas& canvas, const FloatRoundedRect& rect, const TransformationMatrix& transform)
 {
     if (rect.hasNonZeroRadii()) {
         clipRect(canvas, rect, transform);
-        return;
+        return ClipAlignment::NotPixelAligned;
     }
 
     auto matrix = SkM44(transform).asM33();
     const auto localToDevice = canvas.getLocalToDeviceAs3x3();
     if (!matrix.rectStaysRect() || !localToDevice.rectStaysRect()) {
         clipRect(canvas, rect, transform);
-        return;
+        return ClipAlignment::NotPixelAligned;
     }
 
     canvas.clipRegion(SkRegion(localToDevice.mapRect(matrix.mapRect(SkRect(rect.rect()))).round()));
+    return ClipAlignment::PixelAligned;
 }
 
 void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
@@ -977,6 +986,25 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
         context.collectState->frameDamage.add(projectedBoundingBox(transform, FloatRect(rect), clipBounds));
 }
 
+// The layers under a clip only damage what changes in their bounding boxes, and a clip can change pixels
+// inside those without changing them: when it is not a rect aligned to device pixels, like a rounded or a
+// rotated one, and moves, or when its shape changes. Then damage what it covered before and covers now.
+void SkiaCompositingLayer::collectDescendantClipDamage(const SkCanvas& canvas, PaintContext& context, std::optional<ClipAlignment> clipAlignment)
+{
+    std::optional<IntRect> clipRectInFrame;
+    if (clipAlignment)
+        clipRectInFrame = canvas.getDeviceClipBounds();
+
+    const bool movedUnalignedClip = m_movedOnScreen && clipAlignment == ClipAlignment::NotPixelAligned;
+    if (m_clipGeometryChanged || movedUnalignedClip) {
+        if (m_descendantClipRectInFrame)
+            context.collectState->frameDamage.add(*m_descendantClipRectInFrame);
+        if (clipRectInFrame)
+            context.collectState->frameDamage.add(*clipRectInFrame);
+    }
+    m_descendantClipRectInFrame = clipRectInFrame;
+}
+
 bool SkiaCompositingLayer::combinedTransformMovedOnScreen() const
 {
     ASSERT(m_transformAtLastDamage);
@@ -1214,10 +1242,19 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
     const bool clipsDescendantsToPath = contentsRectClipsDescendants && m_contentsClipPath;
 
     ScopedFlush autoFlush(canvas, context.imageSetBatch, (clippingRect.isEmpty() && !clipsDescendantsToPath) ? ScopedFlush::Mode::DoNothing : ScopedFlush::Mode::FlushBeforeAndAfter);
-    if (clipsDescendantsToPath)
+    std::optional<ClipAlignment> clipAlignment;
+    if (clipsDescendantsToPath) {
         canvas.clipPath(m_contentsClipPath->makeTransform(SkM44(clipTransform).asM33()), true);
-    else if (!clippingRect.isEmpty())
-        clipRectToDevicePixels(canvas, clippingRect, clipTransform);
+        clipAlignment = ClipAlignment::NotPixelAligned;
+    } else if (!clippingRect.isEmpty())
+        clipAlignment = clipRectToDevicePixels(canvas, clippingRect, clipTransform);
+
+#if ENABLE(DAMAGE_TRACKING)
+    if (context.collectState && damagePropagationEnabled())
+        collectDescendantClipDamage(canvas, context, clipAlignment);
+#else
+    UNUSED_VARIABLE(clipAlignment);
+#endif
 
     for (auto& child : m_children)
         child->recursivePaint(canvas, context);
@@ -2021,6 +2058,8 @@ void SkiaCompositingLayer::recursiveCleanUpAfterPaint()
 #if ENABLE(DAMAGE_TRACKING)
     m_layerDamage = std::nullopt;
     m_groupPropertyChanged = false;
+    m_clipGeometryChanged = false;
+    m_movedOnScreen = false;
 
     // A mask and a replica are not children, and the walk does not reach them, so their damage would
     // otherwise pile up forever.
