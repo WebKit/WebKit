@@ -1430,12 +1430,12 @@ void RenderBundleEncoder::setBindGroupWithOwnedDynamicOffsets(uint32_t groupInde
     if (auto vertexBindGroupBufferIndex = m_device->vertexBufferIndexForBindGroup(groupIndex); group.vertexArgumentBuffer() && m_vertexBuffers.size() > vertexBindGroupBufferIndex) {
         if (!addResource(m_resources, group.vertexArgumentBuffer(), MTLRenderStageVertex))
             return;
-        m_vertexBuffers[vertexBindGroupBufferIndex] = { .buffer = group.vertexArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.vertexArgumentBuffer().length };
+        m_vertexBuffers[vertexBindGroupBufferIndex] = { .buffer = group.vertexArgumentBuffer(), .offset = group.vertexArgumentBufferOffset(), .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.vertexArgumentBufferLength() };
     }
     if (group.fragmentArgumentBuffer() && m_fragmentBuffers.size() > groupIndex) {
         if (!addResource(m_resources, group.fragmentArgumentBuffer(), MTLRenderStageFragment))
             return;
-        m_fragmentBuffers[groupIndex] = { .buffer = group.fragmentArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.fragmentArgumentBuffer().length };
+        m_fragmentBuffers[groupIndex] = { .buffer = group.fragmentArgumentBuffer(), .offset = group.fragmentArgumentBufferOffset(), .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.fragmentArgumentBufferLength() };
     }
 }
 

@@ -160,11 +160,13 @@ public:
     void trackIndirectDeviceLostCheck(id<MTLBuffer> scratch, uint64_t scratchOffset, id<MTLBuffer> alsoRetain);
 
 private:
+    struct DeferredRenderState;
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WebGPU::RenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&, MTLRenderPassDescriptor*);
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
     NODELETE bool validatePopDebugGroup() const;
-    bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer*, bool needsValidationLayerWorkaround);
+    void flushDeferredStateToMetalEncoder();
+    bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer*, bool needsValidationLayerWorkaround, bool allowDeferral = false);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
     void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>);
@@ -269,6 +271,11 @@ private:
     bool m_passEnded { false };
     bool m_encoderStateWasNotOpen { false };
     bool m_ignoreBufferCache { false };
+    bool m_canDeferEncoding { false };
+    bool m_isDeferringEncoding { false };
+    bool m_hasEncodedToMetalEncoder { false };
+    RetainPtr<MTLRenderPassDescriptor> m_replayPassDescriptor;
+    std::unique_ptr<DeferredRenderState> m_deferredState;
     std::array<uint8_t, maxSupportedImmediateSize> m_immediateData { };
     uint64_t m_setImmediateSlots { 0 };
     bool m_vertexImmediatesDirty { false };

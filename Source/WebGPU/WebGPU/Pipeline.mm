@@ -30,10 +30,13 @@
 #import "Instance.h"
 #import "ShaderModule.h"
 #import "WGSLShaderModule.h"
+#import <dispatch/dispatch.h>
 #import <memory>
 #import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
+#import <wtf/Condition.h>
 #import <wtf/Scope.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
 #include <csignal>
@@ -71,7 +74,7 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
         return std::nullopt;
 
     std::optional<WGSL::PipelineLayout> wgslPipelineLayout { std::nullopt };
-    if (pipelineLayout && pipelineLayout->numberOfBindGroupLayouts())
+    if (pipelineLayout && !pipelineLayout->isAutoLayout())
         wgslPipelineLayout = ShaderModule::convertPipelineLayout(*pipelineLayout);
 
     auto prepareResult = WGSL::prepare(*ast, entryPoint, wgslPipelineLayout ? &*wgslPipelineLayout : nullptr);
@@ -141,7 +144,7 @@ std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, 
         }
     }
 
-    if (pipelineLayout) {
+    if (pipelineLayout && !pipelineLayout->isAutoLayout()) {
         for (unsigned i = 0; i < pipelineLayout->numberOfBindGroupLayouts(); ++i) {
             auto& wgslBindGroupLayout = wgslPipelineLayout->bindGroupLayouts[i];
             auto it = mininumBufferSizes.add(i, BufferBindingSizesForBindGroup()).iterator;
@@ -180,49 +183,700 @@ LibraryCompileRequest libraryCompileRequest(const PreparedLibrary& preparedLibra
 {
     return {
         preparedLibrary.library,
-        preparedLibrary.msl.createNSString().get(),
-        preparedLibrary.label.createNSString().get(),
+        preparedLibrary.msl,
+        preparedLibrary.label,
         preparedLibrary.deviceState
     };
+}
+
+struct LibraryCacheKey {
+    uintptr_t devicePtr { 0 };
+    uint32_t appleGPUFamily { 0 };
+    uint8_t flags { 0 };
+    String msl { };
+
+    friend bool operator==(const LibraryCacheKey&, const LibraryCacheKey&) = default;
+};
+
+struct LibraryCacheKeyHash {
+    static unsigned hash(const LibraryCacheKey& key)
+    {
+        return WTF::pairIntHash(WTF::pairIntHash(WTF::intHash(static_cast<uint64_t>(key.devicePtr)), WTF::intHash((key.appleGPUFamily << 8) | key.flags)), StringHash::hash(key.msl));
+    }
+    static bool equal(const LibraryCacheKey& a, const LibraryCacheKey& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct LibraryCacheKeyTraits : WTF::SimpleClassHashTraits<LibraryCacheKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static LibraryCacheKey emptyValue() { return { }; }
+    static void constructDeletedValue(LibraryCacheKey& slot)
+    {
+        new (NotNull, std::addressof(slot)) LibraryCacheKey { .devicePtr = std::numeric_limits<uintptr_t>::max() };
+    }
+    static bool isDeletedValue(const LibraryCacheKey& value) { return value.devicePtr == std::numeric_limits<uintptr_t>::max(); }
+};
+
+struct ComputePSOCacheKey {
+    uintptr_t libraryPtr { 0 };
+    uint32_t bindGroupCount { 0 };
+    uint32_t validationState { 0 };
+    String mangledName { };
+
+    friend bool operator==(const ComputePSOCacheKey&, const ComputePSOCacheKey&) = default;
+};
+
+struct ComputePSOCacheKeyHash {
+    static unsigned hash(const ComputePSOCacheKey& key)
+    {
+        return WTF::pairIntHash(WTF::pairIntHash(WTF::intHash(static_cast<uint64_t>(key.libraryPtr)), WTF::pairIntHash(WTF::intHash(key.bindGroupCount), WTF::intHash(key.validationState))), StringHash::hash(key.mangledName));
+    }
+    static bool equal(const ComputePSOCacheKey& a, const ComputePSOCacheKey& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct ComputePSOCacheKeyTraits : WTF::SimpleClassHashTraits<ComputePSOCacheKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static ComputePSOCacheKey emptyValue() { return { }; }
+    static void constructDeletedValue(ComputePSOCacheKey& slot)
+    {
+        new (NotNull, std::addressof(slot)) ComputePSOCacheKey { .libraryPtr = std::numeric_limits<uintptr_t>::max() };
+    }
+    static bool isDeletedValue(const ComputePSOCacheKey& value) { return value.libraryPtr == std::numeric_limits<uintptr_t>::max(); }
+};
+
+struct ComputePSOCacheEntry {
+    RetainPtr<id<MTLLibrary>> library;
+    RetainPtr<id<MTLComputePipelineState>> pso;
+};
+
+struct RenderPSOCacheKey {
+    uintptr_t vertexLibraryPtr { 0 };
+    uintptr_t fragmentLibraryPtr { 0 };
+    String vertexMangledName { };
+    String fragmentMangledName { };
+    RenderPSODescriptorSignature signature { };
+
+    friend bool operator==(const RenderPSOCacheKey&, const RenderPSOCacheKey&) = default;
+};
+
+struct RenderPSOCacheKeyHash {
+    static unsigned hash(const RenderPSOCacheKey& key)
+    {
+        unsigned h = WTF::pairIntHash(WTF::intHash(static_cast<uint64_t>(key.vertexLibraryPtr)), WTF::intHash(static_cast<uint64_t>(key.fragmentLibraryPtr)));
+        h = WTF::pairIntHash(h, StringHash::hash(key.vertexMangledName));
+        if (!key.fragmentMangledName.isEmpty())
+            h = WTF::pairIntHash(h, StringHash::hash(key.fragmentMangledName));
+        for (uint64_t w : key.signature.words)
+            h = WTF::pairIntHash(h, WTF::intHash(w));
+        uint64_t packedMeta = (static_cast<uint64_t>(key.signature.descriptorSampleMask) << 32)
+            | (static_cast<uint64_t>(key.signature.depthFormat) << 16)
+            | (static_cast<uint64_t>(key.signature.stencilFormat) << 8)
+            | (static_cast<uint64_t>(key.signature.rasterSampleCount) << 4)
+            | static_cast<uint64_t>(key.signature.topologyAndFlags);
+        h = WTF::pairIntHash(h, WTF::intHash(packedMeta));
+        return h;
+    }
+    static bool equal(const RenderPSOCacheKey& a, const RenderPSOCacheKey& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct RenderPSOCacheKeyTraits : WTF::SimpleClassHashTraits<RenderPSOCacheKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static RenderPSOCacheKey emptyValue() { return { }; }
+    static void constructDeletedValue(RenderPSOCacheKey& slot)
+    {
+        new (NotNull, std::addressof(slot)) RenderPSOCacheKey { .vertexLibraryPtr = std::numeric_limits<uintptr_t>::max() };
+    }
+    static bool isDeletedValue(const RenderPSOCacheKey& value) { return value.vertexLibraryPtr == std::numeric_limits<uintptr_t>::max(); }
+};
+
+struct RenderPSOCacheEntry {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RenderPSOCacheEntry);
+    RetainPtr<id<MTLLibrary>> vertexLibrary;
+    RetainPtr<id<MTLLibrary>> fragmentLibrary;
+    RetainPtr<id<MTLFunction>> vertexFunction;
+    RetainPtr<id<MTLFunction>> fragmentFunction;
+    RetainPtr<id<MTLRenderPipelineState>> pso;
+};
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static constexpr size_t cacheGenerationCapacity = 4096;
+#else
+static constexpr size_t cacheGenerationCapacity = 128;
+#endif
+
+template<typename Key, typename Value, typename Hash, typename Traits>
+struct TwoGenCache {
+    using MapType = HashMap<Key, Value, Hash, Traits>;
+    MapType hot;
+    MapType cold;
+
+    Value* find(const Key& lookupKey, MapType& evictedOut)
+    {
+        if (auto it = hot.find(lookupKey); it != hot.end())
+            return &it->value;
+        auto coldIt = cold.find(lookupKey);
+        if (coldIt == cold.end())
+            return nullptr;
+        Key promotedKey = coldIt->key;
+        Value promotedValue = cold.take(coldIt);
+        if (hot.size() >= cacheGenerationCapacity)
+            evictedOut = std::exchange(cold, std::exchange(hot, { }));
+        auto addResult = hot.set(WTF::move(promotedKey), WTF::move(promotedValue));
+        return &addResult.iterator->value;
+    }
+
+    void set(Key&& key, Value&& value, MapType& evictedOut)
+    {
+        cold.remove(key);
+        if (hot.size() >= cacheGenerationCapacity && !hot.contains(key))
+            evictedOut = std::exchange(cold, std::exchange(hot, { }));
+        hot.set(WTF::move(key), WTF::move(value));
+    }
+
+    std::pair<MapType, MapType> clear()
+    {
+        return { std::exchange(hot, { }), std::exchange(cold, { }) };
+    }
+};
+
+struct InFlightLibraryCompilation {
+    WTF::Lock syncWaitLock;
+    Condition syncWaitCondition;
+    bool syncDone WTF_GUARDED_BY_LOCK(syncWaitLock) { false };
+    RetainPtr<id<MTLLibrary>> syncLibrary;
+    RetainPtr<NSError> syncError;
+    Vector<Function<void(id<MTLLibrary>, NSError *)>, 2> asyncWaiters;
+};
+
+struct InFlightComputePSOCompilation {
+    Vector<Function<void(id<MTLComputePipelineState>, NSString *, bool)>, 2> waiters;
+};
+
+struct InFlightRenderPSOCompilation {
+    Vector<Function<void(id<MTLFunction>, id<MTLFunction>, id<MTLRenderPipelineState>, NSString *)>, 2> waiters;
+};
+
+using LibraryCacheMap = HashMap<LibraryCacheKey, RetainPtr<id<MTLLibrary>>, LibraryCacheKeyHash, LibraryCacheKeyTraits>;
+using ComputePSOCacheMap = HashMap<ComputePSOCacheKey, ComputePSOCacheEntry, ComputePSOCacheKeyHash, ComputePSOCacheKeyTraits>;
+using RenderPSOCacheMap = HashMap<RenderPSOCacheKey, std::unique_ptr<RenderPSOCacheEntry>, RenderPSOCacheKeyHash, RenderPSOCacheKeyTraits>;
+
+struct MetalPipelineCaches {
+    WTF::Lock lock;
+    TwoGenCache<LibraryCacheKey, RetainPtr<id<MTLLibrary>>, LibraryCacheKeyHash, LibraryCacheKeyTraits> libraries;
+    TwoGenCache<ComputePSOCacheKey, ComputePSOCacheEntry, ComputePSOCacheKeyHash, ComputePSOCacheKeyTraits> computePSOs;
+    TwoGenCache<RenderPSOCacheKey, std::unique_ptr<RenderPSOCacheEntry>, RenderPSOCacheKeyHash, RenderPSOCacheKeyTraits> renderPSOs;
+    HashMap<LibraryCacheKey, std::shared_ptr<InFlightLibraryCompilation>, LibraryCacheKeyHash, LibraryCacheKeyTraits> inFlightLibraries;
+    HashMap<ComputePSOCacheKey, std::shared_ptr<InFlightComputePSOCompilation>, ComputePSOCacheKeyHash, ComputePSOCacheKeyTraits> inFlightComputePSOs;
+    HashMap<RenderPSOCacheKey, std::shared_ptr<InFlightRenderPSOCompilation>, RenderPSOCacheKeyHash, RenderPSOCacheKeyTraits> inFlightRenderPSOs;
+};
+
+static MetalPipelineCaches& metalPipelineCaches()
+{
+    static LazyNeverDestroyed<MetalPipelineCaches> caches;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        caches.construct();
+    });
+    return caches.get();
+}
+
+static LibraryCacheKey makeLibraryCacheKey(id<MTLDevice> device, const LibraryCompileRequest& request)
+{
+    uint8_t flags = (request.deviceState.shaderValidationEnabled ? 1 : 0) | (request.deviceState.usesInvariant ? 2 : 0);
+    return {
+        .devicePtr = reinterpret_cast<uintptr_t>((__bridge void*)device),
+        .appleGPUFamily = request.deviceState.appleGPUFamily,
+        .flags = flags,
+        .msl = request.mslKey.isolatedCopy(),
+    };
+}
+
+static LibraryCacheKey makeLibraryLookupKey(id<MTLDevice> device, const LibraryCompileRequest& request)
+{
+    uint8_t flags = (request.deviceState.shaderValidationEnabled ? 1 : 0) | (request.deviceState.usesInvariant ? 2 : 0);
+    return {
+        .devicePtr = reinterpret_cast<uintptr_t>((__bridge void*)device),
+        .appleGPUFamily = request.deviceState.appleGPUFamily,
+        .flags = flags,
+        .msl = request.mslKey,
+    };
+}
+
+id<MTLLibrary> lookupCachedLibrary(id<MTLDevice> device, const LibraryCompileRequest& request)
+{
+    if (request.cachedLibrary)
+        return request.cachedLibrary;
+    if (!device || request.mslKey.isEmpty())
+        return nil;
+
+    LibraryCacheMap evicted;
+    RetainPtr<id<MTLLibrary>> found;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        if (auto* entry = caches.libraries.find(makeLibraryLookupKey(device, request), evicted))
+            found = *entry;
+    }
+    return found.get();
+}
+
+void cacheCompiledLibrary(id<MTLDevice> device, const LibraryCompileRequest& request, id<MTLLibrary> library)
+{
+    if (!device || !library || request.mslKey.isEmpty())
+        return;
+
+    LibraryCacheMap evicted;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        caches.libraries.set(makeLibraryCacheKey(device, request), RetainPtr<id<MTLLibrary>> { library }, evicted);
+    }
+}
+
+id<MTLComputePipelineState> lookupCachedComputePipelineState(id<MTLLibrary> library, const String& mangledName, uint32_t bindGroupCount, uint32_t validationState)
+{
+    if (!library || mangledName.isEmpty())
+        return nil;
+
+    ComputePSOCacheMap evicted;
+    RetainPtr<id<MTLComputePipelineState>> found;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        ComputePSOCacheKey lookupKey {
+            .libraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)library),
+            .bindGroupCount = bindGroupCount,
+            .validationState = validationState,
+            .mangledName = mangledName,
+        };
+        if (auto* entry = caches.computePSOs.find(lookupKey, evicted))
+            found = entry->pso;
+    }
+    return found.get();
+}
+
+void cacheComputePipelineState(id<MTLLibrary> library, const String& mangledName, uint32_t bindGroupCount, uint32_t validationState, id<MTLComputePipelineState> pso)
+{
+    if (!library || !pso || mangledName.isEmpty())
+        return;
+
+    ComputePSOCacheMap evicted;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        ComputePSOCacheKey key {
+            .libraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)library),
+            .bindGroupCount = bindGroupCount,
+            .validationState = validationState,
+            .mangledName = mangledName.isolatedCopy(),
+        };
+        caches.computePSOs.set(WTF::move(key), ComputePSOCacheEntry { library, pso }, evicted);
+    }
+}
+
+std::optional<CachedRenderPipelineState> lookupCachedRenderPipelineState(id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, const String& vertexMangledName, const String& fragmentMangledName, const RenderPSODescriptorSignature& signature)
+{
+    if (!vertexLibrary || vertexMangledName.isEmpty())
+        return std::nullopt;
+
+    RenderPSOCacheMap evicted;
+    std::optional<CachedRenderPipelineState> found;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        RenderPSOCacheKey lookupKey {
+            .vertexLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)vertexLibrary),
+            .fragmentLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)fragmentLibrary),
+            .vertexMangledName = vertexMangledName,
+            .fragmentMangledName = fragmentMangledName,
+            .signature = signature,
+        };
+        if (auto* entry = caches.renderPSOs.find(lookupKey, evicted))
+            found = CachedRenderPipelineState { (*entry)->vertexFunction, (*entry)->fragmentFunction, (*entry)->pso };
+    }
+    return found;
+}
+
+void cacheRenderPipelineState(id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, const String& vertexMangledName, const String& fragmentMangledName, const RenderPSODescriptorSignature& signature, id<MTLFunction> vertexFunction, id<MTLFunction> fragmentFunction, id<MTLRenderPipelineState> pso)
+{
+    if (!vertexLibrary || !vertexFunction || !pso || vertexMangledName.isEmpty())
+        return;
+
+    RenderPSOCacheMap evicted;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        RenderPSOCacheKey key {
+            .vertexLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)vertexLibrary),
+            .fragmentLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)fragmentLibrary),
+            .vertexMangledName = vertexMangledName.isolatedCopy(),
+            .fragmentMangledName = fragmentMangledName.isolatedCopy(),
+            .signature = signature,
+        };
+        caches.renderPSOs.set(WTF::move(key), makeUnique<RenderPSOCacheEntry>(RenderPSOCacheEntry { vertexLibrary, fragmentLibrary, vertexFunction, fragmentFunction, pso }), evicted);
+    }
+}
+
+static void completeInFlightLibrary(const LibraryCacheKey& ownedKey, const std::shared_ptr<InFlightLibraryCompilation>& inFlight, id<MTLLibrary> library, NSError *error, bool dispatchAsyncWaiters)
+{
+    LibraryCacheMap evicted;
+    Vector<Function<void(id<MTLLibrary>, NSError *)>, 2> waiters;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        if (library) {
+            LibraryCacheKey cacheKey {
+                .devicePtr = ownedKey.devicePtr,
+                .appleGPUFamily = ownedKey.appleGPUFamily,
+                .flags = ownedKey.flags,
+                .msl = ownedKey.msl.isolatedCopy(),
+            };
+            caches.libraries.set(WTF::move(cacheKey), RetainPtr<id<MTLLibrary>> { library }, evicted);
+        }
+        caches.inFlightLibraries.remove(ownedKey);
+        waiters = std::exchange(inFlight->asyncWaiters, { });
+    }
+    {
+        Locker waitLocker { inFlight->syncWaitLock };
+        inFlight->syncLibrary = library;
+        inFlight->syncError = error;
+        inFlight->syncDone = true;
+        inFlight->syncWaitCondition.notifyAll();
+    }
+    if (waiters.isEmpty())
+        return;
+    if (dispatchAsyncWaiters) {
+        RetainPtr<id<MTLLibrary>> retainedLib = library;
+        RetainPtr<NSError> retainedErr = error;
+        @autoreleasepool {
+            dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), makeBlockPtr([waiters = WTF::move(waiters), retainedLib = WTF::move(retainedLib), retainedErr = WTF::move(retainedErr)] mutable {
+                for (auto& waiter : waiters)
+                    waiter(retainedLib.get(), retainedErr.get());
+            }).get());
+        }
+        return;
+    }
+    for (auto& waiter : waiters)
+        waiter(library, error);
+}
+
+void compileOrCoalesceLibraryAsync(id<MTLDevice> device, const LibraryCompileRequest& request, Function<void(id<MTLLibrary>, NSError *)>&& callback)
+{
+    if (request.cachedLibrary) {
+        callback(request.cachedLibrary, nil);
+        return;
+    }
+    if (!device || request.mslKey.isEmpty()) {
+        callback(nil, nil);
+        return;
+    }
+
+    LibraryCacheMap evicted;
+    RetainPtr<id<MTLLibrary>> hitLibrary;
+    LibraryCacheKey ownedKey;
+    std::shared_ptr<InFlightLibraryCompilation> inFlight;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        auto lookupKey = makeLibraryLookupKey(device, request);
+        if (auto* entry = caches.libraries.find(lookupKey, evicted))
+            hitLibrary = *entry;
+        else if (auto it = caches.inFlightLibraries.find(lookupKey); it != caches.inFlightLibraries.end()) {
+            it->value->asyncWaiters.append(WTF::move(callback));
+            return;
+        } else {
+            ownedKey = makeLibraryCacheKey(device, request);
+            inFlight = std::make_shared<InFlightLibraryCompilation>();
+            inFlight->asyncWaiters.append(WTF::move(callback));
+            caches.inFlightLibraries.set(LibraryCacheKey { ownedKey.devicePtr, ownedKey.appleGPUFamily, ownedKey.flags, ownedKey.msl.isolatedCopy() }, inFlight);
+        }
+    }
+
+    if (hitLibrary) {
+        callback(hitLibrary.get(), nil);
+        return;
+    }
+
+    ShaderModule::createLibraryAsync(device, request.mslString().get(), request.labelString().get(), request.deviceState, CompletionHandler<void(id<MTLLibrary>, NSError *)> { [ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight)](id<MTLLibrary> library, NSError *error) mutable {
+        completeInFlightLibrary(ownedKey, inFlight, library, error, false);
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
+void compileOrCoalesceComputePSOAsync(id<MTLDevice> device, id<MTLLibrary> library, const String& mangledName, NSString *label, uint32_t bindGroupCount, uint32_t validationStateRaw, Function<void(id<MTLComputePipelineState>, NSString *, bool)>&& callback)
+{
+    if (!device || !library || mangledName.isEmpty()) {
+        callback(nil, @"createComputePipeline failed", false);
+        return;
+    }
+
+    ComputePSOCacheMap evicted;
+    RetainPtr<id<MTLComputePipelineState>> hitPSO;
+    ComputePSOCacheKey ownedKey;
+    std::shared_ptr<InFlightComputePSOCompilation> inFlight;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        ComputePSOCacheKey lookupKey {
+            .libraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)library),
+            .bindGroupCount = bindGroupCount,
+            .validationState = validationStateRaw,
+            .mangledName = mangledName,
+        };
+        if (auto* entry = caches.computePSOs.find(lookupKey, evicted))
+            hitPSO = entry->pso;
+        else if (auto it = caches.inFlightComputePSOs.find(lookupKey); it != caches.inFlightComputePSOs.end()) {
+            it->value->waiters.append(WTF::move(callback));
+            return;
+        } else {
+            ownedKey = ComputePSOCacheKey {
+                .libraryPtr = lookupKey.libraryPtr,
+                .bindGroupCount = bindGroupCount,
+                .validationState = validationStateRaw,
+                .mangledName = mangledName.isolatedCopy(),
+            };
+            inFlight = std::make_shared<InFlightComputePSOCompilation>();
+            inFlight->waiters.append(WTF::move(callback));
+            caches.inFlightComputePSOs.set(ComputePSOCacheKey { ownedKey.libraryPtr, ownedKey.bindGroupCount, ownedKey.validationState, ownedKey.mangledName.isolatedCopy() }, inFlight);
+        }
+    }
+
+    if (hitPSO) {
+        callback(hitPSO.get(), nil, false);
+        return;
+    }
+
+    RetainPtr<id<MTLDevice>> retainedDevice = device;
+    RetainPtr<id<MTLLibrary>> retainedLibrary = library;
+    RetainPtr<NSString> retainedLabel = adoptNS([label copy]);
+    RetainPtr<NSString> functionName = mangledName.createNSString();
+    @autoreleasepool {
+        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), makeBlockPtr([retainedDevice = WTF::move(retainedDevice), retainedLibrary = WTF::move(retainedLibrary), retainedLabel = WTF::move(retainedLabel), functionName = WTF::move(functionName), bindGroupCount, validationStateRaw, ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight)] mutable {
+            auto completeAll = [](const ComputePSOCacheKey& key, const std::shared_ptr<InFlightComputePSOCompilation>& state, id<MTLLibrary> lib, id<MTLComputePipelineState> pso, NSString *errMsg, bool isCompileFailure) {
+                ComputePSOCacheMap localEvicted;
+                Vector<Function<void(id<MTLComputePipelineState>, NSString *, bool)>, 2> waiters;
+                {
+                    auto& caches = metalPipelineCaches();
+                    Locker locker { caches.lock };
+                    if (pso) {
+                        ComputePSOCacheKey cacheKey {
+                            .libraryPtr = key.libraryPtr,
+                            .bindGroupCount = key.bindGroupCount,
+                            .validationState = key.validationState,
+                            .mangledName = key.mangledName.isolatedCopy(),
+                        };
+                        caches.computePSOs.set(WTF::move(cacheKey), ComputePSOCacheEntry { lib, pso }, localEvicted);
+                    }
+                    caches.inFlightComputePSOs.remove(key);
+                    waiters = std::exchange(state->waiters, { });
+                }
+                for (auto& waiter : waiters)
+                    waiter(pso, errMsg, isCompileFailure);
+            };
+
+            auto function = createFunction(retainedLibrary.get(), functionName.get(), retainedLabel.get());
+            if (!function || function.functionType != MTLFunctionTypeKernel) {
+                completeAll(ownedKey, inFlight, retainedLibrary.get(), nil, @"createComputePipeline failed", false);
+                return;
+            }
+            auto desc = [MTLComputePipelineDescriptor new];
+#if ENABLE(WEBGPU_BY_DEFAULT)
+            desc.shaderValidation = static_cast<GPUShaderValidation>(validationStateRaw);
+#else
+            UNUSED_PARAM(validationStateRaw);
+#endif
+            desc.computeFunction = function;
+            for (uint32_t i = 0; i < bindGroupCount; ++i)
+                desc.buffers[i].mutability = MTLMutabilityImmutable;
+            desc.label = retainedLabel.get();
+
+            @autoreleasepool {
+                [retainedDevice.get() newComputePipelineStateWithDescriptor:desc options:MTLPipelineOptionNone completionHandler:makeBlockPtr([retainedLibrary = WTF::move(retainedLibrary), ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight), completeAll](id<MTLComputePipelineState> pso, MTLComputePipelineReflection *, NSError *error) mutable {
+                    @autoreleasepool {
+                        RetainPtr<id<MTLComputePipelineState>> retainedPSO = pso;
+                        RetainPtr<NSString> errMsg = error.localizedDescription;
+                        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), makeBlockPtr([retainedLibrary = WTF::move(retainedLibrary), retainedPSO = WTF::move(retainedPSO), errMsg = WTF::move(errMsg), ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight), completeAll] mutable {
+                            completeAll(ownedKey, inFlight, retainedLibrary.get(), retainedPSO.get(), errMsg.get() ?: @"GPUCompuePipeline could not compile", !retainedPSO);
+                        }).get());
+                    }
+                }).get()];
+            }
+        }).get());
+    }
+}
+
+void compileOrCoalesceRenderPSOAsync(id<MTLDevice> device, id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, const String& vertexMangledName, const String& fragmentMangledName, const RenderPSODescriptorSignature& signature, MTLRenderPipelineDescriptor *descriptor, NSString *label, Function<void(id<MTLFunction>, id<MTLFunction>, id<MTLRenderPipelineState>, NSString *)>&& callback)
+{
+    if (!device || !vertexLibrary || vertexMangledName.isEmpty()) {
+        callback(nil, nil, nil, @"Vertex function could not be created");
+        return;
+    }
+
+    RenderPSOCacheMap evicted;
+    std::optional<CachedRenderPipelineState> hitRenderPSO;
+    RenderPSOCacheKey ownedKey;
+    std::shared_ptr<InFlightRenderPSOCompilation> inFlight;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        RenderPSOCacheKey lookupKey {
+            .vertexLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)vertexLibrary),
+            .fragmentLibraryPtr = reinterpret_cast<uintptr_t>((__bridge void*)fragmentLibrary),
+            .vertexMangledName = vertexMangledName,
+            .fragmentMangledName = fragmentMangledName,
+            .signature = signature,
+        };
+        if (auto* entry = caches.renderPSOs.find(lookupKey, evicted))
+            hitRenderPSO = CachedRenderPipelineState { (*entry)->vertexFunction, (*entry)->fragmentFunction, (*entry)->pso };
+        else if (auto it = caches.inFlightRenderPSOs.find(lookupKey); it != caches.inFlightRenderPSOs.end()) {
+            it->value->waiters.append(WTF::move(callback));
+            return;
+        } else {
+            ownedKey = RenderPSOCacheKey {
+                .vertexLibraryPtr = lookupKey.vertexLibraryPtr,
+                .fragmentLibraryPtr = lookupKey.fragmentLibraryPtr,
+                .vertexMangledName = vertexMangledName.isolatedCopy(),
+                .fragmentMangledName = fragmentMangledName.isolatedCopy(),
+                .signature = signature,
+            };
+            inFlight = std::make_shared<InFlightRenderPSOCompilation>();
+            inFlight->waiters.append(WTF::move(callback));
+            caches.inFlightRenderPSOs.set(RenderPSOCacheKey { ownedKey.vertexLibraryPtr, ownedKey.fragmentLibraryPtr, ownedKey.vertexMangledName.isolatedCopy(), ownedKey.fragmentMangledName.isolatedCopy(), ownedKey.signature }, inFlight);
+        }
+    }
+
+    if (hitRenderPSO) {
+        callback(hitRenderPSO->vertexFunction.get(), hitRenderPSO->fragmentFunction.get(), hitRenderPSO->pso.get(), nil);
+        return;
+    }
+
+    RetainPtr<id<MTLDevice>> retainedDevice = device;
+    RetainPtr<id<MTLLibrary>> retainedVLib = vertexLibrary;
+    RetainPtr<id<MTLLibrary>> retainedFLib = fragmentLibrary;
+    RetainPtr<MTLRenderPipelineDescriptor> bgDescriptor = adoptNS([descriptor copy]);
+    RetainPtr<NSString> retainedLabel = adoptNS([label copy]);
+    RetainPtr<NSString> vertexFunctionName = vertexMangledName.createNSString();
+    RetainPtr<NSString> fragmentFunctionName = fragmentLibrary ? fragmentMangledName.createNSString() : nil;
+
+    @autoreleasepool {
+        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), makeBlockPtr([retainedDevice = WTF::move(retainedDevice), retainedVLib = WTF::move(retainedVLib), retainedFLib = WTF::move(retainedFLib), bgDescriptor = WTF::move(bgDescriptor), retainedLabel = WTF::move(retainedLabel), vertexFunctionName = WTF::move(vertexFunctionName), fragmentFunctionName = WTF::move(fragmentFunctionName), ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight)] mutable {
+            auto completeAll = [](const RenderPSOCacheKey& key, const std::shared_ptr<InFlightRenderPSOCompilation>& state, id<MTLLibrary> vLib, id<MTLLibrary> fLib, id<MTLFunction> vFunc, id<MTLFunction> fFunc, id<MTLRenderPipelineState> pso, NSString *funcErr) {
+                RenderPSOCacheMap localEvicted;
+                Vector<Function<void(id<MTLFunction>, id<MTLFunction>, id<MTLRenderPipelineState>, NSString *)>, 2> waiters;
+                {
+                    auto& caches = metalPipelineCaches();
+                    Locker locker { caches.lock };
+                    if (pso && vFunc) {
+                        RenderPSOCacheKey cacheKey {
+                            .vertexLibraryPtr = key.vertexLibraryPtr,
+                            .fragmentLibraryPtr = key.fragmentLibraryPtr,
+                            .vertexMangledName = key.vertexMangledName.isolatedCopy(),
+                            .fragmentMangledName = key.fragmentMangledName.isolatedCopy(),
+                            .signature = key.signature,
+                        };
+                        caches.renderPSOs.set(WTF::move(cacheKey), makeUnique<RenderPSOCacheEntry>(RenderPSOCacheEntry { vLib, fLib, vFunc, fFunc, pso }), localEvicted);
+                    }
+                    caches.inFlightRenderPSOs.remove(key);
+                    waiters = std::exchange(state->waiters, { });
+                }
+                for (auto& waiter : waiters)
+                    waiter(vFunc, fFunc, pso, funcErr);
+            };
+
+            id<MTLFunction> vFunc = createFunction(retainedVLib.get(), vertexFunctionName.get(), retainedLabel.get());
+            if (!vFunc || vFunc.functionType != MTLFunctionTypeVertex) {
+                completeAll(ownedKey, inFlight, retainedVLib.get(), retainedFLib.get(), nil, nil, nil, @"Vertex function could not be created");
+                return;
+            }
+            bgDescriptor.get().vertexFunction = vFunc;
+
+            id<MTLFunction> fFunc = nil;
+            if (retainedFLib) {
+                fFunc = createFunction(retainedFLib.get(), fragmentFunctionName.get(), retainedLabel.get());
+                if (!fFunc || fFunc.functionType != MTLFunctionTypeFragment) {
+                    completeAll(ownedKey, inFlight, retainedVLib.get(), retainedFLib.get(), nil, nil, nil, @"Fragment function failed creation");
+                    return;
+                }
+                bgDescriptor.get().fragmentFunction = fFunc;
+            }
+
+            RetainPtr<id<MTLFunction>> retainedVFunc = vFunc;
+            RetainPtr<id<MTLFunction>> retainedFFunc = fFunc;
+            @autoreleasepool {
+                [retainedDevice.get() newRenderPipelineStateWithDescriptor:bgDescriptor.get() completionHandler:makeBlockPtr([retainedVLib = WTF::move(retainedVLib), retainedFLib = WTF::move(retainedFLib), retainedVFunc = WTF::move(retainedVFunc), retainedFFunc = WTF::move(retainedFFunc), ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight), completeAll](id<MTLRenderPipelineState> pso, NSError *) mutable {
+                    @autoreleasepool {
+                        RetainPtr<id<MTLRenderPipelineState>> retainedPSO = pso;
+                        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INITIATED, 0), makeBlockPtr([retainedVLib = WTF::move(retainedVLib), retainedFLib = WTF::move(retainedFLib), retainedVFunc = WTF::move(retainedVFunc), retainedFFunc = WTF::move(retainedFFunc), retainedPSO = WTF::move(retainedPSO), ownedKey = WTF::move(ownedKey), inFlight = WTF::move(inFlight), completeAll] mutable {
+                            completeAll(ownedKey, inFlight, retainedVLib.get(), retainedFLib.get(), retainedVFunc.get(), retainedFFunc.get(), retainedPSO.get(), nil);
+                        }).get());
+                    }
+                }).get()];
+            }
+        }).get());
+    }
+}
+
+void purgeMetalPipelineCaches()
+{
+    std::pair<RenderPSOCacheMap, RenderPSOCacheMap> evictedRenderPSOs;
+    std::pair<ComputePSOCacheMap, ComputePSOCacheMap> evictedPSOs;
+    std::pair<LibraryCacheMap, LibraryCacheMap> evictedLibraries;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        evictedRenderPSOs = caches.renderPSOs.clear();
+        evictedPSOs = caches.computePSOs.clear();
+        evictedLibraries = caches.libraries.clear();
+    }
 }
 
 id<MTLLibrary> compileLibrary(id<MTLDevice> device, const LibraryCompileRequest& request, NSError **error)
 {
     if (request.cachedLibrary)
         return request.cachedLibrary;
+    if (!device || request.mslKey.isEmpty())
+        return nil;
 
-    return ShaderModule::createLibrary(device, request.msl, request.label, error, request.deviceState);
+    LibraryCacheMap evicted;
+    RetainPtr<id<MTLLibrary>> hitLibrary;
+    std::shared_ptr<InFlightLibraryCompilation> existingInFlight;
+    std::shared_ptr<InFlightLibraryCompilation> ownedInFlight;
+    LibraryCacheKey ownedKey;
+    {
+        auto& caches = metalPipelineCaches();
+        Locker locker { caches.lock };
+        auto lookupKey = makeLibraryLookupKey(device, request);
+        if (auto* entry = caches.libraries.find(lookupKey, evicted))
+            hitLibrary = *entry;
+        else if (auto it = caches.inFlightLibraries.find(lookupKey); it != caches.inFlightLibraries.end())
+            existingInFlight = it->value;
+        else {
+            ownedKey = makeLibraryCacheKey(device, request);
+            ownedInFlight = std::make_shared<InFlightLibraryCompilation>();
+            caches.inFlightLibraries.set(LibraryCacheKey { ownedKey.devicePtr, ownedKey.appleGPUFamily, ownedKey.flags, ownedKey.msl.isolatedCopy() }, ownedInFlight);
+        }
+    }
+
+    if (hitLibrary)
+        return hitLibrary.get();
+
+    if (existingInFlight) {
+        Locker waitLocker { existingInFlight->syncWaitLock };
+        while (!existingInFlight->syncDone)
+            existingInFlight->syncWaitCondition.wait(existingInFlight->syncWaitLock);
+        if (error)
+            *error = existingInFlight->syncError.get();
+        return existingInFlight->syncLibrary.get();
+    }
+
+    NSError *localError = nil;
+    id<MTLLibrary> library = ShaderModule::createLibrary(device, request.mslString().get(), request.labelString().get(), &localError, request.deviceState);
+    if (error)
+        *error = localError;
+    completeInFlightLibrary(ownedKey, ownedInFlight, library, localError, true);
+    return library;
 }
-
-// The instance that the Metal completion handler of an asynchronous compile holds. Instance::destroy()
-// waits for every compile to signal that its handler no longer holds the instance, so the handler
-// never releases the last reference to the instance on Metal's threads. It signals when it is
-// destroyed, after it has released the instance, so a handler that is never called signals too.
-class AsyncCompileInstance {
-    WTF_MAKE_NONCOPYABLE(AsyncCompileInstance);
-public:
-    explicit AsyncCompileInstance(Instance& instance)
-        : m_instance(&instance)
-        , m_completions(instance.didStartAsyncCompile())
-    {
-    }
-
-    AsyncCompileInstance(AsyncCompileInstance&&) = default;
-
-    ~AsyncCompileInstance()
-    {
-        m_instance = nullptr;
-        if (m_completions)
-            m_completions->signal();
-    }
-
-    // The returned reference must be released before this is destroyed.
-    RefPtr<Instance> take() { return std::exchange(m_instance, nullptr); }
-
-private:
-    RefPtr<Instance> m_instance;
-    Box<Semaphore> m_completions;
-};
 
 template<typename Result>
 static CompletionHandler<void(Result, NSError *)> callOnWebGPUThread(Instance& instance, CompletionHandler<void(Result, NSError *)>&& callback)
@@ -233,18 +887,21 @@ static CompletionHandler<void(Result, NSError *)> callOnWebGPUThread(Instance& i
     // Metal runs its completion handlers on its own queues, so the returned handler is called on an
     // arbitrary thread. It is the hop below which returns to the thread `callback` was created on.
     return Callback { [asyncCompileInstance = AsyncCompileInstance { instance }, callbackToHopBack](Result result, NSError *error) mutable {
-        asyncCompileInstance.take()->scheduleWork([callbackToHopBack, result, error] mutable {
-            std::unique_ptr<Callback> callback(callbackToHopBack);
-            (*callback)(result, error);
-        });
+        auto localInstance = WTF::move(asyncCompileInstance);
+        if (RefPtr instance = localInstance.take()) {
+            instance->scheduleWork([callbackToHopBack, result, error] mutable {
+                std::unique_ptr<Callback> callback(callbackToHopBack);
+                (*callback)(result, error);
+            });
+        }
     }, CompletionHandlerCallThread::AnyThread };
 }
 
 void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const LibraryCompileRequest& request, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
 {
     // A library which was already compiled needs no hop: this is still running on the WebGPU thread.
-    if (request.cachedLibrary) {
-        callback(request.cachedLibrary, nil);
+    if (id<MTLLibrary> cached = lookupCachedLibrary(device, request)) {
+        callback(cached, nil);
         return;
     }
 
@@ -254,7 +911,9 @@ void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const Library
         return;
     }
 
-    ShaderModule::createLibraryAsync(device, request.msl, request.label, request.deviceState, callOnWebGPUThread<id<MTLLibrary>>(instance, WTF::move(callback)));
+    compileOrCoalesceLibraryAsync(device, request, [hopBack = callOnWebGPUThread<id<MTLLibrary>>(instance, WTF::move(callback))](id<MTLLibrary> library, NSError *error) mutable {
+        hopBack(library, error);
+    });
 }
 
 void createComputePipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLComputePipelineDescriptor *descriptor, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&& callback)
@@ -345,16 +1004,21 @@ void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor
     callback(computePipelineState);
 }
 
-id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, NSString *label)
+id<MTLFunction> createFunction(id<MTLLibrary> library, NSString *functionName, NSString *label)
 {
     auto functionDescriptor = [MTLFunctionDescriptor new];
-    functionDescriptor.name = entryPointInformation.mangledName.createNSString().get();
+    functionDescriptor.name = functionName;
     NSError *error = nil;
     id<MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
     if (error)
         WTFLogAlways("Function creation error: %@", error);
     function.label = label;
     return function;
+}
+
+id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, NSString *label)
+{
+    return createFunction(library, entryPointInformation.mangledName.createNSString().get(), label);
 }
 
 NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindingSizesForBindGroup* mininumBufferSizes, const Vector<uint32_t>* dynamicOffsets)

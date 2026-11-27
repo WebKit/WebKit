@@ -89,6 +89,7 @@ public:
     // This can be called on a background thread.
     using WorkItem = Function<void()>;
     void scheduleWork(WorkItem&&);
+    bool hasExternalWorkScheduler() const { return !!m_scheduleWork; }
     NODELETE const std::optional<const MachSendRight>& webProcessID() const;
     id<MTLDevice> device() const;
 
@@ -114,6 +115,36 @@ private:
     // The asynchronous compiles started since destroy() last waited for them.
     uint64_t m_startedAsyncCompileCount { 0 };
     bool m_isValid { true };
+};
+
+// The instance that the Metal completion handler of an asynchronous compile holds. Instance::destroy()
+// waits for every compile to signal that its handler no longer holds the instance, so the handler
+// never releases the last reference to the instance on Metal's threads. It signals when it is
+// destroyed, after it has released the instance, so a handler that is never called signals too.
+class AsyncCompileInstance {
+    WTF_MAKE_NONCOPYABLE(AsyncCompileInstance);
+public:
+    explicit AsyncCompileInstance(Instance& instance)
+        : m_instance(&instance)
+        , m_completions(instance.didStartAsyncCompile())
+    {
+    }
+
+    AsyncCompileInstance(AsyncCompileInstance&&) = default;
+
+    ~AsyncCompileInstance()
+    {
+        m_instance = nullptr;
+        if (m_completions)
+            m_completions->signal();
+    }
+
+    // The returned reference must be released before this is destroyed.
+    RefPtr<Instance> take() { return std::exchange(m_instance, nullptr); }
+
+private:
+    RefPtr<Instance> m_instance;
+    Box<Semaphore> m_completions;
 };
 
 } // namespace WebGPU::Metal

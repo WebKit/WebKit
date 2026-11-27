@@ -31,6 +31,7 @@
 
 #import "BindGroupLayout.h"
 #import "BindableResource.h"
+#import "Device.h"
 #import "ShaderStage.h"
 #import <WebGPU/WebGPUCpp.h>
 #import <wtf/EnumeratedArray.h>
@@ -70,9 +71,11 @@ public:
     };
     using DynamicBuffersContainer = Vector<BufferAndType>;
 
+    using ArgumentBufferAllocation = Device::ArgumentBufferAllocation;
+
     static constexpr MTLRenderStages MTLRenderStageCompute = static_cast<MTLRenderStages>(0);
     static constexpr MTLRenderStages MTLRenderStageUndefined = static_cast<MTLRenderStages>(MTLRenderStageFragment + 1);
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
+    static Ref<BindGroup> create(ArgumentBufferAllocation vertexArgumentBuffer, ArgumentBufferAllocation fragmentArgumentBuffer, ArgumentBufferAllocation computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplers), WTF::move(externalTextureIndices), uniqueIdentifier, device));
     }
@@ -87,9 +90,15 @@ public:
 
     NODELETE bool isValid() const final;
 
-    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
-    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
-    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
+    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer.buffer; }
+    NSUInteger vertexArgumentBufferOffset() const { return m_vertexArgumentBuffer.offset; }
+    NSUInteger vertexArgumentBufferLength() const { return m_vertexArgumentBuffer.length; }
+    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer.buffer; }
+    NSUInteger fragmentArgumentBufferOffset() const { return m_fragmentArgumentBuffer.offset; }
+    NSUInteger fragmentArgumentBufferLength() const { return m_fragmentArgumentBuffer.length; }
+    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer.buffer; }
+    NSUInteger computeArgumentBufferOffset() const { return m_computeArgumentBuffer.offset; }
+    NSUInteger computeArgumentBufferLength() const { return m_computeArgumentBuffer.length; }
 
     const Vector<BindableResources>& resources() const LIFETIME_BOUND { return m_resources; }
 
@@ -122,12 +131,12 @@ public:
     }
 
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, ShaderStageArray<ExternalTextureIndices>&&, uint32_t uniqueIdentifier, Device&);
+    BindGroup(ArgumentBufferAllocation vertexArgumentBuffer, ArgumentBufferAllocation fragmentArgumentBuffer, ArgumentBufferAllocation computeArgumentBuffer, Vector<BindableResources>&&, const BindGroupLayout&, DynamicBuffersContainer&&, SamplersContainer&&, ShaderStageArray<ExternalTextureIndices>&&, uint32_t uniqueIdentifier, Device&);
     BindGroup(Device&);
 
-    const id<MTLBuffer> m_vertexArgumentBuffer { nil };
-    const id<MTLBuffer> m_fragmentArgumentBuffer { nil };
-    const id<MTLBuffer> m_computeArgumentBuffer { nil };
+    const ArgumentBufferAllocation m_vertexArgumentBuffer { };
+    const ArgumentBufferAllocation m_fragmentArgumentBuffer { };
+    const ArgumentBufferAllocation m_computeArgumentBuffer { };
 
     const Ref<Device> m_device;
     Vector<BindableResources> m_resources;

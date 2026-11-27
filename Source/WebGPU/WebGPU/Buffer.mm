@@ -127,18 +127,88 @@ NODELETE static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, OptionSe
     return MTLStorageModePrivate;
 }
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static constexpr NSUInteger maxRecycledSingleBufferBytes = 256 * KB;
+static constexpr size_t maxTotalRecycledBufferBytes = 4 * MB;
+#else
+static constexpr NSUInteger maxRecycledSingleBufferBytes = 64 * KB;
+static constexpr size_t maxTotalRecycledBufferBytes = 1 * MB;
+#endif
+static constexpr size_t maxRecycledBuffersPerSize = 64;
+
 id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storageMode, bool skipAttribution, MTLCPUCacheMode cpuCacheMode, MTLHazardTrackingMode hazardTrackingMode) const
 {
+    NSUInteger allocationLength = std::max<NSUInteger>(1, length);
+    if (storageMode == MTLStorageModeShared && !skipAttribution && cpuCacheMode == MTLCPUCacheModeDefaultCache && hazardTrackingMode == MTLHazardTrackingModeDefault && allocationLength <= maxRecycledSingleBufferBytes) {
+        auto it = m_recycledBuffers.find(allocationLength);
+        if (it != m_recycledBuffers.end() && !it->value.isEmpty()) {
+            uint64_t completedCount = m_defaultQueue->completedCommandBufferCount();
+            if (completedCount >= it->value.first().reusableAfterCompletedCount) {
+                RetainPtr<id<MTLBuffer>> recycled = it->value.takeFirst().buffer;
+                ASSERT(m_recycledBufferBytes >= allocationLength);
+                m_recycledBufferBytes -= allocationLength;
+                if (recycled.get().contents)
+                    memsetSpan(span<uint8_t>(recycled.get()), 0);
+                return recycled.get();
+            }
+        }
+    }
+
     MTLResourceOptions resourceOptions = (cpuCacheMode << MTLResourceCPUCacheModeShift) | (storageMode << MTLResourceStorageModeShift) | (hazardTrackingMode << MTLResourceHazardTrackingModeShift);
-    id<MTLBuffer> buffer = [m_device newBufferWithLength:std::max<NSUInteger>(1, length) options:resourceOptions];
+    id<MTLBuffer> buffer = [m_device newBufferWithLength:allocationLength options:resourceOptions];
     if (!skipAttribution)
         setOwnerWithIdentity(buffer);
     return buffer;
 }
 
+void Device::recycleBuffer(id<MTLBuffer> buffer) const
+{
+    if (!buffer || buffer == m_placeholderBuffer || !isValid())
+        return;
+    if (buffer.storageMode != MTLStorageModeShared || buffer.cpuCacheMode != MTLCPUCacheModeDefaultCache || buffer.hazardTrackingMode != MTLHazardTrackingModeDefault)
+        return;
+
+    NSUInteger length = buffer.length;
+    if (!length || length > maxRecycledSingleBufferBytes || m_recycledBufferBytes + length > maxTotalRecycledBufferBytes)
+        return;
+
+    auto& bucket = m_recycledBuffers.add(length, Deque<RecycledBufferEntry>()).iterator->value;
+    if (bucket.size() >= maxRecycledBuffersPerSize)
+        return;
+
+    buffer.label = nil;
+    uint64_t reusableAfter = m_defaultQueue->submittedCommandBufferCount() + (m_defaultQueue->hasUncommittedQueueWork() ? 1 : 0);
+    bucket.append({ buffer, reusableAfter });
+    m_recycledBufferBytes += length;
+}
+
 id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, bool skipAttribution) const
 {
     return safeCreateBuffer(length, MTLStorageModeShared, skipAttribution);
+}
+
+Device::ArgumentBufferAllocation Device::suballocateArgumentBuffer(NSUInteger length, NSUInteger alignment) const
+{
+    if (!length || !m_device)
+        return { };
+
+    constexpr NSUInteger slabSize = 256 * KB;
+    NSUInteger effectiveAlignment = std::max<NSUInteger>(256, WTF::roundUpToPowerOfTwo(alignment));
+    if (length > slabSize / 2) {
+        id<MTLBuffer> dedicated = safeCreateBuffer(length, MTLStorageModeShared);
+        return { dedicated, 0, dedicated ? length : 0 };
+    }
+
+    NSUInteger alignedOffset = WTF::roundUpToMultipleOf(effectiveAlignment, m_argumentBufferSlabOffset);
+    if (!m_argumentBufferSlab || alignedOffset + length > m_argumentBufferSlab.length) {
+        m_argumentBufferSlab = safeCreateBuffer(slabSize, MTLStorageModeShared);
+        if (!m_argumentBufferSlab)
+            return { };
+        alignedOffset = 0;
+    }
+
+    m_argumentBufferSlabOffset = alignedOffset + length;
+    return { m_argumentBufferSlab, alignedOffset, length };
 }
 
 RefPtr<WebGPU::Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& descriptor)
@@ -164,7 +234,8 @@ RefPtr<WebGPU::Buffer> Device::createBuffer(const WebGPU::BufferDescriptor& desc
         return Buffer::createInvalid(*this);
     }
 
-    buffer.label = descriptor.label.createNSString().get();
+    if (!descriptor.label.isEmpty())
+        buffer.label = descriptor.label.createNSString().get();
 
     auto initialMapState = Buffer::State::Unmapped;
     auto initialMappingRange = Buffer::MappingRange {
@@ -228,6 +299,7 @@ void Buffer::decrementBufferMapCount()
 void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
 {
     UNUSED_PARAM(mayModifyBuffer);
+    m_mayBeInUseByGPU = true;
     bool isNewEntry = commandEncoder.trackEncoderForBuffer(*this, m_commandEncoders);
 #if !CPU(X86_64)
     if (m_device->isShaderValidationEnabled())
@@ -254,7 +326,7 @@ void Buffer::destroy()
     setState(State::Destroyed);
     m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
     m_device->removeBufferFromCache(m_buffer.gpuAddress);
-    m_buffer = m_device->placeholderBuffer();
+    id<MTLBuffer> destroyedBuffer = std::exchange(m_buffer, m_device->placeholderBuffer());
 
     for (Ref bindGroup : m_bindGroups.values())
         bindGroup->releaseDestroyedResources();
@@ -262,6 +334,8 @@ void Buffer::destroy()
     for (Ref renderBundle : m_renderBundles.values())
         renderBundle->releaseDestroyedResources();
     m_renderBundles.clear();
+
+    m_device->recycleBuffer(destroyedBuffer);
 }
 
 void Buffer::addResourceHolder(const BindGroup& bindGroup) const
@@ -269,6 +343,7 @@ void Buffer::addResourceHolder(const BindGroup& bindGroup) const
     if (isDestroyed())
         return;
 
+    m_mayBeInUseByGPU = true;
     m_bindGroups.add(bindGroup);
 }
 
@@ -277,6 +352,7 @@ void Buffer::addResourceHolder(const RenderBundle& renderBundle) const
     if (isDestroyed())
         return;
 
+    m_mayBeInUseByGPU = true;
     m_renderBundles.add(renderBundle);
 }
 

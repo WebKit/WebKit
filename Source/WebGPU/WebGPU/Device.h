@@ -42,7 +42,9 @@
 #import <WebGPU/WebGPUCpp.h>
 #import <expected>
 #import <simd/matrix_types.h>
+#import <wtf/Box.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/Deque.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/HashIterators.h>
@@ -229,8 +231,16 @@ public:
     id<MTLFunction> icbCommandClampFunction(MTLIndexType);
     id<MTLRenderPipelineState> _Nullable icbIndirectEncodePipeline(bool isIndexed, MTLIndexType, NSUInteger rasterSampleCount);
     id<MTLFunction> icbIndirectEncodeFunction(bool isIndexed, MTLIndexType);
+    struct ArgumentBufferAllocation {
+        id<MTLBuffer> _Nullable buffer { nil };
+        NSUInteger offset { 0 };
+        NSUInteger length { 0 };
+    };
+    ArgumentBufferAllocation suballocateArgumentBuffer(NSUInteger length, NSUInteger alignment = 256) const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, bool skipMemoryAttribution = false, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger, bool skipMemoryAttribution = false) const;
+    void recycleBuffer(id<MTLBuffer>) const;
+    id<MTLArgumentEncoder> _Nullable cachedArgumentEncoder(NSArray<MTLArgumentDescriptor *> *, size_t stage) const;
     template<typename T>
     id<MTLBuffer> safeCreateBufferWithData(const T& data) const
     {
@@ -311,14 +321,54 @@ public:
     uint32_t appleGPUFamily() const { return m_appleGPUFamily; }
     void setRasterizationMapsForTexture(MTLResourceID, id<MTLRasterizationRateMap> left, id<MTLRasterizationRateMap> right);
     static id<MTLFunction> nopVertexFunction(id<MTLDevice>);
+    id<MTLDepthStencilState> _Nullable clearDepthStencilState() const;
+    id<MTLRenderPipelineState> _Nullable clearRenderPipelineState(NSUInteger sampleCount, MTLPixelFormat color0, MTLPixelFormat color1, MTLPixelFormat color2, MTLPixelFormat color3, MTLPixelFormat color4, MTLPixelFormat color5, MTLPixelFormat color6, MTLPixelFormat color7, MTLPixelFormat depthFormat, MTLPixelFormat stencilFormat) const;
     void makeSubmitInvalidClearingEncoders(TrackedResourceContainer&);
+
+    void reportUncapturedValidationError(String&&);
+    void completeReadyPendingShaderModules();
+    void drainPendingShaderModules();
+    struct ErrorScope {
+        explicit ErrorScope(WebGPU::ErrorFilter errorFilter)
+            : filter(errorFilter)
+        {
+        }
+
+        const WebGPU::ErrorFilter filter;
+        uint64_t nextOperationIndex { 0 };
+        uint64_t winningErrorIndex { std::numeric_limits<uint64_t>::max() };
+        std::optional<WebGPU::Error> error;
+        uint32_t pendingAsyncOperations { 0 };
+        CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)> popCallback;
+
+        void recordErrorAt(uint64_t operationIndex, WebGPU::ErrorType type, String&& message)
+        {
+            if (operationIndex < winningErrorIndex) {
+                winningErrorIndex = operationIndex;
+                error = WebGPU::Error { type, WTF::move(message) };
+            }
+        }
+
+        void completeAsyncOperation(bool deviceIsLost)
+        {
+            ASSERT(pendingAsyncOperations);
+            if (!--pendingAsyncOperations && popCallback) {
+                auto callback = WTF::move(popCallback);
+                if (deviceIsLost)
+                    callback(true, std::nullopt);
+                else {
+                    bool caughtNoError = !error;
+                    callback(caughtNoError, WTF::move(error));
+                }
+            }
+        }
+    };
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
     Device(Adapter&);
 
-    struct ErrorScope;
-    NODELETE ErrorScope* currentErrorScope(WebGPU::ErrorFilter);
+    NODELETE Box<ErrorScope> currentErrorScope(WebGPU::ErrorFilter);
     // Whether popping succeeds without a scope to pop: true for a lost device, false for an empty
     // stack. std::nullopt when there is a scope to pop.
     NODELETE std::optional<bool> validatePopErrorScope() const;
@@ -344,16 +394,13 @@ private:
     void captureFrameIfNeeded() const;
     GPUShaderValidation shaderValidationState() const;
 
-    struct ErrorScope {
-        std::optional<WebGPU::Error> error;
-        const WebGPU::ErrorFilter filter;
-    };
     id<MTLDevice> _Nullable m_device { nil };
     const Ref<Queue> m_defaultQueue;
 
     // Shared, so that the callback stays alive while it runs even if it replaces itself or loses the device.
     RefPtr<SharedTask<void(WebGPU::Error&&)>> m_uncapturedErrorCallback;
-    Vector<ErrorScope> m_errorScopeStack;
+    Vector<Box<ErrorScope>> m_errorScopeStack;
+    Deque<ThreadSafeWeakPtr<ShaderModule>> m_pendingShaderModules;
     const RefPtr<XRSubImage> m_xrSubImage;
 
     CompletionHandler<void(WebGPU::DeviceLostReason, String&&)> m_deviceLostCallback;
@@ -364,11 +411,14 @@ private:
     HardwareCapabilities m_capabilities { };
 
     id<MTLBuffer> m_placeholderBuffer { };
+    mutable id<MTLBuffer> _Nullable m_argumentBufferSlab { nil };
+    mutable NSUInteger m_argumentBufferSlabOffset { 0 };
     id<MTLTexture> m_placeholderTexture { nil };
     id<MTLTexture> m_placeholderDepthStencilTexture { nil };
     id<MTLBuffer> _Nullable m_dispatchCallBuffer { nil };
     id<MTLComputePipelineState> _Nullable m_dispatchCallPipelineState { nil };
     mutable id<MTLComputePipelineState> _Nullable m_premultiplyAlphaPipeline { nil };
+    mutable id<MTLDepthStencilState> _Nullable m_clearDepthStencilState { nil };
 
     id<MTLRenderPipelineState> _Nullable m_indexBufferClampUintPSO { nil };
     id<MTLRenderPipelineState> _Nullable m_indexBufferClampUshortPSO { nil };
@@ -405,6 +455,15 @@ private:
     HashMap<uint64_t, Buffer*> m_bufferMap;
     ThreadSafeWeakHashSet<Texture> m_textures;
     mutable HashSet<uint64_t> m_bindGroupCompatibilityCache;
+    struct RecycledBufferEntry {
+        RetainPtr<id<MTLBuffer>> buffer;
+        uint64_t reusableAfterCompletedCount { 0 };
+    };
+    mutable HashMap<uint64_t, Deque<RecycledBufferEntry>> m_recycledBuffers;
+    mutable size_t m_recycledBufferBytes { 0 };
+    mutable HashMap<uint64_t, RetainPtr<id<MTLArgumentEncoder>>> m_argumentEncoderCache;
+    OptionSet<WGSL::Extension> m_wgslSupportedExtensions;
+    bool m_hasBuiltWGSLSupportedExtensions { false };
     uint64_t m_commandEncoderId { 0 };
     uint64_t m_pipelineLayoutId { 0 };
     uint64_t m_pipelineId { 0 };

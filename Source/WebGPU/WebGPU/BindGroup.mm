@@ -1211,7 +1211,7 @@ NODELETE static bool allowedExternalTextureFormat(WebGPU::TextureFormat format)
 }
 
 template <typename T>
-static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::Device &object, const Ref<T> &apiTextureView, BindGroup::ShaderStageArray<id<MTLBuffer>> &argumentBuffer, BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> &argumentEncoder, BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> &argumentIndices, const Ref<BindGroupLayout> &bindGroupLayout, const WebGPU::BindGroupEntry &entry, const BindGroupLayout::ExternalTextureBindingLayout *externalTextureEntry, NSUInteger index, MTLResourceUsage resourceUsage, ShaderStage stage, std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResourceUsages, std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResources, const BindGroupLayout::StorageTextureBindingLayout *storageTextureEntry, const BindGroupLayout::TextureBindingLayout *textureEntry)
+static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::Device &object, const Ref<T> &apiTextureView, BindGroup::ShaderStageArray<BindGroup::ArgumentBufferAllocation> &argumentBuffer, BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> &argumentEncoder, BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> &argumentIndices, const Ref<BindGroupLayout> &bindGroupLayout, const WebGPU::BindGroupEntry &entry, const BindGroupLayout::ExternalTextureBindingLayout *externalTextureEntry, NSUInteger index, MTLResourceUsage resourceUsage, ShaderStage stage, std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResourceUsages, std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> &stageResources, const BindGroupLayout::StorageTextureBindingLayout *storageTextureEntry, const BindGroupLayout::TextureBindingLayout *textureEntry)
 {
 #define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
 #define VALIDATION_ERROR(...) object.generateAValidationError(INTERNAL_ERROR_STRING((__VA_ARGS__)))
@@ -1430,13 +1430,13 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
 
     BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout->vertexArgumentEncoder(), bindGroupLayout->fragmentArgumentEncoder(), bindGroupLayout->computeArgumentEncoder() });
     BindGroup::ShaderStageArray<ExternalTextureIndices> externalTextureIndices = std::array<ExternalTextureIndices, stageCount>({ ExternalTextureIndices(), ExternalTextureIndices(), ExternalTextureIndices() });
-    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffer;
+    BindGroup::ShaderStageArray<BindGroup::ArgumentBufferAllocation> argumentBuffer;
     BindGroup::ShaderStageArray<BindGroupLayout::ArgumentIndices> argumentIndices;
     for (ShaderStage stage : stages) {
         auto encodedLength = bindGroupLayout->encodedLength(stage);
         if (encodedLength)
-            argumentBuffer[stage] = safeCreateBuffer(encodedLength, MTLStorageModeShared);
-        [argumentEncoder[stage] setArgumentBuffer:argumentBuffer[stage] offset:0];
+            argumentBuffer[stage] = suballocateArgumentBuffer(encodedLength, argumentEncoder[stage] ? argumentEncoder[stage].alignment : 256);
+        [argumentEncoder[stage] setArgumentBuffer:argumentBuffer[stage].buffer offset:argumentBuffer[stage].offset];
         argumentIndices[stage] = bindGroupLayout->argumentIndices(stage);
     }
 
@@ -1698,7 +1698,7 @@ bool BindGroup::isValid() const
     return !!bindGroupLayout();
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
+BindGroup::BindGroup(ArgumentBufferAllocation vertexArgumentBuffer, ArgumentBufferAllocation fragmentArgumentBuffer, ArgumentBufferAllocation computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, SamplersContainer&& samplers, ShaderStageArray<ExternalTextureIndices>&& externalTextureIndices, uint32_t uniqueIdentifier, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
@@ -1737,12 +1737,9 @@ uint32_t BindGroup::dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*
     return 0u;
 }
 
-void BindGroup::setLabel(String&& label)
+void BindGroup::setLabel(String&&)
 {
-    RetainPtr labelString = label.createNSString();
-    m_vertexArgumentBuffer.label = labelString.get();
-    m_fragmentArgumentBuffer.label = labelString.get();
-    m_computeArgumentBuffer.label = labelString.get();
+    // Argument buffers are suballocated from shared slabs, so individual bind group labels are not set on the shared MTLBuffer.
 }
 
 bool BindGroup::allowedUsage(const OptionSet<BindGroupEntryUsage>& allowedUsage)
@@ -1796,12 +1793,12 @@ uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLay
     return aspectBit | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
 }
 
-[[nodiscard]] static bool setArgumentBuffer(id<MTLArgumentEncoder> encoder, id<MTLBuffer> buffer)
+[[nodiscard]] static bool setArgumentBuffer(id<MTLArgumentEncoder> encoder, const BindGroup::ArgumentBufferAllocation& allocation)
 {
-    if (!encoder || !buffer)
+    if (!encoder || !allocation.buffer)
         return false;
 
-    [encoder setArgumentBuffer:buffer offset:0];
+    [encoder setArgumentBuffer:allocation.buffer offset:allocation.offset];
     return true;
 }
 
@@ -1819,13 +1816,13 @@ bool BindGroup::rebindSamplersIfNeeded() const
         id<MTLSamplerState> samplerState = sampler->tryCacheSamplerState();
         if (!samplerState)
             return false;
-        if (shaderStageArray[ShaderStage::Vertex].has_value() && setArgumentBuffer(m_bindGroupLayout->vertexArgumentEncoder(), vertexArgumentBuffer()))
+        if (shaderStageArray[ShaderStage::Vertex].has_value() && setArgumentBuffer(m_bindGroupLayout->vertexArgumentEncoder(), m_vertexArgumentBuffer))
             [m_bindGroupLayout->vertexArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Vertex]];
 
-        if (shaderStageArray[ShaderStage::Fragment].has_value() && setArgumentBuffer(m_bindGroupLayout->fragmentArgumentEncoder(), fragmentArgumentBuffer()))
+        if (shaderStageArray[ShaderStage::Fragment].has_value() && setArgumentBuffer(m_bindGroupLayout->fragmentArgumentEncoder(), m_fragmentArgumentBuffer))
             [m_bindGroupLayout->fragmentArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Fragment]];
 
-        if (shaderStageArray[ShaderStage::Compute].has_value() && setArgumentBuffer(m_bindGroupLayout->computeArgumentEncoder(), computeArgumentBuffer()))
+        if (shaderStageArray[ShaderStage::Compute].has_value() && setArgumentBuffer(m_bindGroupLayout->computeArgumentEncoder(), m_computeArgumentBuffer))
             [m_bindGroupLayout->computeArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Compute]];
     }
     return true;
@@ -1866,7 +1863,7 @@ bool BindGroup::updateExternalTextures(WebGPU::ExternalTexture& apiExternalTextu
     if (!texture0 || !texture1)
         return false;
 
-    BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffers = std::array<id<MTLBuffer>, 3>({ vertexArgumentBuffer(), fragmentArgumentBuffer(), computeArgumentBuffer() });
+    BindGroup::ShaderStageArray<BindGroup::ArgumentBufferAllocation> argumentBuffers = std::array<BindGroup::ArgumentBufferAllocation, 3>({ m_vertexArgumentBuffer, m_fragmentArgumentBuffer, m_computeArgumentBuffer });
     BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoders = std::array<id<MTLArgumentEncoder>, 3>({ m_bindGroupLayout->vertexArgumentEncoder(), m_bindGroupLayout->fragmentArgumentEncoder(), m_bindGroupLayout->computeArgumentEncoder() });
     for (ShaderStage stage : stages) {
         auto& indices = m_externalTextureIndices[stage];

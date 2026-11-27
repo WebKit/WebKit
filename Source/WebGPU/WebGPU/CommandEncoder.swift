@@ -429,26 +429,40 @@ extension WebGPU.Metal.CommandEncoder {
             stencilAttachmentToClear: Bool,
             device: WebGPU.Metal.Device
         ) -> ((any MTLRenderPipelineState)?, (any MTLDepthStencilState)?) {
-            let mtlRenderPipelineDescriptor = MTLRenderPipelineDescriptor()
-
             var sampleCount: UInt = 0
-            var depthStencilDescriptor: MTLDepthStencilDescriptor? = nil
+            var c0: MTLPixelFormat = .invalid
+            var c1: MTLPixelFormat = .invalid
+            var c2: MTLPixelFormat = .invalid
+            var c3: MTLPixelFormat = .invalid
+            var c4: MTLPixelFormat = .invalid
+            var c5: MTLPixelFormat = .invalid
+            var c6: MTLPixelFormat = .invalid
+            var c7: MTLPixelFormat = .invalid
+
             for (key, textureAndClearColor) in attachmentsToClear {
                 let t = textureAndClearColor.texture
                 sampleCount = UInt(t.sampleCount)
-
-                let mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[key.intValue]
-                mtlColorAttachment?.pixelFormat = t.pixelFormat
-                mtlColorAttachment?.isBlendingEnabled = false
+                switch key.intValue {
+                case 0: c0 = t.pixelFormat
+                case 1: c1 = t.pixelFormat
+                case 2: c2 = t.pixelFormat
+                case 3: c3 = t.pixelFormat
+                case 4: c4 = t.pixelFormat
+                case 5: c5 = t.pixelFormat
+                case 6: c6 = t.pixelFormat
+                case 7: c7 = t.pixelFormat
+                default: break
+                }
             }
 
+            var depthFormat: MTLPixelFormat = .invalid
+            var stencilFormat: MTLPixelFormat = .invalid
+            var depthStencil: (any MTLDepthStencilState)? = nil
             if let depthStencilAttachmentToClear {
-                depthStencilDescriptor = MTLDepthStencilDescriptor()
                 sampleCount = UInt(depthStencilAttachmentToClear.sampleCount)
-                mtlRenderPipelineDescriptor.depthAttachmentPixelFormat =
+                depthFormat =
                     (!depthAttachmentToClear || WebGPU.Metal.Device.isStencilOnlyFormat(depthStencilAttachmentToClear.pixelFormat))
                     ? .invalid : depthStencilAttachmentToClear.pixelFormat
-                depthStencilDescriptor?.isDepthWriteEnabled = false
 
                 // The clear pass has the stencil attachment also when it clears only the depth: it loads the stencil.
                 if (stencilAttachmentToClear || depthAttachmentToClear)
@@ -456,30 +470,13 @@ extension WebGPU.Metal.CommandEncoder {
                         || depthStencilAttachmentToClear.pixelFormat == .stencil8
                         || depthStencilAttachmentToClear.pixelFormat == .x32_stencil8)
                 {
-                    mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = depthStencilAttachmentToClear.pixelFormat
+                    stencilFormat = depthStencilAttachmentToClear.pixelFormat
                 }
+                depthStencil = device.clearDepthStencilState()
             }
-
-            mtlRenderPipelineDescriptor.vertexFunction = WebGPU.Metal.Device.nopVertexFunction(device.device())
-            mtlRenderPipelineDescriptor.fragmentFunction = nil
 
             precondition(sampleCount != 0, "sampleCount must be non-zero")
-            mtlRenderPipelineDescriptor.rasterSampleCount = Int(sampleCount)
-            mtlRenderPipelineDescriptor.inputPrimitiveTopology = .point
-
-            guard let deviceMetal = device.device() else {
-                fatalError()
-            }
-
-            var pso: (any MTLRenderPipelineState)? = nil
-            var depthStencil: (any MTLDepthStencilState)? = nil
-            do {
-                pso = try deviceMetal.makeRenderPipelineState(descriptor: mtlRenderPipelineDescriptor)
-                depthStencil = depthStencilDescriptor.flatMap { deviceMetal.makeDepthStencilState(descriptor: $0) }
-            } catch {
-                fatalError(error.localizedDescription)
-            }
-
+            let pso = device.clearRenderPipelineState(sampleCount, c0, c1, c2, c3, c4, c5, c6, c7, depthFormat, stencilFormat)
             return (pso, depthStencil)
         }
 

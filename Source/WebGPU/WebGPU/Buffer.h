@@ -154,6 +154,8 @@ public:
     void takeSlowIndexValidationPath(CommandBuffer&, uint32_t firstIndex, uint32_t indexCount, MTLIndexType, uint32_t primitiveOffset, uint32_t vertexCount);
     void takeSlowBundleIndirectDrawValidationPath(CommandBuffer&, const ReusedIndirectIndexedDraw&);
     bool needsIndexValidation(uint32_t, uint16_t);
+    bool mayBeInUseByGPU() const { return m_mayBeInUseByGPU; }
+    void markMayBeInUseByGPU() const { m_mayBeInUseByGPU = true; }
 
 private:
     Buffer(id<MTLBuffer>, uint64_t initialSize, OptionSet<WebGPU::BufferUsage>, State initialState, MappingRange initialMappingRange, Device&);
@@ -199,6 +201,7 @@ private:
     HashSet<uint64_t> m_skippedValidationCommandEncoders;
     mutable HashSet<uint64_t> m_pendingIndexWriteCommandEncoders; // NOLINT
     bool m_mustTakeSlowIndexValidationPath { false };
+    mutable bool m_mayBeInUseByGPU { false };
     // Identity of the command buffer this buffer was last cleared for, so that several failed validations
     // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
     uintptr_t m_clearedForCommandBuffer { 0 }; // NOLINT

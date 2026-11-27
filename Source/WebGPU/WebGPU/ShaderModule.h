@@ -66,11 +66,17 @@ class ShaderModule final : public WebGPU::ShaderModule {
     };
     using CheckResult = Variant<ValidCheck, WGSL::FailedCheck, std::monostate>;
 public:
+    struct PendingCheck;
+    struct PendingValidationState;
     static Ref<ShaderModule> create(WGSL::SuccessfulCheck&& successfulCheck, String&& source, WGSL::Configuration&& configuration, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
         Ref shaderModule = adoptRef(*new ShaderModule(WTF::move(successfulCheck), WTF::move(source), WTF::move(configuration), WTF::move(pipelineLayoutHints), WTF::move(entryPointInformation), library, device));
-        shaderModule->releaseASTIfUnused();
+        shaderModule->retainASTRecently();
         return shaderModule;
+    }
+    static Ref<ShaderModule> createPending(String&& source, WGSL::Configuration&& configuration, Ref<PendingCheck>&& pendingCheck, std::unique_ptr<PendingValidationState>&& pendingValidationState, Device& device)
+    {
+        return adoptRef(*new ShaderModule(WTF::move(source), WTF::move(configuration), WTF::move(pendingCheck), WTF::move(pendingValidationState), device));
     }
     static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
     {
@@ -82,7 +88,9 @@ public:
     void compilationInfo(CompletionHandler<void(WebGPU::CompilationInfo&&)>&&) final;
     void setLabel(String&&) final;
 
-    bool isValid() const final { return std::holds_alternative<ValidCheck>(m_checkResult); }
+    bool isValid() const final;
+    void ensureCompiled() const;
+    NODELETE bool hasCompletedPendingCheck() const;
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **, WGSL::DeviceState&&);
@@ -104,13 +112,16 @@ public:
 
     private:
         friend class ShaderModule;
-        ASTHandle(const ShaderModule&, WGSL::ShaderModule&);
+        enum AdoptIncrementedCountTag { AdoptIncrementedCount };
+        ASTHandle(const ShaderModule&, WGSL::ShaderModule&, AdoptIncrementedCountTag);
 
         RefPtr<const ShaderModule> m_shaderModule;
         WGSL::ShaderModule* m_ast { nullptr };
     };
 
     ASTHandle ast() const;
+    void evictAST() const;
+    static void purgeAllCachedASTs();
 
     const PipelineLayout* pipelineLayoutHint(const String&) const;
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
@@ -146,18 +157,28 @@ public:
 
 private:
     ShaderModule(WGSL::SuccessfulCheck&&, String&& source, WGSL::Configuration&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
+    ShaderModule(String&& source, WGSL::Configuration&&, Ref<PendingCheck>&&, std::unique_ptr<PendingValidationState>&&, Device&);
     ShaderModule(Device&, CheckResult&&);
 
-    void releaseASTIfUnused() const;
+    friend struct ASTCacheState;
+    void populateEntryPointMetadata();
+    void finalizePendingCheck();
+    void retainASTRecently() const;
 
-    const CheckResult m_checkResult;
-    // A module can be kept alive for a long time before it is used to create a pipeline, and its
-    // AST is many times the size of its source, so the AST only exists while the module is being
-    // created or a pipeline is being created from it.
+    CheckResult m_checkResult { std::monostate { } };
+    // AST is many times the size of its source, so retained ASTs are bounded by a byte budget.
     const String m_source;
     const std::optional<WGSL::Configuration> m_configuration;
+    RefPtr<PendingCheck> m_pendingCheck;
+    std::unique_ptr<PendingValidationState> m_pendingValidationState;
+    Vector<CompletionHandler<void(WebGPU::CompilationInfo&&)>> m_pendingCompilationInfoCallbacks;
     mutable std::unique_ptr<WGSL::ShaderModule> m_ast;
+    mutable size_t m_astFootprint { 0 };
+    mutable ThreadSafeWeakPtr<const ShaderModule> m_prevCachedAST;
+    mutable ThreadSafeWeakPtr<const ShaderModule> m_nextCachedAST;
     mutable unsigned m_astHandleCount { 0 };
+    mutable bool m_astEvicted { false };
+    mutable bool m_inASTCache { false };
     const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
     const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
@@ -165,7 +186,7 @@ private:
     FragmentInputs parseFragmentInputs(const WGSL::AST::Function&, const String& entryPointName);
     void populateOutputState(const String&, WGSL::Builtin);
 
-    ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const WGSL::CallGraph::EntryPoint&);
+    ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const WGSL::CallGraph::EntryPoint&, const String& entryPointName);
 
     const Ref<Device> m_device;
     HashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;

@@ -34,9 +34,14 @@
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPUCpp.h>
 #import <atomic>
+#import <memory>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
+#import <wtf/MonotonicTime.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/Ref.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
@@ -135,11 +140,17 @@ public:
     void retainTimestampsForOneUpdate(NSMutableSet<id<MTLCounterSampleBuffer>> *);
     void waitForAllCommitedWorkToComplete();
     void synchronizeResourceAndWait(id<MTLBuffer>);
+    bool canDeferPass() const;
+    void registerDeferredPassReplay(id<MTLCommandBuffer>, Function<void(id<MTLCommandBuffer>)>&&);
+    void flushDeferredCommits();
     id<MTLIndirectCommandBuffer> trimICB(id<MTLIndirectCommandBuffer> dest, id<MTLIndirectCommandBuffer> src, NSUInteger newSize);
     id<MTLDevice> _Nullable metalDevice() const;
     std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
     void stageBufferWrite(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
     void encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer>, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy);
+    uint64_t submittedCommandBufferCount() const { return m_submittedCommandBufferCount; }
+    uint64_t completedCommandBufferCount() const { return m_completedCommandBufferCount; }
+    bool hasUncommittedQueueWork() const { return m_commandBuffer != nil; }
 
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
@@ -155,6 +166,7 @@ private:
     id<MTLComputePipelineState> _Nullable stagedCopyPipelineState();
     std::pair<id<MTLBuffer>, uint64_t> reserveTemporaryBuffer(size_t);
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
+    void scheduleWatchdogTimerLocked(Seconds) WTF_REQUIRES_LOCK(m_committedNotCompletedBuffersLock);
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
     NSString * _Nullable errorValidatingWriteTexture(const WebGPU::TexelCopyTextureInfo&, const WebGPU::TexelCopyBufferLayout&, const WebGPU::Extent3D&, size_t, const Texture&) const;
@@ -182,6 +194,8 @@ private:
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };
     uint64_t m_scheduledCommandBufferCount { 0 };
+    HashSet<uint64_t> m_completedOutOfOrderSerials;
+    HashSet<uint64_t> m_scheduledOutOfOrderSerials;
     using OnSubmittedWorkScheduledCallbacks = Vector<WTF::Function<void()>>;
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(bool)>>;
@@ -189,6 +203,8 @@ private:
     NSMutableDictionary<NSNumber*, NSMutableSet<id<MTLCounterSampleBuffer>>*> * _Nullable m_retainedCounterSampleBuffers;
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_createdNotCommittedBuffers { nil };
     NSMutableOrderedSet<id<MTLCommandBuffer>> * _Nullable m_committedNotCompletedBuffers WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock) { nil };
+    HashMap<const void*, MonotonicTime> m_commandBufferCommitTimes WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock);
+    bool m_watchdogScheduled WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock) { false };
     Lock m_committedNotCompletedBuffersLock;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> * _Nullable m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
@@ -218,6 +234,9 @@ private:
 
     Vector<ProvisionalTextureClear> m_provisionalTextureClears;
     Vector<Ref<ExternalImageStagingTexture>> m_externalImageStagingTextures;
+    OSObjectPtr<dispatch_queue_t> m_deferredCommitQueue;
+    std::shared_ptr<std::atomic<uint32_t>> m_inFlightDeferredCommits { std::make_shared<std::atomic<uint32_t>>(0) };
+    HashMap<const void*, Function<void(id<MTLCommandBuffer>)>> m_deferredPassReplays;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
 } // namespace WebGPU::Metal

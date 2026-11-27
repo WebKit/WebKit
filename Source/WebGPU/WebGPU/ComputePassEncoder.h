@@ -103,12 +103,14 @@ public:
     void markEncoderStateWasNotOpen() { m_encoderStateWasNotOpen = true; }
 
 private:
+    struct DeferredState;
     ComputePassEncoder(id<MTLComputeCommandEncoder>, const WebGPU::ComputePassDescriptor&, CommandEncoder&, Device&);
     ComputePassEncoder(CommandEncoder&, Device&, NSString*);
 
     NODELETE bool validatePopDebugGroup() const;
 
     void makeInvalid(NSString* = nil);
+    void flushDeferredStateToMetalEncoder();
     void executePreDispatchCommands(const Buffer* = nullptr);
     id<MTLBuffer> runPredispatchIndirectCallValidation(const Buffer&, uint64_t);
 
@@ -129,9 +131,13 @@ private:
     HashMap<uint32_t, Vector<const BindableResources*>> m_bindGroupResources;
     HashMap<uint32_t, Ref<const BindGroup>> m_bindGroups;
     std::array<uint32_t, 32> m_maxDynamicOffsetAtIndex;
+    std::unique_ptr<DeferredState> m_deferredState;
     NSString *m_lastErrorString { nil };
     bool m_passEnded { false };
     bool m_encoderStateWasNotOpen { false };
+    bool m_canDeferEncoding { false };
+    bool m_isDeferringEncoding { false };
+    bool m_hasEncodedToMetalEncoder { false };
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refComputePassEncoder, derefComputePassEncoder);
 
 

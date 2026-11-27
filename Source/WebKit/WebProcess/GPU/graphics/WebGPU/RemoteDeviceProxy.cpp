@@ -108,7 +108,8 @@ RefPtr<::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const ::WebGPU::BufferD
         return nullptr;
 
     auto result = RemoteBufferProxy::create(*this, identifier, descriptor);
-    result->setLabel(String { descriptor.label });
+    if (!descriptor.label.isEmpty())
+        result->setLabel(String { descriptor.label });
     return result;
 }
 
@@ -131,7 +132,8 @@ RefPtr<::WebGPU::Texture> RemoteDeviceProxy::createTexture(const ::WebGPU::Textu
         .format = descriptor.format,
         .usage = descriptor.usage,
     });
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -143,7 +145,8 @@ RefPtr<::WebGPU::Sampler> RemoteDeviceProxy::createSampler(const ::WebGPU::Sampl
         return nullptr;
 
     auto result = RemoteSamplerProxy::create(*this, identifier);
-    result->setLabel(String { descriptor.label });
+    if (!descriptor.label.isEmpty())
+        result->setLabel(String { descriptor.label });
     return result;
 }
 
@@ -176,7 +179,8 @@ RefPtr<::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
 #endif
 
     auto result = RemoteExternalTextureProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -209,7 +213,8 @@ RefPtr<::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayout(const
         return nullptr;
 
     auto result = RemoteBindGroupLayoutProxy::create(protect(root()), identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -225,7 +230,8 @@ RefPtr<::WebGPU::PipelineLayout> RemoteDeviceProxy::createPipelineLayout(const :
         return nullptr;
 
     auto result = RemotePipelineLayoutProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -241,7 +247,8 @@ RefPtr<::WebGPU::BindGroup> RemoteDeviceProxy::createBindGroup(const ::WebGPU::B
         return nullptr;
 
     auto result = RemoteBindGroupProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -257,7 +264,8 @@ RefPtr<::WebGPU::ShaderModule> RemoteDeviceProxy::createShaderModule(const ::Web
         return nullptr;
 
     auto result = RemoteShaderModuleProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -273,7 +281,8 @@ RefPtr<::WebGPU::ComputePipeline> RemoteDeviceProxy::createComputePipeline(const
         return nullptr;
 
     auto result = RemoteComputePipelineProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -289,7 +298,8 @@ RefPtr<::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const :
         return nullptr;
 
     auto result = RemoteRenderPipelineProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -310,7 +320,8 @@ void RemoteDeviceProxy::createComputePipelineAsync(const ::WebGPU::ComputePipeli
         }
 
         auto computePipelineResult = RemoteComputePipelineProxy::create(protectedThis, identifier);
-        computePipelineResult->setLabel(WTF::move(label));
+        if (!label.isEmpty())
+            computePipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::ComputePipeline> { WTF::move(computePipelineResult) });
     });
     UNUSED_PARAM(sendResult);
@@ -330,7 +341,8 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const ::WebGPU::RenderPipeline
         }
 
         auto renderPipelineResult = RemoteRenderPipelineProxy::create(protectedThis, identifier);
-        renderPipelineResult->setLabel(WTF::move(label));
+        if (!label.isEmpty())
+            renderPipelineResult->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::RenderPipeline> { WTF::move(renderPipelineResult) });
     });
     UNUSED_PARAM(sendResult);
@@ -353,7 +365,8 @@ void RemoteDeviceProxy::createComputePipelineWithPipelineLayoutFromPipelineAsync
         }
 
         Ref result = RemoteComputePipelineProxy::create(protectedThis, identifier);
-        result->setLabel(WTF::move(label));
+        if (!label.isEmpty())
+            result->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::ComputePipeline> { WTF::move(result) });
     });
     UNUSED_PARAM(sendResult);
@@ -376,7 +389,8 @@ void RemoteDeviceProxy::createRenderPipelineWithPipelineLayoutFromPipelineAsync(
         }
 
         Ref result = RemoteRenderPipelineProxy::create(protectedThis, identifier);
-        result->setLabel(WTF::move(label));
+        if (!label.isEmpty())
+            result->setLabel(WTF::move(label));
         callback(Ref<::WebGPU::RenderPipeline> { WTF::move(result) });
     });
     UNUSED_PARAM(sendResult);
@@ -390,7 +404,8 @@ RefPtr<::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(const :
         return nullptr;
 
     auto result = RemoteCommandEncoderProxy::create(protect(root()), identifier);
-    result->setLabel(String { descriptor.label });
+    if (!descriptor.label.isEmpty())
+        result->setLabel(String { descriptor.label });
     return result;
 }
 
@@ -406,7 +421,8 @@ RefPtr<::WebGPU::RenderBundleEncoder> RemoteDeviceProxy::createRenderBundleEncod
         return nullptr;
 
     auto result = RemoteRenderBundleEncoderProxy::create(*this, identifier);
-    result->setLabel(WTF::move(convertedDescriptor->label));
+    if (!convertedDescriptor->label.isEmpty())
+        result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
 
@@ -418,7 +434,8 @@ RefPtr<::WebGPU::QuerySet> RemoteDeviceProxy::createQuerySet(const ::WebGPU::Que
         return nullptr;
 
     auto result = RemoteQuerySetProxy::create(*this, identifier, descriptor);
-    result->setLabel(String { descriptor.label });
+    if (!descriptor.label.isEmpty())
+        result->setLabel(String { descriptor.label });
     return result;
 }
 

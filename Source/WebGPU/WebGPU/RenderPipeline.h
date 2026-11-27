@@ -33,12 +33,18 @@
 #import "PipelineLayout.h"
 
 #import <WebGPU/WebGPUCpp.h>
+#import <atomic>
+#import <memory>
+#import <mutex>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashTraits.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 
 namespace WebGPU::Metal {
@@ -47,6 +53,34 @@ class BindGroupLayout;
 class Device;
 class TextureOrTextureView;
 class TextureView;
+
+struct PendingRenderPipelineCompilation {
+    BinarySemaphore semaphore;
+    WTF::Lock resolveLock;
+    std::atomic<bool> isReady { false };
+    RetainPtr<id<MTLFunction>> vertexFunction;
+    RetainPtr<id<MTLFunction>> fragmentFunction;
+    RetainPtr<id<MTLRenderPipelineState>> renderPipelineState;
+    RetainPtr<NSString> errorMessage;
+    bool hadLibraryError { false };
+    bool didWait WTF_GUARDED_BY_LOCK(resolveLock) { false };
+
+    void complete()
+    {
+        isReady.store(true, std::memory_order_release);
+        semaphore.signal();
+    }
+
+    id<MTLRenderPipelineState> wait()
+    {
+        Locker locker { resolveLock };
+        if (!didWait) {
+            semaphore.wait();
+            didWait = true;
+        }
+        return renderPipelineState.get();
+    }
+};
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpipeline
 class RenderPipeline final : public WebGPU::RenderPipeline {
@@ -76,11 +110,15 @@ public:
 
     bool isValid() const final { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
 
-    MTLRenderPipelineDescriptor* renderPipelineDescriptor() const { return m_renderPipelineDescriptor; }
+    MTLRenderPipelineDescriptor* renderPipelineDescriptor() const;
+    bool isPipelineStateReady() const { return m_renderPipelineState || !m_pendingCompilation || m_pendingCompilation->isReady.load(std::memory_order_acquire); }
+    id<MTLRenderPipelineState> precompiledPipelineState() const { return m_renderPipelineState; }
+    std::shared_ptr<PendingRenderPipelineCompilation> pendingCompilation() const { return m_pendingCompilation; }
     id<MTLRenderPipelineState> renderPipelineState() const;
     id<MTLRenderPipelineState> icbRenderPipelineState() const;
 
     void setPrecompiledRenderPipelineState(id<MTLRenderPipelineState>);
+    void setPendingCompilation(std::shared_ptr<PendingRenderPipelineCompilation>&&);
 
     NODELETE id<MTLDepthStencilState> depthStencilState() const;
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
@@ -125,11 +163,13 @@ public:
 private:
     RenderPipeline(MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, Ref<PipelineLayout>&&, float depthBias, float depthBiasSlopeScale, float depthBiasClamp, uint32_t sampleMask, MTLRenderPipelineDescriptor*, uint32_t colorAttachmentCount, WebGPU::PrimitiveTopology, std::optional<WebGPU::IndexFormat> stripIndexFormat, uint32_t sampleCount, bool hasFragment, Vector<std::optional<WebGPU::TextureFormat>>&& colorTargetFormats, std::optional<WebGPU::TextureFormat> depthStencilFormat, bool writesStencil, RequiredBufferIndicesContainer&&, BufferBindingSizesForPipeline&&, uint64_t uniqueId, uint32_t vertexShaderBindingCount, Device&);
     RenderPipeline(Device&);
+    void waitForPendingCompilation() const;
     bool colorTargetsMatch(MTLRenderPassDescriptor*, uint32_t) const;
     bool depthAttachmentMatches(MTLRenderPassDepthAttachmentDescriptor*) const;
     bool stencilAttachmentMatches(MTLRenderPassStencilAttachmentDescriptor*) const;
 
     mutable id<MTLRenderPipelineState> m_renderPipelineState { nil };
+    mutable std::shared_ptr<PendingRenderPipelineCompilation> m_pendingCompilation;
 
     const Ref<Device> m_device;
     MTLPrimitiveType m_primitiveType;

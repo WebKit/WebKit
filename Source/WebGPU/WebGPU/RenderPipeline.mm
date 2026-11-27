@@ -35,10 +35,13 @@
 #import "RenderBundleEncoder.h"
 #import "TextureOrTextureView.h"
 #import "WGSLShaderModule.h"
+#import <atomic>
+#import <wtf/BlockPtr.h>
 #import <wtf/Borrow.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
 @interface NSObject ()
@@ -712,11 +715,7 @@ static MTLVertexDescriptor *createVertexDescriptor(const WebGPU::VertexState& ve
         *error = @"totalAttributeCount > limits.maxVertexAttributes";
         return nil;
     }
-#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-    outShaderLocations = shaderLocations;
-#else
-    UNUSED_PARAM(outShaderLocations);
-#endif
+    outShaderLocations = WTF::move(shaderLocations);
 
     return vertexDescriptor;
 }
@@ -1803,6 +1802,57 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     if (!pipelineLayout && !finalPipelineLayout->isValid())
         return callback(returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_s));
 
+    RenderPSODescriptorSignature psoSignature;
+    if (descriptor.fragment) {
+        size_t targetCount = std::min<size_t>(8, descriptor.fragment->targets.size());
+        for (size_t i = 0; i < targetCount; ++i) {
+            if (!descriptor.fragment->targets[i])
+                continue;
+            MTLRenderPipelineColorAttachmentDescriptor *ca = mtlRenderPipelineDescriptor.colorAttachments[i];
+            uint64_t word = static_cast<uint64_t>(ca.pixelFormat)
+                | (static_cast<uint64_t>(ca.writeMask & 0xF) << 16)
+                | (ca.blendingEnabled ? (1ull << 20) : 0ull);
+            if (ca.blendingEnabled) {
+                word |= (static_cast<uint64_t>(ca.alphaBlendOperation) << 21)
+                    | (static_cast<uint64_t>(ca.sourceAlphaBlendFactor) << 25)
+                    | (static_cast<uint64_t>(ca.destinationAlphaBlendFactor) << 31)
+                    | (static_cast<uint64_t>(ca.rgbBlendOperation) << 37)
+                    | (static_cast<uint64_t>(ca.sourceRGBBlendFactor) << 41)
+                    | (static_cast<uint64_t>(ca.destinationRGBBlendFactor) << 47);
+            }
+            psoSignature.words.append((static_cast<uint64_t>(i) << 56) | word);
+        }
+    }
+    psoSignature.depthFormat = static_cast<uint16_t>(mtlRenderPipelineDescriptor.depthAttachmentPixelFormat);
+    psoSignature.stencilFormat = static_cast<uint16_t>(mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat);
+    psoSignature.rasterSampleCount = static_cast<uint8_t>(mtlRenderPipelineDescriptor.rasterSampleCount);
+    psoSignature.topologyAndFlags = static_cast<uint8_t>((static_cast<uint32_t>(mtlRenderPipelineDescriptor.inputPrimitiveTopology) & 0x3)
+        | (mtlRenderPipelineDescriptor.alphaToCoverageEnabled ? 4u : 0u)
+        | ((static_cast<uint32_t>(shaderValidationState()) & 0x7) << 3));
+    psoSignature.descriptorSampleMask = (!usesSampleMask && descriptor.multisample.mask != RenderBundleEncoder::defaultSampleMask) ? descriptor.multisample.mask : RenderBundleEncoder::defaultSampleMask;
+    if (MTLVertexDescriptor *vd = mtlRenderPipelineDescriptor.vertexDescriptor) {
+        for (uint32_t b = 0; b < deviceLimits.maxVertexBuffers; ++b) {
+            if (!requiredBufferIndices.contains(b))
+                continue;
+            MTLVertexBufferLayoutDescriptor *layoutDesc = vd.layouts[b];
+            psoSignature.words.append((1ull << 62)
+                | (static_cast<uint64_t>(b) << 48)
+                | (static_cast<uint64_t>(layoutDesc.stepFunction) << 40)
+                | (static_cast<uint64_t>(layoutDesc.stepRate) << 32)
+                | static_cast<uint64_t>(layoutDesc.stride));
+        }
+        for (uint32_t loc = 0; loc < deviceLimits.maxVertexAttributes; ++loc) {
+            if (!shaderLocations.contains(loc))
+                continue;
+            MTLVertexAttributeDescriptor *attrDesc = vd.attributes[loc];
+            psoSignature.words.append((2ull << 62)
+                | (static_cast<uint64_t>(loc) << 48)
+                | (static_cast<uint64_t>(attrDesc.bufferIndex) << 40)
+                | (static_cast<uint64_t>(attrDesc.format) << 32)
+                | static_cast<uint64_t>(attrDesc.offset));
+        }
+    }
+
     // The pipeline is created before its shaders have been compiled: it only holds on to
     // mtlRenderPipelineDescriptor, and its MTLRenderPipelineState is installed (or, for the
     // synchronous path, left to be compiled on demand) once Metal is done with the MSL. Everything
@@ -1815,23 +1865,127 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     std::optional<LibraryCompileRequest> fragmentCompileRequest;
     if (preparedFragmentLibrary)
         fragmentCompileRequest = libraryCompileRequest(*preparedFragmentLibrary);
+    bool hasFragmentStage = fragmentCompileRequest.has_value();
+    String vertexMangledName = preparedVertexLibrary->entryPointInformation.mangledName.isolatedCopy();
+    String fragmentMangledName = preparedFragmentLibrary ? preparedFragmentLibrary->entryPointInformation.mangledName.isolatedCopy() : String { };
 
-    CompletionHandler<void(id<MTLLibrary>, id<MTLLibrary>, NSError *)> finishCreation = [protectedThis = protect(*this), isAsync, suppressErrors = m_supressAllErrors, libraryCompilation, label = WTF::move(label), renderPipelineDescriptor = RetainPtr { mtlRenderPipelineDescriptor }, pipeline = WTF::move(pipeline), vertexLibraryInfo = WTF::move(*preparedVertexLibrary), fragmentLibraryInfo = WTF::move(preparedFragmentLibrary), shaderLocations = WTF::move(shaderLocations), callback = WTF::move(callback)](id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, NSError *libraryError) mutable {
+    if (id<MTLLibrary> cachedVertexLib = lookupCachedLibrary(m_device, vertexCompileRequest)) {
+        id<MTLLibrary> cachedFragmentLib = hasFragmentStage ? lookupCachedLibrary(m_device, *fragmentCompileRequest) : nil;
+        if (!hasFragmentStage || cachedFragmentLib) {
+            if (auto cachedRenderPSO = lookupCachedRenderPipelineState(cachedVertexLib, cachedFragmentLib, vertexMangledName, fragmentMangledName, psoSignature)) {
+                mtlRenderPipelineDescriptor.vertexFunction = cachedRenderPSO->vertexFunction.get();
+                if (cachedRenderPSO->fragmentFunction)
+                    mtlRenderPipelineDescriptor.fragmentFunction = cachedRenderPSO->fragmentFunction.get();
+                pipeline->setPrecompiledRenderPipelineState(cachedRenderPSO->pso.get());
+                return callback(std::make_pair(WTF::move(pipeline), nil));
+            }
+        }
+    }
+
+    if (!isAsync && libraryCompilation == LibraryCompilation::Synchronous && asynchronousIfPossible() == LibraryCompilation::Asynchronous && m_device) {
+        auto pending = std::make_shared<PendingRenderPipelineCompilation>();
+        struct StageJoinState {
+            std::atomic<uint32_t> remaining { 0 };
+            WTF::Lock lock;
+            RetainPtr<id<MTLLibrary>> vertexLibrary;
+            RetainPtr<id<MTLLibrary>> fragmentLibrary;
+            RetainPtr<NSError> error;
+            std::shared_ptr<PendingRenderPipelineCompilation> pending;
+            RetainPtr<id<MTLDevice>> device;
+            RetainPtr<NSString> label;
+            RetainPtr<MTLRenderPipelineDescriptor> descriptor;
+            String vertexMangledName;
+            String fragmentMangledName;
+            RenderPSODescriptorSignature psoSignature;
+            bool hasFragmentStage { false };
+
+            void finalize()
+            {
+                id<MTLLibrary> vLib = vertexLibrary.get();
+                id<MTLLibrary> fLib = fragmentLibrary.get();
+                if (!vLib || (hasFragmentStage && !fLib)) {
+                    pending->hadLibraryError = true;
+                    pending->errorMessage = error.get().localizedDescription ?: @"Render library failed creation";
+                    pending->complete();
+                    return;
+                }
+                auto pendingCopy = pending;
+                compileOrCoalesceRenderPSOAsync(device.get(), vLib, fLib, vertexMangledName, fragmentMangledName, psoSignature, descriptor.get(), label.get(), [pending = WTF::move(pendingCopy)](id<MTLFunction> vFunc, id<MTLFunction> fFunc, id<MTLRenderPipelineState> pso, NSString *funcErr) mutable {
+                    if (funcErr) {
+                        pending->hadLibraryError = true;
+                        pending->errorMessage = funcErr;
+                        pending->complete();
+                        return;
+                    }
+                    pending->vertexFunction = vFunc;
+                    pending->fragmentFunction = fFunc;
+                    pending->renderPipelineState = pso;
+                    pending->complete();
+                });
+            }
+        };
+        auto joinState = std::make_shared<StageJoinState>();
+        joinState->pending = pending;
+        joinState->device = m_device;
+        joinState->label = label;
+        joinState->descriptor = adoptNS([mtlRenderPipelineDescriptor copy]);
+        joinState->vertexMangledName = WTF::move(vertexMangledName);
+        joinState->fragmentMangledName = WTF::move(fragmentMangledName);
+        joinState->psoSignature = WTF::move(psoSignature);
+        joinState->hasFragmentStage = hasFragmentStage;
+        joinState->remaining.store(1 + 1 + (hasFragmentStage ? 1 : 0), std::memory_order_relaxed);
+
+        compileOrCoalesceLibraryAsync(m_device, vertexCompileRequest, [joinState](id<MTLLibrary> lib, NSError *err) mutable {
+            {
+                Locker locker { joinState->lock };
+                joinState->vertexLibrary = lib;
+                if (err && !joinState->error)
+                    joinState->error = err;
+            }
+            if (joinState->remaining.fetch_sub(1, std::memory_order_acq_rel) == 1)
+                joinState->finalize();
+        });
+        if (hasFragmentStage) {
+            compileOrCoalesceLibraryAsync(m_device, *fragmentCompileRequest, [joinState](id<MTLLibrary> lib, NSError *err) mutable {
+                {
+                    Locker locker { joinState->lock };
+                    joinState->fragmentLibrary = lib;
+                    if (err && !joinState->error)
+                        joinState->error = err;
+                }
+                if (joinState->remaining.fetch_sub(1, std::memory_order_acq_rel) == 1)
+                    joinState->finalize();
+            });
+        }
+        if (joinState->remaining.fetch_sub(1, std::memory_order_acq_rel) == 1)
+            joinState->finalize();
+
+        pipeline->setPendingCompilation(WTF::move(pending));
+        return callback(std::make_pair(WTF::move(pipeline), nil));
+    }
+
+    CompletionHandler<void(id<MTLLibrary>, id<MTLLibrary>, NSError *)> finishCreation = [protectedThis = protect(*this), isAsync, suppressErrors = m_supressAllErrors, libraryCompilation, label = WTF::move(label), renderPipelineDescriptor = RetainPtr { mtlRenderPipelineDescriptor }, pipeline = WTF::move(pipeline), vertexMangledName = WTF::move(vertexMangledName), fragmentMangledName = WTF::move(fragmentMangledName), psoSignature = WTF::move(psoSignature), vertexLibraryInfo = WTF::move(*preparedVertexLibrary), fragmentLibraryInfo = WTF::move(preparedFragmentLibrary), shaderLocations = WTF::move(shaderLocations), callback = WTF::move(callback)](id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, NSError *libraryError) mutable {
         auto errorReporting = scopedErrorReporting(protectedThis, suppressErrors);
 
-        if (!vertexLibrary)
-            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, libraryError.localizedDescription ?: @"Vertex library failed creation"));
+        if (!vertexLibrary || (fragmentLibraryInfo && !fragmentLibrary))
+            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, libraryError.localizedDescription ?: @"Render library failed creation"));
+
+        if (auto cachedRenderPSO = lookupCachedRenderPipelineState(vertexLibrary, fragmentLibrary, vertexMangledName, fragmentMangledName, psoSignature)) {
+            renderPipelineDescriptor.get().vertexFunction = cachedRenderPSO->vertexFunction.get();
+            if (cachedRenderPSO->fragmentFunction)
+                renderPipelineDescriptor.get().fragmentFunction = cachedRenderPSO->fragmentFunction.get();
+            pipeline->setPrecompiledRenderPipelineState(cachedRenderPSO->pso.get());
+            return callback(std::make_pair(WTF::move(pipeline), nil));
+        }
 
         auto vertexFunction = createFunction(vertexLibrary, vertexLibraryInfo.entryPointInformation, label.get());
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex)
             return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Vertex function could not be created"_s));
         renderPipelineDescriptor.get().vertexFunction = vertexFunction;
 
+        id<MTLFunction> fragmentFunction = nil;
         if (fragmentLibraryInfo) {
-            if (!fragmentLibrary)
-                return callback(returnInvalidRenderPipeline(protectedThis, isAsync, libraryError.localizedDescription ?: @"Fragment library could not be created"));
-
-            auto fragmentFunction = createFunction(fragmentLibrary, fragmentLibraryInfo->entryPointInformation, label.get());
+            fragmentFunction = createFunction(fragmentLibrary, fragmentLibraryInfo->entryPointInformation, label.get());
             if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment)
                 return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Fragment function failed creation"_s));
             renderPipelineDescriptor.get().fragmentFunction = fragmentFunction;
@@ -1858,18 +2012,64 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         // Compile the pipeline state now rather than leaving it to the first draw. This is only an
         // optimization: nothing here can invalidate the pipeline, and if the compile fails the lazy
         // renderPipelineState() path still runs, and reports the failure, at first use.
-        createRenderPipelineStateAsync(protectedThis->m_device, *protectedInstance, renderPipelineDescriptor.get(), [pipeline = WTF::move(pipeline), callback = WTF::move(callback)](id<MTLRenderPipelineState> renderPipelineState, NSError *) mutable {
-            if (renderPipelineState)
-                pipeline->setPrecompiledRenderPipelineState(renderPipelineState);
-            callback(std::make_pair(WTF::move(pipeline), nil));
+        using AsyncFinishCallback = CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)>;
+        auto* ownedCallback = new AsyncFinishCallback(WTF::move(callback));
+        compileOrCoalesceRenderPSOAsync(protectedThis->m_device, vertexLibrary, fragmentLibrary, vertexMangledName, fragmentMangledName, psoSignature, renderPipelineDescriptor.get(), label.get(), [asyncCompileInstance = AsyncCompileInstance { *protectedInstance }, renderPipelineDescriptor, pipeline = WTF::move(pipeline), ownedCallback](id<MTLFunction> vFunc, id<MTLFunction> fFunc, id<MTLRenderPipelineState> renderPipelineState, NSString *) mutable {
+            RetainPtr<id<MTLFunction>> retainedVFunc = vFunc;
+            RetainPtr<id<MTLFunction>> retainedFFunc = fFunc;
+            RetainPtr<id<MTLRenderPipelineState>> retainedPSO = renderPipelineState;
+            auto localInstance = WTF::move(asyncCompileInstance);
+            if (RefPtr instance = localInstance.take()) {
+                instance->scheduleWork([renderPipelineDescriptor = WTF::move(renderPipelineDescriptor), pipeline = WTF::move(pipeline), retainedVFunc = WTF::move(retainedVFunc), retainedFFunc = WTF::move(retainedFFunc), retainedPSO = WTF::move(retainedPSO), ownedCallback] mutable {
+                    std::unique_ptr<AsyncFinishCallback> finish(ownedCallback);
+                    if (retainedVFunc)
+                        renderPipelineDescriptor.get().vertexFunction = retainedVFunc.get();
+                    if (retainedFFunc)
+                        renderPipelineDescriptor.get().fragmentFunction = retainedFFunc.get();
+                    if (retainedPSO)
+                        pipeline->setPrecompiledRenderPipelineState(retainedPSO.get());
+                    (*finish)(std::make_pair(WTF::move(pipeline), nil));
+                });
+            }
         });
     };
 
-    // Compile the fragment MSL once the vertex MSL is done. The two stages of one pipeline are
-    // serialized, but independent pipelines still compile concurrently, which is the point.
-    compileLibrary(vertexCompileRequest, libraryCompilation, [protectedThis = protect(*this), libraryCompilation, fragmentCompileRequest = WTF::move(fragmentCompileRequest), finishCreation = WTF::move(finishCreation)](id<MTLLibrary> vertexLibrary, NSError *vertexError) mutable {
-        if (!vertexLibrary || !fragmentCompileRequest) {
+    if (!fragmentCompileRequest) {
+        compileLibrary(vertexCompileRequest, libraryCompilation, [finishCreation = WTF::move(finishCreation)](id<MTLLibrary> vertexLibrary, NSError *vertexError) mutable {
             finishCreation(vertexLibrary, nil, vertexError);
+        });
+        return;
+    }
+
+    if (libraryCompilation == LibraryCompilation::Asynchronous) {
+        struct AsyncDualStageJoin {
+            uint32_t remaining { 2 };
+            RetainPtr<id<MTLLibrary>> vertexLibrary { };
+            RetainPtr<id<MTLLibrary>> fragmentLibrary { };
+            RetainPtr<NSError> error { };
+            CompletionHandler<void(id<MTLLibrary>, id<MTLLibrary>, NSError *)> finishCreation { };
+        };
+        auto dualJoin = std::make_shared<AsyncDualStageJoin>(AsyncDualStageJoin { .finishCreation = WTF::move(finishCreation) });
+        compileLibrary(vertexCompileRequest, libraryCompilation, [dualJoin](id<MTLLibrary> vertexLibrary, NSError *vertexError) mutable {
+            dualJoin->vertexLibrary = vertexLibrary;
+            if (vertexError && !dualJoin->error)
+                dualJoin->error = vertexError;
+            if (!--dualJoin->remaining)
+                dualJoin->finishCreation(dualJoin->vertexLibrary.get(), dualJoin->fragmentLibrary.get(), dualJoin->error.get());
+        });
+        compileLibrary(*fragmentCompileRequest, libraryCompilation, [dualJoin](id<MTLLibrary> fragmentLibrary, NSError *fragmentError) mutable {
+            dualJoin->fragmentLibrary = fragmentLibrary;
+            if (fragmentError && !dualJoin->error)
+                dualJoin->error = fragmentError;
+            if (!--dualJoin->remaining)
+                dualJoin->finishCreation(dualJoin->vertexLibrary.get(), dualJoin->fragmentLibrary.get(), dualJoin->error.get());
+        });
+        return;
+    }
+
+    compileLibrary(vertexCompileRequest, libraryCompilation, [protectedThis = protect(*this), libraryCompilation, fragmentCompileRequest = WTF::move(fragmentCompileRequest), finishCreation = WTF::move(finishCreation)](id<MTLLibrary> vertexLibrary, NSError *vertexError) mutable {
+        if (!vertexLibrary) {
+            finishCreation(nil, nil, vertexError);
             return;
         }
 
@@ -2082,11 +2282,41 @@ const BufferBindingSizesForBindGroup* RenderPipeline::minimumBufferSizes(uint32_
     return it == m_minimumBufferSizes.end() ? nullptr : &it->value;
 }
 
+MTLRenderPipelineDescriptor* RenderPipeline::renderPipelineDescriptor() const
+{
+    waitForPendingCompilation();
+    return m_renderPipelineDescriptor;
+}
+
+void RenderPipeline::setPendingCompilation(std::shared_ptr<PendingRenderPipelineCompilation>&& pendingCompilation)
+{
+    m_pendingCompilation = WTF::move(pendingCompilation);
+}
+
+void RenderPipeline::waitForPendingCompilation() const
+{
+    if (!m_pendingCompilation)
+        return;
+
+    auto pending = std::exchange(m_pendingCompilation, nullptr);
+    pending->wait();
+    if (pending->hadLibraryError) {
+        m_device->generateAValidationError(pending->errorMessage.get() ?: @"Render library failed creation");
+        return;
+    }
+    m_renderPipelineDescriptor.vertexFunction = pending->vertexFunction.get();
+    if (pending->fragmentFunction)
+        m_renderPipelineDescriptor.fragmentFunction = pending->fragmentFunction.get();
+    if (pending->renderPipelineState)
+        m_renderPipelineState = pending->renderPipelineState.get();
+}
+
 RefPtr<RenderPipeline> RenderPipeline::recomputeLastStrideAsStride() const
 {
     if (m_lastStrideAsStridePipeline)
         return m_lastStrideAsStridePipeline;
 
+    waitForPendingCompilation();
     MTLRenderPipelineDescriptor* clonedRenderPipelineDescriptor = [m_renderPipelineDescriptor copy];
 
     auto requiredBufferIndices = m_requiredBufferIndices;
@@ -2106,8 +2336,12 @@ RefPtr<RenderPipeline> RenderPipeline::recomputeLastStrideAsStride() const
 
 id<MTLRenderPipelineState> RenderPipeline::renderPipelineState() const
 {
+    waitForPendingCompilation();
     if (m_renderPipelineState)
         return m_renderPipelineState;
+
+    if (!m_renderPipelineDescriptor.vertexFunction)
+        return nil;
 
     m_renderPipelineState = [m_device->device() newRenderPipelineStateWithDescriptor:m_renderPipelineDescriptor error:nil];
     if (!m_renderPipelineState)
@@ -2124,8 +2358,12 @@ void RenderPipeline::setPrecompiledRenderPipelineState(id<MTLRenderPipelineState
 
 id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
 {
+    waitForPendingCompilation();
     if (m_renderPipelineState && m_renderPipelineDescriptor.supportIndirectCommandBuffers)
         return m_renderPipelineState;
+
+    if (!m_renderPipelineDescriptor.vertexFunction)
+        return nil;
 
     m_renderPipelineDescriptor.supportIndirectCommandBuffers = YES;
     m_renderPipelineState = [m_device->device() newRenderPipelineStateWithDescriptor:m_renderPipelineDescriptor error:nil];

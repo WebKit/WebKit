@@ -34,12 +34,18 @@
 #import "PipelineLayout.h"
 
 #import <WebGPU/WebGPUCpp.h>
+#import <atomic>
+#import <memory>
+#import <mutex>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashTraits.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 
 namespace WebGPU::Metal {
@@ -48,13 +54,43 @@ class BindGroupLayout;
 class Device;
 class PipelineLayout;
 
+struct PendingComputePipelineCompilation {
+    BinarySemaphore semaphore;
+    WTF::Lock resolveLock;
+    std::atomic<bool> isReady { false };
+    RetainPtr<id<MTLComputePipelineState>> computePipelineState;
+    RetainPtr<NSString> libraryErrorMessage;
+    bool hadLibraryError { false };
+    bool didWait WTF_GUARDED_BY_LOCK(resolveLock) { false };
+
+    void complete()
+    {
+        isReady.store(true, std::memory_order_release);
+        semaphore.signal();
+    }
+
+    id<MTLComputePipelineState> wait()
+    {
+        Locker locker { resolveLock };
+        if (!didWait) {
+            semaphore.wait();
+            didWait = true;
+        }
+        return computePipelineState.get();
+    }
+};
+
 // https://gpuweb.github.io/gpuweb/#gpucomputepipeline
 class ComputePipeline final : public WebGPU::ComputePipeline {
     WTF_MAKE_TZONE_ALLOCATED(ComputePipeline);
 public:
     static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device& device)
     {
-        return adoptRef(*new ComputePipeline(computePipelineState, WTF::move(pipelineLayout), threadsPerThreadgroup, WTF::move(minimumBufferSizes), uniqueId, maxLinearIndexingWorkgroups, device));
+        return adoptRef(*new ComputePipeline(computePipelineState, nullptr, WTF::move(pipelineLayout), threadsPerThreadgroup, WTF::move(minimumBufferSizes), uniqueId, maxLinearIndexingWorkgroups, device));
+    }
+    static Ref<ComputePipeline> createPending(std::shared_ptr<PendingComputePipelineCompilation>&& pendingCompilation, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device& device)
+    {
+        return adoptRef(*new ComputePipeline(nil, WTF::move(pendingCompilation), WTF::move(pipelineLayout), threadsPerThreadgroup, WTF::move(minimumBufferSizes), uniqueId, maxLinearIndexingWorkgroups, device));
     }
     static Ref<ComputePipeline> createInvalid(Device& device)
     {
@@ -66,9 +102,12 @@ public:
     Ref<WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t groupIndex) final;
     NODELETE void setLabel(String&&) final;
 
-    bool isValid() const final { return m_computePipelineState && m_pipelineLayout->isValid(); }
+    bool isValid() const final { return m_isValid && m_pipelineLayout->isValid(); }
 
-    id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
+    bool isPipelineStateReady() const { return m_computePipelineState || (!m_pendingCompilation || m_pendingCompilation->isReady.load(std::memory_order_acquire)); }
+    id<MTLComputePipelineState> precompiledPipelineState() const { return m_computePipelineState; }
+    std::shared_ptr<PendingComputePipelineCompilation> pendingCompilation() const { return m_pendingCompilation; }
+    id<MTLComputePipelineState> computePipelineState() const;
 
     Device& device() const { return m_device; }
     MTLSize threadsPerThreadgroup() const { return m_threadsPerThreadgroup; }
@@ -86,10 +125,12 @@ public:
         m_usesImmediates = usesImmediates;
     }
 private:
-    ComputePipeline(id<MTLComputePipelineState>, Ref<PipelineLayout>&&, MTLSize, BufferBindingSizesForPipeline&&, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device&);
+    ComputePipeline(id<MTLComputePipelineState>, std::shared_ptr<PendingComputePipelineCompilation>&&, Ref<PipelineLayout>&&, MTLSize, BufferBindingSizesForPipeline&&, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device&);
     ComputePipeline(Device&);
 
-    const id<MTLComputePipelineState> m_computePipelineState { nil };
+    mutable id<MTLComputePipelineState> m_computePipelineState { nil };
+    mutable std::shared_ptr<PendingComputePipelineCompilation> m_pendingCompilation;
+    mutable bool m_isValid { false };
 
     const Ref<Device> m_device;
     const MTLSize m_threadsPerThreadgroup;

@@ -40,6 +40,7 @@
 #import <wtf/Borrow.h>
 #import <wtf/Box.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/NumberOfCores.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -72,6 +73,9 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Adapter& adapter, Device& device)
     m_createdNotCommittedBuffers = [NSMutableOrderedSet orderedSet];
     m_openCommandEncoders = [NSMapTable strongToStrongObjectsMapTable];
     m_retainedCounterSampleBuffers = [NSMutableDictionary dictionary];
+#if PLATFORM(MAC)
+    m_deferredCommitQueue = dispatch_queue_create("com.apple.WebGPU.DeferredCommitQueue", serialQueueWithAutoreleasePoolAttrSingleton());
+#endif
 }
 
 Queue::Queue(Adapter& adapter, Device& device)
@@ -279,6 +283,8 @@ id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescript
 
 void Queue::makeInvalid()
 {
+    flushDeferredCommits();
+    m_deferredPassReplays.clear();
     m_commandQueue = nil;
     for (auto& [_, callbackVector] : m_onSubmittedWorkScheduledCallbacks) {
         for (auto& callback : callbackVector)
@@ -291,6 +297,8 @@ void Queue::makeInvalid()
 
     m_onSubmittedWorkScheduledCallbacks.clear();
     m_onSubmittedWorkDoneCallbacks.clear();
+    m_scheduledOutOfOrderSerials.clear();
+    m_completedOutOfOrderSerials.clear();
 
     for (auto& provisionalClear : std::exchange(m_provisionalTextureClears, { })) {
         if (RefPtr texture = provisionalClear.texture.get())
@@ -320,6 +328,7 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(bool)>&& callback)
 
     ASSERT(m_submittedCommandBufferCount >= m_completedCommandBufferCount);
 
+    devicePtr->drainPendingShaderModules();
     finalizeBlitCommandEncoder();
 
     if (isIdle()) {
@@ -342,6 +351,7 @@ void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
         return;
     }
 
+    devicePtr->drainPendingShaderModules();
     finalizeBlitCommandEncoder();
 
     if (isSchedulingIdle()) {
@@ -382,12 +392,39 @@ void Queue::removeMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
 void Queue::removeMTLCommandBufferInternal(id<MTLCommandBuffer> commandBuffer)
 {
+    if (commandBuffer)
+        m_deferredPassReplays.remove((__bridge const void*)commandBuffer);
     [m_openCommandEncoders removeObjectForKey:commandBuffer];
     [m_createdNotCommittedBuffers removeObject:commandBuffer];
 }
 
+bool Queue::canDeferPass() const
+{
+#if PLATFORM(MAC)
+    if (!m_deferredCommitQueue)
+        return false;
+    static const uint32_t maxDeferredBuffers = std::min<uint32_t>(32, std::max<uint32_t>(8, WTF::numberOfProcessorCores() * 2));
+    return (m_deferredPassReplays.size() * 2 + m_inFlightDeferredCommits->load(std::memory_order_relaxed)) < maxDeferredBuffers;
+#else
+    return false;
+#endif
+}
+
+void Queue::registerDeferredPassReplay(id<MTLCommandBuffer> commandBuffer, Function<void(id<MTLCommandBuffer>)>&& replay)
+{
+    if (commandBuffer)
+        m_deferredPassReplays.set((__bridge const void*)commandBuffer, WTF::move(replay));
+}
+
+void Queue::flushDeferredCommits()
+{
+    if (m_deferredCommitQueue && m_inFlightDeferredCommits->load(std::memory_order_acquire))
+        dispatch_sync(m_deferredCommitQueue.get(), ^{ });
+}
+
 void Queue::waitForAllCommitedWorkToComplete()
 {
+    flushDeferredCommits();
     id<MTLCommandBuffer> commandBuffer = nil;
     do {
         {
@@ -415,24 +452,69 @@ template<unsigned errorCode>
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void Queue::scheduleWatchdogTimerLocked(Seconds delay)
+{
+    if (m_watchdogScheduled)
+        return;
+    m_watchdogScheduled = true;
+    int64_t delayNanoseconds = std::max<int64_t>(1, static_cast<int64_t>(delay.nanoseconds()));
+    Ref protectedThis { *this };
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delayNanoseconds), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        bool didTimeOut = false;
+        NSString *timedOutLabel = nil;
+        {
+            Locker locker { protectedThis->m_committedNotCompletedBuffersLock };
+            protectedThis->m_watchdogScheduled = false;
+            auto now = MonotonicTime::now();
+            while (id<MTLCommandBuffer> oldest = protectedThis->m_committedNotCompletedBuffers.firstObject) {
+                if (oldest.status >= MTLCommandBufferStatusCompleted) {
+                    [protectedThis->m_committedNotCompletedBuffers removeObjectAtIndex:0];
+                    protectedThis->m_commandBufferCommitTimes.remove((__bridge const void*)oldest);
+                    continue;
+                }
+                auto it = protectedThis->m_commandBufferCommitTimes.find((__bridge const void*)oldest);
+                MonotonicTime commitTime = it != protectedThis->m_commandBufferCommitTimes.end() ? it->value : now;
+                Seconds elapsed = now - commitTime;
+                if (elapsed >= 3_s) {
+                    didTimeOut = true;
+                    timedOutLabel = oldest.label;
+                } else
+                    protectedThis->scheduleWatchdogTimerLocked(3_s - elapsed);
+                break;
+            }
+        }
+        if (didTimeOut)
+            crashGPUProcess(protectedThis->m_device.get(), [NSString stringWithFormat:@"WebGPU: command buffer %@ did not complete within 3s timeout", timedOutLabel]);
+    });
+}
+
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
-    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted || !isValid()) {
+    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusEnqueued || !isValid()) {
         removeMTLCommandBuffer(commandBuffer);
         return;
     }
 
+    auto deferredReplay = m_deferredPassReplays.take((__bridge const void*)commandBuffer);
+
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
-    [commandBuffer addScheduledHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
-            ++(protectedThis->m_scheduledCommandBufferCount);
-            for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
-                callback();
+    const uint64_t commandBufferSerial = ++m_submittedCommandBufferCount;
+    [commandBuffer addScheduledHandler:[protectedThis = protect(*this), commandBufferSerial](id<MTLCommandBuffer>) {
+        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef(), commandBufferSerial] {
+            if (commandBufferSerial == protectedThis->m_scheduledCommandBufferCount + 1) {
+                ++(protectedThis->m_scheduledCommandBufferCount);
+                for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
+                    callback();
+                while (!protectedThis->m_scheduledOutOfOrderSerials.isEmpty() && protectedThis->m_scheduledOutOfOrderSerials.remove(protectedThis->m_scheduledCommandBufferCount + 1)) {
+                    ++(protectedThis->m_scheduledCommandBufferCount);
+                    for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
+                        callback();
+                }
+            } else if (commandBufferSerial > protectedThis->m_scheduledCommandBufferCount + 1)
+                protectedThis->m_scheduledOutOfOrderSerials.add(commandBufferSerial);
         });
     }];
-    auto didComplete = Box<std::atomic<bool>>::create(false);
-    [commandBuffer addCompletedHandler:[protectedThis = protect(*this), didComplete](id<MTLCommandBuffer> mtlCommandBuffer) {
-        didComplete->store(true, std::memory_order_relaxed);
+    [commandBuffer addCompletedHandler:[protectedThis = protect(*this), commandBufferSerial](id<MTLCommandBuffer> mtlCommandBuffer) {
         MTLCommandBufferStatus status = mtlCommandBuffer.status;
         bool loseTheDevice = false;
         if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted) {
@@ -463,12 +545,21 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
         {
             Locker locker { protectedThis->m_committedNotCompletedBuffersLock };
             [protectedThis->m_committedNotCompletedBuffers removeObject:mtlCommandBuffer];
+            protectedThis->m_commandBufferCommitTimes.remove((__bridge const void*)mtlCommandBuffer);
         }
 
-        protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef()]() {
-            ++(protectedThis->m_completedCommandBufferCount);
-            for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
-                callback(true);
+        protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef(), commandBufferSerial] {
+            if (commandBufferSerial == protectedThis->m_completedCommandBufferCount + 1) {
+                ++(protectedThis->m_completedCommandBufferCount);
+                for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
+                    callback(true);
+                while (!protectedThis->m_completedOutOfOrderSerials.isEmpty() && protectedThis->m_completedOutOfOrderSerials.remove(protectedThis->m_completedCommandBufferCount + 1)) {
+                    ++(protectedThis->m_completedCommandBufferCount);
+                    for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
+                        callback(true);
+                }
+            } else if (commandBufferSerial > protectedThis->m_completedCommandBufferCount + 1)
+                protectedThis->m_completedOutOfOrderSerials.add(commandBufferSerial);
             if (loseTheDevice) {
                 auto device = protectedThis->m_device.get();
                 if (device)
@@ -477,20 +568,38 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
         });
     }];
 
-    [commandBuffer commit];
+    if ((deferredReplay || m_inFlightDeferredCommits->load(std::memory_order_acquire) > 0) && m_deferredCommitQueue) {
+        [commandBuffer enqueue];
+        removeMTLCommandBufferInternal(commandBuffer);
+        auto inFlightCounter = m_inFlightDeferredCommits;
+        inFlightCounter->fetch_add(1, std::memory_order_acq_rel);
+        RetainPtr<id<MTLCommandBuffer>> retainedCommandBuffer = commandBuffer;
+        ThreadSafeWeakPtr<Queue> weakThis { *this };
+        dispatch_async(m_deferredCommitQueue.get(), makeBlockPtr([weakThis = WTF::move(weakThis), inFlightCounter = WTF::move(inFlightCounter), retainedCommandBuffer = WTF::move(retainedCommandBuffer), deferredReplay = WTF::move(deferredReplay)] mutable {
+            @autoreleasepool {
+                if (deferredReplay)
+                    deferredReplay(retainedCommandBuffer.get());
+                if (RefPtr protectedThis = weakThis) {
+                    Locker locker { protectedThis->m_committedNotCompletedBuffersLock };
+                    [protectedThis->m_committedNotCompletedBuffers addObject:retainedCommandBuffer.get()];
+                    protectedThis->m_commandBufferCommitTimes.set((__bridge const void*)retainedCommandBuffer.get(), MonotonicTime::now());
+                    protectedThis->scheduleWatchdogTimerLocked(3_s);
+                }
+                [retainedCommandBuffer.get() commit];
+                inFlightCounter->fetch_sub(1, std::memory_order_acq_rel);
+            }
+        }).get());
+        return;
+    }
+
     {
         Locker locker { m_committedNotCompletedBuffersLock };
         [m_committedNotCompletedBuffers addObject:commandBuffer];
+        m_commandBufferCommitTimes.set((__bridge const void*)commandBuffer, MonotonicTime::now());
+        scheduleWatchdogTimerLocked(3_s);
     }
+    [commandBuffer commit];
     removeMTLCommandBufferInternal(commandBuffer);
-    ++m_submittedCommandBufferCount;
-
-    NSString *label = commandBuffer.label;
-    ThreadSafeWeakPtr weakDevice = m_device;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (!didComplete->load(std::memory_order_relaxed))
-            crashGPUProcess(weakDevice.get(), [NSString stringWithFormat:@"WebGPU: command buffer %@ did not complete within 3s timeout", label]);
-    });
 }
 
 static void invalidateCommandBuffers(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands, auto&& makeInvalidFunc)
@@ -508,27 +617,42 @@ void Queue::submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands)
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
     if (NSString* error = errorValidatingSubmit(commands)) {
         device->generateAValidationError(error ?: @"Validation failure.");
-        return invalidateCommandBuffers(WTF::move(commands), ^(CommandBuffer& command) {
+        return invalidateCommandBuffers(WTF::move(commands), [&](CommandBuffer& command) {
             command.makeInvalid(command.lastError() ?: error);
         });
     }
 
     finalizeBlitCommandEncoder();
 
-    NSMutableOrderedSet<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableOrderedSet orderedSetWithCapacity:commands.size()];
-    HashMap<void*, Ref<CommandBuffer>> metalCommandBuffersReverseMap;
+    Vector<std::pair<id<MTLCommandBuffer>, Ref<CommandBuffer>>, 4> commandBuffersToSubmit;
+    commandBuffersToSubmit.reserveInitialCapacity(commands.size());
+    HashSet<const void*> seenCommandBuffers;
+    const bool useHashSet = commands.size() > 4;
     NSString* validationError = nil;
-    for (Ref command : commands) {
-        if (id<MTLCommandBuffer> mtlBuffer = command->commandBuffer(); mtlBuffer && ![commandBuffersToSubmit containsObject:mtlBuffer]) {
-            [commandBuffersToSubmit addObject:mtlBuffer];
-            metalCommandBuffersReverseMap.set((__bridge void*)mtlBuffer, WTF::move(command));
-        } else {
+    for (auto& command : commands) {
+        id<MTLCommandBuffer> mtlBuffer = command->commandBuffer();
+        bool isDuplicate = false;
+        if (mtlBuffer) {
+            if (useHashSet)
+                isDuplicate = !seenCommandBuffers.add((__bridge const void*)mtlBuffer).isNewEntry;
+            else {
+                for (const auto& existing : commandBuffersToSubmit) {
+                    if (existing.first == mtlBuffer) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (mtlBuffer && !isDuplicate)
+            commandBuffersToSubmit.append({ mtlBuffer, command.copyRef() });
+        else {
             validationError = command->lastError() ?: @"Command buffer appears twice.";
             break;
         }
     }
 
-    invalidateCommandBuffers(WTF::move(commands), ^(CommandBuffer& command) {
+    invalidateCommandBuffers(WTF::move(commands), [&](CommandBuffer& command) {
         validationError ? command.makeInvalid(command.lastError() ?: validationError) : command.makeInvalidDueToCommit(@"command buffer was submitted");
     });
     if (validationError) {
@@ -536,12 +660,7 @@ void Queue::submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands)
         return;
     }
 
-    for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit) {
-        RefPtr apiCommandBuffer = metalCommandBuffersReverseMap.get((__bridge void*)commandBuffer);
-#if ASSERT_ENABLED
-        if (!apiCommandBuffer)
-            ASSERT_NOT_REACHED("Always expect command buffer in the container");
-#endif
+    for (auto& [commandBuffer, apiCommandBuffer] : commandBuffersToSubmit) {
         apiCommandBuffer->preCommitHandler();
         // A command encoder that overflowed one MTLCommandBuffer's render encoder budget spilled the
         // filled buffers here. They hold the commands encoded before this one, so they have to be
@@ -550,11 +669,15 @@ void Queue::submit(Vector<Ref<WebGPU::Metal::CommandBuffer>>&& commands)
         for (auto& priorCommandBuffer : borrow(priorCommandBuffers))
             commitMTLCommandBuffer(priorCommandBuffer.get());
         commitMTLCommandBuffer(commandBuffer);
+        if (apiCommandBuffer->hasPostCommitHandlers())
+            flushDeferredCommits();
         apiCommandBuffer->postCommitHandler();
     }
 
-    if ([MTLCaptureManager sharedCaptureManager].isCapturing && device->shouldStopCaptureAfterSubmit())
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing && device->shouldStopCaptureAfterSubmit()) {
+        flushDeferredCommits();
         [[MTLCaptureManager sharedCaptureManager] stopCapture];
+    }
 }
 
 uint64_t Queue::retainCounterSampleBuffer(CommandEncoder& encoder)
@@ -619,6 +742,7 @@ void Queue::synchronizeResourceAndWait(id<MTLBuffer> buffer)
     ALLOW_DEPRECATED_DECLARATIONS_END
     id<MTLCommandBuffer> commandBuffer = m_commandBuffer;
     finalizeBlitCommandEncoder();
+    flushDeferredCommits();
     [commandBuffer waitUntilCompleted];
 #else
     UNUSED_PARAM(buffer);
@@ -738,6 +862,7 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
             return;
         }
     }
+    buffer.markMayBeInUseByGPU();
     writeBuffer(buffer.buffer(), bufferOffset, data);
 }
 
@@ -2112,7 +2237,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [sourceTexture replaceRegion:MTLRegionMake2D(0, 0, sourceWidth, sourceHeight) mipmapLevel:0 withBytes:source.pixelData.data() bytesPerRow:source.pixelDataBytesPerRow];
         sourceSecondPlaneTexture = sourceTexture;
     } else if (RetainPtr pixelBuffer = source.pixelBuffer) {
-
         // The frame's planes are wrapped in MTLTextures exactly the way importExternalTexture() wraps
         // them, so a video reaches the destination without its pixels ever leaving the GPU.
         auto frame = device->createExternalTextureFromPixelBuffer(pixelBuffer.get(), source.colorSpace, Device::PremultiplyAlpha::No);
