@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 10000px;
+            margin: 0;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 0;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let layoutCount = 0;
+        let stickyTop = 0;
+        async function scrollTest()
+        {
+            debug("Test that scrolling from script does not lay out a sticky box on every scroll step");
+
+            await UIHelper.renderingUpdate();
+            internals.startTrackingLayoutUpdates();
+            for (let y = 100; y <= 2000; y += 100) {
+                window.scrollTo(0, y);
+                await UIHelper.renderingUpdate();
+            }
+            layoutCount = internals.layoutUpdateCount();
+            shouldBeTrue('layoutCount <= 4');
+            if (layoutCount > 4)
+                debug('saw ' + layoutCount + ' layouts');
+
+            stickyTop = document.querySelector('.sticky').getBoundingClientRect().top;
+            shouldBe('stickyTop', '0');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', scrollTest, false);
+    </script>
+</head>
+<body>
+    <div class="sticky">sticky</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+Test that scrolling from script does not lay out a sticky box on every scroll step
+PASS layoutCount <= 4 is true
+PASS stickyTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+sticky
