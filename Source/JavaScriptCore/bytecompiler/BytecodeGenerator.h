@@ -1294,6 +1294,7 @@ namespace JSC {
 
     public:
         JSString* addStringConstant(UniquedStringImpl*);
+        JSString* stringForArrayBufferElement(UniquedStringImpl*);
         JSValue addBigIntConstant(UniquedStringImpl*, uint8_t radix, bool sign);
         RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&, int);
 

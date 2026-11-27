@@ -486,16 +486,18 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
         if (firstPutElement->elision())
             break;
         ExpressionNode* value = firstPutElement->value();
-        if (value->isConstant()) {
+        if (value->isString()) {
+            // Filled in by newArray(), so that a literal emitted element by element does not allocate the string twice.
+            recommendedIndexingType = leastUpperBoundOfIndexingTypes(recommendedIndexingType, ArrayWithContiguous);
+            if (!hadVariableExpression)
+                constants.constructAndAppend();
+        } else if (value->isConstant()) {
             JSValue constant = static_cast<ConstantNode*>(value)->jsValue(generator);
             if (!constant) [[unlikely]]
                 hadVariableExpression = true;
             else {
                 recommendedIndexingType = leastUpperBoundOfIndexingTypeAndValue(recommendedIndexingType, constant);
-                if (!constant.isString())
-                    allDenseStrings = false;
-                else if (auto* impl = asString(constant)->tryGetValueImpl(); !impl || !impl->isAtom())
-                    allDenseStrings = false;
+                allDenseStrings = false;
                 if (!hadVariableExpression)
                     constants.append(constant);
             }
@@ -514,13 +516,11 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
         if (length && !hadVariableExpression) {
             ASSERT(elements == m_element);
             ASSERT(constants.size() == length);
-            if (allDenseStrings) {
-                VM& vm = generator.vm();
-                for (auto& slot : constants) {
-                    JSString* string = asString(slot);
-                    StringImpl* stringImpl = const_cast<StringImpl*>(string->getValueImpl());
-                    slot = vm.atomStringToJSStringMap.ensureValue(stringImpl, [&] { return string; });
-                }
+            ElementNode* element = elements;
+            for (auto& slot : constants) {
+                if (ExpressionNode* value = element->value(); value->isString())
+                    slot = generator.stringForArrayBufferElement(static_cast<StringNode*>(value)->value());
+                element = element->next();
             }
             return emitNewArrayBufferWithConstants(generator, dst, constants.span(), recommendedIndexingType, allDenseStrings);
         }

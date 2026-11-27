@@ -3469,6 +3469,16 @@ JSString* BytecodeGenerator::addStringConstant(UniquedStringImpl* uid)
     return stringInMap;
 }
 
+// The JSCellButterfly holding the elements of a constant array literal keeps them alive, so they do not need constant registers.
+JSString* BytecodeGenerator::stringForArrayBufferElement(UniquedStringImpl* uid)
+{
+    return vm().atomStringToJSStringMap.ensureValue(uid, [&] -> JSString* {
+        if (JSString* string = m_stringMap.get(uid))
+            return string;
+        return jsString(vm(), *uid);
+    });
+}
+
 RegisterID* BytecodeGenerator::addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
 {
     auto result = m_templateObjectDescriptorSet.add(WTF::move(descriptor));
