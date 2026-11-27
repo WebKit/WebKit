@@ -54,19 +54,6 @@ namespace WebCore {
 
 using namespace JSC;
 
-#if ENABLE(WEBDRIVER_BIDI)
-static SecurityOriginData resolveOriginForRealm(LocalFrame& localFrame)
-{
-    if (RefPtr document = localFrame.document())
-        return document->securityOrigin().data();
-
-    if (RefPtr loader = localFrame.loader().activeDocumentLoader(); loader && !loader->url().isEmpty())
-        return SecurityOriginData::fromURL(loader->url());
-
-    return SecurityOriginData::createOpaque();
-}
-#endif
-
 static void collectGarbageAfterWindowProxyDestruction()
 {
     // Make sure to GC Extra Soon(tm) during memory pressure conditions
@@ -131,15 +118,20 @@ void WindowProxy::replaceFrame(Frame& frame)
 void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world, Frame* frameForNotification)
 {
     ASSERT(m_jsWindowProxies.contains(&world));
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr<DOMWindow> window;
+    if (auto iterator = m_jsWindowProxies.find(&world); iterator != m_jsWindowProxies.end())
+        window = &iterator->value->wrapped();
+#endif
     m_jsWindowProxies.remove(&world);
 
 #if ENABLE(WEBDRIVER_BIDI)
     // Notify about realm destruction for automation.
     // Use frameForNotification if provided (during detachment), otherwise use m_frame.
     RefPtr frame = frameForNotification ? frameForNotification : m_frame.get();
-    if (frame) {
+    if (frame && window) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame))
-            AutomationInstrumentation::scriptRealmDestroyed(localFrame->frameID(), world);
+            AutomationInstrumentation::scriptRealmDestroyed(*localFrame, *window, world);
     }
 #else
     UNUSED_PARAM(frameForNotification);
@@ -161,9 +153,10 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
     world.didCreateWindowProxy(this);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    // Notify about realm creation for automation.
+    // Notify about realm creation for automation. The window's realm may have been reported already, before its JS global
+    // object existed.
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*m_frame))
-        AutomationInstrumentation::scriptRealmCreated(localFrame->frameID(), resolveOriginForRealm(*localFrame), world);
+        AutomationInstrumentation::scriptRealmCreated(*localFrame, protect(jsWindowProxy->wrapped()), world);
 #endif
 
     return *jsWindowProxy.get();
@@ -230,14 +223,17 @@ void WindowProxy::setDOMWindow(DOMWindow* newDOMWindow)
         if (&windowProxy->wrapped() == newDOMWindow)
             continue;
 
+#if ENABLE(WEBDRIVER_BIDI)
+        Ref oldWindow = windowProxy->wrapped();
+#endif
         windowProxy->setWindow(*newDOMWindow);
 
 #if ENABLE(WEBDRIVER_BIDI)
         // Navigations reuse the JSWindowProxy with a new DOMWindow, which means a new realm.
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame)) {
             Ref world = windowProxy->world();
-            AutomationInstrumentation::scriptRealmDestroyed(localFrame->frameID(), world);
-            AutomationInstrumentation::scriptRealmCreated(localFrame->frameID(), resolveOriginForRealm(*localFrame), world);
+            AutomationInstrumentation::scriptRealmDestroyed(*localFrame, oldWindow, world);
+            AutomationInstrumentation::scriptRealmCreated(*localFrame, *newDOMWindow, world);
         }
 #endif
 

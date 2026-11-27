@@ -1079,11 +1079,8 @@ void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier
         return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
     auto frameID = frame->frameID();
-    if (expectedRealmIdentifier) {
-        auto resolvedRealmIterator = m_frameToRealmIdentifier.find(frameID);
-        if (resolvedRealmIterator == m_frameToRealmIdentifier.end() || resolvedRealmIterator->value != *expectedRealmIdentifier)
-            return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
-    }
+    if (expectedRealmIdentifier && realmIdentifierForFrame(*coreLocalFrame) != expectedRealmIdentifier)
+        return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
     if (!coreLocalFrame->isMainFrame())
         ensureObserverForFrame(*frame);
@@ -1091,18 +1088,17 @@ void WebAutomationSessionProxy::evaluateBidiCallFunction(WebCore::PageIdentifier
     JSObjectRef scriptObject = scriptObjectForFrame(*frame);
     ASSERT(scriptObject);
 
-    auto executionRealmIterator = m_frameToRealmIdentifier.find(frameID);
-    if (executionRealmIterator == m_frameToRealmIdentifier.end() || (expectedRealmIdentifier && executionRealmIterator->value != *expectedRealmIdentifier))
+    auto executionRealmIdentifier = ensureRealmForFrame(*coreLocalFrame);
+    if (!executionRealmIdentifier || (expectedRealmIdentifier && *executionRealmIdentifier != *expectedRealmIdentifier))
         return completionHandler({ }, std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
-    auto executionRealmIdentifier = executionRealmIterator->value;
     JSValueRef exception = nullptr;
     JSGlobalContextRef context = frame->jsContext();
     auto callbackID = JSCallbackIdentifier::generate();
 
     auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
     result.iterator->value.set(callbackID, [completionHandler = WTF::move(completionHandler), executionRealmIdentifier](String&& result, String&& errorType) mutable {
-        completionHandler(WTF::move(result), std::optional { executionRealmIdentifier }, WTF::move(errorType));
+        completionHandler(WTF::move(result), executionRealmIdentifier, WTF::move(errorType));
     });
 
     JSValueRef functionArguments[] = {
@@ -1876,13 +1872,23 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-std::optional<RealmIdentifier> WebAutomationSessionProxy::realmIdentifierForFrame(WebCore::FrameIdentifier frameIdentifier) const
+std::optional<RealmIdentifier> WebAutomationSessionProxy::realmIdentifierForFrame(WebCore::LocalFrame& frame) const
 {
-    auto realmIterator = m_frameToRealmIdentifier.find(frameIdentifier);
-    if (realmIterator == m_frameToRealmIdentifier.end())
+    RefPtr window = frame.window();
+    auto realmIterator = m_frameRealms.find(frame.frameID());
+    if (!window || realmIterator == m_frameRealms.end() || realmIterator->value.windowIdentifier != window->identifier())
         return std::nullopt;
 
-    return realmIterator->value;
+    return realmIterator->value.realmIdentifier;
+}
+
+std::optional<RealmIdentifier> WebAutomationSessionProxy::ensureRealmForFrame(WebCore::LocalFrame& frame)
+{
+    // A document's realm is reported when it commits, but an initial empty document never commits.
+    if (RefPtr window = frame.window())
+        AutomationInstrumentation::scriptRealmCreated(frame, *window, mainThreadNormalWorldSingleton());
+
+    return realmIdentifierForFrame(frame);
 }
 
 void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&& completionHandler)
@@ -1893,26 +1899,10 @@ void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID,
 
     RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
     RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
-    RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
-    if (!document)
+    if (!coreLocalFrame || !coreLocalFrame->document())
         return completionHandler(std::nullopt);
 
-    // A scriptless subframe might not have a normal-world realm yet. Create it so
-    // getRealms returns the realm identifier used by later script commands and events.
-    // FIXME: Avoid eagerly creating a JSWindowProxy during realm enumeration.
-    // https://bugs.webkit.org/show_bug.cgi?id=310506
-    protect(coreLocalFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
-
-    auto realmIdentifier = realmIdentifierForFrame(frame->frameID());
-    if (!realmIdentifier) {
-        scriptRealmCreated(frame->frameID(), document->securityOrigin().data());
-        realmIdentifier = realmIdentifierForFrame(frame->frameID());
-    }
-
-    if (!realmIdentifier)
-        return completionHandler(std::nullopt);
-
-    completionHandler(WTF::move(realmIdentifier));
+    completionHandler(ensureRealmForFrame(*coreLocalFrame));
 }
 
 void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier frameID, const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
@@ -1920,26 +1910,43 @@ void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier fra
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(frameID, source, level, messageText, type, timestamp), 0);
 }
 
-void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier frameID, const WebCore::SecurityOriginData& origin)
+void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier frameID, const WebCore::GlobalWindowIdentifier& windowIdentifier, const WebCore::SecurityOriginData& origin)
 {
     WeakPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
+    if (auto realmIterator = m_frameRealms.find(frameID); realmIterator != m_frameRealms.end()) {
+        // The window already has its realm, which it may have got before script created its JS global object.
+        // HTML gives a window to the next document only if their origins are the same origin-domain, and the
+        // realm stays. WebKit also does if the initial empty document's origin was never initialized, as in a
+        // window created through the API (see DocumentWriter::begin()). That would be a new window, so a new realm.
+        if (realmIterator->value.windowIdentifier == windowIdentifier && realmIterator->value.origin == origin)
+            return;
+
+        // The frame has a new window, and nothing reported that the previous one left it.
+        removeRealm(frameID);
+    }
+
     auto realmIdentifier = RealmIdentifier::generate();
-    m_frameToRealmIdentifier.set(frameID, realmIdentifier);
+    m_frameRealms.set(frameID, WindowRealm { realmIdentifier, windowIdentifier, origin });
 
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmCreated(frameID, realmIdentifier, origin), 0);
 }
 
-void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID)
+void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID, const WebCore::GlobalWindowIdentifier& windowIdentifier)
 {
-    auto realmIterator = m_frameToRealmIdentifier.find(frameID);
-    if (realmIterator == m_frameToRealmIdentifier.end())
+    // A window that is no longer the frame's, such as one in the back/forward cache, has no realm to destroy.
+    auto realmIterator = m_frameRealms.find(frameID);
+    if (realmIterator == m_frameRealms.end() || realmIterator->value.windowIdentifier != windowIdentifier)
         return;
 
-    auto realmIdentifier = realmIterator->value;
-    m_frameToRealmIdentifier.remove(realmIterator);
+    removeRealm(frameID);
+}
+
+void WebAutomationSessionProxy::removeRealm(WebCore::FrameIdentifier frameID)
+{
+    auto realmIdentifier = m_frameRealms.take(frameID).realmIdentifier;
 
     m_dedicatedWorkerRealmInfo.removeIf([realmIdentifier](auto& entry) {
         return entry.value.ownerRealmIdentifier == realmIdentifier;
@@ -1960,13 +1967,9 @@ void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& 
     if (!document || document->identifier() != ownerDocumentIdentifier || !page || !page->isControlledByAutomation())
         return;
 
-    auto ownerRealmIdentifier = realmIdentifierForFrame(ownerFrameIdentifier);
-    if (!ownerRealmIdentifier) {
-        scriptRealmCreated(ownerFrameIdentifier, document->securityOrigin().data());
-        ownerRealmIdentifier = realmIdentifierForFrame(ownerFrameIdentifier);
-        if (!ownerRealmIdentifier)
-            return;
-    }
+    auto ownerRealmIdentifier = ensureRealmForFrame(*coreFrame);
+    if (!ownerRealmIdentifier)
+        return;
 
     DedicatedWorkerRealmKey key { ownerFrameIdentifier, workerIdentifier };
     auto workerRealmIterator = m_dedicatedWorkerRealmInfo.find(key);
@@ -2004,17 +2007,7 @@ void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::Page
     if (!coreFrame)
         return;
 
-    // FIXME: Eager JSWindowProxy creation for BiDi compliance makes automation tooling invasive by
-    // forcing JSGlobalObject materialization earlier than WebKit's lazy architecture would naturally.
-    // The better long-term solution is a logical realm registry that binds to JSGlobalObject when it
-    // naturally materializes, preserving both spec compliance and WebKit's lazy semantics. This hybrid
-    // approach should be prioritized for worker/worklet realm implementation where eager materialization
-    // poses greater risks. See https://bugs.webkit.org/show_bug.cgi?id=310506
-
-    // Force creation of JSWindowProxy for the normal world without executing script.
-    // Accessing jsWindowProxy() will create the proxy if it doesn't exist, which triggers
-    // the scriptRealmCreated instrumentation in WindowProxy::createJSWindowProxy().
-    protect(coreFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
+    ensureRealmForFrame(*coreFrame);
 }
 
 void WebAutomationSessionProxy::reloadFrame(WebCore::FrameIdentifier frameID, OptionSet<WebCore::ReloadOption> reloadOptions)

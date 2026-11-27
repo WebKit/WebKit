@@ -29,6 +29,13 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "DOMWrapperWorld.h"
+#include "Document.h"
+#include "DocumentLoader.h"
+#include "FrameLoader.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
+#include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/NeverDestroyed.h>
@@ -66,34 +73,49 @@ void AutomationInstrumentation::addMessageToConsole(FrameIdentifier frameID, con
         client->addMessageToConsole(frameID, message->source(), message->level(), message->message(), message->type(), message->timestamp());
 }
 
-void AutomationInstrumentation::scriptRealmCreated(FrameIdentifier frameID, const SecurityOriginData& origin, DOMWrapperWorld& world)
+static SecurityOriginData originForWindowRealm(LocalFrame& frame, DOMWindow& window)
 {
-    if (!automationClient()) [[likely]]
-        return;
+    // While a frame replaces its document, it has none, but the new window already has its document.
+    if (RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window)) {
+        if (RefPtr document = localWindow->document())
+            return document->securityOrigin().data();
+    }
 
-    // Only notify for normal world (main page execution), not user/internal worlds.
-    if (!world.isNormal())
-        return;
+    if (RefPtr document = frame.document())
+        return document->securityOrigin().data();
 
-    WTF::ensureOnMainThread([frameID, origin = origin.isolatedCopy()] {
-        if (RefPtr client = automationClient().get())
-            client->scriptRealmCreated(frameID, origin);
-    });
+    if (RefPtr loader = frame.loader().activeDocumentLoader(); loader && !loader->url().isEmpty())
+        return SecurityOriginData::fromURL(loader->url());
+
+    return SecurityOriginData::createOpaque();
 }
 
-void AutomationInstrumentation::scriptRealmDestroyed(FrameIdentifier frameID, DOMWrapperWorld& world)
+void AutomationInstrumentation::scriptRealmCreated(LocalFrame& frame, DOMWindow& window, DOMWrapperWorld& world)
 {
-    if (!automationClient()) [[likely]]
+    ASSERT(isMainThread());
+    RefPtr client = automationClient();
+    if (!client) [[likely]]
         return;
 
     // Only notify for normal world (main page execution), not user/internal worlds.
     if (!world.isNormal())
         return;
 
-    WTF::ensureOnMainThread([frameID] {
-        if (RefPtr client = automationClient().get())
-            client->scriptRealmDestroyed(frameID);
-    });
+    client->scriptRealmCreated(frame.frameID(), window.identifier(), originForWindowRealm(frame, window));
+}
+
+void AutomationInstrumentation::scriptRealmDestroyed(LocalFrame& frame, DOMWindow& window, DOMWrapperWorld& world)
+{
+    ASSERT(isMainThread());
+    RefPtr client = automationClient();
+    if (!client) [[likely]]
+        return;
+
+    // Only notify for normal world (main page execution), not user/internal worlds.
+    if (!world.isNormal())
+        return;
+
+    client->scriptRealmDestroyed(frame.frameID(), window.identifier());
 }
 
 void AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier, const SecurityOriginData& origin)

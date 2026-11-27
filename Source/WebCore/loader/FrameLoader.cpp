@@ -178,6 +178,10 @@
 #include "Archive.h"
 #endif
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "AutomationInstrumentation.h"
+#endif
+
 #if ENABLE(DATA_DETECTION)
 #include "DataDetection.h"
 #include "DataDetectionResultsStorage.h"
@@ -810,6 +814,12 @@ void FrameLoader::receivedFirstData()
     Ref frame = m_frame.get();
     
     dispatchDidCommitLoad(std::nullopt);
+#if ENABLE(WEBDRIVER_BIDI)
+    // The new document's realm exists whether or not script ever creates its JS global object. Report it once the
+    // commit is reported, so that the UI process knows which process has the frame.
+    if (RefPtr window = frame->window())
+        AutomationInstrumentation::scriptRealmCreated(frame, *window, mainThreadNormalWorldSingleton());
+#endif
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -3668,6 +3678,10 @@ void FrameLoader::detachFromParent()
     }
 
     InspectorInstrumentation::frameDetachedFromParent(frame);
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr window = frame->window())
+        AutomationInstrumentation::scriptRealmDestroyed(frame, *window, mainThreadNormalWorldSingleton());
+#endif
 
     detachViewsAndDocumentLoader();
 
