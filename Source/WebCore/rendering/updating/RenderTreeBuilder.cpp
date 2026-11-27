@@ -830,7 +830,10 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
     for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
         ASSERT(!c->isInline() || c->isOutsideListMarker());
 #endif
-    parent.repaint();
+    // `parent` may be part of a detached subtree still being assembled, like a
+    // view transition pseudo-element tree; nothing to repaint until it attaches.
+    if (parent.isDescendantOf(&parent.view()))
+        parent.repaint();
 }
 
 CheckedPtr<RenderObject> RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBoxModelObject& parent, RenderObject& originalBeforeChild)

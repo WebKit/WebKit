@@ -73,11 +73,13 @@ enum class VisitedMatchType : unsigned char {
 
 static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
 {
-    // This pseudo class only matches the root element.
-    if (&element != element.document().documentElement())
-        return false;
+    RefPtr<ViewTransition> viewTransition;
+    if (&element == element.document().documentElement())
+        viewTransition = element.document().activeViewTransition();
+    else
+        viewTransition = element.document().activeViewTransitionForScope(element);
 
-    if (const RefPtr viewTransition = element.document().activeViewTransition()) {
+    if (viewTransition) {
         Ref activeTypes = viewTransition->types();
 
         for (const auto& type : types) {

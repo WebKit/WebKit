@@ -92,6 +92,7 @@
 #include "TransformOperationsSharedPrimitivesPrefix.h"
 #include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
+#include "ViewTransition.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/IteratorOperations.h>
 #include <ranges>
@@ -1592,8 +1593,27 @@ const String KeyframeEffect::pseudoElement() const
 
     // The target pseudo-selector. null if this effect has no effect target or if the effect target is an element (i.e. not a pseudo-element).
     // When the effect target is a pseudo-element, this specifies the pseudo-element selector (e.g. ::before).
-    if (targetsPseudoElement())
+    if (targetsPseudoElement()) {
+        // Generated view transition names are only observable in a document transition
+        // with document-tree participants; scoped transitions and shadow tree
+        // participants expose them as "match-element".
+        // https://drafts.csswg.org/css-view-transitions-2/#view-transition-name-prop
+        if (isNamedViewTransitionPseudoElement(m_pseudoElementIdentifier) && m_pseudoElementIdentifier->nameOrPart.startsWith("-ua-"_s) && m_target) {
+            bool maskGeneratedName = m_target != m_target->document().documentElement();
+            if (!maskGeneratedName) {
+                if (RefPtr transition = m_target->document().activeViewTransition()) {
+                    if (auto* capturedElement = transition->namedElements().find(m_pseudoElementIdentifier->nameOrPart))
+                        maskGeneratedName = capturedElement->generatedNameFromShadowTree;
+                }
+            }
+            if (maskGeneratedName) {
+                auto identifier = *m_pseudoElementIdentifier;
+                identifier.nameOrPart = "match-element"_s;
+                return pseudoElementIdentifierAsString(identifier);
+            }
+        }
         return pseudoElementIdentifierAsString(m_pseudoElementIdentifier);
+    }
     return { };
 }
 

@@ -631,9 +631,9 @@ ALWAYS_INLINE bool matchesUserValidPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element)
 {
-    if (&element != element.document().documentElement())
-        return false;
-    return !!element.document().activeViewTransition();
+    if (&element == element.document().documentElement())
+        return !!element.document().activeViewTransition();
+    return !!element.document().activeViewTransitionForScope(element);
 }
 
 ALWAYS_INLINE bool matchesEvenLessGoodPseudoClass(const Element& element)

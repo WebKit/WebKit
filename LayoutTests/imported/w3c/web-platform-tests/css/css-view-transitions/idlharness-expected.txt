@@ -29,7 +29,7 @@ PASS ViewTransition interface: operation skipTransition()
 FAIL ViewTransition interface: attribute types assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function types() {
     [native code]
 }"
-FAIL ViewTransition interface: attribute transitionRoot assert_true: The prototype object must have a property "transitionRoot" expected true got false
+PASS ViewTransition interface: attribute transitionRoot
 FAIL ViewTransition interface: operation waitUntil(Promise<any>) assert_own_property: interface prototype object missing non-static operation expected property "waitUntil" missing
 PASS ViewTransition must be primary interface of document.startViewTransition()
 PASS Stringification of document.startViewTransition()
@@ -38,7 +38,7 @@ PASS ViewTransition interface: document.startViewTransition() must inherit prope
 PASS ViewTransition interface: document.startViewTransition() must inherit property "finished" with the proper type
 PASS ViewTransition interface: document.startViewTransition() must inherit property "skipTransition()" with the proper type
 PASS ViewTransition interface: document.startViewTransition() must inherit property "types" with the proper type
-FAIL ViewTransition interface: document.startViewTransition() must inherit property "transitionRoot" with the proper type assert_inherits: property "transitionRoot" not found in prototype chain
+PASS ViewTransition interface: document.startViewTransition() must inherit property "transitionRoot" with the proper type
 FAIL ViewTransition interface: document.startViewTransition() must inherit property "waitUntil(Promise<any>)" with the proper type assert_inherits: property "waitUntil" not found in prototype chain
 FAIL ViewTransition interface: calling waitUntil(Promise<any>) on document.startViewTransition() with too few arguments must throw TypeError assert_inherits: property "waitUntil" not found in prototype chain
 PASS ViewTransitionTypeSet interface: existence and properties of interface object
@@ -65,6 +65,6 @@ PASS Document interface: attribute activeViewTransition
 PASS Document interface: document must inherit property "startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions))" with the proper type
 PASS Document interface: calling startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions)) on document with too few arguments must throw TypeError
 PASS Document interface: document must inherit property "activeViewTransition" with the proper type
-FAIL Element interface: operation startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions)) assert_own_property: interface prototype object missing non-static operation expected property "startViewTransition" missing
-FAIL Element interface: attribute activeViewTransition assert_true: The prototype object must have a property "activeViewTransition" expected true got false
+PASS Element interface: operation startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions))
+PASS Element interface: attribute activeViewTransition
 
