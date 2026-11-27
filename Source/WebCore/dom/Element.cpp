@@ -5121,16 +5121,6 @@ void Element::setChildIndex(unsigned index)
     rareData.setChildIndex(index);
 }
 
-bool Element::hasFlagsSetDuringStylingOfChildren() const
-{
-    return childrenAffectedByFirstChildRules()
-        || childrenAffectedByLastChildRules()
-        || childrenAffectedByForwardPositionalRules()
-        || descendantsAffectedByForwardPositionalRules()
-        || childrenAffectedByBackwardPositionalRules()
-        || descendantsAffectedByBackwardPositionalRules();
-}
-
 unsigned Element::rareDataChildIndex() const
 {
     ASSERT(hasRareData());
