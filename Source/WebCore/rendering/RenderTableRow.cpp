@@ -27,12 +27,10 @@
 #include "config.h"
 #include "RenderTableRow.h"
 
-#include "BackgroundPainter.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "PaintInfo.h"
-#include "PaintInfoInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
@@ -42,6 +40,7 @@
 #include "RenderTableCell.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "TablePainter.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -234,54 +233,9 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-void RenderTableRow::paintOutlineForRowIfNeeded(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    PaintPhase paintPhase = paintInfo.phase;
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && usedStyle().visibility() == UsedVisibility::Visible) {
-        auto adjustedPaintOffset = paintOffset + location();
-        paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxSize()));
-    }
-}
-
-void RenderTableRow::paintShadowForRowIfNeeded(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (paintInfo.phase != PaintPhase::BlockBackground && paintInfo.phase != PaintPhase::ChildBlockBackground)
-        return;
-
-    auto adjustedPaintOffset = paintOffset + location();
-    LayoutRect rect(adjustedPaintOffset, borderBoxSize());
-    adjustBorderBoxRectForPainting(rect);
-
-    Paint::BackgroundPainter backgroundPainter { *this, paintInfo };
-    backgroundPainter.paintBoxShadow(rect, usedStyle(), Style::ShadowStyle::Normal);
-}
-
 void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    ASSERT(hasSelfPaintingLayer());
-
-    auto adjustedPaintOffset = paintOffset + location();
-
-    if (paintInfo.phase == PaintPhase::Accessibility) {
-        if (CheckedPtr context = paintInfo.accessibilityRegionContext())
-            context->takeBounds(*this, adjustedPaintOffset);
-    }
-
-    paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-    for (CheckedPtr cell = firstCell(); cell; cell = cell->nextCell()) {
-        // Paint the row background behind the cell.
-        if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::ChildBlockBackground)
-            cell->paintBackgroundsBehindCell(paintInfo, adjustedPaintOffset, this, paintOffset);
-        if (!cell->hasSelfPaintingLayer())
-            cell->paint(paintInfo, adjustedPaintOffset);
-    }
-
-    // When the row has a self-painting layer (position: relative), collapsed
-    // borders must be painted here after cell backgrounds. Otherwise the cell
-    // background (in this layer) covers the inner half of the border (painted
-    // by the table's layer).
-    if (CheckedPtr table = this->table(); table && table->collapseBorders() && paintInfo.phase == PaintPhase::ChildBlockBackgrounds)
-        table->paintCollapsedBordersForRow(paintInfo, *this, adjustedPaintOffset);
+    Paint::TablePainter::paint(*this, paintInfo, paintOffset);
 }
 
 void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)

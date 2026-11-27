@@ -27,14 +27,12 @@
 #include "config.h"
 #include "RenderTableSection.h"
 
-#include "BorderPainter.h"
 #include "Document.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "PaintInfo.h"
-#include "PaintInfoInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
@@ -50,6 +48,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TablePainter.h"
 #include <limits>
 #include <ranges>
 #include <wtf/HashSet.h>
@@ -64,7 +63,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTableSection);
 
 // Those 2 variables are used to balance the memory consumption vs the repaint time on big tables.
 static const unsigned gMinTableSizeToUseFastPaintPathWithOverflowingCell = 75 * 75;
-static const float gMaxAllowedOverflowingCellRatioForFastPaintPath = 0.1f;
 
 static inline void setRowLogicalHeightToRowStyleLogicalHeight(RenderTableSection::RowStruct& row)
 {
@@ -760,7 +758,7 @@ void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned n
     clearOverflow();
     m_overflowingCells.clear();
     unsigned totalCellsCount = nEffCols * totalRows;
-    unsigned maxAllowedOverflowingCellsCount = totalCellsCount < gMinTableSizeToUseFastPaintPathWithOverflowingCell ? 0 : gMaxAllowedOverflowingCellRatioForFastPaintPath * totalCellsCount;
+    unsigned maxAllowedOverflowingCellsCount = totalCellsCount < gMinTableSizeToUseFastPaintPathWithOverflowingCell ? 0 : maxAllowedOverflowingCellRatioForFastPaintPath * totalCellsCount;
 
 #if ASSERT_ENABLED
     bool hasOverflowingCell = false;
@@ -991,77 +989,7 @@ std::optional<LayoutUnit> RenderTableSection::baselineFromCellContentEdges(ItemP
 
 void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    ASSERT(!needsLayout());
-    // avoid crashing on bugs that cause us to paint with dirty layout
-    if (needsLayout())
-        return;
-    
-    unsigned totalRows = m_grid.size();
-    unsigned totalCols = table()->columns().size();
-
-    if (!totalRows || !totalCols)
-        return;
-
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-
-    PaintPhase phase = paintInfo.phase;
-    bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
-    paintObject(paintInfo, adjustedPaintOffset);
-    if (pushedClip)
-        popContentsClip(paintInfo, phase, adjustedPaintOffset);
-
-    if ((phase == PaintPhase::Outline || phase == PaintPhase::SelfOutline) && usedStyle().visibility() == UsedVisibility::Visible)
-        paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxSize()));
-}
-
-NODELETE static inline bool compareCellPositions(const SingleThreadWeakPtr<RenderTableCell>& elem1, const SingleThreadWeakPtr<RenderTableCell>& elem2)
-{
-    return elem1->rowIndex() < elem2->rowIndex();
-}
-
-// This comparison is used only when we have overflowing cells as we have an unsorted array to sort. We thus need
-// to sort both on rows and columns to properly repaint.
-NODELETE static inline bool compareCellPositionsWithOverflowingCells(const SingleThreadWeakPtr<RenderTableCell>& elem1, const SingleThreadWeakPtr<RenderTableCell>& elem2)
-{
-    if (elem1->rowIndex() != elem2->rowIndex())
-        return elem1->rowIndex() < elem2->rowIndex();
-
-    return elem1->col() < elem2->col();
-}
-
-void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    CheckedRef row = downcast<RenderTableRow>(*cell->parent());
-    auto rowBackgroundPaintOffset = blockStartRelativeToPhysicalForChild(row, paintOffset);
-    auto rowPaintOffset = rowBackgroundPaintOffset + row->location();
-    auto cellPoint = row->blockStartRelativeToPhysicalForChild(*cell, rowPaintOffset);
-    PaintPhase paintPhase = paintInfo.phase;
-
-    if (paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) {
-        // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
-        // the column group, column, row group, row, and then the cell.
-
-        // Column groups and columns first.
-        // FIXME: Columns and column groups do not currently support opacity, and they are being painted "too late" in
-        // the stack, since we have already opened a transparency layer (potentially) for the table row group.
-        // Note that we deliberately ignore whether or not the cell has a layer, since these backgrounds paint "behind" the
-        // cell.
-        if (CheckedPtr column = protect(table())->colElement(cell->col())) {
-            if (CheckedPtr columnGroup = column->enclosingColumnGroup())
-                cell->paintBackgroundsBehindCell(paintInfo, cellPoint, columnGroup, cellPoint);
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, column, cellPoint);
-        }
-
-        // Paint the row group next.
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, this, paintOffset);
-
-        // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
-        // painting the row background for the cell.
-        if (!row->hasSelfPaintingLayer())
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, row.ptr(), rowBackgroundPaintOffset);
-    }
-    if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()))
-        cell->paint(paintInfo, cellPoint);
+    Paint::TablePainter::paint(*this, paintInfo, paintOffset);
 }
 
 LayoutRect RenderTableSection::logicalRectForWritingModeAndDirection(const LayoutRect& rect) const
@@ -1191,16 +1119,6 @@ Color RenderTableSection::rowGroupBorderColor(CSSPropertyID borderColor) const
     }
 }
 
-void RenderTableSection::paintRowGroupBorder(const PaintInfo& paintInfo, bool antialias, LayoutRect rect, BoxSide side, CSSPropertyID borderColor, BorderStyle borderStyle, BorderStyle tableBorderStyle)
-{
-    if (tableBorderStyle == BorderStyle::Hidden)
-        return;
-    rect.intersect(paintInfo.rect);
-    if (rect.isEmpty())
-        return;
-    Paint::BorderPainter::drawLineForBoxSide(paintInfo.context(), protect(document()), rect, side, rowGroupBorderColor(borderColor), borderStyle, 0, 0, antialias);
-}
-
 LayoutUnit RenderTableSection::offsetLeftForRowGroupBorder(RenderTableCell* cell, const LayoutRect& rowGroupRect, unsigned row)
 {
 
@@ -1246,306 +1164,9 @@ LayoutUnit RenderTableSection::horizontalRowGroupBorderWidth(RenderTableCell* ce
     return m_rowPos[row + 1] - m_rowPos[row] + (isLastRow ? outerBorderLeft(table()->writingMode()) : !row ? outerBorderRight(table()->writingMode()) : 0_lu);
 }
 
-void RenderTableSection::paintRowGroupBorderIfRequired(const PaintInfo& paintInfo, const LayoutPoint& paintOffset, unsigned row, unsigned column, BoxSide borderSide, RenderTableCell* cell)
-{
-    if (table()->currentBorderValue()->precedence() > BorderPrecedence::RowGroup)
-        return;
-    if (paintInfo.context().paintingDisabled())
-        return;
-
-    CheckedRef style = this->style();
-    bool antialias = Paint::BorderPainter::shouldAntialiasLines(paintInfo.context());
-    LayoutRect rowGroupRect = LayoutRect(paintOffset, borderBoxSize());
-    rowGroupRect.moveBy(-LayoutPoint(outerBorderLeft(table()->writingMode()), (borderSide == BoxSide::Right) ? 0_lu : outerBorderTop(table()->writingMode())));
-
-    switch (borderSide) {
-    case BoxSide::Top:
-        paintRowGroupBorder(
-            paintInfo,
-            antialias,
-            LayoutRect {
-                paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row),
-                rowGroupRect.y(),
-                horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column),
-                Style::evaluate<LayoutUnit>(style->borderTop().width, style->usedZoomForLength(), style->deviceScaleFactor()),
-            },
-            BoxSide::Top,
-            CSSPropertyID::BorderTopColor,
-            style->borderTopStyle(),
-            table()->style().borderTopStyle()
-        );
-        break;
-    case BoxSide::Bottom:
-        paintRowGroupBorder(
-            paintInfo,
-            antialias,
-            LayoutRect {
-                paintOffset.x() + offsetLeftForRowGroupBorder(cell, rowGroupRect, row),
-                rowGroupRect.y() + rowGroupRect.height(),
-                horizontalRowGroupBorderWidth(cell, rowGroupRect, row, column),
-                Style::evaluate<LayoutUnit>(style->borderBottom().width, style->usedZoomForLength(), style->deviceScaleFactor()),
-            },
-            BoxSide::Bottom,
-            CSSPropertyID::BorderBottomColor,
-            style->borderBottomStyle(),
-            table()->style().borderBottomStyle()
-        );
-        break;
-    case BoxSide::Left:
-        paintRowGroupBorder(
-            paintInfo,
-            antialias,
-            LayoutRect {
-                rowGroupRect.x(),
-                rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row),
-                Style::evaluate<LayoutUnit>(style->borderLeft().width, style->usedZoomForLength(), style->deviceScaleFactor()),
-                verticalRowGroupBorderHeight(cell, rowGroupRect, row),
-            },
-            BoxSide::Left,
-            CSSPropertyID::BorderLeftColor,
-            style->borderLeftStyle(),
-            table()->style().borderLeftStyle()
-        );
-        break;
-    case BoxSide::Right:
-        paintRowGroupBorder(
-            paintInfo,
-            antialias,
-            LayoutRect {
-                rowGroupRect.x() + rowGroupRect.width(),
-                rowGroupRect.y() + offsetTopForRowGroupBorder(cell, borderSide, row),
-                Style::evaluate<LayoutUnit>(style->borderRight().width, style->usedZoomForLength(), style->deviceScaleFactor()),
-                verticalRowGroupBorderHeight(cell, rowGroupRect, row),
-            },
-            BoxSide::Right,
-            CSSPropertyID::BorderRightColor,
-            style->borderRightStyle(),
-            table()->style().borderRightStyle()
-        );
-        break;
-    default:
-        break;
-    }
-
-}
-
-NODELETE static BoxSide physicalBorderForDirection(const WritingMode writingMode, CollapsedBorderSide side)
-{
-    // FIXME: Replace this with types/methods from BoxSides.h
-    switch (side) {
-    case CollapsedBorderSide::Start:
-        if (writingMode.isHorizontal())
-            return writingMode.isInlineLeftToRight() ? BoxSide::Left : BoxSide::Right;
-        return writingMode.isInlineTopToBottom() ? BoxSide::Top : BoxSide::Bottom;
-    case CollapsedBorderSide::End:
-        if (writingMode.isHorizontal())
-            return writingMode.isInlineLeftToRight() ? BoxSide::Right : BoxSide::Left;
-        return writingMode.isInlineTopToBottom() ? BoxSide::Bottom : BoxSide::Top;
-    case CollapsedBorderSide::Before:
-        if (writingMode.isHorizontal())
-            return writingMode.isBlockTopToBottom() ? BoxSide::Top : BoxSide::Bottom;
-        return writingMode.isBlockLeftToRight() ? BoxSide::Left : BoxSide::Right;
-    case CollapsedBorderSide::After:
-        if (writingMode.isHorizontal())
-            return writingMode.isBlockTopToBottom() ? BoxSide::Bottom : BoxSide::Top;
-        return writingMode.isBlockLeftToRight() ? BoxSide::Right : BoxSide::Left;
-    }
-    ASSERT_NOT_REACHED();
-    return BoxSide::Left;
-}
-
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase == PaintPhase::Accessibility) {
-        if (CheckedPtr context = paintInfo.accessibilityRegionContext()) {
-            context->takeBounds(*this, paintOffset);
-            for (auto& rowStruct : m_grid) {
-                if (CheckedPtr row = rowStruct.rowRenderer; row && !row->hasSelfPaintingLayer())
-                    context->takeBounds(*row, paintOffset + row->location());
-            }
-        }
-    }
-
-    auto localRepaintRect = paintInfo.rect;
-    localRepaintRect.moveBy(-paintOffset);
-
-    CellSpan dirtiedRows { 0, 0 };
-    CellSpan dirtiedColumns { 0, 0 };
-
-    if (localRepaintRect.contains(borderBoxRectInContainer())) {
-        dirtiedRows = fullTableRowSpan();
-        dirtiedColumns = fullTableColumnSpan();
-    } else {
-        auto tableAlignedRect = logicalRectForWritingModeAndDirection(localRepaintRect);
-        dirtiedRows = this->dirtiedRows(tableAlignedRect);
-        dirtiedColumns = this->dirtiedColumns(tableAlignedRect);
-    }
-
-    if (dirtiedColumns.start == dirtiedColumns.end)
-        return;
-
-    auto paintRowOutline = [&](unsigned rowIndex, PaintPhase phase) {
-        if (phase != PaintPhase::Outline && phase != PaintPhase::SelfOutline)
-            return;
-
-        CheckedPtr row = m_grid[rowIndex].rowRenderer;
-        if (row && !row->hasSelfPaintingLayer() && row->hasOutline())
-            row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-    };
-
-    auto paintRowShadow = [&](unsigned rowIndex, PaintPhase phase) {
-        if (phase != PaintPhase::BlockBackground && phase != PaintPhase::ChildBlockBackground)
-            return;
-
-        CheckedPtr row = m_grid[rowIndex].rowRenderer;
-        if (row && !row->hasSelfPaintingLayer() && !row->style().boxShadow().isNone())
-            row->paintShadowForRowIfNeeded(paintInfo, paintOffset);
-    };
-
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    auto recordRowBackdrop = [&](unsigned rowIndex, PaintPhase phase) {
-        if (phase != PaintPhase::AXCustomColorCollectBackgrounds)
-            return;
-
-        CheckedPtr row = m_grid[rowIndex].rowRenderer;
-        if (!row || row->hasSelfPaintingLayer())
-            return;
-
-        auto rowPaintOffset = blockStartRelativeToPhysicalForChild(*row, paintOffset) + row->location();
-        auto rowBorderRect = FloatRect { LayoutRect(rowPaintOffset, row->borderBoxSize()) };
-        paintInfo.axCustomColorBackdropContext()->recordBackdrop(*row, rowBorderRect, paintInfo.paintBehavior);
-    };
-#endif
-
-    auto paintContiguousCells = [&]() {
-        // Draw the dirty cells in the order that they appear.
-        for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
-            paintRowShadow(r , paintInfo.phase);
-            paintRowOutline(r, paintInfo.phase);
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            recordRowBackdrop(r, paintInfo.phase);
-#endif
-
-            for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
-                CellStruct& current = cellAt(r, c);
-                CheckedPtr cell = current.primaryCell();
-                if (!cell || (r > dirtiedRows.start && primaryCellAt(r - 1, c) == cell) || (c > dirtiedColumns.start && primaryCellAt(r, c - 1) == cell))
-                    continue;
-                paintCell(cell.get(), paintInfo, paintOffset);
-            }
-        }
-    };
-
-    auto paintContiguousCellsWithCollapsedBorders = [&]() {
-        // Collapsed borders are painted from the bottom right to the top left so that precedence
-        // due to cell position is respected. We need to paint one row beyond the topmost dirtied
-        // row to calculate its collapsed border value.
-        unsigned startRow = dirtiedRows.start ? dirtiedRows.start - 1 : 0;
-        for (unsigned r = dirtiedRows.end; r > startRow; r--) {
-            unsigned row = r - 1;
-            bool shouldPaintRowGroupBorder = false;
-            for (unsigned c = dirtiedColumns.end; c > dirtiedColumns.start; c--) {
-                unsigned col = c - 1;
-                CellStruct& current = cellAt(row, col);
-                CheckedPtr cell = current.primaryCell();
-                if (!cell) {
-                    if (!c)
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::Start));
-                    else if (c == table()->numEffCols())
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::End));
-
-                    shouldPaintRowGroupBorder = true;
-                    continue;
-                }
-
-                if ((row > dirtiedRows.start && primaryCellAt(row - 1, col) == cell) || (col > dirtiedColumns.start && primaryCellAt(row, col - 1) == cell))
-                    continue;
-
-                // If we had a run of null cells paint their corresponding section of the row group's border if necessary. Note that
-                // this will only happen once within a row as the null cells will always be clustered together on one end of the row.
-                if (shouldPaintRowGroupBorder) {
-                    if (r == m_grid.size())
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::After), cell);
-                    else if (!row && !protect(table())->sectionAbove(this))
-                        paintRowGroupBorderIfRequired(paintInfo, paintOffset, row, col, physicalBorderForDirection(table()->writingMode(), CollapsedBorderSide::Before), cell);
-
-                    shouldPaintRowGroupBorder = false;
-                }
-
-                CheckedRef row = downcast<RenderTableRow>(*cell->parent());
-                auto rowPaintOffset = blockStartRelativeToPhysicalForChild(row, paintOffset) + row->location();
-                auto cellPoint = row->blockStartRelativeToPhysicalForChild(*cell, rowPaintOffset);
-                cell->paintCollapsedBorders(paintInfo, cellPoint);
-            }
-        }
-    };
-
-    auto paintDirtyCells = [&]() {
-        // The overflowing cells should be scarce to avoid adding a lot of cells to the HashSet.
-#if ASSERT_ENABLED
-        unsigned totalRows = m_grid.size();
-        unsigned totalCols = table()->columns().size();
-        ASSERT(m_overflowingCells.computeSize() < totalRows * totalCols * gMaxAllowedOverflowingCellRatioForFastPaintPath);
-#endif
-
-        // To make sure we properly repaint the section, we repaint all the overflowing cells that we collected.
-        auto cells = copyToVector(m_overflowingCells);
-
-        HashSet<CheckedPtr<RenderTableCell>> spanningCells;
-
-        for (unsigned r = dirtiedRows.start; r < dirtiedRows.end; r++) {
-            paintRowOutline(r, paintInfo.phase);
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            recordRowBackdrop(r, paintInfo.phase);
-#endif
-
-            for (unsigned c = dirtiedColumns.start; c < dirtiedColumns.end; c++) {
-                CellStruct& current = cellAt(r, c);
-                if (!current.hasCells())
-                    continue;
-
-                for (unsigned i = 0; i < current.cells.size(); ++i) {
-                    CheckedPtr cell = current.cells[i];
-                    if (m_overflowingCells.contains(*cell))
-                        continue;
-
-                    if (cell->rowSpan() > 1 || cell->colSpan() > 1) {
-                        if (!spanningCells.add(cell).isNewEntry)
-                            continue;
-                    }
-
-                    cells.append(cell.get());
-                }
-            }
-        }
-
-        // Sort the dirty cells by paint order.
-        if (m_overflowingCells.computeIsEmpty())
-            std::ranges::stable_sort(cells, compareCellPositions);
-        else
-            std::ranges::sort(cells, compareCellPositionsWithOverflowingCells);
-
-        if (paintInfo.phase == PaintPhase::CollapsedTableBorders) {
-            for (unsigned i = cells.size(); i > 0; --i) {
-                CheckedRef cell = *cells[i - 1];
-                CheckedRef row = downcast<RenderTableRow>(*cell->parent());
-                auto rowPaintOffset = blockStartRelativeToPhysicalForChild(row, paintOffset) + row->location();
-                auto cellPoint = row->blockStartRelativeToPhysicalForChild(cell, rowPaintOffset);
-                cell->paintCollapsedBorders(paintInfo, cellPoint);
-            }
-        } else {
-            for (unsigned i = 0; i < cells.size(); ++i)
-                paintCell(protect(cells[i]).get(), paintInfo, paintOffset);
-        }
-    };
-
-    if (!m_hasMultipleCellLevels && m_overflowingCells.computeIsEmpty()) {
-        if (paintInfo.phase == PaintPhase::CollapsedTableBorders)
-            paintContiguousCellsWithCollapsedBorders();
-        else
-            paintContiguousCells();
-    } else
-        paintDirtyCells();
+    Paint::TablePainter::paintObject(*this, paintInfo, paintOffset);
 }
 
 void RenderTableSection::imageChanged(WrappedImagePtr, const IntRect*)

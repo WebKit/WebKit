@@ -54,10 +54,18 @@ public:
     unsigned end;
 };
 
+namespace Paint {
+class TablePainter;
+}
+
 class RenderTableSection final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableSection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
+    friend class Paint::TablePainter;
 public:
+    // The fraction of overflowing cells above which painting doesn't use the fast path.
+    static constexpr float maxAllowedOverflowingCellRatioForFastPaintPath = 0.1f;
+
     RenderTableSection(Element&, UniqueRef<Style::ComputedStyle>&&);
     RenderTableSection(Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderTableSection();
@@ -174,11 +182,8 @@ private:
 
     void layout() override;
 
-    void paintCell(RenderTableCell*, PaintInfo&, const LayoutPoint&);
     void paintObject(PaintInfo&, const LayoutPoint&) override;
     Color rowGroupBorderColor(CSSPropertyID borderColor) const;
-    void paintRowGroupBorder(const PaintInfo&, bool antialias, LayoutRect, BoxSide, CSSPropertyID borderColor, BorderStyle, BorderStyle tableBorderStyle);
-    void paintRowGroupBorderIfRequired(const PaintInfo&, const LayoutPoint& paintOffset, unsigned row, unsigned col, BoxSide, RenderTableCell* = 0);
     NODELETE LayoutUnit offsetLeftForRowGroupBorder(RenderTableCell*, const LayoutRect& rowGroupRect, unsigned row);
 
     NODELETE LayoutUnit offsetTopForRowGroupBorder(RenderTableCell*, BoxSide borderSide, unsigned row);

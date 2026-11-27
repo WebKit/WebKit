@@ -37,9 +37,14 @@ static const unsigned maxColumnIndex = 0x1FFFFFE; // 33554430
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
+namespace Paint {
+class TablePainter;
+}
+
 class RenderTableCell final : public RenderBlockFlow {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableCell);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCell);
+    friend class Paint::TablePainter;
 public:
     RenderTableCell(Element&, UniqueRef<Style::ComputedStyle>&&);
     RenderTableCell(Document&, UniqueRef<Style::ComputedStyle>&&);
@@ -86,8 +91,6 @@ public:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 
-    void paintCollapsedBorders(PaintInfo&, const LayoutPoint&);
-    void paintBackgroundsBehindCell(PaintInfo&, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset);
     bool isHiddenEmptyCell() const;
 
     LayoutUnit cellBaselinePosition() const;

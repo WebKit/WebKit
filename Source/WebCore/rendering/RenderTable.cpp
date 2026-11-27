@@ -28,10 +28,7 @@
 #include "RenderTable.h"
 
 #include "AutoTableLayout.h"
-#include "BackgroundPainter.h"
-#include "BorderPainter.h"
 #include "BorderShape.h"
-#include "BoxDecorationPainter.h"
 #include "CollapsedBorderValue.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
@@ -41,8 +38,6 @@
 #include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameView.h"
-#include "MaskPainter.h"
-#include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
@@ -67,6 +62,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "StyleSizing.h"
+#include "TablePainter.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -850,116 +846,12 @@ void RenderTable::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions
 
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    auto isSkippedContent = [&] {
-        if (style().usedContentVisibility() == ContentVisibility::Visible)
-            return false;
-        // FIXME: Tables can never be skipped content roots. If a table is _inside_ a skipped subtree, we should have bailed out at the skipped root ancestor.
-        if (CheckedPtr containingBlock = this->containingBlock(); containingBlock && containingBlock->isAnonymousBlock() && !containingBlock->style().isSkippedRootOrSkippedContent())
-            return true;
-        return false;
-    };
-    if (isSkippedContent())
-        return;
-
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-
-    PaintPhase paintPhase = paintInfo.phase;
-
-    if (!isDocumentElementRenderer()) {
-        LayoutRect overflowBox = visualOverflowRect();
-        blockStartRelativeToPhysical(overflowBox);
-        overflowBox.moveBy(adjustedPaintOffset);
-        if (!overflowBox.intersects(paintInfo.rect))
-            return;
-    }
-
-    bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
-    paintObject(paintInfo, adjustedPaintOffset);
-    if (pushedClip)
-        popContentsClip(paintInfo, paintPhase, adjustedPaintOffset);
+    Paint::TablePainter::paint(*this, paintInfo, paintOffset);
 }
 
 void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    PaintPhase paintPhase = paintInfo.phase;
-    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && usedStyle().visibility() == UsedVisibility::Visible)
-        Paint::BoxDecorationPainter { *this, paintInfo, paintOffset }.paintBoxDecorations();
-
-    if (paintPhase == PaintPhase::Mask) {
-        Paint::MaskPainter { *this, paintInfo, paintOffset }.paintMask();
-        return;
-    }
-
-    if (paintPhase == PaintPhase::Accessibility)
-        protect(paintInfo.accessibilityRegionContext())->takeBounds(*this, paintOffset);
-
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    if (paintPhase == PaintPhase::AXCustomColorCollectBackgrounds) {
-        LayoutRect rect(paintOffset, borderBoxSize());
-        adjustBorderBoxRectForPainting(rect);
-        paintInfo.axCustomColorBackdropContext()->recordBackdrop(*this, FloatRect { rect }, paintInfo.paintBehavior);
-    }
-#endif
-
-    // We're done. We don't bother painting any children.
-    if (paintPhase == PaintPhase::BlockBackground)
-        return;
-    
-    // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintPhase == PaintPhase::ChildBlockBackgrounds)
-        paintPhase = PaintPhase::ChildBlockBackground;
-
-    PaintInfo info(paintInfo);
-    info.phase = paintPhase;
-    info.updateSubtreePaintRootForChildren(this);
-
-    for (CheckedRef box : childrenOfType<RenderBox>(*this)) {
-        if (!box->hasSelfPaintingLayer() && (box->isRenderTableSection() || box->isRenderTableCaption())) {
-            LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(box, paintOffset);
-            box->paint(info, childPoint);
-        }
-    }
-    
-    if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && usedStyle().visibility() == UsedVisibility::Visible) {
-        paintCollapsedBorderPasses(info, [&](PaintInfo& borderPaintInfo) {
-            for (CheckedPtr section = bottomSection(); section; section = sectionAbove(section)) {
-                LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*section, paintOffset);
-                section->paint(borderPaintInfo, childPoint);
-            }
-        });
-    }
-
-    // Paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && usedStyle().visibility() == UsedVisibility::Visible)
-        paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
-}
-
-template<typename Function>
-void RenderTable::paintCollapsedBorderPasses(const PaintInfo& paintInfo, NOESCAPE const Function& paintPass)
-{
-    ASSERT(collapseBorders());
-    recalcCollapsedBorders();
-
-    PaintInfo borderPaintInfo(paintInfo);
-    borderPaintInfo.phase = PaintPhase::CollapsedTableBorders;
-
-    for (auto& border : m_collapsedBorders) {
-        m_currentBorder = &border;
-        paintPass(borderPaintInfo);
-    }
-    m_currentBorder = nullptr;
-}
-
-void RenderTable::paintCollapsedBordersForRow(PaintInfo& paintInfo, RenderTableRow& row, const LayoutPoint& paintOffset)
-{
-    paintCollapsedBorderPasses(paintInfo, [&](PaintInfo& borderPaintInfo) {
-        for (CheckedPtr cell = row.firstCell(); cell; cell = cell->nextCell()) {
-            if (!cell->hasSelfPaintingLayer()) {
-                auto cellPoint = row.blockStartRelativeToPhysicalForChild(*cell, paintOffset);
-                cell->paintCollapsedBorders(borderPaintInfo, cellPoint);
-            }
-        }
-    });
+    Paint::TablePainter::paintObject(*this, paintInfo, paintOffset);
 }
 
 void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)

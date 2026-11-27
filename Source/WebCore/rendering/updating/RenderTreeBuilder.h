@@ -44,7 +44,7 @@ public:
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
-    const RenderView& view() const;
+    NODELETE const RenderView& view() const;
 
     NODELETE static bool isRebuildRootForChildren(const RenderElement&);
 

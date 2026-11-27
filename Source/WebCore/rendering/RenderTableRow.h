@@ -33,9 +33,14 @@ namespace WebCore {
 static const unsigned unsetRowIndex = 0x7FFFFFFF;
 static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
+namespace Paint {
+class TablePainter;
+}
+
 class RenderTableRow final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
+    friend class Paint::TablePainter;
 public:
     RenderTableRow(Element&, UniqueRef<Style::ComputedStyle>&&);
     RenderTableRow(Document&, UniqueRef<Style::ComputedStyle>&&);
@@ -49,8 +54,6 @@ public:
 
     RenderTable* table() const;
 
-    void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
-    void paintShadowForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
     void setRowIndex(unsigned);
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }

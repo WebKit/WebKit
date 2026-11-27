@@ -27,12 +27,9 @@
 #include "config.h"
 #include "RenderTableCell.h"
 
-#include "BackgroundPainter.h"
-#include "BorderPainter.h"
 #include "CollapsedBorderValue.h"
 #include "ElementInlines.h"
 #include "FloatQuad.h"
-#include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
@@ -49,7 +46,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "StyleBoxShadow.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleProperties.h"
 #include "TransformState.h"
@@ -247,7 +243,6 @@ void RenderTableCell::constrainIntrinsicLogicalWidthContributionsByMinMax(Layout
         minContentLogicalWidthContribution = std::max(adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth, LayoutUnit(fixedLogicalWidth->resolveZoom(usedZoom)), 0_lu), minContentLogicalWidthContribution);
     }
 }
-
 
 bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
 {
@@ -1167,7 +1162,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
     return result;    
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(const WritingMode writingMode) const
+CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(const WritingMode writingMode) const
 {
     CheckedPtr section = this->section();
     if (writingMode.isHorizontal())
@@ -1175,7 +1170,7 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedLeftBorder(const Wri
     return writingMode.isBlockLeftToRight() ? section->cachedCollapsedBorder(*this, CollapsedBorderSide::Before) : section->cachedCollapsedBorder(*this, CollapsedBorderSide::After);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(const WritingMode writingMode) const
+CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(const WritingMode writingMode) const
 {
     CheckedPtr section = this->section();
     if (writingMode.isHorizontal())
@@ -1183,7 +1178,7 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedRightBorder(const Wr
     return writingMode.isBlockLeftToRight() ? section->cachedCollapsedBorder(*this, CollapsedBorderSide::After) : section->cachedCollapsedBorder(*this, CollapsedBorderSide::Before);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(const WritingMode writingMode) const
+CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(const WritingMode writingMode) const
 {
     CheckedPtr section = this->section();
     if (writingMode.isHorizontal())
@@ -1191,7 +1186,7 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedTopBorder(const Writ
     return writingMode.isInlineTopToBottom() ? section->cachedCollapsedBorder(*this, CollapsedBorderSide::Start) : section->cachedCollapsedBorder(*this, CollapsedBorderSide::End);
 }
 
-inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const WritingMode writingMode) const
+CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const WritingMode writingMode) const
 {
     CheckedPtr section = this->section();
     if (writingMode.isHorizontal())
@@ -1352,56 +1347,6 @@ void RenderTableCell::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset
     RenderBlockFlow::paint(paintInfo, paintOffset);
 }
 
-struct CollapsedBorder {
-    CollapsedBorderValue borderValue;
-    BoxSide side;
-    bool shouldPaint;
-    LayoutUnit x1;
-    LayoutUnit y1;
-    LayoutUnit x2;
-    LayoutUnit y2;
-    BorderStyle style;
-};
-
-class CollapsedBorders {
-public:
-    CollapsedBorders()
-        : m_count(0)
-    {
-    }
-    
-    void addBorder(const CollapsedBorderValue& borderValue, BoxSide borderSide, bool shouldPaint,
-        LayoutUnit x1, LayoutUnit y1, LayoutUnit x2, LayoutUnit y2, BorderStyle borderStyle)
-    {
-        if (borderValue.exists() && shouldPaint) {
-            m_borders[m_count].borderValue = borderValue;
-            m_borders[m_count].side = borderSide;
-            m_borders[m_count].shouldPaint = shouldPaint;
-            m_borders[m_count].x1 = x1;
-            m_borders[m_count].x2 = x2;
-            m_borders[m_count].y1 = y1;
-            m_borders[m_count].y2 = y2;
-            m_borders[m_count].style = borderStyle;
-            m_count++;
-        }
-    }
-
-    NODELETE CollapsedBorder* nextBorder()
-    {
-        for (unsigned i = 0; i < m_count; i++) {
-            if (m_borders[i].borderValue.exists() && m_borders[i].shouldPaint) {
-                m_borders[i].shouldPaint = false;
-                return &m_borders[i];
-            }
-        }
-        
-        return 0;
-    }
-    
-    std::array<CollapsedBorder, 4> m_borders;
-    unsigned m_count;
-};
-
 static void addBorderStyle(RenderTable::CollapsedBorderValues& borderValues,
                            CollapsedBorderValue borderValue)
 {
@@ -1427,205 +1372,9 @@ void RenderTableCell::sortBorderValues(RenderTable::CollapsedBorderValues& borde
     std::ranges::sort(borderValues, compareBorders);
 }
 
-void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    ASSERT(paintInfo.phase == PaintPhase::CollapsedTableBorders);
-
-    if (!paintInfo.shouldPaintWithinRoot(*this) || usedStyle().visibility() != UsedVisibility::Visible)
-        return;
-
-    LayoutRect localRepaintRect = paintInfo.rect;
-    LayoutRect paintRect = LayoutRect(paintOffset + location(), borderBoxSize());
-    if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
-        return;
-
-    if (paintRect.maxY() + table()->outerBorderBottom() <= localRepaintRect.y())
-        return;
-
-    GraphicsContext& graphicsContext = paintInfo.context();
-    if (!table()->currentBorderValue() || graphicsContext.paintingDisabled())
-        return;
-
-    WritingMode writingMode = tableWritingMode();
-    CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(writingMode);
-    CollapsedBorderValue rightVal = cachedCollapsedRightBorder(writingMode);
-    CollapsedBorderValue topVal = cachedCollapsedTopBorder(writingMode);
-    CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(writingMode);
-
-    // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
-    LayoutUnit topWidth = topVal.width();
-    LayoutUnit bottomWidth = bottomVal.width();
-    LayoutUnit leftWidth = leftVal.width();
-    LayoutUnit rightWidth = rightVal.width();
-
-    float deviceScaleFactor = document().deviceScaleFactor();
-    LayoutUnit leftHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(leftWidth , deviceScaleFactor, false);
-    LayoutUnit topHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(topWidth, deviceScaleFactor, false);
-    LayoutUnit rightHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(rightWidth, deviceScaleFactor, true);
-    LayoutUnit bottomHalfCollapsedBorder = CollapsedBorderValue::adjustedCollapsedBorderWidth(bottomWidth, deviceScaleFactor, true);
-    
-    LayoutRect borderRect = LayoutRect(paintRect.x() - leftHalfCollapsedBorder,
-        paintRect.y() - topHalfCollapsedBorder,
-        paintRect.width() + leftHalfCollapsedBorder + rightHalfCollapsedBorder,
-        paintRect.height() + topHalfCollapsedBorder + bottomHalfCollapsedBorder);
-
-    BorderStyle topStyle = collapsedBorderStyle(topVal.style());
-    BorderStyle bottomStyle = collapsedBorderStyle(bottomVal.style());
-    BorderStyle leftStyle = collapsedBorderStyle(leftVal.style());
-    BorderStyle rightStyle = collapsedBorderStyle(rightVal.style());
-    
-    bool renderTop = topStyle > BorderStyle::Hidden && !topVal.isTransparent() && floorToDevicePixel(topWidth, deviceScaleFactor);
-    bool renderBottom = bottomStyle > BorderStyle::Hidden && !bottomVal.isTransparent() && floorToDevicePixel(bottomWidth, deviceScaleFactor);
-    bool renderLeft = leftStyle > BorderStyle::Hidden && !leftVal.isTransparent() && floorToDevicePixel(leftWidth, deviceScaleFactor);
-    bool renderRight = rightStyle > BorderStyle::Hidden && !rightVal.isTransparent() && floorToDevicePixel(rightWidth, deviceScaleFactor);
-
-    // We never paint diagonals at the joins.  We simply let the border with the highest
-    // precedence paint on top of borders with lower precedence.  
-    CollapsedBorders borders;
-    borders.addBorder(topVal, BoxSide::Top, renderTop, borderRect.x(), borderRect.y(), borderRect.maxX(), borderRect.y() + topWidth, topStyle);
-    borders.addBorder(bottomVal, BoxSide::Bottom, renderBottom, borderRect.x(), borderRect.maxY() - bottomWidth, borderRect.maxX(), borderRect.maxY(), bottomStyle);
-    borders.addBorder(leftVal, BoxSide::Left, renderLeft, borderRect.x(), borderRect.y(), borderRect.x() + leftWidth, borderRect.maxY(), leftStyle);
-    borders.addBorder(rightVal, BoxSide::Right, renderRight, borderRect.maxX() - rightWidth, borderRect.y(), borderRect.maxX(), borderRect.maxY(), rightStyle);
-
-    bool antialias = Paint::BorderPainter::shouldAntialiasLines(graphicsContext);
-    
-    for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
-        if (border->borderValue.isSameIgnoringColor(*table()->currentBorderValue()))
-            Paint::BorderPainter::drawLineForBoxSide(graphicsContext, protect(document()), LayoutRect(LayoutPoint(border->x1, border->y1), LayoutPoint(border->x2, border->y2)), border->side,
-                border->borderValue.color(), border->style, 0, 0, antialias);
-    }
-}
-
-NODELETE static LayoutRect backgroundRectForRow(const RenderBox& tableRow, const RenderTable& table)
-{
-    LayoutRect rect = { tableRow.location(), tableRow.borderBoxSize() };
-    if (!table.collapseBorders()) {
-        // Row border boxes include unwanted hSpacing on both inline ends.
-        auto hSpacing = table.hBorderSpacing();
-        LayoutUnit vSpacing = 0_lu;
-        if (table.writingMode().isHorizontal())
-            rect.contract({ vSpacing, hSpacing, vSpacing, hSpacing });
-        else
-            rect.contract({ hSpacing, vSpacing, hSpacing, vSpacing });
-    }
-    return rect;
-}
-
-NODELETE static LayoutRect backgroundRectForSection(const RenderTableSection& tableSection, const RenderTable& table)
-{
-    LayoutRect rect = { { }, tableSection.borderBoxSize() };
-    if (!table.collapseBorders()) {
-        auto hSpacing = table.hBorderSpacing();
-        auto vSpacing = table.vBorderSpacing();
-        // All sections' size()s include unwanted vSpacing at the block-end
-        // position. The first section's size() includes additional unwanted
-        // vSpacing at the block-start position. All sections' size()s include
-        // unwanted hSpacing on both inline ends.
-        auto beforeBlockSpacing = &tableSection == table.topSection() ? vSpacing : 0_lu;
-        if (table.writingMode().isHorizontal())
-            rect.contract({ beforeBlockSpacing, hSpacing, vSpacing, hSpacing });
-        else if (table.writingMode().isBlockFlipped())
-            rect.contract({ hSpacing, beforeBlockSpacing, hSpacing, vSpacing });
-        else
-            rect.contract({ hSpacing, vSpacing, hSpacing, beforeBlockSpacing });
-    }
-    return rect;
-}
-
 bool RenderTableCell::isHiddenEmptyCell() const
 {
     return !table()->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild();
-}
-
-void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset)
-{
-    ASSERT(backgroundObject);
-
-    if (!paintInfo.shouldPaintWithinRoot(*this))
-        return;
-
-    if (usedStyle().visibility() != UsedVisibility::Visible)
-        return;
-
-    if (isHiddenEmptyCell())
-        return;
-
-    RenderTable* tableElt = table();
-    const auto& style = backgroundObject->style();
-    auto& bgLayers = style.backgroundLayers();
-
-    auto color = style.visitedDependentUsedBackgroundColor();
-    if (!Style::hasImageInAnyLayer(bgLayers) && !color.isVisible())
-        return;
-
-    Style::ColorResolver colorResolver { style };
-    color = colorResolver.colorApplyingColorFilter(color);
-
-    LayoutPoint adjustedPaintOffset = paintOffset;
-    if (backgroundObject != this)
-        adjustedPaintOffset.moveBy(location());
-
-    // Background images attached to the row or row group must span the row
-    // or row group. Draw them at the backgroundObject's dimensions, but
-    // clipped to this cell.
-    // FIXME: This should also apply to columns and column groups.
-    bool paintBackgroundObject = backgroundObject != this && Style::hasImageInAnyLayer(bgLayers) && !is<RenderTableCol>(backgroundObject);
-    // We have to clip here because the background would paint
-    // on top of the borders otherwise. This only matters for cells and rows.
-    bool shouldClip = paintBackgroundObject || (backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders());
-    GraphicsContextStateSaver stateSaver(paintInfo.context(), shouldClip);
-    if (paintBackgroundObject)
-        paintInfo.context().clip({ adjustedPaintOffset, borderBoxSize() });
-    else if (shouldClip) {
-        LayoutRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
-            borderBoxWidth() - borderLeft() - borderRight(), borderBoxHeight() - borderTop() - borderBottom());
-        paintInfo.context().clip(clipRect);
-    }
-    LayoutRect fillRect;
-    if (paintBackgroundObject) {
-        if (auto* tableSectionRenderer = dynamicDowncast<RenderTableSection>(backgroundObject))
-            fillRect = backgroundRectForSection(*tableSectionRenderer, *tableElt);
-        else
-            fillRect = backgroundRectForRow(*backgroundObject, *tableElt);
-        fillRect.moveBy(backgroundPaintOffset);
-    } else
-        fillRect = LayoutRect { adjustedPaintOffset, borderBoxSize() };
-
-    // When painting a cell's own background with collapsed borders, inset the
-    // fill rect at the table's outer edges to match this cell's collapsed
-    // border extent. The cell's allocated width includes space for the maximum
-    // collapsed border inner halves across all cells in the same column. If
-    // this cell has narrower borders at the table edge, its background should
-    // not paint into that extra space. Interior column edges are not adjusted
-    // so that cell backgrounds remain continuous across the row.
-    if (backgroundObject == this && tableElt->collapseBorders()) {
-        bool isFirstColumn = !tableElt->colToEffCol(col());
-        bool isLastColumn = tableElt->colToEffCol(col() + colSpan() - 1) == tableElt->numEffCols() - 1;
-
-        LayoutUnit leftInset = isFirstColumn ? tableElt->maxCollapsedInnerBorderHalfForFirstColumn() - borderHalfLeft(false) : 0_lu;
-        LayoutUnit rightInset = isLastColumn ? tableElt->maxCollapsedInnerBorderHalfForLastColumn() - borderHalfRight(false) : 0_lu;
-
-        if (leftInset || rightInset) {
-            fillRect.shiftXEdgeBy(leftInset);
-            fillRect.shiftMaxXEdgeBy(-rightInset);
-        }
-    }
-
-    auto compositeOp = protect(document())->compositeOperatorForBackgroundColor(color, *this);
-
-    Paint::BackgroundPainter painter { *this, paintInfo };
-
-    bool hasBackgroundClipText = false;
-    for (auto& backgroundLayer : style.backgroundLayers().usedValues()) {
-        if (backgroundLayer.clip() == FillBox::Text || backgroundLayer.clip() == FillBox::BorderAreaText)
-            hasBackgroundClipText = true;
-    }
-
-    if (backgroundObject != this && !hasBackgroundClipText) {
-        painter.setOverrideClip(FillBox::BorderBox);
-        painter.setOverrideOrigin(FillBox::BorderBox);
-    }
-    painter.paintFillLayers(color, bgLayers, style.usedZoomForLength(), fillRect, BleedAvoidance::None, compositeOp, backgroundObject);
 }
 
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)

@@ -56,6 +56,7 @@
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
+#include "TablePainter.h"
 
 namespace WebCore {
 namespace Paint {
@@ -207,7 +208,7 @@ void BoxDecorationPainter::paintTableCellDecorations(RenderTableCell& cell)
     backgroundPainter.paintBoxShadow(paintRect, cell.usedStyle(), Style::ShadowStyle::Normal);
 
     // Paint our cell background.
-    cell.paintBackgroundsBehindCell(m_paintInfo, m_paintOffset, &cell, m_paintOffset);
+    TablePainter::paintBackgroundsBehindCell(cell, m_paintInfo, m_paintOffset, cell, m_paintOffset);
 
     // For collapsed borders, we expand from inner edge to outer edge for inset shadow painting.
     LayoutRect insetShadowRect = paintRect;

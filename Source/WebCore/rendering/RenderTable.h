@@ -44,9 +44,14 @@ class TableLayout;
 enum class SkipEmptySections : bool { No, Yes };
 enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 
+namespace Paint {
+class TablePainter;
+}
+
 class RenderTable : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
+    friend class Paint::TablePainter;
 public:
     RenderTable(Type, Element&, UniqueRef<Style::ComputedStyle>&&);
     RenderTable(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
@@ -183,8 +188,6 @@ public:
 
     LayoutUnit maxCollapsedInnerBorderHalfForFirstColumn() { recalcCollapsedBorders(); return m_maxCollapsedInnerBorderHalfFirstColumn; }
     LayoutUnit maxCollapsedInnerBorderHalfForLastColumn() { recalcCollapsedBorders(); return m_maxCollapsedInnerBorderHalfLastColumn; }
-    const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
-    void paintCollapsedBordersForRow(PaintInfo&, RenderTableRow&, const LayoutPoint& paintOffset);
     
     bool hasSections() const { return m_head || m_foot || m_firstBody; }
 
@@ -224,7 +227,6 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&) final;
     void paintObject(PaintInfo&, const LayoutPoint&) final;
 
-    template<typename Function> void paintCollapsedBorderPasses(const PaintInfo&, NOESCAPE const Function& paintPass);
     void layout() final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) const;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
@@ -284,7 +286,6 @@ protected:
     std::unique_ptr<TableLayout> m_tableLayout;
 
     CollapsedBorderValues m_collapsedBorders;
-    const CollapsedBorderValue* m_currentBorder { nullptr };
     LayoutUnit m_maxCollapsedInnerBorderHalfFirstColumn;
     LayoutUnit m_maxCollapsedInnerBorderHalfLastColumn;
     bool m_collapsedBordersValid : 1 { false };
