@@ -39,7 +39,6 @@ namespace Wasm {
     macro(UnalignedMemoryAccess, "Unaligned memory access"_s) \
     macro(OutOfBoundsTableAccess, "Out of bounds table access"_s) \
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
-    macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
     macro(NullReference,  "call_ref to a null reference"_s) \
     macro(NullExnrefReference,  "throw_ref on a null reference"_s) \
     macro(NullI31Get, "i31.get_<sx> to a null reference"_s) \
@@ -106,7 +105,6 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::OutOfBoundsDataSegmentAccess:
     case ExceptionType::OutOfBoundsElementSegmentAccess:
     case ExceptionType::OutOfBoundsCallIndirect:
-    case ExceptionType::NullTableEntry:
     case ExceptionType::NullReference:
     case ExceptionType::NullExnrefReference:
     case ExceptionType::NullI31Get:

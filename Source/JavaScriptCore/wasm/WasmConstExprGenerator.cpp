@@ -856,7 +856,6 @@ public:
     [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addUnreachable() CONST_EXPR_STUB
-    [[nodiscard]] PartialResult addCrash() CONST_EXPR_STUB
     NODELETE bool usesSIMD() { return false; }
     NODELETE void notifyFunctionUsesSIMD() { }
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType, uint64_t, ExpressionType&, uint8_t) CONST_EXPR_STUB

@@ -4986,12 +4986,6 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addCrash()
-{
-    m_jit.breakpoint();
-    return { };
-}
-
 WasmOrigin BBQJIT::origin()
 {
     if (!m_parser)

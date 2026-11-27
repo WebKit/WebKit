@@ -532,7 +532,6 @@ public:
     [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
     [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
     [[nodiscard]] PartialResult addUnreachable();
-    [[nodiscard]] PartialResult addCrash();
 
     NODELETE void setParser(FunctionParser<IPIntGenerator>* parser) { m_parser = parser; };
     NODELETE size_t getCurrentInstructionLength()
@@ -2951,11 +2950,6 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
 // Traps
 
 [[nodiscard]] PartialResult IPIntGenerator::addUnreachable()
-{
-    return { };
-}
-
-[[nodiscard]] PartialResult IPIntGenerator::addCrash()
 {
     return { };
 }

@@ -872,7 +872,6 @@ public:
     [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned tableIndex, const RTT&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     [[nodiscard]] PartialResult addUnreachable();
-    [[nodiscard]] PartialResult addCrash();
 
     using ValueResults = Vector<Value*, 16>;
     void fillCallResults(Value* callResult, const RTT& signature, ValueResults&);
@@ -1964,16 +1963,6 @@ auto OMGIRGenerator::addUnreachable() -> PartialResult
     B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
     unreachable->setGenerator([this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, origin, ExceptionType::Unreachable);
-    });
-    unreachable->effects.terminal = true;
-    return { };
-}
-
-auto OMGIRGenerator::addCrash() -> PartialResult
-{
-    B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
-    unreachable->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        jit.breakpoint();
     });
     unreachable->effects.terminal = true;
     return { };

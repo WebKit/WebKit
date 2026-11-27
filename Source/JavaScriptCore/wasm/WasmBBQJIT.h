@@ -2080,8 +2080,6 @@ public:
 
     [[nodiscard]] PartialResult addUnreachable();
 
-    [[nodiscard]] PartialResult addCrash();
-
     ALWAYS_INLINE void willParseOpcode();
 
     ALWAYS_INLINE void willParseExtendedOpcode();
