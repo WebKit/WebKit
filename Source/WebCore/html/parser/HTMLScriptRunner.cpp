@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All rights reserved.
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -201,6 +201,12 @@ bool HTMLScriptRunner::executeScriptsWaitingForParsing()
             watchForLoad(m_scriptsToExecuteAfterParsing.first());
             return false;
         }
+
+        if (!m_document)
+            return false;
+        m_hasScriptsWaitingForStylesheets = !m_document->haveStylesheetsLoaded();
+        if (m_hasScriptsWaitingForStylesheets)
+            return false;
         executePendingScriptAndDispatchEvent(m_scriptsToExecuteAfterParsing.takeFirst().get());
         // FIXME: What is this m_document check for?
         if (!m_document)
