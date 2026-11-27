@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(DAMAGE_TRACKING) && USE(SKIA)
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/CoordinatedPlatformLayer.h>
@@ -169,5 +168,3 @@ TEST(CoordinatedPlatformLayerScrollingPosition, MainPositionSetAfterTheScrolling
 }
 
 } // namespace TestWebKitAPI
-
-#endif // ENABLE(DAMAGE_TRACKING) && USE(SKIA)

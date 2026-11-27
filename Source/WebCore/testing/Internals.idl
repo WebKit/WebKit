@@ -535,7 +535,7 @@ enum LayerType {
 };
 
 [
-    Conditional=DAMAGE_TRACKING,
+    Conditional=DAMAGE_TESTING,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
 ] dictionary FrameDamage {
@@ -868,7 +868,7 @@ enum LayerType {
     boolean isNetworkInterceptionConfiguredForTesting(DOMString url);
     undefined lowerAllFrameMemoryMonitorLimits();
 
-    [Conditional=DAMAGE_TRACKING] sequence<FrameDamage> getFrameDamageHistory();
+    [Conditional=DAMAGE_TESTING] sequence<FrameDamage> getFrameDamageHistory();
 
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;

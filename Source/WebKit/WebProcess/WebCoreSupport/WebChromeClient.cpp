@@ -205,7 +205,7 @@
 #include "ScrollbarsControllerCoordinated.h"
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 #include <WebCore/Damage.h>
 #endif
 
@@ -2743,7 +2743,7 @@ void WebChromeClient::didProgrammaticallyClearTextFormControl(const HTMLTextForm
         page->didProgrammaticallyClearTextFormControl(element);
 }
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 void WebChromeClient::resetDamageHistoryForTesting()
 {
     if (!m_page)

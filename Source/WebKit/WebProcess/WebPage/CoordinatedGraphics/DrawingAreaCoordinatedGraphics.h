@@ -90,7 +90,7 @@ private:
     void forceUpdate() override;
     void didDiscardBackingStore() override;
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     void resetDamageHistoryForTesting() override;
     void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const override;
 #endif

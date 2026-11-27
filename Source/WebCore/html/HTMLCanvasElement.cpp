@@ -638,7 +638,7 @@ void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect,
     m_copiedImage = nullptr;
     if (CheckedPtr renderer = renderBox()) {
         bool usesLayerContents = usesContentsAsLayerContents();
-#if ENABLE(DAMAGE_TRACKING)
+#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
         bool needsDirtyRect = !usesLayerContents || document().settings().propagateDamagingInformation();
 #else
         bool needsDirtyRect = !usesLayerContents;

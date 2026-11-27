@@ -58,9 +58,7 @@ NonCompositedFrameRenderer::NonCompositedFrameRenderer(WebPage& webPage)
         frameComplete();
     }, AcceleratedSurface::RenderingPurpose::NonComposited))
 {
-#if ENABLE(DAMAGE_TRACKING)
     resetFrameDamage();
-#endif
 }
 
 bool NonCompositedFrameRenderer::initialize()
@@ -89,15 +87,12 @@ NonCompositedFrameRenderer::~NonCompositedFrameRenderer()
 
 void NonCompositedFrameRenderer::addDirtyRect(const IntRect& rect)
 {
-#if ENABLE(DAMAGE_TRACKING)
-    if (m_frameDamage) {
-        auto scaledRect = rect;
-        scaledRect.scale(m_webPage->deviceScaleFactor());
-        m_frameDamage->add(scaledRect);
-    }
-#else
-    UNUSED_PARAM(rect);
-#endif
+    if (!m_frameDamage)
+        return;
+
+    auto scaledRect = rect;
+    scaledRect.scale(m_webPage->deviceScaleFactor());
+    m_frameDamage->add(scaledRect);
 }
 
 void NonCompositedFrameRenderer::setNeedsDisplay()
@@ -121,7 +116,6 @@ void NonCompositedFrameRenderer::setNeedsDisplayInRect(const IntRect& rect)
     scheduleRenderingUpdate();
 }
 
-#if ENABLE(DAMAGE_TRACKING)
 void NonCompositedFrameRenderer::resetFrameDamage()
 {
     auto scaledRect = m_webPage->bounds();
@@ -143,14 +137,12 @@ void NonCompositedFrameRenderer::resetFrameDamage()
 
     m_frameDamage = std::make_optional<Damage>(scaledRect, settings.unifyDamagedRegions() ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles, rectangleThreshold);
 }
-#endif
 
 void NonCompositedFrameRenderer::sizeDidChange()
 {
-#if ENABLE(DAMAGE_TRACKING)
     resetFrameDamage();
     addDirtyRect(m_webPage->bounds());
-#endif
+
     if (canUpdateRendering())
         updateRendering();
     else
@@ -193,13 +185,11 @@ void NonCompositedFrameRenderer::updateRendering()
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
 
-#if ENABLE(DAMAGE_TRACKING)
     if (m_frameDamage && m_frameDamage->isEmpty() && !m_forcedRepaintAsyncCallback) {
         webPage->didUpdateRendering({ });
         WTFEndSignpost(this, NonCompositedRenderingUpdate);
         return;
     }
-#endif
 
     IntSize scaledSize = webPage->size();
     scaledSize.scale(webPage->deviceScaleFactor());
@@ -229,14 +219,14 @@ void NonCompositedFrameRenderer::updateRendering()
             canvas->concat(matrix);
         }
 
-#if ENABLE(DAMAGE_TRACKING)
         if (m_frameDamage) {
+#if ENABLE(DAMAGE_TESTING)
             if (m_frameDamageHistoryForTesting)
                 m_frameDamageHistoryForTesting->append(m_frameDamage->regionForTesting());
+#endif
             m_surface->setFrameDamage(WTF::move(*m_frameDamage));
             resetFrameDamage();
         }
-#endif
 
         auto drawRect = [&](const IntRect& rect) {
             WTFBeginSignpost(canvas, DrawRect, "Skia/%s, dirty region %ix%i+%i+%i", m_context ? "GPU" : "CPU", rect.x(), rect.y(), rect.width(), rect.height());
@@ -244,7 +234,6 @@ void NonCompositedFrameRenderer::updateRendering()
             WTFEndSignpost(canvas, DrawRect);
         };
 
-#if ENABLE(DAMAGE_TRACKING)
         if (auto& renderTargetDamage = m_surface->renderTargetDamage()) {
             // Only the damaged rects are repainted, so the clear has to be limited to them,
             // otherwise a non-opaque clear color wipes the rest of the target.
@@ -267,11 +256,6 @@ void NonCompositedFrameRenderer::updateRendering()
                 canvas->clear(*clearColor);
             drawRect(webPage->bounds());
         }
-#else
-        if (auto clearColor = m_surface->skiaClearColor({ }))
-            canvas->clear(*clearColor);
-        drawRect(webPage->bounds());
-#endif
 
         canvas->restore();
 
@@ -350,7 +334,7 @@ void NonCompositedFrameRenderer::preferredBufferFormatsDidChange()
 }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 void NonCompositedFrameRenderer::resetDamageHistoryForTesting()
 {
     m_frameDamageHistoryForTesting = std::make_optional<Vector<WebCore::Region>>();

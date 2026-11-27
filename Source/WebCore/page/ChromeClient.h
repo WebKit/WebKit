@@ -861,7 +861,7 @@ public:
 
     virtual void didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement&) { }
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     virtual void resetDamageHistoryForTesting() { }
     virtual void foreachRegionInDamageHistoryForTesting(Function<void(const Region&)>&&) const { }
 #endif

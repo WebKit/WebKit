@@ -89,15 +89,6 @@ public:
 
     std::optional<float> fps() const { return m_fpsCounter.fps.load(); };
 
-#if ENABLE(DAMAGE_TRACKING)
-    enum class DamagePropagationFlags : uint8_t {
-        Unified = 1 << 0,
-        UseForCompositing = 1 << 1
-    };
-    void setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>>, unsigned rectangleThreshold);
-    void enableFrameDamageNotificationForTesting();
-#endif
-
 private:
 #if HAVE(DISPLAY_LINK)
     explicit ThreadedCompositor(LayerTreeHost&);
@@ -152,14 +143,6 @@ private:
         unsigned frameCountSinceLastCalculation { 0 };
         std::atomic<std::optional<float>> fps;
     } m_fpsCounter;
-
-#if ENABLE(DAMAGE_TRACKING)
-    struct {
-        std::optional<OptionSet<DamagePropagationFlags>> flags;
-        std::unique_ptr<WebCore::TextureMapperDamageVisualizer> visualizer;
-        std::atomic<bool> shouldNotifyFrameDamageForTesting { false };
-    } m_damage;
-#endif
 
     std::atomic<uint32_t> m_compositionRequestID { 0 };
 #if HAVE(DISPLAY_LINK)

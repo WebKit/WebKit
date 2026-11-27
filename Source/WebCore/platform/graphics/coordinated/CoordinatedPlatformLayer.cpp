@@ -99,9 +99,8 @@ SkiaCompositingLayer& CoordinatedPlatformLayer::ensureTarget()
     ASSERT(!isMainThread());
     if (!m_target)
         m_target = SkiaCompositingLayer::create();
-#if ENABLE(DAMAGE_TRACKING)
+
     m_target->setDamagePropagationEnabled(m_damagePropagationEnabled);
-#endif
     return *m_target;
 }
 
@@ -514,14 +513,10 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
     m_contentsBuffer = WTF::move(buffer);
     addPendingChange(Change::ContentsBuffer);
 
-#if ENABLE(DAMAGE_TRACKING)
     if (dirtyRegion)
         addDamage(WTF::move(*dirtyRegion));
     else
         damageWholeLayer();
-#else
-    UNUSED_PARAM(dirtyRegion);
-#endif
 }
 
 void CoordinatedPlatformLayer::setScrollbarContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer, const FloatRect& rect)
@@ -653,7 +648,6 @@ void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
     m_dirtyRegion = damage.rects();
 }
 
-#if ENABLE(DAMAGE_TRACKING)
 void CoordinatedPlatformLayer::addDamage(Damage&& damage)
 {
     assertIsMainThread();
@@ -663,17 +657,14 @@ void CoordinatedPlatformLayer::addDamage(Damage&& damage)
         m_damage->add(damage);
     addPendingChange(Change::Damage);
 }
-#endif
 
 void CoordinatedPlatformLayer::damageWholeLayer()
 {
-#if ENABLE(DAMAGE_TRACKING)
     // An empty Damage rejects everything added to it later, so it must never become the layer's damage.
     if (!m_damagePropagationEnabled || sizeOnMainThread().isEmpty())
         return;
 
     addDamage(Damage { sizeOnMainThread(), Damage::Mode::Full });
-#endif
 }
 
 void CoordinatedPlatformLayer::setFilters(const FilterOperations& filters)
@@ -1168,10 +1159,8 @@ bool CoordinatedPlatformLayer::commitPendingRenderingUpdateProperties()
         properties.debugBorderWidth = m_debugBorderWidth;
         properties.repaintCount = m_repaintCount;
     }
-#if ENABLE(DAMAGE_TRACKING)
     if (changes.contains(Change::Damage))
         properties.damage = std::exchange(m_damage, std::nullopt);
-#endif
 
     properties.changes = WTF::move(changes);
 
@@ -1314,12 +1303,10 @@ void CoordinatedPlatformLayer::flushCompositingStateProperties(const OptionSet<C
             repaintCount = properties->repaintCount;
         layer.setDebugIndicators(WTF::move(color), width, repaintCount);
     }
-#if ENABLE(DAMAGE_TRACKING)
     if (changes.contains(Change::Damage)) {
         ASSERT(properties->damage.has_value());
         layer.addDamage(*std::exchange(properties->damage, std::nullopt));
     }
-#endif
 }
 
 void CoordinatedPlatformLayer::flushCompositingStateScrollbarContents(const OptionSet<CompositionReason>& reasons)

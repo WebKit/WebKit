@@ -75,32 +75,9 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper,
     FloatRect layerRect = { { }, m_size };
     TransformationMatrix adjustedTransform = transform * TransformationMatrix::rectToRect(layerRect, targetRect);
 
-#if ENABLE(DAMAGE_TRACKING)
-    const auto& frameDamage = textureMapper.damage();
-    const auto canUseDamageToDrawTextureFragment = [&]() {
-        return frameDamage
-            && !frameDamage->isEmpty()
-            && frameDamage->mode() != Damage::Mode::Full
-            && adjustedTransform.isIdentity()
-            && opacity == 1.0;
-    }();
-#endif
-
     for (const auto& tile : m_tiles.values()) {
         ASSERT(tile.scale() == m_scale);
         const auto allEdgesExposed = allTileEdgesExposed(layerRect, tile.rect()) ? TextureMapper::AllEdgesExposed::Yes : TextureMapper::AllEdgesExposed::No;
-
-#if ENABLE(DAMAGE_TRACKING)
-        if (canUseDamageToDrawTextureFragment && allEdgesExposed == TextureMapper::AllEdgesExposed::No && tile.texture().isOpaque() && !tile.texture().filterOperation()) {
-            const auto tileDamageRect = intersection(tile.rect(), frameDamage->bounds());
-            if (!tileDamageRect.isEmpty()) {
-                const auto sourceRect = FloatRect { FloatPoint { tileDamageRect.location() - tile.rect().location() }, tileDamageRect.size() };
-                textureMapper.drawTextureFragment(tile.texture(), sourceRect, tileDamageRect);
-            }
-
-            continue;
-        }
-#endif
         textureMapper.drawTexture(tile.texture(), tile.rect(), adjustedTransform, opacity, allEdgesExposed);
     }
 }

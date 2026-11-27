@@ -185,7 +185,7 @@ public:
     virtual void dispatchPendingCallbacksAfterEnsuringDrawing() = 0;
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     virtual void resetDamageHistoryForTesting() { }
     virtual void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const { }
 #endif

@@ -63,7 +63,6 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerTreeHost);
 
-#if ENABLE(DAMAGE_TRACKING)
 static bool damageOverlayForcesPropagation()
 {
     // WEBKIT_SHOW_DAMAGE draws the damage the layers report, so it needs propagation on even when the
@@ -75,7 +74,6 @@ static bool damageOverlayForcesPropagation()
     auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar));
     return value && *value;
 }
-#endif
 
 std::unique_ptr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 {
@@ -88,7 +86,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();
-#if ENABLE(DAMAGE_TRACKING)
         const auto& settings = webPage.corePage()->settings();
         const bool propagateDamage = settings.propagateDamagingInformation() || damageOverlayForcesPropagation();
         rootLayer.setDamagePropagationEnabled(propagateDamage);
@@ -96,7 +93,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
             m_damageInGlobalCoordinateSpace = std::make_shared<Damage>(m_webPage->size());
             rootLayer.setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
         }
-#endif
+
         Locker locker { rootLayer.lock() };
         rootLayer.setAnchorPoint(FloatPoint3D(0, 0, 0));
         rootLayer.setSize(m_webPage->size());
@@ -105,7 +102,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     lazyInitialize(m_compositor, ThreadedCompositor::create(webPage, *this, m_sceneState.get()));
     m_tileManager = CoordinatedTileManager::create(m_compositor->threadSafeGrContext());
 
-#if ENABLE(DAMAGE_TRACKING)
     std::optional<OptionSet<ThreadedCompositor::DamagePropagationFlags>> damagePropagationFlags;
     const auto& settings = webPage.corePage()->settings();
     if (settings.propagateDamagingInformation()) {
@@ -116,7 +112,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
             damagePropagationFlags->add(ThreadedCompositor::DamagePropagationFlags::UseForCompositing);
     }
     m_compositor->setDamagePropagationSettings(damagePropagationFlags, settings.damageRectangleThreshold());
-#endif
 }
 
 LayerTreeHost::~LayerTreeHost()
@@ -348,11 +343,10 @@ void LayerTreeHost::backgroundColorDidChange()
 
 void LayerTreeHost::attachLayer(CoordinatedPlatformLayer& layer)
 {
-#if ENABLE(DAMAGE_TRACKING)
     layer.setDamagePropagationEnabled(!!m_damageInGlobalCoordinateSpace);
     if (m_damageInGlobalCoordinateSpace)
         layer.setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
-#endif
+
     m_sceneState->addLayer(layer);
 }
 
@@ -585,7 +579,7 @@ void LayerTreeHost::preferredBufferFormatsDidChange()
 }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 void LayerTreeHost::notifyFrameDamageForTesting(Region&& damageRegion)
 {
     Locker locker { m_frameDamageHistoryForTestingLock };

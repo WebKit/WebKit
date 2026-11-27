@@ -124,9 +124,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
     , m_swapChain(*this)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(usesGL() && useExplicitSync())
-#if ENABLE(DAMAGE_TRACKING)
     , m_damageTracker(m_swapChain, !usesGL())
-#endif
 {
 }
 
@@ -856,7 +854,6 @@ uint64_t AcceleratedSurface::SwapChain::window()
 }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
 void AcceleratedSurface::SwapChainDamageTracker::recordFrameDamage(Damage&& damage, AccumulateIntoSwapChain accumulate)
 {
     m_frameDamage = WTF::move(damage);
@@ -901,7 +898,6 @@ void AcceleratedSurface::SwapChainDamageTracker::didPresent(RenderTarget& target
     // few full-height cells.
     target.setDamage(Damage(m_swapChain.size(), needsFineGrainedDamage() ? Damage::Mode::Rectangles : Damage::Mode::BoundingBox, Damage::NoMaxRectangles));
 }
-#endif
 
 bool AcceleratedSurface::shouldPaintMirrored() const
 {
@@ -1065,9 +1061,7 @@ void AcceleratedSurface::willRenderFrame(const IntSize& size)
     bool bufferFormatChanged = m_swapChain.handleBufferFormatChangeIfNeeded();
     if (sizeDidChange || bufferFormatChanged) {
         m_pendingFrameNotifyTargets.clear();
-#if ENABLE(DAMAGE_TRACKING)
         m_damageTracker.reset();
-#endif
     }
 
     m_target = m_swapChain.nextTarget();
@@ -1106,12 +1100,8 @@ void AcceleratedSurface::didRenderFrame(TargetContents targetContents)
         m_target->sync(m_useExplicitSync);
 
     Vector<IntRect, 1> damageRects;
-#if ENABLE(DAMAGE_TRACKING)
     m_damageTracker.didPresent(*m_target, targetContents);
     damageRects = m_damageTracker.takeFrameDamageRects();
-#else
-    UNUSED_PARAM(targetContents);
-#endif
 
     m_target->didRenderFrame();
     m_pendingFrameNotifyTargets.insert(0, { m_target, WTF::move(damageRects) });
@@ -1127,13 +1117,11 @@ void AcceleratedSurface::sendFrame()
     target->sendFrame(WTF::move(damageRects));
 }
 
-#if ENABLE(DAMAGE_TRACKING)
 const std::optional<Damage>& AcceleratedSurface::renderTargetDamage()
 {
     static std::optional<Damage> nulloptDamage;
     return m_target ? m_damageTracker.damageSinceTargetWasLastCurrent(*m_target) : nulloptDamage;
 }
-#endif
 
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 void AcceleratedSurface::releaseBuffer(RendererBufferIdentifier targetID, UnixFileDescriptor&& releaseFence)

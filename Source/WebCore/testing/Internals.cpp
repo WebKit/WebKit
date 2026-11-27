@@ -837,7 +837,7 @@ void Internals::resetToConsistentState(Page& page)
 
     Paint::TextPainter::setForceUseGlyphDisplayListForTesting(false);
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     page.chrome().client().resetDamageHistoryForTesting();
 #endif
 
@@ -892,7 +892,7 @@ Internals::Internals(Document& document)
 
     Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(true);
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     document.page()->chrome().client().resetDamageHistoryForTesting();
 #endif
 
@@ -9560,7 +9560,7 @@ Vector<String> Internals::activeQuirkNames() const
     return document->quirks().activeQuirkNames();
 }
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() const
 {
     RefPtr document = contextDocument();

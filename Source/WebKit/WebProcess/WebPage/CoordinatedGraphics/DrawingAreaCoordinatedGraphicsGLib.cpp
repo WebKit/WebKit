@@ -387,7 +387,7 @@ void DrawingAreaCoordinatedGraphics::preferredBufferFormatsDidChange()
 }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
 {
     if (!m_renderer)

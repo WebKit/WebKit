@@ -389,16 +389,13 @@ void GraphicsLayerCoordinated::setContentsNeedsDisplayInRect(const FloatRect& re
     if (!m_contentsDisplayDelegate)
         return;
 
-#if ENABLE(DAMAGE_TRACKING)
     if (!rect.isEmpty() && m_contentsVisible && !m_size.isEmpty()) {
         if (!m_contentsDirtyRegion)
             m_contentsDirtyRegion = Damage(m_size, Damage::Mode::Rectangles, Damage::MaxRectanglesForHighResolution);
 
         m_contentsDirtyRegion->add(rect);
     }
-#else
-    UNUSED_PARAM(rect);
-#endif
+
     noteLayerPropertyChanged(Change::ContentsBufferNeedsDisplay, ScheduleFlush::Yes);
 }
 
