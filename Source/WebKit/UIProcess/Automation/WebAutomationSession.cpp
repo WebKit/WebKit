@@ -240,6 +240,29 @@ WebProcessPool* WebAutomationSession::processPool() const
     return m_processPool.get();
 }
 
+Vector<Ref<WebPageProxy>> WebAutomationSession::pagesControlledByAutomation() const
+{
+    Vector<Ref<WebPageProxy>> pages;
+    RefPtr processPool = m_processPool;
+    if (!processPool)
+        return pages;
+
+    for (Ref process : borrow(processPool->processes()).get()) {
+        for (Ref page : process->mainPages()) {
+            if (page->isControlledByAutomation())
+                pages.append(WTF::move(page));
+        }
+    }
+
+    // The walk above is in no useful order: a page moves to a newer process when it navigates cross-site,
+    // and a process lists its pages in hash order. Page identifiers are generated in creation order and stay
+    // with the page, which gives the order of HTML's top-level traversable set.
+    std::ranges::sort(pages, { }, [](auto& page) {
+        return page->identifier();
+    });
+    return pages;
+}
+
 // NOTE: this class could be split at some point to support local and remote automation sessions.
 // For now, it only works with a remote automation driver over a RemoteInspector connection.
 

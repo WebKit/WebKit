@@ -39,7 +39,6 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
 #include <JavaScriptCore/MathCommon.h>
 #include <limits>
 #include <wtf/Borrow.h>
@@ -441,25 +440,13 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
         return;
     }
 
-    Vector<Ref<WebPageProxy>> pagesToProcess;
-
-    RefPtr processPool = session->processPool();
-    for (Ref process : borrow(processPool->processes()).get()) {
-        for (Ref page : process->mainPages()) {
-            if (!page->isControlledByAutomation())
-                continue;
-
-            if (!optionalRoot.isEmpty()) {
-                if (session->handleForWebPageProxy(page) == optionalRoot) {
-                    pagesToProcess.append(page);
-                    break;
-                }
-            } else
-                pagesToProcess.append(page);
-        }
+    auto pagesToProcess = session->pagesControlledByAutomation();
+    if (!optionalRoot.isEmpty()) {
+        pagesToProcess.removeAllMatching([&](auto& page) {
+            return session->handleForWebPageProxy(page) != optionalRoot;
+        });
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(pagesToProcess.isEmpty(), FrameNotFound);
     }
-
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalRoot.isEmpty() && pagesToProcess.isEmpty(), FrameNotFound);
 
     if (pagesToProcess.isEmpty()) {
         callback({ { JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create() } });

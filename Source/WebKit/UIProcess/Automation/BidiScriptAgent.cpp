@@ -40,7 +40,6 @@
 #include "WebFrameMetrics.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
 #include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
@@ -697,13 +696,8 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
         pagesToProcess.append(*resolvedPageForContext);
     else {
         // Enumerate all controlled pages; filtering by context happens during collection.
-        RefPtr processPool = session->processPool();
-        for (Ref process : borrow(processPool->processes())) {
-            for (Ref page : process->mainPages()) {
-                if (page->isControlledByAutomation())
-                    pagesToProcess.append(page);
-            }
-        }
+        for (Ref page : session->pagesControlledByAutomation())
+            pagesToProcess.append(WTF::move(page));
     }
 
     if (pagesToProcess.isEmpty()) {

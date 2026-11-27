@@ -35,9 +35,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
 #include <WebCore/RegistrableDomain.h>
-#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 
 namespace WebKit {
@@ -53,21 +51,6 @@ BidiPermissionsAgent::BidiPermissionsAgent(WebAutomationSession& session, Backen
 }
 
 BidiPermissionsAgent::~BidiPermissionsAgent() = default;
-
-static Vector<Ref<WebPageProxy>> allPageProxiesFor(const WebAutomationSession& session)
-{
-    Vector<Ref<WebPageProxy>> pages;
-    RefPtr processPool = session.processPool();
-    for (Ref process : borrow(processPool->processes()).get()) {
-        for (Ref page : process->mainPages()) {
-            if (!page->isControlledByAutomation())
-                continue;
-            pages.append(WTF::move(page));
-        }
-    }
-
-    return pages;
-}
 
 void BidiPermissionsAgent::setPermission(Ref<JSON::Object>&& descriptor, const String& origin, Inspector::Protocol::BidiPermissions::PermissionState state, const String& optionalUserContext, CommandCallback<void>&& callback)
 {
@@ -87,7 +70,7 @@ void BidiPermissionsAgent::setPermission(Ref<JSON::Object>&& descriptor, const S
             callback({ });
         });
 
-        for (auto page : allPageProxiesFor(*session)) {
+        for (Ref page : session->pagesControlledByAutomation()) {
             auto pageOrigin = RegistrableDomain { page->pageLoadState().origin() };
             if (pageOrigin != topFrameOrigin)
                 continue;

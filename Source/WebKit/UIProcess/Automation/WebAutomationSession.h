@@ -187,6 +187,9 @@ public:
     NODELETE WebProcessPool* processPool() const;
     void setProcessPool(WebProcessPool*);
 
+    // The session's top-level browsing contexts, oldest first.
+    Vector<Ref<WebPageProxy>> pagesControlledByAutomation() const;
+
     // A same-document navigation is reported as such: it does not end a wait whose navigation was destroyed.
     enum class NavigationNotification : bool { LoadEnded, SameDocumentNavigation };
     void navigationOccurredForFrame(const WebFrameProxy&, API::Navigation* = nullptr, NavigationNotification = NavigationNotification::LoadEnded);

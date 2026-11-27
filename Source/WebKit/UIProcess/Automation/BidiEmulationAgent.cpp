@@ -33,9 +33,6 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProcessor.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
-#include "WebProcessProxy.h"
-#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -52,22 +49,6 @@ BidiEmulationAgent::BidiEmulationAgent(WebAutomationSession& session, BackendDis
 }
 
 BidiEmulationAgent::~BidiEmulationAgent() = default;
-
-static Vector<Ref<WebPageProxy>> pagesControlledByAutomation(const WebAutomationSession& session)
-{
-    Vector<Ref<WebPageProxy>> pages;
-    RefPtr processPool = session.processPool();
-    if (!processPool)
-        return pages;
-
-    for (Ref process : borrow(processPool->processes()).get()) {
-        for (Ref page : process->mainPages()) {
-            if (page->isControlledByAutomation())
-                pages.append(WTF::move(page));
-        }
-    }
-    return pages;
-}
 
 void BidiEmulationAgent::didCreatePage(WebPageProxy& page)
 {
@@ -157,7 +138,7 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
         }
 
         auto& browserAgent = session->bidiProcessor().browserAgent();
-        for (Ref page : pagesControlledByAutomation(*session)) {
+        for (Ref page : session->pagesControlledByAutomation()) {
             if (userContexts.contains(browserAgent.userContextForPage(page)))
                 page->setScrollbarStyleOverride(scrollbarTypeOverrideForPage(page));
         }
@@ -165,7 +146,7 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
     }
 
     m_scrollbarTypeOverride = scrollbarType;
-    for (Ref page : pagesControlledByAutomation(*session))
+    for (Ref page : session->pagesControlledByAutomation())
         page->setScrollbarStyleOverride(scrollbarTypeOverrideForPage(page));
     return { };
 }
