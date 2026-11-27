@@ -1,0 +1,1 @@
+PASS: fixed container was composited after its child became visible

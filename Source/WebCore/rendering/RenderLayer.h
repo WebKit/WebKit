@@ -1317,6 +1317,7 @@ private:
     void NODELETE dirtyAncestorChainVisibleDescendantStatus();
     
     bool computeHasVisibleContent() const;
+    void updateCompositingForViewportConstrainedLayerWithNoVisibleContent();
 
     bool has3DTransformedDescendant() const { ASSERT(!m_3DTransformedDescendantStatusDirty); return m_has3DTransformedDescendant; }
     bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }

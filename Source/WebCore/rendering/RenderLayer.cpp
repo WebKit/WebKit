@@ -2012,6 +2012,15 @@ void RenderLayer::updateAncestorDependentState()
     updateSelfPaintingLayer();
 }
 
+// A fixed layer is not composited while it has nothing to paint (RenderLayerCompositor::requiresCompositingForPosition()).
+// When it gains visible content or a visible descendant, it needs to be reevaluated; otherwise it keeps painting into
+// its ancestor's backing store and does not stay fixed during rubberbanding.
+void RenderLayer::updateCompositingForViewportConstrainedLayerWithNoVisibleContent()
+{
+    if (viewportConstrainedNotCompositedReason() == NotCompositedForNoVisibleContent)
+        setNeedsPostLayoutCompositingUpdate();
+}
+
 void RenderLayer::updateDescendantDependentFlags()
 {
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty() || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty || m_hasViewportConstrainedDescendantStatusDirty) {
@@ -2040,6 +2049,7 @@ void RenderLayer::updateDescendantDependentFlags()
             m_hasVisibleDescendant = hasVisibleDescendant;
             if (!isNormalFlowOnly())
                 dirtyHiddenStackingContextAncestorZOrderLists();
+            updateCompositingForViewportConstrainedLayerWithNoVisibleContent();
         }
         m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
@@ -2065,6 +2075,7 @@ void RenderLayer::updateDescendantDependentFlags()
                 // collected.
                 dirtyHiddenStackingContextAncestorZOrderLists();
             }
+            updateCompositingForViewportConstrainedLayerWithNoVisibleContent();
         }
         m_visibleContentStatusDirty = false;
     }
