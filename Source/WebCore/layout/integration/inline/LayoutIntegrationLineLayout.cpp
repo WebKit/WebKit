@@ -670,7 +670,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
     auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout, layoutStartLineIndex);
 
-    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent, layoutStartLineIndex);
+    updateRenderTreePositions(adjustments, didDiscardContent, layoutStartLineIndex);
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
@@ -749,7 +749,7 @@ void LineLayout::setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&
     m_layoutInfoForTesting = WTF::move(layoutInfo);
 }
 
-void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent, size_t layoutStartLineIndex)
+void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, bool didDiscardContent, size_t layoutStartLineIndex)
 {
     if (!m_inlineContent && !didDiscardContent)
         return;
@@ -830,15 +830,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                 continue;
             }
             renderer->setIsClippedByLineClamp(LineClampUpdater::isInsideLineClampContainer(renderer));
-            auto isInitialLetter = layoutBox->style().pseudoElementType() == PseudoElementType::FirstLetter;
             auto& floatingObject = blockFlow->insertFloatingBox(renderer);
             hasFloats = true;
             auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(logicalGeometry, m_inlineContentConstraints->formattingRootBorderBoxSize(), placedFloatsWritingMode);
-            if (isInitialLetter) {
-                auto firstLineTrim = LayoutUnit { inlineLayoutState.firstLineStartTrimForInitialLetter() };
-                marginBoxVisualRect.move(0_lu, -firstLineTrim);
-                borderBoxVisualRect.move(0_lu, -firstLineTrim);
-            }
 
             blockFlow->placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
 

@@ -136,9 +136,13 @@ void PlacedFloats::add(Item newFloatItem)
 
 void PlacedFloats::moveOnBlockAxis(size_t index, LayoutUnit offset)
 {
-    ASSERT(offset >= 0);
     auto& floatItem = m_list[index];
     floatItem.moveOnBlockAxis(offset);
+    if (offset < 0) {
+        computeLowestPositionsOnBlockAxis();
+        computeLowestTopPositionOnBlockAxis();
+        return;
+    }
     // A float that moves down can only lower these.
     auto& lowestPositionOnBlockAxis = floatItem.isStartPositioned() ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
     lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(floatItem.marginBoxBottom()), floatItem.marginBoxBottom());
