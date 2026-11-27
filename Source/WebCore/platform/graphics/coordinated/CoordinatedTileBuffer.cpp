@@ -123,10 +123,11 @@ std::optional<uint64_t> CoordinatedTileBuffer::cancelPainting()
     return std::exchange(m_painting.renderingUpdateID, std::nullopt);
 }
 
-std::optional<uint64_t> CoordinatedTileBuffer::updateDistance(unsigned distance, uint64_t renderingUpdateID)
+std::optional<uint64_t> CoordinatedTileBuffer::updatePriority(unsigned distance, IsInScrollDirection isInScrollDirection, uint64_t renderingUpdateID)
 {
     Locker locker { m_painting.lock };
     m_painting.distance = distance;
+    m_painting.isInScrollDirection = isInScrollDirection;
 
     if (m_painting.state == PaintingState::Complete || m_painting.state == PaintingState::Cancelled)
         return std::nullopt;
@@ -156,6 +157,12 @@ unsigned CoordinatedTileBuffer::distance() const
     return m_painting.distance;
 }
 
+CoordinatedTileBuffer::Priority CoordinatedTileBuffer::priority() const
+{
+    Locker locker { m_painting.lock };
+    return { m_painting.distance, m_painting.isInScrollDirection };
+}
+
 void CoordinatedTileBuffer::waitUntilPaintingFinished()
 {
     Locker locker { m_painting.lock };
@@ -168,13 +175,13 @@ void CoordinatedTileBuffer::waitUntilPaintingFinished()
     });
 }
 
-Ref<CoordinatedTileBuffer> CoordinatedUnacceleratedTileBuffer::create(const IntSize& size, Flags flags, unsigned distance, std::optional<uint64_t> renderingUpdateID)
+Ref<CoordinatedTileBuffer> CoordinatedUnacceleratedTileBuffer::create(const IntSize& size, Flags flags, unsigned distance, IsInScrollDirection isInScrollDirection, std::optional<uint64_t> renderingUpdateID)
 {
-    return adoptRef(*new CoordinatedUnacceleratedTileBuffer(size, flags, distance, renderingUpdateID));
+    return adoptRef(*new CoordinatedUnacceleratedTileBuffer(size, flags, distance, isInScrollDirection, renderingUpdateID));
 }
 
-CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const IntSize& size, Flags flags, unsigned distance, std::optional<uint64_t> renderingUpdateID)
-    : CoordinatedTileBuffer(flags, distance, renderingUpdateID)
+CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const IntSize& size, Flags flags, unsigned distance, IsInScrollDirection isInScrollDirection, std::optional<uint64_t> renderingUpdateID)
+    : CoordinatedTileBuffer(flags, distance, isInScrollDirection, renderingUpdateID)
     , m_size(size)
 {
 }
@@ -249,7 +256,7 @@ void CoordinatedUnacceleratedTileBuffer::finishPainting()
     m_surface = nullptr;
 }
 
-Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, const IntSize& size, Flags flags, unsigned distance, std::optional<uint64_t> renderingUpdateID)
+Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, const IntSize& size, Flags flags, unsigned distance, IsInScrollDirection isInScrollDirection, std::optional<uint64_t> renderingUpdateID)
 {
     auto alphaType = (flags & SupportsAlpha) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
     auto imageInfo = SkImageInfo::Make(size.width(), size.height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
@@ -258,11 +265,11 @@ Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(const sk_sp<
     auto properties = FontRenderOptions::singleton().createSurfaceProps();
     auto maxResourceCacheBytes = PlatformDisplay::sharedDisplay().maxSkiaResourceCacheBytes();
     auto characterization = threadSafeGrContext->createCharacterization(maxResourceCacheBytes, imageInfo, backendFormat, 0, kTopLeft_GrSurfaceOrigin, properties, skgpu::Mipmapped::kNo);
-    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTF::move(characterization), flags, distance, renderingUpdateID));
+    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTF::move(characterization), flags, distance, isInScrollDirection, renderingUpdateID));
 }
 
-CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&& characterization, Flags flags, unsigned distance, std::optional<uint64_t> renderingUpdateID)
-    : CoordinatedTileBuffer(flags, distance, renderingUpdateID)
+CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(GrSurfaceCharacterization&& characterization, Flags flags, unsigned distance, IsInScrollDirection isInScrollDirection, std::optional<uint64_t> renderingUpdateID)
+    : CoordinatedTileBuffer(flags, distance, isInScrollDirection, renderingUpdateID)
     , m_characterization(WTF::move(characterization))
 {
 }
@@ -297,10 +304,11 @@ void CoordinatedAcceleratedTileBuffer::finishPainting()
 
 #endif // USE(SKIA)
 
-CoordinatedTileBuffer::CoordinatedTileBuffer(Flags flags, unsigned distance, std::optional<uint64_t> renderingUpdateID)
+CoordinatedTileBuffer::CoordinatedTileBuffer(Flags flags, unsigned distance, IsInScrollDirection isInScrollDirection, std::optional<uint64_t> renderingUpdateID)
     : m_flags(flags)
 {
     m_painting.distance = distance;
+    m_painting.isInScrollDirection = isInScrollDirection;
     if (!distance)
         m_painting.renderingUpdateID = renderingUpdateID;
 }

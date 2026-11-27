@@ -147,7 +147,7 @@ public:
 #if USE(TEXTURE_MAPPER)
     void setTransformedVisibleRect(IntRect&&);
 #else
-    void setTransformedVisibleAndCoverageRects(const IntRect&, const IntRect&);
+    void setTransformedVisibleAndCoverageRects(const IntRect&, const IntRect&, const IntSize&);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
@@ -409,6 +409,7 @@ private:
     Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if !USE(TEXTURE_MAPPER)
     IntRect m_transformedCoverageRect WTF_GUARDED_BY_CAPABILITY(mainThread);
+    IntSize m_scrollDirection WTF_GUARDED_BY_CAPABILITY(mainThread);
     EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_CAPABILITY(mainThread);
     TransformationMatrix m_childrenTransform WTF_GUARDED_BY_CAPABILITY(mainThread);
     bool m_preserves3D WTF_GUARDED_BY_CAPABILITY(mainThread) { false };

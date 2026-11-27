@@ -155,14 +155,14 @@ void CoordinatedBackingStoreProxy::setAffectedByTransformAnimation(bool affected
     }
 }
 
-std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedPlatformLayer& layer)
+std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, const IntSize& scrollDirection, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedPlatformLayer& layer)
 {
     assertIsMainThread();
     ASSERT(layer.owner());
     Vector<uint32_t> tilesToCreate;
     Vector<uint32_t> tilesToRemove;
     if (shouldCreateAndDestroyTiles)
-        createOrDestroyTiles(layer, unscaledVisibleRect, unscaledCoverageRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, layer.maxTextureSize(), tilesToCreate, tilesToRemove);
+        createOrDestroyTiles(layer, unscaledVisibleRect, unscaledCoverageRect, IntRect { { }, IntSize(unscaledSize) }, enclosingIntRect(unscaledViewportRect).size(), contentsScale, scrollDirection, layer.maxTextureSize(), tilesToCreate, tilesToRemove);
 
     if (m_animatedBackingStoreClient)
         m_animatedBackingStoreClient->update(layer.owner(), unscaledViewportRect, m_coverRect, unscaledSize, contentsScale);
@@ -176,8 +176,8 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
     unsigned dirtyTilesCount = 0;
     HashMap<uint32_t, bool> tilesToUpdateVisibility;
     for (auto& tile : m_tiles.values()) {
-        const bool distanceChanged = std::exchange(tile.distanceChanged, false);
-        if (distanceChanged) {
+        const bool priorityChanged = std::exchange(tile.priorityChanged, false);
+        if (priorityChanged) {
             bool isVisible = !tile.distance;
             if (isVisible != tile.isVisible) {
                 tile.isVisible = isVisible;
@@ -190,10 +190,13 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
             if (paintingState == CoordinatedTileBuffer::PaintingState::Complete || paintingState == CoordinatedTileBuffer::PaintingState::Cancelled)
                 return true;
 
-            if (!distanceChanged)
+            if (!priorityChanged)
                 return false;
 
-            if (auto tileRenderingUpdateID = buffer->updateDistance(tile.distance, tileManager.currentRenderingUpdate())) {
+            auto tileRenderingUpdateID = buffer->updatePriority(tile.distance,
+                tile.isInScrollDirection ? CoordinatedTileBuffer::IsInScrollDirection::Yes : CoordinatedTileBuffer::IsInScrollDirection::No,
+                tileManager.currentRenderingUpdate());
+            if (tileRenderingUpdateID) {
                 // FIXME: pass tileRenderingUpdateID to willPaintTile() and didPaintTile() when we support starting next rendering
                 // update while waiting for previous composition.
                 if (tile.distance) {
@@ -248,7 +251,7 @@ std::optional<CoordinatedBackingStoreProxy::Update> CoordinatedBackingStoreProxy
             WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile.id,
                 tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
-            auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect, tile.distance);
+            auto buffer = tileManager.scheduleReplay(*layer.owner(), recording, tile.rect, tile.dirtyRect, tile.distance, tile.isInScrollDirection);
             tile.activeBuffers.append(buffer);
 
             IntRect updateRect(tile.dirtyRect);
@@ -299,7 +302,7 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer& layer, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, const IntSize& scrollDirection, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove)
 {
     bool contentsScaleChanged = m_contentsScale != contentsScale;
     m_contentsScale = contentsScale;
@@ -309,7 +312,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
     IntRect coverRect = unionRect(visibleRect, mapFromContents(unscaledCoverageRect));
     coverRect.intersect(contentsRect);
     bool contentsRectChanged = contentsScaleChanged || m_contentsRect != contentsRect;
-    bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverRect != coverRect;
+    bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverRect != coverRect || m_scrollDirection != scrollDirection;
     if (!geometryChanged)
         return;
 
@@ -322,6 +325,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
         m_contentsRect = contentsRect;
         m_visibleRect = visibleRect;
         m_coverRect = coverRect;
+        m_scrollDirection = scrollDirection;
 
         bool tileSizeChanged = false;
         if (!m_contentsRect.isEmpty()) {
@@ -343,8 +347,10 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
         }
     }
 
-    // The keep rect is an inflated version of the cover rect, inflated in tile dimensions.
+    // Keep painted tiles behind the scroll direction as if the coverage were centered.
     m_keepRect = m_coverRect;
+    auto center = m_visibleRect.center();
+    m_keepRect.unite(IntRect(IntPoint(2 * center.x() - m_coverRect.maxX(), 2 * center.y() - m_coverRect.maxY()), m_coverRect.size()));
     m_keepRect.inflateX(m_tileSize.width() / 2);
     m_keepRect.inflateY(m_tileSize.height() / 2);
     m_keepRect.intersect(m_contentsRect);
@@ -360,15 +366,21 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
     });
 
     IntPoint visibleCenterPosition = tilePositionForPoint(m_visibleRect.center());
-    auto tileDistance = [&](const IntPoint& tilePosition) -> unsigned {
+    auto tilePriority = [&](const IntPoint& tilePosition) -> std::pair<unsigned, bool> {
+        bool isInScrollDirection = false;
         if (m_visibleRect.intersects(tileRectForPosition(tilePosition)))
-            return 0;
+            return { 0, isInScrollDirection };
 
-        return std::max(1, std::max(std::abs(visibleCenterPosition.y() - tilePosition.y()), std::abs(visibleCenterPosition.x() - tilePosition.x())));
+        unsigned distance = std::max(1, std::max(std::abs(visibleCenterPosition.y() - tilePosition.y()), std::abs(visibleCenterPosition.x() - tilePosition.x())));
+        IntSize delta = { tilePosition.x() - visibleCenterPosition.x(), tilePosition.y() - visibleCenterPosition.y() };
+        isInScrollDirection = delta.width() * m_scrollDirection.width() + delta.height() * m_scrollDirection.height() > 0;
+        return { distance, isInScrollDirection };
     };
 
-    for (auto& [position, tile] : m_tiles)
-        tile.setDistance(tileDistance(position));
+    for (auto& [position, tile] : m_tiles) {
+        auto [distance, isInScrollDirection] = tilePriority(position);
+        tile.setPriority(distance, isInScrollDirection);
+    }
 
     if (m_coverRect.isEmpty())
         return;
@@ -391,13 +403,16 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(CoordinatedPlatformLayer
     }
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
-    // Which position is considered the closest depends on the tileDistance function.
+    // Which position is considered the closest depends on the tilePriority function.
     forEachTilePositionInRect(m_coverRect, [&](IntPoint&& position) {
         if (m_tiles.contains(position))
             return;
 
         auto tile = Tile(generateTileID(), tileRectForPosition(position));
-        tile.setDistance(tileDistance(position));
+
+        auto [distance, isInScrollDirection] = tilePriority(position);
+        tile.setPriority(distance, isInScrollDirection);
+
         tilesToCreate.append(tile.id);
         m_tiles.add(WTF::move(position), WTF::move(tile));
     });

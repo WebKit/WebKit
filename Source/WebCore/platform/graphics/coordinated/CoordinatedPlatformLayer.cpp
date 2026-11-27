@@ -325,14 +325,15 @@ void CoordinatedPlatformLayer::setVisibleRect(const FloatRect& visibleRect)
     m_visibleRect = visibleRect;
 }
 
-void CoordinatedPlatformLayer::setTransformedVisibleAndCoverageRects(const IntRect& transformedVisibleRect, const IntRect& transformedCoverageRect)
+void CoordinatedPlatformLayer::setTransformedVisibleAndCoverageRects(const IntRect& transformedVisibleRect, const IntRect& transformedCoverageRect, const IntSize& scrollDirection)
 {
     assertIsMainThread();
-    if (m_transformedVisibleRect == transformedVisibleRect && m_transformedCoverageRect == transformedCoverageRect)
+    if (m_transformedVisibleRect == transformedVisibleRect && m_transformedCoverageRect == transformedCoverageRect && m_scrollDirection == scrollDirection)
         return;
 
     m_transformedVisibleRect = transformedVisibleRect;
     m_transformedCoverageRect = transformedCoverageRect;
+    m_scrollDirection = scrollDirection;
     m_needsTilesUpdate = true;
 }
 
@@ -888,7 +889,7 @@ void CoordinatedPlatformLayer::updateBackingStore()
         return;
 
     bool shouldCreateDestroyTiles = m_needsTilesUpdate;
-    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, m_transformedCoverageRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, shouldCreateDestroyTiles, m_dirtyRegion, *this);
+    auto tilesUpdate = m_backingStoreProxy->updateIfNeeded(m_transformedVisibleRect, m_transformedCoverageRect, sizeOnMainThread(), m_visibleRect, m_contentsScale, m_contentsOpaque, m_scrollDirection, shouldCreateDestroyTiles, m_dirtyRegion, *this);
     m_dirtyRegion.clear();
     m_needsTilesUpdate = false;
 

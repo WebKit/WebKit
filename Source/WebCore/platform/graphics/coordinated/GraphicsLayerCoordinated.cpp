@@ -1009,22 +1009,56 @@ void GraphicsLayerCoordinated::computeLayerTransformIfNeeded(bool affectedByTran
 }
 
 #if !USE(TEXTURE_MAPPER)
-FloatRect GraphicsLayerCoordinated::computeCoverageRect(const FloatRect& rootVisibleRect, const FloatRect& inheritedCoverageRect, TileCoverage tileCoverage) const
+std::optional<FloatRect> GraphicsLayerCoordinated::computeCoverageRect(const FloatRect& rootVisibleRect, TileCoverage tileCoverage)
 {
-    if (tileCoverage == TiledBacking::CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        return inheritedCoverageRect;
+    if (tileCoverage == TiledBacking::CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        m_scrollDirection = { };
+        m_previousCoverageVisibleRect = { };
+        return std::nullopt;
+    }
 
     FloatRect bounds { { }, m_size };
     FloatRect visibleRect = m_layerTransform.cachedInverse->clampedBoundsOfProjectedQuad(FloatQuad(rootVisibleRect));
     clampToSizeIfRectIsInfinite(visibleRect, m_size);
-    if (!visibleRect.intersects(bounds))
-        return inheritedCoverageRect;
+    if (!visibleRect.intersects(bounds)) {
+        m_scrollDirection = { };
+        m_previousCoverageVisibleRect = { };
+        return std::nullopt;
+    }
+
+    if (visibleRect.size() != m_previousCoverageVisibleRect.size())
+        m_scrollDirection = { };
+    else {
+        auto delta = visibleRect.location() - m_previousCoverageVisibleRect.location();
+        if (delta.width())
+            m_scrollDirection.setWidth(delta.width() > 0 ? 1 : -1);
+        if (delta.height())
+            m_scrollDirection.setHeight(delta.height() > 0 ? 1 : -1);
+    }
+    m_previousCoverageVisibleRect = visibleRect;
 
     FloatRect coverageRect = visibleRect;
-    if (tileCoverage & TiledBacking::CoverageForHorizontalScrolling)
-        coverageRect.inflateX(visibleRect.width() / 2);
-    if (tileCoverage & TiledBacking::CoverageForVerticalScrolling)
-        coverageRect.inflateY(visibleRect.height() / 2);
+    static constexpr float aheadRatio = 0.75;
+    auto grow = [](float& minEdge, float& maxEdge, float extra, int direction) {
+        float ahead = direction ? extra * aheadRatio : extra / 2;
+        float behind = extra - ahead;
+        minEdge -= direction < 0 ? ahead : behind;
+        maxEdge += direction < 0 ? behind : ahead;
+    };
+    if (tileCoverage & TiledBacking::CoverageForHorizontalScrolling) {
+        float minX = coverageRect.x();
+        float maxX = coverageRect.maxX();
+        grow(minX, maxX, visibleRect.width(), m_scrollDirection.width());
+        coverageRect.shiftXEdgeTo(minX);
+        coverageRect.shiftMaxXEdgeTo(maxX);
+    }
+    if (tileCoverage & TiledBacking::CoverageForVerticalScrolling) {
+        float minY = coverageRect.y();
+        float maxY = coverageRect.maxY();
+        grow(minY, maxY, visibleRect.height(), m_scrollDirection.height());
+        coverageRect.shiftYEdgeTo(minY);
+        coverageRect.shiftMaxYEdgeTo(maxY);
+    }
 
     if (coverageRect.x() < bounds.x())
         coverageRect.setX(bounds.x());
@@ -1036,7 +1070,7 @@ FloatRect GraphicsLayerCoordinated::computeCoverageRect(const FloatRect& rootVis
         coverageRect.setY(bounds.maxY() - coverageRect.height());
     coverageRect.intersect(bounds);
 
-    return unionRect(inheritedCoverageRect, m_layerTransform.current.combined().mapRect(coverageRect));
+    return m_layerTransform.current.combined().mapRect(coverageRect);
 }
 #endif
 
@@ -1053,7 +1087,25 @@ void GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(FloatRect& rect, cons
     }
 }
 
-void GraphicsLayerCoordinated::updateVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect)
+#if !USE(TEXTURE_MAPPER)
+static IntSize mapDirection(const TransformationMatrix& matrix, const FloatPoint& origin, const IntSize& direction)
+{
+    if (direction.isZero())
+        return { };
+
+    auto delta = matrix.mapPoint(origin + FloatSize(direction)) - matrix.mapPoint(origin);
+    const float threshold = std::max(std::abs(delta.width()), std::abs(delta.height())) / 2;
+    if (!threshold)
+        return { };
+
+    auto sign = [threshold](float v) {
+        return std::abs(v) < threshold ? 0 : (v > 0 ? 1 : -1);
+    };
+    return { sign(delta.width()), sign(delta.height()) };
+}
+#endif
+
+void GraphicsLayerCoordinated::updateVisibleAndCoverageRects(const FloatRect& visibleRect, const FloatRect& coverageRect, const IntSize& scrollDirection)
 {
     assertIsMainThread();
 #if USE(TEXTURE_MAPPER)
@@ -1066,7 +1118,7 @@ void GraphicsLayerCoordinated::updateVisibleAndCoverageRects(const FloatRect& vi
 #if USE(TEXTURE_MAPPER)
         m_platformLayer->setTransformedVisibleRect({ });
 #else
-        m_platformLayer->setTransformedVisibleAndCoverageRects({ }, { });
+        m_platformLayer->setTransformedVisibleAndCoverageRects({ }, { }, { });
 #endif
         return;
     }
@@ -1090,8 +1142,10 @@ void GraphicsLayerCoordinated::updateVisibleAndCoverageRects(const FloatRect& vi
 #if USE(TEXTURE_MAPPER)
     m_platformLayer->setTransformedVisibleRect(projectRect(visibleRect));
     UNUSED_PARAM(coverageRect);
+    UNUSED_PARAM(scrollDirection);
 #else
-    m_platformLayer->setTransformedVisibleAndCoverageRects(projectRect(visibleRect), projectRect(coverageRect));
+    m_platformLayer->setTransformedVisibleAndCoverageRects(projectRect(visibleRect), projectRect(coverageRect),
+        mapDirection(*m_layerTransform.cachedInverse, visibleRect.center(), scrollDirection));
 #endif
 }
 
@@ -1268,10 +1322,14 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
     computeLayerTransformIfNeeded(affectedByTransformAnimation);
 #if !USE(TEXTURE_MAPPER)
-    if (m_tileCoverage && m_layerTransform.cachedInverse)
-        commitState.coverageRect = computeCoverageRect(commitState.visibleRect, commitState.coverageRect, *m_tileCoverage);
+    if (m_tileCoverage && m_layerTransform.cachedInverse) {
+        if (auto coverageRect = computeCoverageRect(commitState.visibleRect, *m_tileCoverage)) {
+            commitState.coverageRect.unite(*coverageRect);
+            commitState.scrollDirection = mapDirection(m_layerTransform.current.combined(), m_previousCoverageVisibleRect.center(), m_scrollDirection);
+        }
+    }
 #endif
-    updateVisibleAndCoverageRects(commitState.visibleRect, commitState.coverageRect);
+    updateVisibleAndCoverageRects(commitState.visibleRect, commitState.coverageRect, commitState.scrollDirection);
 
     if (m_pendingChanges.contains(Change::DrawsContent))
         m_platformLayer->setDrawsContent(m_drawsContent);

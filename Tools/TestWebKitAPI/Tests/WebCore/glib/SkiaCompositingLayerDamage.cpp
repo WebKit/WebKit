@@ -404,7 +404,7 @@ TEST(SkiaCompositingLayerDamage, ReplicatedLayerIsDamagedWithItsReplica)
 
 static Ref<CoordinatedTileBuffer> createPaintedTileBuffer(const IntSize& size)
 {
-    Ref buffer = CoordinatedUnacceleratedTileBuffer::create(size, CoordinatedTileBuffer::NoFlags, 0, std::nullopt);
+    Ref buffer = CoordinatedUnacceleratedTileBuffer::create(size, CoordinatedTileBuffer::NoFlags, 0, CoordinatedTileBuffer::IsInScrollDirection::No, std::nullopt);
     buffer->beginPainting();
     buffer->completePainting();
     static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer.get()).takeData();

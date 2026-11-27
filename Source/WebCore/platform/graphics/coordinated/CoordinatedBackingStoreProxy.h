@@ -100,7 +100,7 @@ public:
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedPlatformLayer&);
     Update takePendingUpdate();
 #else
-    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedPlatformLayer&);
+    std::optional<Update> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const FloatSize& unscaledSize, const FloatRect& unscaledViewportRect, float contentsScale, bool contentsOpaque, const IntSize& scrollDirection, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedPlatformLayer&);
 #endif
 
     void waitUntilPaintingFinished();
@@ -153,13 +153,14 @@ private:
         }
 
 #if USE(SKIA)
-        void setDistance(unsigned newDistance)
+        void setPriority(unsigned newDistance, bool newIsInScrollDirection)
         {
-            if (distance == newDistance)
+            if (distance == newDistance && isInScrollDirection == newIsInScrollDirection)
                 return;
 
             distance = newDistance;
-            distanceChanged = true;
+            isInScrollDirection = newIsInScrollDirection;
+            priorityChanged = true;
         }
 
         void cancelActiveBuffers(CoordinatedPlatformLayer&);
@@ -171,8 +172,9 @@ private:
 #if USE(SKIA)
         Vector<IntRect, 1> damageRects;
         unsigned distance { std::numeric_limits<unsigned>::max() };
+        bool isInScrollDirection { false };
         bool isVisible { false };
-        bool distanceChanged { false };
+        bool priorityChanged { false };
         Vector<Ref<CoordinatedTileBuffer>, 1> activeBuffers;
 #endif
     };
@@ -185,7 +187,7 @@ private:
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
     void adjustForContentsRect(IntRect&) const;
 #else
-    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
+    void createOrDestroyTiles(CoordinatedPlatformLayer&, const IntRect& unscaledVisibleRect, const IntRect& unscaledCoverageRect, const IntRect& unscaledContentsRect, const IntSize& unscaledViewportSize, float contentsScale, const IntSize& scrollDirection, int maxTextureSize, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
 #endif
     IntSize computeTileSize(const IntSize& viewportSize, int maxTextureSize) const;
 
@@ -199,6 +201,8 @@ private:
     IntSize m_tileSize;
 #if USE(TEXTURE_MAPPER)
     float m_coverAreaMultiplier { 2 };
+#else
+    IntSize m_scrollDirection;
 #endif
 #if USE(CAIRO)
     bool m_pendingTileCreation { false };

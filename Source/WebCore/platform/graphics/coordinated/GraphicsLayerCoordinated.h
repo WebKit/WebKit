@@ -197,7 +197,7 @@ private:
     void computePixelAlignmentIfNeeded(float pageScaleFactor, const FloatPoint& positionRelativeToBase, FloatPoint& adjustedPosition, FloatPoint& adjustedBoundsOrigin, FloatPoint3D& adjustedAnchorPoint, FloatSize& adjustedSize);
     void computeLayerTransformIfNeeded(bool affectedByTransformAnimation);
 #if !USE(TEXTURE_MAPPER)
-    FloatRect computeCoverageRect(const FloatRect&, const FloatRect&, TileCoverage) const;
+    std::optional<FloatRect> computeCoverageRect(const FloatRect&, TileCoverage);
 #endif
     IntRect transformedRect(const FloatRect&) const;
     IntRect transformedRectIncludingFuture(const FloatRect&) const;
@@ -207,7 +207,7 @@ private:
     void updateBackdropFiltersRect();
 #endif
     void updateAnimations();
-    void updateVisibleAndCoverageRects(const FloatRect&, const FloatRect&);
+    void updateVisibleAndCoverageRects(const FloatRect&, const FloatRect&, const IntSize&);
     void updateIndicators();
     bool isRunningTransformAnimation() const;
     bool filtersCanBeComposited(const FilterOperations&) const;
@@ -215,6 +215,7 @@ private:
     struct CommitState {
         FloatRect visibleRect;
         FloatRect coverageRect;
+        IntSize scrollDirection;
         bool ancestorHadChanges { false };
         bool ancestorHasTransformAnimation { false };
     };
@@ -260,6 +261,8 @@ private:
 #else
     AcceleratedAnimations m_animations;
     std::optional<TileCoverage> m_tileCoverage;
+    FloatRect m_previousCoverageVisibleRect;
+    IntSize m_scrollDirection;
 #endif
 };
 

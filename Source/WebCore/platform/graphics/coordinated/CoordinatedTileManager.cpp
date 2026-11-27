@@ -127,7 +127,7 @@ Ref<SkiaRecordingResult> CoordinatedTileManager::record(const GraphicsLayerCoord
     return m_paintingEngine->record(layer, recordRect, canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, contentsOpaque, contentsScale, dirtyTilesCount);
 }
 
-Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const GraphicsLayerCoordinated& layer, const Ref<SkiaRecordingResult>& recording, const IntRect& tileRect, const IntRect& dirtyRect, unsigned distance)
+Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const GraphicsLayerCoordinated& layer, const Ref<SkiaRecordingResult>& recording, const IntRect& tileRect, const IntRect& dirtyRect, unsigned distance, bool isInScrollDirection)
 {
     Ref buffer = [&] -> Ref<CoordinatedTileBuffer> {
         std::optional<uint64_t> tileRenderingUpdateID;
@@ -135,10 +135,11 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const Graphics
             tileRenderingUpdateID = m_currentRenderingUpdate;
 
         auto flags = recording->contentsOpaque() ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha;
+        auto inScrollDirection = isInScrollDirection ? CoordinatedTileBuffer::IsInScrollDirection::Yes : CoordinatedTileBuffer::IsInScrollDirection::No;
         if (recording->renderingMode() == RenderingMode::Unaccelerated)
-            return CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), flags, distance, tileRenderingUpdateID);
+            return CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), flags, distance, inScrollDirection, tileRenderingUpdateID);
 
-        return CoordinatedAcceleratedTileBuffer::create(threadSafeGrContext(), tileRect.size(), flags, distance, tileRenderingUpdateID);
+        return CoordinatedAcceleratedTileBuffer::create(threadSafeGrContext(), tileRect.size(), flags, distance, inScrollDirection, tileRenderingUpdateID);
     }();
 
     Ref platformLayer = layer.coordinatedPlatformLayer();
@@ -151,7 +152,7 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::scheduleReplay(const Graphics
     WTFBeginSignpost(this, QueueTilePaintingTask);
     {
         Locker locker { m_paintingTaskQueueLock };
-        PaintingTaskPriority priority = { distance, m_nextTaskSequence++ };
+        PaintingTaskPriority priority = { distance, isInScrollDirection, m_nextTaskSequence++ };
         size_t position = std::upper_bound(m_paintingTaskQueue.begin(), m_paintingTaskQueue.end(), priority, [](auto& priority, auto& task) {
             return priority < task.priority;
         }) - m_paintingTaskQueue.begin();
@@ -204,7 +205,9 @@ void CoordinatedTileManager::didFinishRenderingUpdate()
         if (task.buffer->paintingState() == CoordinatedTileBuffer::PaintingState::Cancelled)
             return true;
 
-        task.priority.distance = task.buffer->distance();
+        auto bufferPriority = task.buffer->priority();
+        task.priority.distance = bufferPriority.distance;
+        task.priority.isInScrollDirection = bufferPriority.isInScrollDirection == CoordinatedTileBuffer::IsInScrollDirection::Yes;
         return false;
     });
 
@@ -232,7 +235,7 @@ Ref<CoordinatedTileBuffer> CoordinatedTileManager::schedulePaint(GraphicsLayerCo
     FloatRect scaledDirtyRect(dirtyRect);
     scaledDirtyRect.scale(1 / contentsScale);
 
-    auto buffer = CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha, 0, std::nullopt);
+    auto buffer = CoordinatedUnacceleratedTileBuffer::create(dirtyRect.size(), contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha, 0, CoordinatedTileBuffer::IsInScrollDirection::No, std::nullopt);
     m_paintingEngine->paint(layer, buffer.get(), dirtyRect, enclosingIntRect(scaledDirtyRect), IntRect { { }, dirtyRect.size() }, contentsScale);
     return buffer;
 }
