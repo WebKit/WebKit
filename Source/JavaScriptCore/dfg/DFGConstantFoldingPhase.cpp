@@ -906,6 +906,14 @@ private:
                                 changed = true;
                                 break;
                             }
+                        } else if (constant.isSymbol() && !asSymbol(constant)->uid().isPrivate()) {
+                            Symbol* symbol = asSymbol(constant);
+                            m_graph.freezeStrong(symbol);
+                            m_graph.identifiers().ensure(&symbol->uid());
+                            m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                            node->convertToGetByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(symbol));
+                            changed = true;
+                            break;
                         }
                     }
                 }
