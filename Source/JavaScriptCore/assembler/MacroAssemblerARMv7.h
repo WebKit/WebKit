@@ -323,6 +323,7 @@ public:
 
     void add8(TrustedImm32 imm, Address address)
     {
+        imm = TrustedImm32(static_cast<uint8_t>(imm.m_value));
         load8(address, dataTempRegister);
         add32(imm, dataTempRegister, dataTempRegister);
         store8(dataTempRegister, address);
@@ -657,39 +658,40 @@ public:
 
     void or8(TrustedImm32 imm, AbsoluteAddress address)
     {
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        load8(setupArmAddress(address), dataTempRegister);
-        if (armImm.isValid()) {
-            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store8(dataTempRegister, Address(addressTempRegister));
-        } else {
-            move(imm, addressTempRegister);
-            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            store8(dataTempRegister, Address(addressTempRegister));
-        }
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(static_cast<uint8_t>(imm.m_value));
+        ASSERT(armImm.isValid());
+        ArmAddress newAddress = setupArmAddress(address);
+        RegisterID scratchData = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        load8(newAddress, scratchData);
+        m_assembler.orr(scratchData, scratchData, armImm);
+        store8(scratchData, newAddress);
     }
 
     void or16(TrustedImm32 imm, AbsoluteAddress dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        load16(setupArmAddress(dest), dataTempRegister);
+        ArmAddress newAddress = setupArmAddress(dest);
+        RegisterID scratchData = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        RegisterID scratchAddress = newAddress.base;
+        load16(newAddress, scratchData);
         if (armImm.isValid()) {
-            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store16(dataTempRegister, Address(addressTempRegister));
+            m_assembler.orr(scratchData, scratchData, armImm);
+            store16(scratchData, newAddress);
         } else {
-            move(imm, addressTempRegister);
-            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            store16(dataTempRegister, Address(addressTempRegister));
+            move(imm, scratchAddress);
+            m_assembler.orr(scratchData, scratchData, scratchAddress);
+            move(TrustedImmPtr(dest.m_ptr), scratchAddress);
+            store16(scratchData, Address(scratchAddress));
         }
     }
 
     void or16(RegisterID mask, AbsoluteAddress dest)
     {
-        load16(setupArmAddress(dest), dataTempRegister);
-        m_assembler.orr(dataTempRegister, dataTempRegister, mask);
-        store16(dataTempRegister, Address(addressTempRegister));
+        ArmAddress newAddress = setupArmAddress(dest);
+        RegisterID scratchData = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        load16(newAddress, scratchData);
+        m_assembler.orr(scratchData, scratchData, mask);
+        store16(scratchData, newAddress);
     }
 
     void or32(RegisterID src, RegisterID dest)
@@ -699,9 +701,11 @@ public:
 
     void or32(RegisterID src, AbsoluteAddress dest)
     {
-        load32(setupArmAddress(dest), dataTempRegister);
-        or32(src, dataTempRegister);
-        store32(dataTempRegister, Address(addressTempRegister));
+        ArmAddress newAddress = setupArmAddress(dest);
+        RegisterID scratchData = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        load32(newAddress, scratchData);
+        or32(src, scratchData);
+        store32(scratchData, newAddress);
     }
 
     void or32(RegisterID src, Address dest)
@@ -714,22 +718,31 @@ public:
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        load32(setupArmAddress(address), dataTempRegister);
+        ArmAddress newAddress = setupArmAddress(address);
+        RegisterID scratchData = newAddress.base == addressTempRegister ? dataTempRegister : addressTempRegister;
+        RegisterID scratchAddress = newAddress.base;
+        load32(newAddress, scratchData);
         if (armImm.isValid()) {
-            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
-            store32(dataTempRegister, Address(addressTempRegister));
+            m_assembler.orr(scratchData, scratchData, armImm);
+            store32(scratchData, newAddress);
         } else {
-            move(imm, addressTempRegister);
-            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            store32(dataTempRegister, Address(addressTempRegister));
+            move(imm, scratchAddress);
+            m_assembler.orr(scratchData, scratchData, scratchAddress);
+            move(TrustedImmPtr(address.m_ptr), scratchAddress);
+            store32(scratchData, Address(scratchAddress));
         }
     }
 
     void or32(TrustedImm32 imm, Address address)
     {
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         load32(address, dataTempRegister);
-        or32(imm, dataTempRegister, dataTempRegister);
+        if (armImm.isValid())
+            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
+        else {
+            move(imm, addressTempRegister);
+            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
+        }
         store32(dataTempRegister, address);
     }
 
