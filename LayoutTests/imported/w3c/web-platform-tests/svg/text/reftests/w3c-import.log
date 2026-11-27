@@ -71,6 +71,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-decoration-zero-width-fragment-stroke-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-decoration-zero-width-fragment-stroke-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-decoration-zero-width-fragment-stroke.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-display-contents-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image-ref.html
@@ -114,6 +117,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-after-text.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-change-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-path-change.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-fill-box.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/reftests/text-positioning-list-combining-marks-expected.html

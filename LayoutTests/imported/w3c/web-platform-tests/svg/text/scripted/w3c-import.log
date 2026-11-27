@@ -39,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/text-query-fragments.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/text-query-ligature-dx.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textlength-inconsistent.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-href-basic-shape-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-href-basic-shape-targets.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-href-basic-shape-transform.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-href-path-mutated.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-idl.html
@@ -48,6 +51,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-path-attr-startoffset.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-pathlength-zero-startoffset.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-textlength-text-anchor-001.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-textlength-text-anchor-002.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-textlength-text-anchor-003.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/transform-dynamic-update.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/tspan-xml-space-preserve-position.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/typographic-character-position-methods.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/xml-space-dynamic-text-change.html

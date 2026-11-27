@@ -24,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-intrinsic-size-min-size.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-negative-viewbox-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-negative-viewbox.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateMotion-print-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateMotion-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/layout/svg-use-symbol-animateMotion-print.html

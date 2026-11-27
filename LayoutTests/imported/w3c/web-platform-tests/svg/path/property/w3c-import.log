@@ -12,6 +12,7 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-arc-zero-radius.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-discrete.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-relative-absolute.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-single.svg

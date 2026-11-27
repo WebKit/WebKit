@@ -30,7 +30,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-positive.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-expected.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-percentage.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/distance/pathLength-zero.svg

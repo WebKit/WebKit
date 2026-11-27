@@ -12,6 +12,7 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/circle-black-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/circle-green-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/circle-green-with-stroke-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/circle-with-parameters.svg
@@ -19,10 +20,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/css-linked-parameters-precedence-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/css-linked-parameters-precedence-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/css-linked-parameters-precedence-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-custom-property-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-custom-property-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-2.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-cleared-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-linked-parameters-cleared-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-fragment-identifiers-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-fragment-identifiers-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-fragment-identifiers-2-expected.html

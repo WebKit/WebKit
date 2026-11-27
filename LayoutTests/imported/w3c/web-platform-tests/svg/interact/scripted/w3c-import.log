@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/log.py
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/module-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/module-02.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/non-scaling-stroke-ancestor-transform-change-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/non-scaling-stroke-transform-change-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/pointer-events-fill-stroke-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/pointer-events-getBoundingClientRect.html

@@ -66,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-lL-vV-hH-inverse.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-mM-aA-Z-inverse.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-animation-qQ-tT-inverse.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-arc-zero-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-accumulate-mismatch.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-accumulate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-path-by-animation-additive-mismatch.tentative.html
@@ -95,6 +96,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animate-stop-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-base.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-calcMode-discrete-accumulate.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-calcMode-discrete-from-to-trailing-junk.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-calcMode-discrete-from-to.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-calcMode-discrete-keyPoints.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/animateMotion-calcMode-discrete-keyTimes.html
@@ -203,6 +205,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/set-animation-end-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/set-animation-end-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/set-dynamic-attributeName-css-property-cleanup.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/set-target-inserted-after-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/short-simple-duration-and-fractional-repeatcount.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/single-values-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/slider-switch.html
@@ -328,9 +331,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switching-animated-target-to-unknown-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-escaped-dots.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-offset-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-remove-add-while-running.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbases-with-tangled-dependencies.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-external-resource-animate-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-external-resource-animate-href-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-external-resource-animate-href.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-external-resource-animate.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-begin-element-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-begin-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-event-base-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-event-base.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-inherits-begin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-instance-animate-inherits-begin.html

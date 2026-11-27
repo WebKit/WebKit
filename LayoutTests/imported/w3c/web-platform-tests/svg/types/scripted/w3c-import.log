@@ -82,6 +82,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-convertToSpecifiedUnits-reserialization.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-ex.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-ic.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-invalid-value-initial-value.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-invalid-value-no-throw.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-lh.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px-with-context.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGLength-px.html

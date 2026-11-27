@@ -29,6 +29,66 @@ FAIL setPathData() rejects multi-character type strings path.setPathData is not 
     { type: "M", values: [0, 0] },
     { type: "MM", values: [10, 10] }
   ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A large-arc flag -1 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A large-arc flag 0.5 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A large-arc flag 2 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A sweep flag -1 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A sweep flag 0.5 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects A sweep flag 2 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a large-arc flag -1 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a large-arc flag 0.5 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a large-arc flag 2 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a sweep flag -1 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a sweep flag 0.5 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
+FAIL setPathData() rejects a sweep flag 2 path.setPathData is not a function. (In 'path.setPathData([
+          { type: "M", values: [0, 0] },
+          { type: command, values },
+          { type: "L", values: [30, 30] }
+        ])', 'path.setPathData' is undefined)
 FAIL setPathData() rejects a leading non-moveto segment path.setPathData is not a function. (In 'path.setPathData([
     { type: "L", values: [10, 10] },
     { type: "L", values: [20, 20] }

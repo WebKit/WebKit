@@ -20,9 +20,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/nth-last-child-of-class.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/opacity-style-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-grow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-grow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-grow.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-grow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-grow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-grow.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/invalidation/pct-stroke-dasharray-01-expected.html

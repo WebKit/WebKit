@@ -70,7 +70,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-rems.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-stretch.tentative-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-stretch.tentative.svg
-/LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units-with-ICB-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units-with-ICB.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/nested-svg-sizing-viewport-units-with-ICB.tentative.html
@@ -130,6 +129,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame.tentative.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-srcdoc-frame.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap-content-visibility-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap-content-visibility.tentative.https-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap-content-visibility.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap.tentative.https-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/styling/svg-filter-render-swap.tentative.https.html

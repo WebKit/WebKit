@@ -1,0 +1,4 @@
+
+
+FAIL Document parsing does not execute an SVG <script> moved to another document before its end tag assert_false: Moved SVG <script> during document parsing must not execute expected false got true
+
