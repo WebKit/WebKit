@@ -83,6 +83,8 @@ private:
     const ElementBox& root() const { return m_formattingContextRoot; }
 
     void findPositionForFormattingContextRoot(FloatAvoider&, AxisRange<ParentFormattingContextRoot> containingBlockContentBoxEdges) const;
+    // Continues from m_lastConstraintsPosition (or starts over when blockAxisPosition is above it), then makes blockAxisPosition the last one.
+    size_t firstFloatToCheckFromLastConstraintsPosition(AxisPosition<ParentFormattingContextRoot> blockAxisPosition) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
     AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(LayoutPoint borderBoxTopLeft, const ContainingBlock&) const;
@@ -92,6 +94,13 @@ private:
     const PlacedFloats& m_placedFloats;
     Point<ParentFormattingContextRoot> m_rootTopLeft;
     LayoutUnit m_rootBorderBoxInlineSize;
+    // constraints() is mostly asked about non-decreasing positions (line after line), so each call continues from the last one.
+    struct LastConstraintsPosition {
+        AxisPosition<ParentFormattingContextRoot> blockAxisPosition;
+        // placedFloats().list()[0, firstFloatToCheck) all end above blockAxisPosition, so they can't constrain a line at or below it.
+        size_t firstFloatToCheck { 0 };
+    };
+    mutable std::optional<LastConstraintsPosition> m_lastConstraintsPosition;
 };
 
 }

@@ -390,6 +390,23 @@ static std::optional<std::pair<AxisPosition<ParentFormattingContextRoot>, AxisPo
     return std::pair { edge, floatItem.marginBoxBottom() };
 }
 
+size_t FloatingContext::firstFloatToCheckFromLastConstraintsPosition(AxisPosition<ParentFormattingContextRoot> blockAxisPosition) const
+{
+    // Floats that end above the last position end above a lower one too. Floats added later go after them (inline layout
+    // places floats, and takes them back, see LineBuilder::unplaceFloatBox(), at or below the line it is asked about), except
+    // for a float PlacedFloats::add() puts before an earlier one, which has an empty margin box that floatContainsLine() ignores.
+    auto& floats = placedFloats().list();
+    auto canContinue = m_lastConstraintsPosition && m_lastConstraintsPosition->blockAxisPosition <= blockAxisPosition && m_lastConstraintsPosition->firstFloatToCheck <= floats.size();
+    auto firstFloatToCheck = canContinue ? m_lastConstraintsPosition->firstFloatToCheck : 0;
+    while (firstFloatToCheck < floats.size() && floats[firstFloatToCheck].marginBoxBottom() < blockAxisPosition)
+        ++firstFloatToCheck;
+    ASSERT(std::ranges::none_of(floats.span().first(firstFloatToCheck), [&](auto& floatItem) {
+        return floatItem.marginBoxBottom() >= blockAxisPosition && !floatItem.marginBoxSize().isEmpty();
+    }));
+    m_lastConstraintsPosition = LastConstraintsPosition { blockAxisPosition, firstFloatToCheck };
+    return firstFloatToCheck;
+}
+
 FloatingContext::Constraints FloatingContext::constraints(AxisPosition<FormattingContextRoot> candidateTop, AxisPosition<FormattingContextRoot> candidateBottom, MayBeAboveLastFloat mayBeAboveLastFloat) const
 {
     if (isEmpty())
@@ -404,8 +421,10 @@ FloatingContext::Constraints FloatingContext::constraints(AxisPosition<Formattin
 
     auto start = std::optional<Point<ParentFormattingContextRoot>> { };
     auto end = std::optional<Point<ParentFormattingContextRoot>> { };
+    auto firstFloatToCheck = firstFloatToCheckFromLastConstraintsPosition(adjustedCandidateTop);
     if (mayBeAboveLastFloat == MayBeAboveLastFloat::No) {
-        for (auto& floatItem : placedFloats.list() | std::views::reverse) {
+        for (auto index = placedFloats.list().size(); index-- > firstFloatToCheck;) {
+            auto& floatItem = placedFloats.list()[index];
             if ((start && floatItem.isStartPositioned()) || (end && !floatItem.isStartPositioned()))
                 continue;
 
@@ -424,7 +443,8 @@ FloatingContext::Constraints FloatingContext::constraints(AxisPosition<Formattin
                 break;
         }
     } else {
-        for (auto& floatItem : placedFloats.list() | std::views::reverse) {
+        for (auto index = placedFloats.list().size(); index-- > firstFloatToCheck;) {
+            auto& floatItem = placedFloats.list()[index];
             auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem, adjustedCandidateTop, adjustedCandidateBottom, candidateHeight);
             if (!edgeAndBottom)
                 continue;
@@ -438,7 +458,6 @@ FloatingContext::Constraints FloatingContext::constraints(AxisPosition<Formattin
                 if (!end || end->x() > edge)
                     end = Point<ParentFormattingContextRoot> { edge, bottom };
             }
-            // FIXME: Bail out when floats are way above.
         }
     }
 
