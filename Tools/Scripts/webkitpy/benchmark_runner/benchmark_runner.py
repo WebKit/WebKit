@@ -21,8 +21,8 @@ class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
     def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform,
-                 browser, browser_path, subtests=None, scale_unit=True, show_iteration_raw_values=False, device_id=None,
-                 diagnose_dir=None, generate_pgo_profiles=False, profile_output_dir=None, trace_type=None,
+                 browser, browser_path, subtests=None, scale_unit=True, show_iteration_raw_values=False, show_iteration_subtests=False,
+                 device_id=None, diagnose_dir=None, generate_pgo_profiles=False, profile_output_dir=None, trace_type=None,
                  profiling_interval=None, browser_args=None, http_server_type=None, http_server_port=0):
         self._plan_name, self._plan = BenchmarkRunner._load_plan_data(plan_file)
         if 'options' not in self._plan:
@@ -57,6 +57,7 @@ class BenchmarkRunner(object):
         self._output_file = output_file
         self._scale_unit = scale_unit
         self._show_iteration_raw_values = show_iteration_raw_values
+        self._show_iteration_subtests = show_iteration_subtests
         self._config = self._plan.get('config', {})
         if device_id:
             self._config['device_id'] = device_id
@@ -279,10 +280,32 @@ class BenchmarkRunner(object):
         tests = {test_name: test for test_name, test in result.items() if test_name != 'debugOutput'}
         return BenchmarkResults(tests).format(scale_unit, show_iteration_raw_values, max_depth=1, show_iteration_aggregates=False)
 
+    @classmethod
+    def _format_iteration_subtest_results(cls, tests, parent_path=''):
+        output = ''
+        for test_name, test in sorted(tests.items()):
+            if test_name == 'debugOutput':
+                continue
+            test_path = f'{parent_path}/{test_name}' if parent_path else test_name
+            for metric_name, metric in sorted(test.get('metrics', {}).items()):
+                if isinstance(metric, dict):
+                    for values in metric.values():
+                        output += f'{test_path}:{metric_name}: {values}\n'
+            output += cls._format_iteration_subtest_results(test.get('tests', {}), test_path)
+        return output
+
     def _show_iteration_results(self, iteration, result):
         try:
             formatted_results = self._format_iteration_results(result, self._scale_unit, self._show_iteration_raw_values)
         except Exception as error:
             _log.warning('Cannot format the results of the iteration {iteration}: {error}'.format(iteration=iteration, error=error))
+        else:
+            _log.info('Top level results of the iteration {iteration}:\n{results}'.format(iteration=iteration, results=formatted_results))
+        if not self._show_iteration_subtests:
             return
-        _log.info('Top level results of the iteration {iteration}:\n{results}'.format(iteration=iteration, results=formatted_results))
+        try:
+            formatted_subtest_results = self._format_iteration_subtest_results(result)
+        except Exception as error:
+            _log.warning(f'Cannot list the subtest results of the iteration {iteration}: {error}')
+            return
+        _log.info(f'Subtest results of the iteration {iteration}:\n{formatted_subtest_results}')

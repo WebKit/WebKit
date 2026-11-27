@@ -58,6 +58,7 @@ def config_argument_parser():
     parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=diagnose_directory, help='Directory for storing diagnose information on test failure. Defaults to {}.'.format(diagnose_directory))
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-raw-values', '--show-iteration-values', dest='show_iteration_raw_values', action='store_true', help="Show every raw measurement taken within an iteration, instead of one aggregated value per iteration.")
+    parser.add_argument('--show-iteration-subtests', dest='show_iteration_subtests', action='store_true', help='After each iteration, also log the raw values of every subtest, for debugging.')
     parser.add_argument('--generate-pgo-profiles', dest="generate_pgo_profiles", action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnostics directory.")
     parser.add_argument('--profile', dest='trace_type', default=None, choices=["full", "full-no-clpc", "ktrace-full", "ktrace-profile"], help="Collect profiling traces, and copy them to the diagnostic directory. 'ktrace' tracing types are deprecated, but currently supported for backwards compatibility.")
     parser.add_argument('--profiling-interval', default=None, help="Specify the profiling sampling rate.")
@@ -98,7 +99,8 @@ def run_benchmark_plan(args, plan):
     runner = benchmark_runner_class(plan,
                                     args.local_copy, args.count, args.timeout, args.build_dir, args.output_file,
                                     args.platform, args.browser, args.browser_path, subtests=args.subtests, scale_unit=args.scale_unit,
-                                    show_iteration_raw_values=args.show_iteration_raw_values, device_id=args.device_id, diagnose_dir=args.diagnose_dir,
+                                    show_iteration_raw_values=args.show_iteration_raw_values, show_iteration_subtests=args.show_iteration_subtests,
+                                    device_id=args.device_id, diagnose_dir=args.diagnose_dir,
                                     generate_pgo_profiles=args.generate_pgo_profiles,
                                     profile_output_dir=args.diagnose_dir if args.trace_type else None,
                                     trace_type=args.trace_type, profiling_interval=args.profiling_interval,

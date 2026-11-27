@@ -144,6 +144,28 @@ class FormatIterationResultsTest(unittest.TestCase):
             BenchmarkRunner._format_iteration_results(result, scale_unit=False, show_iteration_raw_values=True),
             'Speedometer:Time:Total: 7.000ms stdev=20.2% raw=[6.000, 8.000]\n')
 
+    def test_subtest_results_list_every_subtest_with_its_raw_values(self):
+        result = iteration_result_with_score(10)
+        result['debugOutput'] = ['some debug output']
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_subtest_results(result),
+            'Speedometer/SubTest1:Score: [10]\n'
+            'Speedometer/SubTest2:Score: [40]\n')
+
+    def test_subtest_results_include_nested_subtests_and_grouped_values(self):
+        result = {'JetStream': {
+            'metrics': {'Time': ['Geometric']},
+            'tests': {
+                'Air': {
+                    'metrics': {'Time': ['Geometric']},
+                    'tests': {
+                        'First': {'metrics': {'Time': {'current': [[1, 2]]}}},
+                        'Worst': {'metrics': {'Time': {'current': [[3, 4]]}}}}}}}}
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_subtest_results(result),
+            'JetStream/Air/First:Time: [[1, 2]]\n'
+            'JetStream/Air/Worst:Time: [[3, 4]]\n')
+
 
 class MockBrowserDriver:
 
@@ -161,7 +183,7 @@ class MockBrowserDriver:
 
 
 class FakeBenchmarkRunner(BenchmarkRunner):
-    def __init__(self, iteration_results, scale_unit=True, show_iteration_raw_values=False):
+    def __init__(self, iteration_results, scale_unit=True, show_iteration_raw_values=False, show_iteration_subtests=False):
         self._iteration_results = iteration_results
         self._plan = {'entry_point': 'index.html', 'options': {}}
         self._plan_name = 'fake'
@@ -173,6 +195,7 @@ class FakeBenchmarkRunner(BenchmarkRunner):
         self._output_file = os.devnull
         self._scale_unit = scale_unit
         self._show_iteration_raw_values = show_iteration_raw_values
+        self._show_iteration_subtests = show_iteration_subtests
 
     def _run_one_test(self, web_root, test_file, iteration):
         return self._iteration_results[iteration - 1]
@@ -211,6 +234,33 @@ class ShowIterationResultsTest(unittest.TestCase):
         self.assertEqual(
             [record.getMessage() for record in logs.records],
             ['Cannot format the results of the iteration 3: "Speedometer" does not contain metrics or tests'])
+
+    def test_logs_subtest_results_when_requested(self):
+        runner = FakeBenchmarkRunner([], show_iteration_subtests=True)
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            runner._show_iteration_results(1, iteration_result_with_score(10))
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Top level results of the iteration 1:\nSpeedometer:Score:Geometric: 20.0pt stdev=0.0%\n',
+             'Subtest results of the iteration 1:\nSpeedometer/SubTest1:Score: [10]\nSpeedometer/SubTest2:Score: [40]\n'])
+
+    def test_logs_subtest_results_even_when_top_level_cannot_be_aggregated(self):
+        runner = FakeBenchmarkRunner([], show_iteration_subtests=True)
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            runner._show_iteration_results(1, iteration_result_with_score(0))
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Cannot format the results of the iteration 1: math domain error',
+             'Subtest results of the iteration 1:\nSpeedometer/SubTest1:Score: [0]\nSpeedometer/SubTest2:Score: [0]\n'])
+
+    def test_malformed_subtest_results_are_reported_but_not_raised(self):
+        runner = FakeBenchmarkRunner([], show_iteration_subtests=True)
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='WARNING') as logs:
+            runner._show_iteration_results(3, {'Speedometer': ['not', 'a', 'test']})
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Cannot format the results of the iteration 3: "Speedometer" does not contain metrics or tests',
+             "Cannot list the subtest results of the iteration 3: 'list' object has no attribute 'get'"])
 
 
 class RunBenchmarkIterationLoggingTest(unittest.TestCase):
