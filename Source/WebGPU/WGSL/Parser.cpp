@@ -1145,7 +1145,7 @@ Result<AddressSpace> Parser<Lexer>::parseAddressSpace()
     if (auto* addressSpace = WGSL::parseAddressSpace(identifier.ident); addressSpace && *addressSpace != AddressSpace::Handle)
         return { *addressSpace };
 
-    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
+    FAIL("Expected one of 'function'/'immediate'/'private'/'storage'/'uniform'/'workgroup'"_s);
 }
 
 template<typename Lexer>

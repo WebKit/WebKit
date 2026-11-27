@@ -36,6 +36,7 @@ namespace WGSL {
 #define ENUM_AddressSpace(value) \
     value(Function, function) \
     value(Handle, handle) \
+    value(Immediate, immediate) \
     value(Private, private) \
     value(Storage, storage) \
     value(Uniform, uniform) \
@@ -147,6 +148,7 @@ namespace WGSL {
 #define ENUM_LanguageFeature(value) \
     value(BufferView, buffer_view, 1 << 14) \
     value(FragmentDepth, fragment_depth, 1 << 7) \
+    value(ImmediateAddressSpace, immediate_address_space, 1 << 13) \
     value(LinearIndexing, linear_indexing, 1 << 8) \
     value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \
     value(PointerCompositeAccess, pointer_composite_access, 1 << 1) \

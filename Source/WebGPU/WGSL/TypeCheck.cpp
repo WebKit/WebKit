@@ -403,6 +403,9 @@ const TypeChecker::ContextMap& TypeChecker::sharedBuiltinBindings()
                     if ((elementType->containsOverrideArray() || elementType->containsOverrideBuffer()) && addressSpace != AddressSpace::Workgroup) [[unlikely]]
                         TYPE_ERROR(type.span(), "override-sized types can only be pointed to in the <workgroup> address space"_s);
 
+                    if (addressSpace == AddressSpace::Immediate && (!elementType->isHostShareable() || !elementType->isConstructible() || elementType->containsArray())) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', *elementType, "' cannot be used as the store type of a pointer in the <immediate> address space"_s);
+
                     AccessMode accessMode;
                     if (argumentCount > 2) {
                         if (addressSpace != AddressSpace::Storage) [[unlikely]]
@@ -422,6 +425,7 @@ const TypeChecker::ContextMap& TypeChecker::sharedBuiltinBindings()
                         case AddressSpace::Uniform:
                         case AddressSpace::Storage:
                         case AddressSpace::Handle:
+                        case AddressSpace::Immediate:
                             accessMode = AccessMode::Read;
                             break;
                         }
@@ -570,6 +574,7 @@ const TypeChecker::ContextMap& TypeChecker::sharedBuiltinBindings()
             CHECK(introduceValue(AST::Identifier::make("rgba16unorm"_s), types.texelFormatType()));
 
             CHECK(introduceValue(AST::Identifier::make("function"_s), types.addressSpaceType()));
+            CHECK(introduceValue(AST::Identifier::make("immediate"_s), types.addressSpaceType()));
             CHECK(introduceValue(AST::Identifier::make("private"_s), types.addressSpaceType()));
             CHECK(introduceValue(AST::Identifier::make("workgroup"_s), types.addressSpaceType()));
             CHECK(introduceValue(AST::Identifier::make("uniform"_s), types.addressSpaceType()));
@@ -771,6 +776,14 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
             if (!result->isConstructible() && !(std::holds_alternative<Types::Buffer>(*result) && std::get<Types::Buffer>(*result).isCreationFixed())) [[unlikely]]
                 TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <uniform> because it's not constructible"_s);
             break;
+        case AddressSpace::Immediate:
+            if (!result->isHostShareable()) [[unlikely]]
+                TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <immediate> because it's not host-shareable"_s);
+            if (!result->isConstructible()) [[unlikely]]
+                TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <immediate> because it's not constructible"_s);
+            if (result->containsArray()) [[unlikely]]
+                TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <immediate> because it contains an array"_s);
+            break;
         case AddressSpace::Workgroup:
             if (!result->hasFixedFootprint()) [[unlikely]]
                 TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <workgroup> because it doesn't have fixed footprint"_s);
@@ -803,7 +816,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
             TYPE_ERROR(variable.span(), "module-scope 'var' must not use address space 'function'"_s);
         if (addressSpace != AddressSpace::Function && !isModuleScope()) [[unlikely]]
             TYPE_ERROR(variable.span(), "function-scope 'var' declaration must use 'function' address space"_s);
-        if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer()) [[unlikely]]
+        if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup || addressSpace == AddressSpace::Immediate) && variable.maybeInitializer()) [[unlikely]]
             TYPE_ERROR(variable.span(), "variables in the address space '"_s, toString(addressSpace), "' cannot have an initializer"_s);
         if (addressSpace != AddressSpace::Workgroup && (result->containsOverrideArray() || result->containsOverrideBuffer())) [[unlikely]]
             TYPE_ERROR(variable.span(), "override-sized type can only be used as the store type of a 'var<workgroup>'"_s);

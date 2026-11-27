@@ -491,6 +491,7 @@ static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
         return "thread"_s;
     case AddressSpace::Workgroup:
         return "threadgroup"_s;
+    case AddressSpace::Immediate:
     case AddressSpace::Uniform:
         return "constant"_s;
     case AddressSpace::Storage:
@@ -1680,6 +1681,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
             break;
         case AddressSpace::Function:
         case AddressSpace::Handle:
+        case AddressSpace::Immediate:
         case AddressSpace::Private:
         case AddressSpace::Storage:
         case AddressSpace::Uniform:
@@ -2129,7 +2131,7 @@ void FunctionDefinitionWriter::visit(const Type* type, bool shouldPack)
                 m_body.append("const "_s);
             if (addressSpace)
                 m_body.append(addressSpace, ' ');
-            bool shouldPack = pointer.addressSpace == AddressSpace::Storage || pointer.addressSpace == AddressSpace::Uniform || (pointer.addressSpace == AddressSpace::Workgroup && (pointer.element->containsRuntimeArray() || (m_shaderModule.usesBufferView() && pointer.element->isHostShareable())));
+            bool shouldPack = pointer.addressSpace == AddressSpace::Storage || pointer.addressSpace == AddressSpace::Uniform || pointer.addressSpace == AddressSpace::Immediate || (pointer.addressSpace == AddressSpace::Workgroup && (pointer.element->containsRuntimeArray() || (m_shaderModule.usesBufferView() && pointer.element->isHostShareable())));
             bool useMayAlias = m_shaderModule.usesBufferView() && !std::holds_alternative<Types::Atomic>(*pointer.element) && !std::holds_alternative<Types::Buffer>(*pointer.element);
             if (useMayAlias)
                 m_body.append("__wgsl_may_alias<"_s);
@@ -3635,10 +3637,10 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
         bool fromBufferView = m_shaderModule.usesBufferView() && isBufferViewExpr(access.base());
         bool isPackedWorkgroup = m_shaderModule.usesBufferView() || fromBufferView;
         if (auto* ref = std::get_if<Types::Reference>(baseType)) {
-            if (ref->addressSpace == AddressSpace::Storage || ref->addressSpace == AddressSpace::Uniform || (ref->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ref->element->isHostShareable()))
+            if (ref->addressSpace == AddressSpace::Storage || ref->addressSpace == AddressSpace::Uniform || ref->addressSpace == AddressSpace::Immediate || (ref->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ref->element->isHostShareable()))
                 elementType = ref->element;
         } else if (auto* ptr = std::get_if<Types::Pointer>(baseType)) {
-            if (ptr->addressSpace == AddressSpace::Storage || ptr->addressSpace == AddressSpace::Uniform || (ptr->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ptr->element->isHostShareable()))
+            if (ptr->addressSpace == AddressSpace::Storage || ptr->addressSpace == AddressSpace::Uniform || ptr->addressSpace == AddressSpace::Immediate || (ptr->addressSpace == AddressSpace::Workgroup && isPackedWorkgroup && ptr->element->isHostShareable()))
                 elementType = ptr->element;
         }
         if (elementType) {

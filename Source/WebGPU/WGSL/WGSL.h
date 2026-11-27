@@ -220,6 +220,8 @@ struct EntryPointInformation {
     Variant<Vertex, Fragment, Compute> typedEntryPoint;
     size_t sizeForWorkgroupVariables { 0 };
     size_t bindingCount { 0 };
+    uint32_t immediateSize { 0 };
+    uint64_t requiredImmediateSlots { 0 };
     bool usesInvariant { false };
 };
 

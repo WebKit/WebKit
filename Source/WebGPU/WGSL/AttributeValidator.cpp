@@ -267,6 +267,7 @@ void AttributeValidator::visit(AST::Variable& variable)
         case AddressSpace::Uniform:
             return true;
         case AddressSpace::Function:
+        case AddressSpace::Immediate:
         case AddressSpace::Private:
         case AddressSpace::Workgroup:
             return false;
@@ -364,7 +365,7 @@ void AttributeValidator::visit(AST::Variable& variable)
         return;
     }
 
-    if (isResource)
+    if (isResource || variable.addressSpace() == AddressSpace::Immediate)
         validateAlignment(variable.span(), *variable.addressSpace(), variable.storeType());
     if (hasError()) [[unlikely]]
         return;

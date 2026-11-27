@@ -80,6 +80,7 @@ private:
     struct UsedGlobals {
         UsedResources resources;
         UsedPrivateGlobals privateGlobals;
+        const Global* immediateGlobal { nullptr };
     };
 
     struct Insertion {
@@ -111,7 +112,7 @@ private:
     void insertDynamicOffsetsBufferIfNeeded(const SourceSpan&, const AST::Function&);
     void insertParameter(const SourceSpan&, const AST::Function&, unsigned, AST::Identifier&&, AST::Expression* = nullptr, AST::ParameterRole = AST::ParameterRole::BindGroup);
 
-    void insertParameters(AST::Function&, const Vector<unsigned>&);
+    void insertParameters(AST::Function&, const Vector<unsigned>&, const Global* immediateGlobal);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
     const Global* readVariable(AST::IdentifierExpression&);
@@ -352,6 +353,7 @@ static bool isPackedPointerType(const Types::Pointer& ptr, bool usesBufferView)
 {
     return ptr.addressSpace == AddressSpace::Storage
         || ptr.addressSpace == AddressSpace::Uniform
+        || ptr.addressSpace == AddressSpace::Immediate
         || (ptr.addressSpace == AddressSpace::Workgroup && (ptr.element->containsRuntimeArray() || (usesBufferView && ptr.element->isHostShareable())));
 }
 
@@ -1141,7 +1143,7 @@ std::optional<Error> RewriteGlobalVariables::collectGlobals()
             packResource(*globalVar);
 
             bufferLengths.append({ globalVar, resource->group, resource->binding });
-        } else if ((m_shaderModule.usesBufferView() && globalVar->addressSpace() == AddressSpace::Workgroup && globalVar->storeType() && globalVar->storeType()->isHostShareable() && !std::holds_alternative<Types::Buffer>(*globalVar->storeType())))
+        } else if (globalVar->addressSpace() == AddressSpace::Immediate || (m_shaderModule.usesBufferView() && globalVar->addressSpace() == AddressSpace::Workgroup && globalVar->storeType() && globalVar->storeType()->isHostShareable() && !std::holds_alternative<Types::Buffer>(*globalVar->storeType())))
             packResource(*globalVar);
     }
 
@@ -1236,7 +1238,7 @@ void RewriteGlobalVariables::packResource(AST::Variable& global)
         return;
     }
 
-    if (global.addressSpace() == AddressSpace::Workgroup) {
+    if (global.addressSpace() == AddressSpace::Immediate || global.addressSpace() == AddressSpace::Workgroup) {
         if (auto* vectorType = std::get_if<Types::Vector>(resolvedType)) {
             if (vectorType->size == 3) {
                 m_shaderModule.setUsesPackedVec3();
@@ -1567,7 +1569,7 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
         insertDynamicOffsetsBufferIfNeeded(entryPoint.function);
         return maybeGroups.error();
     }
-    insertParameters(entryPoint.function, *maybeGroups);
+    insertParameters(entryPoint.function, *maybeGroups, usedGlobals.immediateGlobal);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
     validateUsedGlobals(usedGlobals);
@@ -1840,6 +1842,58 @@ BindGroupLayoutEntry::BindingMember RewriteGlobalVariables::bindingMemberForGlob
     });
 }
 
+static uint64_t computeRequiredImmediateSlots(const Type* type, unsigned byteOffset)
+{
+    if (!type)
+        return 0;
+    return WTF::switchOn(*type,
+        [&](const Types::Primitive&) -> uint64_t {
+            unsigned size = type->size();
+            if (!size)
+                return 0;
+            uint64_t mask = 0;
+            unsigned firstSlot = byteOffset / 4;
+            unsigned lastSlot = (byteOffset + size - 1) / 4;
+            for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                mask |= (uint64_t { 1 } << slot);
+            return mask;
+        },
+        [&](const Types::Vector&) -> uint64_t {
+            unsigned size = type->size();
+            if (!size)
+                return 0;
+            uint64_t mask = 0;
+            unsigned firstSlot = byteOffset / 4;
+            unsigned lastSlot = (byteOffset + size - 1) / 4;
+            for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                mask |= (uint64_t { 1 } << slot);
+            return mask;
+        },
+        [&](const Types::Matrix& matrix) -> uint64_t {
+            unsigned elementSize = matrix.element->size();
+            unsigned columnSize = matrix.rows * elementSize;
+            unsigned columnStride = (matrix.rows == 3 ? 4 : matrix.rows) * elementSize;
+            uint64_t mask = 0;
+            for (unsigned col = 0; col < matrix.columns; ++col) {
+                unsigned colOffset = byteOffset + col * columnStride;
+                unsigned firstSlot = colOffset / 4;
+                unsigned lastSlot = (colOffset + columnSize - 1) / 4;
+                for (unsigned slot = firstSlot; slot <= lastSlot && slot < 64; ++slot)
+                    mask |= (uint64_t { 1 } << slot);
+            }
+            return mask;
+        },
+        [&](const Types::Struct& structure) -> uint64_t {
+            uint64_t mask = 0;
+            for (auto& member : structure.structure.members())
+                mask |= computeRequiredImmediateSlots(member.type().inferredType(), byteOffset + member.offset());
+            return mask;
+        },
+        [&](const auto&) -> uint64_t {
+            return 0;
+        });
+}
+
 auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& entryPoint) -> Result<UsedGlobals>
 {
     UsedGlobals usedGlobals;
@@ -1865,6 +1919,13 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
         case AST::VariableFlavor::Let:
         case AST::VariableFlavor::Const:
             if (!global.resource.has_value()) {
+                if (variable.addressSpace() == AddressSpace::Immediate) {
+                    usedGlobals.immediateGlobal = &global;
+                    m_entryPointInformation->immediateSize = variable.storeType()->size();
+                    m_entryPointInformation->requiredImmediateSlots = computeRequiredImmediateSlots(variable.storeType(), 0);
+                    continue;
+                }
+
                 usedGlobals.privateGlobals.append(&global);
 
                 if (auto* qualifier = variable.maybeQualifier(); qualifier && qualifier->addressSpace() == AddressSpace::Workgroup)
@@ -2841,12 +2902,18 @@ void RewriteGlobalVariables::insertDynamicOffsetsBufferIfNeeded(const AST::Funct
     insertDynamicOffsetsBufferIfNeeded(function.span(), function);
 }
 
-void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups)
+void RewriteGlobalVariables::insertParameters(AST::Function& function, const Vector<unsigned>& groups, const Global* immediateGlobal)
 {
     auto span = function.span();
     for (auto group : groups)
         insertParameter(span, function, group, argumentBufferParameterName(group));
     insertDynamicOffsetsBufferIfNeeded(span, function);
+    if (immediateGlobal) {
+        auto& immediateVar = *immediateGlobal->declaration;
+        unsigned immediateBufferIndex = buffersForStage(m_shaderModule.configuration(), m_stage) + 1;
+        auto parameterRole = immediateVar.role() == AST::VariableRole::PackedResource ? AST::ParameterRole::PackedResource : AST::ParameterRole::UserDefined;
+        insertParameter(span, function, immediateBufferIndex, AST::Identifier::make(immediateVar.name()), immediateVar.maybeReferenceType(), parameterRole);
+    }
 }
 
 void RewriteGlobalVariables::insertMaterializations(AST::Function& function, const UsedResources& usedResources)

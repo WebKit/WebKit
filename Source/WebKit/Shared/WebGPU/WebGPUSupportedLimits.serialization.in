@@ -58,6 +58,7 @@ header: <WebGPU/WebGPUCpp.h>
     uint32_t maxStorageTexturesInFragmentStage;
     uint32_t maxStorageBuffersInVertexStage;
     uint32_t maxStorageTexturesInVertexStage;
+    uint32_t maxImmediateSize;
 };
 
 header: "WebGPUSupportedLimits.h"

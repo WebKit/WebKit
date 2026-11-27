@@ -253,6 +253,17 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
 
     m_bindGroupResources.clear();
 
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to dispatch");
+        return;
+    }
+
+    if (pipeline->usesImmediates() && m_immediatesDirty) {
+        [computeCommandEncoder() setBytes:m_immediateData.data() length:m_immediateData.size() atIndex:m_device->maxBuffersForComputeStage() + 1];
+        m_immediatesDirty = false;
+    }
+
     if (!m_computeDynamicOffsets.size())
         return;
 
@@ -492,6 +503,24 @@ void ComputePassEncoder::dispatchIndirect(const WebGPU::Buffer& indirectBuffer, 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
+void ComputePassEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"GPUComputePassEncoder.setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+        m_immediatesDirty = true;
+    }
 }
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)

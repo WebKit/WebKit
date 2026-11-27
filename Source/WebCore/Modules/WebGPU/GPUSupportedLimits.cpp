@@ -203,4 +203,9 @@ uint32_t GPUSupportedLimits::maxStorageTexturesInVertexStage() const
     return m_backing->maxStorageTexturesInVertexStage();
 }
 
+uint32_t GPUSupportedLimits::maxImmediateSize() const
+{
+    return m_backing->maxImmediateSize();
+}
+
 }

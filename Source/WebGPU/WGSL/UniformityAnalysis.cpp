@@ -289,6 +289,7 @@ bool UniformityGraph::isGlobalNonUniform(AST::Variable& globalVar)
             // underlying texels are mutable (write-only and read-write storage textures).
             break;
         case AddressSpace::Function:
+        case AddressSpace::Immediate:
         case AddressSpace::Uniform:
             break;
         }

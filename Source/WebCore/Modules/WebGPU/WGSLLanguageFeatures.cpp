@@ -34,6 +34,7 @@ void WGSLLanguageFeatures::initializeSetLike(DOMSetAdapter& set) const
 {
     set.add<IDLDOMString>("buffer_view"_s);
     set.add<IDLDOMString>("fragment_depth"_s);
+    set.add<IDLDOMString>("immediate_address_space"_s);
     set.add<IDLDOMString>("linear_indexing"_s);
     set.add<IDLDOMString>("packed_4x8_integer_dot_product"_s);
     set.add<IDLDOMString>("pointer_composite_access"_s);

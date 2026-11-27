@@ -267,7 +267,16 @@ void IOValidator::visit(AST::CallExpression& call)
 void IOValidator::validateResources(const CallGraph::EntryPoint& entryPoint)
 {
     HashMap<std::pair<unsigned, unsigned>, const CallGraph::Global*> usedGlobals;
+    const CallGraph::Global* usedImmediateGlobal = nullptr;
     for (auto* global : entryPoint.usedGlobals) {
+        if (global->declaration && global->declaration->addressSpace() == AddressSpace::Immediate) {
+            if (usedImmediateGlobal) [[unlikely]] {
+                error(global->declaration->span(), "entry point '"_s, entryPoint.originalName, "' uses multiple immediate variables: '"_s, usedImmediateGlobal->declaration->originalName(), "' and '"_s, global->declaration->originalName(), '\'');
+                return;
+            }
+            usedImmediateGlobal = global;
+        }
+
         if (!global->resource)
             continue;
 

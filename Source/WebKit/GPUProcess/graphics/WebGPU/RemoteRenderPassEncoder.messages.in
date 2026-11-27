@@ -39,6 +39,7 @@ messages -> RemoteRenderPassEncoder Stream {
     void DrawIndirect(WebKit::WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
     void DrawIndexedIndirect(WebKit::WebGPUBufferIdentifier indirectBuffer, uint64_t indirectOffset)
     void SetBindGroup(uint32_t index, std::optional<WebKit::WebGPUBindGroupIdentifier> identifier, std::optional<Vector<uint32_t>> dynamicOffsets)
+    void SetImmediates(uint32_t rangeOffset, Vector<uint32_t> data)
     void PushDebugGroup(String groupLabel)
     void PopDebugGroup()
     void InsertDebugMarker(String markerLabel)
