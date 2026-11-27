@@ -162,7 +162,7 @@ auto SubstitutionResolver::substituteVarArgumentGrammar(CSSParserTokenRange rang
     std::optional<CSSParserTokenRange> fallbackRange;
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range)) {
         range.trimTrailingWhitespace();
-        fallbackRange = range;
+        fallbackRange = unwrapArgumentBraces(range);
     }
 
     auto parseName = [](CSSParserTokenRange nameRange) -> std::optional<AtomString> {
@@ -232,7 +232,7 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
             return false;
         range.consumeIncludingWhitespace();
         range.trimTrailingWhitespace();
-        fallbackRange = range;
+        fallbackRange = unwrapArgumentBraces(range);
     }
 
     return substituteNamedValueOrFallback(name, fallbackRange, CSSValueID::Env, tokens, context, *indices);

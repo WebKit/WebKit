@@ -1,0 +1,9 @@
+
+PASS Property color value 'inherit(--missing, {rgb(1, 2, 3)})'
+PASS Property color value 'inherit(--missing, { rgb(1, 2, 3) })'
+PASS Property color value 'inherit(--missing, {rgb(1, 2, 3)} )'
+PASS Property font-family value 'inherit(--missing, {Arial, sans-serif})'
+PASS e.style['color'] = "inherit(--missing, {rgb(1, 2, 3)} rgb(4, 5, 6))" should not set the property value
+PASS e.style['font-family'] = "inherit(--missing, {Arial}, sans-serif)" should not set the property value
+PASS e.style['color'] = "inherit(--missing, rgb(1, 2, 3) {})" should not set the property value
+
