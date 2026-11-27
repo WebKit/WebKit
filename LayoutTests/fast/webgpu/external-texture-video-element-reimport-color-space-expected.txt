@@ -1,0 +1,9 @@
+Tests that GPUDevice.importExternalTexture of a video element that was already imported into another color space converts to the color space the new import names, both in a later task and in the same task, and that importing it again with the same descriptor still hands back the same GPUExternalTexture.
+
+PASS Importing into srgb
+PASS Importing into display-p3 after srgb, in a later task
+PASS Importing into srgb after display-p3, in a later task
+PASS Importing into display-p3 after srgb in the same task gives another GPUExternalTexture
+PASS Importing into display-p3 again in the same task gives the same GPUExternalTexture
+PASS Importing into srgb, then display-p3 in the same task: srgb
+PASS Importing into srgb, then display-p3 in the same task: display-p3

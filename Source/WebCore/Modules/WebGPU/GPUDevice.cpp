@@ -578,7 +578,10 @@ private:
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importOrUpdateExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
 #if ENABLE(VIDEO)
-    if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
+    RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor);
+    if (externalTexture && externalTexture->colorSpace() != externalTextureDescriptor.colorSpace)
+        externalTexture = nullptr;
+    if (externalTexture) {
         if (externalTexture->isActive() && !externalTexture->isDestroyed())
             return externalTexture.releaseNonNull();
 
@@ -597,7 +600,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importOrUpdateExternalTexture(co
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
 
-    return GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), *this);
+    return GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), externalTextureDescriptor.colorSpace, *this);
 }
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExternalTextureDescriptor&& externalTextureDescriptor)

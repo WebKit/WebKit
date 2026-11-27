@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/video-formats/video-formats-manifest.js"></script>
+<script src="../../resources/video-formats/video-formats-test-utils.js"></script>
+</head>
+<body>
+<p>Tests that GPUDevice.importExternalTexture of a video element that was already imported into another color space converts to the color space the new import names, both in a later task and in the same task, and that importing it again with the same descriptor still hands back the same GPUExternalTexture.</p>
+<pre id="log"></pre>
+<script>
+"use strict";
+
+// GPUDevice hands a video element's external texture back when the same element is imported again, and
+// only updates it to the current frame. "srgb" and "display-p3" differ for every saturated patch, by as
+// much as 51 in 8-bit units for red, so a texture handed back for the wrong color space shows.
+const name = "h264-420-bt709-videorange.mp4";
+// As external-texture-10bit-video.html allows for an SDR frame.
+const tolerance = 4;
+// WebGPU takes an SDR frame to be sRGB-encoded, so "srgb" is expected to give the frame's own values,
+// and "display-p3" those values converted to Display P3.
+const expectationNames = { "srgb": "native", "display-p3": "nativeInDisplayP3" };
+
+const shader = `
+struct VertexOut {
+    @builtin(position) position: vec4f,
+    @location(0) uv: vec2f,
+}
+
+@vertex fn vertexMain(@builtin(vertex_index) index: u32) -> VertexOut {
+    var positions = array<vec2f, 3>(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+    var uvs = array<vec2f, 3>(vec2f(0, 1), vec2f(2, 1), vec2f(0, -1));
+    return VertexOut(vec4f(positions[index], 0, 1), uvs[index]);
+}
+
+@group(0) @binding(0) var videoSampler: sampler;
+@group(0) @binding(1) var videoTexture: texture_external;
+
+@fragment fn fragmentMain(@location(0) uv: vec2f) -> @location(0) vec4f {
+    return textureSampleBaseClampToEdge(videoTexture, videoSampler, uv);
+}
+`;
+
+const lines = [];
+function log(message) { lines.push(message); }
+function check(label, failures) { log(failures.length ? `FAIL ${label}: ${failures.join("; ")}` : `PASS ${label}`); }
+
+function createTarget(device, width, height)
+{
+    return device.createTexture({
+        size: [width, height],
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+}
+
+async function readTexture(device, texture, width, height)
+{
+    const bytesPerRow = Math.ceil(width * 4 / 256) * 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * height, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow, rowsPerImage: height }, [width, height]);
+    device.queue.submit([encoder.finish()]);
+    await buffer.mapAsync(GPUMapMode.READ);
+    const mapped = new Uint8Array(buffer.getMappedRange());
+    const data = new Float32Array(width * height * 4);
+    for (let y = 0; y < height; ++y) {
+        for (let i = 0; i < width * 4; ++i)
+            data[y * width * 4 + i] = mapped[y * bytesPerRow + i];
+    }
+    buffer.unmap();
+    buffer.destroy();
+    return { width, height, data };
+}
+
+// Imports and encodes without yielding, since a GPUExternalTexture expires at the end of its task.
+function encodeSample(device, pipeline, encoder, video, colorSpace, texture)
+{
+    const externalTexture = device.importExternalTexture({ source: video, colorSpace });
+    const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: device.createSampler() },
+            { binding: 1, resource: externalTexture },
+        ],
+    });
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), clearValue: [0, 0, 0, 1], loadOp: "clear", storeOp: "store" }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.draw(3);
+    pass.end();
+    return externalTexture;
+}
+
+async function sample(device, pipeline, video, colorSpace, info)
+{
+    const texture = createTarget(device, info.displayWidth, info.displayHeight);
+    const encoder = device.createCommandEncoder();
+    encodeSample(device, pipeline, encoder, video, colorSpace, texture);
+    device.queue.submit([encoder.finish()]);
+    return readTexture(device, texture, info.displayWidth, info.displayHeight);
+}
+
+function formatColor(color) { return "(" + color.map(v => Math.round(v)).join(",") + ")"; }
+
+function checkColorSpace(label, readback, info, colorSpace)
+{
+    const failures = [];
+    const patches = VideoFormats.expectedPatches(info, { colorSpace: expectationNames[colorSpace] }).filter(patch => patch.expected);
+    for (const patch of patches) {
+        const observed = VideoFormats.samplePatch(readback, patch.rect).slice(0, 3);
+        const expected = patch.expected.slice(0, 3);
+        if (observed.some((v, i) => Math.abs(v - expected[i]) > tolerance))
+            failures.push(`${patch.cell} ${formatColor(observed)}, expected ${formatColor(expected)} within ${tolerance}`);
+    }
+    check(label, failures);
+}
+
+async function run()
+{
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        log("FAIL: no WebGPU device");
+        return;
+    }
+
+    const module = device.createShaderModule({ code: shader });
+    const pipeline = device.createRenderPipeline({
+        layout: "auto",
+        vertex: { module },
+        fragment: { module, targets: [{ format: "rgba8unorm" }] },
+    });
+
+    const info = VideoFormats.videoInfo(name);
+    const video = await VideoFormats.loadVideo(name);
+
+    // Each import in a task of its own, which updates the texture handed back to the current frame.
+    for (const [colorSpace, after] of [["srgb", null], ["display-p3", "srgb"], ["srgb", "display-p3"]]) {
+        const readback = await sample(device, pipeline, video, colorSpace, info);
+        checkColorSpace(after ? `Importing into ${colorSpace} after ${after}, in a later task` : `Importing into ${colorSpace}`, readback, info, colorSpace);
+    }
+
+    // Both imports in one task, which hands back the texture as it is.
+    const width = info.displayWidth, height = info.displayHeight;
+    const srgbTarget = createTarget(device, width, height);
+    const displayP3Target = createTarget(device, width, height);
+    const encoder = device.createCommandEncoder();
+    const srgbTexture = encodeSample(device, pipeline, encoder, video, "srgb", srgbTarget);
+    const displayP3Texture = encodeSample(device, pipeline, encoder, video, "display-p3", displayP3Target);
+    const sameDescriptorTexture = device.importExternalTexture({ source: video, colorSpace: "display-p3" });
+    device.queue.submit([encoder.finish()]);
+    check("Importing into display-p3 after srgb in the same task gives another GPUExternalTexture", srgbTexture !== displayP3Texture ? [] : ["got the same one"]);
+    check("Importing into display-p3 again in the same task gives the same GPUExternalTexture", sameDescriptorTexture === displayP3Texture ? [] : ["got another one"]);
+    checkColorSpace("Importing into srgb, then display-p3 in the same task: srgb", await readTexture(device, srgbTarget, width, height), info, "srgb");
+    checkColorSpace("Importing into srgb, then display-p3 in the same task: display-p3", await readTexture(device, displayP3Target, width, height), info, "display-p3");
+
+    VideoFormats.releaseVideo(video);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+run().catch(error => log(`FAIL: ${error}`)).finally(() => {
+    document.getElementById("log").textContent = lines.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
