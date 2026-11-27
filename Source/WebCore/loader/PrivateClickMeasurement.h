@@ -81,8 +81,8 @@ public:
     WEBCORE_EXPORT URL attributionReportClickSourceURL() const;
     WEBCORE_EXPORT URL attributionReportClickDestinationURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> attributionReportJSON() const;
-    const PCM::SourceSite& sourceSite() const { return m_sourceSite; };
-    const PCM::AttributionDestinationSite& destinationSite() const { return m_destinationSite; };
+    const PCM::SourceSite& sourceSite() const LIFETIME_BOUND { return m_sourceSite; };
+    const PCM::AttributionDestinationSite& destinationSite() const LIFETIME_BOUND { return m_destinationSite; };
     WallTime timeOfAdClick() const { return m_timeOfAdClick; }
     NODELETE WEBCORE_EXPORT bool hasPreviouslyBeenReported();
     PCM::AttributionTimeToSendData timesToSend() const { return m_timesToSend; };

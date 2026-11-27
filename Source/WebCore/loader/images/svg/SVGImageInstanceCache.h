@@ -41,7 +41,7 @@ public:
 
     void reset(RefPtr<SVGImageInstance>&& defaultInstance);
 
-    SVGImageInstance* defaultInstance() const { return m_defaultInstance.get(); }
+    SVGImageInstance* defaultInstance() const LIFETIME_BOUND { return m_defaultInstance.get(); }
     SVGImageInstance* find(const SVGImageInstanceKey&) const;
     void add(Ref<SVGImageInstance>&&);
 

@@ -36,7 +36,7 @@ public:
     explicit CachedSVGDocument(CachedResourceRequest&&, CachedSVGDocument&);
     virtual ~CachedSVGDocument();
 
-    SVGDocument* document() const { return m_document.get(); }
+    SVGDocument* document() const LIFETIME_BOUND { return m_document.get(); }
 
 private:
     bool mayTryReplaceEncodedData() const override { return true; }

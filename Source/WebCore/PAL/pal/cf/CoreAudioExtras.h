@@ -45,17 +45,17 @@ inline std::span<T> mutableSpan(AudioBuffer& buffer)
     return unsafeMakeSpan(static_cast<T*>(buffer.mData), buffer.mDataByteSize / sizeof(T));
 }
 
-inline std::span<AudioBuffer> span(AudioBufferList& list)
+inline std::span<AudioBuffer> span(AudioBufferList& list LIFETIME_BOUND)
 {
     return unsafeMakeSpan(list.mBuffers, list.mNumberBuffers);
 }
 
-inline std::span<const AudioBuffer> span(const AudioBufferList& list)
+inline std::span<const AudioBuffer> span(const AudioBufferList& list LIFETIME_BOUND)
 {
     return unsafeMakeSpan(list.mBuffers, list.mNumberBuffers);
 }
 
-inline std::span<const AudioChannelDescription> span(const AudioChannelLayout& layout)
+inline std::span<const AudioChannelDescription> span(const AudioChannelLayout& layout LIFETIME_BOUND)
 {
     return unsafeMakeSpan(layout.mChannelDescriptions, layout.mNumberChannelDescriptions);
 }

@@ -90,8 +90,7 @@ SVGImage::~SVGImage() = default;
 
 Page* SVGImage::defaultInstancePage() const
 {
-    RefPtr instance = m_instances->defaultInstance();
-    return instance ? instance->page() : nullptr;
+    return m_instances->defaultInstance() ? m_instances->defaultInstance()->page() : nullptr;
 }
 
 RefPtr<SVGSVGElement> SVGImage::defaultInstanceRootElement() const

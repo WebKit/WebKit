@@ -80,7 +80,7 @@ public:
     // https://html.spec.whatwg.org/multipage/images.html#img-req-state
     ImageRequestState currentRequestState() const;
 
-    CachedImage* image() const { return m_image.get(); }
+    CachedImage* image() const LIFETIME_BOUND { return m_image.get(); }
     void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.
     
     size_t pendingDecodePromisesCountForTesting() const { return m_decodingPromises.size(); }

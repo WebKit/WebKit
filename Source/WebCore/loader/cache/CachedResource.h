@@ -142,7 +142,7 @@ public:
     const URL& url() const LIFETIME_BOUND { return m_resourceRequest.url(); }
     String cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
-    const CookieJar* cookieJar() const { return m_cookieJar.get(); }
+    const CookieJar* cookieJar() const LIFETIME_BOUND { return m_cookieJar.get(); }
     Type type() const { return m_type; }
     String mimeType() const { return response().mimeType(); }
     long long expectedContentLength() const { return response().expectedContentLength(); }
@@ -192,7 +192,7 @@ public:
     virtual bool stillNeedsLoad() const { return false; }
     void whenLoaded(CompletionHandler<void()>&&);
 
-    SubresourceLoader* loader() const { return m_loader.get(); }
+    SubresourceLoader* loader() const LIFETIME_BOUND { return m_loader.get(); }
 
     bool isImage() const { return type() == Type::ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
@@ -228,7 +228,7 @@ public:
 
     void clearLoader();
 
-    FragmentedSharedBuffer* resourceBuffer() const { return m_data.get(); }
+    FragmentedSharedBuffer* resourceBuffer() const LIFETIME_BOUND { return m_data.get(); }
 
     virtual void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     virtual void responseReceived(ResourceResponse&&);
@@ -245,8 +245,8 @@ public:
 
     void loadFrom(const CachedResource&);
 
-    const SecurityOrigin* origin() const { return m_origin.get(); }
-    SecurityOrigin* origin() { return m_origin.get(); }
+    const SecurityOrigin* origin() const LIFETIME_BOUND { return m_origin.get(); }
+    SecurityOrigin* origin() LIFETIME_BOUND { return m_origin.get(); }
     AtomString initiatorType() const { return m_initiatorType; }
 
     bool isExpired() const;
@@ -284,7 +284,7 @@ public:
     bool varyHeaderValuesMatch(const ResourceRequest&);
 
     bool isCacheValidator() const { return !!m_resourceToRevalidate; }
-    CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate.get(); }
+    CachedResource* resourceToRevalidate() const LIFETIME_BOUND { return m_resourceToRevalidate.get(); }
 
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);
@@ -303,7 +303,7 @@ public:
     std::optional<ResourceLoaderIdentifier> identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
 
     void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTF::move(originalRequest); }
-    const std::unique_ptr<ResourceRequest>& originalRequest() const { return m_originalRequest; }
+    const std::unique_ptr<ResourceRequest>& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
 #if USE(QUICK_LOOK)
     virtual void previewResponseReceived(ResourceResponse&&);

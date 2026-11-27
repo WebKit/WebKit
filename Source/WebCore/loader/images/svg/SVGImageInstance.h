@@ -67,7 +67,7 @@ public:
 
     void updateRendering();
 
-    Page* page() const { return m_page.get(); }
+    Page* page() const LIFETIME_BOUND { return m_page.get(); }
     RefPtr<SVGSVGElement> rootElement() const;
     LocalFrameView* frameView() const;
 
@@ -97,7 +97,7 @@ public:
     };
 
     DocumentState documentStateForDraw(const ImageDrawDescriptor&) const;
-    const DocumentState& appliedDocumentState() const { return m_appliedDocumentState; }
+    const DocumentState& appliedDocumentState() const LIFETIME_BOUND { return m_appliedDocumentState; }
     void applyDocumentState(const DocumentState&);
 
     void paint(GraphicsContext&, const FloatRect& source);

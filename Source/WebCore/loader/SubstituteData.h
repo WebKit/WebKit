@@ -50,7 +50,7 @@ public:
     bool isValid() const { return m_content != nullptr; }
     SessionHistoryVisibility shouldRevealToSessionHistory() const { return m_shouldRevealToSessionHistory; }
 
-    FragmentedSharedBuffer* content() const { return m_content.get(); }
+    FragmentedSharedBuffer* content() const LIFETIME_BOUND { return m_content.get(); }
     RefPtr<FragmentedSharedBuffer> contentForSerialization() const { return m_content; }
     const String& mimeType() const LIFETIME_BOUND { return m_response.mimeType(); }
     const String& textEncoding() const LIFETIME_BOUND { return m_response.textEncodingName(); }

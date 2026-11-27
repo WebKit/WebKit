@@ -73,7 +73,7 @@ public:
 
     const AtomString& downloadAttribute() const LIFETIME_BOUND { return m_downloadAttribute; }
 
-    Element* sourceElement() const { return m_sourceElement.get(); }
+    Element* sourceElement() const LIFETIME_BOUND { return m_sourceElement.get(); }
     void setSourceElement(Element* sourceElement) { m_sourceElement = sourceElement; }
 
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }

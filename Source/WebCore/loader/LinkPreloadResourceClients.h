@@ -70,7 +70,7 @@ protected:
         m_resource = nullptr;
     }
 
-    CachedResource* ownedResource() { return m_resource.get(); }
+    CachedResource* ownedResource() LIFETIME_BOUND { return m_resource.get(); }
 
 private:
     SingleThreadWeakPtr<LinkLoader> m_loader;

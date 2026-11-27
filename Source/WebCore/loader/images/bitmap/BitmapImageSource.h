@@ -47,7 +47,7 @@ public:
 
     // State
     ImageDecoder* decoder(FragmentedSharedBuffer* = nullptr) const;
-    ImageDecoder* decoderIfExists() const { return m_decoder.get(); }
+    ImageDecoder* decoderIfExists() const LIFETIME_BOUND { return m_decoder.get(); }
 
     // Encoded and decoded data
     void destroyDecodedData(bool destroyAll) final;

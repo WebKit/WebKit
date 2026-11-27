@@ -52,12 +52,12 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    HTMLFormElement& form() const { return m_form; }
+    HTMLFormElement& form() const LIFETIME_BOUND { return m_form; }
     const StringPairVector& textFieldValues() const LIFETIME_BOUND { return m_textFieldValues; }
-    Document& sourceDocument() const { return m_sourceDocument; }
+    Document& sourceDocument() const LIFETIME_BOUND { return m_sourceDocument; }
 
     FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
-    HTMLFormControlElement* submitter() const { return m_submitter.get(); }
+    HTMLFormControlElement* submitter() const LIFETIME_BOUND { return m_submitter.get(); }
 
 private:
     FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger, HTMLFormControlElement* submitter);

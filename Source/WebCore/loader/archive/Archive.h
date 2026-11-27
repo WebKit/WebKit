@@ -42,7 +42,7 @@ public:
     virtual bool shouldUseMainResourceEncoding() const = 0;
     virtual bool shouldUseMainResourceURL() const = 0;
 
-    ArchiveResource* mainResource() const { return m_mainResource.get(); }
+    ArchiveResource* mainResource() const LIFETIME_BOUND { return m_mainResource.get(); }
     const Vector<Ref<ArchiveResource>>& subresources() const LIFETIME_BOUND { return m_subresources; }
     const Vector<Ref<Archive>>& subframeArchives() const LIFETIME_BOUND { return m_subframeArchives; }
     WEBCORE_EXPORT std::expected<Vector<String>, ArchiveError> saveResourcesToDisk(const String& directory);

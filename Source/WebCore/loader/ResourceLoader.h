@@ -87,7 +87,7 @@ public:
 #endif
 
     NODELETE WEBCORE_EXPORT FrameLoader* frameLoader() const;
-    DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+    DocumentLoader* documentLoader() const LIFETIME_BOUND { return m_documentLoader.get(); }
     const ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
     WEBCORE_EXPORT void start();
@@ -140,7 +140,7 @@ public:
 #endif
 
     const URL& url() const LIFETIME_BOUND { return m_request.url(); }
-    ResourceHandle* handle() const { return m_handle.get(); }
+    ResourceHandle* handle() const LIFETIME_BOUND { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
     bool shouldSniffContent() const { return m_options.sniffContent == ContentSniffingPolicy::SniffContent; }

@@ -119,8 +119,8 @@ public:
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
 
-    FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
-    const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
+    FragmentedSharedBuffer* data() LIFETIME_BOUND { return m_encodedImageData.get(); }
+    const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_encodedImageData.get(); }
 
     virtual ColorSpace colorSpace(const ColorSpace& defaultColorSpace = ColorSpace::SRGB());
     virtual bool hasHDRContent() const { return false; }

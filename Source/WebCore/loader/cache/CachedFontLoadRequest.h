@@ -57,7 +57,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    CachedFont& cachedFont() const { return *m_font; }
+    CachedFont& cachedFont() const LIFETIME_BOUND { return *m_font; }
 
 private:
     CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)

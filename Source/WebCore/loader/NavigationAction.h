@@ -123,7 +123,7 @@ public:
     NODELETE void setSourceBackForwardItem(HistoryItem*);
     const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const LIFETIME_BOUND { return m_sourceBackForwardItemIdentifier; }
 
-    const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };
+    const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const LIFETIME_BOUND { return m_privateClickMeasurement; };
     void setPrivateClickMeasurement(PrivateClickMeasurement&& privateClickMeasurement) { m_privateClickMeasurement = privateClickMeasurement; };
 
 

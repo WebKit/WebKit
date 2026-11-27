@@ -138,9 +138,9 @@ public:
 
     NODELETE WEBCORE_EXPORT LocalFrame& frame() const;
 
-    PolicyChecker& policyChecker() const { return m_policyChecker; }
+    PolicyChecker& policyChecker() const LIFETIME_BOUND { return m_policyChecker; }
 
-    HistoryController& history() const { return m_history; }
+    HistoryController& history() const LIFETIME_BOUND { return m_history; }
 
     ResourceLoadNotifier& notifier() const LIFETIME_BOUND { return m_notifier; }
 
@@ -198,9 +198,9 @@ public:
     String outgoingOrigin() const;
 
     NODELETE WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
-    DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
-    DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
+    DocumentLoader* documentLoader() const LIFETIME_BOUND { return m_documentLoader.get(); }
+    DocumentLoader* policyDocumentLoader() const LIFETIME_BOUND { return m_policyDocumentLoader.get(); }
+    DocumentLoader* provisionalDocumentLoader() const LIFETIME_BOUND { return m_provisionalDocumentLoader.get(); }
     FrameState state() const { return m_state; }
 
     enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
@@ -253,8 +253,8 @@ public:
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
     static URL partitionedFirstPartyForCookiesForSubframeNavigation(const Document&);
 
-    const LocalFrameLoaderClient& client() const { return m_client.get(); }
-    LocalFrameLoaderClient& client() { return m_client.get(); }
+    const LocalFrameLoaderClient& client() const LIFETIME_BOUND { return m_client.get(); }
+    LocalFrameLoaderClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     NODELETE WEBCORE_EXPORT FrameIdentifier frameID() const;
 
@@ -384,7 +384,7 @@ public:
 
     // HistoryController specific.
     void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
-    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
+    HistoryItem* requestedHistoryItem() const LIFETIME_BOUND { return m_requestedHistoryItem.get(); }
     WEBCORE_EXPORT void setRequestedHistoryItem(HistoryItem&);
     WEBCORE_EXPORT void loadRequestedHistoryItem(FrameLoadType, PolicyAlreadyDecided = PolicyAlreadyDecided::No);
 
@@ -405,7 +405,7 @@ public:
     WEBCORE_EXPORT void prefetchDNSIfNeeded(const URL&);
 
     void prefetch(const URL&, const Vector<String>&, std::optional<ReferrerPolicy>, bool lowPriority = false);
-    DocumentPrefetcher& documentPrefetcher() { return m_documentPrefetcher.get(); }
+    DocumentPrefetcher& documentPrefetcher() LIFETIME_BOUND { return m_documentPrefetcher.get(); }
 
     bool loadChildHistoryItemIntoFrame(LocalFrame&);
     WEBCORE_EXPORT void continueLoadURLIntoChildFrame(const URL&, const String& referer, LocalFrame&);

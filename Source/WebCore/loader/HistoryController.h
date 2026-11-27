@@ -80,16 +80,16 @@ public:
     void updateForSameDocumentNavigation();
     NODELETE void updateForFrameLoadCompleted();
 
-    HistoryItem* currentItem() const { return m_currentItem.get(); }
+    HistoryItem* currentItem() const LIFETIME_BOUND { return m_currentItem.get(); }
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(RefPtr<HistoryItem>&&);
 
-    HistoryItem* previousItem() const { return m_previousItem.get(); }
+    HistoryItem* previousItem() const LIFETIME_BOUND { return m_previousItem.get(); }
     void clearPreviousItem();
 
-    HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
+    HistoryItem* provisionalItem() const LIFETIME_BOUND { return m_provisionalItem.get(); }
     void setProvisionalItem(RefPtr<HistoryItem>&&);
 
     void pushState(RefPtr<SerializedScriptValue>&&, const String& url);

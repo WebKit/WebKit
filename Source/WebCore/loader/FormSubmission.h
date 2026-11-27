@@ -87,11 +87,11 @@ public:
     const URL& action() const LIFETIME_BOUND { return m_action; }
     const AtomString& target() const LIFETIME_BOUND { return m_target; }
     const String& contentType() const LIFETIME_BOUND { return m_contentType; }
-    FormState* state() const { return m_formState.get(); }
-    FormData& data() const { return *m_formData; }
+    FormState* state() const LIFETIME_BOUND { return m_formState.get(); }
+    FormData& data() const LIFETIME_BOUND { return *m_formData; }
     const String& boundary() const LIFETIME_BOUND { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
-    Event* event() const { return m_event.get(); }
+    Event* event() const LIFETIME_BOUND { return m_event.get(); }
     const String& referrer() const LIFETIME_BOUND { return m_referrer; }
     const String& origin() const LIFETIME_BOUND { return m_origin; }
 

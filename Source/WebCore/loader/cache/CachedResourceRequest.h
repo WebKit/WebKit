@@ -102,8 +102,8 @@ public:
 
     void setOrigin(Ref<SecurityOrigin>&& origin) { m_origin = WTF::move(origin); }
     RefPtr<SecurityOrigin> releaseOrigin() { return WTF::move(m_origin); }
-    const SecurityOrigin* origin() const { return m_origin.get(); }
-    SecurityOrigin* origin() { return m_origin.get(); }
+    const SecurityOrigin* origin() const LIFETIME_BOUND { return m_origin.get(); }
+    SecurityOrigin* origin() LIFETIME_BOUND { return m_origin.get(); }
 
     bool hasFragmentIdentifier() const { return !m_fragmentIdentifier.isEmpty(); }
     const String& fragmentIdentifier() const LIFETIME_BOUND { return m_fragmentIdentifier; }

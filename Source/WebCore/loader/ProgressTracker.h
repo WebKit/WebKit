@@ -51,7 +51,7 @@ public:
     explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);
     ~ProgressTracker();
 
-    ProgressTrackerClient& client() { return m_client.get(); }
+    ProgressTrackerClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     double estimatedProgress() const { return m_progressValue; }
 

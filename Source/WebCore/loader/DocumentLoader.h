@@ -199,7 +199,7 @@ public:
     const ResourceRequest& request() const;
     ResourceRequest& request();
 
-    CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
+    CachedResourceLoader& cachedResourceLoader() LIFETIME_BOUND { return m_cachedResourceLoader; }
 
     const SubstituteData& substituteData() const LIFETIME_BOUND { return m_substituteData; }
 
@@ -279,8 +279,8 @@ public:
     void addResponse(const ResourceResponse&);
     const Vector<ResourceResponse>& responses() const LIFETIME_BOUND { return m_responses; }
 
-    const NavigationAction& triggeringAction() const { return m_triggeringAction; }
-    NavigationAction& triggeringAction() { return m_triggeringAction; }
+    const NavigationAction& triggeringAction() const LIFETIME_BOUND { return m_triggeringAction; }
+    NavigationAction& triggeringAction() LIFETIME_BOUND { return m_triggeringAction; }
     void setTriggeringAction(NavigationAction&&);
     void setTriggeringNavigationAPIType(NavigationNavigationType type) { m_triggeringAction.setNavigationAPIType(type); };
 
@@ -304,7 +304,7 @@ public:
     // these accessors return the URL that would have been used if a history
     // item were created. This allows WebKit to link history items reflecting
     // redirects into a chain from start to finish.
-    const String& clientRedirectSourceForHistory() const { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
+    const String& clientRedirectSourceForHistory() const LIFETIME_BOUND { return m_clientRedirectSourceForHistory; } // null if no client redirect occurred.
     String clientRedirectDestinationForHistory() const { return urlForHistory().string(); }
     void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
     
@@ -452,7 +452,7 @@ public:
 #if ENABLE(CONTENT_FILTERING)
     void setBlockedPageURL(const URL& blockedPageURL) { m_blockedPageURL = blockedPageURL; }
     void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTF::move(substituteDataFromContentFilter); }
-    ContentFilter* contentFilter() const { return m_contentFilter.get(); }
+    ContentFilter* contentFilter() const LIFETIME_BOUND { return m_contentFilter.get(); }
 
     WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript);
 #endif
@@ -497,7 +497,7 @@ public:
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
     void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
 
-    ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
+    ContentSecurityPolicy* contentSecurityPolicy() const LIFETIME_BOUND { return m_contentSecurityPolicy.get(); }
     const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const LIFETIME_BOUND { return m_responseCOOP; }
     const AgentClusterAssignment& agentClusterAssignment() const LIFETIME_BOUND { return m_agentClusterAssignment; }
     void setAgentClusterAssignment(const AgentClusterAssignment& assignment) { m_agentClusterAssignment = assignment; }

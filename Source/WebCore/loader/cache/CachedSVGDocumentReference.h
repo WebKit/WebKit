@@ -51,7 +51,7 @@ public:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&);
     bool loadRequested() const { return m_loadRequested; }
 
-    CachedSVGDocument* document() { return m_document.get(); }
+    CachedSVGDocument* document() LIFETIME_BOUND { return m_document.get(); }
 
 private:
     explicit CachedSVGDocumentReference(const Style::URL&);

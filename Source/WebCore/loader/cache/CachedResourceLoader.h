@@ -175,7 +175,7 @@ public:
 
     ResourceTimingInformation& resourceTimingInformation() LIFETIME_BOUND { return m_resourceTimingInfo; }
 
-    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker.get(); }
+    KeepaliveRequestTracker& keepaliveRequestTracker() LIFETIME_BOUND { return m_keepaliveRequestTracker.get(); }
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
