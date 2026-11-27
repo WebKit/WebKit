@@ -47,6 +47,9 @@ public:
     float pathLength() const { return m_pathLength->currentValue(); }
     SVGAnimatedNumber& pathLengthAnimated() { return m_pathLength; }
 
+    void invalidatePathDependencies();
+    void invalidatePathDependenciesForStyleChange();
+
 protected:
     SVGGeometryElement(const QualifiedName&, Document&, const SVGPropertyRegistry&);
 
