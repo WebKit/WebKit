@@ -63,6 +63,7 @@ TOOLCHAIN_DIRS = [
 SWIFT_LATEST_URL = 'https://download.swift.org/development/xcode/latest-build.yml'
 SWIFT_DOWNLOAD_BASE = 'https://download.swift.org/development/xcode'
 LINUX_CLANG_NAMES = ['clang++'] + ['clang++-{}'.format(v) for v in range(30, 17, -1)]
+SCAN_BUILD_NAMES = ['scan-build-{}'.format(v) for v in range(30, 17, -1)] + ['scan-build']
 WEBKIT_BUILD_DIRECTORY = os.path.join(SCRIPTS_DIR, 'webkit-build-directory')
 
 # Ordered so that PAL (which lives under WebCore) is matched before WebCore.
@@ -396,6 +397,19 @@ def resolve_analyzer_clang(args, db):
         print('Using analyzer: {} ({})'.format(clang, display), file=sys.stderr)
         return clang
     sys.exit('No analyzer clang available. Pass --clang PATH or re-run with --download-toolchain.')
+
+
+def find_scan_build(clang=None):
+    # The one shipped with the analyzer first, then the newest versioned name in PATH.
+    if clang:
+        path = os.path.join(os.path.dirname(clang), 'scan-build')
+        if os.path.isfile(path):
+            return path
+    for name in SCAN_BUILD_NAMES:
+        path = shutil.which(name)
+        if path:
+            return path
+    return None
 
 
 def resolve_port_build_dir(port):
