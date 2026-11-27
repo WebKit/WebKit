@@ -7536,6 +7536,17 @@ WebGLEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+WebGLOnWebGPUEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "WebGL on WebGPU"
+  humanReadableDescription: "Run WebGL with ANGLE in the Web Process on WebGPU, which runs in the GPU Process"
+  condition: ENABLE(WEBGL_WEBGPU)
+  defaultValue: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
+
 WebGLTimerQueriesEnabled:
   type: bool
   status: developer
