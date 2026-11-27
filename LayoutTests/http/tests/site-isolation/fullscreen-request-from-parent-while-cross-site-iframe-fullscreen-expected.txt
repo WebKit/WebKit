@@ -1,0 +1,13 @@
+Tests that the main frame cannot make another element fullscreen while an element in a cross-site iframe is fullscreen, since a descendant document has a fullscreen element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframe entered fullscreen
+PASS requestResult is "TypeError"
+PASS document.fullscreenElement.id is "frame"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+other

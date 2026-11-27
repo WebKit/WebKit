@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that the main frame cannot make another element fullscreen while an element in a cross-site iframe is fullscreen, since a descendant document has a fullscreen element.");
+jsTestIsAsync = true;
+
+let requestResult;
+
+function postToFrame(message)
+{
+    document.getElementById("frame").contentWindow.postMessage(message, "*");
+}
+
+addEventListener("message", async event => {
+    if (event.data === "entered") {
+        debug("iframe entered fullscreen");
+        await new Promise(resolve => {
+            internals.withUserGesture(() => {
+                document.getElementById("other").requestFullscreen().then(() => {
+                    requestResult = "resolved";
+                    resolve();
+                }, error => {
+                    requestResult = error.name;
+                    resolve();
+                });
+            });
+        });
+        await new Promise(resolve => setTimeout(resolve, 0));
+        shouldBeEqualToString("requestResult", "TypeError");
+        shouldBeEqualToString("document.fullscreenElement.id", "frame");
+        postToFrame("exit");
+        return;
+    }
+    if (event.data === "exited")
+        finishJSTest();
+});
+
+onload = async () => {
+    if (window.testRunner)
+        await testRunner.updatePresentation();
+    postToFrame("enter");
+};
+</script>
+<iframe id="frame" allowfullscreen src="http://localhost:8000/site-isolation/resources/fullscreen-controlled-by-parent.html"></iframe>
+<div id="other">other</div>
