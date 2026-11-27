@@ -32,12 +32,20 @@ namespace WebCore {
 
 void WGSLLanguageFeatures::initializeSetLike(DOMSetAdapter& set) const
 {
+    set.add<IDLDOMString>("buffer_view"_s);
+    set.add<IDLDOMString>("fragment_depth"_s);
+    set.add<IDLDOMString>("immediate_address_space"_s);
+    set.add<IDLDOMString>("linear_indexing"_s);
     set.add<IDLDOMString>("packed_4x8_integer_dot_product"_s);
     set.add<IDLDOMString>("pointer_composite_access"_s);
     set.add<IDLDOMString>("readonly_and_readwrite_storage_textures"_s);
     set.add<IDLDOMString>("subgroup_id"_s);
     set.add<IDLDOMString>("subgroup_uniformity"_s);
+    set.add<IDLDOMString>("swizzle_assignment"_s);
+    set.add<IDLDOMString>("texture_and_sampler_let"_s);
     set.add<IDLDOMString>("texture_formats_tier1"_s);
+    set.add<IDLDOMString>("uniform_buffer_standard_layout"_s);
+    set.add<IDLDOMString>("unrestricted_aliasing"_s);
     set.add<IDLDOMString>("unrestricted_pointer_parameters"_s);
 }
 

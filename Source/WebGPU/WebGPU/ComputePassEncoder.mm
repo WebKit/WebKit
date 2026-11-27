@@ -253,6 +253,17 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
 
     m_bindGroupResources.clear();
 
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to dispatch");
+        return;
+    }
+
+    if (pipeline->usesImmediates() && m_immediatesDirty) {
+        [computeCommandEncoder() setBytes:m_immediateData.data() length:m_immediateData.size() atIndex:m_device->maxBuffersForComputeStage() + 1];
+        m_immediatesDirty = false;
+    }
+
     if (!m_computeDynamicOffsets.size())
         return;
 
@@ -276,7 +287,9 @@ void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
     RETURN_IF_FINISHED();
     executePreDispatchCommands();
     auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
-    if (x > dimensionMax || y > dimensionMax || z > dimensionMax) {
+    auto maxLinearWorkgroups = m_pipeline ? m_pipeline->maxLinearIndexingWorkgroups() : std::numeric_limits<uint64_t>::max();
+    auto totalWorkgroups = checkedProduct<uint64_t>(x, y, z);
+    if (x > dimensionMax || y > dimensionMax || z > dimensionMax || totalWorkgroups.hasOverflowed() || totalWorkgroups.value() > maxLinearWorkgroups) {
         makeInvalid([NSString stringWithFormat:@"x(%u) > dimensionMax(%u) || y(%u) > dimensionMax(%u) || z(%u) > dimensionMax(%u)", x, dimensionMax, y, dimensionMax, z, dimensionMax]);
         return;
     }
@@ -297,7 +310,7 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
         options.fastMathEnabled = YES;
         ALLOW_DEPRECATED_DECLARATIONS_END
         NSError *error = nil;
-        id<MTLLibrary> library = [mtlDevice newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void csDispatchClamp(device const uint* indirectBuffer, device uint* dispatchCallBuffer, uint index [[thread_position_in_grid]]) { dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, indirectBuffer[index] > %u); }", dimensionMax] options:options error:&error];
+        id<MTLLibrary> library = [mtlDevice newLibraryWithSource:[NSString stringWithFormat:@"[[kernel]] void csDispatchClamp(device const uint* indirectBuffer [[buffer(0)]], device uint* dispatchCallBuffer [[buffer(1)]], constant ulong& maxLinearWorkgroups [[buffer(2)]], uint index [[thread_position_in_grid]]) { ulong totalWorkgroups = ulong(indirectBuffer[0]) * ulong(indirectBuffer[1]) * ulong(indirectBuffer[2]); dispatchCallBuffer[index] = metal::select(indirectBuffer[index], 0u, (indirectBuffer[index] > %u) || (totalWorkgroups > maxLinearWorkgroups)); }", dimensionMax] options:options error:&error];
         if (error)
             WTFLogAlways("%@", error); // NOLINT
 
@@ -308,9 +321,11 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
     auto device = m_device;
     id<MTLComputePipelineState> computePipelineState = device->dispatchCallPipelineState(function);
     id<MTLBuffer> dispatchCallBuffer = device->dispatchCallBuffer();
+    uint64_t maxLinearWorkgroups = m_pipeline ? m_pipeline->maxLinearIndexingWorkgroups() : std::numeric_limits<uint64_t>::max();
     [computeCommandEncoder() setComputePipelineState:computePipelineState];
     [computeCommandEncoder() setBuffer:indirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [computeCommandEncoder() setBuffer:dispatchCallBuffer offset:0 atIndex:1];
+    [computeCommandEncoder() setBytes:&maxLinearWorkgroups length:sizeof(maxLinearWorkgroups) atIndex:2];
     [computeCommandEncoder() dispatchThreads:MTLSizeMake(3, 1, 1) threadsPerThreadgroup:MTLSizeMake(3, 1, 1)];
     return dispatchCallBuffer;
 }
@@ -488,6 +503,24 @@ void ComputePassEncoder::dispatchIndirect(const WebGPU::Buffer& indirectBuffer, 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
+void ComputePassEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"GPUComputePassEncoder.setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+        m_immediatesDirty = true;
+    }
 }
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)

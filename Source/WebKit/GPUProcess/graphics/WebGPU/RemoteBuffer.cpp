@@ -64,28 +64,39 @@ void RemoteBuffer::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBuffer::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
+void RemoteBuffer::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool, std::optional<Vector<uint8_t>>&&)>&& callback)
 {
     if (m_pendingMap) {
-        callback(false);
+        callback(false, std::nullopt);
         return;
     }
 
     m_pendingMap = true;
 
-    protect(m_backing)->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTF::move(callback), mapModeFlags] (bool success) mutable {
+    protect(m_backing)->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTF::move(callback), mapModeFlags, offset, size](bool success) mutable {
         bool mapWasPending = protectedThis->m_pendingMap;
         protectedThis->m_pendingMap = false;
         if (!success) {
-            callback(false);
+            callback(false, std::nullopt);
             return;
         }
 
+        std::optional<Vector<uint8_t>> data;
         if (mapWasPending) {
             protectedThis->m_isMapped = true;
             protectedThis->m_mapModeFlags = mapModeFlags;
+            if (size) {
+                uint64_t rangeSize = *size;
+                if (!rangeSize)
+                    data = Vector<uint8_t> { };
+                else if (rangeSize <= WebGPU::maxCrossProcessResourceCopySize) {
+                    auto bufferContents = protect(protectedThis->m_backing)->getBufferContents();
+                    if (offset <= bufferContents.size() && rangeSize <= bufferContents.size() - offset)
+                        data = Vector<uint8_t> { bufferContents.subspan(offset, rangeSize) };
+                }
+            }
         }
-        callback(true);
+        callback(true, WTF::move(data));
     });
 }
 

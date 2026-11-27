@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
 #include <wtf/EmbeddedFixedVector.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -57,12 +59,16 @@ class Builder {
 public:
     Builder() = default;
     Builder(Builder&&);
+    ~Builder();
 
     template<typename T, typename... Arguments, typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
     T& construct(Arguments&&... arguments)
     {
-        m_nodes.append(std::unique_ptr<T>(new T(std::forward<Arguments>(arguments)...)));
-        return *uncheckedDowncast<T>(m_nodes.last().get());
+        static_assert(sizeof(T) <= slabCapacity && alignof(T) <= alignof(std::max_align_t));
+        void* storage = allocate(sizeof(T), alignof(T));
+        T* node = new (storage) T(std::forward<Arguments>(arguments)...);
+        m_nodes.append(node);
+        return *node;
     }
 
     class State {
@@ -70,14 +76,26 @@ public:
     private:
         State() = default;
 
-        unsigned m_numberOfNodes;
+        unsigned m_numberOfNodes { 0 };
+        unsigned m_numberOfSlabs { 0 };
+        unsigned m_slabOffset { slabCapacity };
     };
 
     NODELETE State saveCurrentState();
     void restore(State&&);
+    size_t memoryFootprint() const;
 
 private:
-    Vector<std::unique_ptr<Node>> m_nodes;
+    static constexpr size_t slabCapacity = 16384;
+    struct Slab {
+        alignas(std::max_align_t) std::array<std::byte, slabCapacity> bytes;
+    };
+
+    void* allocate(size_t, size_t alignment);
+
+    Vector<Slab*, 4> m_slabs;
+    Vector<Node*> m_nodes;
+    unsigned m_currentSlabOffset { slabCapacity };
 };
 
 } // namespace AST

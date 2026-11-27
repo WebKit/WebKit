@@ -32,6 +32,7 @@ messages -> RemotePresentationContext Stream {
     void Configure(WebKit::WebGPU::CanvasConfiguration configuration)
     void Unconfigure()
     void GetCurrentTexture(WebKit::WebGPUTextureIdentifier identifier, uint32_t frameIndex)
+    void Destruct()
 }
 
 #endif

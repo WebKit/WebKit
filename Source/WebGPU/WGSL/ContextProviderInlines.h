@@ -31,19 +31,27 @@
 namespace WGSL {
 
 template<typename Value>
-ContextProvider<Value>::Context::Context(const Context *const parent)
+ContextProvider<Value>::Context::Context(const Context* parent, const ContextMap* fallbackMap)
     : m_parent(parent)
+    , m_fallbackMap(fallbackMap)
 {
 }
 
 template<typename Value>
 const Value* ContextProvider<Value>::Context::lookup(const String& name) const
 {
-    auto it = m_map.find(name);
-    if (it != m_map.end())
-        return &it->value;
+    if (!m_map.isEmpty()) {
+        auto it = m_map.find(name);
+        if (it != m_map.end())
+            return &it->value;
+    }
     if (m_parent)
         return m_parent->lookup(name);
+    if (m_fallbackMap) {
+        auto it = m_fallbackMap->find(name);
+        if (it != m_fallbackMap->end())
+            return &it->value;
+    }
     return nullptr;
 }
 
@@ -60,23 +68,30 @@ template<typename Value>
 ContextProvider<Value>::ContextScope::ContextScope(ContextProvider<Value>* provider)
     : m_provider(*provider)
     , m_previousContext(provider->m_context)
+    , m_scopeContext(m_previousContext)
 {
-    m_provider.m_contexts.append(std::unique_ptr<Context>(new Context { m_previousContext }));
-    m_provider.m_context = m_provider.m_contexts.last().get();
+    m_provider.m_context = &m_scopeContext;
+}
+
+template<typename Value>
+ContextProvider<Value>::ContextScope::ContextScope(ContextProvider<Value>* provider, const ContextMap* fallbackMap)
+    : m_provider(*provider)
+    , m_previousContext(provider->m_context)
+    , m_scopeContext(m_previousContext, fallbackMap)
+{
+    m_provider.m_context = &m_scopeContext;
 }
 
 template<typename Value>
 ContextProvider<Value>::ContextScope::~ContextScope()
 {
     m_provider.m_context = m_previousContext;
-    m_provider.m_contexts.removeLast();
 }
 
 template<typename Value>
-ContextProvider<Value>::ContextProvider()
+ContextProvider<Value>::ContextProvider(const ContextMap* fallbackMap)
     : m_context(nullptr)
-    , m_contexts()
-    , m_globalScope(this)
+    , m_globalScope(this, fallbackMap)
 {
 }
 

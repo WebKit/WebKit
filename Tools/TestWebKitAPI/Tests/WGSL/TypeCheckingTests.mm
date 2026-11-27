@@ -168,8 +168,9 @@ TEST(WGSLTypeCheckingTests, AccessExpression)
     expectNoError(fn("let x: f32 = array(0)[0];"_s));
     expectTypeError(fn("let i = 0; let x: u32 = array(0)[i];"_s), "cannot initialize var of type 'u32' with value of type 'i32'"_s);
 
-    // Test cannot write to multiple vector locations
-    expectTypeError(fn("var v = vec2(0); v.xy = vec2(1);"_s), "cannot assign to a value of type 'vec2<i32>'"_s);
+    // Test swizzle assignment
+    expectNoError(fn("var v = vec2(0); v.xy = vec2(1);"_s));
+    expectTypeError(fn("var v = vec2(0); v.xx = vec2(1);"_s), "cannot assign to swizzle with duplicate components"_s);
 }
 
 TEST(WGSLTypeCheckingTests, Atomics)
@@ -700,27 +701,24 @@ TEST(WGSLTypeCheckingTests, Reordering)
 
 TEST(WGSLTypeCheckingTests, RequiredAlignment)
 {
-    expectTypeError(
+    expectNoError(
         "struct S1 { y1: array<i32, 2> }"
-        "@group(0) @binding(1) var<uniform> x1: S1;"_s,
-        "arrays in the uniform address space must have a stride multiple of 16 bytes, but has a stride of 4 bytes"_s);
+        "@group(0) @binding(1) var<uniform> x1: S1;"_s);
 
     expectTypeError(
         "struct S1 { x1: i32, @align(4) y1: array<vec4i, 2> }"
         "@group(0) @binding(1) var<uniform> x1: S1;"_s,
         "@align attribute 4 of struct member is not a multiple of the type's alignment 16"_s);
 
-    expectTypeError(
+    expectNoError(
         "struct S1 { x1: i32, y3: T }"
         "struct T { x: i32, y: i32, }"
-        "@group(0) @binding(1) var<uniform> x1: S1;"_s,
-        "offset of struct member S1::y3 must be a multiple of 16 bytes, but its offset is 4 bytes"_s);
+        "@group(0) @binding(1) var<uniform> x1: S1;"_s);
 
-    expectTypeError(
+    expectNoError(
         "struct S1 { y3: T, z3: i32 }"
         "struct T { x: i32, y: i32, }"
-        "@group(0) @binding(1) var<uniform> x1: S1;"_s,
-        "uniform address space requires that the number of bytes between S1::y3 and S1::z3 must be at least 16 bytes, but it is 8 bytes"_s);
+        "@group(0) @binding(1) var<uniform> x1: S1;"_s);
 }
 
 inline void expectStaticCheckErrorContaining(const String& wgsl, const String& errorMessageSubstring)

@@ -106,6 +106,7 @@ private:
     // The contents of the mapped range, which persistentMappedRange() fetches once per mapping and
     // unmap() writes back, so that its spans stay valid until unmap().
     std::optional<Vector<uint8_t>> m_persistentMappedRange;
+    std::optional<Vector<uint8_t>> m_mappedData;
 };
 
 } // namespace WebKit::WebGPU

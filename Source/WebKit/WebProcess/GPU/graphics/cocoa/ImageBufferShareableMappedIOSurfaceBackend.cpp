@@ -53,6 +53,13 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     if (creationContext.resourceOwner)
         surface->setOwnershipIdentity(creationContext.resourceOwner);
 
+    if (parameters.bufferFormat.useLosslessCompression == UseLosslessCompression::No && backendSize.unclampedArea() <= 512 * 512) {
+        if (auto lock = surface->lock<IOSurface::AccessMode::ReadWrite>()) {
+            zeroSpan(lock->surfaceSpan());
+            return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTF::move(surface), nullptr, 0, protect(creationContext.surfacePool), creationContext.useIOSurfaceWebKitBehavior, false } };
+        }
+    }
+
     RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(0, std::nullopt, creationContext.useIOSurfaceWebKitBehavior);
     if (!cgContext)
         return nullptr;

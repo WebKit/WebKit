@@ -182,7 +182,16 @@ void WebGPUIntegrationImpl::copyExternalImageToTexture(WebGPU::Queue& queue, con
         backingSource.premultipliedAlpha = true;
     } else
 #endif
-    {
+    if (!source.pixelData.empty()) {
+        if (!source.pixelDataFormat || !source.pixelDataSize.width || !source.pixelDataSize.height || !source.pixelDataBytesPerRow)
+            return;
+        backingSource.pixelData = source.pixelData;
+        backingSource.pixelDataBytesPerRow = source.pixelDataBytesPerRow;
+        backingSource.sourceFormat = source.pixelDataFormat;
+        backingSource.sourceSize = source.pixelDataSize;
+        backingSource.hasAlpha = source.pixelDataHasAlpha;
+        backingSource.colorSpace = source.pixelDataColorSpace;
+    } else {
         RefPtr sourceImageBuffer = source.imageBuffer;
         if (!sourceImageBuffer)
             return;

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BufferSource.h"
 #include "EventTarget.h"
 #include "GPUColorDict.h"
 #include "GPUIndexFormat.h"
@@ -83,6 +84,8 @@ public:
         const Uint32Array& dynamicOffsetsData,
         GPUSize64 dynamicOffsetsDataStart,
         GPUSize32 dynamicOffsetsDataLength);
+
+    ExceptionOr<void> setImmediates(GPUSize32 rangeOffset, BufferSource&& data, GPUSize64 dataOffset, std::optional<GPUSize64>);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();

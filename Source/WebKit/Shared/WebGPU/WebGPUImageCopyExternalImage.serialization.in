@@ -28,6 +28,18 @@
     bool premultipliedAlpha;
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageCopyExternalImageData {
+    std::optional<WebKit::WebGPU::Origin2D> origin;
+    bool flipY;
+    bool premultipliedAlpha;
+    bool hasAlpha;
+    bool isDisplayP3;
+    ::WebGPU::TextureFormat format;
+    uint32_t width;
+    uint32_t height;
+    uint32_t bytesPerRow;
+};
+
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 # CustomHeader because this lives beside ImageCopyExternalImage in WebGPUImageCopyExternalImage.h, which
 # the struct above has already pulled in, rather than in a header of its own.

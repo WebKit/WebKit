@@ -33,6 +33,7 @@
 #import <CoreVideo/CVPixelBuffer.h>
 #import <Metal/Metal.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <atomic>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
@@ -193,7 +194,30 @@ private:
     const ThreadSafeWeakPtr<Instance> m_instance;
     id<MTLBuffer> _Nullable m_temporaryBuffer;
     uint64_t m_temporaryBufferOffset;
+    struct ExternalImageStagingTexture : ThreadSafeRefCounted<ExternalImageStagingTexture> {
+        static Ref<ExternalImageStagingTexture> create(MTLPixelFormat pixelFormat, uint32_t width, uint32_t height, id<MTLTexture> texture)
+        {
+            return adoptRef(*new ExternalImageStagingTexture(pixelFormat, width, height, texture));
+        }
+
+        MTLPixelFormat pixelFormat { MTLPixelFormatInvalid };
+        uint32_t width { 0 };
+        uint32_t height { 0 };
+        std::atomic<bool> inUse { true };
+        RetainPtr<id<MTLTexture>> texture;
+
+    private:
+        ExternalImageStagingTexture(MTLPixelFormat format, uint32_t w, uint32_t h, id<MTLTexture> tex)
+            : pixelFormat(format)
+            , width(w)
+            , height(h)
+            , texture(tex)
+        {
+        }
+    };
+
     Vector<ProvisionalTextureClear> m_provisionalTextureClears;
+    Vector<Ref<ExternalImageStagingTexture>> m_externalImageStagingTextures;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
 } // namespace WebGPU::Metal
