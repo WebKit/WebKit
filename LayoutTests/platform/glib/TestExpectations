@@ -2109,6 +2109,8 @@ webkit.org/b/329575 storage/indexeddb/delete-database-with-stalled-abort-crash.h
 
 webkit.org/b/330949 http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Failure Pass ]
 
+webkit.org/b/333280 [ Debug ] http/tests/IndexedDB/transaction-abort-pending-requests-stop.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
