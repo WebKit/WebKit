@@ -1,0 +1,15 @@
+
+PASS Valid protocol 'openid4vp-v1-unsigned' passes through filtering
+PASS Valid protocol 'openid4vp-v1-signed' passes through filtering
+PASS Valid protocol 'openid4vp-v1-multisigned' passes through filtering
+PASS Filtered: 'openid4vp' (bare identifier without version or mode)
+PASS Filtered: 'openid4vp-v1' (version without mode)
+PASS Filtered: 'openid4vp-v2-unsigned' (wrong version number)
+PASS Filtered: 'openid4vp-v1-unknown' (valid prefix with unknown mode)
+PASS Filtered: 'OPENID4VP-V1-UNSIGNED' (uppercase variant)
+PASS Filtered: 'Openid4vp-V1-Unsigned' (mixed case variant)
+PASS Filtered: ' openid4vp-v1-unsigned' (leading whitespace)
+PASS Filtered: 'openid4vp-v1-unsigned ' (trailing whitespace)
+PASS Filtered: 'openid4vp-v1-unsigned	' (trailing tab)
+PASS Filtered: 'openid4vp_v1_unsigned' (underscores instead of hyphens)
+
