@@ -72,7 +72,7 @@ public:
     void connectionToWebProcessClosed() { clear(); }
 
 #if !RELEASE_LOG_DISABLED
-    Logger& logger() { return m_logger; }
+    Logger& logger() LIFETIME_BOUND { return m_logger; }
 #endif
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }

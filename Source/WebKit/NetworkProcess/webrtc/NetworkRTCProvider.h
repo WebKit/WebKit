@@ -115,7 +115,7 @@ public:
 
     void callOnRTCNetworkThread(Function<void()>&&);
 
-    IPC::Connection& connection() { return m_ipcConnection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
 
@@ -144,7 +144,7 @@ private:
     void addSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>&&);
 
 #if PLATFORM(COCOA)
-    const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier);
+    const String& attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier) LIFETIME_BOUND;
 #else
     static webrtc::Thread& rtcNetworkThread();
     void createSocket(WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<webrtc::AsyncPacketSocket>&&, Socket::Type, Ref<IPC::Connection>&&);

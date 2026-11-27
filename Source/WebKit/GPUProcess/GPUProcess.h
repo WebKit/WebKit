@@ -130,7 +130,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-    RemoteAudioSessionProxyManager& audioSessionManager();
+    RemoteAudioSessionProxyManager& audioSessionManager() LIFETIME_BOUND;
 #endif
 
     WebCore::NowPlayingManager& nowPlayingManager() LIFETIME_BOUND;
@@ -147,7 +147,7 @@ public:
     std::optional<WebCore::MediaSessionIdentifier> remoteCommandTargetSessionInProcess(WebCore::ProcessIdentifier) const;
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    WorkQueue& videoMediaStreamTrackRendererQueue();
+    WorkQueue& videoMediaStreamTrackRendererQueue() LIFETIME_BOUND;
     void ensureAVCaptureServerConnection();
     void didApplyCaptureEnvironment(WebCore::ProcessIdentifier, WebCore::PageIdentifier);
     bool setCaptureAttributionString(const WebCore::SecurityOriginData&);
@@ -157,7 +157,7 @@ public:
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-    WorkQueue& libWebRTCCodecsQueue();
+    WorkQueue& libWebRTCCodecsQueue() LIFETIME_BOUND;
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)

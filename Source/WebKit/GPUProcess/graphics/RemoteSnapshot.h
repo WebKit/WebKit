@@ -106,7 +106,7 @@ private:
         DisplayListAndReleaseDispatcher& operator=(DisplayListAndReleaseDispatcher&&) = default;
         ~DisplayListAndReleaseDispatcher();
 
-        const WebCore::DisplayList::DisplayList* displayList() const { return m_displayList.get(); }
+        const WebCore::DisplayList::DisplayList* displayList() const LIFETIME_BOUND { return m_displayList.get(); }
 
     private:
         RefPtr<const WebCore::DisplayList::DisplayList> m_displayList;

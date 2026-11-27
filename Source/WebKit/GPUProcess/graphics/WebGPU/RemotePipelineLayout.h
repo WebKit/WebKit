@@ -70,7 +70,7 @@ private:
     RemotePipelineLayout& operator=(const RemotePipelineLayout&) = delete;
     RemotePipelineLayout& operator=(RemotePipelineLayout&&) = delete;
 
-    ::WebGPU::PipelineLayout& backing() { return m_backing; }
+    ::WebGPU::PipelineLayout& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

@@ -246,7 +246,7 @@ RefPtr<WebCore::AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::render
     return nullptr;
 }
 
-RemoteAudioVideoRendererProxyManager::RendererContext& RemoteAudioVideoRendererProxyManager::contextFor(RemoteAudioVideoRendererIdentifier identifier)
+RemoteAudioVideoRendererProxyManager::RendererContext& RemoteAudioVideoRendererProxyManager::contextFor(RemoteAudioVideoRendererIdentifier identifier) LIFETIME_BOUND
 {
     auto iterator = m_renderers.find(identifier);
     RELEASE_ASSERT(iterator != m_renderers.end());

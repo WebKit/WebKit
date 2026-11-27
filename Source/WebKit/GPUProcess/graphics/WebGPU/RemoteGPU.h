@@ -118,7 +118,7 @@ public:
 #endif
 
     static Vector<UniqueRef<WebCore::IOSurface>> createRenderBuffers(unsigned width, unsigned height, const WebCore::ProcessIdentity&, bool standardDynamicRange = false);
-    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    IPC::StreamConnectionWorkQueue& workQueue() const LIFETIME_BOUND { return m_workQueue; }
     // The destination of the messages to RemoteGPUProxy in the Web process.
     RemoteGPUIdentifier identifier() const { return m_identifier; }
 

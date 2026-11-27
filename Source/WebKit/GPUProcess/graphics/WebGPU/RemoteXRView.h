@@ -83,7 +83,7 @@ private:
     RemoteXRView& operator=(const RemoteXRView&) = delete;
     RemoteXRView& operator=(RemoteXRView&&) = delete;
 
-    ::WebGPU::XRView& backing() { return m_backing; }
+    ::WebGPU::XRView& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

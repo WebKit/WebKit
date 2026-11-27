@@ -72,7 +72,7 @@ public:
     void tryCloseDatabase(const WebCore::IDBDatabaseIdentifier&);
 
 private:
-    WebCore::IDBServer::UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const WebCore::IDBDatabaseIdentifier&);
+    WebCore::IDBServer::UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const WebCore::IDBDatabaseIdentifier&) LIFETIME_BOUND;
 
     // WebCore::UniqueIDBDatabaseManager
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&) final;

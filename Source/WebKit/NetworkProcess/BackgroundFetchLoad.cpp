@@ -227,7 +227,7 @@ void BackgroundFetchLoad::wasBlockedByDisabledFTP()
     didFinish(ftpDisabledError(ResourceRequest(URL { currentURL() })));
 }
 
-const URL& BackgroundFetchLoad::currentURL() const
+const URL& BackgroundFetchLoad::currentURL() const LIFETIME_BOUND
 {
     return m_networkLoadChecker->url();
 }

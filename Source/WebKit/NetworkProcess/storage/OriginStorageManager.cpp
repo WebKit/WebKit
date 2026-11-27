@@ -680,7 +680,7 @@ OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
     return *m_defaultBucket;
 }
 
-OriginQuotaManager& OriginStorageManager::quotaManager()
+OriginQuotaManager& OriginStorageManager::quotaManager() LIFETIME_BOUND
 {
     return m_quotaManager.get();
 }

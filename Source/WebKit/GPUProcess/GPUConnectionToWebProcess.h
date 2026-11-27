@@ -169,7 +169,7 @@ public:
     void close() { didClose(connection()); }
 #endif
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
-    GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
+    GPUProcess& gpuProcess() LIFETIME_BOUND { return m_gpuProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     struct NowPlayingCandidate {
@@ -185,7 +185,7 @@ public:
     Ref<RemoteSharedResourceCache> sharedResourceCache();
 
 #if ENABLE(VIDEO)
-    RemoteAudioVideoRendererProxyManager& remoteAudioVideoRendererProxyManager();
+    RemoteAudioVideoRendererProxyManager& remoteAudioVideoRendererProxyManager() LIFETIME_BOUND;
     void canDecodeExtendedType(WebCore::PlatformMediaDecodingType, WebCore::ContentType, CompletionHandler<void(bool)>&&) const;
 #endif
 
@@ -226,24 +226,24 @@ public:
 
     const WebCore::ProcessIdentity& webProcessIdentity() const LIFETIME_BOUND { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
-    RemoteCDMFactoryProxy& cdmFactoryProxy();
+    RemoteCDMFactoryProxy& cdmFactoryProxy() LIFETIME_BOUND;
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
+    RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy() LIFETIME_BOUND;
 #endif
-    RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
+    RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy() LIFETIME_BOUND;
 #if ENABLE(VIDEO)
-    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return m_remoteMediaPlayerManagerProxy.get(); }
+    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() LIFETIME_BOUND { return m_remoteMediaPlayerManagerProxy.get(); }
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    VideoReceiverEndpointManager& videoReceiverEndpointManager();
+    VideoReceiverEndpointManager& videoReceiverEndpointManager() LIFETIME_BOUND;
 #endif
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
 #endif
 
 #if HAVE(AVASSETREADER)
-    RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
+    RemoteImageDecoderAVFProxy& imageDecoderAVFProxy() LIFETIME_BOUND;
 #endif
 
     void updateSupportedRemoteCommands();
@@ -292,7 +292,7 @@ public:
     NODELETE bool isAlwaysOnLoggingAllowed() const;
 
 #if USE(AUDIO_SESSION)
-    RemoteAudioSessionProxy& audioSessionProxy();
+    RemoteAudioSessionProxy& audioSessionProxy() LIFETIME_BOUND;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -303,11 +303,11 @@ private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
 #if ENABLE(WEB_AUDIO)
-    RemoteAudioDestinationManager& remoteAudioDestinationManager();
+    RemoteAudioDestinationManager& remoteAudioDestinationManager() LIFETIME_BOUND;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
-    RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
+    UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy() LIFETIME_BOUND;
+    RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager() LIFETIME_BOUND;
 #endif
 
     void createRenderingBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
@@ -348,7 +348,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    RemoteMediaSessionHelperProxy& mediaSessionHelperProxy();
+    RemoteMediaSessionHelperProxy& mediaSessionHelperProxy() LIFETIME_BOUND;
     void ensureMediaSessionHelper();
 #endif
 

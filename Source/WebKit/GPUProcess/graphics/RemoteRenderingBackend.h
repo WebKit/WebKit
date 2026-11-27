@@ -119,21 +119,21 @@ public:
     // Stands in for an image that could not be created, so that the web process can keep using its
     // identifier. Clipping to it clips everything.
     static RefPtr<WebCore::NativeImage> createPlaceholderNativeImage();
-    RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
+    RemoteSharedResourceCache& sharedResourceCache() LIFETIME_BOUND { return m_sharedResourceCache; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 
-    IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
+    IPC::StreamServerConnection& streamConnection() const LIFETIME_BOUND { return m_streamConnection.get(); }
 
-    GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
+    GPUConnectionToWebProcess& gpuConnectionToWebProcess() LIFETIME_BOUND { return m_gpuConnectionToWebProcess.get(); }
 
     void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTF::move(memory); }
     RefPtr<WebCore::SharedMemory> sharedMemoryForGetPixelBuffer() const { return m_getPixelBufferSharedMemory; }
 
-    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    IPC::StreamConnectionWorkQueue& workQueue() const LIFETIME_BOUND { return m_workQueue; }
 
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
     RefPtr<RemoteImageBufferSet> imageBufferSet(ImageBufferSetIdentifier);

@@ -82,7 +82,7 @@ private:
     void initialize();
     auto createDecoderCallback(VideoDecoderIdentifier, bool useRemoteFrames, bool enableAdditionalLogging, WebCore::VideoFrameRotation, bool isMirrored);
     std::unique_ptr<WebCore::GPUVideoDecoder> createLocalDecoder(VideoDecoderIdentifier, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride, WebCore::VideoFrameRotation, bool isMirrored);
-    WorkQueue& workQueue() const { return m_queue; }
+    WorkQueue& workQueue() const LIFETIME_BOUND { return m_queue; }
 
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

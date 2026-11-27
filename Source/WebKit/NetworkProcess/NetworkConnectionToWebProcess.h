@@ -199,7 +199,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkSession* networkSession();
 
-    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_connection.get(); }
 
     bool usesSingleWebProcess() const { return m_sharedPreferencesForWebProcess.usesSingleWebProcess; }
     bool blobFileAccessEnforcementEnabled() const { return m_sharedPreferencesForWebProcess.blobFileAccessEnforcementEnabled; }
@@ -282,7 +282,7 @@ public:
 
     WebSharedWorkerServerConnection* sharedWorkerConnection();
 
-    NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
+    NetworkSchemeRegistry& schemeRegistry() LIFETIME_BOUND { return m_schemeRegistry.get(); }
 
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
@@ -299,13 +299,13 @@ public:
     void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
 
 #if ENABLE(WEB_RTC)
-    NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+    NetworkMDNSRegister& mdnsRegister() LIFETIME_BOUND { return m_mdnsRegister; }
 #if PLATFORM(COCOA)
     bool webRTCInterfaceMonitoringViaNWEnabled() const { return m_sharedPreferencesForWebProcess.webRTCInterfaceMonitoringViaNWEnabled; }
 #endif
 #endif
 
-    WebSWServerToContextConnection* swContextConnection() { return m_swContextConnection.get(); }
+    WebSWServerToContextConnection* swContextConnection() LIFETIME_BOUND { return m_swContextConnection.get(); }
     void clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier);
     void allowAccessToFile(const String& path);
     void loadCancelledDownloadRedirectRequestInFrame(const WebCore::ResourceRequest&, const WebCore::FrameIdentifier&, const WebCore::PageIdentifier&);
@@ -442,7 +442,7 @@ private:
 #endif
 
 #if USE(LIBWEBRTC)
-    NetworkRTCProvider& rtcProvider();
+    NetworkRTCProvider& rtcProvider() LIFETIME_BOUND;
 #endif
 #if ENABLE(WEB_RTC)
     void registerToRTCDataChannelProxy();
@@ -542,7 +542,7 @@ private:
     void prioritizeResourceLoads(const Vector<WebCore::ResourceLoaderIdentifier>&);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    WebPaymentCoordinatorProxy& paymentCoordinator();
+    WebPaymentCoordinatorProxy& paymentCoordinator() LIFETIME_BOUND;
 
     // WebPaymentCoordinatorProxy::Client
     IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;

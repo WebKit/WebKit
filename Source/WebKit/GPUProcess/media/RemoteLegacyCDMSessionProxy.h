@@ -59,7 +59,7 @@ public:
     NODELETE void invalidate();
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
-    WebCore::LegacyCDMSession* session() const { return m_session.get(); }
+    WebCore::LegacyCDMSession* session() const LIFETIME_BOUND { return m_session.get(); }
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
@@ -78,7 +78,7 @@ private:
     String mediaKeysStorageDirectory() const final;
     String mediaKeysHashSalt() const final { return m_mediaKeysHashSalt; }
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteLegacyCDMSessionProxy"_s; }
     NODELETE WTFLogChannel& logChannel() const;

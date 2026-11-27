@@ -250,7 +250,7 @@ public:
 
     String recordsPathIsolatedCopy() const;
 
-    SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
+    SpeculativeLoadManager* speculativeLoadManager() LIFETIME_BOUND { return m_speculativeLoadManager.get(); }
 
     void startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest&, const NetworkCache::Key&, std::unique_ptr<Entry>&&, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
 

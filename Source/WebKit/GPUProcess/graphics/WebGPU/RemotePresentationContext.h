@@ -73,7 +73,7 @@ private:
     RemotePresentationContext& operator=(const RemotePresentationContext&) = delete;
     RemotePresentationContext& operator=(RemotePresentationContext&&) = delete;
 
-    ::WebGPU::PresentationContext& backing() { return m_backing; }
+    ::WebGPU::PresentationContext& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

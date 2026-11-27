@@ -70,7 +70,7 @@ private:
     RemoteCommandBuffer& operator=(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer& operator=(RemoteCommandBuffer&&) = delete;
 
-    ::WebGPU::CommandBuffer& backing() { return m_backing; }
+    ::WebGPU::CommandBuffer& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

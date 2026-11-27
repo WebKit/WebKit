@@ -661,7 +661,7 @@ void RemoteGraphicsContext::fillEllipse(const FloatRect& rect)
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader()
+SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader() LIFETIME_BOUND
 {
     if (!m_sharedVideoFrameReader) {
         Ref gpuConnectionToWebProcess = m_renderingBackend->gpuConnectionToWebProcess();

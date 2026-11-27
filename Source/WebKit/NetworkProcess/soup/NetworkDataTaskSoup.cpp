@@ -1324,9 +1324,9 @@ void NetworkDataTaskSoup::download()
     }
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
-    auto& downloadManager = protect(NetworkProcess::singleton())->downloadManager();
+    CheckedRef downloadManager = NetworkProcess::singleton().downloadManager();
     Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
-    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+    downloadManager->dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
     download->didCreateDestination(m_pendingDownloadLocation);
 
     ASSERT(!m_client);

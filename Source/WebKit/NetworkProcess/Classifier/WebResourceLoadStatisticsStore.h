@@ -127,7 +127,7 @@ public:
 
     static const OptionSet<WebsiteDataType>& monitoredDataTypes();
 
-    SuspendableWorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
+    SuspendableWorkQueue& statisticsQueue() LIFETIME_BOUND { return m_statisticsQueue.get(); }
 
     void populateMemoryStoreFromDisk(CompletionHandler<void()>&&);
     void loadWebsitesWithUserInteraction(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&&);

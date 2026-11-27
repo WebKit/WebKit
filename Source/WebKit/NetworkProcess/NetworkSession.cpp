@@ -965,7 +965,7 @@ void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
     m_dataTaskSet.remove(task);
 }
 
-NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
+NetworkLoadScheduler& NetworkSession::networkLoadScheduler() LIFETIME_BOUND
 {
     if (!m_networkLoadScheduler)
         lazyInitialize(m_networkLoadScheduler, NetworkLoadScheduler::create());
@@ -1029,7 +1029,7 @@ void NetworkSession::unregisterSWServerConnection(WebSWServerConnection& connect
         store->unregisterSWServerConnection(connection);
 }
 
-SWServer& NetworkSession::ensureSWServer()
+SWServer& NetworkSession::ensureSWServer() LIFETIME_BOUND
 {
     if (!m_swServer) {
         auto info = valueOrDefault(m_serviceWorkerInfo);
@@ -1159,7 +1159,7 @@ Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()
     return ensureBackgroundFetchStore();
 }
 
-BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
+BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore() LIFETIME_BOUND
 {
     if (!m_backgroundFetchStore)
         lazyInitialize(m_backgroundFetchStore, BackgroundFetchStoreImpl::create(m_storageManager.get(), ensureSWServer()));
@@ -1215,13 +1215,13 @@ void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& d
         resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
 }
 
-PrefetchCache& NetworkSession::prefetchCache()
+PrefetchCache& NetworkSession::prefetchCache() LIFETIME_BOUND
 {
     return m_prefetchCache.get();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-WebCore::ResourceMonitorThrottlerHolder& NetworkSession::resourceMonitorThrottler()
+WebCore::ResourceMonitorThrottlerHolder& NetworkSession::resourceMonitorThrottler() LIFETIME_BOUND
 {
     if (!m_resourceMonitorThrottler) {
         RELEASE_LOG(ResourceMonitoring, "NetworkSession::resourceMonitorThrottler sessionID=%" PRIu64 ", ResourceMonitorThrottler is created.", m_sessionID.toUInt64());

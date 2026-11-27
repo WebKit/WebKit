@@ -97,7 +97,7 @@ public:
 
     void stopListeningForIPC();
 
-    RemoteQueue& queue() { return m_queue; }
+    RemoteQueue& queue() LIFETIME_BOUND { return m_queue; }
 
 private:
     friend class WebGPU::ObjectHeap;
@@ -109,7 +109,7 @@ private:
     RemoteDevice& operator=(const RemoteDevice&) = delete;
     RemoteDevice& operator=(RemoteDevice&&) = delete;
 
-    ::WebGPU::Device& backing() { return m_backing; }
+    ::WebGPU::Device& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

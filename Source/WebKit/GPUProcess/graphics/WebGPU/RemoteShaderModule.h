@@ -73,7 +73,7 @@ private:
     RemoteShaderModule& operator=(const RemoteShaderModule&) = delete;
     RemoteShaderModule& operator=(RemoteShaderModule&&) = delete;
 
-    ::WebGPU::ShaderModule& backing() { return m_backing; }
+    ::WebGPU::ShaderModule& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

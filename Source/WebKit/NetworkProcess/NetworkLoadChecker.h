@@ -118,8 +118,8 @@ public:
 
     void enableContentExtensionsCheck() { m_checkContentExtensions = true; }
 
-    WebCore::SecurityOrigin* origin() const { return m_origin; }
-    WebCore::SecurityOrigin* topOrigin() const { return m_topOrigin; }
+    WebCore::SecurityOrigin* origin() const LIFETIME_BOUND { return m_origin; }
+    WebCore::SecurityOrigin* topOrigin() const LIFETIME_BOUND { return m_topOrigin; }
 
     const WebCore::FetchOptions& options() const LIFETIME_BOUND { return m_options; }
 

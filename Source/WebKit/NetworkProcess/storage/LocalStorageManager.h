@@ -73,7 +73,7 @@ private:
     void connectionClosedForTransientStorageArea(IPC::Connection::UniqueID);
 
     StorageAreaBase& ensureLocalStorageArea(const WebCore::ClientOrigin&, Ref<WorkQueue>&&) LIFETIME_BOUND;
-    MemoryStorageArea& ensureTransientLocalStorageArea(const WebCore::ClientOrigin&);
+    MemoryStorageArea& ensureTransientLocalStorageArea(const WebCore::ClientOrigin&) LIFETIME_BOUND;
 
     String m_path;
     const CheckedRef<StorageAreaRegistry> m_registry;

@@ -89,7 +89,7 @@ private:
     RemoteQueue& operator=(const RemoteQueue&) = delete;
     RemoteQueue& operator=(RemoteQueue&&) = delete;
 
-    ::WebGPU::Queue& backing() { return m_backing; }
+    ::WebGPU::Queue& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

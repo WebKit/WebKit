@@ -65,7 +65,7 @@ public:
     uint64_t allocatedUnusedCapacity();
     std::optional<WebCore::ClientOrigin> origin() const;
 
-    const Markable<WebCore::FileSystemHandleGlobalIdentifier>& globalIdentifier() const { return m_globalIdentifier; }
+    const Markable<WebCore::FileSystemHandleGlobalIdentifier>& globalIdentifier() const LIFETIME_BOUND { return m_globalIdentifier; }
     void setGlobalIdentifier(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) { m_globalIdentifier = globalIdentifier; }
 
     void close();

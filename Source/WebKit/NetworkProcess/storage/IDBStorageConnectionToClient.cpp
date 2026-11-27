@@ -54,7 +54,7 @@ IDBStorageConnectionToClient::~IDBStorageConnectionToClient()
     m_connectionToClient->clearDelegate();
 }
 
-WebCore::IDBServer::IDBConnectionToClient& IDBStorageConnectionToClient::connectionToClient()
+WebCore::IDBServer::IDBConnectionToClient& IDBStorageConnectionToClient::connectionToClient() LIFETIME_BOUND
 {
     return m_connectionToClient;
 }

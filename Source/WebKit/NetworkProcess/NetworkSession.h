@@ -144,7 +144,7 @@ public:
 
     void destroyPrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
-    WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
+    WebResourceLoadStatisticsStore* resourceLoadStatistics() const LIFETIME_BOUND { return m_resourceLoadStatistics.get(); }
     void setTrackingPreventionEnabled(bool);
     NODELETE bool isTrackingPreventionEnabled() const;
     static WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&);
@@ -237,9 +237,9 @@ public:
     void removeSyntheticLoaderAwaitingWebProcessTransferForTesting(NetworkResourceLoadIdentifier);
 #endif
 
-    NetworkCache::Cache* cache() { return m_cache.get(); }
+    NetworkCache::Cache* cache() LIFETIME_BOUND { return m_cache.get(); }
 
-    NODELETE PrefetchCache& prefetchCache();
+    NODELETE PrefetchCache& prefetchCache() LIFETIME_BOUND;
     void clearPrefetchCache() { m_prefetchCache->clear(); }
 
     virtual RefPtr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, WebCore::IsInitiatedByWorker);
@@ -247,7 +247,7 @@ public:
     virtual void addWebSocketTask(WebSocketTask&) { }
 
     WebCore::BlobRegistryImpl& blobRegistry() LIFETIME_BOUND { return m_blobRegistry; }
-    NetworkBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
+    NetworkBroadcastChannelRegistry& broadcastChannelRegistry() LIFETIME_BOUND { return m_broadcastChannelRegistry; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
     bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
@@ -263,8 +263,8 @@ public:
     NODELETE ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
     void removeNavigationPreloaderTask(ServiceWorkerFetchTask&);
 
-    WebCore::SWServer* swServer() { return m_swServer.get(); }
-    WebCore::SWServer& ensureSWServer();
+    WebCore::SWServer* swServer() LIFETIME_BOUND { return m_swServer.get(); }
+    WebCore::SWServer& ensureSWServer() LIFETIME_BOUND;
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
 
@@ -277,15 +277,15 @@ public:
     void resumeBackgroundFetch(const String&, CompletionHandler<void()>&&);
     void clickBackgroundFetch(const String&, CompletionHandler<void()>&&);
 
-    WebSharedWorkerServer* sharedWorkerServer() { return const_cast<WebSharedWorkerServer*>(m_sharedWorkerServer.getIfExists()); }
-    WebSharedWorkerServer& ensureSharedWorkerServer() { return const_cast<WebSharedWorkerServer&>(m_sharedWorkerServer.get(*this)); }
+    WebSharedWorkerServer* sharedWorkerServer() LIFETIME_BOUND { return const_cast<WebSharedWorkerServer*>(m_sharedWorkerServer.getIfExists()); }
+    WebSharedWorkerServer& ensureSharedWorkerServer() LIFETIME_BOUND { return const_cast<WebSharedWorkerServer&>(m_sharedWorkerServer.get(*this)); }
 
-    NetworkStorageManager& storageManager() { return m_storageManager.get(); }
+    NetworkStorageManager& storageManager() LIFETIME_BOUND { return m_storageManager.get(); }
     void clearCacheEngine();
 
-    NetworkLoadScheduler& networkLoadScheduler();
+    NetworkLoadScheduler& networkLoadScheduler() LIFETIME_BOUND;
 
-    PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
+    PCM::ManagerInterface& privateClickMeasurement() LIFETIME_BOUND { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
     bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
     void setPrivateClickMeasurementPrivateRelayEnforcement(bool);
@@ -316,10 +316,10 @@ public:
 #endif
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    NetworkNotificationManager& notificationManager() { return m_notificationManager.get(); }
+    NetworkNotificationManager& notificationManager() LIFETIME_BOUND { return m_notificationManager.get(); }
 #endif
 
-    const Vector<WebCore::SecurityOriginData>& mockPushSubscriptionOriginsForTesting() const { return m_mockPushSubscriptionOriginsForTesting; }
+    const Vector<WebCore::SecurityOriginData>& mockPushSubscriptionOriginsForTesting() const LIFETIME_BOUND { return m_mockPushSubscriptionOriginsForTesting; }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     std::pair<std::optional<uint64_t> /* bandwidthBytesPerSecond */, Seconds /* latency */> emulatedConditions() const { return { m_emulatedBandwidthBytesPerSecond, m_emulatedLatency }; }
@@ -347,7 +347,7 @@ public:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    WebCore::ResourceMonitorThrottlerHolder& resourceMonitorThrottler();
+    WebCore::ResourceMonitorThrottlerHolder& resourceMonitorThrottler() LIFETIME_BOUND;
 
     void clearResourceMonitorThrottlerData(CompletionHandler<void()>&&);
 #endif
@@ -374,7 +374,7 @@ protected:
     RefPtr<WebCore::BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&) final;
     Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore() final;
 
-    BackgroundFetchStoreImpl& ensureBackgroundFetchStore();
+    BackgroundFetchStoreImpl& ensureBackgroundFetchStore() LIFETIME_BOUND;
 
     PAL::SessionID m_sessionID;
     ThreadSafeWeakHashSet<NetworkDataTask> m_dataTaskSet;

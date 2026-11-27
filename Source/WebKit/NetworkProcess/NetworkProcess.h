@@ -202,8 +202,8 @@ public:
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess&);
 
-    AuthenticationManager& authenticationManager();
-    NODELETE DownloadManager& downloadManager();
+    AuthenticationManager& authenticationManager() LIFETIME_BOUND;
+    NODELETE DownloadManager& downloadManager() LIFETIME_BOUND;
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(PAL::SessionID) const final;
@@ -416,7 +416,7 @@ public:
 
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
     NODELETE NetworkConnectionToWebProcess* webProcessConnection(const IPC::Connection&) const;
-    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
+    WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() LIFETIME_BOUND { return m_messagePortChannelRegistry; }
 
     void setServiceWorkerFetchTimeoutForTesting(Seconds, CompletionHandler<void()>&&);
     void resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<void()>&&);
@@ -457,7 +457,7 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
-    RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
+    RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy() LIFETIME_BOUND;
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }

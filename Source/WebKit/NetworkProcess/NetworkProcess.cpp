@@ -344,12 +344,12 @@ void NetworkProcess::releaseDeferredFetchQuota(WebCore::DeferredFetchIdentifier 
     releaseDeferredFetchControlFrameIfUnused(reservation.pageIdentifier, reservation.controlFrameIdentifier);
 }
 
-AuthenticationManager& NetworkProcess::authenticationManager()
+AuthenticationManager& NetworkProcess::authenticationManager() LIFETIME_BOUND
 {
     return *supplement<AuthenticationManager>();
 }
 
-DownloadManager& NetworkProcess::downloadManager()
+DownloadManager& NetworkProcess::downloadManager() LIFETIME_BOUND
 {
     return m_downloadManager;
 }
@@ -3726,7 +3726,7 @@ void NetworkProcess::clearAppPrivacyReportTestingData(PAL::SessionID sessionID, 
 #endif
 
 #if ENABLE(WEB_RTC)
-RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
+RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy() LIFETIME_BOUND
 {
     ASSERT(isMainRunLoop());
     if (!m_rtcDataChannelProxy)

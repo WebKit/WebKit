@@ -62,7 +62,7 @@ public:
     ASCIILiteral logClassName() const final { return "VideoReceiverEndpointManager"; }
     WTFLogChannel& logChannel() const final;
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    const Logger& logger() const final { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger; }
 #endif
 
 private:

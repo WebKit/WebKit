@@ -72,7 +72,7 @@ private:
     RemoteXRBinding& operator=(const RemoteXRBinding&) = delete;
     RemoteXRBinding& operator=(RemoteXRBinding&&) = delete;
 
-    ::WebGPU::XRBinding& backing() { return m_backing; }
+    ::WebGPU::XRBinding& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

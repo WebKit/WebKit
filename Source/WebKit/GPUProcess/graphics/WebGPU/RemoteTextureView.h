@@ -70,7 +70,7 @@ private:
     RemoteTextureView& operator=(const RemoteTextureView&) = delete;
     RemoteTextureView& operator=(RemoteTextureView&&) = delete;
 
-    ::WebGPU::TextureView& backing() { return m_backing; }
+    ::WebGPU::TextureView& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

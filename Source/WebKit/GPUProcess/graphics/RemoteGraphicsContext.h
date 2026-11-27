@@ -185,7 +185,7 @@ protected:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) override;
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameReader& sharedVideoFrameReader();
+    SharedVideoFrameReader& sharedVideoFrameReader() LIFETIME_BOUND;
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 #endif

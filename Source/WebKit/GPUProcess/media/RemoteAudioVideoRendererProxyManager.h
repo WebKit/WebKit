@@ -192,7 +192,7 @@ private:
     RefPtr<WebCore::AudioVideoRenderer> createRenderer(UniqueRef<WebCore::SharedTimebase>&&);
     RefPtr<WebCore::AudioVideoRenderer> rendererFor(RemoteAudioVideoRendererIdentifier) const;
     RemoteAudioVideoRendererState stateFor(RemoteAudioVideoRendererIdentifier) const;
-    NODELETE RendererContext& contextFor(RemoteAudioVideoRendererIdentifier);
+    NODELETE RendererContext& contextFor(RemoteAudioVideoRendererIdentifier) LIFETIME_BOUND;
     void rendereringModeChanged(RemoteAudioVideoRendererIdentifier);
     void updateCachedVideoMetrics(RemoteAudioVideoRendererIdentifier);
     void maybeUpdateCachedVideoMetrics(RemoteAudioVideoRendererIdentifier);
@@ -209,7 +209,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    Logger& logger() { return m_logger; }
+    Logger& logger() LIFETIME_BOUND { return m_logger; }
     NODELETE WTFLogChannel& logChannel() const;
     ASCIILiteral logClassName() const { return "RemoteAudioVideoRendererProxyManager"; }
     uint64_t logIdentifier() const { return m_logIdentifier; }

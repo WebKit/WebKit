@@ -246,7 +246,7 @@ void IDBStorageManager::stopDatabaseActivitiesForSuspend()
     }
 }
 
-WebCore::IDBServer::UniqueIDBDatabase& IDBStorageManager::getOrCreateUniqueIDBDatabase(const WebCore::IDBDatabaseIdentifier& identifier)
+WebCore::IDBServer::UniqueIDBDatabase& IDBStorageManager::getOrCreateUniqueIDBDatabase(const WebCore::IDBDatabaseIdentifier& identifier) LIFETIME_BOUND
 {
     auto addResult = m_databases.add(identifier, nullptr);
     if (addResult.isNewEntry)

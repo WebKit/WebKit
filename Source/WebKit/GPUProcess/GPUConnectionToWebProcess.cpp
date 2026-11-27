@@ -608,7 +608,7 @@ void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous 
 }
 
 #if ENABLE(WEB_AUDIO)
-RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestinationManager()
+RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestinationManager() LIFETIME_BOUND
 {
     if (!m_remoteAudioDestinationManager)
         lazyInitialize(m_remoteAudioDestinationManager, makeUniqueWithoutRefCountedCheck<RemoteAudioDestinationManager>(*this));
@@ -618,14 +618,14 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManagerProxy()
+UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManagerProxy() LIFETIME_BOUND
 {
     if (!m_userMediaCaptureManagerProxy)
         lazyInitialize(m_userMediaCaptureManagerProxy, UserMediaCaptureManagerProxy::create(makeUniqueRef<GPUProxyForCapture>(*this)));
     return *m_userMediaCaptureManagerProxy;
 }
 
-RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProcess::audioMediaStreamTrackRendererInternalUnitManager()
+RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProcess::audioMediaStreamTrackRendererInternalUnitManager() LIFETIME_BOUND
 {
     if (!m_audioMediaStreamTrackRendererInternalUnitManager)
         lazyInitialize(m_audioMediaStreamTrackRendererInternalUnitManager, makeUniqueWithoutRefCountedCheck<RemoteAudioMediaStreamTrackRendererInternalUnitManager>(*this));
@@ -635,7 +635,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProces
 #endif
 
 #if ENABLE(VIDEO)
-RemoteAudioVideoRendererProxyManager& GPUConnectionToWebProcess::remoteAudioVideoRendererProxyManager()
+RemoteAudioVideoRendererProxyManager& GPUConnectionToWebProcess::remoteAudioVideoRendererProxyManager() LIFETIME_BOUND
 {
     if (!m_remoteAudioVideoRendererProxyManager)
         lazyInitialize(m_remoteAudioVideoRendererProxyManager, RemoteAudioVideoRendererProxyManager::create(*this));
@@ -657,7 +657,7 @@ void GPUConnectionToWebProcess::canDecodeExtendedType(PlatformMediaDecodingType 
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
+RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy() LIFETIME_BOUND
 {
     if (!m_cdmFactoryProxy)
         lazyInitialize(m_cdmFactoryProxy, RemoteCDMFactoryProxy::create(*this));
@@ -667,7 +667,7 @@ RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 #endif
 
 #if USE(AUDIO_SESSION)
-RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
+RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy() LIFETIME_BOUND
 {
     if (!m_audioSessionProxy) {
         Ref audioSessionProxy = RemoteAudioSessionProxy::create(*this);
@@ -694,7 +694,7 @@ void GPUConnectionToWebProcess::providePresentingApplicationPID(WebCore::PageIde
 #endif
 
 #if HAVE(AVASSETREADER)
-RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
+RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy() LIFETIME_BOUND
 {
     if (!m_imageDecoderAVFProxy)
         lazyInitialize(m_imageDecoderAVFProxy, makeUniqueWithoutRefCountedCheck<RemoteImageDecoderAVFProxy>(*this));
@@ -788,7 +788,7 @@ void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerId
 #endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-VideoReceiverEndpointManager& GPUConnectionToWebProcess::videoReceiverEndpointManager()
+VideoReceiverEndpointManager& GPUConnectionToWebProcess::videoReceiverEndpointManager() LIFETIME_BOUND
 {
     return m_videoReceiverEndpointManager.get(*this);
 }
@@ -980,7 +980,7 @@ void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-RemoteMediaSessionHelperProxy& GPUConnectionToWebProcess::mediaSessionHelperProxy()
+RemoteMediaSessionHelperProxy& GPUConnectionToWebProcess::mediaSessionHelperProxy() LIFETIME_BOUND
 {
     if (!m_mediaSessionHelperProxy)
         lazyInitialize(m_mediaSessionHelperProxy, makeUniqueWithoutRefCountedCheck<RemoteMediaSessionHelperProxy>(*this));
@@ -994,7 +994,7 @@ void GPUConnectionToWebProcess::ensureMediaSessionHelper()
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
+RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy() LIFETIME_BOUND
 {
     if (!m_legacyCdmFactoryProxy)
         lazyInitialize(m_legacyCdmFactoryProxy, RemoteLegacyCDMFactoryProxy::create(*this));
@@ -1004,7 +1004,7 @@ RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
 #endif
 
 #if ENABLE(GPU_PROCESS)
-RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy()
+RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy() LIFETIME_BOUND
 {
     if (!m_mediaEngineConfigurationFactoryProxy)
         lazyInitialize(m_mediaEngineConfigurationFactoryProxy, makeUniqueWithoutRefCountedCheck<RemoteMediaEngineConfigurationFactoryProxy>(*this));

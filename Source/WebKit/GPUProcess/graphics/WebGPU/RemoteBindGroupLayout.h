@@ -70,7 +70,7 @@ private:
     RemoteBindGroupLayout& operator=(const RemoteBindGroupLayout&) = delete;
     RemoteBindGroupLayout& operator=(RemoteBindGroupLayout&&) = delete;
 
-    ::WebGPU::BindGroupLayout& backing() { return m_backing; }
+    ::WebGPU::BindGroupLayout& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

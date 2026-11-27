@@ -182,9 +182,9 @@ private:
     void updateFileModificationTime(String&& path);
     void removeFromPendingWriteOperations(const Key&);
 
-    ConcurrentWorkQueue& ioQueue() { return m_ioQueue.get(); }
-    ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
-    WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
+    ConcurrentWorkQueue& ioQueue() LIFETIME_BOUND { return m_ioQueue.get(); }
+    ConcurrentWorkQueue& backgroundIOQueue() LIFETIME_BOUND { return m_backgroundIOQueue.get(); }
+    WorkQueue& serialBackgroundIOQueue() LIFETIME_BOUND { return m_serialBackgroundIOQueue.get(); }
 
     NODELETE bool mayContainBlob(const Key&) const;
 

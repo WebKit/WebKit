@@ -70,7 +70,7 @@ private:
     RemoteRenderPipeline& operator=(const RemoteRenderPipeline&) = delete;
     RemoteRenderPipeline& operator=(RemoteRenderPipeline&&) = delete;
 
-    ::WebGPU::RenderPipeline& backing() { return m_backing; }
+    ::WebGPU::RenderPipeline& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

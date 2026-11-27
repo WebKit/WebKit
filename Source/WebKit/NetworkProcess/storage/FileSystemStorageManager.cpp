@@ -123,7 +123,7 @@ std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::File
     return std::pair { globalIdentifier, newHandleIdentifier };
 }
 
-const String& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentifier identifier)
+const String& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentifier identifier) LIFETIME_BOUND
 {
     auto handle = m_handles.find(identifier);
     return handle == m_handles.end() ? emptyString() : handle->value->path();

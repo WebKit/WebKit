@@ -75,7 +75,7 @@ public:
 
     const WebCore::ProcessIdentity& resourceOwner() const LIFETIME_BOUND { return m_resourceOwner; }
 #if HAVE(IOSURFACE)
-    WebCore::IOSurfacePool& ioSurfacePool() const { return m_ioSurfacePool; }
+    WebCore::IOSurfacePool& ioSurfacePool() const LIFETIME_BOUND { return m_ioSurfacePool; }
 #endif
 
     NODELETE void didCreateImageBuffer(WebCore::RenderingPurpose, WebCore::RenderingMode);

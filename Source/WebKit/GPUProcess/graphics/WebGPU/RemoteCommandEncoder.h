@@ -79,7 +79,7 @@ private:
     RemoteCommandEncoder& operator=(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder& operator=(RemoteCommandEncoder&&) = delete;
 
-    ::WebGPU::CommandEncoder& backing() { return m_backing; }
+    ::WebGPU::CommandEncoder& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

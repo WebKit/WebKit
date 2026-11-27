@@ -70,7 +70,7 @@ private:
     RemoteExternalTexture& operator=(const RemoteExternalTexture&) = delete;
     RemoteExternalTexture& operator=(RemoteExternalTexture&&) = delete;
 
-    ::WebGPU::ExternalTexture& backing() { return m_backing; }
+    ::WebGPU::ExternalTexture& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

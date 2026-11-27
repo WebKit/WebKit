@@ -77,8 +77,8 @@ public:
 private:
     PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory, const ApplicationBundleIdentifiersOrAuditToken&);
 
-    PCM::Store& store();
-    const PCM::Store& store() const;
+    PCM::Store& store() LIFETIME_BOUND;
+    const PCM::Store& store() const LIFETIME_BOUND;
     void initializeStore() const;
     void startTimer(Seconds);
     void getTokenPublicKey(PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);

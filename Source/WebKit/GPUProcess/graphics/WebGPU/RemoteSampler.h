@@ -70,7 +70,7 @@ private:
     RemoteSampler& operator=(const RemoteSampler&) = delete;
     RemoteSampler& operator=(RemoteSampler&&) = delete;
 
-    ::WebGPU::Sampler& backing() { return m_backing; }
+    ::WebGPU::Sampler& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

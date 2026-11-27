@@ -113,7 +113,7 @@ public:
 
     const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_parameters.request; }
 
-    NetworkLoad* networkLoad() const { return m_networkLoad.get(); }
+    NetworkLoad* networkLoad() const LIFETIME_BOUND { return m_networkLoad.get(); }
 
     void start();
     void abort();
@@ -129,12 +129,12 @@ public:
     void pendingStreamEnd();
     void pendingStreamError();
 
-    WebCore::PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+    WebCore::PendingStreamState* pendingStreamState() const LIFETIME_BOUND { return m_pendingStreamState.get(); }
 
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTF::move(response); }
     const WebCore::ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
 
-    NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
+    NetworkConnectionToWebProcess& connectionToWebProcess() const LIFETIME_BOUND { return m_connection; }
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
     WebCore::ResourceLoaderIdentifier coreIdentifier() const { return *m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }

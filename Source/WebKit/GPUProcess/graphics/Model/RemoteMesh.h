@@ -86,7 +86,7 @@ private:
     RemoteMesh& operator=(const RemoteMesh&) = delete;
     RemoteMesh& operator=(RemoteMesh&&) = delete;
 
-    WebKit::Mesh& backing() { return m_backing; }
+    WebKit::Mesh& backing() LIFETIME_BOUND { return m_backing; }
 
     RefPtr<IPC::Connection> connection() const;
 

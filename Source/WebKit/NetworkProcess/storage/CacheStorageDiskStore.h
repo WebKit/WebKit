@@ -52,7 +52,7 @@ private:
     struct SafeFileData {
         Variant<std::monostate, FileSystem::MappedFileData, Vector<uint8_t>> data;
 
-        std::span<const uint8_t> span() const;
+        std::span<const uint8_t> span() const LIFETIME_BOUND;
         RefPtr<WebCore::SharedBuffer> convertToSharedBuffer() &&;
         NODELETE explicit operator bool() const;
         static SafeFileData read(const String& filePath);

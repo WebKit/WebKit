@@ -73,7 +73,7 @@ private:
     RemoteAdapter& operator=(const RemoteAdapter&) = delete;
     RemoteAdapter& operator=(RemoteAdapter&&) = delete;
 
-    ::WebGPU::Adapter& backing() { return m_backing; }
+    ::WebGPU::Adapter& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

@@ -87,7 +87,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(WebCore::SWServer::Connection);
 
-    IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
+    IPC::Connection& ipcConnection() const LIFETIME_BOUND { return m_contentConnection.get(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -187,7 +187,7 @@ private:
 
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 
-    IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
+    IPC::Connection* messageSenderConnection() const LIFETIME_BOUND final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return 0; }
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);

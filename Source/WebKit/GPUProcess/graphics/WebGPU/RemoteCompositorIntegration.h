@@ -87,7 +87,7 @@ private:
     RemoteCompositorIntegration& operator=(const RemoteCompositorIntegration&) = delete;
     RemoteCompositorIntegration& operator=(RemoteCompositorIntegration&&) = delete;
 
-    WebCore::WebGPUCompositorIntegration& backing() { return m_backing; }
+    WebCore::WebGPUCompositorIntegration& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

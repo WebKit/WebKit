@@ -62,7 +62,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     const RemoteCDMInstanceConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
-    WebCore::CDMInstance& instance() { return m_instance; }
+    WebCore::CDMInstance& instance() LIFETIME_BOUND { return m_instance; }
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
@@ -72,7 +72,7 @@ private:
     // CDMInstanceClient
     void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
 #endif
 

@@ -37,7 +37,7 @@ namespace WebKit {
     
 #if ENABLE(APPLE_PAY_REMOTE_UI)
 
-WebPaymentCoordinatorProxy& NetworkConnectionToWebProcess::paymentCoordinator()
+WebPaymentCoordinatorProxy& NetworkConnectionToWebProcess::paymentCoordinator() LIFETIME_BOUND
 {
     if (!m_paymentCoordinator)
         m_paymentCoordinator = WebPaymentCoordinatorProxy::create(*this);

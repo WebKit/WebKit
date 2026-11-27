@@ -70,7 +70,7 @@ private:
     RemoteRenderBundle& operator=(const RemoteRenderBundle&) = delete;
     RemoteRenderBundle& operator=(RemoteRenderBundle&&) = delete;
 
-    ::WebGPU::RenderBundle& backing() { return m_backing; }
+    ::WebGPU::RenderBundle& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

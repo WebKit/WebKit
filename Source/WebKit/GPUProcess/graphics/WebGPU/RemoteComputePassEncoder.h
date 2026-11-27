@@ -70,7 +70,7 @@ private:
     RemoteComputePassEncoder& operator=(const RemoteComputePassEncoder&) = delete;
     RemoteComputePassEncoder& operator=(RemoteComputePassEncoder&&) = delete;
 
-    ::WebGPU::ComputePassEncoder& backing() { return m_backing; }
+    ::WebGPU::ComputePassEncoder& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

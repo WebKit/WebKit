@@ -62,7 +62,7 @@ public:
 
     void cancel();
 
-    const SpeculativeLoad& load() const { return *m_load; }
+    const SpeculativeLoad& load() const LIFETIME_BOUND { return *m_load; }
 
 private:
     AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, CompletionHandler<void(Result)>&&);

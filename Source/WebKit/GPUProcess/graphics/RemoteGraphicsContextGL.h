@@ -97,7 +97,7 @@ public:
 protected:
     RemoteGraphicsContextGL(GPUConnectionToWebProcess&, RemoteGraphicsContextGLIdentifier, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);
     void initialize(WebCore::GraphicsContextGLAttributes&&);
-    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    IPC::StreamConnectionWorkQueue& workQueue() const LIFETIME_BOUND { return m_workQueue; }
 
     void workQueueInitialize(WebCore::GraphicsContextGLAttributes&&);
     virtual void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) { };

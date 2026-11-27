@@ -801,13 +801,13 @@ void PrivateClickMeasurementManager::initializeStore() const
         m_store = PCM::PersistentStore::create(m_storageDirectory);
 }
 
-PCM::Store& PrivateClickMeasurementManager::store()
+PCM::Store& PrivateClickMeasurementManager::store() LIFETIME_BOUND
 {
     initializeStore();
     return *m_store;
 }
 
-const PCM::Store& PrivateClickMeasurementManager::store() const
+const PCM::Store& PrivateClickMeasurementManager::store() const LIFETIME_BOUND
 {
     initializeStore();
     return *m_store;

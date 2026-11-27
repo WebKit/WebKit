@@ -1192,7 +1192,7 @@ WebCore::NowPlayingManager& GPUProcess::nowPlayingManager()
 }
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager()
+RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() LIFETIME_BOUND
 {
     if (!m_audioSessionManager)
         m_audioSessionManager = RemoteAudioSessionProxyManager::create(*this);
@@ -1201,7 +1201,7 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager()
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
+WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue() LIFETIME_BOUND
 {
     if (!m_videoMediaStreamTrackRendererQueue)
         lazyInitialize(m_videoMediaStreamTrackRendererQueue, WorkQueue::create("RemoteVideoMediaStreamTrackRenderer"_s, WorkQueue::QOS::UserInitiated));
@@ -1210,7 +1210,7 @@ WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-WorkQueue& GPUProcess::libWebRTCCodecsQueue()
+WorkQueue& GPUProcess::libWebRTCCodecsQueue() LIFETIME_BOUND
 {
     if (!m_libWebRTCCodecsQueue)
         lazyInitialize(m_libWebRTCCodecsQueue, WorkQueue::create("LibWebRTCCodecsQueue"_s, WorkQueue::QOS::UserInitiated));

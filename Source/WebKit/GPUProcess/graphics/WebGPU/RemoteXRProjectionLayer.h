@@ -79,7 +79,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
     void stopListeningForIPC();
 
-    ::WebGPU::XRProjectionLayer& backing() { return m_backing; }
+    ::WebGPU::XRProjectionLayer& backing() LIFETIME_BOUND { return m_backing; }
 
 private:
     friend class WebGPU::ObjectHeap;

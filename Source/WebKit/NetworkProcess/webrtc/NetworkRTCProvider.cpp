@@ -271,7 +271,7 @@ bool NetworkRTCProvider::webRTCInterfaceMonitoringViaNWEnabled() const
     return connection && connection->webRTCInterfaceMonitoringViaNWEnabled();
 }
 
-const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
+const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier) LIFETIME_BOUND
 {
     return m_attributedBundleIdentifiers.ensure(pageIdentifier, [protectedThis = Ref { *this }, pageIdentifier]() -> String {
         String value;

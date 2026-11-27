@@ -61,7 +61,7 @@ public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
     static Ref<CacheStorageManager> create(const String& path, CacheStorageRegistry&, const WebCore::ClientOrigin&, ShouldWriteOriginFile, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     ~CacheStorageManager();
-    const WebCore::ClientOrigin& origin() const { return m_origin; }
+    const WebCore::ClientOrigin& origin() const LIFETIME_BOUND { return m_origin; }
     void openCache(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void removeCache(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
     void allCaches(uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);

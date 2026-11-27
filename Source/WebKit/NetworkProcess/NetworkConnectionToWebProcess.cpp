@@ -395,7 +395,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
 }
 
 #if USE(LIBWEBRTC)
-NetworkRTCProvider& NetworkConnectionToWebProcess::rtcProvider()
+NetworkRTCProvider& NetworkConnectionToWebProcess::rtcProvider() LIFETIME_BOUND
 {
     if (!m_rtcProvider)
         m_rtcProvider = NetworkRTCProvider::create(*this);

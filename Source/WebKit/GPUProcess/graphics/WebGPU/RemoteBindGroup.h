@@ -70,7 +70,7 @@ private:
     RemoteBindGroup& operator=(const RemoteBindGroup&) = delete;
     RemoteBindGroup& operator=(RemoteBindGroup&&) = delete;
 
-    ::WebGPU::BindGroup& backing() { return m_backing; }
+    ::WebGPU::BindGroup& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

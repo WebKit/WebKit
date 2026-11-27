@@ -47,12 +47,12 @@ public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
     static Ref<FileSystemStorageManager> create(WorkQueue&, String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
-    const WebCore::ClientOrigin& origin() const { return m_origin; }
+    const WebCore::ClientOrigin& origin() const LIFETIME_BOUND { return m_origin; }
 
     NODELETE bool isActive() const;
     uint64_t allocatedUnusedCapacity() const;
     std::expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
-    NODELETE const String& getPath(WebCore::FileSystemHandleIdentifier);
+    NODELETE const String& getPath(WebCore::FileSystemHandleIdentifier) LIFETIME_BOUND;
     const String& rootPath() const LIFETIME_BOUND { return m_path; }
     NODELETE FileSystemStorageHandle::Type getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);

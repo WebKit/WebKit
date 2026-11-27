@@ -84,7 +84,7 @@ private:
     RemoteXRSubImage& operator=(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage& operator=(RemoteXRSubImage&&) = delete;
 
-    ::WebGPU::XRSubImage& backing() { return m_backing; }
+    ::WebGPU::XRSubImage& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();

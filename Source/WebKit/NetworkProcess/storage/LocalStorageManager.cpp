@@ -217,7 +217,7 @@ StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connec
     return localStorageArea->identifier();
 }
 
-MemoryStorageArea& LocalStorageManager::ensureTransientLocalStorageArea(const WebCore::ClientOrigin& origin)
+MemoryStorageArea& LocalStorageManager::ensureTransientLocalStorageArea(const WebCore::ClientOrigin& origin) LIFETIME_BOUND
 {
     RefPtr transientStorageArea = m_transientStorageArea;
     if (!transientStorageArea) {

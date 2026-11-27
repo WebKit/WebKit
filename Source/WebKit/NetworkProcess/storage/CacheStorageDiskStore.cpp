@@ -50,7 +50,7 @@ static constexpr auto blobsDirectoryName = "Blobs"_s;
 static constexpr auto blobSuffix = "-blob"_s;
 static const unsigned currentVersion = 19;
 
-std::span<const uint8_t> CacheStorageDiskStore::SafeFileData::span() const
+std::span<const uint8_t> CacheStorageDiskStore::SafeFileData::span() const LIFETIME_BOUND
 {
     return WTF::switchOn(data,
         [](const std::monostate&) { return std::span<const uint8_t> { }; },

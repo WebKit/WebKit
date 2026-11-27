@@ -70,7 +70,7 @@ private:
     RemoteQuerySet& operator=(const RemoteQuerySet&) = delete;
     RemoteQuerySet& operator=(RemoteQuerySet&&) = delete;
 
-    ::WebGPU::QuerySet& backing() { return m_backing; }
+    ::WebGPU::QuerySet& backing() LIFETIME_BOUND { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
