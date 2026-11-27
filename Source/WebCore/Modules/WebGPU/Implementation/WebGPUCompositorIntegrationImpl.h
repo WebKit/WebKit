@@ -105,13 +105,14 @@ private:
 
     bool replaceRenderBufferIfInUse(uint32_t index);
     // The spare render buffers hold both the render buffers that were replaced and the copies of
-    // render buffers. A spare is available for either when it is not in use and has the format.
-    std::optional<size_t> availableSpareRenderBufferIndex(WebCore::IOSurface::Format);
+    // render buffers. A spare is available for either when it is not in use and has the format and
+    // the color space.
+    std::optional<size_t> availableSpareRenderBufferIndex(WebCore::IOSurface::Format, const WebCore::ColorSpace&);
     std::unique_ptr<WebCore::IOSurface> takeSpareRenderBuffer();
     void addSpareRenderBuffer(UniqueRef<WebCore::IOSurface>&&);
     void updateSpareRenderBuffers();
-    WebCore::IOSurface* copyRenderBufferDestination(WebCore::IOSurface::Format);
-    RetainPtr<CVPixelBufferRef> copyRenderBufferToPixelBuffer(uint32_t bufferIndex, WebCore::IOSurface::Format);
+    WebCore::IOSurface* copyRenderBufferDestination(WebCore::IOSurface::Format, const WebCore::ColorSpace&);
+    RetainPtr<CVPixelBufferRef> copyRenderBufferToPixelBuffer(uint32_t bufferIndex, WebCore::IOSurface::Format, ::WebGPU::RenderBufferCopyColorSpace);
     WebCore::IOSurface::Format copyFormat() const;
     CGImageAlphaInfo copyAlphaInfo() const;
 

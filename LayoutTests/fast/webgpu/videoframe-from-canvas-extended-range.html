@@ -1,0 +1,253 @@
+<!-- webkit-test-runner [ WebGPUHDREnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a VideoFrame of a WebGPU canvas draws like the canvas, for the extended range, every color space and alpha mode, and both canvas elements and OffscreenCanvases.");
+
+window.jsTestIsAsync = true;
+
+const width = 8;
+const height = 2;
+
+// The colors the canvas is drawn with, one per pixel. They are stored as they are, so for a
+// premultiplied canvas they are premultiplied colors, and for an opaque one their alpha is ignored.
+// An 8-bit canvas clamps them to 0...1.
+const colors = [
+    // In the standard range.
+    [0.25, 0.5, 0.75, 1],
+    [1, 1, 1, 1],
+    [0, 0, 0, 1],
+    [0.1, 0.9, 0.4, 1],
+    // Above 1 and below 0.
+    [2, 0.5, 0, 1],
+    [-0.5, 0.25, 1.5, 1],
+    [0.2, -0.3, 3, 1],
+    [4, 4, 4, 1],
+    [-1, -1, -1, 1],
+    [0.5, 1.25, -0.25, 1],
+    // Translucent, in the standard range.
+    [0.25, 0.125, 0.0625, 0.5],
+    [0.05, 0.6, 0.02, 0.25],
+    // Translucent, brighter than the alpha.
+    [0.8, 0.3, 0.1, 0.5],
+    [1.5, 0.2, -0.1, 0.5],
+    // Transparent.
+    [0, 0, 0, 0],
+    [0.3, 0.2, 0.1, 0.75],
+];
+// (2, 0.5, 0) in extended Display P3 is (6.02, 0.0147, -0.114) in linear sRGB, which is
+// (255, 32, 0) in sRGB.
+const outOfRangeIndex = 4;
+const outOfRangeDisplayP3InSRGB = [255, 32, 0, 255];
+
+// The 8-bit sRGB values of the two drawings may differ by the rounding of their conversions.
+const tolerance = 2;
+
+const formats = ["bgra8unorm", "rgba8unorm", "rgba16float"];
+const toneMappingModes = ["standard", "extended"];
+const colorSpaces = ["srgb", "display-p3", "srgb-linear", "display-p3-linear"];
+const alphaModes = ["opaque", "premultiplied"];
+const sources = ["HTMLCanvasElement", "OffscreenCanvas"];
+
+const shaderCode = `
+struct Colors {
+    values: array<vec4f, ${colors.length}>,
+};
+@group(0) @binding(0) var<uniform> colors: Colors;
+
+@vertex
+fn vertexMain(@builtin(vertex_index) index: u32) -> @builtin(position) vec4f {
+    let positions = array(vec2f(-1, -1), vec2f(3, -1), vec2f(-1, 3));
+    return vec4f(positions[index], 0, 1);
+}
+
+@fragment
+fn fragmentMain(@builtin(position) position: vec4f) -> @location(0) vec4f {
+    return colors.values[u32(position.x) + ${width}u * u32(position.y)];
+}
+`;
+
+function createCanvas(source)
+{
+    if (source == "OffscreenCanvas")
+        return new OffscreenCanvas(width, height);
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+}
+
+async function drawWebGPUCanvas(device, pipelines, variant)
+{
+    const canvas = createCanvas(variant.source);
+    const context = canvas.getContext("webgpu");
+    context.configure({
+        device,
+        format: variant.format,
+        colorSpace: variant.colorSpace,
+        toneMapping: { mode: variant.toneMappingMode },
+        alphaMode: variant.alphaMode,
+    });
+
+    const pipeline = pipelines.get(variant.format);
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+            view: context.getCurrentTexture().createView(),
+            loadOp: "clear",
+            storeOp: "store",
+            clearValue: { r: 0, g: 0, b: 0, a: 0 },
+        }],
+    });
+    pass.setPipeline(pipeline.renderPipeline);
+    pass.setBindGroup(0, pipeline.bindGroup);
+    pass.draw(3);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    return canvas;
+}
+
+function drawIn2DCanvas(source)
+{
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { colorSpace: "srgb" });
+    context.drawImage(source, 0, 0);
+    return context.getImageData(0, 0, width, height, { colorSpace: "srgb" }).data;
+}
+
+function pixel(data, index)
+{
+    return Array.from(data.subarray(index * 4, index * 4 + 4));
+}
+
+// The pixels of the image data are unpremultiplied, which magnifies the rounding of translucent
+// pixels, so they are compared premultiplied.
+function premultiplied(value)
+{
+    return [value[0] * value[3] / 255, value[1] * value[3] / 255, value[2] * value[3] / 255, value[3]];
+}
+
+function isClose(actual, expected)
+{
+    const actualPremultiplied = premultiplied(actual);
+    const expectedPremultiplied = premultiplied(expected);
+    return actualPremultiplied.every((value, i) => Math.abs(value - expectedPremultiplied[i]) <= tolerance);
+}
+
+function variantLabel(variant)
+{
+    return `${variant.format} ${variant.toneMappingMode} ${variant.colorSpace} ${variant.alphaMode} ${variant.source}`;
+}
+
+async function testVariant(device, pipelines, variant)
+{
+    const label = variantLabel(variant);
+    const canvas = await drawWebGPUCanvas(device, pipelines, variant);
+    const expected = drawIn2DCanvas(canvas);
+
+    let frame;
+    try {
+        frame = new VideoFrame(canvas, { timestamp: 0 });
+    } catch (e) {
+        testFailed(`${label}: new VideoFrame() threw ${e}`);
+        return;
+    }
+    const actual = drawIn2DCanvas(frame);
+    const frameColorSpace = frame.colorSpace.toJSON();
+    frame.close();
+
+    const mismatches = [];
+    for (let index = 0; index < colors.length; ++index) {
+        if (!isClose(pixel(actual, index), pixel(expected, index)))
+            mismatches.push(`pixel ${index}: ${pixel(actual, index)} instead of ${pixel(expected, index)}`);
+    }
+    if (mismatches.length)
+        testFailed(`${label}: the VideoFrame does not draw like the canvas: ${mismatches.join("; ")}`);
+    else
+        testPassed(`${label}: the VideoFrame draws like the canvas`);
+
+    if (variant.format == "rgba16float" && variant.toneMappingMode == "extended") {
+        // The extended range does not fit in 8 bits, so the frame has the contents converted to sRGB.
+        const expectedColorSpace = { primaries: "bt709", transfer: "iec61966-2-1", matrix: "rgb", fullRange: true };
+        if (JSON.stringify(frameColorSpace) == JSON.stringify(expectedColorSpace))
+            testPassed(`${label}: the VideoFrame is in sRGB`);
+        else
+            testFailed(`${label}: the VideoFrame color space is ${JSON.stringify(frameColorSpace)}, expected ${JSON.stringify(expectedColorSpace)}`);
+
+        if (variant.colorSpace == "display-p3") {
+            const outOfRange = pixel(actual, outOfRangeIndex);
+            if (outOfRange.every((value, i) => Math.abs(value - outOfRangeDisplayP3InSRGB[i]) <= 1))
+                testPassed(`${label}: the VideoFrame converts (2, 0.5, 0) before clamping it`);
+            else
+                testFailed(`${label}: the VideoFrame draws (2, 0.5, 0) as ${outOfRange}, expected ${outOfRangeDisplayP3InSRGB}`);
+        }
+    }
+
+    if (variant.source == "OffscreenCanvas")
+        canvas.getContext("webgpu").unconfigure();
+}
+
+function createPipelines(device)
+{
+    const module = device.createShaderModule({ code: shaderCode });
+    const colorBuffer = device.createBuffer({ size: colors.length * 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(colorBuffer, 0, new Float32Array(colors.flat()));
+    const pipelines = new Map;
+    for (const format of formats) {
+        const renderPipeline = device.createRenderPipeline({
+            layout: "auto",
+            vertex: { module, entryPoint: "vertexMain" },
+            fragment: { module, entryPoint: "fragmentMain", targets: [{ format }] },
+            primitive: { topology: "triangle-list" },
+        });
+        const bindGroup = device.createBindGroup({
+            layout: renderPipeline.getBindGroupLayout(0),
+            entries: [{ binding: 0, resource: { buffer: colorBuffer } }],
+        });
+        pipelines.set(format, { renderPipeline, bindGroup });
+    }
+    return pipelines;
+}
+
+async function runTests()
+{
+    if (!navigator.gpu) {
+        testFailed("WebGPU is not available");
+        finishJSTest();
+        return;
+    }
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        testFailed("Could not get a GPUDevice");
+        finishJSTest();
+        return;
+    }
+
+    const pipelines = createPipelines(device);
+    for (const format of formats) {
+        for (const toneMappingMode of toneMappingModes) {
+            for (const colorSpace of colorSpaces) {
+                for (const alphaMode of alphaModes) {
+                    for (const source of sources)
+                        await testVariant(device, pipelines, { format, toneMappingMode, colorSpace, alphaMode, source });
+                }
+            }
+        }
+    }
+    if (window.GCController)
+        GCController.collect();
+    finishJSTest();
+}
+
+runTests();
+</script>
+</body>
+</html>

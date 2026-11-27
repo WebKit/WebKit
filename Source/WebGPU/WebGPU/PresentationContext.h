@@ -75,7 +75,7 @@ public:
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }
-    bool copyRenderBuffer(uint32_t, IOSurfaceRef) override { return false; }
+    bool copyRenderBuffer(uint32_t, IOSurfaceRef, WebGPU::RenderBufferCopyColorSpace) override { return false; }
 
     void setLabel(String&&) override { }
     bool isValid() const override { return false; }

@@ -310,6 +310,14 @@ enum class QueryType : uint8_t {
     Timestamp,
 };
 
+// The color space of a copy of a render buffer.
+enum class RenderBufferCopyColorSpace : bool {
+    // The color space of the render buffer.
+    RenderBuffer,
+    // sRGB, in the standard range.
+    SRGB, // NOLINT
+};
+
 enum class SamplerBindingType : uint8_t {
     Filtering,
     NonFiltering,
@@ -1647,8 +1655,9 @@ public:
 #if PLATFORM(COCOA)
     // Copies the contents of a render buffer to an IOSurface of its size. The destination has the
     // pixel format of the render buffer, or a BGRA pixel format, to which the contents are converted.
-    // Returns false when the render buffer cannot be copied.
-    virtual bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination) = 0;
+    // A copy in the sRGB color space has a BGRA destination, and has the contents converted to sRGB
+    // and clamped to the standard range. Returns false when the render buffer cannot be copied.
+    virtual bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination, RenderBufferCopyColorSpace) = 0;
 #endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;
