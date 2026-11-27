@@ -413,12 +413,13 @@ if (COMPILER_IS_GCC_OR_CLANG)
                 # FIXME: Consider passing -sanitize=address to swift.
                 webkit_add_compile_definitions(__SANITIZE_ADDRESS__)
             elseif (${SANITIZER} MATCHES "undefined")
-                # Please keep these options synchronized with Tools/sanitizer/ubsan.xcconfig
+                # Please keep these options synchronized with WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_YES in Configurations/Sanitizers.xcconfig
                 WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS("-fno-omit-frame-pointer -fno-delete-null-pointer-checks -fno-optimize-sibling-calls")
                 # -fsanitize=vptr is disabled because incompatible with -fno-rtti.
-                # swiftc rejects -fno-sanitize=, so that one is C-family only.
+                # swiftc rejects -fno-sanitize= and -fsanitize=local-bounds, so those are C-family only.
                 add_compile_options("${_cc_sanitize}=undefined"
-                                    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fno-sanitize=vptr>")
+                                    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fno-sanitize=vptr>"
+                                    "$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fsanitize=local-bounds>")
                 add_link_options("${_ld_sanitize}=undefined")
                 list(APPEND ENABLED_COMPILER_SANITIZERS "-fsanitize=undefined")
 
