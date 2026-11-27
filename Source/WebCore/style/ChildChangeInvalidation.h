@@ -56,9 +56,10 @@ private:
     template<typename Function> void traverseRemovedElements(NOESCAPE const Function&);
     template<typename Function> void traverseAddedElements(NOESCAPE const Function&);
 
-    Element& parentElement() { return *m_parentElement; }
+    ContainerNode& parent() { return *m_parent; }
+    bool parentNeedsStyleInvalidation() const;
 
-    const RefPtr<Element> m_parentElement;
+    const RefPtr<ContainerNode> m_parent;
     const ContainerNode::ChildChange& m_childChange;
 
     const bool m_isEnabled;
@@ -68,16 +69,17 @@ private:
 };
 
 inline ChildChangeInvalidation::ChildChangeInvalidation(ContainerNode& container, const ContainerNode::ChildChange& childChange)
-    : m_parentElement(dynamicDowncast<Element>(container))
+    : m_parent(container.isElementOrShadowRoot() ? &container : nullptr)
     , m_childChange(childChange)
-    , m_isEnabled(m_parentElement && m_parentElement->needsStyleInvalidation())
-    , m_needsHasInvalidation(m_isEnabled && Scope::forNode(*m_parentElement).usesHasPseudoClass())
+    , m_isEnabled(m_parent && parentNeedsStyleInvalidation())
+    , m_needsHasInvalidation(m_isEnabled && Scope::forNode(*m_parent).usesHasPseudoClass())
 {
     if (!m_isEnabled)
         return;
 
-    if (m_parentElement->styleAffectedByEmpty() && emptyStateMayChange())
-        m_emptyInvalidation.emplace(*m_parentElement, CSSSelector::PseudoClass::Empty, PseudoClassChangeInvalidation::AnyValue);
+    // Shadow roots can't match :empty.
+    if (auto* parentElement = dynamicDowncast<Element>(*m_parent); parentElement && parentElement->styleAffectedByEmpty() && emptyStateMayChange())
+        m_emptyInvalidation.emplace(*parentElement, CSSSelector::PseudoClass::Empty, PseudoClassChangeInvalidation::AnyValue);
 
     if (m_needsHasInvalidation)
         invalidateForHasBeforeMutation();

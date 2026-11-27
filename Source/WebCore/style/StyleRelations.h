@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class ContainerNode;
 class Element;
 
 namespace Style {
@@ -56,12 +57,12 @@ struct Relation {
         AffectedByHasWithForwardSiblingRelationship,
         AffectedByHasWithAdjacentSiblingRelationship,
     };
-    const Element* element;
+    const ContainerNode* node;
     Type type;
     unsigned value;
 
-    Relation(const Element& element, Type type, unsigned value = 1)
-        : element(&element)
+    Relation(const ContainerNode& node, Type type, unsigned value = 1)
+        : node(&node)
         , type(type)
         , value(value)
     { }

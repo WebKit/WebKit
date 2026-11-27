@@ -231,7 +231,7 @@ void dumpSelectorOperationStats()
 
 extern "C" {
 
-static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const ContainerNode*));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, bool, (const Element*));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPlaceholderShown, bool, (const Element*));
@@ -543,6 +543,7 @@ private:
     void generateRightmostTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateWalkToParentNode(Assembler::RegisterID targetRegister);
     void generateWalkToParentElement(Assembler::JumpList& failureCases, Assembler::RegisterID targetRegister);
+    void generateWalkToParentElementOrShadowRoot(Assembler::JumpList& failureCases, Assembler::RegisterID targetRegister);
     void generateParentElementTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateAncestorTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment&);
 
@@ -2724,6 +2725,16 @@ void SelectorCodeGenerator::generateWalkToParentElement(Assembler::JumpList& fai
     failureCases.append(DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, targetRegister));
 }
 
+void SelectorCodeGenerator::generateWalkToParentElementOrShadowRoot(Assembler::JumpList& failureCases, Assembler::RegisterID targetRegister)
+{
+    //    ContainerNode* parent = parentNode()
+    //    if (!parent || !parent->isElementOrShadowRoot())
+    //         failure
+    generateWalkToParentNode(targetRegister);
+    failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, targetRegister));
+    failureCases.append(DOMJIT::branchTestIsElementOrShadowRootFlagOnNode(m_assembler, Assembler::Zero, targetRegister));
+}
+
 void SelectorCodeGenerator::generateParentElementTreeWalker(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
     Assembler::JumpList traversalFailureCases;
@@ -2866,10 +2877,10 @@ void SelectorCodeGenerator::generateAddStyleRelationIfResolvingStyle(Assembler::
     notResolvingStyle.link(&m_assembler);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext* checkingContext, const Element* element))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext* checkingContext, const ContainerNode* node))
 {
     COUNT_SELECTOR_OPERATION(operationAddStyleRelationFunction);
-    checkingContext->styleRelations.append({ *element, { }, 1 });
+    checkingContext->styleRelations.append({ *node, { }, 1 });
 }
 
 void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID checkingContext, Assembler::RegisterID element, Style::Relation::Type relationType, std::optional<Assembler::RegisterID> value)
@@ -2910,7 +2921,7 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
         Assembler::Address typeAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, type));
         mergeFailure.append(m_assembler.branch32(Assembler::NotEqual, typeAddress, Assembler::TrustedImm32(Style::Relation::AffectsNextSibling)));
 
-        Assembler::Address elementAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, element));
+        Assembler::Address elementAddress(lastRelation, OBJECT_OFFSETOF(Style::Relation, node));
         {
             // if (element.nextSiblingElement() == lastRelation.element)
             LocalRegister nextSiblingElement(m_registerAllocator);
@@ -3893,9 +3904,9 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
-    Assembler::Jump notElementCase = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
+    Assembler::Jump notElementOrShadowRootCase = DOMJIT::branchTestIsElementOrShadowRootFlagOnNode(m_assembler, Assembler::Zero, parentNode);
     generateAddStyleRelation(checkingContext, parentNode, Style::Relation::ChildrenAffectedByFirstChildRules);
-    notElementCase.link(&m_assembler);
+    notElementOrShadowRootCase.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setFirstChildState() on the StyleComputedStyle.
@@ -4036,9 +4047,9 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
-    Assembler::Jump notElement = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
+    Assembler::Jump notElementOrShadowRoot = DOMJIT::branchTestIsElementOrShadowRootFlagOnNode(m_assembler, Assembler::Zero, parentNode);
     generateAddStyleRelation(checkingContext, parentNode, Style::Relation::ChildrenAffectedByLastChildRules);
-    notElement.link(&m_assembler);
+    notElementOrShadowRoot.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setLastChildState() on the StyleComputedStyle.
@@ -4093,10 +4104,10 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
     LocalRegister checkingContext(m_registerAllocator);
     Assembler::Jump notResolvingStyle = jumpIfNotResolvingStyle(checkingContext);
 
-    Assembler::Jump notElement = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
+    Assembler::Jump notElementOrShadowRoot = DOMJIT::branchTestIsElementOrShadowRootFlagOnNode(m_assembler, Assembler::Zero, parentNode);
     generateAddStyleRelation(checkingContext, parentNode, Style::Relation::ChildrenAffectedByFirstChildRules);
     generateAddStyleRelation(checkingContext, parentNode, Style::Relation::ChildrenAffectedByLastChildRules);
-    notElement.link(&m_assembler);
+    notElementOrShadowRoot.link(&m_assembler);
 
     // The parent marking is unconditional. If the matching is not a success, we can now fail.
     // Otherwise we need to apply setLastChildState() on the StyleComputedStyle.
@@ -4251,16 +4262,16 @@ NODELETE static bool nthFilterIsAlwaysSatisified(int a, int b)
 
 void SelectorCodeGenerator::generateNthChildRelationUpdate(const SelectorFragment& fragment)
 {
-    Assembler::JumpList notElementCases;
-    LocalRegister parentElement(m_registerAllocator);
-    generateWalkToParentElement(notElementCases, parentElement);
+    Assembler::JumpList notElementOrShadowRootCases;
+    LocalRegister parentNode(m_registerAllocator);
+    generateWalkToParentElementOrShadowRoot(notElementOrShadowRootCases, parentNode);
 
     auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
         ? Style::Relation::ChildrenAffectedByForwardPositionalRules
         : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-    generateAddStyleRelationIfResolvingStyle(parentElement, relation);
+    generateAddStyleRelationIfResolvingStyle(parentNode, relation);
 
-    notElementCases.link(&m_assembler);
+    notElementOrShadowRootCases.link(&m_assembler);
 }
 
 void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -4373,12 +4384,12 @@ void SelectorCodeGenerator::generateNthLastChildParentCheckAndRelationUpdate(Ass
 
     auto noParentCase = m_assembler.branchTestPtr(Assembler::Zero, parentNode);
 
-    auto notElementCase = DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, parentNode);
+    auto notElementOrShadowRootCase = DOMJIT::branchTestIsElementOrShadowRootFlagOnNode(m_assembler, Assembler::Zero, parentNode);
     auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
         ? Style::Relation::ChildrenAffectedByBackwardPositionalRules
         : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
     generateAddStyleRelationIfResolvingStyle(parentNode, relation);
-    notElementCase.link(&m_assembler);
+    notElementOrShadowRootCase.link(&m_assembler);
 
     if (m_selectorContext != SelectorContext::QuerySelector) {
         failureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parentNode, Node::stateFlagsMemoryOffset()),

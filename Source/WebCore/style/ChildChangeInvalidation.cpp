@@ -69,13 +69,25 @@ NODELETE static bool isElementRemovalForStyle(const ContainerNode::ChildChange& 
     return childChange.type == ContainerNode::ChildChange::Type::ElementRemoved || childChange.type == ContainerNode::ChildChange::Type::ElementMovedFrom;
 }
 
+bool ChildChangeInvalidation::parentNeedsStyleInvalidation() const
+{
+    if (auto* element = dynamicDowncast<Element>(*m_parent))
+        return element->needsStyleInvalidation();
+    auto& shadowRoot = downcast<ShadowRoot>(*m_parent);
+    // Don't support first-child, nth-of-type, etc... in UA shadow roots as an optimization.
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
+        return false;
+    auto* host = shadowRoot.host();
+    return host && host->needsStyleInvalidation();
+}
+
 bool ChildChangeInvalidation::emptyStateMayChange() const
 {
     // CharacterData::makeChildChange uses TextChanged only when both the old and new data are non-empty,
     // so the parent's :empty state can't flip and we can skip the traversal below.
     if (m_childChange.type == ContainerNode::ChildChange::Type::TextChanged)
         return false;
-    bool wasEmpty = elementIsEmptyForCSS(*m_parentElement);
+    bool wasEmpty = elementIsEmptyForCSS(downcast<Element>(*m_parent));
     return isInsertionForStyle(m_childChange) == wasEmpty;
 }
 
@@ -100,12 +112,12 @@ NODELETE static bool isSiblingHasRelation(const MatchElement& matchElement)
 
 void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation)
 {
-    Ref resolver = parentElement().styleResolver();
+    Ref resolver = protect(Scope::forNode(parent()))->resolver();
     auto& ruleSets = resolver->ruleSets();
 
     Invalidator::MatchElementRuleSets matchElementRuleSets;
 
-    bool isChild = changedElement.parentElement() == &parentElement();
+    bool isChild = changedElement.parentNode() == &parent();
 
     auto canAffectElementsWithStyle = [&](const InvalidationRuleSet& ruleSet) {
         if (!ruleSet.matchElement.hasRelation)
@@ -209,9 +221,9 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
 
 void ChildChangeInvalidation::invalidateForHasSiblings(MatchingHasSelectors& matchingHasSelectors, MutationPhase phase)
 {
-    bool affectedByBackwardSibling = parentElement().affectedByHasWithBackwardSiblingRelationship();
-    bool affectedByForwardSibling = parentElement().affectedByHasWithForwardSiblingRelationship();
-    bool affectedByAdjacentSibling = parentElement().affectedByHasWithAdjacentSiblingRelationship();
+    bool affectedByBackwardSibling = parent().affectedByHasWithBackwardSiblingRelationship();
+    bool affectedByForwardSibling = parent().affectedByHasWithForwardSiblingRelationship();
+    bool affectedByAdjacentSibling = parent().affectedByHasWithAdjacentSiblingRelationship();
 
     auto invalidateSibling = [&](auto& changedElement) {
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::Sibling);
@@ -237,10 +249,10 @@ void ChildChangeInvalidation::invalidateForHasSiblings(MatchingHasSelectors& mat
     if (!checkNow)
         return;
 
-    if (RefPtr next = m_childChange.nextSiblingElement; next && parentElement().childrenAffectedByFirstChildRules() && !next->previousElementSibling())
+    if (RefPtr next = m_childChange.nextSiblingElement; next && parent().childrenAffectedByFirstChildRules() && !next->previousElementSibling())
         invalidateForChangedElement(*next, matchingHasSelectors, ChangedElementRelation::FirstOrLastChild);
 
-    if (RefPtr previous = m_childChange.previousSiblingElement; previous && parentElement().childrenAffectedByLastChildRules() && !previous->nextElementSibling())
+    if (RefPtr previous = m_childChange.previousSiblingElement; previous && parent().childrenAffectedByLastChildRules() && !previous->nextElementSibling())
         invalidateForChangedElement(*previous, matchingHasSelectors, ChangedElementRelation::FirstOrLastChild);
 }
 
@@ -284,11 +296,11 @@ void ChildChangeInvalidation::traverseRemovedElements(NOESCAPE const Function& f
     if (isInsertionForStyle(m_childChange) && m_childChange.type != ContainerNode::ChildChange::Type::AllChildrenReplaced)
         return;
 
-    Ref resolver = parentElement().styleResolver();
+    Ref resolver = protect(Scope::forNode(parent()))->resolver();
     auto& features = resolver->ruleSets().features();
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
-    RefPtr firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
+    RefPtr firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parent().firstElementChild();
 
     for (RefPtr toRemove = firstToRemove; toRemove != m_childChange.nextSiblingElement; toRemove = toRemove->nextElementSibling()) {
         function(*toRemove);
@@ -310,7 +322,7 @@ void ChildChangeInvalidation::traverseAddedElements(NOESCAPE const Function& fun
     auto callFunctionOnInclusiveDescendants = [&](Element& element) {
         function(element);
 
-        Ref resolver = parentElement().styleResolver();
+        Ref resolver = protect(Scope::forNode(parent()))->resolver();
         auto& features = resolver->ruleSets().features();
         if (!needsDescendantTraversal(features))
             return;
@@ -343,7 +355,7 @@ static void invalidateForSiblingCombinators(Element* sibling)
     }
 }
 
-static void invalidateForForwardPositionalRules(Element& parent, Element* elementAfterChange)
+static void invalidateForForwardPositionalRules(ContainerNode& parent, Element* elementAfterChange)
 {
     bool childrenAffected = parent.childrenAffectedByForwardPositionalRules();
     bool descendantsAffected = parent.descendantsAffectedByForwardPositionalRules();
@@ -361,7 +373,7 @@ static void invalidateForForwardPositionalRules(Element& parent, Element* elemen
     }
 }
 
-static void invalidateForBackwardPositionalRules(Element& parent, Element* elementBeforeChange)
+static void invalidateForBackwardPositionalRules(ContainerNode& parent, Element* elementBeforeChange)
 {
     bool childrenAffected = parent.childrenAffectedByBackwardPositionalRules();
     bool descendantsAffected = parent.descendantsAffectedByBackwardPositionalRules();
@@ -403,7 +415,9 @@ static void invalidateForLastChildState(Element& child, bool state)
 
 void ChildChangeInvalidation::invalidateAfterChange()
 {
-    if (m_childChange.source == ContainerNode::ChildChange::Source::Parser)
+    // Children of a parsing element don't match :last-child and similar, and are invalidated when parsing finishes.
+    // Shadow roots don't parse their children, so the parser's insertions into them need invalidating as they happen.
+    if (m_childChange.source == ContainerNode::ChildChange::Source::Parser && is<Element>(parent()))
         return;
 
     checkForSiblingStyleChanges();
@@ -426,7 +440,7 @@ void ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(Element& pa
 
 void ChildChangeInvalidation::checkForSiblingStyleChanges()
 {
-    Ref parent = parentElement();
+    Ref parent = this->parent();
     RefPtr elementBeforeChange = m_childChange.previousSiblingElement;
     RefPtr elementAfterChange = m_childChange.nextSiblingElement;
 

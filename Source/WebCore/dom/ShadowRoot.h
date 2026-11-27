@@ -166,8 +166,6 @@ private:
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) override;
     void removingSteps(RemovalType, ContainerNode& insertionPoint) override;
 
-    void childrenChanged(const ChildChange&) override;
-
     ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
 
     bool m_hasBegunDeletingDetachedChildren : 1 { false };
