@@ -681,7 +681,7 @@ auto SubstitutionResolver::substituteAttrArgumentGrammar(CSSParserTokenRange ran
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
-        fallbackRange = range;
+        fallbackRange = unwrapArgumentBraces(range);
 
     auto substitutedFirstArg = substituteTokenRange(firstArgRange, context);
     if (!substitutedFirstArg)

@@ -236,8 +236,8 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
 // comma-containing-production rules: a {}-wrapped block groups internal commas, but may not be
 // mixed with other values, and a bare {} is not a valid value.
 // https://drafts.csswg.org/css-values-5/#component-function-commas
-// `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?#
-// (random-item() items, where an item may be empty).
+// `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?
+// (random-item() items and the attr() fallback, which may be empty).
 static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
 {
     if (argumentRange.atEnd())
@@ -346,10 +346,8 @@ bool isValidAttrReference(CSSParserTokenRange range, const CSSParserContext& par
     // Optional second arg (fallback).
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
         return range.atEnd();
-    if (range.atEnd())
-        return true;
 
-    return !!classifyBlock(range, parserContext);
+    return isValidDeclarationValueArgument(range, parserContext, /* allowEmpty */ true);
 }
 
 // https://drafts.csswg.org/css-values-5/#funcdef-random-item
