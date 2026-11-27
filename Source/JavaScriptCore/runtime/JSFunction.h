@@ -88,6 +88,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
     static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSFunction* createGeneratorBody(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, JSValue wrapper);
 
     JS_EXPORT_PRIVATE String name(VM&);
     JS_EXPORT_PRIVATE String displayName(VM&);
@@ -150,6 +151,8 @@ public:
             return std::bit_cast<FunctionRareData*>(executableOrRareData & ~rareDataTag);
         return nullptr;
     }
+
+    JSFunction* cachedGeneratorBody(FunctionExecutable*, JSScope*);
 
     bool isHostOrBuiltinFunction() const;
     bool isBuiltinFunction() const;

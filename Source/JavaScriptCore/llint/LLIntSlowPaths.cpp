@@ -1980,7 +1980,9 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
     auto bytecode = pc->as<OpNewFuncExp>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
-    
+    if (isGeneratorOrAsyncFunctionBodyParseMode(executable->parseMode()))
+        LLINT_RETURN(JSFunction::createGeneratorBody(vm, globalObject, executable, scope, callFrame->jsCallee()));
+
     LLINT_RETURN(JSFunction::create(vm, globalObject, executable, scope));
 }
 

@@ -1774,6 +1774,12 @@ void JIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
     loadConstant(constant, argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
+    if (opcodeID == op_new_func_exp && isGeneratorOrAsyncFunctionBodyParseMode(unlinkedExecutable->parseMode())) {
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, argumentGPR3);
+        callOperationNoExceptionCheck(operationNewGeneratorBodyFunction, dst, argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3);
+        return;
+    }
+
     auto function = operationNewFunction;
     if (opcodeID == op_new_func_exp)
         function = selectNewFunctionOperation(unlinkedExecutable);

@@ -350,6 +350,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewStrictFunctionWithInvalidatedReallocationW
 JSC_DECLARE_JIT_OPERATION(operationNewArrowFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewGeneratorBodyFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));

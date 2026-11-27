@@ -94,6 +94,36 @@ JSFunction* JSFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* exec
     return result;
 }
 
+// A generator or async function body has no observable identity, so every call of a wrapper whose
+// scope is the body's scope can share one body function.
+JSFunction* JSFunction::createGeneratorBody(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope, JSValue wrapper)
+{
+    ASSERT(isGeneratorOrAsyncFunctionBodyParseMode(executable->parseMode()));
+    auto* wrapperFunction = dynamicDowncast<JSFunction>(wrapper);
+    if (!wrapperFunction || wrapperFunction->scope() != scope)
+        return create(vm, globalObject, executable, scope);
+
+    if (JSFunction* body = wrapperFunction->cachedGeneratorBody(executable, scope))
+        return body;
+
+    JSFunction* body = create(vm, globalObject, executable, scope);
+    wrapperFunction->ensureRareData(vm)->setGeneratorBodyFunction(vm, body);
+    return body;
+}
+
+JSFunction* JSFunction::cachedGeneratorBody(FunctionExecutable* executable, JSScope* scope)
+{
+    if (this->scope() != scope)
+        return nullptr;
+    FunctionRareData* rareData = this->rareData();
+    if (!rareData)
+        return nullptr;
+    JSFunction* body = rareData->generatorBodyFunction();
+    if (!body || body->executable() != executable)
+        return nullptr;
+    return body;
+}
+
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction, ImplementationVisibility implementationVisibility, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, implementationVisibility, intrinsic, nativeConstructor, signature, length, name);

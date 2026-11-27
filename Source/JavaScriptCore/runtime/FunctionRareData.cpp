@@ -64,6 +64,7 @@ void FunctionRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     rareData->m_internalFunctionAllocationProfile.visitAggregate(visitor);
     visitor.append(rareData->m_boundFunctionStructureID);
     visitor.append(rareData->m_executable);
+    visitor.append(rareData->m_generatorBodyFunction);
 }
 
 DEFINE_VISIT_CHILDREN(FunctionRareData);

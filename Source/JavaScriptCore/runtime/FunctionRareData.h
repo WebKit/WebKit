@@ -116,6 +116,13 @@ public:
 
     ExecutableBase* executable() const LIFETIME_BOUND { return m_executable.get(); }
 
+    JSFunction* generatorBodyFunction() const LIFETIME_BOUND { return m_generatorBodyFunction.get(); }
+    void setGeneratorBodyFunction(VM& vm, JSFunction* function)
+    {
+        WTF::storeStoreFence();
+        m_generatorBodyFunction.set(vm, this, function);
+    }
+
     bool hasReifiedLength() const { return m_hasReifiedLength; }
     void setHasReifiedLength() { m_hasReifiedLength = true; }
     bool hasReifiedName() const { return m_hasReifiedName; }
@@ -160,6 +167,7 @@ private:
     InternalFunctionAllocationProfile m_internalFunctionAllocationProfile;
     WriteBarrierStructureID m_boundFunctionStructureID;
     WriteBarrier<ExecutableBase> m_executable;
+    WriteBarrier<JSFunction> m_generatorBodyFunction;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
     bool m_hasReifiedLength : 1;
     bool m_hasReifiedName : 1;

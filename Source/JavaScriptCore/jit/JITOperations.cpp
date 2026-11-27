@@ -2604,6 +2604,15 @@ JSC_DEFINE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject* 
     OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, uncheckedDowncast<FunctionExecutable>(functionExecutable))));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationNewGeneratorBodyFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable, JSCell* wrapper))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSValue::encode(JSFunction::createGeneratorBody(vm, globalObject, uncheckedDowncast<FunctionExecutable>(functionExecutable), environment, wrapper)));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
 {
     VM& vm = globalObject->vm();

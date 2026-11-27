@@ -1685,6 +1685,14 @@ void LOLJIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
     loadConstant(constant, functionDeclArgumentGPR);
 
     OpcodeID opcodeID = Op::opcodeID;
+    if (opcodeID == op_new_func_exp && isGeneratorOrAsyncFunctionBodyParseMode(unlinkedExecutable->parseMode())) {
+        constexpr GPRReg wrapperArgumentGPR = preferredArgumentGPR<decltype(operationNewGeneratorBodyFunction), 3>();
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, wrapperArgumentGPR);
+        callOperationNoExceptionCheck(operationNewGeneratorBodyFunction, dst, globalObjectArgumentGPR, scopeArgumentGPR, functionDeclArgumentGPR, wrapperArgumentGPR);
+        m_fastAllocator.releaseScratches(allocations);
+        return;
+    }
+
     auto function = operationNewFunction;
     if (opcodeID == op_new_func_exp)
         function = selectNewFunctionOperation(unlinkedExecutable);

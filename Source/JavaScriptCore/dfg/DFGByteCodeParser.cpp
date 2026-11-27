@@ -552,6 +552,7 @@ private:
     void handleNewFunc(NodeType, Bytecode);
     template <typename Bytecode>
     void handleNewFuncExp(NodeType, Bytecode);
+    JSFunction* tryGetCachedGeneratorBody(NodeType, FunctionExecutable*, Node* scope);
     template <typename Bytecode>
     void handleCreateInternalFieldObject(const ClassInfo*, NodeType createOp, NodeType newOp, Bytecode);
 
@@ -12027,13 +12028,28 @@ void ByteCodeParser::handleNewFunc(NodeType op, Bytecode bytecode)
     addToGraph(Phantom, scope);
 }
 
+JSFunction* ByteCodeParser::tryGetCachedGeneratorBody(NodeType op, FunctionExecutable* executable, Node* scope)
+{
+    if (op != NewFunction || !isGeneratorOrAsyncFunctionBodyParseMode(executable->parseMode()))
+        return nullptr;
+    JSFunction* wrapper = get(VirtualRegister(CallFrameSlot::callee))->dynamicCastConstant<JSFunction*>();
+    if (!wrapper)
+        return nullptr;
+    JSScope* scopeConstant = scope->dynamicCastConstant<JSScope*>();
+    if (!scopeConstant)
+        return nullptr;
+    return wrapper->cachedGeneratorBody(executable, scopeConstant);
+}
+
 template <typename Bytecode>
 void ByteCodeParser::handleNewFuncExp(NodeType op, Bytecode bytecode)
 {
     FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(bytecode.m_functionDecl);
-    FrozenValue* frozen = m_graph.freezeStrong(expr);
     Node* scope = get(bytecode.m_scope);
-    set(bytecode.m_dst, addToGraph(op, OpInfo(frozen), scope));
+    if (JSFunction* body = tryGetCachedGeneratorBody(op, expr, scope))
+        set(bytecode.m_dst, weakJSConstant(body));
+    else
+        set(bytecode.m_dst, addToGraph(op, OpInfo(m_graph.freezeStrong(expr)), scope));
     // Ideally we wouldn't have to do this Phantom. But:
     //
     // For the constant case: we must do it because otherwise we would have no way of knowing
