@@ -73,9 +73,20 @@ public:
         MaxContent // https://github.com/w3c/csswg-drafts/issues/12843
     };
 
+    enum class Packing : bool {
+        Sparse,
+        Dense
+    };
+
     using ResolvedFitTolerance = Variant<LayoutUnit, CSS::Keyword::Infinite>;
 
-    GridLanesResult performGridLanesPlacement(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
+    // The space left in a track above an item placed below the track's running position.
+    struct SkippedSpace {
+        LayoutUnit start;
+        LayoutUnit end;
+    };
+
+    GridLanesResult performGridLanesPlacement(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase, Packing);
 
 private:
     GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item, ResolvedFitTolerance);
@@ -86,13 +97,28 @@ private:
         LayoutUnit marginBoxEnd;
     };
 
-    GridLanesResult placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
+    struct ItemPlacement {
+        GridArea area;
+        StackingAxisPlacement placement;
+    };
+
+    // The skipped spaces of each grid axis track, from highest to lowest.
+    using SkippedSpaces = Vector<Vector<SkippedSpace>>;
+
+    GridLanesResult placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase, Packing);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
     void layoutGridItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
     LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
 
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
+    GridSpan clampedGridAxisTracks(const GridArea&) const;
     StackingAxisPlacement updateRunningPositions(const GridArea&, LayoutUnit marginBoxSize);
+
+    ItemPlacement placeItemSparsely(const GridArea&, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis);
+    ItemPlacement placeItemDensely(SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridArea& normalPlacementArea, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis, ResolvedFitTolerance);
+    std::optional<ItemPlacement> placeIntoSkippedSpace(SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridArea& normalPlacementArea, LayoutUnit marginBoxSize, bool isAutoPlacedInGridAxis, ResolvedFitTolerance);
+    Vector<std::optional<LayoutUnit>> skippedSpacePositions(const SkippedSpaces&, const GridTrackSizingAlgorithm&, const GridSpan& normalPlacementTracks, LayoutUnit spaceNeeded, bool isAutoPlacedInGridAxis) const;
+    void recordSkippedSpaces(SkippedSpaces&, const GridSpan&) const;
     NODELETE LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     bool tracksAcceptAutoPlacedItem(unsigned startLine, unsigned trackCount) const;
     NODELETE inline Style::GridTrackSizingDirection gridAxisDirection() const;
