@@ -26,11 +26,14 @@
 #pragma once
 
 #include <cmath>
+#include <optional>
 #include <type_traits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -155,6 +158,7 @@ struct ConstantValue : BaseValue {
     using BaseValue::BaseValue;
 
     void dump(PrintStream&) const;
+    size_t extraMemoryFootprint() const;
 
     bool isBool() const { return std::holds_alternative<bool>(*this); }
     bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
@@ -210,6 +214,121 @@ struct ConstantValue : BaseValue {
     }
 };
 
+class OptionalConstantValue {
+public:
+    OptionalConstantValue() = default;
+    OptionalConstantValue(std::nullopt_t) { }
+    OptionalConstantValue(const ConstantValue& value)
+        : m_box(Box::create(value))
+    {
+    }
+    OptionalConstantValue(ConstantValue&& value)
+        : m_box(Box::create(WTF::move(value)))
+    {
+    }
+    OptionalConstantValue(const std::optional<ConstantValue>& value)
+    {
+        if (value)
+            m_box = Box::create(*value);
+    }
+    OptionalConstantValue(std::optional<ConstantValue>&& value)
+    {
+        if (value)
+            m_box = Box::create(WTF::move(*value));
+    }
+    OptionalConstantValue(const OptionalConstantValue&) = default;
+    OptionalConstantValue(OptionalConstantValue&&) = default;
+    OptionalConstantValue& operator=(const OptionalConstantValue&) = default;
+    OptionalConstantValue& operator=(OptionalConstantValue&&) = default;
+
+    OptionalConstantValue& operator=(std::nullopt_t)
+    {
+        m_box = nullptr;
+        return *this;
+    }
+
+    OptionalConstantValue& operator=(const ConstantValue& value)
+    {
+        if (m_box && m_box->hasOneRef()) {
+            m_box->value = value;
+            m_box->convertedTypeAddress = 0;
+        } else
+            m_box = Box::create(value);
+        return *this;
+    }
+
+    OptionalConstantValue& operator=(ConstantValue&& value)
+    {
+        if (m_box && m_box->hasOneRef()) {
+            m_box->value = WTF::move(value);
+            m_box->convertedTypeAddress = 0;
+        } else
+            m_box = Box::create(WTF::move(value));
+        return *this;
+    }
+
+    explicit operator bool() const { return !!m_box; }
+    bool has_value() const { return !!m_box; } // NOLINT
+
+    const ConstantValue& operator*() const LIFETIME_BOUND { RELEASE_ASSERT(m_box); return m_box->value; }
+    const ConstantValue* operator->() const LIFETIME_BOUND { RELEASE_ASSERT(m_box); return &m_box->value; }
+    const ConstantValue& value() const LIFETIME_BOUND { RELEASE_ASSERT(m_box); return m_box->value; }
+
+    ConstantValue& mutableValue() LIFETIME_BOUND
+    {
+        RELEASE_ASSERT(m_box);
+        if (!m_box->hasOneRef())
+            m_box = Box::create(m_box->value);
+        else
+            m_box->convertedTypeAddress = 0;
+        return m_box->value;
+    }
+
+    bool isConvertedTo(const Type* type) const { return m_box && type && m_box->convertedTypeAddress == reinterpret_cast<uintptr_t>(type); }
+    void setConvertedType(const Type* type)
+    {
+        if (m_box)
+            m_box->convertedTypeAddress = reinterpret_cast<uintptr_t>(type);
+    }
+
+    const void* storageIdentity() const { return m_box.get(); }
+    size_t storageMemoryFootprint() const { return m_box ? sizeof(Box) + m_box->value.extraMemoryFootprint() : 0; }
+
+    operator std::optional<ConstantValue>() const
+    {
+        if (!m_box)
+            return std::nullopt;
+        return m_box->value;
+    }
+
+    void dump(PrintStream& out) const
+    {
+        if (m_box)
+            m_box->value.dump(out);
+        else
+            out.print("<nullopt>");
+    }
+
+private:
+    struct Box : ThreadSafeRefCounted<Box> {
+        static Ref<Box> create(const ConstantValue& value) { return adoptRef(*new Box(value)); }
+        static Ref<Box> create(ConstantValue&& value) { return adoptRef(*new Box(WTF::move(value))); }
+        explicit Box(const ConstantValue& value)
+            : value(value)
+        {
+        }
+        explicit Box(ConstantValue&& value)
+            : value(WTF::move(value))
+        {
+        }
+        ConstantValue value;
+        uintptr_t convertedTypeAddress { 0 };
+    };
+
+    RefPtr<Box> m_box;
+};
+static_assert(sizeof(OptionalConstantValue) == sizeof(void*));
+
 template<typename To, typename From>
 std::optional<To> convertInteger(From value)
 {
@@ -224,8 +343,8 @@ std::optional<To> convertFloat(From value)
 {
     static_assert(std::is_floating_point<To>::value || std::is_same<To, half>::value, "Result type is expected to be a floating point type: double, float, or half");
 
-    static To max;
-    static To lowest;
+    To max;
+    To lowest;
     if constexpr (std::is_floating_point<To>::value) {
         max = std::numeric_limits<To>::max();
         lowest = std::numeric_limits<To>::lowest();

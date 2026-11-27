@@ -250,7 +250,7 @@ private:
     bool m_supportsSubgroupUniformity { false };
 };
 
-AST::IdentifierExpression* UniformityGraph::rootIdentifier(AST::Expression& expr)
+SUPPRESS_NODELETE AST::IdentifierExpression* UniformityGraph::rootIdentifier(AST::Expression& expr)
 {
     if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(expr))
         return ident;
@@ -264,6 +264,10 @@ AST::IdentifierExpression* UniformityGraph::rootIdentifier(AST::Expression& expr
         return rootIdentifier(unary->expression());
     if (auto* deref = dynamicDowncast<AST::PointerDereferenceExpression>(expr))
         return rootIdentifier(deref->target());
+    if (auto* call = dynamicDowncast<AST::CallExpression>(expr)) {
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call->target()); target && (target->base().id() == "bufferView"_s || target->base().id() == "bufferArrayView"_s) && !call->arguments().isEmpty())
+            return rootIdentifier(call->arguments()[0]);
+    }
     return nullptr;
 }
 
@@ -384,6 +388,7 @@ std::optional<Error> UniformityGraph::processFunction(AST::Function& function)
                 switch (*builtin) {
                 case Builtin::NumWorkgroups:
                 case Builtin::WorkgroupId:
+                case Builtin::WorkgroupIndex:
                 case Builtin::NumSubgroups:
                     isNonUniform = false;
                     break;
@@ -1133,11 +1138,32 @@ std::pair<Node*, Node*> UniformityGraph::processExpression(Node* cf, AST::Expres
     if (auto* unaryExpr = dynamicDowncast<AST::UnaryExpression>(expression)) {
         if (unaryExpr->operation() == AST::UnaryOperation::AddressOf)
             return processAddressOf(cf, unaryExpr->expression());
-        return processExpression(cf, unaryExpr->expression());
+        auto [cf1, val] = processExpression(cf, unaryExpr->expression());
+        if (unaryExpr->operation() == AST::UnaryOperation::Dereference) {
+            if (auto* rootIdent = rootIdentifier(unaryExpr->expression())) {
+                if (auto* rootVal = info.getVariable(rootIdent->identifier().id())) {
+                    auto* derefNode = info.createNode(&expression);
+                    derefNode->addEdge(val);
+                    derefNode->addEdge(rootVal);
+                    return { cf1, derefNode };
+                }
+            }
+        }
+        return { cf1, val };
     }
 
-    if (auto* derefExpr = dynamicDowncast<AST::PointerDereferenceExpression>(expression))
-        return processExpression(cf, derefExpr->target());
+    if (auto* derefExpr = dynamicDowncast<AST::PointerDereferenceExpression>(expression)) {
+        auto [cf1, val] = processExpression(cf, derefExpr->target());
+        if (auto* rootIdent = rootIdentifier(derefExpr->target())) {
+            if (auto* rootVal = info.getVariable(rootIdent->identifier().id())) {
+                auto* derefNode = info.createNode(&expression);
+                derefNode->addEdge(val);
+                derefNode->addEdge(rootVal);
+                return { cf1, derefNode };
+            }
+        }
+        return { cf1, val };
+    }
 
     if (auto* binaryExpr = dynamicDowncast<AST::BinaryExpression>(expression)) {
         bool isShortCircuit = binaryExpr->operation() == AST::BinaryOperation::ShortCircuitAnd
@@ -1244,8 +1270,31 @@ UniformityGraph::LValue UniformityGraph::processLValueExpression(Node* cf, AST::
         return { cf2, lhsValue, rootIdent };
     }
 
-    if (auto* fieldExpr = dynamicDowncast<AST::FieldAccessExpression>(expr))
+    if (auto* fieldExpr = dynamicDowncast<AST::FieldAccessExpression>(expr)) {
+        if (!isPartialReference) {
+            AST::Expression* root = &expr;
+            while (auto* fa = dynamicDowncast<AST::FieldAccessExpression>(*root)) {
+                auto* baseType = fa->base().inferredType();
+                if (auto* ref = std::get_if<Types::Reference>(baseType))
+                    baseType = ref->element;
+                else if (auto* ptr = std::get_if<Types::Pointer>(baseType))
+                    baseType = ptr->element;
+                if (!baseType || !std::holds_alternative<Types::Vector>(*baseType))
+                    break;
+                root = &fa->base();
+            }
+            if (root != &expr) {
+                auto* rootType = root->inferredType();
+                if (auto* ref = std::get_if<Types::Reference>(rootType))
+                    rootType = ref->element;
+                else if (auto* ptr = std::get_if<Types::Pointer>(rootType))
+                    rootType = ptr->element;
+                if (auto* vecType = std::get_if<Types::Vector>(rootType); vecType && fieldExpr->fieldName().id().length() == vecType->size)
+                    return processLValueExpression(cf, *root, false);
+            }
+        }
         return processLValueExpression(cf, fieldExpr->base(), true);
+    }
 
     if (auto* identityExpr = dynamicDowncast<AST::IdentityExpression>(expr))
         return processLValueExpression(cf, identityExpr->expression(), isPartialReference);
@@ -1255,6 +1304,19 @@ UniformityGraph::LValue UniformityGraph::processLValueExpression(Node* cf, AST::
 
     if (auto* derefExpr = dynamicDowncast<AST::PointerDereferenceExpression>(expr))
         return processLValueExpression(cf, derefExpr->target(), isPartialReference);
+
+    if (auto* callExpr = dynamicDowncast<AST::CallExpression>(expr)) {
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(callExpr->target()); target && (target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s) && callExpr->arguments().size() >= 2) {
+            auto [cf1, lhsValue, rootIdent] = processLValueExpression(cf, callExpr->arguments()[0], true);
+            Node* cfCur = cf1;
+            for (unsigned i = 1; i < callExpr->arguments().size(); ++i) {
+                auto [cfNext, argVal] = processExpression(cfCur, callExpr->arguments()[i]);
+                lhsValue->addEdge(argVal);
+                cfCur = cfNext;
+            }
+            return { cfCur, lhsValue, rootIdent };
+        }
+    }
 
     return { cf, info.createNode(), { } };
 }
@@ -1267,6 +1329,8 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
     String name;
     if (target)
         name = target->identifier().id();
+    else if (auto* elaboratedTarget = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target()))
+        name = elaboratedTarget->base().id();
 
     Node* cfLastArg = cf;
     Vector<Node*> args;
@@ -1460,6 +1524,7 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
 
     result->addEdge(cfAfter);
 
+    HashSet<String> updatedPointerRoots;
     for (unsigned i = 0; i < args.size(); ++i) {
         if (funcInfo) {
             auto& paramInfo = funcInfo->parameters[i];
@@ -1508,8 +1573,18 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 }
 
                 auto* rootIdent = rootIdentifier(arg);
-                if (rootIdent)
-                    info.setVariable(rootIdent->identifier().id(), ptrResult);
+                if (rootIdent) {
+                    const auto& rootName = rootIdent->identifier().id();
+                    if (!updatedPointerRoots.add(rootName).isNewEntry) {
+                        if (auto* priorResult = info.getVariable(rootName)) {
+                            auto* merged = info.createNode(&call);
+                            merged->addEdge(priorResult);
+                            merged->addEdge(ptrResult);
+                            ptrResult = merged;
+                        }
+                    }
+                    info.setVariable(rootName, ptrResult);
+                }
             }
         } else {
             if (name == "workgroupUniformLoad"_s && !m_analyzingSubgroupScope) {
@@ -1532,6 +1607,17 @@ std::pair<Node*, Node*> UniformityGraph::processCall(Node* cf, AST::CallExpressi
                 }
                 if (auto* node = info.requiredToBeUniformForSeverity(callSiteSeverity))
                     node->addEdge(ptrValueNode);
+            } else if ((name == "bufferLength"_s || name == "arrayLength"_s || name == "bufferView"_s || name == "bufferArrayView"_s) && !i) {
+                auto* ptrValueNode = borrow(args)[0];
+                if (auto* rootId = rootIdentifier(call.arguments()[0])) {
+                    for (auto& paramInfo : info.parameters) {
+                        if (paramInfo.name == rootId->identifier().id() && paramInfo.ptrInputContents) {
+                            ptrValueNode = paramInfo.value;
+                            break;
+                        }
+                    }
+                }
+                result->addEdge(ptrValueNode);
             } else {
                 // A subgroup reduction/broadcast at subgroup scope yields a uniform
                 // result regardless of whether its inputs are uniform, so its result

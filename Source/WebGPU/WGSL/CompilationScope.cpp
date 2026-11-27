@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CompilationScope.h"
 
+#include "Types.h"
 #include "WGSLShaderModule.h"
 
 namespace WGSL {
@@ -35,7 +36,10 @@ CompilationScope::CompilationScope(ShaderModule& shaderModule)
     , m_builderState(shaderModule.astBuilder().saveCurrentState())
     , m_replacementsSize(shaderModule.currentReplacementSize())
     , m_overrideValidationsSize(shaderModule.currentOverrideValidationsSize())
+    , m_typesSize(shaderModule.types().currentState().first)
+    , m_typeCacheSize(shaderModule.types().currentState().second)
 {
+    m_shaderModule.beginCompilationScope();
 }
 
 CompilationScope::CompilationScope(CompilationScope&& other)
@@ -43,6 +47,8 @@ CompilationScope::CompilationScope(CompilationScope&& other)
     , m_builderState(other.m_builderState)
     , m_replacementsSize(other.m_replacementsSize)
     , m_overrideValidationsSize(other.m_overrideValidationsSize)
+    , m_typesSize(other.m_typesSize)
+    , m_typeCacheSize(other.m_typeCacheSize)
 {
     other.m_invalidated = true;
 }
@@ -53,6 +59,8 @@ CompilationScope::~CompilationScope()
         return;
     m_shaderModule.revertOverrideValidations(m_overrideValidationsSize);
     m_shaderModule.revertReplacements(m_replacementsSize);
+    m_shaderModule.endCompilationScope();
+    m_shaderModule.types().restoreState(m_typesSize, m_typeCacheSize);
     m_shaderModule.astBuilder().restore(WTF::move(m_builderState));
 }
 

@@ -211,6 +211,9 @@ const Type* concretize(const Type* type, TypeStore& types)
         [&](const Reference&) -> const Type* {
             return nullptr;
         },
+        [&](const Types::Buffer&) -> const Type* {
+            return nullptr;
+        },
         [&](const TypeConstructor&) -> const Type* {
             return nullptr;
         });

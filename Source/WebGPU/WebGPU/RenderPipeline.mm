@@ -979,7 +979,14 @@ NSString* Device::addPipelineLayouts(Vector<Vector<ResolvedBindGroupLayoutEntry>
                 }); existingBindingIndex != notFound) {
                     entries[existingBindingIndex].visibility |= visibility;
                     std::span(entries[existingBindingIndex].metalBinding)[stage] = entry.binding;
-                    if (!BindGroupLayout::equalBindingEntries(entries[existingBindingIndex].bindingLayout, makeBindingLayout(entry.bindingMember)))
+                    auto incomingLayout = makeBindingLayout(entry.bindingMember);
+                    auto* existingBufferLayout = std::get_if<BindGroupLayout::BufferBindingLayout>(&entries[existingBindingIndex].bindingLayout);
+                    auto* incomingBufferLayout = std::get_if<BindGroupLayout::BufferBindingLayout>(&incomingLayout);
+                    if (existingBufferLayout && incomingBufferLayout) {
+                        if (existingBufferLayout->type != incomingBufferLayout->type || existingBufferLayout->hasDynamicOffset != incomingBufferLayout->hasDynamicOffset)
+                            return @"Binding mismatch in auto-generated layouts";
+                        existingBufferLayout->minBindingSize = std::max(existingBufferLayout->minBindingSize, incomingBufferLayout->minBindingSize);
+                    } else if (!BindGroupLayout::equalBindingEntries(entries[existingBindingIndex].bindingLayout, incomingLayout))
                         return @"Binding mismatch in auto-generated layouts";
                     entryMap.set(entry.name, webBinding);
                     continue;
@@ -1539,6 +1546,8 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
             return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation"));
 
         const auto& entryPointInformation = preparedVertexLibrary->entryPointInformation;
+        if (!std::holds_alternative<WGSL::Reflection::Vertex>(entryPointInformation.typedEntryPoint))
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex entry point is not a vertex shader"_s));
         vertexShaderBindingCount = std::min<uint32_t>(entryPointInformation.bindingCount, std::numeric_limits<uint32_t>::max());
         if (!pipelineLayout) {
             if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
@@ -1665,6 +1674,8 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
             return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created"));
 
         const auto& entryPointInformation = preparedFragmentLibrary->entryPointInformation;
+        if (!std::holds_alternative<WGSL::Reflection::Fragment>(entryPointInformation.typedEntryPoint))
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment entry point is not a fragment shader"_s));
         if (!pipelineLayout) {
             if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
                 return callback(returnInvalidRenderPipeline(*this, isAsync, error));

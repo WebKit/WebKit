@@ -120,6 +120,7 @@ namespace WGSL {
     value(FragDepth, frag_depth) \
     value(FrontFacing, front_facing) \
     value(GlobalInvocationId, global_invocation_id) \
+    value(GlobalInvocationIndex, global_invocation_index) \
     value(InstanceIndex, instance_index) \
     value(LocalInvocationId, local_invocation_id) \
     value(LocalInvocationIndex, local_invocation_index) \
@@ -134,6 +135,7 @@ namespace WGSL {
     value(SubgroupSize, subgroup_size) \
     value(VertexIndex, vertex_index) \
     value(WorkgroupId, workgroup_id) \
+    value(WorkgroupIndex, workgroup_index) \
 
 #define ENUM_Extension(value) \
     value(ClipDistances, clip_distances, 1 << 0) \
@@ -143,12 +145,19 @@ namespace WGSL {
     value(Subgroups, subgroups, 1 << 3) \
 
 #define ENUM_LanguageFeature(value) \
+    value(BufferView, buffer_view, 1 << 14) \
+    value(FragmentDepth, fragment_depth, 1 << 7) \
+    value(LinearIndexing, linear_indexing, 1 << 8) \
     value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \
     value(PointerCompositeAccess, pointer_composite_access, 1 << 1) \
     value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 2) \
     value(SubgroupId, subgroup_id, 1 << 5) \
     value(SubgroupUniformity, subgroup_uniformity, 1 << 6) \
+    value(SwizzleAssignment, swizzle_assignment, 1 << 9) \
+    value(TextureAndSamplerLet, texture_and_sampler_let, 1 << 10) \
     value(TextureFormatsTier1, texture_formats_tier1, 1 << 3) \
+    value(UniformBufferStandardLayout, uniform_buffer_standard_layout, 1 << 11) \
+    value(UnrestrictedAliasing, unrestricted_aliasing, 1 << 12) \
     value(UnrestrictedPointerParameters, unrestricted_pointer_parameters, 1 << 4) \
 
 #define ENUM_DECLARE_VALUE(__value, _, ...) \
@@ -164,7 +173,7 @@ namespace WGSL {
     const __name* parse##__name(const WTF::String&)
 
 #define ENUM_DECLARE(__name) \
-    enum class __name : uint8_t { \
+    enum class __name : uint16_t { \
     ENUM_##__name(ENUM_DECLARE_VALUE) \
     }; \
     ENUM_DECLARE_PRINT_INTERNAL(__name); \

@@ -209,7 +209,7 @@ public:
         AtomicCompareExchangeResult::map,
     });
 
-    String name;
+    ASCIILiteral name;
     Kind kind;
     FixedVector<const Type*> values;
 };
@@ -239,9 +239,18 @@ struct Atomic {
     const Type* element;
 };
 
+struct Buffer {
+    using Size = Variant<std::monostate, unsigned, AST::Expression*>;
+    Size size;
+
+    bool isUnsized() const { return std::holds_alternative<std::monostate>(size); }
+    bool isCreationFixed() const { return std::holds_alternative<unsigned>(size); }
+    bool isOverrideSized() const { return std::holds_alternative<AST::Expression*>(size); }
+};
+
 struct TypeConstructor {
     ASCIILiteral name;
-    std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)> construct;
+    std::function<Result<const Type*>(TypeChecker&, AST::ElaboratedTypeExpression&)> construct;
 };
 
 } // namespace Types
@@ -260,6 +269,7 @@ struct Type : public Variant<
     Types::Reference,
     Types::Pointer,
     Types::Atomic,
+    Types::Buffer,
     Types::TypeConstructor
 > {
     using Variant<
@@ -276,6 +286,7 @@ struct Type : public Variant<
         Types::Reference,
         Types::Pointer,
         Types::Atomic,
+        Types::Buffer,
         Types::TypeConstructor
         >::variant;
     void dump(PrintStream&) const;
@@ -291,6 +302,10 @@ struct Type : public Variant<
     bool hasCreationFixedFootprint() const;
     bool containsRuntimeArray() const;
     bool containsOverrideArray() const;
+    bool containsOverrideBuffer() const;
+    bool containsArray() const;
+    bool containsAtomic() const;
+    unsigned minBufferViewSize() const;
     bool isSampler() const;
     bool isTexture() const;
 };
