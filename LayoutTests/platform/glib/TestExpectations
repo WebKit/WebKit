@@ -469,12 +469,24 @@ imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.
 
 imported/w3c/web-platform-tests/css/mediaqueries/display-mode.html [ Pass ]
 
+imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.grid.no_filter.no_shadow.fillRect.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/compositing/2d.composite.grid.no_filter.no_shadow.pattern.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.ctx-filter.rotation.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.no-cxt-filter.rotation.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/colr-glyph-composition.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/text/direction-inherit-rtl.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/text/direction-rtl.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.grid.no_filter.no_shadow.fillRect.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.grid.no_filter.no_shadow.fillRect.w.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.grid.no_filter.no_shadow.pattern.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/compositing/2d.composite.grid.no_filter.no_shadow.pattern.w.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/layers/2d.layer.global-states.ctx-filter.rotation.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/layers/2d.layer.global-states.ctx-filter.rotation.w.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/layers/2d.layer.global-states.no-cxt-filter.rotation.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/layers/2d.layer.global-states.no-cxt-filter.rotation.w.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-008.html [ Pass ]
 
