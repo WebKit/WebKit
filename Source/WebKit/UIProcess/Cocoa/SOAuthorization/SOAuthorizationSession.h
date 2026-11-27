@@ -101,7 +101,7 @@ protected:
     ASCIILiteral stateString() const;
     NODELETE ASCIILiteral initiatingActionString() const;
     void setState(State state) { m_state = state; }
-    const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
+    const API::NavigationAction* navigationAction() LIFETIME_BOUND { return m_navigationAction.get(); }
     Ref<API::NavigationAction> releaseNavigationAction();
 
 private:

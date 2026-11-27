@@ -71,10 +71,10 @@ public:
 
     NODELETE WebPageProxy* page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
-    WebProcessProxy& process() const { return m_process.get(); }
-    WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
-    const BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup.get(); }
-    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    WebProcessProxy& process() const LIFETIME_BOUND { return m_process.get(); }
+    WebFrameProxy& mainFrame() LIFETIME_BOUND { return m_mainFrame.get(); }
+    const BrowsingContextGroup& browsingContextGroup() const LIFETIME_BOUND { return m_browsingContextGroup.get(); }
+    BrowsingContextGroup& browsingContextGroup() LIFETIME_BOUND { return m_browsingContextGroup.get(); }
 
     NODELETE WebBackForwardCache& backForwardCache() const;
 

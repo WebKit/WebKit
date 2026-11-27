@@ -1972,7 +1972,7 @@ bool WebExtensionContext::isBackgroundPage(WebCore::FrameIdentifier frameIdentif
     return isBackgroundPage(page->identifier());
 }
 
-const String& WebExtensionContext::backgroundWebViewInspectionName()
+const String& WebExtensionContext::backgroundWebViewInspectionName() LIFETIME_BOUND
 {
     if (!m_backgroundWebViewInspectionName.isEmpty())
         return m_backgroundWebViewInspectionName;

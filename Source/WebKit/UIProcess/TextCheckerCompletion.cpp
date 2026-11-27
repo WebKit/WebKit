@@ -47,7 +47,7 @@ TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, con
 {
 }
 
-const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() const
+const TextCheckingRequestData& TextCheckerCompletion::textCheckingRequestData() const LIFETIME_BOUND
 {
     return m_requestData;
 }

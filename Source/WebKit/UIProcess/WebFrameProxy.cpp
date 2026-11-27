@@ -278,7 +278,7 @@ void WebFrameProxy::webProcessWillShutDown()
         m_navigateCallback({ }, { });
 }
 
-WebProcessProxy& WebFrameProxy::process() const
+WebProcessProxy& WebFrameProxy::process() const LIFETIME_BOUND
 {
     return m_frameProcess->process();
 }

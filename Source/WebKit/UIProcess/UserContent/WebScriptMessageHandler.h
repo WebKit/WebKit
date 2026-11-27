@@ -61,7 +61,7 @@ public:
 
     String name() const { return m_name; }
 
-    API::ContentWorld& world() { return m_world.get(); }
+    API::ContentWorld& world() LIFETIME_BOUND { return m_world.get(); }
 
     Client& client() const LIFETIME_BOUND { return *m_client; }
 

@@ -81,7 +81,7 @@ private:
     };
     static State stateFromProcessState(RBSProcessState *);
     static State stateForHandle(RBSProcessHandle *);
-    const State& ensureState() const;
+    const State& ensureState() const LIFETIME_BOUND;
     void setState(State&&);
 
     WeakHashSet<EndowmentStateTrackerClient> m_clients;

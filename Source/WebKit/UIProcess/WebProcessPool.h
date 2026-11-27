@@ -171,7 +171,7 @@ public:
     void ref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::deref(); }
 
-    API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
+    API::ProcessPoolConfiguration& configuration() LIFETIME_BOUND { return m_configuration.get(); }
 
     static Vector<Ref<WebProcessPool>> allProcessPools();
 
@@ -192,7 +192,7 @@ public:
     void removeMessageReceiver(IPC::ReceiverName);
     void removeMessageReceiver(IPC::ReceiverName, uint64_t destinationID);
 
-    WebBackForwardCache& backForwardCache() { return m_backForwardCache.get(); }
+    WebBackForwardCache& backForwardCache() LIFETIME_BOUND { return m_backForwardCache.get(); }
     
     void addMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase& destinationID, IPC::MessageReceiver& receiver)
     {
@@ -227,7 +227,7 @@ public:
 
     void processDidFinishLaunching(WebProcessProxy&);
 
-    WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
+    WebProcessCache& webProcessCache() LIFETIME_BOUND { return m_webProcessCache.get(); }
 
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy&);
@@ -238,7 +238,7 @@ public:
     void pageEndUsingWebsiteDataStore(WebPageProxy&, WebsiteDataStore&);
     bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
-    const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
+    const String& injectedBundlePath() const LIFETIME_BOUND { return m_configuration->injectedBundlePath(); }
 
     Ref<DownloadProxy> download(WebsiteDataStore&, WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, const String& suggestedFilename = { });
     Ref<DownloadProxy> resumeDownload(WebsiteDataStore&, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart);
@@ -263,7 +263,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    const WebCore::ScreenProperties& cachedScreenProperties();
+    const WebCore::ScreenProperties& cachedScreenProperties() LIFETIME_BOUND;
     void displayPropertiesChanged(WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
@@ -279,7 +279,7 @@ public:
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
     void countWebPagesInAllProcessesForTesting(CompletionHandler<void(unsigned)>&&);
 
-    WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
+    WebPageGroup& defaultPageGroup() LIFETIME_BOUND { return m_defaultPageGroup.get(); }
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setDisableFontSubpixelAntialiasingForTesting(bool);
@@ -297,7 +297,7 @@ public:
     void registerURLSchemeAsCachePartitioned(const String&);
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&);
 
-    VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
+    VisitedLinkStore& visitedLinkStore() LIFETIME_BOUND { return m_visitedLinkStore.get(); }
 
     void setCacheModel(CacheModel);
     void setCacheModelSynchronouslyForTesting(CacheModel);
@@ -353,7 +353,7 @@ public:
 
     void updateAutomationCapabilities() const;
     void setAutomationSession(RefPtr<WebAutomationSession>&&);
-    WebAutomationSession* automationSession() const { return m_automationSession.get(); }
+    WebAutomationSession* automationSession() const LIFETIME_BOUND { return m_automationSession.get(); }
 
     // Defaults to false.
     void setHTTPPipeliningEnabled(bool);
@@ -395,8 +395,8 @@ public:
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
 
-    GPUProcessProxy& ensureGPUProcess();
-    GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
+    GPUProcessProxy& ensureGPUProcess() LIFETIME_BOUND;
+    GPUProcessProxy* gpuProcess() const LIFETIME_BOUND { return m_gpuProcess.get(); }
 #endif
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
@@ -412,7 +412,7 @@ public:
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::ModelProcessConnectionParameters&&);
 
-    ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
+    ModelProcessProxy* modelProcess() const LIFETIME_BOUND { return m_modelProcess.get(); }
 #endif
 
     // Network Process Management
@@ -448,7 +448,7 @@ public:
     void updateProcessSuppressionState();
 
     NSMutableDictionary *ensureBundleParameters();
-    NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
+    NSMutableDictionary *bundleParameters() LIFETIME_BOUND { return m_bundleParameters.get(); }
 #else
     void updateProcessSuppressionState() const { }
 #endif
@@ -588,7 +588,7 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    ExtensionCapabilityGranter& extensionCapabilityGranter();
+    ExtensionCapabilityGranter& extensionCapabilityGranter() LIFETIME_BOUND;
 #endif
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
@@ -624,7 +624,7 @@ public:
 
 #if PLATFORM(COCOA)
     void registerAssetFonts(WebProcessProxy&);
-    const HashMap<String, bool>& mediaSourceTypesSupported() const { return m_mediaSourceTypesSupported; }
+    const HashMap<String, bool>& mediaSourceTypesSupported() const LIFETIME_BOUND { return m_mediaSourceTypesSupported; }
     void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
 #endif
 
@@ -795,7 +795,7 @@ private:
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    NODELETE ModelProcessProxy& ensureModelProcess();
+    NODELETE ModelProcessProxy& ensureModelProcess() LIFETIME_BOUND;
     void updateModelProcessAssertion();
     void terminateAllWebContentProcessesWithModelPlayers();
 #endif
@@ -842,7 +842,7 @@ private:
         PrintProcessUseCounter useCounter;
     };
 
-    PrintProcessState& printProcessState(WebProcessProxy::LockdownMode lockdownMode) { return lockdownMode == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState; }
+    PrintProcessState& printProcessState(WebProcessProxy::LockdownMode lockdownMode) LIFETIME_BOUND { return lockdownMode == WebProcessProxy::LockdownMode::Enabled ? m_lockdownPrintProcessState : m_printProcessState; }
     void shutDownPrintProcess(WebProcessProxy::LockdownMode);
     void printProcessDidDisconnect(WebProcessProxy&);
     void printProcessUseCountDidChange(WebProcessProxy::LockdownMode);

@@ -59,7 +59,7 @@ public:
 
     WebKit::WebPageProxy* page() { return m_page.get(); }
     const WTF::URL& originalURL() const LIFETIME_BOUND { return m_originalURL; }
-    const DataTaskClient& client() const { return m_client.get(); }
+    const DataTaskClient& client() const LIFETIME_BOUND { return m_client.get(); }
     void setClient(Ref<DataTaskClient>&&);
     void networkProcessCrashed();
     void didCompleteWithError(WebCore::ResourceError&&);

@@ -45,7 +45,7 @@ FidoAuthenticator::~FidoAuthenticator()
         driver->cancel();
 }
 
-CtapDriver& FidoAuthenticator::driver() const
+CtapDriver& FidoAuthenticator::driver() const LIFETIME_BOUND
 {
     ASSERT(m_driver);
     return *m_driver;

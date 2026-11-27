@@ -205,8 +205,8 @@ protected:
 
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
 
-    ProcessState& processStateForConnection(IPC::Connection&);
-    NODELETE const ProcessState& processStateForIdentifier(WebCore::ProcessIdentifier) const;
+    ProcessState& processStateForConnection(IPC::Connection&) LIFETIME_BOUND;
+    NODELETE const ProcessState& processStateForIdentifier(WebCore::ProcessIdentifier) const LIFETIME_BOUND;
     IPC::Connection* connectionForIdentifier(WebCore::ProcessIdentifier);
     void forEachProcessState(NOESCAPE const Function<void(ProcessState&, WebProcessProxy&)>&);
 

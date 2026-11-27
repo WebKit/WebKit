@@ -1071,7 +1071,7 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
     return result;
 }
 
-EnhancedSecuritySitesHolder& WebsiteDataStore::enhancedSecuritySitesHolder()
+EnhancedSecuritySitesHolder& WebsiteDataStore::enhancedSecuritySitesHolder() LIFETIME_BOUND
 {
     ASSERT(isPersistent());
 

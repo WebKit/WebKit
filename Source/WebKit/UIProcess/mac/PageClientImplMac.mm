@@ -172,8 +172,8 @@ NSWindow *PageClientImpl::activeWindow() const
     if (CheckedPtr impl = m_impl.get()) {
         if (RetainPtr thumbnailView = impl->thumbnailView())
             return [thumbnailView window];
-        if (impl->targetWindowForMovePreparation())
-            return impl->targetWindowForMovePreparation();
+        if (RetainPtr window = impl->targetWindowForMovePreparation())
+            return window.autorelease();
     }
     return [m_view.get() window];
 }

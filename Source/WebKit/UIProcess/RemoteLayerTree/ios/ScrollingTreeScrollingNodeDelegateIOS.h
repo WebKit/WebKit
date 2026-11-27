@@ -69,7 +69,7 @@ public:
     String currentURL() const;
 
     void currentSnapPointIndicesDidChange(std::optional<unsigned> horizontal, std::optional<unsigned> vertical) const;
-    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
+    CALayer *scrollLayer() const LIFETIME_BOUND { return m_scrollLayer.get(); }
 
     void resetScrollViewDelegate();
     void commitStateBeforeChildren(const WebCore::ScrollingStateScrollingNode&);

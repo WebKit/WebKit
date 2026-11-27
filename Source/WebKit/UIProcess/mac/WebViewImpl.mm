@@ -5614,7 +5614,7 @@ void WebViewImpl::removeTextEffectForID(NSUUID *uuid)
 
 #endif // ENABLE(WRITING_TOOLS)
 
-ViewGestureController& WebViewImpl::ensureGestureController()
+ViewGestureController& WebViewImpl::ensureGestureController() LIFETIME_BOUND
 {
     if (!m_gestureController)
         m_gestureController = ViewGestureController::create(m_page);

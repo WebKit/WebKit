@@ -83,7 +83,7 @@ public:
 
     RefPtr<WebExtensionBookmark> parent() const;
     std::optional<size_t> index() const;
-    const Vector<Ref<WebExtensionBookmark>>& children() const;
+    const Vector<Ref<WebExtensionBookmark>>& children() const LIFETIME_BOUND;
 
     // Returns this bookmark or the descendant with the identifier.
     RefPtr<WebExtensionBookmark> find(const String& identifier);
@@ -109,7 +109,7 @@ public:
     std::optional<WebExtensionError> removalError(const String& apiName, Recursively) const;
 
 #ifdef __OBJC__
-    NSObject *delegate() const { return m_delegate.get(); }
+    NSObject *delegate() const LIFETIME_BOUND { return m_delegate.get(); }
 #endif
 
 private:

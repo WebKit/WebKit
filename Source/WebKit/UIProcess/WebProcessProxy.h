@@ -228,7 +228,7 @@ public:
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, NOESCAPE const Function<void(WebPageProxy&)>&);
     void addAllowedFirstPartyForCookies(const WebCore::Site&, LoadedWebArchive);
-    const std::pair<LoadedWebArchive, HashSet<WebCore::Site>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
+    const std::pair<LoadedWebArchive, HashSet<WebCore::Site>>& allowedFirstPartiesForCookiesData() const LIFETIME_BOUND { return m_allowedFirstPartiesForCookies; }
     bool hasCommittedWebArchive() const { return m_hasCommittedWebArchive; }
     void setHasCommittedWebArchive() { m_hasCommittedWebArchive = true; }
 
@@ -467,7 +467,7 @@ public:
     void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
 
     void setTaskNamePort(MachSendRight&&);
-    const MachSendRight& taskNamePort() const { return m_taskNamePort; }
+    const MachSendRight& taskNamePort() const LIFETIME_BOUND { return m_taskNamePort; }
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(UIPROCESS_PERIODIC_MEMORY_MONITOR)

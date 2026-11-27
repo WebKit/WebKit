@@ -50,8 +50,8 @@ public:
     WebCore::UserScript& userScript() LIFETIME_BOUND { return m_userScript; }
     const WebCore::UserScript& userScript() const LIFETIME_BOUND { return m_userScript; }
 
-    ContentWorld& contentWorld() { return m_world; }
-    const ContentWorld& contentWorld() const { return m_world; }
+    ContentWorld& contentWorld() LIFETIME_BOUND { return m_world; }
+    const ContentWorld& contentWorld() const LIFETIME_BOUND { return m_world; }
 
     WebKit::WebPageProxy* page() const;
 

@@ -60,7 +60,7 @@ public:
 
     WebProtectionSpace* protectionSpace() const;
 
-    AuthenticationDecisionListener& listener() const { return m_listener.get(); }
+    AuthenticationDecisionListener& listener() const LIFETIME_BOUND { return m_listener.get(); }
     const WebCore::AuthenticationChallenge& core() LIFETIME_BOUND { return m_coreAuthenticationChallenge; }
 
 private:

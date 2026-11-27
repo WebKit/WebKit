@@ -273,12 +273,12 @@ public:
     bool consumeTransientActivation();
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
 
-    NODELETE WebProcessProxy& process() const;
+    NODELETE WebProcessProxy& process() const LIFETIME_BOUND;
     void setProcess(FrameProcess&);
-    const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
-    FrameProcess& frameProcess() { return m_frameProcess.get(); }
+    const FrameProcess& frameProcess() const LIFETIME_BOUND { return m_frameProcess.get(); }
+    FrameProcess& frameProcess() LIFETIME_BOUND { return m_frameProcess.get(); }
     void removeChildFrames();
-    ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
+    ProvisionalFrameProxy* provisionalFrame() LIFETIME_BOUND { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
     void cancelProvisionalFrame(WebProcessProxy& provisionalProcess);
     NODELETE WebProcessProxy& provisionalLoadProcess();
@@ -327,7 +327,7 @@ public:
     WebCore::ScrollbarMode scrollingMode() const { return m_scrollingMode; }
     void updateScrollingMode(WebCore::ScrollbarMode);
 
-    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const { return m_cspOriginsThatUpgradeInsecureNavigations; }
+    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const LIFETIME_BOUND { return m_cspOriginsThatUpgradeInsecureNavigations; }
     void setCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&& origins) { m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(origins); }
 
     void updateOpener(std::optional<WebCore::FrameIdentifier>);

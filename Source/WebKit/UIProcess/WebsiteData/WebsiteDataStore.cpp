@@ -308,7 +308,7 @@ WebsiteDataStore* WebsiteDataStore::existingDataStoreForSessionID(PAL::SessionID
 }
 
 #if HAVE(APP_SSO)
-SOAuthorizationCoordinator& WebsiteDataStore::soAuthorizationCoordinator(const WebPageProxy& pageProxy)
+SOAuthorizationCoordinator& WebsiteDataStore::soAuthorizationCoordinator(const WebPageProxy& pageProxy) LIFETIME_BOUND
 {
     RELEASE_ASSERT(protect(pageProxy.preferences())->isExtensibleSSOEnabled());
     if (!m_soAuthorizationCoordinator)
@@ -341,7 +341,7 @@ void WebsiteDataStore::setNetworkProcess(NetworkProcessProxy& networkProcess)
     m_networkProcess = networkProcess;
 }
 
-NetworkProcessProxy& WebsiteDataStore::networkProcess()
+NetworkProcessProxy& WebsiteDataStore::networkProcess() LIFETIME_BOUND
 {
     if (!m_networkProcess) {
         Ref networkProcess = networkProcessForSession(m_sessionID);
@@ -479,7 +479,7 @@ static void resolveDirectories(WebsiteDataStoreConfiguration::Directories& direc
         directories.isolatedSitesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.isolatedSitesDirectory);
 }
 
-const WebsiteDataStoreConfiguration::Directories& WebsiteDataStore::resolvedDirectories() const
+const WebsiteDataStoreConfiguration::Directories& WebsiteDataStore::resolvedDirectories() const LIFETIME_BOUND
 {
     ASSERT(RunLoop::isMain());
 
@@ -1105,7 +1105,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 }
 
-DeviceIdHashSaltStorage& WebsiteDataStore::ensureDeviceIdHashSaltStorage()
+DeviceIdHashSaltStorage& WebsiteDataStore::ensureDeviceIdHashSaltStorage() LIFETIME_BOUND
 {
     if (!m_deviceIdHashSaltStorage)
         lazyInitialize(m_deviceIdHashSaltStorage, DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()));
@@ -1114,7 +1114,7 @@ DeviceIdHashSaltStorage& WebsiteDataStore::ensureDeviceIdHashSaltStorage()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-DeviceIdHashSaltStorage& WebsiteDataStore::ensureMediaKeysHashSaltStorage()
+DeviceIdHashSaltStorage& WebsiteDataStore::ensureMediaKeysHashSaltStorage() LIFETIME_BOUND
 {
     if (!m_mediaKeysHashSaltStorage)
         lazyInitialize(m_mediaKeysHashSaltStorage, DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->mediaKeysHashSaltsStorageDirectory() : String()));
@@ -1548,7 +1548,7 @@ void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionH
     protect(networkProcess())->setTimeToLiveUserInteraction(m_sessionID, seconds, WTF::move(completionHandler));
 }
 
-IsolatedSiteStore& WebsiteDataStore::isolatedSiteStore()
+IsolatedSiteStore& WebsiteDataStore::isolatedSiteStore() LIFETIME_BOUND
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -2540,7 +2540,7 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAut
 }
 
 #if PLATFORM(COCOA)
-VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
+VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager() LIFETIME_BOUND
 {
     if (!is<VirtualAuthenticatorManager>(m_authenticatorManager.get()))
         m_authenticatorManager = VirtualAuthenticatorManager::create();
@@ -2549,7 +2549,7 @@ VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
 #endif
 #endif
 
-API::HTTPCookieStore& WebsiteDataStore::cookieStore()
+API::HTTPCookieStore& WebsiteDataStore::cookieStore() LIFETIME_BOUND
 {
     if (!m_cookieStore)
         lazyInitialize(m_cookieStore, API::HTTPCookieStore::create(*this));

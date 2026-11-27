@@ -219,7 +219,7 @@ std::optional<size_t> WebExtensionBookmark::index() const
     return m_index;
 }
 
-const Vector<Ref<WebExtensionBookmark>>& WebExtensionBookmark::children() const
+const Vector<Ref<WebExtensionBookmark>>& WebExtensionBookmark::children() const LIFETIME_BOUND
 {
     if (m_children)
         return *m_children;

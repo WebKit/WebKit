@@ -239,7 +239,7 @@ public:
 protected:
     explicit RemoteScrollingCoordinatorProxy(WebPageProxy&);
 
-    RemoteScrollingTree& scrollingTree() const { return m_scrollingTree.get(); }
+    RemoteScrollingTree& scrollingTree() const LIFETIME_BOUND { return m_scrollingTree.get(); }
 
     virtual void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) = 0;
 

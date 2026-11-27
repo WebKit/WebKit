@@ -111,8 +111,8 @@ public:
     void connect();
     virtual void terminate(std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
 
-    ProcessThrottler& throttler() { return m_throttler; }
-    const ProcessThrottler& throttler() const { return m_throttler; }
+    ProcessThrottler& throttler() LIFETIME_BOUND { return m_throttler; }
+    const ProcessThrottler& throttler() const LIFETIME_BOUND { return m_throttler; }
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
@@ -221,7 +221,7 @@ public:
 
     void checkForResponsiveness(CompletionHandler<void()>&& = nullptr, UseLazyStop = UseLazyStop::No);
 
-    ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer.get(); }
+    ResponsivenessTimer& responsivenessTimer() const LIFETIME_BOUND { return m_responsivenessTimer.get(); }
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }

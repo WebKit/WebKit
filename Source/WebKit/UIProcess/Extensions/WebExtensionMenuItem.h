@@ -96,7 +96,7 @@ public:
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     const String& title() const LIFETIME_BOUND { return m_title; }
 
-    WebExtensionCommand* command() const { return m_command.get(); }
+    WebExtensionCommand* command() const LIFETIME_BOUND { return m_command.get(); }
 
     RefPtr<WebCore::Icon> icon(WebCore::FloatSize) const;
 

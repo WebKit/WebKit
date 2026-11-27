@@ -2012,7 +2012,7 @@ void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageP
 }
 #endif
 
-WebExtensionAction& WebExtensionContext::defaultAction()
+WebExtensionAction& WebExtensionContext::defaultAction() LIFETIME_BOUND
 {
     if (!m_defaultAction)
         m_defaultAction = WebExtensionAction::create(*this);
@@ -2092,7 +2092,7 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-WebExtensionSidebar& WebExtensionContext::defaultSidebar()
+WebExtensionSidebar& WebExtensionContext::defaultSidebar() LIFETIME_BOUND
 {
     if (!m_defaultSidebar)
         m_defaultSidebar = WebExtensionSidebar::create(*this, WebExtensionSidebar::IsDefault::Yes);
@@ -2173,7 +2173,7 @@ bool WebExtensionContext::discardSidebarIfUnmodified(WebExtensionSidebar& sideba
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
+const WebExtensionContext::CommandsVector& WebExtensionContext::commands() LIFETIME_BOUND
 {
     if (m_populatedCommands)
         return m_commands;

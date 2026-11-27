@@ -547,7 +547,7 @@ void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, Process
 }
 
 #if ENABLE(GPU_PROCESS)
-GPUProcessProxy& WebProcessPool::ensureGPUProcess()
+GPUProcessProxy& WebProcessPool::ensureGPUProcess() LIFETIME_BOUND
 {
     if (!m_gpuProcess) {
         Ref gpuProcess = GPUProcessProxy::getOrCreate();
@@ -599,7 +599,7 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)
-ModelProcessProxy& WebProcessPool::ensureModelProcess()
+ModelProcessProxy& WebProcessPool::ensureModelProcess() LIFETIME_BOUND
 {
     if (!m_modelProcess)
         m_modelProcess = ModelProcessProxy::getOrCreate();

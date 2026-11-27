@@ -535,7 +535,7 @@ void RemoteLayerTreeDrawingAreaProxyIOS::windowScreenDidChange(WebCore::Platform
 UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
 {
     if (RefPtr node = m_remoteLayerTreeHost->nodeForID(layerID))
-        return node->uiView();
+        return protect(node->uiView()).autorelease();
     return nil;
 }
 

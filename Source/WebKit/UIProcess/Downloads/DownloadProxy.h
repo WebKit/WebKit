@@ -78,7 +78,7 @@ public:
 
     DownloadID downloadID() const { return m_downloadID; }
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
-    API::Data* legacyResumeData() const { return m_legacyResumeData.get(); }
+    API::Data* legacyResumeData() const LIFETIME_BOUND { return m_legacyResumeData.get(); }
 
     void cancel(CompletionHandler<void(API::Data*)>&&);
 
@@ -102,14 +102,14 @@ public:
 #if PLATFORM(COCOA)
     void publishProgress(const URL&);
     void setProgress(NSProgress *progress) { m_progress = progress; }
-    NSProgress *progress() const { return m_progress.get(); }
+    NSProgress *progress() const LIFETIME_BOUND { return m_progress.get(); }
 #endif
 #if PLATFORM(MAC)
     void updateQuarantinePropertiesIfPossible();
 #endif
-    API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
+    API::FrameInfo& frameInfo() LIFETIME_BOUND { return m_frameInfo.get(); }
 
-    API::DownloadClient& client() { return m_client.get(); }
+    API::DownloadClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     void setClient(Ref<API::DownloadClient>&&);
     void setDidStartCallback(CompletionHandler<void(DownloadProxy*)>&& callback) { m_didStartCallback = WTF::move(callback); }

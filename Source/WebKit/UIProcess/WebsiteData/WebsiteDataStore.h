@@ -162,8 +162,8 @@ public:
 
     static void forEachWebsiteDataStore(NOESCAPE const Function<void(WebsiteDataStore&)>&);
     
-    NetworkProcessProxy& networkProcess();
-    NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
+    NetworkProcessProxy& networkProcess() LIFETIME_BOUND;
+    NetworkProcessProxy* networkProcessIfExists() LIFETIME_BOUND { return m_networkProcess.get(); }
     void setNetworkProcess(NetworkProcessProxy&);
     
     NODELETE static WebsiteDataStore* existingDataStoreForSessionID(PAL::SessionID);
@@ -252,7 +252,7 @@ public:
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
     void logTestingEvent(const String&);
-    IsolatedSiteStore& isolatedSiteStore();
+    IsolatedSiteStore& isolatedSiteStore() LIFETIME_BOUND;
     std::optional<OptionSet<IsolatedSiteStore::Signal>> isolatedSiteSignalsForTesting(const URL&);
     void setHighValueFraudTargetDomainsForTesting(Vector<String>&&);
     void setMaximumIsolatedSiteCountForTesting(size_t);
@@ -321,7 +321,7 @@ public:
     void storeServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
-    const WebsiteDataStoreConfiguration::Directories& resolvedDirectories() const;
+    const WebsiteDataStoreConfiguration::Directories& resolvedDirectories() const LIFETIME_BOUND;
     FileSystem::Salt mediaKeysStorageSalt() const;
 #if ENABLE(SCREEN_TIME)
     void removeScreenTimeData(const HashSet<URL>& websitesToRemove);
@@ -335,10 +335,10 @@ public:
 #endif
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
-    DeviceIdHashSaltStorage& ensureDeviceIdHashSaltStorage();
+    DeviceIdHashSaltStorage& ensureDeviceIdHashSaltStorage() LIFETIME_BOUND;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    DeviceIdHashSaltStorage& ensureMediaKeysHashSaltStorage();
+    DeviceIdHashSaltStorage& ensureMediaKeysHashSaltStorage() LIFETIME_BOUND;
 #endif
 
     WebsiteDataStoreParameters parameters();
@@ -371,20 +371,20 @@ public:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
+    AuthenticatorManager& authenticatorManager() LIFETIME_BOUND { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 #if PLATFORM(COCOA)
-    VirtualAuthenticatorManager& virtualAuthenticatorManager();
+    VirtualAuthenticatorManager& virtualAuthenticatorManager() LIFETIME_BOUND;
 #endif
 #endif
 
-    const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }
+    const WebsiteDataStoreConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
 
-    WebsiteDataStoreClient& client() { return m_client.get(); }
+    WebsiteDataStoreClient& client() LIFETIME_BOUND { return m_client.get(); }
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTF::move(client); }
 
-    API::HTTPCookieStore& cookieStore();
-    WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
+    API::HTTPCookieStore& cookieStore() LIFETIME_BOUND;
+    WebCore::LocalWebLockRegistry& webLockRegistry() LIFETIME_BOUND { return m_webLockRegistry.get(); }
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
     void originDirectoryForTesting(WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
@@ -393,11 +393,11 @@ public:
     bool networkProcessHasEntitlementForTesting(const String&);
 
 #if ENABLE(DEVICE_ORIENTATION)
-    WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
+    WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() LIFETIME_BOUND { return m_deviceOrientationAndMotionAccessController; }
 #endif
 
 #if HAVE(APP_SSO)
-    SOAuthorizationCoordinator& soAuthorizationCoordinator(const WebPageProxy&);
+    SOAuthorizationCoordinator& soAuthorizationCoordinator(const WebPageProxy&) LIFETIME_BOUND;
 #endif
 
 #if PLATFORM(COCOA)
@@ -504,7 +504,7 @@ public:
     HashSet<Ref<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
     void setServiceWorkerOverridePreferences(WebPreferences* preferences) { m_serviceWorkerOverridePreferences = preferences; }
-    WebPreferences* serviceWorkerOverridePreferences() const { return m_serviceWorkerOverridePreferences.get(); }
+    WebPreferences* serviceWorkerOverridePreferences() const LIFETIME_BOUND { return m_serviceWorkerOverridePreferences.get(); }
 
     Ref<DownloadProxy> createDownloadProxy(Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const std::optional<FrameInfoData>&);
     void download(const DownloadProxy&, const String& suggestedFilename);
@@ -625,7 +625,7 @@ private:
     HashSet<WebCore::RegistrableDomain> platformAdditionalDomainsWithUserInteraction() const;
 
 #if PLATFORM(COCOA)
-    EnhancedSecuritySitesHolder& enhancedSecuritySitesHolder();
+    EnhancedSecuritySitesHolder& enhancedSecuritySitesHolder() LIFETIME_BOUND;
 #endif
 
     void removeEnhancedSecuritySites(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);

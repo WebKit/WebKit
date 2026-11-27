@@ -77,7 +77,7 @@ public:
     bool currentIsValid(const InteractionInformationRequest&) const;
     bool currentIsApproximatelyValid(const InteractionInformationRequest&, int radius) const;
     bool hasValidCurrentInformation() const { return m_hasValidCurrentInformation; }
-    const InteractionInformationAtPosition& currentInformation() const { return m_currentInformation; }
+    const InteractionInformationAtPosition& currentInformation() const LIFETIME_BOUND { return m_currentInformation; }
 
 private:
     void requestUpdate(const InteractionInformationRequest&);

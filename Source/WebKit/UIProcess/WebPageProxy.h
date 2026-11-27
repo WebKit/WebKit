@@ -855,7 +855,7 @@ public:
 
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
 
-    const API::PageConfiguration& configuration() const { return m_configuration.get(); }
+    const API::PageConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
 
     using Identifier = WebPageProxyIdentifier;
 
@@ -880,16 +880,16 @@ public:
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     void setTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&&);
     Ref<WebCore::DocumentSyncData> topDocumentSyncData() const;
-    WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
-    WebFrameProxy* focusedOrMainFrame() const { return m_focusedFrame ? m_focusedFrame.get() : m_mainFrame.get(); }
+    WebFrameProxy* focusedFrame() const LIFETIME_BOUND { return m_focusedFrame.get(); }
+    WebFrameProxy* focusedOrMainFrame() const LIFETIME_BOUND { return m_focusedFrame ? m_focusedFrame.get() : m_mainFrame.get(); }
     void resetFocusedFrameIfInProcess(const WebProcessProxy&);
 
-    DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
+    DrawingAreaProxy* drawingArea() const LIFETIME_BOUND { return m_drawingArea.get(); }
     NODELETE DrawingAreaProxy* provisionalDrawingArea() const;
 
     WebNavigationState& navigationState() LIFETIME_BOUND { return m_navigationState; }
 
-    NODELETE WebsiteDataStore& websiteDataStore();
+    NODELETE WebsiteDataStore& websiteDataStore() LIFETIME_BOUND;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
@@ -908,27 +908,27 @@ public:
     void isNoLongerAssociatedWithRemotePage(RemotePageProxy&);
 
 #if ENABLE(DATA_DETECTION)
-    NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
+    NSArray *dataDetectionResults() LIFETIME_BOUND { return m_dataDetectionResults.get(); }
     void detectDataInAllFrames(OptionSet<WebCore::DataDetectorType>, CompletionHandler<void(DataDetectionResult&&)>&&);
     void removeDataDetectedLinks(CompletionHandler<void(DataDetectionResult&&)>&&);
 #endif
         
 #if PLATFORM(COCOA)
-    RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
+    RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const LIFETIME_BOUND { return m_scrollingCoordinatorProxy.get(); }
 #endif
 
-    WebBackForwardListWrapper& backForwardListWrapper() { return m_backForwardList; }
+    WebBackForwardListWrapper& backForwardListWrapper() LIFETIME_BOUND { return m_backForwardList; }
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    WebBackForwardList& backForwardList() const { return m_backForwardList->getImpl(); }
-    WebBackForwardListMessageForwarder& backForwardListMessageReceiver() const;
+    WebBackForwardList& backForwardList() const LIFETIME_BOUND { return m_backForwardList->getImpl(); }
+    WebBackForwardListMessageForwarder& backForwardListMessageReceiver() const LIFETIME_BOUND;
 #else
-    WebBackForwardList& backForwardList() const { return m_backForwardList; }
-    WebBackForwardList& backForwardListMessageReceiver() const { return m_backForwardList; }
+    WebBackForwardList& backForwardList() const LIFETIME_BOUND { return m_backForwardList; }
+    WebBackForwardList& backForwardListMessageReceiver() const LIFETIME_BOUND { return m_backForwardList; }
 #endif
 
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
-    VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore; }
+    VisitedLinkStore& visitedLinkStore() LIFETIME_BOUND { return m_visitedLinkStore; }
 
     void exitFullscreenImmediately();
     void fullscreenMayReturnToInline();
@@ -985,7 +985,7 @@ public:
 
     void loadServiceWorker(const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
-    WebUserContentControllerProxy& userContentController() { return m_userContentController.get(); }
+    WebUserContentControllerProxy& userContentController() LIFETIME_BOUND { return m_userContentController.get(); }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     WebExtensionController* webExtensionController();
@@ -1002,12 +1002,12 @@ public:
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    PlaybackSessionManagerProxy* playbackSessionManager() { return m_playbackSessionManager.get(); }
+    PlaybackSessionManagerProxy* playbackSessionManager() LIFETIME_BOUND { return m_playbackSessionManager.get(); }
     NODELETE VideoPresentationManagerProxy* videoPresentationManager();
     void setMockVideoPresentationModeEnabled(bool);
 #endif
 
-    WebScreenOrientationManagerProxy* screenOrientationManager() { return m_screenOrientationManager.get(); }
+    WebScreenOrientationManagerProxy* screenOrientationManager() LIFETIME_BOUND { return m_screenOrientationManager.get(); }
 
 #if PLATFORM(IOS_FAMILY)
     bool allowsMediaDocumentInlinePlayback() const;
@@ -1017,7 +1017,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
+    SystemPreviewController* systemPreviewController() LIFETIME_BOUND { return m_systemPreviewController.get(); }
     void systemPreviewActionTriggered(WebProcessProxy&, const WebCore::SystemPreviewInfo&, const String&);
 #endif
 
@@ -1039,7 +1039,7 @@ public:
     void setFindClient(std::unique_ptr<API::FindClient>&&);
     API::FindMatchesClient& findMatchesClient() LIFETIME_BOUND { return *m_findMatchesClient; }
     void setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&&);
-    API::DiagnosticLoggingClient* diagnosticLoggingClient() { return m_diagnosticLoggingClient.get(); }
+    API::DiagnosticLoggingClient* diagnosticLoggingClient() LIFETIME_BOUND { return m_diagnosticLoggingClient.get(); }
     void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&&);
     void setFormClient(std::unique_ptr<API::FormClient>&&);
     void setNavigationClient(UniqueRef<API::NavigationClient>&&);
@@ -1901,7 +1901,7 @@ public:
     void teardownTextIndicatorLayer();
     void startTextIndicatorFadeOut();
 #if PLATFORM(COCOA)
-    WebCore::TextIndicator* textIndicator() const { return m_textIndicator.get(); }
+    WebCore::TextIndicator* textIndicator() const LIFETIME_BOUND { return m_textIndicator.get(); }
 #endif
 
     void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
@@ -2065,8 +2065,8 @@ public:
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
 #endif
 
-    WebProcessProxy& ensureRunningProcess();
-    WebProcessProxy& siteIsolatedProcess() const { return m_legacyMainFrameProcess; }
+    WebProcessProxy& ensureRunningProcess() LIFETIME_BOUND;
+    WebProcessProxy& siteIsolatedProcess() const LIFETIME_BOUND { return m_legacyMainFrameProcess; }
 
     static RefPtr<WebPageProxy> leastRecentlyVisiblePageToUnload();
 
@@ -2094,7 +2094,7 @@ public:
 
     void setPreferences(WebPreferences&);
 
-    WebPageGroup& pageGroup() { return m_pageGroup; }
+    WebPageGroup& pageGroup() LIFETIME_BOUND { return m_pageGroup; }
 
     NODELETE bool hasRunningProcess() const;
     void launchInitialProcessIfNecessary();
@@ -2240,7 +2240,7 @@ public:
     void didHandleTapAsHover();
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     void setHoverActivatedByClickBounds(std::optional<WebCore::IntRect>&&);
-    const std::optional<WebCore::IntRect>& hoverActivatedByClickBounds() const { return m_hoverActivatedByClickBounds; }
+    const std::optional<WebCore::IntRect>& hoverActivatedByClickBounds() const LIFETIME_BOUND { return m_hoverActivatedByClickBounds; }
 #endif
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(TapIdentifier);
@@ -2380,7 +2380,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    API::HitTestResult* lastMouseMoveHitTestResult() const { return m_lastMouseMoveHitTestResult.get(); }
+    API::HitTestResult* lastMouseMoveHitTestResult() const LIFETIME_BOUND { return m_lastMouseMoveHitTestResult.get(); }
     std::optional<WebCore::FrameIdentifier> immediateActionHitTestFrameID() const { return m_immediateActionHitTestFrameID; }
     void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint, CompletionHandler<void(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*)>&&);
     std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> takeOutstandingImmediateActionHitTestReply();
@@ -2434,7 +2434,7 @@ public:
     void hideValidationMessage();
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     void showValidationMessageWithMainFrameRect(const WebCore::IntRect& mainFrameAnchorRect);
-    WebCore::ValidationBubble* validationBubble() const { return m_validationBubble.get(); } // For testing.
+    WebCore::ValidationBubble* validationBubble() const LIFETIME_BOUND { return m_validationBubble.get(); } // For testing.
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2542,7 +2542,7 @@ public:
 #endif
 
     // Non-empty while the client has told us it is presenting this page as a machine translation.
-    const String& displayedTranslationLocaleIdentifier() const;
+    const String& displayedTranslationLocaleIdentifier() const LIFETIME_BOUND;
     void setDisplayedTranslationLocaleIdentifier(const String&);
 
     void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&&);
@@ -2584,7 +2584,7 @@ public:
 
     void updateCurrentModifierState();
 
-    ProvisionalPageProxy* provisionalPageProxy() const { return m_provisionalPage.get(); }
+    ProvisionalPageProxy* provisionalPageProxy() const LIFETIME_BOUND { return m_provisionalPage.get(); }
     void commitProvisionalPage(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedReportedOrigin, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
     void destroyProvisionalPage();
 
@@ -2671,11 +2671,11 @@ public:
 #if ENABLE(WEB_AUTHN)
     // Web Authentication API
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
-    WebAuthenticatorCoordinatorProxy* webAuthenticatorCoordinatorProxy() const { return m_webAuthnCredentialsMessenger.get(); }
+    WebAuthenticatorCoordinatorProxy* webAuthenticatorCoordinatorProxy() const LIFETIME_BOUND { return m_webAuthnCredentialsMessenger.get(); }
 
 #if ENABLE(PHONE_NUMBER_POSSESSION)
     // Phone Number Possession API
-    WebPhoneNumberPossessionCoordinatorProxy* phoneNumberPossessionCoordinatorProxy() const { return m_phoneNumberPossessionCoordinatorProxy.get(); }
+    WebPhoneNumberPossessionCoordinatorProxy* phoneNumberPossessionCoordinatorProxy() const LIFETIME_BOUND { return m_phoneNumberPossessionCoordinatorProxy.get(); }
 #endif
 
     // Digital Credentials API
@@ -2801,9 +2801,9 @@ public:
 
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }
 
-    WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
+    WebPopupMenuProxy* activePopupMenu() const LIFETIME_BOUND { return m_activePopupMenu.get(); }
 #if ENABLE(CONTEXT_MENUS) && !PLATFORM(MAC)
-    WebContextMenuProxy* activeContextMenu() const { return m_activeContextMenu.get(); }
+    WebContextMenuProxy* activeContextMenu() const LIFETIME_BOUND { return m_activeContextMenu.get(); }
 #endif
 
     void preconnectTo(WebCore::ResourceRequest&&, OptionSet<WebCore::AdvancedPrivacyProtections> = { });
@@ -2939,10 +2939,10 @@ public:
     bool shouldAvoidSynchronouslyWaitingToPreventDeadlock() const;
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
-    WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
+    WKQuickLookPreviewController *quickLookPreviewController() const LIFETIME_BOUND { return m_quickLookPreviewController.get(); }
 #endif
 
-    WebProcessProxy* processForSite(const WebCore::Site&);
+    RefPtr<WebProcessProxy> processForSite(const WebCore::Site&);
 
     void observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastDocumentSyncData(IPC::Connection&, const WebCore::DocumentSyncSerializationData&);
@@ -3041,9 +3041,9 @@ public:
     void restartXRSessionActivityOnProcessResumeIfNeeded();
 #endif
 
-    NODELETE WebColorPickerClient& colorPickerClient();
+    NODELETE WebColorPickerClient& colorPickerClient() LIFETIME_BOUND;
 
-    NODELETE WebPopupMenuProxyClient& popupMenuClient();
+    NODELETE WebPopupMenuProxyClient& popupMenuClient() LIFETIME_BOUND;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
@@ -3081,7 +3081,7 @@ public:
     void updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&&);
     void applyTextExtractionFilter(const String& input, CompletionHandler<void(String&&)>&&);
 
-    TextExtractionCache& textExtractionCache();
+    TextExtractionCache& textExtractionCache() LIFETIME_BOUND;
 
     void hasVideoInPictureInPictureDidChange(bool);
 
@@ -3161,7 +3161,7 @@ public:
     void clearWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = false; }
 #endif
 
-    API::WebsitePolicies* mainFrameWebsitePolicies() const { return m_mainFrameWebsitePolicies.get(); }
+    API::WebsitePolicies* mainFrameWebsitePolicies() const LIFETIME_BOUND { return m_mainFrameWebsitePolicies.get(); }
 
 #if PLATFORM(COCOA)
     void sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifier>, WebCore::ScrollUpdate, bool isLastUpdate);
@@ -3188,7 +3188,7 @@ public:
     // configuration: the union of the patterns of every consumer. Each WebContent process hosting
     // one of its frames holds a replica, refreshed on every write and seeded from the creation
     // parameters of a process that joins the page later.
-    const Inspector::NetworkInterception& networkInterception() const;
+    const Inspector::NetworkInterception& networkInterception() const LIFETIME_BOUND;
     // Replaces the patterns of one consumer. The handler runs once every hosting process has the new configuration.
     void setNetworkInterceptPatterns(Inspector::NetworkInterceptOwner, Vector<Inspector::InterceptPattern>&&, CompletionHandler<void()>&&);
     void updateNetworkInterception(CompletionHandler<void()>&&);
@@ -3239,7 +3239,7 @@ public:
 
     WebProcessActivityState& processActivityState() LIFETIME_BOUND { return m_mainFrameProcessActivityState; }
 
-    ProcessActivityGroupContext& activityGroupContext();
+    ProcessActivityGroupContext& activityGroupContext() LIFETIME_BOUND;
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     void updateWebProcessSuspensionDelay();
@@ -3286,14 +3286,14 @@ public:
     bool hasAccessibilityActivityForTesting();
 #endif
 
-    AboutSchemeHandler& aboutSchemeHandler() const { return m_aboutSchemeHandler; }
+    AboutSchemeHandler& aboutSchemeHandler() const LIFETIME_BOUND { return m_aboutSchemeHandler; }
 
     bool hasProvisionalPage() const { return m_provisionalPage; }
     bool isRemoteFrameNavigation(Ref<WebProcessProxy>);
 
 #if ENABLE(WEB_ARCHIVE)
     bool didLoadWebArchive() const { return !!m_replacedDataStoreForWebArchiveLoad; }
-    WebsiteDataStore* replacedDataStoreForWebArchiveLoad() const { return m_replacedDataStoreForWebArchiveLoad.get(); }
+    WebsiteDataStore* replacedDataStoreForWebArchiveLoad() const LIFETIME_BOUND { return m_replacedDataStoreForWebArchiveLoad.get(); }
     void setReplacedDataStoreForWebArchiveLoad(Ref<WebsiteDataStore>&&);
 #else
     bool didLoadWebArchive() const { return false; }
@@ -3585,7 +3585,7 @@ private:
     void applyMutedState(WebCore::MediaProducerMutedStateFlags, MuteCaptureInOtherPages, CompletionHandler<void()>&&);
 
 #if ENABLE(MEDIA_STREAM)
-    UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
+    UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager() LIFETIME_BOUND;
     void requestUserMediaPermissionForFrame(IPC::Connection&, WebCore::UserMediaRequestIdentifier, FrameInfoData&&, IPC::Untrusted<WebCore::SecurityOriginData>&& userMediaDocumentOriginIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
     void enumerateMediaDevicesForFrame(IPC::Connection&, WebCore::FrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& userMediaDocumentOriginData, IPC::Untrusted<WebCore::SecurityOriginData>&& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
     void beginMonitoringCaptureDevices();
@@ -4120,7 +4120,7 @@ private:
     void takeTextExtractionAssertion();
     void dropTextExtractionAssertion();
 
-    SpeechRecognitionPermissionManager* speechRecognitionPermissionManager() const { return m_speechRecognitionPermissionManager; }
+    SpeechRecognitionPermissionManager* speechRecognitionPermissionManager() const LIFETIME_BOUND { return m_speechRecognitionPermissionManager; }
 
 #if PLATFORM(COCOA)
     String presentingApplicationBundleIdentifier() const;
@@ -4141,9 +4141,9 @@ private:
     Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, LockdownMode, EnhancedSecurity, IsEnhancedSecurityExplicitlySet, ProcessSwapRequestedByClient);
     Ref<BrowsingContextGroup> browsingContextGroupForCommittingNavigation(const API::Navigation*) const;
 
-    WebProcessProxy& processForTheFrameItem(WebBackForwardListFrameItem&) const;
+    Ref<WebProcessProxy> processForTheFrameItem(WebBackForwardListFrameItem&) const;
     Ref<FrameState> copyFrameStateForBackForwardNavigation(WebBackForwardListFrameItem&) const;
-    WebProcessProxy* frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem&) const;
+    RefPtr<WebProcessProxy> frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem&) const;
 
     void setClientNavigationActivity(API::Navigation&);
 

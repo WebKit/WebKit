@@ -156,7 +156,7 @@ public:
     const std::optional<ExtensionProcess>& extensionProcess() const LIFETIME_BOUND { return m_process; }
     void setIsRetryingLaunch() { m_isRetryingLaunch = true; }
     bool isRetryingLaunch() const { return m_isRetryingLaunch; }
-    LaunchGrant* launchGrant() const { return m_launchGrant.get(); }
+    LaunchGrant* launchGrant() const LIFETIME_BOUND { return m_launchGrant.get(); }
     void releaseLaunchGrant() { m_launchGrant = nullptr; }
     static bool hasExtensionsInAppBundle();
 #endif

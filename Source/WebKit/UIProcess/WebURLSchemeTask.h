@@ -68,7 +68,7 @@ public:
     std::optional<WebCore::PageIdentifier> webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID.asOptional(); }
     WebProcessProxy& process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
     WebCore::ResourceRequest request() const;
-    API::FrameInfo& frameInfo() const { return m_frameInfo.get(); }
+    API::FrameInfo& frameInfo() const LIFETIME_BOUND { return m_frameInfo.get(); }
 
 #if PLATFORM(COCOA)
     NSURLRequest *nsRequest() const;

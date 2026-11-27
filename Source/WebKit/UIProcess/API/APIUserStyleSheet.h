@@ -59,8 +59,8 @@ public:
     // and should not message anywhere.
     bool isOrphaned() const { return m_isPageScoped && !page(); }
 
-    ContentWorld& contentWorld() { return m_world; }
-    const ContentWorld& contentWorld() const { return m_world; }
+    ContentWorld& contentWorld() LIFETIME_BOUND { return m_world; }
+    const ContentWorld& contentWorld() const LIFETIME_BOUND { return m_world; }
 
 private:
     WebCore::UserStyleSheet m_userStyleSheet;

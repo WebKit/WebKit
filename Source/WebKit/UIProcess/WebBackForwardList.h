@@ -190,7 +190,7 @@ public:
 
     String loggingString();
 
-    WebBackForwardList& getImpl() { return *m_impl; }
+    WebBackForwardList& getImpl() LIFETIME_BOUND { return *m_impl; }
     WebBackForwardListMessageForwarder& messageReceiver() const;
 
 private:

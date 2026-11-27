@@ -106,7 +106,7 @@ protected:
     WeakPtr<WebCore::PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose) { return nullptr; }
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
 #endif
 
 private:

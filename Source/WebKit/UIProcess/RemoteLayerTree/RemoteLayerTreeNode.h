@@ -94,7 +94,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    UIView *uiView() const { return m_uiView.get(); }
+    UIView *uiView() const LIFETIME_BOUND { return m_uiView.get(); }
 #endif
 
     WebCore::PlatformLayerIdentifier layerID() const { return m_layerID; }
@@ -156,11 +156,11 @@ public:
 
 #if ENABLE(THREADED_ANIMATIONS)
     void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&, RemoteLayerTreeHost&);
-    const RemoteAnimationStack* animationStack() const { return m_animationStack.get(); }
+    const RemoteAnimationStack* animationStack() const LIFETIME_BOUND { return m_animationStack.get(); }
     RefPtr<RemoteAnimationStack> takeAnimationStack() { return std::exchange(m_animationStack, nullptr); }
     bool hasHighImpactMonotonicAnimations() const { return m_hasHighImpactMonotonicAnimations; }
     // In this layer's coordinate space without its transform. Unknown if not set.
-    const std::optional<WebCore::FloatRect>& animationExtent() const { return m_animationExtent; }
+    const std::optional<WebCore::FloatRect>& animationExtent() const LIFETIME_BOUND { return m_animationExtent; }
     void setAnimationExtent(const std::optional<WebCore::FloatRect>& animationExtent) { m_animationExtent = animationExtent; }
 #endif
 

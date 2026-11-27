@@ -41,7 +41,7 @@ public:
         return adoptRef(*new WebCredential(credential));
     }
 
-    NODELETE const WebCore::Credential& credential();
+    NODELETE const WebCore::Credential& credential() LIFETIME_BOUND;
 
 private:
     explicit WebCredential(const WebCore::Credential&);

@@ -54,8 +54,8 @@ public:
 #endif
     ~BidiUserContext();
 
-    WebsiteDataStore& dataStore() const { return m_dataStore.get(); }
-    WebProcessPool& processPool() const { return m_processPool.get(); }
+    WebsiteDataStore& dataStore() const LIFETIME_BOUND { return m_dataStore.get(); }
+    WebProcessPool& processPool() const LIFETIME_BOUND { return m_processPool.get(); }
 
     Vector<Ref<WebPageProxy>> allPages() const;
 

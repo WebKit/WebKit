@@ -62,7 +62,7 @@ public:
 
     void setConfiguration(Configuration&&);
     void setConfigurationForTesting(Configuration&&);
-    const Configuration& configuration() const { return m_configuration; }
+    const Configuration& configuration() const LIFETIME_BOUND { return m_configuration; }
 
 #if PLATFORM(IOS_FAMILY)
     void didDetectWebProcessWithoutPerProcessJetsamLimit();

@@ -64,7 +64,7 @@ public:
     void cancel() const;
     void setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
 
-    const WebAuthenticationPanelClient& client() const { return m_client.get(); }
+    const WebAuthenticationPanelClient& client() const LIFETIME_BOUND { return m_client.get(); }
     void setClient(Ref<WebAuthenticationPanelClient>&&);
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated methods.

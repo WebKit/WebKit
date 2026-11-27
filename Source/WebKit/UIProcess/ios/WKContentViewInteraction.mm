@@ -14517,7 +14517,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     if (!layerTreeNode)
         return nil;
 
-    return layerTreeNode->uiView();
+    return protect(layerTreeNode->uiView()).autorelease();
 }
 
 - (NSArray<UIView *> *)allViewsIntersectingSelectionRange

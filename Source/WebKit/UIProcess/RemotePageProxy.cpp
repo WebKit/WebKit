@@ -336,7 +336,7 @@ WebPageProxy* RemotePageProxy::page() const
     return m_page.get();
 }
 
-WebProcessActivityState& RemotePageProxy::processActivityState()
+WebProcessActivityState& RemotePageProxy::processActivityState() LIFETIME_BOUND
 {
     return m_processActivityState;
 }

@@ -197,7 +197,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         takenRemotePage->disconnect();
 }
 
-WebProcessProxy& ProvisionalPageProxy::process() const
+WebProcessProxy& ProvisionalPageProxy::process() const LIFETIME_BOUND
 {
     return m_frameProcess->process();
 }

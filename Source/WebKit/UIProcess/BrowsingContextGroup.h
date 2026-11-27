@@ -74,7 +74,7 @@ public:
     WebCore::BrowsingContextGroupIdentifier identifier() const { return m_identifier; }
 
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
-    WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore; }
+    WebsiteDataStore& websiteDataStore() const LIFETIME_BOUND { return m_websiteDataStore; }
     WebProcessProxy::LockdownMode lockdownMode() const { return m_lockdownMode; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
     NODELETE bool canUseProcessForCrossOriginIsolation(const WebProcessProxy&) const;

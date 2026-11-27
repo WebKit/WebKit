@@ -41,7 +41,7 @@ class RemoteAnimation : public RefCounted<RemoteAnimation> {
 public:
     static Ref<RemoteAnimation> create(const WebCore::AcceleratedEffect&, const RemoteAnimationTimeline&);
 
-    const RemoteAnimationTimeline& timeline() const { return m_timeline.get(); }
+    const RemoteAnimationTimeline& timeline() const LIFETIME_BOUND { return m_timeline.get(); }
 
     const OptionSet<WebCore::AcceleratedEffectProperty>& animatedProperties() const LIFETIME_BOUND { return m_effect->animatedProperties(); }
     const Vector<WebCore::AcceleratedEffect::Keyframe>& keyframes() const LIFETIME_BOUND { return m_effect->keyframes(); }

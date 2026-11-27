@@ -1465,7 +1465,7 @@ void WebProcessPool::applyEDRSuppressionIfNeeded(WebCore::ScreenProperties& scre
 }
 
 #if PLATFORM(MAC)
-const WebCore::ScreenProperties& WebProcessPool::cachedScreenProperties()
+const WebCore::ScreenProperties& WebProcessPool::cachedScreenProperties() LIFETIME_BOUND
 {
     if (!m_cachedScreenProperties) {
         auto screenProperties = WebCore::collectScreenProperties();
@@ -1615,7 +1615,7 @@ void WebProcessPool::suppressEDR(bool suppressEDR)
 }
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-ExtensionCapabilityGranter& WebProcessPool::extensionCapabilityGranter()
+ExtensionCapabilityGranter& WebProcessPool::extensionCapabilityGranter() LIFETIME_BOUND
 {
     if (!m_extensionCapabilityGranter)
         lazyInitialize(m_extensionCapabilityGranter, ExtensionCapabilityGranter::create().releaseNonNull());

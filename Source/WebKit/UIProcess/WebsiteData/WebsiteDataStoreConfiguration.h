@@ -81,7 +81,7 @@ public:
     void setLastModificationTimeUpdateIntervalOverride(std::optional<Seconds> interval) { m_lastModificationTimeUpdateIntervalOverride = interval; }
     std::optional<Seconds> timeBasedEvictionIntervalOverride() const { return m_timeBasedEvictionIntervalOverride; }
     void setTimeBasedEvictionIntervalOverride(std::optional<Seconds> interval) { m_timeBasedEvictionIntervalOverride = interval; }
-    const Vector<WebCore::SecurityOriginData>& mockPushSubscriptionOriginsForTesting() const { return m_mockPushSubscriptionOriginsForTesting; }
+    const Vector<WebCore::SecurityOriginData>& mockPushSubscriptionOriginsForTesting() const LIFETIME_BOUND { return m_mockPushSubscriptionOriginsForTesting; }
     void setMockPushSubscriptionOriginsForTesting(Vector<WebCore::SecurityOriginData>&& origins) { m_mockPushSubscriptionOriginsForTesting = WTF::move(origins); }
 
     std::optional<double> totalQuotaRatio() const { return m_totalQuotaRatio; }

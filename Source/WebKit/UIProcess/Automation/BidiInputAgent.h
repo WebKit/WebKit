@@ -122,14 +122,14 @@ public:
     void add(const String& id, Source);
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-    SimulatedInputSource& simulatedSource(const Action&);
-    const HashMap<String, Ref<SimulatedInputSource>>& simulatedSources() const { return m_simulatedSources; }
+    SimulatedInputSource& simulatedSource(const Action&) LIFETIME_BOUND;
+    const HashMap<String, Ref<SimulatedInputSource>>& simulatedSources() const LIFETIME_BOUND { return m_simulatedSources; }
 #endif
 
     // https://w3c.github.io/webdriver/#dfn-input-cancel-list
-    Vector<Action>& inputCancelList() { return m_inputCancelList; }
+    Vector<Action>& inputCancelList() LIFETIME_BOUND { return m_inputCancelList; }
 
-    BidiInputActionsQueue& actionsQueue() { return m_actionsQueue.get(); }
+    BidiInputActionsQueue& actionsQueue() LIFETIME_BOUND { return m_actionsQueue.get(); }
 
     void reset();
 
@@ -164,7 +164,7 @@ public:
 
 private:
     // https://w3c.github.io/webdriver/#dfn-get-the-input-state — keyed by top-level context handle.
-    Automation::BidiInputState& inputStateForTopLevelContext(const String& pageHandle);
+    Automation::BidiInputState& inputStateForTopLevelContext(const String& pageHandle) LIFETIME_BOUND;
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;

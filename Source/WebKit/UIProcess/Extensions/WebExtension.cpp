@@ -849,7 +849,7 @@ Vector<Ref<API::Error>> WebExtension::errors()
     return m_errors;
 }
 
-const Vector<String>& WebExtension::supportedLocales()
+const Vector<String>& WebExtension::supportedLocales() LIFETIME_BOUND
 {
     if (!m_supportedLocales.isEmpty())
         return m_supportedLocales;
@@ -885,7 +885,7 @@ const Vector<String>& WebExtension::supportedLocales()
     return m_supportedLocales;
 }
 
-const String& WebExtension::defaultLocale()
+const String& WebExtension::defaultLocale() LIFETIME_BOUND
 {
     if (!manifestParsedSuccessfully())
         return nullString();
@@ -926,31 +926,31 @@ String WebExtension::bestMatchLocale()
     return defaultLocale();
 }
 
-const String& WebExtension::displayName()
+const String& WebExtension::displayName() LIFETIME_BOUND
 {
     populateDisplayStringsIfNeeded();
     return m_displayName;
 }
 
-const String& WebExtension::displayShortName()
+const String& WebExtension::displayShortName() LIFETIME_BOUND
 {
     populateDisplayStringsIfNeeded();
     return m_displayShortName;
 }
 
-const String& WebExtension::displayVersion()
+const String& WebExtension::displayVersion() LIFETIME_BOUND
 {
     populateDisplayStringsIfNeeded();
     return m_displayVersion;
 }
 
-const String& WebExtension::displayDescription()
+const String& WebExtension::displayDescription() LIFETIME_BOUND
 {
     populateDisplayStringsIfNeeded();
     return m_displayDescription;
 }
 
-const String& WebExtension::version()
+const String& WebExtension::version() LIFETIME_BOUND
 {
     populateDisplayStringsIfNeeded();
     return m_version;
@@ -999,7 +999,7 @@ void WebExtension::populateDisplayStringsIfNeeded()
         recordError(createError(Error::InvalidDescription));
 }
 
-const String& WebExtension::contentSecurityPolicy()
+const String& WebExtension::contentSecurityPolicy() LIFETIME_BOUND
 {
     populateContentSecurityPolicyStringsIfNeeded();
     return m_contentSecurityPolicy;
@@ -1090,7 +1090,7 @@ bool WebExtension::backgroundContentIsServiceWorker()
     return m_backgroundContentEnvironment == Environment::ServiceWorker;
 }
 
-const String& WebExtension::backgroundContentPath()
+const String& WebExtension::backgroundContentPath() LIFETIME_BOUND
 {
     populateBackgroundPropertiesIfNeeded();
 
@@ -1114,7 +1114,7 @@ const String& WebExtension::backgroundContentPath()
     return nullString();
 }
 
-const String& WebExtension::generatedBackgroundContent()
+const String& WebExtension::generatedBackgroundContent() LIFETIME_BOUND
 {
     if (!m_generatedBackgroundContent.isEmpty())
         return m_generatedBackgroundContent;
@@ -1308,7 +1308,7 @@ bool WebExtension::hasInspectorBackgroundPage()
     return !m_inspectorBackgroundPagePath.isEmpty();
 }
 
-const String& WebExtension::inspectorBackgroundPagePath()
+const String& WebExtension::inspectorBackgroundPagePath() LIFETIME_BOUND
 {
     populateInspectorPropertiesIfNeeded();
     return m_inspectorBackgroundPagePath;
@@ -1342,13 +1342,13 @@ bool WebExtension::hasOverrideNewTabPage()
     return !m_overrideNewTabPagePath.isEmpty();
 }
 
-const String& WebExtension::optionsPagePath()
+const String& WebExtension::optionsPagePath() LIFETIME_BOUND
 {
     populatePagePropertiesIfNeeded();
     return m_optionsPagePath;
 }
 
-const String& WebExtension::overrideNewTabPagePath()
+const String& WebExtension::overrideNewTabPagePath() LIFETIME_BOUND
 {
     populatePagePropertiesIfNeeded();
     return m_overrideNewTabPagePath;
@@ -1392,7 +1392,7 @@ void WebExtension::populatePagePropertiesIfNeeded()
         recordError(createError(Error::InvalidURLOverrides));
 }
 
-const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()
+const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents() LIFETIME_BOUND
 {
     populateContentScriptPropertiesIfNeeded();
     return m_staticInjectedContents;
@@ -1670,13 +1670,13 @@ RefPtr<WebCore::Icon> WebExtension::sidebarIcon(WebCore::FloatSize idealSize)
     return nullptr;
 }
 
-const std::optional<String>& WebExtension::sidebarDocumentPath()
+const std::optional<String>& WebExtension::sidebarDocumentPath() LIFETIME_BOUND
 {
     populateSidebarPropertiesIfNeeded();
     return m_sidebarDocumentPath;
 }
 
-const std::optional<String>& WebExtension::sidebarTitle()
+const std::optional<String>& WebExtension::sidebarTitle() LIFETIME_BOUND
 {
     populateSidebarPropertiesIfNeeded();
     return m_sidebarTitle;
@@ -1752,31 +1752,31 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
     return permissions;
 }
 
-const WebExtension::PermissionsSet& WebExtension::requestedPermissions()
+const WebExtension::PermissionsSet& WebExtension::requestedPermissions() LIFETIME_BOUND
 {
     populatePermissionsPropertiesIfNeeded();
     return m_permissions;
 }
 
-const WebExtension::PermissionsSet& WebExtension::optionalPermissions()
+const WebExtension::PermissionsSet& WebExtension::optionalPermissions() LIFETIME_BOUND
 {
     populatePermissionsPropertiesIfNeeded();
     return m_optionalPermissions;
 }
 
-const WebExtension::MatchPatternSet& WebExtension::requestedPermissionMatchPatterns()
+const WebExtension::MatchPatternSet& WebExtension::requestedPermissionMatchPatterns() LIFETIME_BOUND
 {
     populatePermissionsPropertiesIfNeeded();
     return m_permissionMatchPatterns;
 }
 
-const WebExtension::MatchPatternSet& WebExtension::optionalPermissionMatchPatterns()
+const WebExtension::MatchPatternSet& WebExtension::optionalPermissionMatchPatterns() LIFETIME_BOUND
 {
     populatePermissionsPropertiesIfNeeded();
     return m_optionalPermissionMatchPatterns;
 }
 
-const WebExtension::MatchPatternSet& WebExtension::externallyConnectableMatchPatterns()
+const WebExtension::MatchPatternSet& WebExtension::externallyConnectableMatchPatterns() LIFETIME_BOUND
 {
     populateExternallyConnectableIfNeeded();
     return m_externallyConnectableMatchPatterns;
@@ -2005,13 +2005,13 @@ void WebExtension::populateActionPropertiesIfNeeded()
     m_actionObject = actionObject;
 }
 
-const String& WebExtension::displayActionLabel()
+const String& WebExtension::displayActionLabel() LIFETIME_BOUND
 {
     populateActionPropertiesIfNeeded();
     return m_displayActionLabel;
 }
 
-const String& WebExtension::actionPopupPath()
+const String& WebExtension::actionPopupPath() LIFETIME_BOUND
 {
     populateActionPropertiesIfNeeded();
     return m_actionPopupPath;
@@ -2323,7 +2323,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIconVariantForManifestKey(const JSON::Ob
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 
-const WebExtension::CommandsVector& WebExtension::commands()
+const WebExtension::CommandsVector& WebExtension::commands() LIFETIME_BOUND
 {
     populateCommandsIfNeeded();
     return m_commands;
@@ -2645,7 +2645,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
     }
 }
 
-const WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets()
+const WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets() LIFETIME_BOUND
 {
     populateDeclarativeNetRequestPropertiesIfNeeded();
     return m_declarativeNetRequestRulesets;

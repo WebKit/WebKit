@@ -140,7 +140,7 @@ void EndowmentStateTracker::removeClient(EndowmentStateTrackerClient& client)
     m_clients.remove(client);
 }
 
-auto EndowmentStateTracker::ensureState() const -> const State&
+auto EndowmentStateTracker::ensureState() const LIFETIME_BOUND -> const State&
 {
     if (!m_state)
         m_state = stateForHandle([RBSProcessHandle currentProcess]);

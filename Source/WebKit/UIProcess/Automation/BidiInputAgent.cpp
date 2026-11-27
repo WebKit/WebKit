@@ -100,7 +100,7 @@ static SimulatedInputSourceType simulatedSourceType(const Source& source)
     return type;
 }
 
-SimulatedInputSource& BidiInputState::simulatedSource(const Action& action)
+SimulatedInputSource& BidiInputState::simulatedSource(const Action& action) LIFETIME_BOUND
 {
     auto* source = find(action.id);
     if (!source) {
@@ -883,7 +883,7 @@ BidiInputAgent::BidiInputAgent(WebAutomationSession& session, BackendDispatcher&
 
 BidiInputAgent::~BidiInputAgent() = default;
 
-Automation::BidiInputState& BidiInputAgent::inputStateForTopLevelContext(const String& pageHandle)
+Automation::BidiInputState& BidiInputAgent::inputStateForTopLevelContext(const String& pageHandle) LIFETIME_BOUND
 {
     return m_inputStates.ensure(pageHandle, [] {
         return Automation::BidiInputState::create();

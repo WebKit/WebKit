@@ -182,7 +182,7 @@ public:
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
     void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&& callback) { m_didMoveSwipeSnapshotCallback = WTF::move(callback); }
 
-    SwipeProgressTracker* swipeProgressTracker() const { return m_swipeProgressTracker.get(); }
+    SwipeProgressTracker* swipeProgressTracker() const LIFETIME_BOUND { return m_swipeProgressTracker.get(); }
 #elif PLATFORM(IOS_FAMILY)
     bool isNavigationSwipeGestureRecognizer(UIGestureRecognizer *) const;
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);

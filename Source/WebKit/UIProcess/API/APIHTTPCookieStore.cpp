@@ -248,10 +248,10 @@ WebKit::NetworkProcessProxy* HTTPCookieStore::networkProcessIfExists()
     return nullptr;
 }
 
-WebKit::NetworkProcessProxy* HTTPCookieStore::networkProcessLaunchingIfNecessary()
+RefPtr<WebKit::NetworkProcessProxy> HTTPCookieStore::networkProcessLaunchingIfNecessary()
 {
     if (RefPtr dataStore = m_owningDataStore.get())
-        return &dataStore->networkProcess();
+        return dataStore->networkProcess();
     return nullptr;
 }
 

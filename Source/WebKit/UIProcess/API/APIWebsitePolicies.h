@@ -73,10 +73,10 @@ public:
     WebKit::WebsitePopUpPolicy popUpPolicy() const { return m_data.popUpPolicy; }
     void setPopUpPolicy(WebKit::WebsitePopUpPolicy policy) { m_data.popUpPolicy = policy; }
 
-    WebKit::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    WebKit::WebsiteDataStore* websiteDataStore() const LIFETIME_BOUND { return m_websiteDataStore.get(); }
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
     
-    WebKit::WebUserContentControllerProxy* userContentController() const { return m_userContentController.get(); }
+    WebKit::WebUserContentControllerProxy* userContentController() const LIFETIME_BOUND { return m_userContentController.get(); }
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
     void setCustomUserAgent(WTF::String&& customUserAgent) { m_data.customUserAgent = WTF::move(customUserAgent); }

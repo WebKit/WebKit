@@ -160,7 +160,7 @@ private:
     std::optional<std::pair<WebCore::IntRect, WebCore::IntRect>> convertFromMainFrameToScreenCoordinates(std::pair<WebCore::IntRect, WebCore::IntRect> rectsInMainFrameCoordinates);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManagerProxy"_s; }
     NODELETE WTFLogChannel& logChannel() const;

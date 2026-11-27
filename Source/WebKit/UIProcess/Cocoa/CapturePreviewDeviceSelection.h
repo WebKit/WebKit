@@ -42,7 +42,7 @@ public:
     CapturePreviewDeviceSelection(Vector<WebCore::CaptureDevice>&& videoDevices, Vector<WebCore::CaptureDevice>&& audioDevices);
 
     bool requestNeeds(CapturePreviewDeviceType type) const { return type == CapturePreviewDeviceType::Camera ? m_requestNeedsVideo : m_requestNeedsAudio; }
-    const Vector<WebCore::CaptureDevice>& devices(CapturePreviewDeviceType type) const { return type == CapturePreviewDeviceType::Camera ? m_videoDevices : m_audioDevices; }
+    const Vector<WebCore::CaptureDevice>& devices(CapturePreviewDeviceType type) const LIFETIME_BOUND { return type == CapturePreviewDeviceType::Camera ? m_videoDevices : m_audioDevices; }
     bool isMenuEnabled(CapturePreviewDeviceType type) const { return !devices(type).isEmpty(); }
     size_t selectedIndex(CapturePreviewDeviceType type) const { return type == CapturePreviewDeviceType::Camera ? m_selectedVideoIndex : m_selectedAudioIndex; }
 

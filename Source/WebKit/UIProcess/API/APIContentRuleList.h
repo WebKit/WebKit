@@ -48,7 +48,7 @@ public:
     virtual ~ContentRuleList();
 
     NODELETE const WTF::String& name() const LIFETIME_BOUND;
-    const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
+    const WebKit::WebCompiledContentRuleList& compiledRuleList() const LIFETIME_BOUND { return m_compiledRuleList.get(); }
     
     static bool supportsRegularExpression(const WTF::String&);
     static std::error_code parseRuleList(const WTF::String&, WebCore::ContentExtensions::CSSSelectorsAllowed);

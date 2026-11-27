@@ -656,7 +656,7 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
     return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
-const PlaybackSessionManagerProxy::ModelInterfaceTuple& PlaybackSessionManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
+const PlaybackSessionManagerProxy::ModelInterfaceTuple& PlaybackSessionManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId) LIFETIME_BOUND
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId);
@@ -669,7 +669,7 @@ Ref<PlaybackSessionModelContext> PlaybackSessionManagerProxy::ensureModel(Playba
     return std::get<0>(ensureModelAndInterface(contextId));
 }
 
-PlatformPlaybackSessionInterface& PlaybackSessionManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId)
+PlatformPlaybackSessionInterface& PlaybackSessionManagerProxy::ensureInterface(PlaybackSessionContextIdentifier contextId) LIFETIME_BOUND
 {
     return std::get<1>(ensureModelAndInterface(contextId)).get();
 }

@@ -133,10 +133,10 @@ public:
     void setHasCrossOriginRedirect() { m_hasCrossOriginRedirect = true; }
 
     WebKit::WebBackForwardListItem* targetItem() const;
-    WebKit::WebBackForwardListFrameItem* targetFrameItem() const { return m_targetFrameItem.get(); }
-    WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
+    WebKit::WebBackForwardListFrameItem* targetFrameItem() const LIFETIME_BOUND { return m_targetFrameItem.get(); }
+    WebKit::WebBackForwardListItem* fromItem() const LIFETIME_BOUND { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
-    WebKit::WebBackForwardListItem* reloadItem() const { return m_reloadItem.get(); }
+    WebKit::WebBackForwardListItem* reloadItem() const LIFETIME_BOUND { return m_reloadItem.get(); }
 
     void appendRedirectionURL(const WTF::URL&);
     Vector<WTF::URL> takeRedirectChain() { return WTF::move(m_redirectChain); }
@@ -173,7 +173,7 @@ public:
         m_lastNavigationActionHitTestJSHandle = WTF::move(hitTestJSHandle);
     }
     const std::optional<WebKit::NavigationActionData>& lastNavigationAction() const LIFETIME_BOUND { return m_lastNavigationAction; }
-    JSHandle* lastNavigationActionHitTestJSHandle() const { return m_lastNavigationActionHitTestJSHandle.get(); }
+    JSHandle* lastNavigationActionHitTestJSHandle() const LIFETIME_BOUND { return m_lastNavigationActionHitTestJSHandle.get(); }
 
     void setOriginatingFrameInfo(const WebKit::FrameInfoData& frameInfo) { m_originatingFrameInfo = frameInfo; }
     const std::optional<WebKit::FrameInfoData>& originatingFrameInfo() const LIFETIME_BOUND { return m_originatingFrameInfo; }
@@ -188,7 +188,7 @@ public:
 
     const std::unique_ptr<SubstituteData>& substituteData() const LIFETIME_BOUND { return m_substituteData; }
 
-    const WebCore::PrivateClickMeasurement* privateClickMeasurement() const { return m_lastNavigationAction && m_lastNavigationAction->privateClickMeasurement ? &*m_lastNavigationAction->privateClickMeasurement : nullptr; }
+    const WebCore::PrivateClickMeasurement* privateClickMeasurement() const LIFETIME_BOUND { return m_lastNavigationAction && m_lastNavigationAction->privateClickMeasurement ? &*m_lastNavigationAction->privateClickMeasurement : nullptr; }
     void setClientNavigationActivity(Variant<std::monostate, Ref<WebKit::ProcessThrottler::TimedActivity>, Ref<WebKit::ProcessActivityGroup>>&& activity) { m_clientNavigationActivity = WTF::move(activity); }
     void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
@@ -207,7 +207,7 @@ public:
     bool backForwardTraversalDidCommitInAnyFrame() const { return m_backForwardTraversalDidCommitInAnyFrame; }
 
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTF::move(policies); }
-    API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
+    API::WebsitePolicies* websitePolicies() LIFETIME_BOUND { return m_websitePolicies.get(); }
 
     void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
@@ -247,7 +247,7 @@ public:
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
     bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
 
-    WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
+    WebKit::FrameState* backForwardFrameState() const LIFETIME_BOUND { return m_backForwardFrameState.get(); }
     void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
 
     std::optional<WebCore::ProcessIdentifier> backForwardCacheMainFrameProcessIdentifier() const { return m_backForwardCacheMainFrameProcessIdentifier; }

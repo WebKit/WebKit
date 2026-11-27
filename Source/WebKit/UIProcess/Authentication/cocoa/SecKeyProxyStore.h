@@ -45,7 +45,7 @@ public:
     bool initialize(const WebCore::Credential&);
     bool isInitialized() const { return !!m_secKeyProxy; }
 
-    auto* get() const { return m_secKeyProxy.get(); }
+    auto* get() const LIFETIME_BOUND { return m_secKeyProxy.get(); }
 
 private:
     SecKeyProxyStore() = default;

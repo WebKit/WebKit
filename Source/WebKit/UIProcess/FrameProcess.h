@@ -49,8 +49,8 @@ public:
     ~FrameProcess();
 
     const std::optional<WebCore::Site>& site() const LIFETIME_BOUND { return m_site; }
-    const WebProcessProxy& process() const { return m_process.get(); }
-    WebProcessProxy& process() { return m_process.get(); }
+    const WebProcessProxy& process() const LIFETIME_BOUND { return m_process.get(); }
+    WebProcessProxy& process() LIFETIME_BOUND { return m_process.get(); }
     bool isSharedProcess() const { return !m_site; }
     const WebCore::Site& sharedProcessMainFrameSite() const LIFETIME_BOUND { ASSERT(!m_site); return m_mainFrameSite; }
     bool isArchiveProcess() const { return m_isArchiveProcess; }

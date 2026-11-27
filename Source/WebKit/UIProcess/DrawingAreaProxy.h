@@ -158,7 +158,7 @@ public:
 protected:
     DrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
 
-    WebProcessProxy& webProcessProxy() const { return m_webProcessProxy; }
+    WebProcessProxy& webProcessProxy() const LIFETIME_BOUND { return m_webProcessProxy; }
 
     void removeOutstandingPresentationUpdateCallback(IPC::Connection&, AsyncReplyID);
 

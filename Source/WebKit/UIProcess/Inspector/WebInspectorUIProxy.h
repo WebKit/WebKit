@@ -118,7 +118,7 @@ public:
 
     void invalidate();
 
-    API::InspectorClient& inspectorClient() { return *m_inspectorClient; }
+    API::InspectorClient& inspectorClient() LIFETIME_BOUND { return *m_inspectorClient; }
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
@@ -126,7 +126,7 @@ public:
     WebPageProxy* inspectorPage() const { return m_inspectorPage; }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
+    WebInspectorUIExtensionControllerProxy* extensionController() const LIFETIME_BOUND { return m_extensionController.get(); }
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }

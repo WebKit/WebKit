@@ -92,7 +92,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     uint64_t logIdentifier() const { return m_sessionState.logIdentifier; }
 #endif
 

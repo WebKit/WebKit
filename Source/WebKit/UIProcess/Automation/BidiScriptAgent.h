@@ -102,7 +102,7 @@ public:
     void emitEventsForActiveRealms(const HashSet<String>& contextFilter = { });
 
     // Access active realms for realm destruction without WebFrameProxy.
-    const HashMap<RealmIdentifier, RealmInfo>& activeRealms() const { return m_activeRealms; }
+    const HashMap<RealmIdentifier, RealmInfo>& activeRealms() const LIFETIME_BOUND { return m_activeRealms; }
 
     void executePreloadScriptsForContext(const String& browsingContext, const String& frameHandle);
 

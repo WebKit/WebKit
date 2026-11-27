@@ -46,7 +46,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    WebProcessProxy& process() { return m_process; }
+    WebProcessProxy& process() LIFETIME_BOUND { return m_process; }
     DrawingAreaIdentifier identifier() const { return m_identifier; }
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
 

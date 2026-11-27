@@ -128,20 +128,20 @@ public:
         WebCore::SecurityOriginData securityOrigin;
         bool operator==(const OpenerInfo&) const;
     };
-    NODELETE const std::optional<OpenerInfo>& openerInfo() const;
+    NODELETE const std::optional<OpenerInfo>& openerInfo() const LIFETIME_BOUND;
     void setOpenerInfo(std::optional<OpenerInfo>&&);
     void consumeOpenerInfo();
 
-    NODELETE const WebCore::Site& openedSite() const;
+    NODELETE const WebCore::Site& openedSite() const LIFETIME_BOUND;
     void setOpenedSite(const WebCore::Site&);
 
     bool processInheritedFromOpener() const { return m_data.processInheritedFromOpener; }
     void setProcessInheritedFromOpener(bool value) { m_data.processInheritedFromOpener = value; }
 
-    NODELETE const WTF::String& openedMainFrameName() const;
+    NODELETE const WTF::String& openedMainFrameName() const LIFETIME_BOUND;
     void setOpenedMainFrameName(const WTF::String&);
 
-    NODELETE const WebCore::RegistrableDomain& openedByScriptDomain() const;
+    NODELETE const WebCore::RegistrableDomain& openedByScriptDomain() const LIFETIME_BOUND;
     void setOpenedByScriptDomain(WebCore::RegistrableDomain&&);
 
     WebCore::SandboxFlags initialSandboxFlags() const { return m_data.initialSandboxFlags; }
@@ -150,17 +150,17 @@ public:
     WebCore::ReferrerPolicy initialReferrerPolicy() const { return m_data.initialReferrerPolicy; }
     NODELETE void setInitialReferrerPolicy(WebCore::ReferrerPolicy);
 
-    NODELETE const std::optional<WebCore::WindowFeatures>& windowFeatures() const;
+    NODELETE const std::optional<WebCore::WindowFeatures>& windowFeatures() const LIFETIME_BOUND;
     void setWindowFeatures(WebCore::WindowFeatures&&);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
 
-    WebKit::WebUserContentControllerProxy& userContentController() const;
+    WebKit::WebUserContentControllerProxy& userContentController() const LIFETIME_BOUND;
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    NODELETE const WTF::URL& requiredWebExtensionBaseURL() const;
+    NODELETE const WTF::URL& requiredWebExtensionBaseURL() const LIFETIME_BOUND;
     void setRequiredWebExtensionBaseURL(WTF::URL&&);
 
     NODELETE WebKit::WebExtensionController* webExtensionController() const;
@@ -173,7 +173,7 @@ public:
     NODELETE WebKit::WebPageGroup* pageGroup();
     void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
-    WebKit::WebPreferences& preferences() const;
+    WebKit::WebPreferences& preferences() const LIFETIME_BOUND;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     NODELETE WebKit::WebPageProxy* relatedPage() const;
@@ -188,21 +188,21 @@ public:
     NODELETE WebKit::WebPageProxy* alternateWebViewForNavigationGestures() const;
     NODELETE void setAlternateWebViewForNavigationGestures(WeakPtr<WebKit::WebPageProxy>&&);
 
-    WebKit::VisitedLinkStore& visitedLinkStore() const;
+    WebKit::VisitedLinkStore& visitedLinkStore() const LIFETIME_BOUND;
     void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
 
-    WebKit::WebsiteDataStore& websiteDataStore() const;
+    WebKit::WebsiteDataStore& websiteDataStore() const LIFETIME_BOUND;
     NODELETE WebKit::WebsiteDataStore* websiteDataStoreIfExists() const;
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
 
-    WebsitePolicies& defaultWebsitePolicies() const;
+    WebsitePolicies& defaultWebsitePolicies() const LIFETIME_BOUND;
     void setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&&);
 
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const { return m_data.canShowWhileLocked; }
     void setCanShowWhileLocked(bool canShowWhileLocked) { m_data.canShowWhileLocked = canShowWhileLocked; }
 
-    const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const { return m_data.clickInteractionDriverForTesting; }
+    const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const LIFETIME_BOUND { return m_data.clickInteractionDriverForTesting; }
     void setClickInteractionDriverForTesting(RetainPtr<_UIClickInteractionDriving>&& driver) { m_data.clickInteractionDriverForTesting = WTF::move(driver); }
 
     bool inlineMediaPlaybackRequiresPlaysInlineAttribute() const { return m_data.inlineMediaPlaybackRequiresPlaysInlineAttribute; }
@@ -519,7 +519,7 @@ private:
                     m_value = initializer();
                 return *m_value;
             }
-            T* getIfExists() const { return m_value.get(); }
+            T* getIfExists() const LIFETIME_BOUND { return m_value.get(); }
         private:
             mutable RefPtr<T> m_value;
         };

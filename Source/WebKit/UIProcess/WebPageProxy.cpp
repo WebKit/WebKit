@@ -1244,7 +1244,7 @@ PageClient* WebPageProxy::pageClient() const
     return m_pageClient.get();
 }
 
-WebsiteDataStore& WebPageProxy::websiteDataStore()
+WebsiteDataStore& WebPageProxy::websiteDataStore() LIFETIME_BOUND
 {
     return m_browsingContextGroup->websiteDataStore();
 }
@@ -2455,7 +2455,7 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy&, LoadParameters&)
 
 #endif
 
-WebProcessProxy& WebPageProxy::ensureRunningProcess()
+WebProcessProxy& WebPageProxy::ensureRunningProcess() LIFETIME_BOUND
 {
     // Callers should perform page close check.
     RELEASE_ASSERT(!m_isClosed);
@@ -3322,10 +3322,10 @@ void WebPageProxy::restoreBackForwardListCurrentItemAfterCanceledTraversal(API::
 #endif
 }
 
-WebProcessProxy& WebPageProxy::processForTheFrameItem(WebBackForwardListFrameItem& frameItem) const
+Ref<WebProcessProxy> WebPageProxy::processForTheFrameItem(WebBackForwardListFrameItem& frameItem) const
 {
-    if (auto* process = frameProcessForNonCachedBackForwardNavigation(frameItem))
-        return *process;
+    if (RefPtr process = frameProcessForNonCachedBackForwardNavigation(frameItem))
+        return process.releaseNonNull();
     return m_legacyMainFrameProcess;
 }
 
@@ -3341,7 +3341,7 @@ Ref<FrameState> WebPageProxy::copyFrameStateForBackForwardNavigation(WebBackForw
     return protect(preferences())->shouldUseUIProcessForBackForwardItemLoading() ? targetFrameItem->copyFrameState() : targetFrameItem->copyFrameStateWithChildren();
 }
 
-WebProcessProxy* WebPageProxy::frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem& frameItem) const
+RefPtr<WebProcessProxy> WebPageProxy::frameProcessForNonCachedBackForwardNavigation(WebBackForwardListFrameItem& frameItem) const
 {
     if (!protect(preferences())->siteIsolationEnabled())
         return nullptr;
@@ -3362,7 +3362,7 @@ WebProcessProxy* WebPageProxy::frameProcessForNonCachedBackForwardNavigation(Web
         return nullptr;
     }
 
-    return &frame->process();
+    return process;
 }
 
 void WebPageProxy::tryRestoreScrollPosition()
@@ -10907,7 +10907,7 @@ void WebPageProxy::sendPageLevelStorageAccessToProcess(WebProcessProxy& process,
     }
 }
 
-const Inspector::NetworkInterception& WebPageProxy::networkInterception() const
+const Inspector::NetworkInterception& WebPageProxy::networkInterception() const LIFETIME_BOUND
 {
     return internals().networkInterception;
 }
@@ -14817,7 +14817,7 @@ void WebPageProxy::endColorPicker()
         colorPicker->endPicker();
 }
 
-WebColorPickerClient& WebPageProxy::colorPickerClient()
+WebColorPickerClient& WebPageProxy::colorPickerClient() LIFETIME_BOUND
 {
     return internals();
 }
@@ -18096,7 +18096,7 @@ UserMediaPermissionRequestManagerProxy* WebPageProxy::userMediaPermissionRequest
     return m_userMediaPermissionRequestManager.get();
 }
 
-UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequestManager()
+UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequestManager() LIFETIME_BOUND
 {
     if (!m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager = UserMediaPermissionRequestManagerProxy::create(*this);
@@ -18500,7 +18500,7 @@ void WebPageProxy::startVisualTranslation(const String& sourceLanguageIdentifier
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-const String& WebPageProxy::displayedTranslationLocaleIdentifier() const
+const String& WebPageProxy::displayedTranslationLocaleIdentifier() const LIFETIME_BOUND
 {
     return m_internals->displayedTranslationLocaleIdentifier;
 }
@@ -22145,10 +22145,10 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-WebProcessProxy* WebPageProxy::processForSite(const Site& site)
+RefPtr<WebProcessProxy> WebPageProxy::processForSite(const Site& site)
 {
     if (RefPtr process = protect(browsingContextGroup())->processForSite(site))
-        return &process->process();
+        return process->process();
 
     return nullptr;
 }
@@ -22328,7 +22328,7 @@ RefPtr<WebProcessProxy> WebPageProxy::processForElementContext(const ElementCont
     return process;
 }
 
-WebPopupMenuProxyClient& WebPageProxy::popupMenuClient()
+WebPopupMenuProxyClient& WebPageProxy::popupMenuClient() LIFETIME_BOUND
 {
     return internals();
 }
@@ -23179,7 +23179,7 @@ void WebPageProxy::applyTextExtractionFilter(const String& input, CompletionHand
     sendWithAsyncReply(Messages::WebPage::ApplyTextExtractionFilter(input), WTF::move(completion));
 }
 
-TextExtractionCache& WebPageProxy::textExtractionCache()
+TextExtractionCache& WebPageProxy::textExtractionCache() LIFETIME_BOUND
 {
     return internals().textExtractionCache;
 }
@@ -23780,7 +23780,7 @@ void WebPageProxy::willDestroyRemotePage(RemotePageProxy& remotePage)
     internals().didRemoveActivityTarget(remotePage.process());
 }
 
-ProcessActivityGroupContext& WebPageProxy::activityGroupContext()
+ProcessActivityGroupContext& WebPageProxy::activityGroupContext() LIFETIME_BOUND
 {
     return internals();
 }
@@ -23829,7 +23829,7 @@ RefPtr<WebDeviceOrientationUpdateProviderProxy> WebPageProxy::webDeviceOrientati
 
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 
-WebBackForwardListMessageForwarder& WebPageProxy::backForwardListMessageReceiver() const
+WebBackForwardListMessageForwarder& WebPageProxy::backForwardListMessageReceiver() const LIFETIME_BOUND
 {
     return m_backForwardList->messageReceiver();
 }

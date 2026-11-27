@@ -343,7 +343,7 @@ public:
     Inspector::CommandResult<void> processBidiMessage(const String&) override;
     Inspector::CommandResult<void> emitActiveBidiScriptRealmCreatedEvents() override;
     void sendBidiMessage(const String&);
-    WebDriverBidiProcessor& bidiProcessor() const { return m_bidiProcessor; }
+    WebDriverBidiProcessor& bidiProcessor() const LIFETIME_BOUND { return m_bidiProcessor; }
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -359,7 +359,7 @@ public:
     // Event Simulation Support.
     NODELETE bool isSimulatingUserInteraction() const;
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-    SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
+    SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&) LIFETIME_BOUND;
     void runInteractionSequence(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&&, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, SimulatedInputRunOptions, AutomationCompletionHandler&&);
 #if ENABLE(WEBDRIVER_BIDI)
     void runBidiInteractionSequence(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&&, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);

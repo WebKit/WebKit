@@ -50,7 +50,7 @@ public:
 
     const WebPageGroupData& data() const LIFETIME_BOUND { return m_data; }
 
-    WebPreferences& preferences() const { return m_preferences; }
+    WebPreferences& preferences() const LIFETIME_BOUND { return m_preferences; }
 
 private:
     WebPageGroupData m_data;

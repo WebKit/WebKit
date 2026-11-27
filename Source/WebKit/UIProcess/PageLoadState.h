@@ -157,7 +157,7 @@ public:
     const URL& unreachableURL() const LIFETIME_BOUND { return m_committedState.unreachableURL; }
     const URL& baseURL() const LIFETIME_BOUND { return m_committedState.baseURL; }
 
-    const URL& activeURL() const { return activeURL(m_committedState); }
+    const URL& activeURL() const LIFETIME_BOUND { return activeURL(m_committedState); }
 
     bool hasOnlySecureContent() const;
     NODELETE bool hasNegotiatedLegacyTLS() const;

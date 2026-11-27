@@ -95,7 +95,7 @@ public:
     IPC::TransferString cachedTransferString(const String&) const;
     void resetTransferStringCache();
 
-    API::Array& userScripts() { return m_userScripts.get(); }
+    API::Array& userScripts() LIFETIME_BOUND { return m_userScripts.get(); }
     void addUserScript(API::UserScript&, InjectUserScriptImmediately);
     void removeUserScript(API::UserScript&);
     void removeAllUserScripts(API::ContentWorld&);
@@ -106,7 +106,7 @@ public:
 #endif
     WebCoreUserScriptData dataFromUserScript(const API::UserScript&, WebProcessProxy&) const;
 
-    API::Array& userStyleSheets() { return m_userStyleSheets.get(); }
+    API::Array& userStyleSheets() LIFETIME_BOUND { return m_userStyleSheets.get(); }
     void addUserStyleSheet(API::UserStyleSheet&);
     void removeUserStyleSheet(API::UserStyleSheet&);
     void removeAllUserStyleSheets(API::ContentWorld&);

@@ -70,7 +70,7 @@ RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
     return std::exchange(m_frameProcess, nullptr).releaseNonNull();
 }
 
-WebProcessProxy& ProvisionalFrameProxy::process() const
+WebProcessProxy& ProvisionalFrameProxy::process() const LIFETIME_BOUND
 {
     ASSERT(m_frameProcess);
     return m_frameProcess->process();

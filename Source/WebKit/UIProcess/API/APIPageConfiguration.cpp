@@ -111,7 +111,7 @@ void PageConfiguration::ensureLazyInitializedRefsAreInitialized()
     m_data.defaultWebsitePolicies.get();
 }
 
-const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const
+const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const LIFETIME_BOUND
 {
     return m_data.windowFeatures;
 }
@@ -121,7 +121,7 @@ void PageConfiguration::setWindowFeatures(WebCore::WindowFeatures&& windowFeatur
     m_data.windowFeatures = WTF::move(windowFeatures);
 }
 
-const WebCore::Site& PageConfiguration::openedSite() const
+const WebCore::Site& PageConfiguration::openedSite() const LIFETIME_BOUND
 {
     return m_data.openedSite;
 }
@@ -131,7 +131,7 @@ void PageConfiguration::setOpenedSite(const WebCore::Site& site)
     m_data.openedSite = site;
 }
 
-const WTF::String& PageConfiguration::openedMainFrameName() const
+const WTF::String& PageConfiguration::openedMainFrameName() const LIFETIME_BOUND
 {
     return m_data.openedMainFrameName;
 }
@@ -141,7 +141,7 @@ void PageConfiguration::setOpenedMainFrameName(const WTF::String& name)
     m_data.openedMainFrameName = name;
 }
 
-const WebCore::RegistrableDomain& PageConfiguration::openedByScriptDomain() const
+const WebCore::RegistrableDomain& PageConfiguration::openedByScriptDomain() const LIFETIME_BOUND
 {
     return m_data.openedByScriptDomain;
 }
@@ -151,7 +151,7 @@ void PageConfiguration::setOpenedByScriptDomain(WebCore::RegistrableDomain&& dom
     m_data.openedByScriptDomain = WTF::move(domain);
 }
 
-auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
+auto PageConfiguration::openerInfo() const LIFETIME_BOUND -> const std::optional<OpenerInfo>&
 {
     return *m_data.openerInfo;
 }
@@ -188,7 +188,7 @@ void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
     m_data.processPool = WTF::move(processPool);
 }
 
-WebUserContentControllerProxy& PageConfiguration::userContentController() const
+WebUserContentControllerProxy& PageConfiguration::userContentController() const LIFETIME_BOUND
 {
     return m_data.userContentController.get();
 }
@@ -199,7 +199,7 @@ void PageConfiguration::setUserContentController(RefPtr<WebUserContentController
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-const WTF::URL& PageConfiguration::requiredWebExtensionBaseURL() const
+const WTF::URL& PageConfiguration::requiredWebExtensionBaseURL() const LIFETIME_BOUND
 {
     return m_data.requiredWebExtensionBaseURL;
 }
@@ -252,7 +252,7 @@ void PageConfiguration::setPageGroup(RefPtr<WebPageGroup>&& pageGroup)
     m_data.pageGroup = WTF::move(pageGroup);
 }
 
-WebPreferences& PageConfiguration::preferences() const
+WebPreferences& PageConfiguration::preferences() const LIFETIME_BOUND
 {
     return m_data.preferences.get();
 }
@@ -312,7 +312,7 @@ void PageConfiguration::setAlternateWebViewForNavigationGestures(WeakPtr<WebPage
     m_data.alternateWebViewForNavigationGestures = WTF::move(alternateWebViewForNavigationGestures);
 }
 
-WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const
+WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const LIFETIME_BOUND
 {
     return m_data.visitedLinkStore.get();
 }
@@ -322,7 +322,7 @@ void PageConfiguration::setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&& v
     m_data.visitedLinkStore = WTF::move(visitedLinkStore);
 }
 
-WebsiteDataStore& PageConfiguration::websiteDataStore() const
+WebsiteDataStore& PageConfiguration::websiteDataStore() const LIFETIME_BOUND
 {
     if (!m_data.websiteDataStore)
         m_data.websiteDataStore = WebsiteDataStore::defaultDataStore();
@@ -339,7 +339,7 @@ void PageConfiguration::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDa
     m_data.websiteDataStore = WTF::move(websiteDataStore);
 }
 
-WebsitePolicies& PageConfiguration::defaultWebsitePolicies() const
+WebsitePolicies& PageConfiguration::defaultWebsitePolicies() const LIFETIME_BOUND
 {
     return m_data.defaultWebsitePolicies.get();
 }

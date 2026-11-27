@@ -108,13 +108,13 @@ public:
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
-    WebProcessProxy& process() { return m_process.get(); }
-    WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
+    WebProcessProxy& process() LIFETIME_BOUND { return m_process.get(); }
+    WebProcessProxy& siteIsolatedProcess() const LIFETIME_BOUND { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
     const WebCore::Site& site() const LIFETIME_BOUND { return m_site; }
 
-    NODELETE WebProcessActivityState& processActivityState();
+    NODELETE WebProcessActivityState& processActivityState() LIFETIME_BOUND;
 
     WebCore::MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void setDrawingArea(DrawingAreaProxy*);

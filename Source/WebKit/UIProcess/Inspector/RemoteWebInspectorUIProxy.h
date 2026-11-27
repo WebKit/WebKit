@@ -105,11 +105,11 @@ public:
     void sendMessageToFrontend(const String& message);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
+    WebInspectorUIExtensionControllerProxy* extensionController() const LIFETIME_BOUND { return m_extensionController.get(); }
 #endif
     
 #if PLATFORM(MAC)
-    NSWindow *window() const { return m_window.get(); }
+    NSWindow *window() const LIFETIME_BOUND { return m_window.get(); }
     WKWebView *webView() const;
 
     const WebCore::FloatRect& sheetRect() const LIFETIME_BOUND { return m_sheetRect; }

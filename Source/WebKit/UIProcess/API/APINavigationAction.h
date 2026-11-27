@@ -44,8 +44,8 @@ public:
         return adoptRef(*new NavigationAction(std::forward<Args>(args)...));
     }
 
-    FrameInfo* sourceFrame() const { return m_sourceFrame.get(); }
-    FrameInfo* targetFrame() const { return m_targetFrame.get(); }
+    FrameInfo* sourceFrame() const LIFETIME_BOUND { return m_sourceFrame.get(); }
+    FrameInfo* targetFrame() const LIFETIME_BOUND { return m_targetFrame.get(); }
     const WTF::String& targetFrameName() const LIFETIME_BOUND { return m_targetFrameName; }
 
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_request; }
@@ -58,7 +58,7 @@ public:
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     const std::optional<WebKit::WebHitTestResultData>& webHitTestResultData() const LIFETIME_BOUND { return m_navigationActionData.webHitTestResultData; }
 #endif
-    JSHandle* hitTestJSHandle() const { return m_hitTestJSHandle.get(); }
+    JSHandle* hitTestJSHandle() const LIFETIME_BOUND { return m_hitTestJSHandle.get(); }
     void setHitTestJSHandle(RefPtr<JSHandle>&& handle) { m_hitTestJSHandle = WTF::move(handle); }
     WebCore::FloatPoint clickLocationInRootViewCoordinates() const { return m_navigationActionData.clickLocationInRootViewCoordinates; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
@@ -72,9 +72,9 @@ public:
 
     bool isProcessingUserGesture() const { return m_userInitiatedAction; }
     bool isProcessingUnconsumedUserGesture() const { return m_userInitiatedAction && !m_userInitiatedAction->consumed(); }
-    UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
+    UserInitiatedAction* userInitiatedAction() const LIFETIME_BOUND { return m_userInitiatedAction.get(); }
 
-    Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
+    Navigation* mainFrameNavigation() const LIFETIME_BOUND { return m_mainFrameNavigation.get(); }
 
 #if HAVE(APP_SSO)
     bool shouldPerformSOAuthorization() { return m_shouldPerformSOAuthorization; }

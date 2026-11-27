@@ -408,7 +408,7 @@ public:
 
     bool isLoaded() const { return !!m_extensionController; }
 
-    WebExtension& extension() const { return *m_extension; }
+    WebExtension& extension() const LIFETIME_BOUND { return *m_extension; }
     WebExtensionController* extensionController() const { return m_extensionController.get(); }
 
     const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
@@ -579,7 +579,7 @@ public:
     void inspectorEffectiveAppearanceDidChange(API::InspectorExtension&, Inspector::ExtensionAppearance);
 #endif
 
-    WebExtensionAction& defaultAction();
+    WebExtensionAction& defaultAction() LIFETIME_BOUND;
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getAction(WebExtensionTab*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);
@@ -587,7 +587,7 @@ public:
     void performAction(WebExtensionTab*, UserTriggered = UserTriggered::No);
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    WebExtensionSidebar& defaultSidebar();
+    WebExtensionSidebar& defaultSidebar() LIFETIME_BOUND;
     std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionWindow const&);
     std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
@@ -606,7 +606,7 @@ public:
     bool canProgrammaticallyCloseSidebar();
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-    const CommandsVector& commands();
+    const CommandsVector& commands() LIFETIME_BOUND;
     WebExtensionCommand* command(const String& identifier);
     void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
     void resetCommands();
@@ -651,17 +651,17 @@ public:
     void unloadBackgroundContentForTesting();
 
     URL backgroundContentURL();
-    WebViewClass *backgroundWebView() const { return m_backgroundWebView.get(); }
+    WebViewClass *backgroundWebView() const LIFETIME_BOUND { return m_backgroundWebView.get(); }
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN) && PLATFORM(COCOA)
-    WKWebView *offscreenWebView() const { return m_offscreenWebView.get(); }
+    WKWebView *offscreenWebView() const LIFETIME_BOUND { return m_offscreenWebView.get(); }
     bool isOffscreenWebView(WKWebView *webView) const { return webView == m_offscreenWebView; }
 #endif
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
     RefPtr<API::Error> backgroundContentLoadError() const { return m_backgroundContentLoadError; }
 
-    const String& backgroundWebViewInspectionName();
+    const String& backgroundWebViewInspectionName() LIFETIME_BOUND;
     void setBackgroundWebViewInspectionName(const String&);
 
     bool decidePolicyForNavigationAction(WebViewClass *, NavigationPolicyAction *);

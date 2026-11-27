@@ -236,7 +236,7 @@ public:
     RefPtr<API::Data> serializeLocalization();
 
 #if PLATFORM(COCOA)
-    NSBundle *bundle() const { return m_bundle.get(); }
+    NSBundle *bundle() const LIFETIME_BOUND { return m_bundle.get(); }
     SecStaticCodeRef bundleStaticCode() const;
     NSData *bundleHash() const;
 #endif
@@ -255,24 +255,24 @@ public:
 
     RefPtr<WebExtensionLocalization> localization();
 
-    const Vector<String>& supportedLocales();
-    const String& defaultLocale();
+    const Vector<String>& supportedLocales() LIFETIME_BOUND;
+    const String& defaultLocale() LIFETIME_BOUND;
     String bestMatchLocale();
 
-    const String& displayName();
-    const String& displayShortName();
-    const String& displayVersion();
-    const String& displayDescription();
-    const String& version();
+    const String& displayName() LIFETIME_BOUND;
+    const String& displayShortName() LIFETIME_BOUND;
+    const String& displayVersion() LIFETIME_BOUND;
+    const String& displayDescription() LIFETIME_BOUND;
+    const String& version() LIFETIME_BOUND;
 
-    const String& contentSecurityPolicy();
+    const String& contentSecurityPolicy() LIFETIME_BOUND;
     bool usesStructuredCloneMessageSerialization();
 
     RefPtr<WebCore::Icon> icon(WebCore::FloatSize idealSize);
 
     RefPtr<WebCore::Icon> actionIcon(WebCore::FloatSize idealSize);
-    const String& displayActionLabel();
-    const String& actionPopupPath();
+    const String& displayActionLabel() LIFETIME_BOUND;
+    const String& actionPopupPath() LIFETIME_BOUND;
 
     bool hasAction();
     bool hasBrowserAction();
@@ -283,8 +283,8 @@ public:
     bool hasSidePanel();
     bool hasAnySidebar();
     RefPtr<WebCore::Icon> sidebarIcon(WebCore::FloatSize idealSize);
-    const std::optional<String>& sidebarDocumentPath();
-    const std::optional<String>& sidebarTitle();
+    const std::optional<String>& sidebarDocumentPath() LIFETIME_BOUND;
+    const std::optional<String>& sidebarTitle() LIFETIME_BOUND;
 #endif
 
     std::expected<Ref<WebCore::Icon>, RefPtr<API::Error>> iconForPath(const String&, WebCore::FloatSize sizeForResizing = { }, std::optional<double> displayScale = std::nullopt);
@@ -306,45 +306,45 @@ public:
     bool backgroundContentUsesModules();
     bool backgroundContentIsServiceWorker();
 
-    const String& backgroundContentPath();
-    const String& generatedBackgroundContent();
+    const String& backgroundContentPath() LIFETIME_BOUND;
+    const String& generatedBackgroundContent() LIFETIME_BOUND;
 
     bool hasInspectorBackgroundPage();
-    const String& inspectorBackgroundPagePath();
+    const String& inspectorBackgroundPagePath() LIFETIME_BOUND;
 
     bool hasOptionsPage();
     bool hasOverrideNewTabPage();
 
-    const String& optionsPagePath();
-    const String& overrideNewTabPagePath();
+    const String& optionsPagePath() LIFETIME_BOUND;
+    const String& overrideNewTabPagePath() LIFETIME_BOUND;
 
-    const CommandsVector& commands();
+    const CommandsVector& commands() LIFETIME_BOUND;
     bool hasCommands();
 
-    const DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
+    const DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets() LIFETIME_BOUND;
     std::optional<DeclarativeNetRequestRulesetData> declarativeNetRequestRuleset(const String&);
     bool hasContentModificationRules() { return !declarativeNetRequestRulesets().isEmpty(); }
 
-    const InjectedContentVector& staticInjectedContents();
+    const InjectedContentVector& staticInjectedContents() LIFETIME_BOUND;
     bool hasStaticInjectedContentForURL(const URL&);
     bool hasStaticInjectedContent();
 
     // Permissions requested by the extension in their manifest.
     // These are not the currently allowed permissions.
-    const PermissionsSet& requestedPermissions();
-    const PermissionsSet& optionalPermissions();
+    const PermissionsSet& requestedPermissions() LIFETIME_BOUND;
+    const PermissionsSet& optionalPermissions() LIFETIME_BOUND;
 
     bool hasRequestedPermission(String);
 
     // Match patterns requested by the extension in their manifest.
     // These are not the currently allowed permission patterns.
-    const MatchPatternSet& requestedPermissionMatchPatterns();
-    const MatchPatternSet& optionalPermissionMatchPatterns();
+    const MatchPatternSet& requestedPermissionMatchPatterns() LIFETIME_BOUND;
+    const MatchPatternSet& optionalPermissionMatchPatterns() LIFETIME_BOUND;
     const MatchPatternSet combinedPermissionMatchPatterns() { return requestedPermissionMatchPatterns().unionWith(optionalPermissionMatchPatterns()); }
 
     // Permission patterns requested by the extension in their manifest.
     // These determine which websites the extension can communicate with.
-    const MatchPatternSet& externallyConnectableMatchPatterns();
+    const MatchPatternSet& externallyConnectableMatchPatterns() LIFETIME_BOUND;
 
     // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
     MatchPatternSet allRequestedMatchPatterns();

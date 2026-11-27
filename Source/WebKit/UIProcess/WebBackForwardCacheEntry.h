@@ -55,7 +55,7 @@ public:
 
     NODELETE WebBackForwardCache* backForwardCache() const;
 
-    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
+    SuspendedPageProxy* suspendedPage() const LIFETIME_BOUND { return m_suspendedPage.get(); }
     void setSuspendedPage(Ref<SuspendedPageProxy>&&);
     void clearSuspendedPage();
     Ref<SuspendedPageProxy> takeSuspendedPage();

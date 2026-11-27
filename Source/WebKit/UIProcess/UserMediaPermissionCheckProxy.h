@@ -52,8 +52,8 @@ public:
     void invalidate() { complete(PermissionInfo::Error); }
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
-    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() LIFETIME_BOUND { return m_userMediaDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() LIFETIME_BOUND { return m_topLevelDocumentSecurityOrigin.get(); }
     
 private:
     UserMediaPermissionCheckProxy(WebCore::FrameIdentifier, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);

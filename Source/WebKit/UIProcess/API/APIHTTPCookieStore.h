@@ -98,7 +98,7 @@ public:
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
     WebKit::NetworkProcessProxy* networkProcessIfExists();
-    WebKit::NetworkProcessProxy* networkProcessLaunchingIfNecessary();
+    RefPtr<WebKit::NetworkProcessProxy> networkProcessLaunchingIfNecessary();
 
     template<typename Message>
     void fetchCookies(Message&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&, RefPtr<WTF::WorkQueue> replyQueue);

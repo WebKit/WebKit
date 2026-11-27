@@ -51,7 +51,7 @@ public:
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 #endif
 
-    WebCore::AuthenticatorAssertionResponse& response() { return m_response.get(); }
+    WebCore::AuthenticatorAssertionResponse& response() LIFETIME_BOUND { return m_response.get(); }
 
 private:
     WebAuthenticationAssertionResponse(Ref<WebCore::AuthenticatorAssertionResponse>&&);

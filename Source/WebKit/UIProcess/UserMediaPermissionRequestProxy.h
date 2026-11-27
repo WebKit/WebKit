@@ -114,10 +114,10 @@ public:
     const FrameInfoData& frameInfo() const LIFETIME_BOUND { return m_frameInfo; }
     WebCore::FrameIdentifier frameID() const { return m_frameInfo.frameID; }
 
-    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
-    WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
-    const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
-    const WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() const { return m_userMediaDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() LIFETIME_BOUND { return m_topLevelDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() LIFETIME_BOUND { return m_userMediaDocumentSecurityOrigin.get(); }
+    const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const LIFETIME_BOUND { return m_topLevelDocumentSecurityOrigin.get(); }
+    const WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() const LIFETIME_BOUND { return m_userMediaDocumentSecurityOrigin.get(); }
 
     const WebCore::MediaStreamRequest& userRequest() const LIFETIME_BOUND { return m_request; }
 

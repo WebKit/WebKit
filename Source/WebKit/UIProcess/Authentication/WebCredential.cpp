@@ -35,7 +35,7 @@ WebCredential::WebCredential(const WebCore::Credential& credential)
 
 WebCredential::~WebCredential() = default;
 
-const WebCore::Credential& WebCredential::credential()
+const WebCore::Credential& WebCredential::credential() LIFETIME_BOUND
 {
     return m_coreCredential;
 }

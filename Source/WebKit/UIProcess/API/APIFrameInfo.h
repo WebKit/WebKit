@@ -63,7 +63,7 @@ public:
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
     WTF::String title() const { return m_stateSnapshot.title; }
-    const WebCore::CertificateInfo& certificateInfo() const { return m_stateSnapshot.certificateInfo; }
+    const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_stateSnapshot.certificateInfo; }
 
     const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
 

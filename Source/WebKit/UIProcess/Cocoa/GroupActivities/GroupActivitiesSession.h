@@ -68,7 +68,7 @@ private:
     friend class GroupActivitiesSessionNotifier;
     friend class GroupActivitiesCoordinator;
     GroupActivitiesSession(RetainPtr<WKGroupSession>&&);
-    WKGroupSession* groupSession() { return m_groupSession.get(); }
+    WKGroupSession* groupSession() LIFETIME_BOUND { return m_groupSession.get(); }
 
     const RetainPtr<WKGroupSession> m_groupSession;
     WeakHashSet<StateChangeObserver> m_stateChangeObservers;

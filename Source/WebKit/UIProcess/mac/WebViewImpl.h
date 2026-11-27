@@ -228,7 +228,7 @@ public:
     NSWindow *window();
     NSInteger windowNumber();
 
-    WebPageProxy& page() { return m_page.get(); }
+    WebPageProxy& page() LIFETIME_BOUND { return m_page.get(); }
 
     WKWebView *view() const { return m_view.getAutoreleased(); }
 
@@ -395,7 +395,7 @@ public:
     bool windowOcclusionDetectionEnabled() const { return m_windowOcclusionDetectionEnabled; }
 
     void prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<void()>&& completionHandler);
-    NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation.get(); }
+    NSWindow *targetWindowForMovePreparation() const LIFETIME_BOUND { return m_targetWindowForMovePreparation.get(); }
 
     void setFontForWebView(NSFont *, id);
 
@@ -408,7 +408,7 @@ public:
     NSInteger spellCheckerDocumentTag();
 
     void pressureChangeWithEvent(NSEvent *);
-    NSEvent *lastPressureEvent() { return m_lastPressureEvent.get(); }
+    NSEvent *lastPressureEvent() LIFETIME_BOUND { return m_lastPressureEvent.get(); }
 
 #if ENABLE(FULLSCREEN_API)
     NODELETE bool hasFullScreenWindowController() const;
@@ -622,8 +622,8 @@ public:
 
     _WKWarningView *warningView() LIFETIME_BOUND { return m_warningView.get(); }
 
-    ViewGestureController* gestureController() const { return m_gestureController.get(); }
-    ViewGestureController& ensureGestureController();
+    ViewGestureController* gestureController() const LIFETIME_BOUND { return m_gestureController.get(); }
+    ViewGestureController& ensureGestureController() LIFETIME_BOUND;
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     WKAppKitGestureController *appKitGestureController() const LIFETIME_BOUND { return m_appKitGestureController.get(); }
     void setTextSelectionDragGesture(NSGestureRecognizer *, void (^completionHandler)(NSDraggingSession *));
@@ -735,7 +735,7 @@ public:
     int32_t processImageAnalyzerRequest(VKCImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<VKCImageAnalysis>&&, NSError *)>&&);
 
     WebCore::FloatRect imageAnalysisInteractionBounds() const { return m_imageAnalysisInteractionBounds; }
-    VKCImageAnalysisOverlayView *imageAnalysisOverlayView() const { return m_imageAnalysisOverlayView.get(); }
+    VKCImageAnalysisOverlayView *imageAnalysisOverlayView() const LIFETIME_BOUND { return m_imageAnalysisOverlayView.get(); }
 #endif // ENABLE(IMAGE_ANALYSIS)
 
     bool imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const;
@@ -812,7 +812,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    MediaSessionCoordinatorProxyPrivate* mediaSessionCoordinatorForTesting() { return m_coordinatorForTesting.get(); }
+    MediaSessionCoordinatorProxyPrivate* mediaSessionCoordinatorForTesting() LIFETIME_BOUND { return m_coordinatorForTesting.get(); }
     void setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate*);
 #endif
 

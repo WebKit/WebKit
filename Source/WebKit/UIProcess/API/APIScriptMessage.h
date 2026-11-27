@@ -51,13 +51,13 @@ public:
 
 #if PLATFORM(COCOA)
     const RetainPtr<id>& body() const LIFETIME_BOUND { return m_body; }
-    NSString *cocoaName() const { return m_cocoaName.get(); }
+    NSString *cocoaName() const LIFETIME_BOUND { return m_cocoaName.get(); }
 #endif
-    API::Object* apiBody() const { return m_apiBody.get(); }
+    API::Object* apiBody() const LIFETIME_BOUND { return m_apiBody.get(); }
     NODELETE WebKit::WebPageProxy* page() const;
-    API::FrameInfo& frame() const { return m_frame.get(); }
+    API::FrameInfo& frame() const LIFETIME_BOUND { return m_frame.get(); }
     const WTF::String& name() const LIFETIME_BOUND { return m_name; }
-    API::ContentWorld& world() const { return m_world.get(); }
+    API::ContentWorld& world() const LIFETIME_BOUND { return m_world.get(); }
 
 private:
     ScriptMessage(RefPtr<API::Object>&&, WebKit::WebPageProxy&, Ref<API::FrameInfo>&&, const WTF::String&, Ref<API::ContentWorld>&&);

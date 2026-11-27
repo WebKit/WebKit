@@ -782,7 +782,7 @@ VideoPresentationManagerProxy::ModelInterfacePair VideoPresentationManagerProxy:
     return std::make_pair(WTF::move(model), WTF::move(interface));
 }
 
-const VideoPresentationManagerProxy::ModelInterfacePair& VideoPresentationManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
+const VideoPresentationManagerProxy::ModelInterfacePair& VideoPresentationManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId) LIFETIME_BOUND
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId);

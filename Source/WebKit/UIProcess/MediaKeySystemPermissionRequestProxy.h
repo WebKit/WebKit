@@ -57,11 +57,11 @@ public:
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
-    WebCore::SecurityOrigin& mediaKeyRequestSecurityOrigin() { return m_mediaKeyRequestSecurityOrigin.get(); }
-    const WebCore::SecurityOrigin& mediaKeyRequestSecurityOrigin() const { return m_mediaKeyRequestSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& mediaKeyRequestSecurityOrigin() LIFETIME_BOUND { return m_mediaKeyRequestSecurityOrigin.get(); }
+    const WebCore::SecurityOrigin& mediaKeyRequestSecurityOrigin() const LIFETIME_BOUND { return m_mediaKeyRequestSecurityOrigin.get(); }
 
-    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
-    const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const { return m_topLevelDocumentSecurityOrigin.get(); }
+    WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() LIFETIME_BOUND { return m_topLevelDocumentSecurityOrigin.get(); }
+    const WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() const LIFETIME_BOUND { return m_topLevelDocumentSecurityOrigin.get(); }
 
     const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 

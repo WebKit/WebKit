@@ -3222,7 +3222,7 @@ bool WebAutomationSession::isSimulatingUserInteraction() const
 }
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
-SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPageProxy& page)
+SimulatedInputDispatcher& WebAutomationSession::inputDispatcherForPage(WebPageProxy& page) LIFETIME_BOUND
 {
     return m_inputDispatchersByPage.ensure(page.identifier(), [&] {
         return SimulatedInputDispatcher::create(page, *this);

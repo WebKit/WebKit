@@ -79,7 +79,7 @@ public:
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
 
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
-    LayerHostingVisibilityPropagator* layerHostingVisibilityPropagator() const { return m_layerHostingVisibilityPropagator.get(); }
+    LayerHostingVisibilityPropagator* layerHostingVisibilityPropagator() const LIFETIME_BOUND { return m_layerHostingVisibilityPropagator.get(); }
     void setLayerHostingVisibilityPropagator(RefPtr<LayerHostingVisibilityPropagator>&&);
 #endif
 
@@ -232,7 +232,7 @@ private:
 
     typedef std::pair<Ref<VideoPresentationModelContext>, Ref<WebCore::PlatformVideoPresentationInterface>> ModelInterfacePair;
     ModelInterfacePair createModelAndInterface(PlaybackSessionContextIdentifier);
-    const ModelInterfacePair& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfacePair& ensureModelAndInterface(PlaybackSessionContextIdentifier) LIFETIME_BOUND;
     NODELETE const ModelInterfacePair* findModelAndInterface(PlaybackSessionContextIdentifier) const;
     Ref<VideoPresentationModelContext> ensureModel(PlaybackSessionContextIdentifier);
     Ref<WebCore::PlatformVideoPresentationInterface> ensureInterface(PlaybackSessionContextIdentifier);

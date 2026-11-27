@@ -70,7 +70,7 @@ public:
     const WebCore::NotificationData& data() const LIFETIME_BOUND { return m_data; }
     bool isPersistentNotification() const { return !m_data.serviceWorkerRegistrationURL.isEmpty(); }
 
-    API::SecurityOrigin& origin() const { return m_origin; }
+    API::SecurityOrigin& origin() const LIFETIME_BOUND { return m_origin; }
 
     std::optional<WebPageProxyIdentifier> pageIdentifier() const { return m_pageIdentifier; }
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }

@@ -291,9 +291,9 @@ private:
 
     typedef std::tuple<Ref<PlaybackSessionModelContext>, Ref<WebCore::PlatformPlaybackSessionInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    const ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier) LIFETIME_BOUND;
     Ref<PlaybackSessionModelContext> ensureModel(PlaybackSessionContextIdentifier);
-    WebCore::PlatformPlaybackSessionInterface& ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlatformPlaybackSessionInterface& ensureInterface(PlaybackSessionContextIdentifier) LIFETIME_BOUND;
 
     // Qualifies an identifier from IPC with the sending process rather than trusting the sender.
     PlaybackSessionContextIdentifier contextIdForConnection(IPC::Connection&, WebCore::HTMLMediaElementIdentifier) const;
@@ -382,7 +382,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, uint64_t);
 
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "PlaybackSessionManagerProxy"_s; }
     NODELETE WTFLogChannel& logChannel() const;

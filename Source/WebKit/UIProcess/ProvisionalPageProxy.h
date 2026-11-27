@@ -111,9 +111,9 @@ public:
     const WebPageProxy* page() const { return m_page.get(); }
 
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
-    WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
-    BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup.get(); }
-    NODELETE WebProcessProxy& process() const;
+    WebFrameProxy* mainFrame() const LIFETIME_BOUND { return m_mainFrame.get(); }
+    BrowsingContextGroup& browsingContextGroup() const LIFETIME_BOUND { return m_browsingContextGroup.get(); }
+    NODELETE WebProcessProxy& process() const LIFETIME_BOUND;
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }
     WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
     const URL& provisionalURL() const LIFETIME_BOUND { return m_provisionalLoadURL; }
@@ -121,7 +121,7 @@ public:
 
     bool isProcessSwappingOnNavigationResponse() const { return m_isProcessSwappingOnNavigationResponse; }
     bool didFailProvisionalLoad() const { return m_didFailProvisionalLoad; }
-    const std::optional<WebCore::Site>& deferredRemoteTransitionSite() const { return m_deferredRemoteTransitionSite; }
+    const std::optional<WebCore::Site>& deferredRemoteTransitionSite() const LIFETIME_BOUND { return m_deferredRemoteTransitionSite; }
     FrameProcess* previousMainFrameProcess() const;
     bool hasActiveLoadForNavigation(const API::Navigation&) const;
 
@@ -129,7 +129,7 @@ public:
     void updateDeferredTopDocumentSyncData(const WebCore::DocumentSyncSerializationData&);
     RefPtr<WebCore::DocumentSyncData> takeDeferredTopDocumentSyncData();
 
-    DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
+    DrawingAreaProxy* drawingArea() const LIFETIME_BOUND { return m_drawingArea.get(); }
     RefPtr<DrawingAreaProxy> takeDrawingArea();
 
     NODELETE void setNavigation(API::Navigation&);
@@ -164,7 +164,7 @@ public:
 
     bool needsCookieAccessAddedInNetworkProcess() const { return m_needsCookieAccessAddedInNetworkProcess; }
 
-    API::WebsitePolicies* mainFrameWebsitePolicies() const { return m_mainFrameWebsitePolicies.get(); }
+    API::WebsitePolicies* mainFrameWebsitePolicies() const LIFETIME_BOUND { return m_mainFrameWebsitePolicies.get(); }
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() LIFETIME_BOUND { return m_messageReceiverRegistration; }
 
