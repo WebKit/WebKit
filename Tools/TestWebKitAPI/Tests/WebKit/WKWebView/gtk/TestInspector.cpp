@@ -219,6 +219,29 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->m_events.clear();
 }
 
+static void testInspectorNotShown(InspectorTest* test, gconstpointer)
+{
+    test->showInWindow();
+    test->resizeView(200, 200);
+    test->loadHtml("<html><body><p>WebKitGTK Inspector test</p></body></html>", 0);
+    test->waitUntilLoadFinished();
+
+    test->show();
+    Vector<InspectorTest::InspectorEvents>& events = test->m_events;
+    g_assert_cmpint(events.size(), ==, 1);
+    g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);
+    test->m_events.clear();
+
+    // Check that the view isn't leaked when the inspector is never shown.
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_web_inspector_get_web_view(test->m_inspector)));
+
+    test->close();
+    events = test->m_events;
+    g_assert_cmpint(events.size(), ==, 1);
+    g_assert_cmpint(events[0], ==, InspectorTest::Closed);
+    test->m_events.clear();
+}
+
 class CustomInspectorTest: public InspectorTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(CustomInspectorTest);
@@ -405,6 +428,7 @@ static void testInspectorCustomContainerDestroyed(CustomInspectorTest* test, gco
 void beforeAll()
 {
     InspectorTest::add("WebKitWebInspector", "default", testInspectorDefault);
+    InspectorTest::add("WebKitWebInspector", "not-shown", testInspectorNotShown);
     CustomInspectorTest::add("WebKitWebInspector", "manual-attach-detach", testInspectorManualAttachDetach);
     CustomInspectorTest::add("WebKitWebInspector", "custom-container-destroyed", testInspectorCustomContainerDestroyed);
 }
