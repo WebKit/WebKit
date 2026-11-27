@@ -231,7 +231,8 @@ bool RenderLayerScrollableArea::forceUpdateScrollbarsOnMainThreadForPerformanceT
 // FIXME: this is only valid after we've made layers.
 bool RenderLayerScrollableArea::usesAsyncScrolling() const
 {
-    return m_layer.compositor().useCoordinatedScrollingForLayer(m_layer);
+    CheckedRef layer = m_layer;
+    return protect(layer->compositor())->useCoordinatedScrollingForLayer(layer);
 }
 
 void RenderLayerScrollableArea::setPostLayoutScrollPosition(std::optional<ScrollPosition> position)

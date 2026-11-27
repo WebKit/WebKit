@@ -120,15 +120,16 @@ void BackgroundPainter::paintRootBoxFillLayers() const
     if (m_paintInfo.skipRootBackground())
         return;
 
-    auto* rootBackgroundRenderer = view().rendererForRootBackground();
+    CheckedRef view = this->view();
+    CheckedPtr rootBackgroundRenderer = view->rendererForRootBackground();
     if (!rootBackgroundRenderer)
         return;
 
-    auto& style = rootBackgroundRenderer->style();
-    auto backgroundColor = style.visitedDependentUsedBackgroundColorApplyingColorFilter(m_paintInfo.paintBehavior);
-    auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
+    CheckedRef style = rootBackgroundRenderer->style();
+    auto backgroundColor = style->visitedDependentUsedBackgroundColorApplyingColorFilter(m_paintInfo.paintBehavior);
+    auto compositeOp = protect(document())->compositeOperatorForBackgroundColor(backgroundColor, protect(m_renderer));
 
-    paintFillLayers(backgroundColor, style.backgroundLayers(), style.usedZoomForLength(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
+    paintFillLayers(backgroundColor, style->backgroundLayers(), style->usedZoomForLength(), view->backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
 }
 
 bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer)

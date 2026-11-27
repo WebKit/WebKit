@@ -691,8 +691,8 @@ public:
     // Ancestor compositing layer, excluding this.
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(ExcludeSelf); }
 
-    RenderLayer* enclosingPixelMovingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
-    RenderLayer* enclosingFilterRepaintLayer() const;
+    CheckedPtr<RenderLayer> enclosingPixelMovingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
+    CheckedPtr<RenderLayer> enclosingFilterRepaintLayer() const;
     enum class UseFilterOutsets : bool { Add, AlreadyIncluded };
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, UseFilterOutsets = UseFilterOutsets::Add);
 

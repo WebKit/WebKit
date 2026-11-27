@@ -1,5 +1,4 @@
 StyleBuilderGenerated.cpp
-rendering/CSSFilterRenderer.cpp
 rendering/FloatingObjects.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/LayoutRepainter.cpp
@@ -21,18 +20,13 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
-rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
 rendering/RenderListItem.cpp
 rendering/RenderObject.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderTableCell.cpp
-rendering/RenderTableCellInlines.h
 rendering/RenderText.cpp
-rendering/RenderView.cpp
-rendering/TextBoxTrimmer.cpp
 rendering/paint/BackgroundPainter.cpp
-rendering/paint/EllipsisBoxPainter.cpp
 rendering/paint/InlineBoxPainter.cpp
 rendering/paint/TextBoxPainter.cpp
 rendering/paint/TextDecorationPainter.cpp

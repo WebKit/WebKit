@@ -102,8 +102,8 @@ void RenderTableCell::willBeRemovedFromTree()
     RenderBlockFlow::willBeRemovedFromTree();
     if (!table() || !section())
         return;
-    RenderTableSection* section = this->section();
-    table()->invalidateCollapsedBorders();
+    CheckedPtr section = this->section();
+    protect(table())->invalidateCollapsedBorders();
     section->removeCachedCollapsedBorders(*this);
     section->setNeedsCellRecalc();
 }
@@ -171,7 +171,7 @@ void RenderTableCell::colSpanOrRowSpanChanged()
 
     setNeedsLayoutAndInvalidateContentLogicalWidths();
     if (parent() && section())
-        section()->setNeedsCellRecalc();
+        protect(section())->setNeedsCellRecalc();
 }
 
 Style::PreferredSize RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisCell, const Style::PreferredSize& widthFromStyle) const
@@ -287,7 +287,7 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
 
         auto needsIntrinsicPadding = baseline > borderAndPaddingBefore() || !borderBoxLogicalHeight;
         if (needsIntrinsicPadding)
-            intrinsicPaddingBefore = section()->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
+            intrinsicPaddingBefore = protect(section())->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
     };
 
     WTF::switchOn(alignment,
@@ -542,25 +542,25 @@ auto RenderTableCell::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBo
     LayoutUnit top = std::max(borderHalfTop(true), outlineSize);
     LayoutUnit bottom = std::max(borderHalfBottom(true), outlineSize);
     if ((left && !flippedInline) || (right && flippedInline)) {
-        if (RenderTableCell* before = table()->cellBefore(this)) {
+        if (CheckedPtr before = protect(table())->cellBefore(this)) {
             top = std::max(top, before->borderHalfTop(true));
             bottom = std::max(bottom, before->borderHalfBottom(true));
         }
     }
     if ((left && flippedInline) || (right && !flippedInline)) {
-        if (RenderTableCell* after = table()->cellAfter(this)) {
+        if (CheckedPtr after = protect(table())->cellAfter(this)) {
             top = std::max(top, after->borderHalfTop(true));
             bottom = std::max(bottom, after->borderHalfBottom(true));
         }
     }
     if (top) {
-        if (RenderTableCell* above = table()->cellAbove(this)) {
+        if (CheckedPtr above = protect(table())->cellAbove(this)) {
             left = std::max(left, above->borderHalfLeft(true));
             right = std::max(right, above->borderHalfRight(true));
         }
     }
     if (bottom) {
-        if (RenderTableCell* below = table()->cellBelow(this)) {
+        if (CheckedPtr below = protect(table())->cellBelow(this)) {
             left = std::max(left, below->borderHalfLeft(true));
             right = std::max(right, below->borderHalfRight(true));
         }
@@ -641,7 +641,7 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
     if (parent() && section() && oldStyle) {
         auto rowWritingMode = row()->writingMode();
         if (style().logicalHeight(rowWritingMode) != oldStyle->logicalHeight(rowWritingMode))
-            section()->rowLogicalHeightChanged(rowIndex());
+            protect(section())->rowLogicalHeightChanged(rowIndex());
     }
 
     // Our intrinsic padding pushes us down to align with the baseline of other cells on the row. If our vertical-align
@@ -650,12 +650,12 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
         clearIntrinsicPadding();
 
     if (CheckedPtr table = this->table(); table && oldStyle) {
-        table->invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, style(), this);
+        table->invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, protect(style()), this);
         if (table->collapseBorders() && diff == Style::DifferenceResult::Layout) {
-            markCellDirtyWhenCollapsedBorderChanges(table->cellBelow(this));
-            markCellDirtyWhenCollapsedBorderChanges(table->cellAbove(this));
-            markCellDirtyWhenCollapsedBorderChanges(table->cellBefore(this));
-            markCellDirtyWhenCollapsedBorderChanges(table->cellAfter(this));
+            markCellDirtyWhenCollapsedBorderChanges(protect(table->cellBelow(this)));
+            markCellDirtyWhenCollapsedBorderChanges(protect(table->cellAbove(this)));
+            markCellDirtyWhenCollapsedBorderChanges(protect(table->cellBefore(this)));
+            markCellDirtyWhenCollapsedBorderChanges(protect(table->cellAfter(this)));
         }
     }
 }
@@ -1196,7 +1196,7 @@ CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const WritingM
 
 RectEdges<LayoutUnit> RenderTableCell::borderWidths() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderWidths();
 
@@ -1213,7 +1213,7 @@ RectEdges<LayoutUnit> RenderTableCell::borderWidths() const
 
 LayoutUnit RenderTableCell::borderLeft() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderLeft();
     return table->collapseBorders() ? borderHalfLeft(false) : RenderBlockFlow::borderLeft();
@@ -1221,7 +1221,7 @@ LayoutUnit RenderTableCell::borderLeft() const
 
 LayoutUnit RenderTableCell::borderRight() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderRight();
     return table->collapseBorders() ? borderHalfRight(false) : RenderBlockFlow::borderRight();
@@ -1229,7 +1229,7 @@ LayoutUnit RenderTableCell::borderRight() const
 
 LayoutUnit RenderTableCell::borderTop() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderTop();
     return table->collapseBorders() ? borderHalfTop(false) : RenderBlockFlow::borderTop();
@@ -1237,7 +1237,7 @@ LayoutUnit RenderTableCell::borderTop() const
 
 LayoutUnit RenderTableCell::borderBottom() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderBottom();
     return table->collapseBorders() ? borderHalfBottom(false) : RenderBlockFlow::borderBottom();
@@ -1247,7 +1247,7 @@ LayoutUnit RenderTableCell::borderBottom() const
 // work with different block flow values instead of being hard-coded to top-to-bottom.
 LayoutUnit RenderTableCell::borderStart() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderStart();
     return table->collapseBorders() ? borderHalfStart(false) : RenderBlockFlow::borderStart();
@@ -1255,7 +1255,7 @@ LayoutUnit RenderTableCell::borderStart() const
 
 LayoutUnit RenderTableCell::borderEnd() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderEnd();
     return table->collapseBorders() ? borderHalfEnd(false) : RenderBlockFlow::borderEnd();
@@ -1263,7 +1263,7 @@ LayoutUnit RenderTableCell::borderEnd() const
 
 LayoutUnit RenderTableCell::borderBefore() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderBefore();
     return table->collapseBorders() ? borderHalfBefore(false) : RenderBlockFlow::borderBefore();
@@ -1271,7 +1271,7 @@ LayoutUnit RenderTableCell::borderBefore() const
 
 LayoutUnit RenderTableCell::borderAfter() const
 {
-    RenderTable* table = this->table();
+    CheckedPtr table = this->table();
     if (!table)
         return RenderBlockFlow::borderAfter();
     return table->collapseBorders() ? borderHalfAfter(false) : RenderBlockFlow::borderAfter();

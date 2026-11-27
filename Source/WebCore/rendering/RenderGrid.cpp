@@ -330,11 +330,11 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
 {
     ASSERT_IMPLIES(cachingRowSubgridsForRootGrid, !algorithm.renderGrid()->isSubgridRows() && (algorithm.renderGrid() == &grid || grid.isSubgridOf(GridLayoutFunctions::flowAwareDirection(*algorithm.renderGrid(), grid, Style::GridTrackSizingDirection::Rows), *algorithm.renderGrid())));
 
-    for (auto& gridItem : childrenOfType<RenderBox>(grid)) {
-        if (gridItem.isOutOfFlowPositioned() || gridItem.isLegend())
+    for (CheckedRef gridItem : childrenOfType<RenderBox>(grid)) {
+        if (gridItem->isOutOfFlowPositioned() || gridItem->isLegend())
             continue;
 
-        callback(const_cast<RenderBox*>(&gridItem));
+        callback(const_cast<RenderBox*>(gridItem.ptr()));
 
         // We keep a cache of items with baseline as alignment values so that we only compute the baseline shims for
         // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
@@ -2038,7 +2038,7 @@ bool RenderGrid::isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style
 {
     if (gridItem.isOutOfFlowPositioned())
         return false;
-    auto align = selfAlignmentForGridItem(gridItem, logicalAxis(alignmentContextType), style()).position();
+    auto align = selfAlignmentForGridItem(gridItem, logicalAxis(alignmentContextType), protect(style())).position();
     if (!isBaselinePosition(align))
         return false;
     return alignmentContextType == Style::GridTrackSizingDirection::Rows
@@ -2104,18 +2104,19 @@ const RenderBox* RenderGrid::baselineGridItem(ItemPosition alignment) const
     for (size_t column = 0; column < numColumns; column++) {
         auto cell = currentGrid().cell(rowIndexDeterminingBaseline, alignment == ItemPosition::Baseline ? column : numColumns - column - 1);
 
-        for (auto& gridItem : cell) {
-            ASSERT(gridItem.get());
+        for (auto& weakGridItem : cell) {
+            ASSERT(weakGridItem.get());
+            CheckedRef gridItem = *weakGridItem;
             // If an item participates in baseline alignment, we select such item.
-            if (isBaselineAlignmentForGridItem(*gridItem, Style::GridTrackSizingDirection::Rows)) {
-                auto gridItemAlignment = selfAlignmentForGridItem(*gridItem, LogicalBoxAxis::Block, style()).position();
-                if (rowIndexDeterminingBaseline == GridLayoutFunctions::alignmentContextForBaselineAlignment(gridSpanForGridItem(*gridItem, Style::GridTrackSizingDirection::Rows), gridItemAlignment)) {
+            if (isBaselineAlignmentForGridItem(gridItem, Style::GridTrackSizingDirection::Rows)) {
+                auto gridItemAlignment = selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block, protect(style())).position();
+                if (rowIndexDeterminingBaseline == GridLayoutFunctions::alignmentContextForBaselineAlignment(gridSpanForGridItem(gridItem, Style::GridTrackSizingDirection::Rows), gridItemAlignment)) {
                     // FIXME: self-baseline and content-baseline alignment not implemented yet.
-                    return gridItem.get();
+                    return weakGridItem.get();
                 }
             }
             if (!baselineGridItem)
-                baselineGridItem = gridItem.get();
+                baselineGridItem = weakGridItem.get();
         }
     }
     return baselineGridItem;
@@ -2129,7 +2130,7 @@ LayoutUnit RenderGrid::columnAxisBaselineOffsetForGridItem(const RenderBox& grid
         return LayoutUnit { };
 
     if (isSubgridRows()) {
-        RenderGrid* outer = downcast<RenderGrid>(parent());
+        CheckedPtr outer = downcast<RenderGrid>(parent());
         if (GridLayoutFunctions::isOrthogonalGridItem(*outer, *this))
             return outer->rowAxisBaselineOffsetForGridItem(gridItem);
         return outer->columnAxisBaselineOffsetForGridItem(gridItem);
@@ -2145,7 +2146,7 @@ LayoutUnit RenderGrid::rowAxisBaselineOffsetForGridItem(const RenderBox& gridIte
         return LayoutUnit { };
 
     if (isSubgridColumns()) {
-        RenderGrid* outer = downcast<RenderGrid>(parent());
+        CheckedPtr outer = downcast<RenderGrid>(parent());
         if (GridLayoutFunctions::isOrthogonalGridItem(*outer, *this))
             return outer->columnAxisBaselineOffsetForGridItem(gridItem);
         return outer->rowAxisBaselineOffsetForGridItem(gridItem);
@@ -2162,7 +2163,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
         ? writingMode().isBlockTopToBottom() == gridItem.writingMode().isAnyTopToBottom()
         : writingMode().isBlockLeftToRight() == gridItem.writingMode().isAnyLeftToRight();
 
-    switch (const auto gridItemAlignSelf = selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block, style()).position()) {
+    switch (const auto gridItemAlignSelf = selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Block, protect(style())).position()) {
     case ItemPosition::SelfStart:
         // self-start is based on the grid item's block-flow direction.
         return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
@@ -2220,7 +2221,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
         ? writingMode().isInlineLeftToRight() == gridItem.writingMode().isAnyLeftToRight()
         : writingMode().isInlineTopToBottom() == gridItem.writingMode().isAnyTopToBottom();
 
-    switch (selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Inline, style()).position()) {
+    switch (selfAlignmentForGridItem(gridItem, LogicalBoxAxis::Inline, protect(style())).position()) {
     case ItemPosition::SelfStart:
         // self-start is based on the grid item's inline-flow direction.
         return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
@@ -2348,7 +2349,7 @@ bool RenderGrid::isSubgrid(Style::GridTrackSizingDirection direction) const
 
 bool RenderGrid::isSubgridInParentDirection(Style::GridTrackSizingDirection parentDirection) const
 {
-    auto* renderGrid = dynamicDowncast<RenderGrid>(parent());
+    CheckedPtr renderGrid = dynamicDowncast<RenderGrid>(parent());
     if (!renderGrid)
         return false;
     auto direction = GridLayoutFunctions::flowAwareDirection(*renderGrid, *this, parentDirection);
@@ -2362,9 +2363,9 @@ bool RenderGrid::isSubgridOf(Style::GridTrackSizingDirection direction, const Re
     if (parent() == &ancestor)
         return true;
 
-    auto& parentGrid = *downcast<RenderGrid>(parent());
+    CheckedRef parentGrid = *downcast<RenderGrid>(parent());
     auto parentDirection = GridLayoutFunctions::flowAwareDirection(parentGrid, *this, direction);
-    return parentGrid.isSubgridOf(parentDirection, ancestor);
+    return parentGrid->isSubgridOf(parentDirection, ancestor);
 }
 
 const Grid& RenderGrid::currentGrid() const

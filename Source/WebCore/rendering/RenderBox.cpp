@@ -196,23 +196,23 @@ RenderBox::~RenderBox() = default;
 void RenderBox::willBeDestroyed()
 {
     if (frame().eventHandler().autoscrollRenderer() == this)
-        frame().eventHandler().stopAutoscrollTimer(true);
+        protect(frame().eventHandler())->stopAutoscrollTimer(true);
 
     if (hasInitializedStyle()) {
         if (!style().scrollSnapAlign().isNone())
-            view().unregisterBoxWithScrollSnapPositions(*this);
+            protect(view())->unregisterBoxWithScrollSnapPositions(*this);
         if (style().containerType().hasSizeContainment())
-            view().unregisterContainerQueryBox(*this);
+            protect(view())->unregisterContainerQueryBox(*this);
         if (style().containerType().hasScrollState())
-            view().unregisterScrollStateQueryBox(*this);
+            protect(view())->unregisterScrollStateQueryBox(*this);
         if (!style().anchorNames().isNone())
-            view().unregisterAnchor(*this);
+            protect(view())->unregisterAnchor(*this);
         if (!style().positionTryFallbacks().isNone())
-            view().unregisterPositionTryBox(*this);
+            protect(view())->unregisterPositionTryBox(*this);
         if (Style::AnchorPositionEvaluator::isAnchorPositioned(style())) // Keep this in sync with styleDidChange().
-            layoutContext().unregisterAnchorScrollAdjusterFor(*this);
+            protect(layoutContext())->unregisterAnchorScrollAdjusterFor(*this);
         if (hasPotentiallyScrollableOverflow()) // Keep this in sync with AnchorScrollAdjuster::addSnapshot() calls.
-            layoutContext().removeScrollerFromAnchorScrollAdjusters(*this);
+            protect(layoutContext())->removeScrollerFromAnchorScrollAdjusters(*this);
     }
 
 #if ENABLE(SPATIAL_PORTAL)
@@ -276,7 +276,7 @@ void RenderBox::removeFloatingAndInvalidateForLayout()
     if (renderTreeBeingDestroyed())
         return;
 
-    if (auto* ancestor = outermostBlockContainingFloatingObject(*this)) {
+    if (CheckedPtr ancestor = outermostBlockContainingFloatingObject(*this)) {
         ancestor->markSiblingsWithFloatsForLayout(this);
         ancestor->markAllDescendantsWithFloatsForLayout(this, false);
     }
@@ -1207,14 +1207,14 @@ bool RenderBox::fixedElementLaysOutRelativeToFrame(const LocalFrameView& frameVi
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
-    return hasNonVisibleOverflow() && layer() && !layer()->hasOverlayScrollbars()
+    return hasNonVisibleOverflow() && layer() && !protect(layer())->hasOverlayScrollbars()
         && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto
             || (style().overflowY() == Overflow::Hidden && !style().scrollbarGutter().isAuto()));
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const
 {
-    return hasNonVisibleOverflow() && layer() && !layer()->hasOverlayScrollbars()
+    return hasNonVisibleOverflow() && layer() && !protect(layer())->hasOverlayScrollbars()
         && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto
             || (style().overflowX() == Overflow::Hidden && !style().scrollbarGutter().isAuto()));
 }
@@ -1890,7 +1890,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+    for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
         if (!child->hasLayer() && child->nodeAtPoint(request, result, locationInContainer, adjustedLocation, action)) {
             updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
             return true;
@@ -2144,7 +2144,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
     bool didFullRepaint = false;
 
-    auto repaintForBackgroundAndMask = [&](auto& style) {
+    auto repaintForBackgroundAndMask = [&](const Style::ComputedStyle& style) {
         if (!parent())
             return;
 
@@ -2156,7 +2156,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
     repaintForBackgroundAndMask(style());
 
-    if (auto* firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
+    if (CheckedPtr firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
         repaintForBackgroundAndMask(*firstLineStyle);
 
     bool isNonEmpty;
@@ -2175,10 +2175,10 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         return;
 
     if (layer()->hasCompositedMask() && Style::findLayerUsedImage(style().maskLayers(), image, isNonEmpty))
-        layer()->contentChanged(ContentChangeType::MaskImage);
+        protect(layer())->contentChanged(ContentChangeType::MaskImage);
 
     if (styleImage)
-        layer()->contentChanged(ContentChangeType::BackgroundImage);
+        protect(layer())->contentChanged(ContentChangeType::BackgroundImage);
 }
 
 void RenderBox::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
@@ -2194,19 +2194,19 @@ template<typename Layers>
 bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& layers, Style::ZoomFactor zoom, bool drawingBackground)
 {
     LayoutRect rendererRect;
-    RenderBox* layerRenderer = nullptr;
+    CheckedPtr<RenderBox> layerRenderer;
 
     for (auto& layer : layers.usedValues()) {
         if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->data() == image && (layerImage->isLoaded(this) || layerImage->canRender(this))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
-            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
+            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !protect(document().documentElement()->renderer())->hasBackground()));
             if (!layerRenderer) {
                 if (drawingRootBackground) {
                     layerRenderer = &view();
 
-                    auto& renderView = downcast<RenderView>(*layerRenderer);
-                    LayoutUnit rw = renderView.frameView().contentsWidth();
-                    LayoutUnit rh = renderView.frameView().contentsHeight();
+                    CheckedRef renderView = downcast<RenderView>(*layerRenderer);
+                    LayoutUnit rw = renderView->frameView().contentsWidth();
+                    LayoutUnit rh = renderView->frameView().contentsHeight();
 
                     rendererRect = LayoutRect(-layerRenderer->marginLeft(),
                         -layerRenderer->marginTop(),
@@ -2216,7 +2216,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
                     // If we're drawing the root background, then we want to use the bounds of the view
                     // (since root backgrounds cover the canvas, not just the element). If the root element
                     // is composited though, we need to issue the repaint to that root element.
-                    auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
+                    CheckedPtr documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
                     CheckedPtr rendererLayer = documentElementRenderer->layer();
                     if (rendererLayer && rendererLayer->isComposited())
                         layerRenderer = documentElementRenderer;
@@ -2240,9 +2240,9 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
             // If this is the root background layer, we may need to extend the repaintRect if the FrameView has an
             // extendedBackground. We should only extend the rect if it is already extending the full width or height
             // of the rendererRect.
-            if (drawingRootBackground && view().frameView().hasExtendedBackgroundRectForPainting()) {
+            if (drawingRootBackground && protect(view().frameView())->hasExtendedBackgroundRectForPainting()) {
                 shouldClipToLayer = false;
-                IntRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
+                IntRect extendedBackgroundRect = protect(view().frameView())->extendedBackgroundRectForPainting();
                 if (rectToRepaint.width() == rendererRect.width()) {
                     rectToRepaint.move(extendedBackgroundRect.x(), 0);
                     rectToRepaint.setWidth(extendedBackgroundRect.width());
@@ -5557,8 +5557,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment());
 
-    auto& style = this->style();
-    auto& containIntrinsicWidth = style.containIntrinsicWidth();
+    CheckedRef style = this->style();
+    auto& containIntrinsicWidth = style->containIntrinsicWidth();
     if (containIntrinsicWidth.isNone())
         return { };
 
@@ -5571,7 +5571,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
     }
 
     if (auto length = containIntrinsicWidth.tryLength())
-        return LayoutUnit { length->resolveZoom(style.usedZoomForLength()) };
+        return LayoutUnit { length->resolveZoom(style->usedZoomForLength()) };
 
     ASSERT(containIntrinsicWidth.isAutoAndNone());
     return { };
@@ -5581,8 +5581,8 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 {
     ASSERT(isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment());
 
-    auto& style = this->style();
-    auto& containIntrinsicHeight = style.containIntrinsicHeight();
+    CheckedRef style = this->style();
+    auto& containIntrinsicHeight = style->containIntrinsicHeight();
     if (containIntrinsicHeight.isNone())
         return { };
 
@@ -5595,7 +5595,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     }
 
     if (auto length = containIntrinsicHeight.tryLength())
-        return LayoutUnit { length->resolveZoom(style.usedZoomForLength()) };
+        return LayoutUnit { length->resolveZoom(style->usedZoomForLength()) };
 
     ASSERT(containIntrinsicHeight.isAutoAndNone());
     return { };

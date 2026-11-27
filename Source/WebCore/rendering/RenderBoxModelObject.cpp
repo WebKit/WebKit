@@ -241,7 +241,7 @@ ASCIILiteral RenderBoxModelObject::renderName() const
 void RenderBoxModelObject::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed())
-        view().imageQualityController().rendererWillBeDestroyed(*this);
+        protect(view())->imageQualityController().rendererWillBeDestroyed(*this);
 
     RenderLayerModelObject::willBeDestroyed();
 }
@@ -596,7 +596,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // movement of stickily positioned items.
     // Table rows are also skipped because a sticky cell should be constrained by its section
     // (thead/tbody/tfoot), not by the individual row whose content box is the same height as the cell.
-    RenderBlock* containingBlock = this->containingBlock();
+    CheckedPtr containingBlock = this->containingBlock();
     while (containingBlock && (!is<RenderBlock>(*containingBlock) || containingBlock->isAnonymousBlock() || containingBlock->isRenderTableRow()))
         containingBlock = containingBlock->containingBlock();
     ASSERT(containingBlock);
@@ -641,7 +641,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
             FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
             enclosingClippingBox->borderTop() + enclosingClippingBox->paddingTop());
         if (enclosingClippingBox.ptr() != containingBlock) {
-            if (auto* scrollableArea = enclosingClippingLayer->scrollableArea())
+            if (CheckedPtr scrollableArea = enclosingClippingLayer->scrollableArea())
                 containerLocationRelativeToScrollingAncestor += scrollableArea->scrollOffset();
         }
         containerRectRelativeToScrollingAncestor.setLocation(containerLocationRelativeToScrollingAncestor);
@@ -663,14 +663,14 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // involving inlines, tables, and transformations.
     if (auto* parentBox = dynamicDowncast<RenderBox>(*parent()))
         parentBox->blockStartRelativeToPhysical(stickyBoxRect);
-    auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
+    auto stickyBoxRelativeToScrollingAncestor = protect(parent())->localToContainerQuad(FloatRect(stickyBoxRect), enclosingClippingBox.ptr(), { } /* ignore transforms */).boundingBox();
 
     if (enclosingClippingLayer) {
         stickyBoxRelativeToScrollingAncestor.move(-FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
             enclosingClippingBox->borderTop() + enclosingClippingBox->paddingTop()));
 
         if (enclosingClippingBox.ptr() != parent()) {
-            if (auto* scrollableArea = enclosingClippingLayer->scrollableArea())
+            if (CheckedPtr scrollableArea = enclosingClippingLayer->scrollableArea())
                 stickyBoxRelativeToScrollingAncestor.moveBy(scrollableArea->scrollOffset());
         }
     }
@@ -729,9 +729,9 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
         clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
             enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
 
-        FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
+        FloatRect constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), protect(view()).ptr()).boundingBox();
 
-        auto* scrollableArea = enclosingClippingLayer->scrollableArea();
+        CheckedPtr scrollableArea = enclosingClippingLayer->scrollableArea();
         FloatPoint scrollOffset;
         if (scrollableArea)
             scrollOffset = FloatPoint() + scrollableArea->scrollOffset();
@@ -934,7 +934,7 @@ PositionWithAffinity RenderBoxModelObject::positionForPoint(const LayoutPoint& p
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
-    RenderElement* container = this->container();
+    CheckedPtr container = this->container();
     if (!container)
         return;
     
@@ -1102,14 +1102,14 @@ void RenderBoxModelObject::removeOutOfFlowBoxes(const RenderElement* newContaini
     Vector<CheckedRef<RenderBox>, 16> renderersToRemove;
     if (!newContainingBlockCandidate) {
         // We don't form containing block for these boxes anymore (either through style change or internal render tree shuffle)
-        for (auto& renderer : *outOfFlowDescendants) {
+        for (CheckedRef renderer : *outOfFlowDescendants) {
             renderersToRemove.append(renderer);
 
             markRendererAndParentForLayout(renderer);
             auto markNewContainingBlockForLayout = [&] {
-                auto isAbsolutePositioned = renderer.isAbsolutelyPositioned();
+                auto isAbsolutePositioned = renderer->isAbsolutelyPositioned();
                 // During style change we can't tell which ancestor is going to be the final containing block, so let's just mark the new candidate dirty.
-                auto* newContainingBlock = containingBlock();
+                CheckedPtr newContainingBlock = containingBlock();
                 for (; newContainingBlock && (isAbsolutePositioned ? !newContainingBlock->canContainAbsolutelyPositionedObjects() : !newContainingBlock->canContainFixedPositionObjects()); newContainingBlock = newContainingBlock->containingBlock()) { }
                 if (newContainingBlock)
                     newContainingBlock->setNeedsLayout();
@@ -1118,8 +1118,8 @@ void RenderBoxModelObject::removeOutOfFlowBoxes(const RenderElement* newContaini
         }
     } else if (containingBlockState == ContainingBlockState::NewContainingBlock) {
         // Some of the positioned boxes are getting transferred over to newContainingBlockCandidate.
-        for (auto& renderer : *outOfFlowDescendants) {
-            if (!renderer.isDescendantOf(newContainingBlockCandidate))
+        for (CheckedRef renderer : *outOfFlowDescendants) {
+            if (!renderer->isDescendantOf(newContainingBlockCandidate))
                 continue;
             renderersToRemove.append(renderer);
             markRendererAndParentForLayout(renderer);
@@ -1166,7 +1166,7 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(const Style
 
     if ((wasContainingBlockForFixedContent && !isContainingBlockForFixedContent) || (wasContainingBlockForAbsoluteContent && !isContainingBlockForAbsoluteContent)) {
         // We are no longer the containing block for out-of-flow descendants.
-        containingBlockForOutOfFlowBoxes->removeOutOfFlowBoxes({ }, ContainingBlockState::NewContainingBlock);
+        containingBlockForOutOfFlowBoxes->removeOutOfFlowBoxes(nullptr, ContainingBlockState::NewContainingBlock);
     }
 
     if (!wasContainingBlockForFixedContent && isContainingBlockForFixedContent) {
@@ -1255,14 +1255,14 @@ LayoutUnit RenderBoxModelObject::marginEnd(const WritingMode writingMode) const
 
 LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->firstInlineBoxRect(*this);
     return { };
 }
 
 LayoutRect RenderBoxModelObject::blockStartRelativeFirstFragmentBorderBoxRect() const
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(*this))
         return lineLayout->blockStartRelativeFirstInlineBoxRect(*this);
     return { };
 }
@@ -1541,7 +1541,7 @@ LayoutRect RenderBoxModelObject::visualOverflowRect() const
 
 Vector<FloatRect> RenderBoxModelObject::localBorderBoxRects() const
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
         auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
         if (inlineBoxRects.isEmpty())
             return { FloatRect { } };

@@ -1329,9 +1329,9 @@ ItemPosition GridTrackSizingAlgorithm::baselineAlignmentPositionForGridItem(cons
 {
     // align-self: auto resolves against the item's own grid container, which for an item of a subgrid
     // is the subgrid rather than the grid running the algorithm.
-    auto& parentGrid = downcast<RenderGrid>(*gridItem.parent());
+    CheckedRef parentGrid = downcast<RenderGrid>(*gridItem.parent());
     auto parentAlignmentContextType = GridLayoutFunctions::flowAwareDirection(*m_renderGrid, parentGrid, alignmentContextType);
-    return parentGrid.selfAlignmentForGridItem(gridItem, Style::logicalAxis(parentAlignmentContextType), parentGrid.style()).position();
+    return parentGrid->selfAlignmentForGridItem(gridItem, Style::logicalAxis(parentAlignmentContextType), protect(parentGrid->style())).position();
 }
 
 LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
@@ -1373,7 +1373,7 @@ void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, S
     else
         m_baselineAlignmentItemsForColumns.add(item, true);
 
-    const auto* gridItemParent = dynamicDowncast<RenderGrid>(item.parent());
+    CheckedPtr<const RenderGrid> gridItemParent = dynamicDowncast<RenderGrid>(item.parent());
     if (gridItemParent) {
         auto gridItemParentIsSubgridRowsOfRootGrid = GridLayoutFunctions::isOrthogonalGridItem(*m_renderGrid, *gridItemParent) ? gridItemParent->isSubgridColumns() : gridItemParent->isSubgridRows();
         if (cachingRowSubgridsForRootGrid && gridItemParentIsSubgridRowsOfRootGrid)
@@ -1851,12 +1851,12 @@ void GridTrackSizingAlgorithm::traverseSubgridTreeForIntrinsicSizing(NOESCAPE co
     };
 
     Vector<SizingData> sizingDataStack;
-    if (auto* firstChild = m_renderGrid->firstInFlowChildBox())
+    if (CheckedPtr firstChild = m_renderGrid->firstInFlowChildBox())
         sizingDataStack.append({ *firstChild, Vector<LayoutUnit>(trackCount) });
 
     while (!sizingDataStack.isEmpty()) {
         auto sizingData = sizingDataStack.takeLast();
-        if (auto* nextGridItem = sizingData.gridItem->nextInFlowSiblingBox())
+        if (CheckedPtr nextGridItem = sizingData.gridItem->nextInFlowSiblingBox())
             sizingDataStack.append({ *nextGridItem, sizingData.accumulatedSubgridMarginBorderPadding });
 
         CheckedRef gridItem = sizingData.gridItem;
@@ -1867,11 +1867,11 @@ void GridTrackSizingAlgorithm::traverseSubgridTreeForIntrinsicSizing(NOESCAPE co
 
         if (CheckedPtr subgrid = dynamicDowncast<RenderGrid>(sizingData.gridItem); subgrid && subgrid->isSubgrid(GridLayoutFunctions::flowAwareDirection(*m_renderGrid, *subgrid, m_direction))) {
             for (auto trackIndex : gridItemSpan) {
-                sizingData.accumulatedSubgridMarginBorderPadding[trackIndex] += computeSubgridMarginBorderPadding(m_renderGrid, m_direction, allTracks[trackIndex], trackIndex, gridItemSpan, subgrid.get());
+                sizingData.accumulatedSubgridMarginBorderPadding[trackIndex] += computeSubgridMarginBorderPadding(m_renderGrid, m_direction, protect(allTracks[trackIndex].get()), trackIndex, gridItemSpan, subgrid.get());
                 auto& track = allTracks[trackIndex];
                 track->setBaseSize(std::max(track->baseSize(), sizingData.accumulatedSubgridMarginBorderPadding[trackIndex] + extraMarginFromSubgridAncestorGutters(*subgrid, gridItemSpan, trackIndex, m_direction).value_or(0_lu)));
             }
-            if (auto* firstChildBox = subgrid->firstChildBox())
+            if (CheckedPtr firstChildBox = subgrid->firstChildBox())
                 sizingDataStack.append({ *firstChildBox, sizingData.accumulatedSubgridMarginBorderPadding });
             continue;
         }
@@ -2251,15 +2251,16 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
     m_baselineAlignment.setWritingMode(m_renderGrid->style().writingMode());
     BaselineItemsCache& baselineItemsCache = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_baselineAlignmentItemsForRows : m_baselineAlignmentItemsForColumns;
     BaselineItemsCache tmpBaselineItemsCache = baselineItemsCache;
-    for (auto& gridItem : tmpBaselineItemsCache.keys()) {
+    for (auto& weakGridItem : tmpBaselineItemsCache.keys()) {
+        CheckedRef gridItem = weakGridItem.get();
         // FIXME (jfernandez): We may have to get rid of the baseline participation
         // flag (hence just using a HashSet) depending on the CSS WG resolution on
         // https://github.com/w3c/csswg-drafts/issues/3046
         if (canParticipateInBaselineAlignment(gridItem, alignmentContextType)) {
             updateBaselineAlignmentContext(gridItem, alignmentContextType);
-            baselineItemsCache.set(gridItem, true);
+            baselineItemsCache.set(weakGridItem, true);
         } else
-            baselineItemsCache.set(gridItem, false);
+            baselineItemsCache.set(weakGridItem, false);
     }
 }
 

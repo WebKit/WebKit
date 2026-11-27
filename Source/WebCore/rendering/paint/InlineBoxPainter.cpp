@@ -196,24 +196,25 @@ void InlineBoxPainter::paintMask()
 
     paintFillLayers(Color(), renderer().style().maskLayers(), renderer().style().usedZoomForLength(), paintRect, compositeOp);
 
-    bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(&renderer());
-    if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer())) {
+    CheckedRef renderer = this->renderer();
+    bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(renderer.ptr());
+    if (!hasBoxImage || !maskBorderSource->isLoaded(renderer.ptr())) {
         if (pushTransparencyLayer)
             m_paintInfo.context().endTransparencyLayer();
         return; // Don't paint anything while we wait for the image to load.
     }
 
-    BorderPainter borderPainter { renderer(), m_paintInfo };
+    BorderPainter borderPainter { renderer, m_paintInfo };
 
     if (!m_inlineBox.isSplit())
-        borderPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer().usedStyle(), maskBorder, compositeOp);
+        borderPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer->usedStyle(), maskBorder, compositeOp);
     else {
         // We have a mask image that spans multiple lines.
         LayoutRect imageStrip = computeNinePieceImageStrip(adjustedPaintOffset, localRect);
         LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, maskBorder, paintRect);
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip(clipRect);
-        borderPainter.paintNinePieceImage(imageStrip, renderer().usedStyle(), maskBorder, compositeOp);
+        borderPainter.paintNinePieceImage(imageStrip, renderer->usedStyle(), maskBorder, compositeOp);
     }
 
     if (pushTransparencyLayer)
@@ -340,7 +341,7 @@ template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& colo
 
 void InlineBoxPainter::paintBoxShadow(Style::ShadowStyle shadowStyle, const LayoutRect& paintRect)
 {
-    BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
+    BackgroundPainter backgroundPainter { protect(renderer()), m_paintInfo };
 
     if (!m_inlineBox.isSplit() || m_isRootInlineBox) {
         backgroundPainter.paintBoxShadow(paintRect, usedStyle(), shadowStyle);

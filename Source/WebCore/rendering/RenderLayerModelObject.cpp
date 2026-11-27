@@ -102,7 +102,7 @@ void RenderLayerModelObject::willBeDestroyed()
 {
     if (isPositioned()) {
         if (style().hasViewportConstrainedPosition())
-            view().frameView().removeViewportConstrainedObject(*this);
+            protect(view().frameView())->removeViewportConstrainedObject(*this);
     }
 
     destroyLayer();
@@ -122,7 +122,7 @@ void RenderLayerModelObject::createLayer()
     m_layer = RenderLayer::create(*this);
     setHasLayer(true);
     setMayHaveLayerInSubtreeIncludingAncestors();
-    m_layer->insertOnlyThisLayer();
+    protect(m_layer.get())->insertOnlyThisLayer();
 }
 
 bool RenderLayerModelObject::createLayerIfAllowed()
@@ -156,13 +156,13 @@ bool RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons() const
 
     // Plain 2D transforms need no layer, paintRendererByApplyingTransformForSVG() handles them.
     // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
-    auto& style = this->style();
+    CheckedRef style = this->style();
     return createsGroupForStyleExcludingClipPathAndMask(style)
         || hasSVGGroupingWillChangeProperty()
         || hasSVG3DTransformRelatedProperty()
         || hasReflection()
-        || !style.specifiedZIndex().isAuto()
-        || style.isolation() != Isolation::Auto;
+        || !style->specifiedZIndex().isAuto()
+        || style->isolation() != Isolation::Auto;
 }
 
 bool RenderLayerModelObject::hasSVG3DTransformRelatedProperty() const
@@ -751,7 +751,7 @@ LegacyRenderSVGResourceClipper* RenderLayerModelObject::legacySVGClipperResource
 {
     return WTF::switchOn(style().clipPath(),
         [&](const Style::ReferencePath& clipPath) -> LegacyRenderSVGResourceClipper* {
-            return ReferencedSVGResources::referencedClipperRenderer(treeScopeForSVGReferences(), clipPath);
+            return ReferencedSVGResources::referencedClipperRenderer(protect(treeScopeForSVGReferences()), clipPath);
         },
         [&](const auto&) -> LegacyRenderSVGResourceClipper* {
             return nullptr;
@@ -1077,7 +1077,7 @@ void RenderLayerModelObject::contentChanged(ContentChangeType changeType, const 
 
 bool RenderLayerModelObject::hasAcceleratedCompositing() const
 {
-    return view().compositor().hasAcceleratedCompositing();
+    return protect(view())->compositor().hasAcceleratedCompositing();
 }
 
 #if ASSERT_ENABLED

@@ -103,7 +103,7 @@ void EllipsisBoxPainter::paint()
         auto textOrigin = visualRect.location();
         textOrigin.move(m_paintOffset.x(), m_paintOffset.y() + ascent);
         textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, deviceScaleFactor));
-        context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+        context.drawBidiText(protect(rootStyle->fontCascade()), m_lineBox.ellipsisText(), textOrigin);
     } else {
         // Like vertical text content, paint the ellipsis in its logical coordinates in a rotated context (see TextBoxPainter).
         visualRect.moveBy(m_paintOffset);
@@ -118,7 +118,7 @@ void EllipsisBoxPainter::paint()
         GraphicsContextStateSaver stateSaver { context };
         context.concatCTM(rotation(paintRect, rotationDirection));
         auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + roundToDevicePixel(ascent, deviceScaleFactor) };
-        context.drawBidiText(rootStyle->fontCascade(), m_lineBox.ellipsisText(), textOrigin);
+        context.drawBidiText(protect(rootStyle->fontCascade()), m_lineBox.ellipsisText(), textOrigin);
     }
 
     if (textColor != context.fillColor())
