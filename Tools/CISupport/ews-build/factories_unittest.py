@@ -21,7 +21,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from . import loadConfig
+from . import loadConfig, relevance
 from .steps import ResultsDatabase, ResultsDBReportMixin, RunAPITests, RunJavaScriptCoreTests, ValidateChange
 import os
 import unittest
@@ -1058,6 +1058,36 @@ class TestExpectedBuildSteps(unittest.TestCase):
                 self.assertEqual(step_class.suite, expected_suite, msg='%s reports %s to the %r suite' % (
                     builder['name'], step_class.__name__, step_class.suite,
                 ))
+
+    def test_every_platform_has_a_port(self):
+        platforms = {step.kwargs.get('platform') for builder in self.config['builders'] for step in builder['factory'].steps if step.step_class.name == 'configure-build'}
+        self.assertIn('gtk', platforms)
+        for platform in platforms - {'*'}:
+            self.assertIsNotNone(relevance.port_for_platform(platform), f'{platform} has no port in relevance.PLATFORM_PORTS')
+
+    def test_platform_specific_changes_skip_other_ports(self):
+        rules = {}
+        for builder in self.config['builders']:
+            for step in builder['factory'].steps:
+                if step.step_class.name == 'check-change-relevance':
+                    rules[builder['name']] = step.kwargs.get('relevance', step.args[0] if step.args else None)
+
+        def queues_running(*files):
+            changed_files = '\n'.join(f'+++ {path}' for path in files).encode()
+            return {name for name in ('GTK-Build-EWS', 'WPE-Build-EWS', 'Win-Build-EWS', 'PlayStation-Build-EWS', 'macOS-Sequoia-Release-Build-EWS',
+                                      'macOS-Golden-Gate-Debug-Build-EWS', 'iOS-27-Simulator-Build-EWS', 'visionOS-27-Build-EWS', 'macOS-Safer-CPP-Checks-EWS',
+                                      'Bindings-Tests-EWS') if rules[name].is_relevant(changed_files)}
+
+        apple = {'macOS-Sequoia-Release-Build-EWS', 'macOS-Golden-Gate-Debug-Build-EWS', 'iOS-27-Simulator-Build-EWS', 'visionOS-27-Build-EWS'}
+        non_apple = {'GTK-Build-EWS', 'WPE-Build-EWS', 'Win-Build-EWS', 'PlayStation-Build-EWS'}
+        self.assertEqual(queues_running('Source/WebKit/UIProcess/ios/WKContentView.mm'), apple | {'macOS-Safer-CPP-Checks-EWS'})
+        self.assertEqual(queues_running('Source/WebCore/platform/mac/ScrollbarThemeMac.mm'), apple | {'macOS-Safer-CPP-Checks-EWS', 'Bindings-Tests-EWS'})
+        self.assertEqual(queues_running('Source/WebCore/platform/graphics/gstreamer/GStreamerCommon.cpp'), non_apple | {'Bindings-Tests-EWS'})
+        self.assertEqual(queues_running('LayoutTests/platform/glib/TestExpectations'), non_apple)
+        self.assertEqual(queues_running('Source/WebKit/UIProcess/win/WebView.cpp'), {'Win-Build-EWS'})
+        self.assertEqual(queues_running('Source/WebKit/UIProcess/playstation/WebPageProxyPlayStation.cpp'), {'PlayStation-Build-EWS'})
+        self.assertEqual(queues_running('Source/WebKit/UIProcess/gtk/WebPageProxyGtk.cpp', 'Source/WebKit/UIProcess/ios/WKContentView.mm'), apple | non_apple | {'macOS-Safer-CPP-Checks-EWS'})
+        self.assertEqual(queues_running('Source/WebCore/dom/Node.cpp'), apple | non_apple | {'macOS-Safer-CPP-Checks-EWS', 'Bindings-Tests-EWS'})
 
     def test_unnecessary_expected_steps(self):
         builders = set()
