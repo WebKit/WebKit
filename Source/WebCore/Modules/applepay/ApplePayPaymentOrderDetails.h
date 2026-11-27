@@ -32,12 +32,16 @@
 
 namespace WebCore {
 
+template<typename> class ExceptionOr;
+
 struct ApplePayPaymentOrderDetails {
     String orderTypeIdentifier; // required
     String orderIdentifier; // required
     String webServiceURL; // required
     String authenticationToken; // required
 };
+
+ExceptionOr<ApplePayPaymentOrderDetails> convertAndValidate(ApplePayPaymentOrderDetails&&);
 
 } // namespace WebCore
 

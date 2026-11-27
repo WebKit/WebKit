@@ -873,18 +873,6 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<Ref<AppleP
     return { };
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-
-static ExceptionOr<ApplePayPaymentOrderDetails> convertAndValidate(ApplePayPaymentOrderDetails&& orderDetails)
-{
-    if (auto& webServiceURL = orderDetails.webServiceURL; !URL { webServiceURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', webServiceURL, "\" is not a valid URL."_s));
-
-    return WTF::move(orderDetails);
-}
-
-#endif // ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-
 static ExceptionOr<ApplePayPaymentCompleteDetails> convertAndValidate(ApplePayPaymentCompleteDetails&& details)
 {
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)

@@ -97,6 +97,7 @@ Modules/applepay/ApplePayMerchantCapability.cpp
 Modules/applepay/ApplePayPaymentAuthorizationResult.cpp
 Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp
 Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp
+Modules/applepay/ApplePayPaymentOrderDetails.cpp
 Modules/applepay/ApplePayReferenceSession.cpp
 Modules/applepay/ApplePayRequestBase.cpp
 Modules/applepay/ApplePaySession.cpp

@@ -356,18 +356,6 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
     return WTF::move(result);
 }
 
-#if HAVE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-
-static ExceptionOr<ApplePayPaymentOrderDetails> convertAndValidate(ApplePayPaymentOrderDetails&& orderDetails)
-{
-    if (auto& webServiceURL = orderDetails.webServiceURL; !URL { webServiceURL }.isValid())
-        return Exception(ExceptionCode::TypeError, makeString('"', webServiceURL, "\" is not a valid URL."_s));
-
-    return WTF::move(orderDetails);
-}
-
-#endif // HAVE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-
 static ExceptionOr<ApplePayPaymentAuthorizationResult> convertAndValidate(ApplePayPaymentAuthorizationResult&& result)
 {
     switch (result.status) {
@@ -397,7 +385,7 @@ static ExceptionOr<ApplePayPaymentAuthorizationResult> convertAndValidate(AppleP
         return Exception { ExceptionCode::InvalidAccessError };
     }
 
-#if HAVE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
     if (auto orderDetails = WTF::move(result.orderDetails)) {
         auto convertedOrderDetails = convertAndValidate(WTF::move(*orderDetails));
         if (convertedOrderDetails.hasException())

@@ -16656,6 +16656,7 @@
 		950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGGraphicsElement.h; sourceTree = "<group>"; };
 		950FECE0285025E90002DE4E /* ApplePayAutomaticReloadPaymentRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayAutomaticReloadPaymentRequest.h; sourceTree = "<group>"; };
 		950FECE1285025EA0002DE4E /* ApplePayAutomaticReloadPaymentRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayAutomaticReloadPaymentRequest.idl; sourceTree = "<group>"; };
+		950FECE3285026170002DE4E /* ApplePayPaymentOrderDetails.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplePayPaymentOrderDetails.cpp; sourceTree = "<group>"; };
 		950FECE4285026170002DE4E /* ApplePayPaymentOrderDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentOrderDetails.h; sourceTree = "<group>"; };
 		950FECE5285026180002DE4E /* ApplePayPaymentOrderDetails.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayPaymentOrderDetails.idl; sourceTree = "<group>"; };
 		950FECE82850262D0002DE4E /* ApplePayPaymentTokenContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePayPaymentTokenContext.h; sourceTree = "<group>"; };
@@ -25651,6 +25652,7 @@
 				A1F6D0051FE096F60018078C /* ApplePayPaymentMethodType.idl */,
 				1ADFDFDA1E71D8DF008F5D34 /* ApplePayPaymentMethodUpdate.h */,
 				1ADFDFDB1E71D8DF008F5D34 /* ApplePayPaymentMethodUpdate.idl */,
+				950FECE3285026170002DE4E /* ApplePayPaymentOrderDetails.cpp */,
 				950FECE4285026170002DE4E /* ApplePayPaymentOrderDetails.h */,
 				950FECE5285026180002DE4E /* ApplePayPaymentOrderDetails.idl */,
 				7C6522F21E00A51700677F22 /* ApplePayPaymentPass.h */,
