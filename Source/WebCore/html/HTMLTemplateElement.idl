@@ -39,6 +39,6 @@
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString shadowRootSlotAssignment;
     [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootClonable;
     [CEReactions=NotNeeded, Reflect] attribute boolean shadowRootSerializable;
-    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CEReactions=NotNeeded, Reflect] attribute DOMString shadowRootCustomElementRegistry;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString shadowRootCustomElementRegistry;
     [EnabledBySetting=ShadowRootReferenceTargetEnabled, CEReactions=NotNeeded, Reflect] attribute DOMString shadowRootReferenceTarget;
 };

@@ -5574,16 +5574,6 @@ SansSerifFontFamily:
     default: '"Helvetica"_str'
     WebCore: '""_str'
 
-ScopedCustomElementRegistryEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Scoped custom element registry"
-  humanReadableDescription: "Enable scoped custom element registry"
-  defaultValue:
-    "PLATFORM(COCOA)": true
-    default: false
-
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 # FIXME: This should have it's own ENABLE.
 ScreenCaptureEnabled:

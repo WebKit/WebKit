@@ -29,7 +29,7 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface CustomElementRegistry {
-    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CallWith=CurrentScriptExecutionContext] constructor();
+    [CallWith=CurrentScriptExecutionContext] constructor();
 
     [CEReactions=Needed, Custom] undefined define(DOMString name, Function constructor);
     any get([AtomString] DOMString name);

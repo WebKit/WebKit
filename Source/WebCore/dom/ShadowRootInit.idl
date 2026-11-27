@@ -30,6 +30,6 @@ dictionary ShadowRootInit {
     boolean clonable = false;
     boolean serializable = false;
     SlotAssignmentMode slotAssignment = "named";
-    [EnabledBySetting=ScopedCustomElementRegistryEnabled] CustomElementRegistry? customElementRegistry;
+    CustomElementRegistry? customElementRegistry;
     [EnabledBySetting=ShadowRootReferenceTargetEnabled] DOMString referenceTarget;
 };
