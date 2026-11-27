@@ -540,29 +540,32 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
 static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput, JSValue method, Vector<KeyframeEffect::ParsedKeyframe>& parsedKeyframes)
 {
+    VM& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     CSSParserContext parserContext(document);
 
     // 1. Let iter be GetIterator(object, method).
-    forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes, &document, &parserContext](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) -> ExceptionOr<void> {
+    forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes, &document, &parserContext](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) {
         // Steps 2 through 5 are already implemented by forEachInIterable().
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         // 6. If Type(nextItem) is not Undefined, Null or Object, then throw a TypeError and abort these steps.
         if (!nextValue.isUndefinedOrNull() && !nextValue.isObject()) {
             throwException(&lexicalGlobalObject, scope, JSC::Exception::create(vm, createTypeError(&lexicalGlobalObject)));
-            return { };
+            return;
         }
 
         if (!nextValue.isObject()) {
             parsedKeyframes.append({ });
-            return { };
+            return;
         }
 
         // 7. Append to processed keyframes the result of running the procedure to process a keyframe-like object passing nextItem
         // as the keyframe input and with the allow lists flag set to false.
         auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, Strong<JSObject>(vm, nextValue.toObject(&lexicalGlobalObject)), false);
         if (processKeyframeLikeObjectResult.hasException())
-            return processKeyframeLikeObjectResult.releaseException();
+            return;
         auto keyframeLikeObject = processKeyframeLikeObjectResult.releaseReturnValue();
 
         KeyframeEffect::ParsedKeyframe keyframeOutput;
@@ -574,7 +577,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
         else if (auto* timelineRangeOffset = std::get_if<TimelineRangeOffset>(&keyframeLikeObject.baseProperties.offset)) {
             if (!isTimelineRangeOffsetValid(*timelineRangeOffset)) {
                 throwException(&lexicalGlobalObject, scope, JSC::Exception::create(vm, createTypeError(&lexicalGlobalObject)));
-                return Exception { ExceptionCode::TypeError };
+                return;
             }
             keyframeOutput.offset = *timelineRangeOffset;
         }
@@ -604,9 +607,8 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
         }
 
         parsedKeyframes.append(WTF::move(keyframeOutput));
-
-        return { };
     });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
     return { };
 }

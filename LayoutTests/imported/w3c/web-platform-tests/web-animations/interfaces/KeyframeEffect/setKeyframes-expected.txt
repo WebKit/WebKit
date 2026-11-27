@@ -79,4 +79,7 @@ PASS KeyframeEffect constructor throws with property-indexed keyframes with an i
 PASS KeyframeEffect constructor throws with property-indexed keyframes with an invalid composite value as one of the array values
 PASS KeyframeEffect constructor throws with keyframes with an invalid composite value
 PASS Changes made via setKeyframes should be immediately visible in style
+PASS Keyframes are not replaced when a later keyframe in the sequence is not an object
+PASS Keyframes are not replaced when a later keyframe in the sequence has an invalid offset
+PASS Keyframes are not replaced when reading a property of a later keyframe in the sequence throws
 

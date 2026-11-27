@@ -51,5 +51,38 @@ test(t => {
   animation.effect.setKeyframes(frames2);
   assert_equals(getComputedStyle(target).left, "250px");
 }, 'Changes made via setKeyframes should be immediately visible in style');
+
+const gKeyframesBeforeFailure = [ { left: '100px' }, { left: '200px' } ];
+
+test(t => {
+  const effect = new KeyframeEffect(target, gKeyframesBeforeFailure);
+  const expected = effect.getKeyframes();
+  assert_throws_js(TypeError, () => {
+    effect.setKeyframes([ { opacity: 0 }, 5 ]);
+  });
+  assert_frame_lists_equal(effect.getKeyframes(), expected);
+}, 'Keyframes are not replaced when a later keyframe in the sequence is not'
+   + ' an object');
+
+test(t => {
+  const effect = new KeyframeEffect(target, gKeyframesBeforeFailure);
+  const expected = effect.getKeyframes();
+  assert_throws_js(TypeError, () => {
+    effect.setKeyframes([ { opacity: 0 }, { offset: 'invalid', opacity: 1 } ]);
+  });
+  assert_frame_lists_equal(effect.getKeyframes(), expected);
+}, 'Keyframes are not replaced when a later keyframe in the sequence has an'
+   + ' invalid offset');
+
+test(t => {
+  const effect = new KeyframeEffect(target, gKeyframesBeforeFailure);
+  const expected = effect.getKeyframes();
+  const error = new Error('getter');
+  assert_throws_exactly(error, () => {
+    effect.setKeyframes([ { opacity: 0 }, { get opacity() { throw error; } } ]);
+  });
+  assert_frame_lists_equal(effect.getKeyframes(), expected);
+}, 'Keyframes are not replaced when reading a property of a later keyframe in'
+   + ' the sequence throws');
 </script>
 </body>
