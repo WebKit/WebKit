@@ -46,13 +46,11 @@ GST_DEBUG_CATEGORY(webkit_audio_provider_debug);
 #define ASP_TRACE(...) GST_TRACE_ID(m_providerId.data(), __VA_ARGS__)
 #define ASP_WARNING(...) GST_WARNING_ID(m_providerId.data(), __VA_ARGS__)
 #define ASP_MEMDUMP(...) GST_MEMDUMP_ID(m_providerId.data(), __VA_ARGS__)
-#define ASP_TRACE(...) GST_TRACE_ID(m_providerId.data(), __VA_ARGS__)
 #else
 #define ASP_DEBUG(...) GST_DEBUG(__VA_ARGS__)
 #define ASP_TRACE(...) GST_TRACE(__VA_ARGS__)
 #define ASP_WARNING(...) GST_WARNING(__VA_ARGS__)
 #define ASP_MEMDUMP(...) GST_MEMDUMP(__VA_ARGS__)
-#define ASP_TRACE(...) GST_TRACE(__VA_ARGS__)
 #endif
 
 static void initializeAudioSourceProviderDebugCategory()
