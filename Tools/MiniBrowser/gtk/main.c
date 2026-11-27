@@ -73,6 +73,7 @@ static gboolean webProcessCrashed;
 static gboolean printVersion;
 static char *configFile;
 static GSettings *interfaceSettings;
+static WebKitGlobalPrivacyControlPolicy gpcPolicy = WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET;
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
 static gboolean enableSandbox;
@@ -157,6 +158,22 @@ static gboolean parseBackgroundColor(const char *optionName, const char *value, 
     return FALSE;
 }
 
+static gboolean parseGPCPolicy(const char *optionName, const char *value, gpointer data, GError **error)
+{
+    if (!value)
+        value = "";
+
+    g_autoptr(GEnumClass) enumClass = g_type_class_ref(WEBKIT_TYPE_GLOBAL_PRIVACY_CONTROL_POLICY);
+    GEnumValue *enumValue = g_enum_get_value_by_nick(enumClass, value);
+    if (enumValue) {
+        gpcPolicy = enumValue->value;
+        return TRUE;
+    }
+
+    g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Invalid Global Privacy Control policy: '%s'", value);
+    return FALSE;
+}
+
 static const GOptionEntry commandLineOptions[] =
 {
     { "autoplay-policy", 0, 0, G_OPTION_ARG_CALLBACK, parseAutoplayPolicy, "Autoplay policy. Valid options are: allow, allow-without-sound, and deny", NULL },
@@ -171,6 +188,7 @@ static const GOptionEntry commandLineOptions[] =
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", NULL },
     { "cookies-file", 'c', 0, G_OPTION_ARG_FILENAME, &cookiesFile, "Persistent cookie storage database file", "FILE" },
     { "cookies-policy", 0, 0, G_OPTION_ARG_STRING, &cookiesPolicy, "Cookies accept policy (always, never, no-third-party). Default: no-third-party", "POLICY" },
+    { "gpc-policy", 0, 0, G_OPTION_ARG_CALLBACK, parseGPCPolicy, "Global Privacy Control policy (unset, enabled, disabled). Default: unset", "POLICY" },
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
@@ -928,6 +946,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
 
     WebKitWebsitePolicies *defaultWebsitePolicies = webkit_website_policies_new_with_policies(
         "autoplay", autoplayPolicy,
+        "global-privacy-control", gpcPolicy,
         NULL);
 
     if (contentFilter) {

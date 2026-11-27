@@ -32,6 +32,7 @@
 static WebKitTestServer* kServer;
 
 static GUniquePtr<char> gLastRequestUserAgent;
+static bool gLastRequestReceivedGPCHeader;
 
 class PolicyClientTest: public LoadTrackingTest {
 public:
@@ -365,6 +366,8 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         return;
     }
 
+    gLastRequestReceivedGPCHeader = !g_strcmp0(soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Sec-GPC"), "1");
+
     if (g_str_equal(path, "/")) {
         static const char* responseString = "<html><body>Testing!</body></html>";
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
@@ -588,6 +591,58 @@ static void testHTTPSByDefaultSetting(PolicyClientTest* test, gconstpointer)
     webkit_feature_list_unref(features);
 }
 
+static void testGPCDefaultPolicy(PolicyClientTest* test, gconstpointer)
+{
+    GRefPtr defaultPolicies = adoptGRef(webkit_website_policies_new());
+    g_assert_cmpint(WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET, ==, webkit_website_policies_get_global_privacy_control(defaultPolicies.get()));
+
+    // No custom policies.
+    test->loadURI(kServer->getURIForPath("/"));
+    test->waitUntilLoadFinished();
+    GRefPtr value = test->runJavaScriptAndWaitUntilFinished("String(navigator.globalPrivacyControl)", -1, nullptr);
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(value.get()));
+    g_assert_cmpstr(valueString.get(), ==, "undefined");
+    g_assert_false(gLastRequestReceivedGPCHeader);
+}
+
+static void testGPCCustomPolicies(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
+
+    // Custom policies with default settings.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new());
+    g_assert_cmpint(WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET, ==, webkit_website_policies_get_global_privacy_control(test->m_websitePolicies.get()));
+
+    test->loadURI(kServer->getURIForPath("/"));
+    test->waitUntilLoadFinished();
+    GRefPtr value = test->runJavaScriptAndWaitUntilFinished("String(navigator.globalPrivacyControl)", -1, nullptr);
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(value.get()));
+    g_assert_cmpstr(valueString.get(), ==, "undefined");
+    g_assert_false(gLastRequestReceivedGPCHeader);
+
+    // Custom policies with GPC enabled.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("global-privacy-control", WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED, nullptr));
+    g_assert_cmpint(WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED, ==, webkit_website_policies_get_global_privacy_control(test->m_websitePolicies.get()));
+
+    test->loadURI(kServer->getURIForPath("/"));
+    test->waitUntilLoadFinished();
+    value = test->runJavaScriptAndWaitUntilFinished("String(navigator.globalPrivacyControl)", -1, nullptr);
+    valueString.reset(WebViewTest::javascriptResultToCString(value.get()));
+    g_assert_cmpstr(valueString.get(), ==, "true");
+    g_assert_true(gLastRequestReceivedGPCHeader);
+
+    // Custom policies with GPC explicitly disabled.
+    test->m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("global-privacy-control", WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED, nullptr));
+    g_assert_cmpint(WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED, ==, webkit_website_policies_get_global_privacy_control(test->m_websitePolicies.get()));
+
+    test->loadURI(kServer->getURIForPath("/"));
+    test->waitUntilLoadFinished();
+    value = test->runJavaScriptAndWaitUntilFinished("String(navigator.globalPrivacyControl)", -1, nullptr);
+    valueString.reset(WebViewTest::javascriptResultToCString(value.get()));
+    g_assert_cmpstr(valueString.get(), ==, "false");
+    g_assert_false(gLastRequestReceivedGPCHeader);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -601,6 +656,8 @@ void beforeAll()
     PolicyClientTest::add("WebKitPolicyClient", "upgrade-to-https-policy", testUpgradeToHTTPSPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "upgrade-to-https-policy-secure-schemes", testUpgradeToHTTPSPolicySecureSchemes);
     PolicyClientTest::add("WebKitPolicyClient", "https-by-default-setting", testHTTPSByDefaultSetting);
+    PolicyClientTest::add("WebKitPolicyClient", "gpc-default-policy", testGPCDefaultPolicy);
+    PolicyClientTest::add("WebKitPolicyClient", "gpc-custom-policies", testGPCCustomPolicies);
     // WARNING: This test must come last, it uses racey constructs that
     // interfere nondeterminisically with any test running after it.
     // https://bugs.webkit.org/show_bug.cgi?id=213190

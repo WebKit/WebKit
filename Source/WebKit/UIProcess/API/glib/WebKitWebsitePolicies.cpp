@@ -34,9 +34,9 @@ using namespace WebKit;
  *
  * View specific website policies.
  *
- * WebKitWebsitePolicies allows you to configure per-page policies,
- * currently autoplay, custom user agent and upgrade to HTTPS policies
- * are supported.
+ * WebKitWebsitePolicies allows you to configure per-page policies, currently
+ * autoplay, custom user agent, upgrade to HTTPS, and Global Privacy Control
+ * policies are supported.
  *
  * Since: 2.30
  */
@@ -49,6 +49,7 @@ enum {
     PROP_AUTOPLAY_POLICY,
     PROP_CUSTOM_USER_AGENT,
     PROP_UPGRADE_TO_HTTPS_POLICY,
+    PROP_GLOBAL_PRIVACY_CONTROL,
 };
 
 struct _WebKitWebsitePoliciesPrivate {
@@ -81,6 +82,9 @@ static void webkitWebsitePoliciesGetProperty(GObject* object, guint propID, GVal
     case PROP_UPGRADE_TO_HTTPS_POLICY:
         g_value_set_enum(value, webkit_website_policies_get_upgrade_to_https_policy(policies));
         break;
+    case PROP_GLOBAL_PRIVACY_CONTROL:
+        g_value_set_enum(value, webkit_website_policies_get_global_privacy_control(policies));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -99,6 +103,21 @@ void webkitWebsitePoliciesSetAutoplayPolicy(WebKitWebsitePolicies* policies, Web
         break;
     case WEBKIT_AUTOPLAY_DENY:
         policies->priv->websitePolicies->setAutoplayPolicy(WebsiteAutoplayPolicy::Deny);
+        break;
+    }
+}
+
+static void webkitWebsitePoliciesSetGlobalPrivacyControlPolicy(WebKitWebsitePolicies* policies, WebKitGlobalPrivacyControlPolicy policy)
+{
+    switch (policy) {
+    case WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET:
+        policies->priv->websitePolicies->setGlobalPrivacyControlEnabled(std::nullopt);
+        break;
+    case WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED:
+        policies->priv->websitePolicies->setGlobalPrivacyControlEnabled(true);
+        break;
+    case WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED:
+        policies->priv->websitePolicies->setGlobalPrivacyControlEnabled(false);
         break;
     }
 }
@@ -132,6 +151,9 @@ static void webkitWebsitePoliciesSetProperty(GObject* object, guint propID, cons
         break;
     case PROP_UPGRADE_TO_HTTPS_POLICY:
         webkitWebsitePoliciesSetUpgradeToHTTPSPolicy(policies, static_cast<WebKitUpgradeToHTTPSPolicy>(g_value_get_enum(value)));
+        break;
+    case PROP_GLOBAL_PRIVACY_CONTROL:
+        webkitWebsitePoliciesSetGlobalPrivacyControlPolicy(policies, static_cast<WebKitGlobalPrivacyControlPolicy>(g_value_get_enum(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -196,6 +218,23 @@ static void webkit_website_policies_class_init(WebKitWebsitePoliciesClass* findC
             WEBKIT_TYPE_UPGRADE_TO_HTTPS_POLICY,
             WEBKIT_UPGRADE_TO_HTTPS_POLICY_KEEP_AS_REQUESTED,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitWebsitePolicies:global-privacy-control: (getter get_global_privacy_control)
+     *
+     * How the Global Privacy Control (GPC) signal is configured.
+     *
+     * Since: 2.56
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_GLOBAL_PRIVACY_CONTROL,
+        g_param_spec_enum(
+            "global-privacy-control",
+            nullptr, nullptr,
+            WEBKIT_TYPE_GLOBAL_PRIVACY_CONTROL_POLICY,
+            WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
 /**
@@ -228,6 +267,7 @@ WebKitWebsitePolicies* webkit_website_policies_new(void)
  * WebKitWebsitePolicies *default_website_policies = webkit_website_policies_new_with_policies(
  *     "autoplay", WEBKIT_AUTOPLAY_DENY,
  *     "custom-user-agent", "Foo/1.0 (custom)",
+ *     "global-privacy-control", WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED,
  *     NULL);
  *
  * // ...
@@ -328,4 +368,26 @@ WebKitUpgradeToHTTPSPolicy webkit_website_policies_get_upgrade_to_https_policy(W
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+/**
+ * webkit_website_policies_get_global_privacy_control: (get-property global-privacy-control)
+ * @policies: a #WebKitWebsitePolicies
+ *
+ * Get the [property@WebsitePolicies:global-privacy-control] property.
+ *
+ * Returns: the configured Global Privacy Control policy.
+ *
+ * Since: 2.56
+ */
+WebKitGlobalPrivacyControlPolicy webkit_website_policies_get_global_privacy_control(WebKitWebsitePolicies* policies)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_POLICIES(policies), WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET);
+
+    if (auto value = policies->priv->websitePolicies->globalPrivacyControlEnabled()) {
+        if (*value)
+            return WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_ENABLED;
+        return WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_DISABLED;
+    }
+    return WEBKIT_GLOBAL_PRIVACY_CONTROL_POLICY_UNSET;
 }
