@@ -7578,6 +7578,15 @@ WebGPUHDREnabled:
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
+WebGPUImportLinearHeadroomEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "WebGPU linearHeadroom for imported or copied video"
+  humanReadableDescription: "Prototype of linearHeadroom for GPUDevice.importExternalTexture and GPUQueue.copyExternalImageToTexture"
+  defaultValue: false
+  disableInLockdownMode: true
+
 WebInspectorEngineeringSettingsAllowed:
   type: bool
   status: internal

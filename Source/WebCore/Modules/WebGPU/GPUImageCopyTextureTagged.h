@@ -38,6 +38,7 @@ struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
             GPUImageCopyTexture::convertToBacking(),
             colorSpace,
             premultipliedAlpha,
+            linearHeadroom,
         };
     }
 
@@ -45,6 +46,7 @@ struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
 
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     bool premultipliedAlpha { false };
+    float linearHeadroom { 0 };
 };
 
 }

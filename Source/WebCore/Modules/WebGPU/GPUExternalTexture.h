@@ -41,9 +41,9 @@ class GPUDevice;
 
 class GPUExternalTexture : public RefCountedAndCanMakeWeakPtr<GPUExternalTexture> {
 public:
-    static Ref<GPUExternalTexture> create(Ref<::WebGPU::ExternalTexture>&& backing, String&& label, PredefinedColorSpace colorSpace, GPUDevice& device)
+    static Ref<GPUExternalTexture> create(Ref<::WebGPU::ExternalTexture>&& backing, String&& label, PredefinedColorSpace colorSpace, float linearHeadroom, GPUDevice& device)
     {
-        return adoptRef(*new GPUExternalTexture(WTF::move(backing), WTF::move(label), colorSpace, device));
+        return adoptRef(*new GPUExternalTexture(WTF::move(backing), WTF::move(label), colorSpace, linearHeadroom, device));
     }
 
     NODELETE String label() const;
@@ -58,6 +58,7 @@ public:
     void deactivate() { m_active = false; }
     bool isActive() const { return m_active; }
     PredefinedColorSpace colorSpace() const { return m_colorSpace; }
+    float linearHeadroom() const { return m_linearHeadroom; }
 #if ENABLE(VIDEO)
     std::optional<unsigned> takeVideoFrameCallbackIdentifier() { return std::exchange(m_videoFrameCallbackIdentifier, std::nullopt); }
     void setVideoFrameCallbackIdentifier(std::optional<unsigned> identifier) { m_videoFrameCallbackIdentifier = identifier; }
@@ -68,11 +69,12 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUExternalTexture(Ref<::WebGPU::ExternalTexture>&&, String&& label, PredefinedColorSpace, GPUDevice&);
+    GPUExternalTexture(Ref<::WebGPU::ExternalTexture>&&, String&& label, PredefinedColorSpace, float linearHeadroom, GPUDevice&);
 
     const Ref<::WebGPU::ExternalTexture> m_backing;
     String m_label;
     PredefinedColorSpace m_colorSpace { PredefinedColorSpace::SRGB };
+    float m_linearHeadroom { 0 };
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_device;
     bool m_destroyed { false };
     bool m_active { false };

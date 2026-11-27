@@ -1,0 +1,66 @@
+Tests the linearHeadroom prototype of https://github.com/gpuweb/gpuweb/issues/5236 on GPUExternalTextureDescriptor and GPUImageCopyTextureTagged: that GPUDevice.importExternalTexture and GPUQueue.copyExternalImageToTexture tone map an HDR (PQ or HLG) frame to SDR by default, even into a linear color space, to the headroom asked for when one is, and not at all for Infinity, and that a headroom below 1 is rejected.
+
+PASS importExternalTexture accepts a linearHeadroom of at least 1 and throws a TypeError for anything else
+PASS copyExternalImageToTexture accepts a linearHeadroom of at least 1 and throws a TypeError for anything else
+PASS Both dictionaries read linearHeadroom
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture defaults to a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture gives white more of a larger headroom
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture defaults to a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture gives white more of a larger headroom
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 2
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 4
+PASS hevc-420-10bit-pq-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of Infinity
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture defaults to a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture gives white more of a larger headroom
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture defaults to a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture gives white more of a larger headroom
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: copyExternalImageToTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree for a headroom of 1
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree for a headroom of 2
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree for a headroom of 4
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importExternalTexture and copyExternalImageToTexture agree for a headroom of Infinity
+PASS hevc-420-10bit-pq-videorange.mp4 from a video element: importing it again in the same task with another headroom uses that headroom
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture defaults to a headroom of 1
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture gives white more of a larger headroom
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture defaults to a headroom of 1
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 1 into srgb-linear is the SDR mapping into srgb, linearized
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 1 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 2 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 4 stays within it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture gives white more of a larger headroom
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of Infinity keeps all of it
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: copyExternalImageToTexture with a headroom of 4 into srgb goes above 1
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 1
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 2
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of 4
+PASS hevc-420-10bit-hlg-videorange.mp4 from a VideoDecoder: importExternalTexture and copyExternalImageToTexture agree for a headroom of Infinity

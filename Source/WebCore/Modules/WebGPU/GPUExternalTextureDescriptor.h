@@ -128,6 +128,7 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 #else
             { },
 #endif
+            linearHeadroom,
         };
     }
 
@@ -137,6 +138,7 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
     GPUVideoSource source;
 #endif
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    float linearHeadroom { 0 };
 };
 
 }

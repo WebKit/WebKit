@@ -82,6 +82,7 @@
 #include "RequestAnimationFrameCallback.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "WebGPUComputePipelineDescriptor.h"
 #include "WebGPURenderPipelineDescriptor.h"
 #include "WebGPUShaderModuleDescriptor.h"
@@ -579,7 +580,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importOrUpdateExternalTexture(co
 {
 #if ENABLE(VIDEO)
     RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor);
-    if (externalTexture && externalTexture->colorSpace() != externalTextureDescriptor.colorSpace)
+    if (externalTexture && (externalTexture->colorSpace() != externalTextureDescriptor.colorSpace || externalTexture->linearHeadroom() != externalTextureDescriptor.linearHeadroom))
         externalTexture = nullptr;
     if (externalTexture) {
         if (externalTexture->isActive() && !externalTexture->isDestroyed())
@@ -600,11 +601,14 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importOrUpdateExternalTexture(co
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };
 
-    return GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), externalTextureDescriptor.colorSpace, *this);
+    return GPUExternalTexture::create(texture.releaseNonNull(), WTF::move(backingDescriptor.label), externalTextureDescriptor.colorSpace, externalTextureDescriptor.linearHeadroom, *this);
 }
 
-ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExternalTextureDescriptor&& externalTextureDescriptor)
+ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExecutionContext& context, GPUExternalTextureDescriptor&& externalTextureDescriptor)
 {
+    if (context.settingsValues().webGPUImportLinearHeadroomEnabled && !(externalTextureDescriptor.linearHeadroom >= 1))
+        return Exception { ExceptionCode::TypeError, "GPUDevice.importExternalTexture: linearHeadroom must be at least 1."_s };
+
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
     RefPtr<HTMLVideoElement> videoElement;
@@ -614,8 +618,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     RefPtr<HTMLVideoElement> videoElement = externalTextureDescriptor.source.ptr();
 #endif
     if (videoElement) {
-        RefPtr context = scriptExecutionContext();
-        if (RefPtr securityOrigin = context ? context->securityOrigin() : nullptr; securityOrigin && videoElement->taintsOrigin(*securityOrigin))
+        if (RefPtr securityOrigin = context.securityOrigin(); securityOrigin && videoElement->taintsOrigin(*securityOrigin))
             return Exception { ExceptionCode::SecurityError, "GPUDevice.importExternalTexture: Cross origin external videos are not allowed in WebGPU"_s };
     }
 #endif
@@ -642,17 +645,15 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
     cancelPendingVideoFrameCallback(externalTexture.ptr());
 
     externalTexture->activate();
-    if (RefPtr context = scriptExecutionContext()) {
-        protect(context->eventLoop())->runAtEndOfMicrotaskCheckpoint([externalTexture] {
-            externalTexture->deactivate();
-        });
-    }
+    protect(context.eventLoop())->runAtEndOfMicrotaskCheckpoint([externalTexture] {
+        externalTexture->deactivate();
+    });
 
     m_videoElementToExternalTextureMap.set(videoElementRef, externalTexture.get());
     m_previouslyImportedExternalTexture.first = videoElementRef.ptr();
     m_previouslyImportedExternalTexture.second = externalTexture.ptr();
 
-    externalTexture->setVideoFrameCallbackIdentifier(videoElementRef->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), videoElementRef, *this, protect(scriptExecutionContext()))));
+    externalTexture->setVideoFrameCallbackIdentifier(videoElementRef->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), videoElementRef, *this, &context)));
     queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [externalTexture](auto&) {
         externalTexture->destroy();
     });

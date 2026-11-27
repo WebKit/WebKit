@@ -944,6 +944,7 @@ struct ImageCopyTextureTagged {
     TextureAspect aspect { TextureAspect::All };
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     bool premultipliedAlpha { false };
+    float linearHeadroom { 0 };
 };
 
 #if PLATFORM(COCOA)
@@ -956,6 +957,7 @@ struct ExternalTextureDescriptor {
     // The size the source presents the frame at, which the pixel buffer does not carry. Zero when
     // the source could not say, and then the decoded size of the frame stands in for it.
     Extent2D visibleSize;
+    float linearHeadroom { 0 };
 };
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucopyexternalimagesourceinfo, with the IOSurface of an

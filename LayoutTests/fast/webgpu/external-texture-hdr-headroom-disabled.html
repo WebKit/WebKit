@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebGPUImportLinearHeadroomEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<p>Tests that with WebGPUImportLinearHeadroomEnabled off, GPUExternalTextureDescriptor and GPUImageCopyTextureTagged do not read linearHeadroom, so a value that would be rejected with it on is ignored.</p>
+<pre id="log"></pre>
+<script>
+"use strict";
+
+const lines = [];
+function log(message) { lines.push(message); }
+function check(label, failures) { log(failures.length ? `FAIL ${label}: ${failures.join("; ")}` : `PASS ${label}`); }
+
+async function run()
+{
+    const adapter = await navigator.gpu?.requestAdapter();
+    const device = await adapter?.requestDevice();
+    if (!device) {
+        log("FAIL: no WebGPU device");
+        return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 4;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 4, 4);
+    const frame = new VideoFrame(canvas, { timestamp: 0 });
+    const texture = device.createTexture({ size: [4, 4], format: "rgba8unorm", usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST });
+
+    let reads = 0;
+    const failures = [];
+    try {
+        device.importExternalTexture({ source: frame, get linearHeadroom() { ++reads; return 0.5; } });
+    } catch (error) {
+        failures.push(`importExternalTexture threw ${error.name}`);
+    }
+    try {
+        device.queue.copyExternalImageToTexture({ source: canvas }, { texture, get linearHeadroom() { ++reads; return 0.5; } }, [4, 4]);
+    } catch (error) {
+        failures.push(`copyExternalImageToTexture threw ${error.name}`);
+    }
+    if (reads)
+        failures.push(`linearHeadroom was read ${reads} times`);
+    check("Neither dictionary reads linearHeadroom", failures);
+    frame.close();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+run().catch(error => log(`FAIL: ${error}`)).finally(() => {
+    document.getElementById("log").textContent = lines.join("\n");
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

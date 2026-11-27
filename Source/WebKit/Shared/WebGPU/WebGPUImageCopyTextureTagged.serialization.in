@@ -24,5 +24,6 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ImageCopyTextureTagged : WebKit::WebGPU::ImageCopyTexture {
     WebCore::PredefinedColorSpace colorSpace;
     bool premultipliedAlpha;
+    float linearHeadroom;
 };
 #endif
