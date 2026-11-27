@@ -21,11 +21,12 @@
 
 #pragma once
 
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <WebCore/JSDOMGlobalObject.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace JSC {
-class ArrayBufferView;
 class JSArrayBufferView;
 }
 
@@ -128,6 +129,22 @@ private:
     bool m_allowNodeSnapshotCreation : 1 { false };
     bool m_allowPostLegacySynchronousMessage : 1 { false };
     bool m_isMediaControls : 1 { false };
+};
+
+// The wrapper is not what keeps the view alive, so the view's address, which is its key, could be reused
+// for another view while the wrapper is alive. Keeping a reference to the view prevents that.
+struct DOMWrapperWorld::ArrayBufferViewWrapper {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(ArrayBufferViewWrapper);
+
+    ArrayBufferViewWrapper(DOMWrapperWorld& world, JSC::ArrayBufferView& view)
+        : world(world)
+        , view(view)
+    {
+    }
+
+    SingleThreadWeakPtr<DOMWrapperWorld> world;
+    const Ref<JSC::ArrayBufferView> view;
+    JSC::Weak<JSC::JSArrayBufferView> wrapper;
 };
 
 NODELETE DOMWrapperWorld& normalWorld(JSC::VM&);
