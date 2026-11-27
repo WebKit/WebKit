@@ -28,6 +28,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-explicit-columns-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-explicit-columns.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-row-gap-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-row-gap.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-min-max-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-min-max-height-002.html
@@ -38,6 +42,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-column-track-intrinsic-sizing-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-column-track-intrinsic-sizing-003-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-column-track-intrinsic-sizing-004-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-tracks-spanning-item-intrinsic-sizing-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-tracks-spanning-item-intrinsic-sizing-002-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-tracks-spanning-item-intrinsic-sizing-003-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-tracks-spanning-item-intrinsic-sizing-004-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flexible-tracks-spanning-item-intrinsic-sizing-005-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-as-flex-item-should-not-shrink-to-fit-002-expected.xht
@@ -153,6 +162,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-spanning-item-with-paddings-auto-rows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-spanning-items-orthogonal-flows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-spanning-items-percentage-grid-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-spanning-items-unspanned-track-growth-limit-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-stretch-respects-min-size-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-stretch-respects-min-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-stretch-respects-min-size-002-expected.xht
@@ -165,6 +175,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-ignores-max-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-ignores-max-size-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-ignores-max-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-ignores-max-size-explicit-columns-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-ignores-max-size-explicit-columns.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-sizing-item-addition-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-track-sizing-item-removal-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/minmax-tracks-with-fixed-breadths.html

@@ -42,7 +42,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1958131-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-2058181-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-2063893-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-2084787.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin.html
@@ -94,6 +96,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-layout-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflow-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflow-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted.html
@@ -116,6 +121,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-relayout-with-nested-grid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-stale-layoutbox-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-table-cell-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-template-columns-mixed-calc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-tracks-fractional-fr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-tracks-stretched-with-different-flex-factors-sum.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-with-aspect-ratio-uses-content-box-height-for-track-sizing-expected.html
@@ -141,7 +147,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/nested-grid-item-block-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/nested-grid-item-block-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/nested-grid-item-block-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/observer-chain-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild-scrollable-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/relative-grandchild.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/replaced-element-percentage-height-in-grid-nested-in-flex-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/replaced-element-percentage-height-in-grid-nested-in-flex-001.html

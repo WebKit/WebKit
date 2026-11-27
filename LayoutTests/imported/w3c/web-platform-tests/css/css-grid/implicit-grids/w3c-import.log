@@ -12,6 +12,12 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-auto-columns-rows-auto-flow-resolution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-auto-columns-rows-resolution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-implicit-columns-auto-resolution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-implicit-rows-auto-resolution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-implicit-tracks-before-explicit-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-item-placed-in-trailing-implicit-column-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-support-grid-auto-columns-rows-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-support-grid-auto-columns-rows-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/implicit-grids/grid-support-grid-auto-columns-rows-002-expected.html

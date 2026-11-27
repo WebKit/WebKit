@@ -1,0 +1,13 @@
+
+PASS grid-template-columns accepts "100px 1fr"
+PASS grid-template-columns serializes "100px 1fr"
+PASS grid-template-columns accepts "100px calc(100% - 100px)"
+PASS grid-template-columns serializes "100px calc(100% - 100px)"
+PASS grid-template-columns accepts "calc(100px) calc(100% - 100px)"
+PASS grid-template-columns serializes "calc(100px) calc(100% - 100px)"
+PASS grid-template-columns accepts "6.25rem calc((100% - 6.25rem) / 1)"
+PASS grid-template-columns serializes "6.25rem calc((100% - 6.25rem) / 1)"
+PASS grid-template-columns accepts "6.25rem 60% calc((40% - 6.25rem) / 2) calc((40% - 6.25rem) / 2)"
+PASS grid-template-columns serializes "6.25rem 60% calc((40% - 6.25rem) / 2) calc((40% - 6.25rem) / 2)"
+PASS grid-template-rows keeps mixed length + calc()
+

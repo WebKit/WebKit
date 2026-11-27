@@ -1,0 +1,4 @@
+
+
+PASS An inline-block wrapping a grid should not have its baseline-aligned position thrown off by irrelevant/trivial mutations
+

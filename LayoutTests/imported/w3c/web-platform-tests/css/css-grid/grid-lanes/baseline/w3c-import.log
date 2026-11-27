@@ -129,6 +129,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-003-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-003.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/row-grid-lanes-item-baseline-cyclic-dependency-003.tentative.html

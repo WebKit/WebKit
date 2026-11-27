@@ -27,7 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/column-track-sizing-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/column-track-sizing-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/column-track-sizing-005.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/dynamic-grid-track-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/dynamic-grid-track-direction.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/grid-lanes-flex-sizing-rows-min-max-height-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/grid-lanes-flex-sizing-rows-min-max-height-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/grid-lanes-flex-sizing-rows-min-max-height-001.html
