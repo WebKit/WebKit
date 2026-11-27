@@ -36,6 +36,8 @@ struct WebKit::PrintInfo {
     WebCore::FloatBoxExtent margin;
 #if PLATFORM(IOS_FAMILY)
     bool snapshotFirstPage;
+#endif
+#if PLATFORM(COCOA)
     float minimumTopMargin;
     float minimumBottomMargin;
 #endif

@@ -55,6 +55,8 @@ class WebFrameProxy;
     RefPtr<WebKit::WebFrameProxy> _webFrame;
     Vector<WebCore::IntRect> _printingPageRects;
     double _totalScaleFactorForPrinting;
+    CGFloat _minimumTopMargin;
+    CGFloat _minimumBottomMargin;
     HashMap<WebCore::IntRect, Ref<WebCore::ShareableBitmap>> _pagePreviews;
 
     Vector<uint8_t> _printedPagesData;

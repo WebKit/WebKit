@@ -63,7 +63,10 @@ struct PrintInfo {
 #endif
     PrintInfo(float pageSetupScaleFactor, float availablePaperWidth, float availablePaperHeight, WebCore::FloatBoxExtent margin
 #if PLATFORM(IOS_FAMILY)
-        , bool snapshotFirstPage, float minimumTopMargin, float minimumBottomMargin
+        , bool snapshotFirstPage
+#endif
+#if PLATFORM(COCOA)
+        , float minimumTopMargin, float minimumBottomMargin
 #endif
 #if PLATFORM(GTK)
         , GRefPtr<GtkPrintSettings>&&, GRefPtr<GtkPageSetup>&&, PrintMode
@@ -78,6 +81,8 @@ struct PrintInfo {
     WebCore::FloatBoxExtent margin;
 #if PLATFORM(IOS_FAMILY)
     bool snapshotFirstPage { false };
+#endif
+#if PLATFORM(COCOA)
     // Room for the app's header and footer, which explicit @page margins don't cover. 0 if there is none.
     float minimumTopMargin { 0 };
     float minimumBottomMargin { 0 };
