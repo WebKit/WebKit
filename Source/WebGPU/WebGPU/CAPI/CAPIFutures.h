@@ -41,6 +41,7 @@
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/ThreadSafetyAnalysis.h>
 #import <wtf/TypeCasts.h>
+#import <wtf/Vector.h>
 
 namespace WebGPU::CAPI {
 
@@ -68,6 +69,13 @@ public:
     uint64_t createFuture();
     void completeFuture(uint64_t future);
 
+    // The future that completes when the device is lost, the same one for every call with the
+    // device. While the device lives, the future stays completed once it has completed. The first
+    // call takes the device-lost callback of the device (Device::resolveDeviceLostPromise()), so the
+    // client of the future must leave that callback to it: setting another callback completes the
+    // future as if the device were lost.
+    uint64_t deviceLostFuture(WebGPU::Device&);
+
     // The work runs in processEvents() or waitAny(), on the thread that calls them.
     void scheduleWork(Function<void()>&&);
     // Dispatches the completions that the instance has received, and runs the scheduled work.
@@ -88,6 +96,16 @@ private:
     // Dispatches the completions that the instance has received. False when it cannot.
     bool dispatchReceivedEvents();
     bool anyFutureCompleted(std::span<const uint64_t> futures) const WTF_REQUIRES_LOCK(m_lock);
+    bool isDeviceLostFuture(uint64_t future) const WTF_REQUIRES_LOCK(m_lock);
+    // Called by the device-lost callback of the device of the future. The future of a device that is
+    // gone completes as any other future: waitAny() reports it once.
+    void didLoseDevice(uint64_t future, bool deviceIsGone);
+
+    struct DeviceLostFuture {
+        // Weak, because the device keeps a callback that keeps this.
+        ThreadSafeWeakPtr<WebGPU::Device> device;
+        uint64_t future;
+    };
 
     mutable Lock m_lock;
     // Signalled when work is scheduled or a future completes.
@@ -97,6 +115,7 @@ private:
     Deque<Function<void()>> m_scheduledWork WTF_GUARDED_BY_LOCK(m_lock);
     uint64_t m_nextFuture WTF_GUARDED_BY_LOCK(m_lock) { 1 };
     HashSet<uint64_t> m_completedFutures WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<DeviceLostFuture> m_deviceLostFutures WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 // A future of the C API on an instance, for one callback. complete() is called after the callback

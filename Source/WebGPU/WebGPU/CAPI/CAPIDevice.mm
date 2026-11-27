@@ -299,6 +299,22 @@ WGPUAdapter wgpuDeviceGetAdapter(WGPUDevice device)
     }
 }
 
+// The future completes when the device is lost, and stays completed while the device lives. Every
+// call with the device returns the same future. The future takes the device-lost callback of the
+// device of the C++ API (WebGPU::Device::resolveDeviceLostPromise()): a client that gets the future
+// must not set that callback on the device, as setting another callback completes the future as if
+// the device were lost.
+WGPUFuture wgpuDeviceGetLostFuture(WGPUDevice device)
+{
+    @autoreleasepool {
+        Ref protectedDevice = WebGPU::CAPI::fromAPI(device);
+        RefPtr instance = protectedDevice->instance();
+        if (!instance)
+            return WGPU_FUTURE_INIT;
+        return { WebGPU::CAPI::EventManager::ensure(*instance)->deviceLostFuture(protectedDevice) };
+    }
+}
+
 // The caller owns the reference to the queue, as for every object the C API returns.
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
 {

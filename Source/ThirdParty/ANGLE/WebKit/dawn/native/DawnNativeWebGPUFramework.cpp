@@ -113,6 +113,7 @@ const DawnProcTable &GetProcs()
         procs.deviceGetAdapter = wgpuDeviceGetAdapter;
         procs.deviceGetFeatures = wgpuDeviceGetFeatures;
         procs.deviceGetLimits = wgpuDeviceGetLimits;
+        procs.deviceGetLostFuture = wgpuDeviceGetLostFuture;
         procs.deviceGetQueue = wgpuDeviceGetQueue;
         procs.deviceHasFeature = wgpuDeviceHasFeature;
         procs.devicePopErrorScope = wgpuDevicePopErrorScope;

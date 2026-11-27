@@ -51,7 +51,7 @@ messages -> RemoteDevice Stream {
     void PushErrorScope(::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (bool success, std::optional<::WebGPU::Error> error) ReplyCanDispatchOutOfOrder
     void SetListensForUncapturedErrors(bool listens)
-    void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason, bool isLost)
+    void ResolveDeviceLostPromise() -> (::WebGPU::DeviceLostReason reason, bool isLost) ReplyCanDispatchOutOfOrder
     void SetLabel(String label)
     void PauseAllErrorReporting(bool pauseErrorReporting)
 

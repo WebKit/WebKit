@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CAPIFutures.h"
 
+#import <wtf/CompletionHandler.h>
 #import <wtf/IndexedRange.h>
 #import <wtf/MonotonicTime.h>
 
@@ -78,6 +79,62 @@ void EventManager::completeFuture(uint64_t future)
     Locker locker { m_lock };
     m_completedFutures.add(future);
     m_condition.notifyAll();
+}
+
+uint64_t EventManager::deviceLostFuture(WebGPU::Device& device)
+{
+    uint64_t future = 0;
+    // Released after the lock, as releasing the last reference of a device calls its device-lost
+    // callback, which locks.
+    Vector<RefPtr<WebGPU::Device>> devices;
+    {
+        Locker locker { m_lock };
+        devices.reserveInitialCapacity(m_deviceLostFutures.size());
+        for (size_t index = 0; index < m_deviceLostFutures.size();) {
+            RefPtr otherDevice = m_deviceLostFutures[index].device;
+            if (!otherDevice) {
+                m_deviceLostFutures.removeAt(index);
+                continue;
+            }
+            if (otherDevice == &device)
+                future = m_deviceLostFutures[index].future;
+            devices.append(WTF::move(otherDevice));
+            ++index;
+        }
+        if (future)
+            return future;
+        future = m_nextFuture++;
+        m_deviceLostFutures.append({ device, future });
+    }
+
+    // Setting the callback of a lost device would lose it again.
+    if (device.isLost()) {
+        completeFuture(future);
+        return future;
+    }
+    device.resolveDeviceLostPromise({ [events = Ref { *this }, weakDevice = ThreadSafeWeakPtr { device }, future](WebGPU::DeviceLostReason, String&&) {
+        events->didLoseDevice(future, !weakDevice.get());
+    }, CompletionHandlerCallThread::AnyThread });
+    return future;
+}
+
+void EventManager::didLoseDevice(uint64_t future, bool deviceIsGone)
+{
+    Locker locker { m_lock };
+    if (deviceIsGone) {
+        m_deviceLostFutures.removeFirstMatching([&](auto& deviceLostFuture) {
+            return deviceLostFuture.future == future;
+        });
+    }
+    m_completedFutures.add(future);
+    m_condition.notifyAll();
+}
+
+bool EventManager::isDeviceLostFuture(uint64_t future) const
+{
+    return m_deviceLostFutures.containsIf([&](auto& deviceLostFuture) {
+        return deviceLostFuture.future == future;
+    });
 }
 
 void EventManager::scheduleWork(Function<void()>&& work)
@@ -143,8 +200,12 @@ auto EventManager::waitAny(std::span<const uint64_t> futures, Seconds timeout, N
             Locker locker { m_lock };
             if (anyFutureCompleted(futures)) {
                 for (auto [index, future] : indexedRange(futures)) {
-                    if (m_completedFutures.remove(future))
-                        didComplete(index);
+                    if (!m_completedFutures.contains(future))
+                        continue;
+                    // The device stays lost.
+                    if (!isDeviceLostFuture(future))
+                        m_completedFutures.remove(future);
+                    didComplete(index);
                 }
                 return WaitStatus::Completed;
             }
