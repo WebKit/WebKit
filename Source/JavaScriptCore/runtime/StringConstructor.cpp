@@ -326,14 +326,18 @@ JSC_DEFINE_HOST_FUNCTION(constructWithStringConstructor, (JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSString* str;
+    if (!callFrame->argumentCount())
+        str = jsEmptyString(vm);
+    else {
+        str = callFrame->uncheckedArgument(0).toString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, stringObjectStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!callFrame->argumentCount())
-        return JSValue::encode(StringObject::create(vm, structure));
-    JSString* str = callFrame->uncheckedArgument(0).toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(StringObject::create(vm, structure, str));
 }
 
