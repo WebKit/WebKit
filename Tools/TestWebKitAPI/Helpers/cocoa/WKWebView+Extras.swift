@@ -241,6 +241,27 @@ extension WKWebView {
     }
 }
 
+extension TestWKWebView {
+    /// Waits for the page to post a message to the `testHandler` message handler.
+    ///
+    /// The wait starts before `body` runs, so a message that `body` causes can't arrive first.
+    ///
+    /// - Parameters:
+    ///   - message: The message to wait for.
+    ///   - body: Work that makes the page post the message.
+    public func waitForMessage(_ message: String, triggeredBy body: () async throws -> Void) async rethrows {
+        let (messages, continuation) = AsyncStream.makeStream(of: Void.self)
+        perform(afterReceivingMessage: message) {
+            continuation.finish()
+        }
+
+        try await body()
+
+        for await _ in messages {
+        }
+    }
+}
+
 extension TestNavigationDelegate {
     /// Waits for a content rule list to perform an action on a load.
     ///

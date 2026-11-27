@@ -28,10 +28,15 @@ public import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 private import WebKit
 private import WebKit_Private.WKWebViewConfigurationPrivate
 
+public import struct Swift.String
+
 #if WTF_PLATFORM_IOS_FAMILY
 private import UIKit
 #else
 public import AppKit
+public import Foundation
+
+public import struct Foundation.URL
 #endif
 
 #if WTF_PLATFORM_MAC
@@ -44,6 +49,32 @@ extension NSPasteboard.PasteboardType {
 
     /// The value of `NSURLPboardType`.
     public static let legacyURL = Self("Apple URL pasteboard type")
+
+    /// The value of `NSRTFDPboardType`.
+    public static let legacyRTFD = Self("NeXT RTFD pasteboard type")
+
+    /// The value of `WebArchivePboardType`.
+    public static let legacyWebArchive = Self("Apple Web Archive pasteboard type")
+}
+
+/// Creates the data of a web archive with an HTML main resource, with the legacy `WebArchive` API.
+///
+/// - Parameters:
+///   - html: The markup of the main resource, in UTF-8.
+///   - url: The URL of the main resource.
+///   - subresources: The archive's subresources.
+/// - Returns: The archive's data.
+#if hasAttribute(diagnose)
+@diagnose(DeprecatedDeclaration, as: ignored, reason: "The tests paste archives made with the legacy WebArchive API")
+#endif
+public func makeWebArchiveData(html: Data, url: URL, subresources: [(data: Data, url: URL, mimeType: String)] = []) -> Data {
+    let mainResource = WebResource(data: html, url: url, mimeType: "text/html", textEncodingName: "utf-8", frameName: nil)
+    let resources = subresources.compactMap {
+        WebResource(data: $0.data, url: $0.url, mimeType: $0.mimeType, textEncodingName: nil, frameName: nil)
+    }
+
+    // The core archive is the same whether the lists are nil or empty.
+    return WebArchive(mainResource: mainResource, subresources: resources, subframeArchives: nil).data
 }
 #endif
 

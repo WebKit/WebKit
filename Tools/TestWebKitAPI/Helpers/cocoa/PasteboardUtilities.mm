@@ -25,48 +25,12 @@
 
 #import "config.h"
 #import "Helpers/cocoa/PasteboardUtilities.h"
-#import "Helpers/cocoa/TestCocoa.h"
-#import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKPreferencesRefPrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 
-#import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/TestCocoa.h"
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
 #endif
-
-RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled)
-{
-#if PLATFORM(IOS_FAMILY)
-    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
-#endif
-
-    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [webViewConfiguration _setColorFilterEnabled:colorFilterEnabled];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:webViewConfiguration.get()]);
-    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
-    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
-    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
-    return webView;
-}
-
-RetainPtr<TestWKWebView> createLockdownModeWebViewWithCustomPasteboardDataEnabled()
-{
-#if PLATFORM(IOS_FAMILY)
-    TestWebKitAPI::Util::instantiateUIApplicationIfNeeded();
-#endif
-
-    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[webViewConfiguration defaultWebpagePreferences] setLockdownModeEnabled: YES];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:webViewConfiguration.get()]);
-    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
-    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
-    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
-    return webView;
-}
 
 #if PLATFORM(MAC)
 NSString *readURLFromPasteboard()
