@@ -53,7 +53,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
+class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences>, public CanMakeWeakPtr<WebPreferences> {
 public:
     static Ref<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
     static Ref<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
@@ -105,8 +105,16 @@ public:
     NODELETE static void forceSiteIsolationAlwaysOnForTesting();
     NODELETE static bool forcedSiteIsolationAlwaysOnForTesting();
 
+    // Re-applies the global preference overrides to every live WebPreferences and updates their pages.
+    static void globalOverridesDidChange();
+
 private:
+    static WeakHashSet<WebPreferences>& allPreferences();
+
     void platformInitializeStore();
+
+    void applyGlobalOverrides();
+    void applyGlobalOverridesAndUpdate();
 
     void update();
 
