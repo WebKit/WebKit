@@ -27,7 +27,6 @@
 
 #include "CSSProperty.h"
 #include "CSSPropertyParser.h"
-#include "CSSSelectorParser.h"
 #include "CSSSerializationContext.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
