@@ -260,6 +260,49 @@ TEST(MirrorLayerTree, FlippedSuperlayer)
     EXPECT_EQ([mirror.layer() contentsAreFlipped], [[webView layer] contentsAreFlipped]);
 }
 
+TEST(MirrorLayerTree, Scrolling)
+{
+    RetainPtr webView = createMirrorWebView();
+    [webView synchronouslyLoadHTMLString:staticContent];
+    [webView waitForNextPresentationUpdate];
+
+    LayerTreeMirror mirror(webView);
+    ASSERT_NOT_NULL(mirror.layer());
+
+    // The scrolling tree moves the scrolled, fixed and overflow scrolled layers in the UI process.
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500); 1"];
+    mirror.expectMatchesPrimaryTree();
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('scroller').scrollTop = 300; 1"];
+    mirror.expectMatchesPrimaryTree();
+
+    [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 0); 1"];
+    mirror.expectMatchesPrimaryTree();
+}
+
+TEST(MirrorLayerTree, WheelScrolling)
+{
+    RetainPtr webView = createMirrorWebView();
+    [webView synchronouslyLoadHTMLString:staticContent];
+    [webView waitForNextPresentationUpdate];
+
+    LayerTreeMirror mirror(webView);
+    ASSERT_NOT_NULL(mirror.layer());
+
+    // Wheel events scroll in the UI process, where the scrolling tree moves the scrolled, fixed and overflow scrolled layers on top of the committed geometry.
+    [webView wheelEventAtPoint:[webView convertPoint:CGPointMake(300, 280) toView:nil] wheelDelta:CGSizeMake(0, -100)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.getElementById('scroller').scrollTop"] intValue] > 0;
+    }));
+    mirror.expectMatchesPrimaryTree();
+
+    [webView wheelEventAtPoint:[webView convertPoint:CGPointMake(600, 400) toView:nil] wheelDelta:CGSizeMake(0, -100)];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] > 0;
+    }));
+    mirror.expectMatchesPrimaryTree();
+}
+
 struct Pixel {
     uint8_t red;
     uint8_t green;

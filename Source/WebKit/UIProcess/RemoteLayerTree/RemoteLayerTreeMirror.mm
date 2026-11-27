@@ -84,7 +84,7 @@ void RemoteLayerTreeMirror::didReceiveFullState(const IPC::Connection& connectio
             [m_mirrorRootLayer setSublayers:@[ rootLayer.get() ]];
     }
 
-    updateLayerFrom(primaryHost);
+    updateGeometry(primaryHost);
 }
 
 void RemoteLayerTreeMirror::didCommitTransactionToPrimaryTree(const IPC::Connection& connection, const RemoteLayerTreeTransaction& transaction, const std::optional<MainFrameData>& mainFrameData, const TransactionID& transactionID, const RemoteLayerTreeHost& primaryHost)
@@ -98,8 +98,6 @@ void RemoteLayerTreeMirror::didCommitTransactionToPrimaryTree(const IPC::Connect
 
     for (auto layerID : transaction.changedLayerProperties().keys())
         copyContentsFromPrimaryLayer(layerID, primaryHost);
-
-    updateLayerFrom(primaryHost);
 }
 
 void RemoteLayerTreeMirror::didSetLayerContentsInPrimaryTree(WebCore::PlatformLayerIdentifier layerID, const RemoteLayerTreeHost& primaryHost)
@@ -113,6 +111,27 @@ void RemoteLayerTreeMirror::copyContentsFromPrimaryLayer(WebCore::PlatformLayerI
     RefPtr mirrorNode = m_host.nodeForID(layerID);
     if (primaryNode && mirrorNode)
         mirrorNode->copyContentsFrom(*primaryNode);
+}
+
+void RemoteLayerTreeMirror::updateGeometry(const RemoteLayerTreeHost& primaryHost)
+{
+    for (auto& [layerID, node] : m_host.nodes()) {
+        RetainPtr primaryLayer = primaryHost.layerForID(layerID);
+        if (!primaryLayer)
+            continue;
+
+        RetainPtr mirrorLayer = node->layer();
+
+        auto position = [primaryLayer position];
+        if (!CGPointEqualToPoint(position, [mirrorLayer position]))
+            [mirrorLayer setPosition:position];
+
+        auto bounds = [primaryLayer bounds];
+        if (!CGRectEqualToRect(bounds, [mirrorLayer bounds]))
+            [mirrorLayer setBounds:bounds];
+    }
+
+    updateLayerFrom(primaryHost);
 }
 
 void RemoteLayerTreeMirror::updateLayerFrom(const RemoteLayerTreeHost& primaryHost)

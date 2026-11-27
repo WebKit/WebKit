@@ -75,6 +75,7 @@ public:
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RefPtr<RemoteLayerTreeNode> rootNode() const { return m_rootNode.get(); }
+    const HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteLayerTreeNode>>& nodes() const LIFETIME_BOUND { return m_nodes; }
 
     RetainPtr<CALayer> layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RetainPtr<CALayer> rootLayer() const;

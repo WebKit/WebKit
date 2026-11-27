@@ -613,6 +613,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         }
     }
 
+    updateMirrorGeometry();
+
     page->layerTreeCommitComplete();
 }
 
@@ -879,6 +881,12 @@ void RemoteLayerTreeDrawingAreaProxy::disableMirrorLayerTree()
 bool RemoteLayerTreeDrawingAreaProxy::isMirrorLayer(CALayer *layer) const
 {
     return layer && m_mirror && m_mirror->layer() == layer;
+}
+
+void RemoteLayerTreeDrawingAreaProxy::updateMirrorGeometry()
+{
+    if (m_mirror && m_remoteLayerTreeHost)
+        m_mirror->updateGeometry(*m_remoteLayerTreeHost);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::initializeSlowFrameIndicator()

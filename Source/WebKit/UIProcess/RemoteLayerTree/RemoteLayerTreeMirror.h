@@ -62,6 +62,8 @@ public:
     void didCommitTransactionToPrimaryTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const TransactionID&, const RemoteLayerTreeHost& primaryHost);
     void didSetLayerContentsInPrimaryTree(WebCore::PlatformLayerIdentifier, const RemoteLayerTreeHost& primaryHost);
 
+    void updateGeometry(const RemoteLayerTreeHost& primaryHost);
+
     void processDidTerminate(WebCore::ProcessIdentifier);
     void processDidLeavePage(WebCore::ProcessIdentifier);
 
