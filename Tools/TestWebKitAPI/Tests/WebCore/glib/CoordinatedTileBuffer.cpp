@@ -24,6 +24,13 @@
 #include <wtf/MainThread.h>
 #include <wtf/WorkQueue.h>
 
+#if USE(SKIA)
+#include <WebCore/FontRenderOptions.h>
+#include <WebCore/PlatformDisplay.h>
+#include <WebCore/SystemSettings.h>
+#include <wtf/Scope.h>
+#endif
+
 namespace TestWebKitAPI {
 
 using namespace WTF;
@@ -49,6 +56,49 @@ TEST(CoordinatedTileBuffer, Create)
     EXPECT_FALSE(buffer->isBackedByOpenGL());
     EXPECT_EQ(buffer->paintingState(), CoordinatedTileBuffer::PaintingState::Pending);
 }
+
+#if USE(SKIA)
+static void checkTextPixelGeometry(auto&& createTile)
+{
+    auto& options = FontRenderOptions::singleton();
+    auto restoreOptions = makeScopeExit([&] {
+        auto& settings = SystemSettings::singleton();
+        options.setSubpixelOrder(settings.subpixelOrder());
+        options.setFollowSystemSettings(settings.followFontSystemSettings());
+    });
+    options.setFollowSystemSettings(true);
+    options.setSubpixelOrder(FontRenderOptions::SubpixelOrder::HorizontalRGB);
+
+    for (auto flags : { CoordinatedTileBuffer::NoFlags, CoordinatedTileBuffer::SupportsAlpha }) {
+        Ref tile = createTile(flags);
+        ASSERT_EQ(tile->beginPainting(), CoordinatedTileBuffer::BeginPaintingResult::Started);
+        auto* canvas = tile->canvas();
+        ASSERT_TRUE(canvas);
+        auto geometry = canvas->getBaseProps().pixelGeometry();
+        EXPECT_EQ(geometry, flags == CoordinatedTileBuffer::SupportsAlpha ? kUnknown_SkPixelGeometry : kRGB_H_SkPixelGeometry);
+        tile->completePainting();
+    }
+}
+
+TEST(CoordinatedTileBuffer, RasterTextPixelGeometry)
+{
+    checkTextPixelGeometry([](auto flags) {
+        return CoordinatedUnacceleratedTileBuffer::create({ 16, 16 }, flags, 0, 1);
+    });
+}
+
+TEST(CoordinatedTileBuffer, AcceleratedTextPixelGeometry)
+{
+    auto* display = PlatformDisplay::sharedDisplayIfExists();
+    if (!display || !display->skiaGLContext())
+        GTEST_SKIP() << "Skia GL context unavailable";
+
+    auto proxy = display->skiaGrContext()->threadSafeProxy();
+    checkTextPixelGeometry([&](auto flags) {
+        return CoordinatedAcceleratedTileBuffer::create(proxy, { 16, 16 }, flags, 0, 1);
+    });
+}
+#endif // USE(SKIA)
 
 TEST(CoordinatedTileBuffer, Paint)
 {
