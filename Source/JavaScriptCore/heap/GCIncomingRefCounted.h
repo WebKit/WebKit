@@ -100,10 +100,14 @@ private:
         return std::bit_cast<JSCell*>(m_encodedPointer & ~singletonFlag());
     }
     
-    Vector<JSCell*>* vectorOfCells() const
+    // An ArrayBuffer typically has a few wrappers (the JSArrayBuffer plus a view or two), so keep them
+    // inline rather than paying a second allocation for the vector's buffer.
+    using VectorOfCells = Vector<JSCell*, 4>;
+
+    VectorOfCells* vectorOfCells() const
     {
         ASSERT(hasVectorOfCells());
-        return std::bit_cast<Vector<JSCell*>*>(m_encodedPointer);
+        return std::bit_cast<VectorOfCells*>(m_encodedPointer);
     }
     
     bool m_needsFilteringIncomingReferences { false };

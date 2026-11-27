@@ -43,7 +43,7 @@ bool GCIncomingRefCounted<T>::addIncomingReference(JSCell* cell)
     ASSERT(Heap::heap(incomingReferenceAt(0)) == Heap::heap(cell));
     
     if (hasSingleton()) {
-        Vector<JSCell*>* vector = new Vector<JSCell*>();
+        auto* vector = new VectorOfCells();
         vector->append(singleton());
         vector->append(cell);
         m_encodedPointer = std::bit_cast<uintptr_t>(vector);
