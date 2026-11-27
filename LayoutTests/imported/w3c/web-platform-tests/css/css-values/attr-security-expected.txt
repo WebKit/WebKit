@@ -9,7 +9,6 @@ PASS 'background-image: src("https://does-not-exist.test/404.png")' with data-fo
 PASS '--x: src(string("https://does-not-exist.test" attr(data-foo)))' with data-foo="/404.png"
 PASS 'background-image: src(string("https://does-not-exist.test" attr(data-foo)))' with data-foo="/404.png"
 PASS 'background-image: src(string("https://does-not-exist.test/""404.png"))' with data-foo="/404.png"
-PASS '--x: attr(data-foo type(<url>))' with data-foo="url(https://does-not-exist.test/404.png)"
 PASS 'background-image: attr(data-foo type(<url>))' with data-foo="url(https://does-not-exist.test/404.png)"
 PASS 'background-image: url("https://does-not-exist.test/404.png")' with data-foo="url(https://does-not-exist.test/404.png)"
 PASS '--x: image(attr(data-foo))' with data-foo="https://does-not-exist.test/404.png"

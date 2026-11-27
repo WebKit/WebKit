@@ -27,4 +27,10 @@ PASS 'background-image: image-set(
                 if(style(--str < attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="3"
 PASS 'background-image: image-set(
                 if(style(--condition-val < attr(data-foo type(*))): url(https://does-not-exist.test/404.png);))' with data-foo="text"
+PASS 'background-image: image-set(url(https://does-not-exist.test/404.png) if(style(--condition-val: attr(data-foo type(*))): 1x; else: 3x), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="3"
+PASS 'background-image: image-set(url(https://does-not-exist.test/404.png) if(style(--condition-val: attr(data-foo type(*))): 1x; else: 3x), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="1"
+PASS 'background-image: image-set(url(https://does-not-exist.test/404.png) if(style(--true): 1x; else: attr(data-foo type(<resolution>))), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="3dppx"
+FAIL 'background-image: -webkit-image-set(url(https://does-not-exist.test/404.png) if(style(--condition-val: attr(data-foo type(*))): 1x; else: 3x), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="3" assert_equals: expected "none" but got "image-set(url(\"https://does-not-exist.test/404.png\") 1dppx, url(\"https://does-not-exist-2.test/404.png\") 2dppx)"
+FAIL 'background-image: -webkit-image-set(url(https://does-not-exist.test/404.png) if(style(--condition-val: attr(data-foo type(*))): 1x; else: 3x), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="1" assert_equals: expected "none" but got "image-set(url(\"https://does-not-exist.test/404.png\") 3dppx, url(\"https://does-not-exist-2.test/404.png\") 2dppx)"
+PASS 'background-image: -webkit-image-set(url(https://does-not-exist.test/404.png) if(style(--true): 1x; else: attr(data-foo type(<resolution>))), url(https://does-not-exist-2.test/404.png) 2x)' with data-foo="3dppx"
 

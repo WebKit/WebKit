@@ -20,4 +20,42 @@ PASS calc(e - exp(sign(1em - 1px))) should be used-value-equivalent to 0
 PASS calc(log(exp(2 * sign(1em - 1px)))) should be used-value-equivalent to 2
 PASS calc(log(exp(1))) should be used-value-equivalent to 1
 PASS calc(log(exp(log(e)))) should be used-value-equivalent to 1
+FAIL log(2, 1) should be used-value-equivalent to calc(NaN) assert_equals: log(2, 1) and calc(NaN) serialize to the same thing in used values. expected "0" but got "179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368"
+FAIL calc(-1 * log(2, 1)) should be used-value-equivalent to calc(NaN) assert_equals: calc(-1 * log(2, 1)) and calc(NaN) serialize to the same thing in used values. expected "0" but got "-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368"
+PASS log(2, -1) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(2, -1)) should be used-value-equivalent to calc(NaN)
+PASS log(2, 0) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(2, 0)) should be used-value-equivalent to calc(NaN)
+PASS log(2, -0) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(2, -0)) should be used-value-equivalent to calc(NaN)
+FAIL log(5, 1) should be used-value-equivalent to calc(NaN) assert_equals: log(5, 1) and calc(NaN) serialize to the same thing in used values. expected "0" but got "179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368"
+FAIL calc(-1 * log(5, 1)) should be used-value-equivalent to calc(NaN) assert_equals: calc(-1 * log(5, 1)) and calc(NaN) serialize to the same thing in used values. expected "0" but got "-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368"
+PASS log(2, 0.5) should be used-value-equivalent to -1
+PASS log(2, 2) should be used-value-equivalent to 1
+PASS log(-1) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(-1)) should be used-value-equivalent to calc(NaN)
+PASS log(-1, 2) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(-1, 2)) should be used-value-equivalent to calc(NaN)
+PASS log(0) should be used-value-equivalent to calc(-infinity)
+PASS log(-0) should be used-value-equivalent to calc(-infinity)
+PASS log(0, 2) should be used-value-equivalent to calc(-infinity)
+PASS calc(1 / log(1)) should be used-value-equivalent to calc(infinity)
+PASS calc(1 / log(1, 2)) should be used-value-equivalent to calc(infinity)
+FAIL calc(1 / log(1, 0.5)) should be used-value-equivalent to calc(infinity) assert_equals: calc(1 / log(1, 0.5)) and calc(infinity) serialize to the same thing in used values. expected "179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368" but got "-179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368"
+PASS log(infinity) should be used-value-equivalent to calc(infinity)
+PASS log(infinity, 2) should be used-value-equivalent to calc(infinity)
+PASS log(NaN) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(NaN)) should be used-value-equivalent to calc(NaN)
+PASS log(NaN, 1) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(NaN, 1)) should be used-value-equivalent to calc(NaN)
+PASS log(1, NaN) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(1, NaN)) should be used-value-equivalent to calc(NaN)
+PASS log(NaN, 2) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(NaN, 2)) should be used-value-equivalent to calc(NaN)
+PASS log(2, NaN) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * log(2, NaN)) should be used-value-equivalent to calc(NaN)
+PASS exp(infinity) should be used-value-equivalent to calc(infinity)
+PASS calc(1 / exp(-infinity)) should be used-value-equivalent to calc(infinity)
+PASS exp(NaN) should be used-value-equivalent to calc(NaN)
+PASS calc(-1 * exp(NaN)) should be used-value-equivalent to calc(NaN)
 

@@ -1,0 +1,8 @@
+
+PASS Rules after "--d: calc(inherit(--d) + 1)" parse as written
+PASS Rules after "--d: calc(inherit(--d, 0) + 1)" parse as written
+PASS Rules after "--d: (inherit(--d))" parse as written
+PASS Rules after "--d: inherit(--d)" parse as written
+PASS Rules after "width: calc(inherit(--d) + 1px)" parse as written
+PASS Rules after an @supports block that uses inherit() parse as written
+

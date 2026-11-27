@@ -1,0 +1,15 @@
+
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-delay
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-direction
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-duration
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-fill-mode
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-iteration-count
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-name
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-play-state
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-range-end
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-range-start
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-timeline
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should set animation-timing-function
+PASS e.style['animation'] = "ident(\"--pa\" \"ss\") 2s" should not set unrelated longhands
+PASS ident() function in animation shorthand for animation-name
+

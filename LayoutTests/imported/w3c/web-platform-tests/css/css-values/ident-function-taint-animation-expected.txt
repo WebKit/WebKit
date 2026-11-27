@@ -1,0 +1,5 @@
+
+PASS An animated custom property is inherited
+PASS ident() constructs an identifier from an animation-tainted custom property
+FAIL ident() preserves animation taint so animation-name uses its fallback assert_equals: expected "none" but got "foo"
+

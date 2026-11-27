@@ -7,11 +7,14 @@ PASS CSS Values and Units Test: attr() argument grammar 4
 PASS CSS Values and Units Test: attr() argument grammar 5
 PASS CSS Values and Units Test: attr() argument grammar 6
 PASS CSS Values and Units Test: attr() argument grammar 7
-PASS CSS Values and Units Test: attr() argument grammar 8
-PASS CSS Values and Units Test: attr() argument grammar 9
-PASS CSS Values and Units Test: attr() argument grammar 10
+FAIL CSS Values and Units Test: attr() argument grammar 8 assert_equals: Value 'attr(data-foo &, 30)', where 'data-foo=10' should be valid for the property 'font-weight'. expected "30" but got "400"
+FAIL CSS Values and Units Test: attr() argument grammar 9 assert_equals: Value 'attr(data-foo type(<number>) | <length>, 30)', where 'data-foo=10' should be valid for the property 'font-weight'. expected "30" but got "400"
+FAIL CSS Values and Units Test: attr() argument grammar 10 assert_equals: Value 'attr(data-foo type(invalid |), 10)', where 'data-foo=0' should be valid for the property 'font-weight'. expected "10" but got "400"
 PASS CSS Values and Units Test: attr() argument grammar 11
 PASS CSS Values and Units Test: attr() argument grammar 12
 PASS CSS Values and Units Test: attr() argument grammar 13
 PASS CSS Values and Units Test: attr() argument grammar 14
+PASS CSS Values and Units Test: attr() argument grammar 15
+PASS CSS Values and Units Test: attr() argument grammar 16
+PASS CSS Values and Units Test: attr() argument grammar 17
 

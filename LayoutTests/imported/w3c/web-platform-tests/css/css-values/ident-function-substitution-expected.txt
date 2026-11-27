@@ -12,4 +12,5 @@ PASS an ident() built from an attribute taints the property it names
 PASS the taint survives the ident() being held in a custom property
 PASS an ident() with no attr() involved does not taint the property it names
 PASS ident() substituting a value the property does not accept
+PASS ident('') valid, but generating IACVT value, fallback when used as var() name
 

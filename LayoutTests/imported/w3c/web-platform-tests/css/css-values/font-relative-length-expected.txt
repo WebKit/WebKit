@@ -1,0 +1,7 @@
+
+PASS width: 1em uses the element's own font-size, not the parent's
+PASS padding: 1em uses the element's own font-size
+PASS calc(1em + 5px) uses the element's own font-size
+PASS Own font-size override takes precedence over parent's for em
+PASS When element has no own font-size, em resolves against inherited value
+

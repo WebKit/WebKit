@@ -2,9 +2,12 @@
 PASS e.style['view-transition-name'] = "ident()" should not set the property value
 PASS e.style['view-transition-name'] = "ident( )" should not set the property value
 PASS e.style['view-transition-name'] = "ident({})" should not set the property value
+PASS e.style['view-transition-name'] = "ident(a {})" should not set the property value
 PASS e.style['view-transition-name'] = "ident(a, b)" should not set the property value
 PASS e.style['view-transition-name'] = "ident(rgb(1, 2, 3))" should set the property value
 PASS e.style['view-transition-name'] = "ident(5px)" should set the property value
+PASS e.style['view-transition-name'] = "ident(())" should set the property value
+PASS e.style['view-transition-name'] = "ident(b ())" should set the property value
 PASS e.style['view-transition-name'] = "ident(myident)" should set the property value
 PASS e.style['view-transition-name'] = "ident( myident)" should set the property value
 PASS e.style['view-transition-name'] = "ident(myident )" should set the property value
@@ -17,5 +20,6 @@ PASS e.style['view-transition-name'] = "ident(\"my\" ident)" should set the prop
 PASS e.style['view-transition-name'] = "ident(my ident)" should set the property value
 PASS e.style['view-transition-name'] = "ident(-- myident)" should set the property value
 PASS e.style['view-transition-name'] = "ident(my 3 3 3 3 ident)" should set the property value
+PASS e.style['view-transition-name'] = "ident(\"\")" should set the property value
 PASS e.style['view-transition-name'] = "ident(\"myident\" 42)" should set the property value
 

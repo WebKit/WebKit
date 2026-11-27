@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-container-query-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-container-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-descriptors.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-if-style-query.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-function-media-query.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/tree-counting/sibling-index-keyframe-font-style-dynamic.html

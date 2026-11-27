@@ -5,4 +5,7 @@ PASS inherit(), no value set on parent
 PASS inherit(), accumulating values
 PASS inherit(), accumulating font-size
 PASS inherit() can be used within if()
+PASS inherit() of an attr()-tainted value stays tainted
+FAIL inherit() on root element for registered properties uses initial values assert_equals: Expected initial value for registered property with `inherits: true` expected "initial-inherited" but got "fallback"
+PASS inherit() on non-root element for registered properties uses initial values
 

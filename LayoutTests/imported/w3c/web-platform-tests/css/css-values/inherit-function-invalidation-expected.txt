@@ -2,4 +2,5 @@
 PASS inherit() invalidates when values changes on parent element, inherited
 PASS inherit() invalidates when values changes on parent element, inherited, deeper
 PASS inherit() invalidates when values changes on parent element, non-inherited
+PASS inherit() invalidates when parent element gains a value, non-inherited
 

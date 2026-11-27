@@ -42,11 +42,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-dynamic-marker-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-dynamic-marker-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-fallback-braces.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-in-max-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-in-max.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-in-slotted-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-in-slotted-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-in-slotted.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-invalidation-after-stylesheet-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-invalidation-after-view-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-length-invalid-cast-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-length-invalid-cast.html
@@ -72,6 +75,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-null-namespace.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-number-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-number-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-parse-url.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-percent-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-percent-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-pseudo-elem-invalidation-2.html
@@ -86,8 +90,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-revert-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-if.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-image-set.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition-interpolated.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition-retarget-taint.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-security.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/attr-serialization.html
@@ -121,6 +127,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-background-size-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-background-size-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-background-size-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-background-size-round-percentage-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-background-size-round-percentage.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-border-radius-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-border-radius-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-border-radius-1.html
@@ -212,8 +220,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-padding-block-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-padding-block-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-padding-block-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-parentheses.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-parenthesis-stack-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-parenthesis-stack.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-percentage-in-number-functions.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-percentage-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-positive-fraction-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-positive-fraction-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-rem-lang-expected.html
@@ -232,6 +243,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-rounds-to-integer.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-serialization-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-serialize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-text-indent-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-text-indent-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/calc-text-indent-1.html
@@ -319,6 +331,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/exp-log-compute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/exp-log-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/exp-log-serialize.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/font-relative-length.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/getComputedStyle-border-radius-003.html
@@ -359,7 +372,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ic-unit-016.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/ident-function-taint-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-conditionals.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/if-function-revert-rule.html
@@ -372,6 +387,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inherit-function-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inherit-function-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inherit-function-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/inherit-function-rule-recovery.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inline-cache-base-uri-cssom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inline-cache-base-uri-cssom-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/inline-cache-base-uri-cssom.html
@@ -497,6 +513,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed-arithmetic-different-categories-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed-arithmetic-inside-calc-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed-arithmetic-mixed-units-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed-arithmetic-negated-product.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed_arithmetic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/typed_arithmetic_cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/update-subpixel-rem-unit.html

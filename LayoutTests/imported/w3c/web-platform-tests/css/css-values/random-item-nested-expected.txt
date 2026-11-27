@@ -3,4 +3,5 @@ PASS random-item() nested inside random-item()
 PASS random-item() resolved through var()
 PASS random-item() used as a var() fallback
 PASS random-item() expands in a shorthand property
+PASS auto random-item() nested inside auto random-item() have independent random base values
 

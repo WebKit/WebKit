@@ -1,4 +1,20 @@
 div
+div
+div
+div
+div
+div
+div
+div
+div
 
-PASS CSS Values and Units Test: attr() security limitations
+PASS Non-interpolable string animation preserves attr taint
+PASS Neutral start keyframe on registered <number> preserves attr taint
+PASS Neutral end keyframe on registered <number> preserves attr taint
+PASS Keyframe value with attr() on registered <number> preserves attr taint
+PASS Additive animation composition on registered <number> preserves attr taint
+PASS Neutral keyframe on registered <length> preserves attr taint
+PASS Neutral keyframe on registered <length-percentage> preserves attr taint
+PASS Neutral keyframe on registered <transform-list> preserves attr taint
+PASS Additive animation composition with attr() keyframe on registered <number>+ preserves attr taint
 

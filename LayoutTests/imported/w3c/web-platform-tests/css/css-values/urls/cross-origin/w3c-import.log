@@ -12,14 +12,24 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-anonymous-credentials.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-anonymous-credentials.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-anonymous-negative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-anonymous.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-use-credentials-credentials.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-use-credentials-credentials.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-use-credentials-negative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-font-cross-origin-use-credentials.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-credentials-redirect.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-credentials-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-credentials.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-credentials.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-negative.sub-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous-negative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous.sub-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-anonymous.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-use-credentials-credentials.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-use-credentials-credentials.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-use-credentials-negative.sub-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-use-credentials-negative.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/cross-origin/url-image-cross-origin-use-credentials.sub-expected.xht
