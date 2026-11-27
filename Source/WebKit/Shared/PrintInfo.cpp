@@ -30,7 +30,10 @@ namespace WebKit {
 
 PrintInfo::PrintInfo(float pageSetupScaleFactor, float availablePaperWidth, float availablePaperHeight, WebCore::FloatBoxExtent margin
 #if PLATFORM(IOS_FAMILY)
-    , bool snapshotFirstPage, float minimumTopMargin, float minimumBottomMargin
+    , bool snapshotFirstPage
+#endif
+#if PLATFORM(COCOA)
+    , float minimumTopMargin, float minimumBottomMargin
 #endif
 #if PLATFORM(GTK)
     , GRefPtr<GtkPrintSettings>&& printSettings, GRefPtr<GtkPageSetup>&& pageSetup, PrintMode printMode
@@ -42,6 +45,8 @@ PrintInfo::PrintInfo(float pageSetupScaleFactor, float availablePaperWidth, floa
     , margin(margin)
 #if PLATFORM(IOS_FAMILY)
     , snapshotFirstPage(snapshotFirstPage)
+#endif
+#if PLATFORM(COCOA)
     , minimumTopMargin(minimumTopMargin)
     , minimumBottomMargin(minimumBottomMargin)
 #endif

@@ -36,6 +36,7 @@
 #import "Helpers/Utilities.h"
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/_WKFrameHandle.h>
@@ -245,6 +246,56 @@ TEST(Printing, PreviewPageDoesNotDependOnPreviousOrientation)
 
     EXPECT_EQ(portraitPage, NSMakeRect(72, 72, 468, 648));
     EXPECT_EQ(portraitPageAfterLandscape, portraitPage);
+}
+
+@interface PrintHeaderAndFooterUIDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation PrintHeaderAndFooterUIDelegate
+- (CGFloat)_webViewHeaderHeight:(WKWebView *)webView
+{
+    return 30;
+}
+
+- (CGFloat)_webViewFooterHeight:(WKWebView *)webView
+{
+    return 30;
+}
+@end
+
+TEST(Printing, PageMarginsLeaveRoomForHeaderAndFooter)
+{
+    RetainPtr delegate = adoptNS([PrintHeaderAndFooterUIDelegate new]);
+    RetainPtr printInfo = adoptNS([[NSPrintInfo alloc] init]);
+    [printInfo setPaperSize:TestWebKitAPI::usLetterPaperSizeInPoints];
+    [printInfo setTopMargin:36];
+    [printInfo setBottomMargin:36];
+
+    // Narrower @page margins widen to leave the printer's unprintable edge and the 30pt header or footer.
+    NSRect imageableBounds = [printInfo imageablePageBounds];
+    CGFloat minimumTopMargin = TestWebKitAPI::usLetterPaperSizeInPoints.height - NSMaxY(imageableBounds) + 30;
+    CGFloat minimumBottomMargin = NSMinY(imageableBounds) + 30;
+    struct Case {
+        NSString *styleSheet;
+        CGFloat topMargin;
+        CGFloat bottomMargin;
+    } cases[] = {
+        { @"", 66, 66 },
+        { @"@page { margin: 0.25in }", minimumTopMargin, minimumBottomMargin },
+        { @"@page { margin-top: 0 }", minimumTopMargin, 66 },
+        { @"@page { margin: 1.5in }", 108, 108 },
+    };
+    for (auto& [styleSheet, topMargin, bottomMargin] : cases) {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        [webView setUIDelegate:delegate];
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<style>%@</style>Hello", styleSheet]];
+        RetainPtr operation = [webView printOperationWithPrintInfo:printInfo];
+        [NSPrintOperation setCurrentOperation:operation];
+        firstPageInPreview(operation, NSPaperOrientationPortrait);
+        [NSPrintOperation setCurrentOperation:nil];
+        EXPECT_EQ([[operation printInfo] topMargin], topMargin) << styleSheet.UTF8String;
+        EXPECT_EQ([[operation printInfo] bottomMargin], bottomMargin) << styleSheet.UTF8String;
+    }
 }
 
 #if HAVE(PDFKIT)

@@ -158,13 +158,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [info setRightMargin:originalMargin(WebKitOriginalRightPrintingMarginKey, [info rightMargin])];
 
     Ref webFrame = *_webFrame;
-    if (RefPtr page = webFrame->page()) {
-        CGFloat scale = [info scalingFactor];
-        topMargin += page->headerHeightForPrinting(webFrame) * scale;
-        bottomMargin += page->footerHeightForPrinting(webFrame) * scale;
-    }
-    [info setTopMargin:topMargin];
-    [info setBottomMargin:bottomMargin];
+    RefPtr page = webFrame->page();
+    CGFloat scale = [info scalingFactor];
+    CGFloat headerHeight = page ? page->headerHeightForPrinting(webFrame) * scale : 0;
+    CGFloat footerHeight = page ? page->footerHeightForPrinting(webFrame) * scale : 0;
+    [info setTopMargin:topMargin + headerHeight];
+    [info setBottomMargin:bottomMargin + footerHeight];
+    NSRect imageableBounds = [info imageablePageBounds];
+    _minimumTopMargin = headerHeight > 0 ? [info paperSize].height - NSMaxY(imageableBounds) + headerHeight : 0;
+    _minimumBottomMargin = footerHeight > 0 ? NSMinY(imageableBounds) + footerHeight : 0;
+}
+
+- (WebKit::PrintInfo)_printInfo
+{
+    WebKit::PrintInfo printInfo([_printOperation.get() printInfo]);
+    printInfo.minimumTopMargin = _minimumTopMargin;
+    printInfo.minimumBottomMargin = _minimumBottomMargin;
+    return printInfo;
 }
 
 - (BOOL)_isPrintingPreview
@@ -278,7 +288,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
     ASSERT(firstPage <= lastPage);
     LOG(Printing, "WKPrintingView requesting PDF data for pages %zu...%zu", firstPage, lastPage);
 
-    WebKit::PrintInfo printInfo([_printOperation.get() printInfo]);
+    auto printInfo = [self _printInfo];
     // Return to printing mode if we're already back to screen (e.g. due to window resizing).
     page->beginPrinting(webFrame.ptr(), printInfo);
 
@@ -368,7 +378,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
     };
-    _expectedComputedPagesCallback = protect(webFrame->page())->computePagesForPrinting(webFrame->frameID(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTF::move(callback));
+    _expectedComputedPagesCallback = protect(webFrame->page())->computePagesForPrinting(webFrame->frameID(), [self _printInfo], WTF::move(callback));
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
@@ -545,15 +555,16 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
                     return;
 
                 // Preview isn't available yet, request it asynchronously.
+                auto printInfo = [self _printInfo];
                 // Return to printing mode if we're already back to screen (e.g. due to window resizing).
-                page->beginPrinting(webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
+                page->beginPrinting(webFrame.get(), printInfo);
 
                 IPCCallbackContext* context = new IPCCallbackContext;
                 auto callback = [context](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(WTF::move(imageHandle), context);
                 };
-                _latestExpectedPreviewCallback = page->drawRectToImage(*webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTF::move(callback));
+                _latestExpectedPreviewCallback = page->drawRectToImage(*webFrame, printInfo, scaledPrintingRect, imageSize, WTF::move(callback));
                 _expectedPreviewCallbacks.add(*_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;

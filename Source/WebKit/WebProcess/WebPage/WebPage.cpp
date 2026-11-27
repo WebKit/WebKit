@@ -7561,8 +7561,8 @@ void WebPage::swipeAnimationDidEnd()
 static FloatBoxExtent computedPageMargin(PrintContext& printContext, const PrintInfo& printInfo)
 {
     auto margin = printContext.computedPageMargin(printInfo.margin);
-#if PLATFORM(IOS_FAMILY)
-    // Auto sides keep UIKit's margin which already leaves room for the header and footer.
+#if PLATFORM(COCOA)
+    // Auto sides keep the print margin which already leaves room for the header and footer.
     if (printInfo.minimumTopMargin > 0 && margin.top() != printInfo.margin.top())
         margin.setTop(std::max(margin.top(), printInfo.minimumTopMargin));
     if (printInfo.minimumBottomMargin > 0 && margin.bottom() != printInfo.margin.bottom())
