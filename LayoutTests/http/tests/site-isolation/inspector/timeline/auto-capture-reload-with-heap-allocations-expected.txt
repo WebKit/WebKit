@@ -1,0 +1,30 @@
+Test that under Site Isolation, an auto-capture with JavaScript Allocations enabled starts Heap on each frame target only after its frame has committed a document other than the initial about:blank document, and not on the Worker targets.
+
+
+
+== Running test suite: SiteIsolation.Timeline.AutoCaptureWithHeapAllocations
+-- Running test case: SiteIsolation.Timeline.AutoCaptureWithHeapAllocations.Reload
+PASS: Should find the cross-origin iframe target.
+PASS: Should find the script-inserted iframe target.
+PASS: Should find the Worker target.
+PASS: TimelineManager should not be capturing.
+PASS: The reload started an auto-capture.
+PASS: The reload should create a new cross-origin iframe target.
+PASS: The reload should create a new script-inserted iframe target.
+PASS: The reload should create a new Worker target.
+PASS: The main frame target started Timeline.
+PASS: The cross-origin iframe target started Timeline.
+PASS: The main frame target started Heap.
+PASS: The cross-origin iframe target started Heap.
+PASS: The script-inserted iframe target started Heap.
+PASS: Capturing stopped.
+PASS: The frontend should start Heap on the main frame target once.
+PASS: The frontend should start Heap on the main frame target after the main frame committed the new document.
+PASS: The frontend should start Heap on the cross-origin iframe target once.
+PASS: The frontend should not start Heap on the cross-origin iframe target that existed before the reload.
+PASS: The frontend should start Heap on the script-inserted iframe target once.
+PASS: The frontend should start Heap on the script-inserted iframe target after its frame committed its real document, not its initial about:blank document.
+PASS: The Worker target that existed before the reload should not report that Heap started.
+PASS: The Worker target created by the reload should not report that Heap started.
+PASS: The page target should not report that Heap started.
+

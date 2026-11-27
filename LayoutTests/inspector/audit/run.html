@@ -67,7 +67,7 @@ function test()
             await InspectorTest.Audit.teardownAudit();
 
             InspectorTest.log("Triggering GC...");
-            await HeapAgent.gc();
+            await InspectorTest.mainFrameTarget.HeapAgent.gc();
 
             await InspectorTest.Audit.setupAudit();
             await auditRun(`function() { return WebInspectorAudit.foo; }`, (result) => {

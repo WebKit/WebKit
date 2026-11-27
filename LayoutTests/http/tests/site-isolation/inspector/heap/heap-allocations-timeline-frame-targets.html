@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="../timeline/resources/frame-timeline-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets");
+
+    const mainFrameMarkerClassName = HeapTest.markerClassName("MainFrameMarker");
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+
+    // The targets that the frontend asks to start Heap.
+    let heapStartedTargets = [];
+    let originalWillStartTrackingForTarget = WI.timelineManager.willStartTrackingForTarget;
+    WI.timelineManager.willStartTrackingForTarget = function(target, domain) {
+        if (domain === "Heap")
+            heapStartedTargets.push(target);
+        return originalWillStartTrackingForTarget.call(this, target, domain);
+    };
+
+    // The snapshots added to the timeline, in order.
+    let addedSnapshots = [];
+    let addedSnapshotListeners = [];
+    let originalHeapSnapshotAdded = WI.timelineManager.heapSnapshotAdded;
+    WI.timelineManager.heapSnapshotAdded = function(timestamp, snapshot) {
+        addedSnapshots.push(snapshot);
+        for (let listener of addedSnapshotListeners.slice()) {
+            if (addedSnapshots.filter((addedSnapshot) => addedSnapshot.target === listener.target).length === listener.count) {
+                addedSnapshotListeners.remove(listener);
+                listener.resolve(snapshot);
+            }
+        }
+        return originalHeapSnapshotAdded.call(this, timestamp, snapshot);
+    };
+
+    // Resolves with the target's added snapshot with the given number (starting at 1).
+    function awaitAddedSnapshot(target, count) {
+        let snapshots = addedSnapshots.filter((snapshot) => snapshot.target === target);
+        if (snapshots.length >= count)
+            return Promise.resolve(snapshots[count - 1]);
+
+        return new Promise((resolve) => {
+            addedSnapshotListeners.push({target, count, resolve});
+        });
+    }
+
+    function addedSnapshotCount(target) {
+        return addedSnapshots.filter((snapshot) => snapshot.target === target).length;
+    }
+
+    // Sets the instruments of the next capture. Starting a capture reuses the active recording while it is empty, so
+    // that recording gets the same instruments.
+    function setTimelineTypes(timelineTypes) {
+        WI.timelineManager.enabledTimelineTypes = timelineTypes;
+
+        let recording = WI.timelineManager.activeRecording;
+        for (let instrument of recording.instruments.slice()) {
+            if (!timelineTypes.includes(instrument.timelineRecordType))
+                recording.removeInstrument(instrument);
+        }
+        for (let timelineType of timelineTypes) {
+            if (!recording.instruments.some((instrument) => instrument.timelineRecordType === timelineType))
+                recording.addInstrument(WI.Instrument.createForTimelineType(timelineType));
+        }
+    }
+
+    function checkSnapshot(snapshot, description) {
+        let includesMainFrameMarker = HeapTest.objectCount(snapshot, mainFrameMarkerClassName) === 1;
+        let includesIFrameMarker = HeapTest.objectCount(snapshot, iframeMarkerClassName) === 1;
+        if (snapshot.target === mainFrameTarget) {
+            InspectorTest.expectThat(includesMainFrameMarker, `The main frame's ${description} should include the main frame's marker.`);
+            InspectorTest.expectFalse(includesIFrameMarker, `The main frame's ${description} should not include the iframe's marker.`);
+        } else {
+            InspectorTest.expectThat(includesIFrameMarker, `The iframe's ${description} should include the iframe's marker.`);
+            InspectorTest.expectFalse(includesMainFrameMarker, `The iframe's ${description} should not include the main frame's marker.`);
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.Targets",
+        description: "Under Site Isolation, the frame targets should report the heap, and the page target should not.",
+        async test() {
+            // FIXME: <https://webkit.org/b/332030> Use an InspectorTest helper that waits for the main frame target,
+            // instead of matching this test's URL. InspectorTest.mainFrameTarget falls back to the page target while the
+            // frontend does not yet know the main frame target's frame.
+            mainFrameTarget = await waitForFrameTargetForURLContaining("/heap-allocations-timeline-frame-targets.html");
+            InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the cross-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+
+            await HeapTest.evaluate(mainFrameTarget, `createMarker("${mainFrameMarkerClassName}")`);
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}").callback = createMarker`);
+
+            InspectorTest.expectThat(WI.heapManager.targetReportsHeap(mainFrameTarget), "The main frame's target should report the heap.");
+            InspectorTest.expectThat(WI.heapManager.targetReportsHeap(iframeTarget), "The cross-origin iframe's target should report the heap.");
+            InspectorTest.expectThat(WI.pageTarget.hasDomain("Heap"), "The page target should still have the Heap domain.");
+            InspectorTest.expectFalse(WI.heapManager.targetReportsHeap(WI.pageTarget), "The page target should not report the heap.");
+
+            let error = await HeapTest.commandError(WI.pageTarget.HeapAgent.snapshot());
+            InspectorTest.expectNotNull(error, "The page target's Heap.snapshot should fail.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.Capture",
+        description: "A capture with JavaScript Allocations should take snapshots from every frame target, each with only its own frame's objects, and none from the page target.",
+        async test() {
+            setTimelineTypes([WI.TimelineRecord.Type.HeapAllocations]);
+            heapStartedTargets = [];
+            let mainFrameSnapshotCount = addedSnapshotCount(mainFrameTarget);
+            let iframeSnapshotCount = addedSnapshotCount(iframeTarget);
+            let pageSnapshotCount = addedSnapshotCount(WI.pageTarget);
+
+            await FrameTimelineTest.startCapturing([]);
+            for (let [target, description] of [[mainFrameTarget, "main frame's target"], [iframeTarget, "iframe's target"]]) {
+                await FrameTimelineTest.awaitTrackingEvent("capturingStarted", target, "Heap");
+                InspectorTest.pass(`The ${description} started Heap.`);
+            }
+            InspectorTest.expectThat(heapStartedTargets.includes(mainFrameTarget) && heapStartedTargets.includes(iframeTarget), "The frontend should start Heap on both frame targets.");
+            InspectorTest.expectFalse(heapStartedTargets.includes(WI.pageTarget), "The frontend should not start Heap on the page target.");
+
+            checkSnapshot(await awaitAddedSnapshot(mainFrameTarget, ++mainFrameSnapshotCount), "first tracking snapshot");
+            checkSnapshot(await awaitAddedSnapshot(iframeTarget, ++iframeSnapshotCount), "first tracking snapshot");
+
+            // The instrument takes a snapshot from every target that reports the heap every 10 seconds.
+            let heapAllocationsInstrument = WI.timelineManager.activeRecording.instruments.find((instrument) => instrument instanceof WI.HeapAllocationsInstrument);
+            heapAllocationsInstrument._takeHeapSnapshot();
+            let periodicSnapshots = [await awaitAddedSnapshot(mainFrameTarget, ++mainFrameSnapshotCount), await awaitAddedSnapshot(iframeTarget, ++iframeSnapshotCount)];
+            for (let snapshot of periodicSnapshots)
+                checkSnapshot(snapshot, "periodic snapshot");
+
+            // Snapshot records are named after their target.
+            InspectorTest.expectNotEqual(periodicSnapshots[0].target.displayName, periodicSnapshots[1].target.displayName, "The two frame targets should have different names.");
+
+            await FrameTimelineTest.stopCapturing();
+            InspectorTest.pass("Capturing stopped.");
+
+            for (let [target, description] of [[mainFrameTarget, "main frame's target"], [iframeTarget, "iframe's target"]])
+                InspectorTest.expectThat(FrameTimelineTest.didReportTrackingEvent("capturingStopped", target, "Heap"), `The ${description} should report that Heap stopped.`);
+            checkSnapshot(await awaitAddedSnapshot(mainFrameTarget, ++mainFrameSnapshotCount), "last tracking snapshot");
+            checkSnapshot(await awaitAddedSnapshot(iframeTarget, ++iframeSnapshotCount), "last tracking snapshot");
+
+            InspectorTest.expectEqual(addedSnapshotCount(WI.pageTarget), pageSnapshotCount, "The page target should not add snapshots.");
+            InspectorTest.expectFalse(FrameTimelineTest.didReportTrackingEvent("capturingStarted", WI.pageTarget, "Heap"), "The page target should not report that Heap started.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.GarbageCollect",
+        description: "Asking every target that reports the heap to collect garbage, like the Console's button, should collect garbage in every frame's process.",
+        async test() {
+            let gcTargets = WI.targets.filter((target) => WI.heapManager.targetReportsHeap(target));
+            InspectorTest.expectFalse(gcTargets.includes(WI.pageTarget), "The page target should not be asked to collect garbage.");
+
+            let garbageCollectedPromise = HeapTest.awaitFullGarbageCollection([mainFrameTarget, iframeTarget]);
+            for (let target of gcTargets)
+                target.HeapAgent.gc();
+            await garbageCollectedPromise;
+            InspectorTest.pass("Both frame targets reported a full garbage collection.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.FunctionLocation",
+        description: "The location of a function in a frame target's snapshot should resolve to a script of that frame target.",
+        async test() {
+            let snapshot = await HeapTest.takeSnapshot(iframeTarget);
+            let [marker] = await HeapTest.instances(snapshot, iframeMarkerClassName);
+            let callbackNode = await HeapTest.propertyNode(marker, "callback");
+            InspectorTest.assert(callbackNode, "Should find the function that the iframe's marker references.");
+
+            let {functionDetails} = await iframeTarget.HeapAgent.getPreview(callbackNode.id);
+            InspectorTest.expectEqual(functionDetails?.name, "createMarker", "The function's details should have its name.");
+
+            let script = WI.debuggerManager.scriptForIdentifier(functionDetails.location.scriptId, iframeTarget);
+            InspectorTest.expectThat(script?.url?.endsWith("heap-markers.js"), "The function's location should resolve to the iframe's script.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, the JavaScript Allocations timeline takes snapshots from every frame target and none from the page target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/heap/resources/heap-frame.html"></iframe>
+</body>

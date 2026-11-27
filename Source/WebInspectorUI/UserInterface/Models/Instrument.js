@@ -120,7 +120,7 @@ WI.Instrument = class Instrument
         return null; // Implemented by subclasses.
     }
 
-    startInstrumentation(initiatingTarget)
+    startInstrumentation(initiatingTarget, {autoCapture} = {})
     {
         WI.Instrument.startLegacyTimelineAgent(initiatingTarget);
     }

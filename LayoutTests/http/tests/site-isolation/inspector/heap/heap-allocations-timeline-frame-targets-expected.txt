@@ -1,0 +1,44 @@
+Test that under Site Isolation, the JavaScript Allocations timeline takes snapshots from every frame target and none from the page target.
+
+
+
+== Running test suite: SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets
+-- Running test case: SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.Targets
+PASS: The main frame's target should report the heap.
+PASS: The cross-origin iframe's target should report the heap.
+PASS: The page target should still have the Heap domain.
+PASS: The page target should not report the heap.
+PASS: The page target's Heap.snapshot should fail.
+
+-- Running test case: SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.Capture
+PASS: The main frame's target started Heap.
+PASS: The iframe's target started Heap.
+PASS: The frontend should start Heap on both frame targets.
+PASS: The frontend should not start Heap on the page target.
+PASS: The main frame's first tracking snapshot should include the main frame's marker.
+PASS: The main frame's first tracking snapshot should not include the iframe's marker.
+PASS: The iframe's first tracking snapshot should include the iframe's marker.
+PASS: The iframe's first tracking snapshot should not include the main frame's marker.
+PASS: The main frame's periodic snapshot should include the main frame's marker.
+PASS: The main frame's periodic snapshot should not include the iframe's marker.
+PASS: The iframe's periodic snapshot should include the iframe's marker.
+PASS: The iframe's periodic snapshot should not include the main frame's marker.
+PASS: The two frame targets should have different names.
+PASS: Capturing stopped.
+PASS: The main frame's target should report that Heap stopped.
+PASS: The iframe's target should report that Heap stopped.
+PASS: The main frame's last tracking snapshot should include the main frame's marker.
+PASS: The main frame's last tracking snapshot should not include the iframe's marker.
+PASS: The iframe's last tracking snapshot should include the iframe's marker.
+PASS: The iframe's last tracking snapshot should not include the main frame's marker.
+PASS: The page target should not add snapshots.
+PASS: The page target should not report that Heap started.
+
+-- Running test case: SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.GarbageCollect
+PASS: The page target should not be asked to collect garbage.
+PASS: Both frame targets reported a full garbage collection.
+
+-- Running test case: SiteIsolation.Heap.HeapAllocationsTimelineFrameTargets.FunctionLocation
+PASS: The function's details should have its name.
+PASS: The function's location should resolve to the iframe's script.
+

@@ -85,6 +85,19 @@ WI.HeapManager = class HeapManager extends WI.Object
         this._enabled = false;
     }
 
+    // Under Site Isolation, every frame target reports the heap of its own frame, and the page target reports nothing.
+    targetReportsHeap(target)
+    {
+        if (!target.hasDomain("Heap"))
+            return false;
+
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, so the page target reported every frame of its process.
+        if (target.type === WI.TargetType.Page)
+            return !WI.targets.some((otherTarget) => otherTarget instanceof WI.FrameTarget && otherTarget.hasDomain("Heap"));
+
+        return true;
+    }
+
     snapshot(target, callback)
     {
         console.assert(this._enabled);
@@ -101,7 +114,7 @@ WI.HeapManager = class HeapManager extends WI.Object
         console.assert(this._enabled);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
 
-        // FIXME: <https://webkit.org/b/298984> Remove this check once frame targets have the Heap domain. Until then, `console.takeHeapSnapshot()` in a frame reports the snapshot on the frame target.
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, but `console.takeHeapSnapshot()` in a frame reported its snapshot on the frame target.
         if (!node.target.hasDomain("Heap")) {
             callback("Heap domain is not available for this target.");
             return;
@@ -119,7 +132,7 @@ WI.HeapManager = class HeapManager extends WI.Object
         console.assert(this._enabled);
         console.assert(node instanceof WI.HeapSnapshotNodeProxy);
 
-        // FIXME: <https://webkit.org/b/298984> Remove this check once frame targets have the Heap domain. Until then, `console.takeHeapSnapshot()` in a frame reports the snapshot on the frame target.
+        // COMPATIBILITY (macOS 27.3, iOS 27.3): Frame targets did not have the Heap domain, but `console.takeHeapSnapshot()` in a frame reported its snapshot on the frame target.
         if (!node.target.hasDomain("Heap")) {
             callback("Heap domain is not available for this target.");
             return;

@@ -1,4 +1,4 @@
-Testing that a heap snapshot from console.takeHeapSnapshot() in a frame does not break previews under Site Isolation.
+Testing that a heap snapshot from console.takeHeapSnapshot() in a frame can be previewed under Site Isolation.
 
 
 == Running test suite: SiteIsolation.Heap.ConsoleHeapSnapshotInFrame
@@ -7,7 +7,8 @@ PASS: The snapshot should come from the main frame's target.
 PASS: The snapshot should include the marker.
 
 -- Running test case: SiteIsolation.Heap.ConsoleHeapSnapshotInFrame.Preview
-PASS: The main frame's target should not have the Heap domain.
-PASS: Getting a preview of the marker should fail.
-PASS: Getting a remote object for the marker should fail.
+PASS: Getting a preview of the marker should not fail.
+PASS: The preview should describe the marker.
+PASS: Getting a remote object for the marker should not fail.
+PASS: The remote object should describe the marker.
 
