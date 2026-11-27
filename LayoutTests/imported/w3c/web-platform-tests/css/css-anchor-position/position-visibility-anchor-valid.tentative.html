@@ -14,17 +14,25 @@
   .target {
     position: absolute;
     position-visibility: anchor-valid;
-    position-area: block-end;
     width: 100px;
     height: 100px;
-    background: red;
-    inset: 0;
   }
+
+  .target.visible { background: green; }
+  .target.hidden { background: red; }
 </style>
 
 <!-- #target1 should be visible. -->
 <div class="anchor" style="anchor-name: --a1;">anchor1</div>
-<div id="target1" class="target" style="position-anchor: --a1; background: green">target1</div>
+<div id="target1" class="target visible" style="position-anchor: --a1; position-area: inline-end">target1</div>
 
-<!-- #target2 should not be visible because anchor name does not exist. -->
-<div id="target2" class="target" style="top: anchor(--does-not-exist bottom);">target2</div>
+<!-- #target2 should be visible; the default anchor exists, even though anchor() uses a nonexistent anchor. -->
+<div id="target2" class="target visible" style="position-anchor: --a1; left: anchor(--does-not-exist right)">target2</div>
+
+<!-- #target3, 4 should not be visible because the default anchor does not exist. -->
+<div id="target3" class="target hidden" style="position-anchor: --does-not-exist; top: anchor(bottom);">target3</div>
+<div id="target4" class="target hidden" style="position-anchor: --does-not-exist; position-area: block-end">target4</div>
+
+<!-- #target5 should not be visible because the default anchor does not exist
+     (even though the anchor function doesn't use it) -->
+<div id="target5" class="target hidden" style="position-anchor: --does-not-exist; top: anchor(--a1 bottom);">target5</div>

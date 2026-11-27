@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+  .container {
+    position: relative;
+  }
   .anchor {
     width: 100px;
     height: 100px;
@@ -11,7 +14,15 @@
     height: 100px;
     background: green;
   }
+  #target1 {
+    position: absolute;
+    top: 0;
+    left: 100px;
+  }
 </style>
 
-<div class="anchor">anchor1</div>
-<div class="target">target1</div>
+<div class="container">
+  <div class="anchor">anchor1</div>
+  <div class="target" id="target1">target1</div>
+  <div class="target">target2</div>
+</div>
