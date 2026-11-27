@@ -119,7 +119,6 @@ public:
     ALWAYS_INLINE ~RefPtr() { SUPPRESS_FORWARD_DECL_ARG RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
 
     T* get() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
-    T* unsafeGet() const { return PtrTraits::unwrap(m_ptr); } // FIXME: Replace with get() then remove.
     operator T*() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
 
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }

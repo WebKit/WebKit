@@ -1637,6 +1637,25 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
     OpJfalse::emit(this, cond, target.bind(m_writer));
 }
 
+// The caller hands over its reference to cond. Dropping that reference before emitting the jump lets a
+// temporary that nothing else refers to be fused with the instruction that produced it (see
+// fuseCompareAndJump() / fuseTestAndJmp()). The RegisterID itself is owned by this generator.
+void BytecodeGenerator::emitJumpIfTrue(RefPtr<RegisterID>&& cond, Label& target)
+{
+    ASSERT(cond);
+    RegisterID* condRegister = cond.leakRef();
+    condRegister->deref();
+    emitJumpIfTrue(condRegister, target);
+}
+
+void BytecodeGenerator::emitJumpIfFalse(RefPtr<RegisterID>&& cond, Label& target)
+{
+    ASSERT(cond);
+    RegisterID* condRegister = cond.leakRef();
+    condRegister->deref();
+    emitJumpIfFalse(condRegister, target);
+}
+
 void BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label& target)
 {
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::callFunction), target.bind(m_writer));
@@ -2432,8 +2451,9 @@ RegisterID* BytecodeGenerator::emitResolveScopeForHoistingFuncDeclInEval(Registe
         move(scope.get(), m_topLevelScopeRegister);
     else
         OpGetScope::emit(this, scope.get());
-    OpResolveScopeForHoistingFuncDeclInEval::emit(this, kill(result.get()), scope.get(), addConstant(property));
-    return result.unsafeGet();
+    RegisterID* resultRegister = kill(result.get());
+    OpResolveScopeForHoistingFuncDeclInEval::emit(this, resultRegister, scope.get(), addConstant(property));
+    return resultRegister;
 }
 
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
@@ -5196,10 +5216,10 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(String(string->cooked()));
     }
-    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTF::move(rawStrings), WTF::move(cookedStrings)), taggedTemplate->endOffset());
+    RegisterID* constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTF::move(rawStrings), WTF::move(cookedStrings)), taggedTemplate->endOffset());
     if (!dst)
-        return constant.unsafeGet();
-    return move(dst, constant.get());
+        return constant;
+    return move(dst, constant);
 }
 
 RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, UniquedStringImpl* property)
@@ -5553,9 +5573,7 @@ RegisterID* BytecodeGenerator::emitGetGenericIterator(RegisterID* argument, Thro
 {
     emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
     RefPtr<RegisterID> iterator = emitGetById(newTemporary(), argument, propertyNames().iteratorSymbol.impl());
-    emitCallIterator(iterator.get(), argument, node);
-
-    return iterator.unsafeGet();
+    return emitCallIterator(iterator.get(), argument, node);
 }
 
 RegisterID* BytecodeGenerator::emitIteratorGenericNext(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, const ThrowableExpressionData* node, EmitAwait doEmitAwait)
@@ -5751,8 +5769,7 @@ RegisterID* BytecodeGenerator::emitDelegateYield(RegisterID* argument, Throwable
         emitLabel(loopDone.get());
     }
 
-    emitGetById(value.get(), value.get(), propertyNames().value.impl());
-    return value.unsafeGet();
+    return emitGetById(value.get(), value.get(), propertyNames().value.impl());
 }
 
 void BytecodeGenerator::emitGeneratorStateChange(int32_t state)
