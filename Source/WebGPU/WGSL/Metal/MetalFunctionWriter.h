@@ -45,7 +45,9 @@ void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const Has
 // sampled through an external texture. PQ or HLG is decoded to linear light where 1.0 is 440 nits,
 // what is brighter than half of that is rolled off towards 1.0 by luminance, and the result is
 // encoded with the pure 2.4 gamma of ITU-R BT.1886 rather than the sRGB curve. Together these match
-// how CoreGraphics draws the same frame to a 2D canvas.
+// how CoreGraphics draws the same frame to a 2D canvas. A linear destination color space keeps the
+// frame's headroom instead: it is decoded where 1.0 is the 203 nit reference white of ITU-R BT.2408,
+// and neither tone mapped nor encoded, so what is brighter than SDR white comes out above 1.0.
 //
 // Self-contained and needing only <metal_stdlib> with `using namespace metal`. Where it is emitted
 // ahead of use is up to the shader. Its identifiers begin with two underscores, which WGSL rejects,

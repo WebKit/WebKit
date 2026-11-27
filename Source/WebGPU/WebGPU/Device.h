@@ -250,9 +250,12 @@ public:
         // for, applied to linear-light values. They are all zero, which no real conversion can be,
         // when the frame's primaries already are that color space. The first column's w describes
         // the frame's transfer function: 0 for SDR, which the shader treats as sRGB-encoded, 1 for
-        // PQ and 2 for HLG, both of which are decoded and tone mapped to SDR. A frame that is
-        // neither all zero nor HDR skips the transfer function round trip entirely. Three float4
-        // columns rather than a float3x3 and a column more, so that it is no larger than a float3x3.
+        // PQ and 2 for HLG, both of which are decoded. The second column's w is 1 when that color
+        // space is linear, which leaves the result linear and lets HDR keep its headroom above 1.0,
+        // and 0 when it is sRGB-encoded, which has HDR tone mapped to SDR. A frame whose xyz are all
+        // zero, which is SDR, and which is imported into an sRGB-encoded color space skips the
+        // transfer function round trip entirely. Three float4 columns rather than a float3x3 and a
+        // column more, so that it is no larger than a float3x3.
         simd::float3x4 primariesConversionMatrix { simd::float3x4(0.f) };
     };
     // A single-plane frame's color is premultiplied into a copy when it is imported for sampling,
