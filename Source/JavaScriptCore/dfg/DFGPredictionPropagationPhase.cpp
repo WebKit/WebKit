@@ -437,9 +437,10 @@ private:
                     changed |= mergePrediction(SpecInt32Only);
                 else if (m_graph.unaryArithShouldSpeculateInt52(node, m_pass))
                     changed |= mergePrediction(SpecInt52Any);
-                else if (isBytecodeNumberSpeculation(prediction))
-                    changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
-                else {
+                else if (isNotCellNorBigIntSpeculation(prediction)) {
+                    // Fixup computes this negation on doubles, so an Int32 prediction would make every Int32 speculation on the result fail.
+                    changed |= mergePrediction(speculatedDoubleTypeForPrediction(prediction));
+                } else {
                     changed |= mergePrediction(SpecInt32Only);
                     if (node->op() == ValueNegate && node->mayHaveBigIntResult())
                         changed |= mergePrediction(SpecBigInt);
