@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>copyTo() and drawing of the VideoFrame of a WebGL OffscreenCanvas in a worker</title>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("copyTo() of the VideoFrame of a WebGL OffscreenCanvas in a worker gives straight alpha values in the requested color space, and drawing the frame gives the same values, for every combination of the alpha, premultipliedAlpha and drawingBufferColorSpace of the context.");
+startWorker("resources/videoframe-copyto-color-space-and-alpha-worker.js");
+</script>
+</body>
+</html>

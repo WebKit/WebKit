@@ -26,6 +26,8 @@
 #import "config.h"
 #import "CVUtilities.h"
 
+#import "CMUtilities.h"
+#import "ColorSpace.h"
 #import "ColorSpaceCG.h"
 #import "FourCC.h"
 #import "IOSurface.h"
@@ -34,10 +36,12 @@
 #import "PlanarImageConverterCV.h"
 #import "RealtimeVideoUtilities.h"
 #import "VideoFrame.h"
+#import <Accelerate/Accelerate.h>
 #import <array>
 #import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -189,6 +193,37 @@ CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef buffer)
     return kCGImageAlphaFirst;
 }
 
+std::optional<PlatformVideoColorSpace> videoColorSpaceForRGBContents(const ColorSpace& colorSpace)
+{
+    auto rgbColorSpace = [](PlatformVideoColorPrimaries primaries, PlatformVideoTransferCharacteristics transfer) {
+        return PlatformVideoColorSpace { .primaries = primaries, .transfer = transfer, .matrix = PlatformVideoMatrixCoefficients::Rgb, .fullRange = true };
+    };
+    if (colorSpace == ColorSpace::SRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621);
+    if (colorSpace == ColorSpace::LinearSRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Linear);
+    // The extended range does not fit in 8 bits, so the contents are clamped to the standard range.
+#if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    if (colorSpace == ColorSpace::ExtendedSRGB())
+        return rgbColorSpace(PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621);
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (colorSpace == ColorSpace::DisplayP3() || colorSpace == ColorSpace::ExtendedDisplayP3())
+        return rgbColorSpace(PlatformVideoColorPrimaries::SmpteEg432, PlatformVideoTransferCharacteristics::Iec6196621);
+    if (colorSpace == ColorSpace::LinearDisplayP3())
+        return rgbColorSpace(PlatformVideoColorPrimaries::SmpteEg432, PlatformVideoTransferCharacteristics::Linear);
+#endif
+    // Extended linear contents would band in 8 bits, and the other color spaces have no video frame
+    // equivalent.
+    return std::nullopt;
+}
+
+void attachVideoColorSpaceForRGBContents(const PlatformVideoColorSpace& colorSpace, CVPixelBufferRef pixelBuffer)
+{
+    // RGB contents have no YCbCr matrix to attach.
+    attachColorSpaceToPixelBuffer({ .primaries = colorSpace.primaries, .transfer = colorSpace.transfer }, pixelBuffer);
+}
+
 void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo alphaInfo)
 {
     CFStringRef alphaMode = nullptr;
@@ -245,6 +280,43 @@ std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat)
     // These formats are video range only; 8-bit full range is widened to 10 bits to keep every level distinct.
     bool isTenBitOutput = description->color.bitDepth > 8 || description->isFullRange;
     return PlanarImageConverter::pixelFormat(description->subsampling, isTenBitOutput ? PlanarImageConverter::tenBitMSB : PlanarImageConverter::eightBit, false, PlanarImageConverter::eightBit);
+}
+
+RetainPtr<CVPixelBufferRef> createUnpremultipliedPixelBuffer(CVPixelBufferRef source)
+{
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(source);
+    if (pixelFormat != kCVPixelFormatType_32BGRA && pixelFormat != kCVPixelFormatType_32ARGB)
+        return nullptr;
+
+    size_t width = CVPixelBufferGetWidth(source);
+    size_t height = CVPixelBufferGetHeight(source);
+    CVPixelBufferRef rawOutput = nullptr;
+    if (CVPixelBufferCreate(kCFAllocatorDefault, width, height, pixelFormat, nullptr, &rawOutput) != kCVReturnSuccess || !rawOutput)
+        return nullptr;
+    RetainPtr output = adoptCF(rawOutput);
+
+    if (CVPixelBufferLockBaseAddress(source, kCVPixelBufferLock_ReadOnly) != kCVReturnSuccess)
+        return nullptr;
+    auto unlockSource = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(source, kCVPixelBufferLock_ReadOnly);
+    });
+    if (CVPixelBufferLockBaseAddress(output.get(), 0) != kCVReturnSuccess)
+        return nullptr;
+    auto unlockOutput = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(output.get(), 0);
+    });
+
+    vImage_Buffer sourceBuffer { CVPixelBufferGetBaseAddress(source), height, width, CVPixelBufferGetBytesPerRow(source) };
+    vImage_Buffer outputBuffer { CVPixelBufferGetBaseAddress(output.get()), height, width, CVPixelBufferGetBytesPerRow(output.get()) };
+    auto error = pixelFormat == kCVPixelFormatType_32BGRA ? vImageUnpremultiplyData_BGRA8888(&sourceBuffer, &outputBuffer, kvImageNoFlags) : vImageUnpremultiplyData_ARGB8888(&sourceBuffer, &outputBuffer, kvImageNoFlags);
+    if (error != kvImageNoError) {
+        RELEASE_LOG_ERROR(Media, "createUnpremultipliedPixelBuffer: vImageUnpremultiplyData failed with error %zd", error);
+        return nullptr;
+    }
+
+    CVBufferPropagateAttachments(source, output.get());
+    setAlphaInfoForCVPixelBuffer(output.get(), kCGImageAlphaFirst);
+    return output;
 }
 
 std::span<const OSType> pixelFormatsWithAlphaPlane()

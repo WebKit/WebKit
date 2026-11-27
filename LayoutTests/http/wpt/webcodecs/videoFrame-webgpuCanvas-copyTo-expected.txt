@@ -1,0 +1,146 @@
+
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS canvas element, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS canvas element, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS canvas element, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS canvas element, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace srgb, opaque contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace srgb, translucent contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS canvas element, rgba16float, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS canvas element, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, bgra8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, rgba8unorm, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode opaque, colorSpace display-p3-linear, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace srgb-linear, translucent contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, opaque contents
+PASS worker OffscreenCanvas, rgba16float, alphaMode premultiplied, colorSpace display-p3-linear, translucent contents
+

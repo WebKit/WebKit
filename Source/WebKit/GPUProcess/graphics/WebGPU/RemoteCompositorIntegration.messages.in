@@ -33,7 +33,10 @@ messages -> RemoteCompositorIntegration Stream {
     void RecreateRenderBuffers(int width, int height, WebCore::ColorSpace destinationColorSpace, enum:uint8_t WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, WebKit::WebGPUDeviceIdentifier deviceIdentifier) -> (uint32_t renderBufferCount) Synchronous
     void PrepareForDisplay(uint32_t frameIndex) -> (Seconds gpuFrameCost, Seconds presentStall, MachSendRight displayBuffer, std::optional<uint32_t> replacedRenderBufferIndex) Synchronous NotStreamEncodableReply // Because CanvasRenderingContext::prepareForDisplay() requires the layer contents synchronously, this needs to be Synchronous.
 #endif
-    void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, uint32_t bufferIndex) -> () Synchronous
+    void CopyNativeImage(uint32_t bufferIndex, WebKit::RemoteNativeImageReference nativeImageReference)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    void CopyVideoFrame(uint32_t bufferIndex, WebKit::RemoteVideoFrameReference reference) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
+#endif
     void Destruct()
     void UpdateContentsHeadroom(float headroom)
 }

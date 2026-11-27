@@ -26,9 +26,11 @@
 #pragma once
 
 #include <WebCore/AlphaPremultiplication.h>
+#include <WebCore/IntSize.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
 
+#include <algorithm>
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -47,13 +49,20 @@
 namespace WebCore {
 
 class ColorSpace;
-class ImageBuffer;
 class NativeImage;
+class VideoFrame;
 
 // The render buffers that the compositor shows a WebGPU canvas from.
 class WebGPUCompositorIntegration : public RefCountedAndCanMakeWeakPtr<WebGPUCompositorIntegration> {
 public:
     virtual ~WebGPUCompositorIntegration() = default;
+
+    // The size of the render buffers that recreateRenderBuffers() makes for the given size.
+    static IntSize renderBufferSize(int width, int height)
+    {
+        constexpr int max2DTextureSize = 16384;
+        return { std::clamp(width, 1, max2DTextureSize), std::clamp(height, 1, max2DTextureSize) };
+    }
 
 #if PLATFORM(COCOA)
     virtual uint32_t recreateRenderBuffers(int width, int height, ColorSpace&&, AlphaPremultiplication, ::WebGPU::TextureFormat, ::WebGPU::Device&) = 0;
@@ -62,8 +71,14 @@ public:
 
     virtual Seconds lastFrameGPUCost() const { return 0_s; }
     virtual Seconds lastFramePresentStall() const { return 0_s; }
-    virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(NativeImage*)>) = 0;
-    virtual void paintCompositedResultsToCanvas(ImageBuffer&, uint32_t bufferIndex) = 0;
+    // Returns a copy of the contents of the render buffer, which stays the same when the render
+    // buffer is drawn to again.
+    virtual RefPtr<NativeImage> copyNativeImage(uint32_t bufferIndex) = 0;
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    // Returns a video frame of a copy of the contents of the render buffer, or null when the
+    // contents cannot be held in a video frame.
+    virtual RefPtr<VideoFrame> copyVideoFrame(uint32_t bufferIndex) = 0;
+#endif
     virtual void updateContentsHeadroom(float) = 0;
     virtual bool isRemoteCompositorIntegrationProxy() const { return false; }
     virtual bool isWebGPUCompositorIntegrationImpl() const { return false; }

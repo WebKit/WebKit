@@ -31,7 +31,11 @@
 #include "RemoteCompositorIntegrationMessages.h"
 #include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
-#include <WebCore/ImageBuffer.h>
+#include "RemoteNativeImageProxy.h"
+#include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#include "RemoteVideoFrameProxy.h"
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -55,8 +59,12 @@ RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy()
 uint32_t RemoteCompositorIntegrationProxy::recreateRenderBuffers(int width, int height, WebCore::ColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, ::WebGPU::TextureFormat textureFormat, ::WebGPU::Device& device)
 {
     auto& proxyDevice = downcast<RemoteDeviceProxy>(device);
+    m_renderBufferSize = renderBufferSize(width, height);
+    m_renderBufferColorSpace = destinationColorSpace;
+    m_renderBufferHasAlpha = alphaMode == WebCore::AlphaPremultiplication::Premultiplied;
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(width, height, WTF::move(destinationColorSpace), alphaMode, textureFormat, proxyDevice.backing()));
     auto [renderBufferCount] = sendResult.takeReplyOr(0u);
+    m_renderBufferCount = renderBufferCount;
     return renderBufferCount;
 }
 
@@ -71,20 +79,48 @@ void RemoteCompositorIntegrationProxy::prepareForDisplay(uint32_t frameIndex, Co
 }
 #endif
 
-void RemoteCompositorIntegrationProxy::paintCompositedResultsToCanvas(WebCore::ImageBuffer& buffer, uint32_t bufferIndex)
+RefPtr<WebCore::NativeImage> RemoteCompositorIntegrationProxy::copyNativeImage(uint32_t bufferIndex)
 {
-    buffer.flushDrawingContext();
-    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::PaintCompositedResultsToCanvas(buffer.renderingResourceIdentifier(), bufferIndex));
-    UNUSED_VARIABLE(sendResult);
+    if (bufferIndex >= m_renderBufferCount) [[unlikely]]
+        return nullptr;
+    RefPtr sharedResourceCache = m_parent->sharedResourceCache();
+    if (!sharedResourceCache) [[unlikely]]
+        return nullptr;
+    // The image contents will be published in the shared resource cache by the GPU process. Adopt it
+    // into the rendering backend's cache right away, so that drawing it needs no further set up.
+    auto headroom = m_contentsHeadroom ? WebCore::Headroom(std::max<float>(*m_contentsHeadroom, WebCore::Headroom::None)) : WebCore::Headroom::None;
+    Ref nativeImage = RemoteNativeImageProxy::create(m_renderBufferSize, m_renderBufferColorSpace.platformColorSpace(), m_renderBufferHasAlpha, sharedResourceCache.releaseNonNull(), headroom);
+    protect(m_parent->renderingBackend())->cacheNativeImageFromSharedNativeImage(nativeImage);
+    auto sendResult = send(Messages::RemoteCompositorIntegration::CopyNativeImage(bufferIndex, nativeImage->reference()));
+    if (sendResult != IPC::Error::NoError) [[unlikely]]
+        return nullptr;
+    return RefPtr<WebCore::NativeImage> { WTF::move(nativeImage) };
 }
 
-void RemoteCompositorIntegrationProxy::withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage*)>)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+RefPtr<WebCore::VideoFrame> RemoteCompositorIntegrationProxy::copyVideoFrame(uint32_t bufferIndex)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    // The video frame object heap is reached through the GPU process connection, which is used on the
+    // main run loop. Elsewhere the caller reads the contents some other way.
+    if (!isMainRunLoop() || bufferIndex >= m_renderBufferCount) [[unlikely]]
+        return nullptr;
+    RefPtr gpuProcessConnection = m_parent->gpuProcessConnection();
+    if (!gpuProcessConnection) [[unlikely]]
+        return nullptr;
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::CopyVideoFrame(bufferIndex, reference));
+    if (!sendResult.succeeded()) [[unlikely]]
+        return nullptr;
+    auto [properties] = sendResult.takeReply();
+    if (!properties)
+        return nullptr;
+    return RemoteVideoFrameProxy::create(protect(m_parent->gpuProcessIPCConnection()), protect(gpuProcessConnection->videoFrameObjectHeapProxy()), reference, WTF::move(*properties));
 }
+#endif
 
 void RemoteCompositorIntegrationProxy::updateContentsHeadroom(float headroom)
 {
+    m_contentsHeadroom = headroom;
     auto result = send(Messages::RemoteCompositorIntegration::UpdateContentsHeadroom(headroom));
     UNUSED_VARIABLE(result);
 }

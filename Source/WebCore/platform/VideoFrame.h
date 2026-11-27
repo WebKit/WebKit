@@ -164,6 +164,9 @@ public:
 
     // Whether the alpha component, if any, must be ignored, the frame being then fully opaque.
     virtual bool shouldIgnoreAlpha() const { return false; }
+    // Whether the colors are stored premultiplied by the alpha, as in the frames of premultiplied canvases.
+    // The readers of the values of a frame, such as copyTo(), get them unpremultiplied.
+    virtual bool hasPremultipliedAlpha() const { return false; }
 
     WEBCORE_EXPORT bool is10bits() const;
 

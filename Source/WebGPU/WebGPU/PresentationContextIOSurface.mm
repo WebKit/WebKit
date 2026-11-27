@@ -29,7 +29,7 @@
 #import "APIConversions.h"
 #import "Texture.h"
 #import "TextureView.h"
-#import <wtf/FastMalloc.h>
+#import <CoreVideo/CVPixelBuffer.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -141,63 +141,56 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& c
         completionHandler();
 }
 
-RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
+bool PresentationContextIOSurface::copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination)
 {
-    isIOSurfaceSupportedFormat = false;
-    RefPtr device = m_device.get();
-    if (!device || bufferIndex >= m_renderBuffers.size())
-        return nullptr;
+    RefPtr device = m_device;
+    if (!device || !destination || m_ioSurfaces.count != m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size())
+        return false;
 
-    auto& renderBuffer = m_renderBuffers[bufferIndex];
-    RefPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
-    if (!texture || !texture->waitForCommandBufferCompletion())
-        return nullptr;
+    // The render buffer texture is the IOSurface that is displayed.
+    id<MTLTexture> source = m_renderBuffers[bufferIndex].texture->texture();
+    RetainPtr<IOSurfaceRef> sourceSurface = source.iosurface;
+    if (!source || !sourceSurface || IOSurfaceGetWidth(destination) != source.width || IOSurfaceGetHeight(destination) != source.height)
+        return false;
 
-    id<MTLTexture> mtlTexture = texture->texture();
-    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB || mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float) {
-        isIOSurfaceSupportedFormat = true;
-        return nullptr;
+    // A blit copies the bytes, so it needs a destination with the layout of the source. Otherwise,
+    // such as for an RGBA render buffer copied to a BGRA destination, a compute pass converts them.
+    bool canBlit = IOSurfaceGetPixelFormat(destination) == IOSurfaceGetPixelFormat(sourceSurface.get());
+    MTLPixelFormat destinationPixelFormat = source.pixelFormat;
+    if (!canBlit) {
+        switch (IOSurfaceGetPixelFormat(destination)) {
+        case kCVPixelFormatType_32BGRA:
+            destinationPixelFormat = MTLPixelFormatBGRA8Unorm;
+            break;
+        default:
+            return false;
+        }
     }
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:destinationPixelFormat width:source.width height:source.height mipmapped:NO];
+    textureDescriptor.usage = canBlit ? MTLTextureUsageShaderRead : MTLTextureUsageShaderWrite;
+    id<MTLTexture> destinationTexture = device->newTextureWithDescriptor(textureDescriptor, destination);
+    if (!destinationTexture)
+        return false;
 
-    bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
-    CFStringRef colorSpaceName = kCGColorSpaceSRGB;
-    switch (m_colorSpace) {
-    case WebGPU::PredefinedColorSpace::SRGB:
-        colorSpaceName = kCGColorSpaceSRGB;
-        break;
-    case WebGPU::PredefinedColorSpace::SRGBLinear:
-        colorSpaceName = kCGColorSpaceLinearSRGB;
-        break;
-    case WebGPU::PredefinedColorSpace::DisplayP3:
-        colorSpaceName = kCGColorSpaceDisplayP3;
-        break;
-    case WebGPU::PredefinedColorSpace::DisplayP3Linear:
-        colorSpaceName = kCGColorSpaceLinearDisplayP3;
-        break;
-    }
-
-    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName));
-    auto bytesPerPixel = fp16 ? 8 : 4;
-    auto width = mtlTexture.width;
-    auto height = mtlTexture.height;
-    auto bytesPerRow = bytesPerPixel * width;
-    auto bitsPerComponent = bytesPerPixel * 2;
-    auto bitsPerPixel = bitsPerComponent * 4;
-    bool isOpaque = m_alphaMode == WebGPU::CanvasAlphaMode::Opaque;
-    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGImageByteOrder32Big);
-    if (fp16)
-        bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
-
-    size_t imageBytesSize = bytesPerRow * height;
-    void* imageBytes = FastMalloc::tryMalloc(imageBytesSize);
-    if (!imageBytes)
-        return nullptr;
-    [mtlTexture getBytes:imageBytes bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-    auto freeImageBytes = [](void* imageBytes, const void*, size_t) {
-        FastMalloc::free(imageBytes);
-    };
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageBytes, imageBytes, imageBytesSize, freeImageBytes));
-    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    Ref deviceQueue = device->getQueue();
+    deviceQueue->resolveProvisionalTextureClears();
+    id<MTLCommandBuffer> commandBuffer = deviceQueue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!commandBuffer)
+        return false;
+    if (canBlit) {
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoderWithDescriptor:[MTLBlitPassDescriptor new]];
+        deviceQueue->setEncoderForBuffer(commandBuffer, blitEncoder);
+        [blitEncoder copyFromTexture:source toTexture:destinationTexture];
+        deviceQueue->endEncoding(blitEncoder, commandBuffer);
+    } else
+        copyTextureToTexture(destinationTexture, source, commandBuffer);
+    deviceQueue->commitMTLCommandBuffer(commandBuffer);
+    // An invalid queue, such as the one of a lost device, does not commit.
+    if (commandBuffer.status < MTLCommandBufferStatusCommitted)
+        return false;
+    // The copy is read by others once it is scheduled.
+    [commandBuffer waitUntilScheduled];
+    return true;
 }
 
 static void generateAValidationError(Device& device, NSString* message, bool generateValidationError)

@@ -332,6 +332,16 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorS
     RetainPtr pixelBuffer = this->pixelBuffer();
     auto currentVideoFramePixelFormat = convertVideoFramePixelFormat(pixelFormat());
 
+    if (isRGBVideoPixelFormat(format) && hasPremultipliedAlpha() && !shouldIgnoreAlpha()) {
+        // The values of a frame are straight alpha. The colors are unpremultiplied before they are
+        // converted, as the conversion of premultiplied colors is not that of the colors.
+        pixelBuffer = createUnpremultipliedPixelBuffer(pixelBuffer.get());
+        if (!pixelBuffer) {
+            callback({ });
+            return;
+        }
+    }
+
     if (isRGBVideoPixelFormat(format)) {
         auto shouldConvert = [](auto sourceFormat, auto sourceColorSpace, auto destinationFormat, auto destinationColorSpace) -> std::optional<OSType> {
             bool isDestinationFormatRGB = destinationFormat == VideoPixelFormat::RGBA || destinationFormat == VideoPixelFormat::RGBX;
@@ -487,6 +497,11 @@ WebCore::IntSize VideoFrameCV::presentationSize() const
 uint32_t VideoFrameCV::pixelFormat() const
 {
     return CVPixelBufferGetPixelFormatType(m_pixelBuffer.get());
+}
+
+bool VideoFrameCV::hasPremultipliedAlpha() const
+{
+    return alphaInfoForCVPixelBuffer(m_pixelBuffer.get()) == kCGImageAlphaPremultipliedFirst;
 }
 
 void VideoFrameCV::setOwnershipIdentity(const ProcessIdentity& resourceOwner)

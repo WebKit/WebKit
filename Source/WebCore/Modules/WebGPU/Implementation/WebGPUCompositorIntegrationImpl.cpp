@@ -28,6 +28,8 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "CVUtilities.h"
+#include "VideoFrameCV.h"
 #include "WebGPUDevice.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/IOSurface.h>
@@ -37,6 +39,7 @@
 #include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
+
 
 namespace WebCore {
 
@@ -88,9 +91,6 @@ uint32_t WebGPUCompositorIntegrationImpl::recreateRenderBuffers(int width, int h
         presentationContext->unconfigure();
     }
 
-    constexpr int max2DTextureSize = 16384;
-    width = std::max(1, std::min(max2DTextureSize, width));
-    height = std::max(1, std::min(max2DTextureSize, height));
     IOSurface::Format colorFormat;
     switch (textureFormat) {
     case WebGPU::TextureFormat::Rgba8unorm:
@@ -107,7 +107,7 @@ uint32_t WebGPUCompositorIntegrationImpl::recreateRenderBuffers(int width, int h
         break;
     }
 
-    m_renderBufferSize = { width, height };
+    m_renderBufferSize = renderBufferSize(width, height);
     m_renderBufferColorSpace = WTF::move(colorSpace);
     m_renderBufferFormat = colorFormat;
     for (unsigned bufferIndex = 0; bufferIndex < 3; ++bufferIndex) {
@@ -158,26 +158,43 @@ bool WebGPUCompositorIntegrationImpl::replaceRenderBufferIfInUse(uint32_t index)
         replacement->setContentEDRHeadroom(*m_contentsHeadroom);
 #endif
 
-    m_spareRenderBuffers.append({ std::exchange(borrow(m_renderBuffers)[index], makeUniqueRefFromNonNullUniquePtr(WTF::move(replacement))) });
-    if (m_spareRenderBuffers.size() > maxSpareRenderBuffers)
-        m_spareRenderBuffers.removeAt(0);
+    addSpareRenderBuffer(std::exchange(borrow(m_renderBuffers)[index], makeUniqueRefFromNonNullUniquePtr(WTF::move(replacement))));
     m_renderBufferWasReplacedCallback(index, RetainPtr { m_renderBuffers[index]->surface() }.get());
     return true;
 }
 
-std::unique_ptr<WebCore::IOSurface> WebGPUCompositorIntegrationImpl::takeSpareRenderBuffer()
+std::optional<size_t> WebGPUCompositorIntegrationImpl::availableSpareRenderBufferIndex(IOSurface::Format format)
 {
-    auto index = m_spareRenderBuffers.findIf([](auto& spare) {
-        return !spare.surface->isInUse();
+    auto index = m_spareRenderBuffers.findIf([&](auto& spare) {
+        return spare.surface->pixelFormat() == format && !spare.surface->isInUse();
     });
     if (index == notFound)
-        return nullptr;
-
-    auto spare = WTF::move(m_spareRenderBuffers[index]);
-    m_spareRenderBuffers.removeAt(index);
-    if (spare.isVolatile)
+        return std::nullopt;
+    Borrow spares = m_spareRenderBuffers;
+    auto& spare = spares[index];
+    if (spare.isVolatile) {
+        // The contents do not matter, so neither does whether they were purged.
         spare.surface->setVolatile(false);
+        spare.isVolatile = false;
+    }
+    return index;
+}
+
+std::unique_ptr<WebCore::IOSurface> WebGPUCompositorIntegrationImpl::takeSpareRenderBuffer()
+{
+    auto index = availableSpareRenderBufferIndex(m_renderBufferFormat);
+    if (!index)
+        return nullptr;
+    auto spare = WTF::move(m_spareRenderBuffers[*index]);
+    m_spareRenderBuffers.removeAt(*index);
     return spare.surface.moveToUniquePtr();
+}
+
+void WebGPUCompositorIntegrationImpl::addSpareRenderBuffer(UniqueRef<IOSurface>&& surface)
+{
+    m_spareRenderBuffers.append({ WTF::move(surface) });
+    if (m_spareRenderBuffers.size() > maxSpareRenderBuffers)
+        m_spareRenderBuffers.removeAt(0);
 }
 
 void WebGPUCompositorIntegrationImpl::updateSpareRenderBuffers()
@@ -189,41 +206,104 @@ void WebGPUCompositorIntegrationImpl::updateSpareRenderBuffers()
         spare.isVolatile = true;
     }
 }
+
+IOSurface::Format WebGPUCompositorIntegrationImpl::copyFormat() const
+{
+    // CoreVideo cannot wrap RGBA surfaces, so the copies of 8-bit render buffers are BGRA.
+    switch (m_renderBufferFormat) {
+    case IOSurface::Format::RGBA:
+        return IOSurface::Format::BGRA;
+    case IOSurface::Format::RGBX:
+        return IOSurface::Format::BGRX;
+    default:
+        return m_renderBufferFormat;
+    }
+}
+
+CGImageAlphaInfo WebGPUCompositorIntegrationImpl::copyAlphaInfo() const
+{
+    bool isOpaque = m_alphaMode != AlphaPremultiplication::Premultiplied;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (copyFormat() == IOSurface::Format::RGBA16F)
+        return isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast;
+#endif
+    return isOpaque ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaPremultipliedFirst;
+}
+
+IOSurface* WebGPUCompositorIntegrationImpl::copyRenderBufferDestination(IOSurface::Format format)
+{
+    if (auto index = availableSpareRenderBufferIndex(format))
+        return m_spareRenderBuffers[*index].surface.ptr();
+    auto surface = IOSurface::create(nullptr, m_renderBufferSize, m_renderBufferColorSpace, IOSurface::Name::WebGPU, format);
+    if (!surface)
+        return nullptr;
+    auto* destination = surface.get();
+    addSpareRenderBuffer(makeUniqueRefFromNonNullUniquePtr(WTF::move(surface)));
+    return destination;
+}
 #endif
 
-void WebGPUCompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)> completion)
+RetainPtr<CVPixelBufferRef> WebGPUCompositorIntegrationImpl::copyRenderBufferToPixelBuffer(uint32_t bufferIndex, IOSurface::Format format)
 {
-    if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size() || !m_device.get())
-        return completion(nullptr);
-
-    RefPtr<NativeImage> displayImage;
-    bool isIOSurfaceSupportedFormat = false;
-    if (RefPtr presentationContextPtr = m_presentationContext)
-        displayImage = NativeImage::create(presentationContextPtr->getTextureAsNativeImage(bufferIndex, isIOSurfaceSupportedFormat));
-
-    if (displayImage) {
-        CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-        return completion(displayImage.get());
+    // The render buffer is drawn to again in later frames, so its contents are copied. The copy is a
+    // spare render buffer, which is in use for as long as the pixel buffer is, and is reused after that.
+    auto* copy = copyRenderBufferDestination(format);
+    if (!copy)
+        return nullptr;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_contentsHeadroom)
+        copy->setContentEDRHeadroom(*m_contentsHeadroom);
+#endif
+    RetainPtr surface = copy->surface();
+    RefPtr presentationContext = m_presentationContext;
+    bool didCopy = bufferIndex < m_renderBuffers.size() && m_device.get() && presentationContext && presentationContext->copyRenderBuffer(bufferIndex, surface.get());
+    if (!didCopy) {
+        // The copy of a render buffer that cannot be read is transparent, as the reader waits for a
+        // copy to be published in any case.
+        RetainPtr context = copy->createPlatformContext();
+        if (!context)
+            return nullptr;
+        CGContextClearRect(context.get(), CGRectMake(0, 0, m_renderBufferSize.width(), m_renderBufferSize.height()));
+        CGContextFlush(context.get());
     }
 
-    if (!isIOSurfaceSupportedFormat)
-        return completion(nullptr);
-
-    // A premultiplied canvas must keep its alpha channel so transparent pixels
-    // composite over the page; an opaque canvas forces the alpha to be ignored.
-    // This matters for RGBA16F, whose IOSurface format cannot itself encode opacity.
-    auto shouldForceOpaque = m_alphaMode == WebCore::AlphaPremultiplication::Premultiplied ? IOSurface::ShouldForceOpaque::No : IOSurface::ShouldForceOpaque::Yes;
-    borrow(m_renderBuffers)[bufferIndex]->withNativeImage(shouldForceOpaque, [&](NativeImage* image) {
-        if (image)
-            CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
-        completion(image);
-    });
+    auto pixelBuffer = createCVPixelBuffer(surface.get());
+    if (!pixelBuffer)
+        return nullptr;
+    return WTF::move(*pixelBuffer);
 }
 
-void WebGPUCompositorIntegrationImpl::paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t)
+RefPtr<NativeImage> WebGPUCompositorIntegrationImpl::copyNativeImage(uint32_t bufferIndex)
 {
-    ASSERT_NOT_REACHED();
+    RetainPtr pixelBuffer = copyRenderBufferToPixelBuffer(bufferIndex, copyFormat());
+    if (!pixelBuffer)
+        return nullptr;
+    // The image has the headroom of the contents, as the render buffers do.
+    auto contentHeadroom = Headroom::None;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    if (m_contentsHeadroom)
+        contentHeadroom = Headroom { std::max<float>(*m_contentsHeadroom, Headroom::None) };
+#endif
+    return NativeImage::createTransient(WTF::move(pixelBuffer), copyAlphaInfo(), m_renderBufferColorSpace.platformColorSpace(), contentHeadroom);
 }
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+RefPtr<VideoFrame> WebGPUCompositorIntegrationImpl::copyVideoFrame(uint32_t bufferIndex)
+{
+    // A video frame is an 8-bit BGRA copy, which the copy of a 16-bit float render buffer converts to.
+    auto colorSpace = videoColorSpaceForRGBContents(m_renderBufferColorSpace);
+    if (!colorSpace)
+        return nullptr;
+    bool isOpaque = m_alphaMode != AlphaPremultiplication::Premultiplied;
+    RetainPtr pixelBuffer = copyRenderBufferToPixelBuffer(bufferIndex, isOpaque ? IOSurface::Format::BGRX : IOSurface::Format::BGRA);
+    if (!pixelBuffer)
+        return nullptr;
+    setAlphaInfoForCVPixelBuffer(pixelBuffer.get(), isOpaque ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaPremultipliedFirst);
+    attachVideoColorSpaceForRGBContents(*colorSpace, pixelBuffer.get());
+    // The alpha of an opaque canvas is ignored, as the copy keeps whatever alpha the contents have.
+    return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTF::move(pixelBuffer), WTF::move(*colorSpace), isOpaque ? VideoFrameCV::ShouldIgnoreAlpha::Yes : VideoFrameCV::ShouldIgnoreAlpha::No);
+}
+#endif
 
 } // namespace WebCore
 

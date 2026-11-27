@@ -992,6 +992,11 @@ RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuff
     auto mediaSamplePixelBuffer = createCVPixelBuffer(copy.get());
     if (!mediaSamplePixelBuffer)
         return nullptr;
+    // The readers of the frame take its color space from the frame and the attachments.
+    if (auto videoColorSpace = videoColorSpaceForRGBContents(m_drawingBufferColorSpace)) {
+        attachVideoColorSpaceForRGBContents(*videoColorSpace, mediaSamplePixelBuffer->get());
+        return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTF::move(*mediaSamplePixelBuffer), WTF::move(*videoColorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    }
     // The surface describes the color space, but a pixel buffer consumer looks for the attachment.
     RetainPtr colorSpace = m_drawingBufferColorSpace.platformColorSpace();
     CVBufferSetAttachment(mediaSamplePixelBuffer->get(), kCVImageBufferCGColorSpaceKey, colorSpace.get(), kCVAttachmentMode_ShouldPropagate);

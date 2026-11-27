@@ -1,0 +1,41 @@
+copyTo() of the VideoFrame of a WebGL OffscreenCanvas in a worker gives straight alpha values in the requested color space, and drawing the frame gives the same values, for every combination of the alpha, premultipliedAlpha and drawingBufferColorSpace of the context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/videoframe-copyto-color-space-and-alpha-worker.js
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha true, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha true, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha true, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha true, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha false, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha false, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha false, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha true, premultipliedAlpha false, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha true, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha true, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha true, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha true, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha false, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha false, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha false, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl, alpha false, premultipliedAlpha false, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha true, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha true, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha true, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha true, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha false, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha false, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha false, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha true, premultipliedAlpha false, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha true, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha true, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha true, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha true, drawingBufferColorSpace display-p3, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha false, drawingBufferColorSpace srgb, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha false, drawingBufferColorSpace srgb, translucent contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha false, drawingBufferColorSpace display-p3, opaque contents
+PASS [Worker] worker OffscreenCanvas, webgl2, alpha false, premultipliedAlpha false, drawingBufferColorSpace display-p3, translucent contents
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

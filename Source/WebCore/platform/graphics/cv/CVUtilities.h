@@ -37,8 +37,10 @@ using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
+class ColorSpace;
 class ProcessIdentity;
 enum class VideoPixelFormat;
+struct PlatformVideoColorSpace;
 namespace PlanarImageConverter {
 struct SampleFormat;
 }
@@ -58,7 +60,16 @@ WEBCORE_EXPORT std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixe
 WEBCORE_EXPORT RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef);
 
 WEBCORE_EXPORT CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef);
-void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
+
+// Returns the color space of a video frame of 8-bit RGB contents in the color space, or nullopt when
+// a video frame cannot describe it.
+WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> videoColorSpaceForRGBContents(const ColorSpace&);
+// Attaches the color space of a video frame of RGB contents, which the readers of the frame take it from.
+WEBCORE_EXPORT void attachVideoColorSpaceForRGBContents(const PlatformVideoColorSpace&, CVPixelBufferRef);
+WEBCORE_EXPORT void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
+// Returns a copy of a premultiplied 32BGRA or 32ARGB pixel buffer with straight alpha, which keeps its
+// other attachments.
+RetainPtr<CVPixelBufferRef> createUnpremultipliedPixelBuffer(CVPixelBufferRef);
 
 std::span<const OSType> pixelFormatsWithAlphaPlane();
 WEBCORE_EXPORT bool isPixelFormatWithAlphaPlane(OSType);
