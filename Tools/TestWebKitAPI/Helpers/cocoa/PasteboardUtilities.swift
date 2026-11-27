@@ -55,6 +55,12 @@ extension NSPasteboard.PasteboardType {
 
     /// The value of `WebArchivePboardType`.
     public static let legacyWebArchive = Self("Apple Web Archive pasteboard type")
+
+    /// The value of `NSFilenamesPboardType`.
+    public static let legacyFilenames = Self("NSFilenamesPboardType")
+
+    /// The value of `NSTIFFPboardType`.
+    public static let legacyTIFF = Self("NeXT TIFF v4.0 pasteboard type")
 }
 
 /// Creates the data of a web archive with an HTML main resource, with the legacy `WebArchive` API.

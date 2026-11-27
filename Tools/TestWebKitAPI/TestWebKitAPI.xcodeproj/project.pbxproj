@@ -621,6 +621,8 @@
 				WebKit/WKWebView/HTTP3Server.swift,
 				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PasteHTML.swift,
+				WebKit/WKWebView/PasteImage.swift,
+				WebKit/WKWebView/PasteMixedContent.swift,
 				WebKit/WKWebView/PasteRTFD.swift,
 				WebKit/WKWebView/PasteWebArchive.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,

@@ -261,8 +261,6 @@ Tests/WebKit/WKWebView/PDFLinkReferrer.mm @nonARC
 Tests/WebKit/WKWebView/PDFSnapshot.mm @nonARC
 Tests/WebKit/WKWebView/PageZoom.mm @nonARC
 Tests/WebKit/WKWebView/ParserYieldTokenTests.mm @nonARC
-Tests/WebKit/WKWebView/PasteImage.mm @nonARC
-Tests/WebKit/WKWebView/PasteMixedContent.mm @nonARC
 Tests/WebKit/WKWebView/PermissionsAPI.mm @nonARC
 Tests/WebKit/WKWebView/PictureInPictureDelegate.mm @nonARC
 Tests/WebKit/WKWebView/PitchShiftAudioUnitTests.cpp

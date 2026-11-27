@@ -830,6 +830,8 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
     Tests/WebKit/WKWebView/PasteHTML.swift
+    Tests/WebKit/WKWebView/PasteImage.swift
+    Tests/WebKit/WKWebView/PasteMixedContent.swift
     Tests/WebKit/WKWebView/PasteRTFD.swift
     Tests/WebKit/WKWebView/PasteWebArchive.swift
     Tests/WebKit/WKWebView/ProcessSwapBackForwardTests.swift
