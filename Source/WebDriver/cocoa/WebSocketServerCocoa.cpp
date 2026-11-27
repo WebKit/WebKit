@@ -362,14 +362,11 @@ void WebSocketServer::disconnect()
         closeConnection(connection);
 }
 
-void WebSocketServer::disconnectSession(const String& sessionId)
+void WebSocketServer::closeSessionConnection(const WebSocketMessageHandler::Connection& connection)
 {
-    // Close every connection of the session. As with soup, they aren't reported as closed by the
-    // client.
-    for (auto& [connection, connectionSessionID] : m_connectionToSession) {
-        if (connectionSessionID == sessionId && m_openConnections.remove(connection))
-            closeConnection(connection);
-    }
+    // Connections that aren't open anymore have been reported as closed already.
+    if (m_openConnections.remove(connection))
+        closeConnection(connection);
 }
 
 } // namespace WebDriver

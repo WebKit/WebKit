@@ -147,6 +147,24 @@ void WebSocketServer::removeResourceForSession(const String& sessionId)
     std::erase(m_listener->resources, resourceName);
 }
 
+void WebSocketServer::disconnectSession(const String& sessionId)
+{
+    // https://w3c.github.io/webdriver-bidi/#close-the-websocket-connections
+    // Connections that this side closes aren't reported as closed, so forget them now, as handling a
+    // connection closing would.
+    Vector<WebSocketMessageHandler::Connection> connections;
+    for (auto& [connection, connectionSessionID] : m_connectionToSession) {
+        if (connectionSessionID == sessionId)
+            connections.append(connection);
+    }
+    for (auto& connection : connections) {
+        m_connectionToSession.remove(connection);
+        closeSessionConnection(connection);
+    }
+
+    removeResourceForSession(sessionId);
+}
+
 WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode errorCode, std::optional<Connection> connection, std::optional<String> errorMessage, std::optional<int> commandId)
 {
     auto reply = JSON::Object::create();

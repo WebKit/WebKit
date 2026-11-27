@@ -148,10 +148,15 @@ public:
 
     // Non-spec method
     void removeResourceForSession(const String& sessionId);
+    // Closes and forgets every connection of the session, and stops accepting new ones.
     void disconnectSession(const String& sessionId);
 
 private:
     explicit WebSocketServer(WebSocketMessageHandler&);
+
+    // Starts the closing handshake of a connection that this side ends. The message handler isn't told
+    // when it's closed.
+    void closeSessionConnection(const WebSocketMessageHandler::Connection&);
 
     void sendMessage(WebSocketMessageHandler::Connection, const String& message);
     void sendErrorResponse(WebSocketMessageHandler::Connection, std::optional<unsigned> commandId, CommandResult::ErrorCode, const String& errorMessage, std::optional<String> stacktrace = std::nullopt);
