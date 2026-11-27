@@ -66,7 +66,10 @@ WEBCORE_EXPORT CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef);
 WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> videoColorSpaceForRGBContents(const ColorSpace&);
 // Attaches the color space of a video frame of RGB contents, which the readers of the frame take it from.
 WEBCORE_EXPORT void attachVideoColorSpaceForRGBContents(const PlatformVideoColorSpace&, CVPixelBufferRef);
-void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
+WEBCORE_EXPORT void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
+// Returns a copy of a premultiplied 32BGRA or 32ARGB pixel buffer with straight alpha, which keeps its
+// other attachments.
+RetainPtr<CVPixelBufferRef> createUnpremultipliedPixelBuffer(CVPixelBufferRef);
 
 std::span<const OSType> pixelFormatsWithAlphaPlane();
 WEBCORE_EXPORT bool isPixelFormatWithAlphaPlane(OSType);

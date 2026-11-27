@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/canvas-videoframe-copyto-utilities.js"></script>
+<script src="resources/videoFrame-webgpuCanvas-copyTo.js"></script>
+</head>
+<body>
+<script>
+// copyTo() of the VideoFrame of a WebGPU canvas gives straight alpha values in the requested color space,
+// and drawing the frame gives the same values, for every format, alpha mode and color space of the canvas.
+defineWebGPUCanvasVideoFrameTests(["canvas element", "OffscreenCanvas"]);
+fetch_tests_from_worker(new Worker("resources/videoFrame-webgpuCanvas-copyTo-worker.js"));
+</script>
+</body>
+</html>

@@ -58,6 +58,7 @@ public:
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
     bool isCV() const final { return true; }
     bool shouldIgnoreAlpha() const final { return m_shouldIgnoreAlpha; }
+    WEBCORE_EXPORT bool hasPremultipliedAlpha() const final;
 
 private:
     friend struct IPC::ArgumentCoder<VideoFrameCV>;

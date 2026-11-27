@@ -36,10 +36,12 @@
 #import "PlanarImageConverterCV.h"
 #import "RealtimeVideoUtilities.h"
 #import "VideoFrame.h"
+#import <Accelerate/Accelerate.h>
 #import <array>
 #import <pal/spi/cf/CoreVideoSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -278,6 +280,43 @@ std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat)
     // These formats are video range only; 8-bit full range is widened to 10 bits to keep every level distinct.
     bool isTenBitOutput = description->color.bitDepth > 8 || description->isFullRange;
     return PlanarImageConverter::pixelFormat(description->subsampling, isTenBitOutput ? PlanarImageConverter::tenBitMSB : PlanarImageConverter::eightBit, false, PlanarImageConverter::eightBit);
+}
+
+RetainPtr<CVPixelBufferRef> createUnpremultipliedPixelBuffer(CVPixelBufferRef source)
+{
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(source);
+    if (pixelFormat != kCVPixelFormatType_32BGRA && pixelFormat != kCVPixelFormatType_32ARGB)
+        return nullptr;
+
+    size_t width = CVPixelBufferGetWidth(source);
+    size_t height = CVPixelBufferGetHeight(source);
+    CVPixelBufferRef rawOutput = nullptr;
+    if (CVPixelBufferCreate(kCFAllocatorDefault, width, height, pixelFormat, nullptr, &rawOutput) != kCVReturnSuccess || !rawOutput)
+        return nullptr;
+    RetainPtr output = adoptCF(rawOutput);
+
+    if (CVPixelBufferLockBaseAddress(source, kCVPixelBufferLock_ReadOnly) != kCVReturnSuccess)
+        return nullptr;
+    auto unlockSource = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(source, kCVPixelBufferLock_ReadOnly);
+    });
+    if (CVPixelBufferLockBaseAddress(output.get(), 0) != kCVReturnSuccess)
+        return nullptr;
+    auto unlockOutput = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(output.get(), 0);
+    });
+
+    vImage_Buffer sourceBuffer { CVPixelBufferGetBaseAddress(source), height, width, CVPixelBufferGetBytesPerRow(source) };
+    vImage_Buffer outputBuffer { CVPixelBufferGetBaseAddress(output.get()), height, width, CVPixelBufferGetBytesPerRow(output.get()) };
+    auto error = pixelFormat == kCVPixelFormatType_32BGRA ? vImageUnpremultiplyData_BGRA8888(&sourceBuffer, &outputBuffer, kvImageNoFlags) : vImageUnpremultiplyData_ARGB8888(&sourceBuffer, &outputBuffer, kvImageNoFlags);
+    if (error != kvImageNoError) {
+        RELEASE_LOG_ERROR(Media, "createUnpremultipliedPixelBuffer: vImageUnpremultiplyData failed with error %zd", error);
+        return nullptr;
+    }
+
+    CVBufferPropagateAttachments(source, output.get());
+    setAlphaInfoForCVPixelBuffer(output.get(), kCGImageAlphaFirst);
+    return output;
 }
 
 std::span<const OSType> pixelFormatsWithAlphaPlane()

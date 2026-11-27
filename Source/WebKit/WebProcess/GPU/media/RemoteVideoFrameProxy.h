@@ -69,6 +69,7 @@ public:
     uint32_t pixelFormat() const final;
     bool isRemoteProxy() const final { return true; }
     bool shouldIgnoreAlpha() const final { return m_shouldIgnoreAlpha; }
+    bool hasPremultipliedAlpha() const final { return m_hasPremultipliedAlpha; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
 #endif
@@ -90,6 +91,7 @@ private:
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
     bool m_shouldIgnoreAlpha { false };
+    const bool m_hasPremultipliedAlpha { false };
     // FIXME: Remove this.
     mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)

@@ -33,6 +33,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/CMUtilities.h>
 #include <WebCore/CVUtilities.h>
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
 #include <WebCore/VideoFrameCV.h>
@@ -53,7 +54,8 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(const WebCor
         expandedIntSize(videoFrame.presentationSize()),
         videoFrame.pixelFormat(),
         videoFrame.colorSpace(),
-        videoFrame.shouldIgnoreAlpha()
+        videoFrame.shouldIgnoreAlpha(),
+        videoFrame.hasPremultipliedAlpha()
     };
 }
 
@@ -74,6 +76,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
     , m_shouldIgnoreAlpha(properties.shouldIgnoreAlpha)
+    , m_hasPremultipliedAlpha(properties.hasPremultipliedAlpha)
     , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
 {
 }
@@ -84,6 +87,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
     , m_shouldIgnoreAlpha(baseVideoFrame.m_shouldIgnoreAlpha)
+    , m_hasPremultipliedAlpha(baseVideoFrame.m_hasPremultipliedAlpha)
 {
 }
 
@@ -129,6 +133,13 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
             semaphore.signal();
         });
         semaphore.wait();
+        // The copy of the pixels has none of the attachments of the frame, but its readers, such as the
+        // conversions of copyTo(), take the color space and the alpha from them.
+        if (m_pixelBuffer) {
+            WebCore::attachColorSpaceToPixelBuffer(colorSpace(), m_pixelBuffer.get());
+            if (m_hasPremultipliedAlpha)
+                WebCore::setAlphaInfoForCVPixelBuffer(m_pixelBuffer.get(), kCGImageAlphaPremultipliedFirst);
+        }
     }
     // FIXME: Some code paths do not like empty pixel buffers.
     if (!m_pixelBuffer)
@@ -150,6 +161,7 @@ TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& 
         << ", size=" << properties.size
         << ", pixelFormat=" << properties.pixelFormat
         << ", shouldIgnoreAlpha=" << properties.shouldIgnoreAlpha
+        << ", hasPremultipliedAlpha=" << properties.hasPremultipliedAlpha
         << " }";
     return ts;
 }

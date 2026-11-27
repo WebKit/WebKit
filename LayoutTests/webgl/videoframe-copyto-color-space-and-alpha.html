@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>copyTo() and drawing of the VideoFrame of a WebGL canvas</title>
+<script src="../resources/js-test.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="../http/wpt/webcodecs/resources/canvas-videoframe-copyto-utilities.js"></script>
+<script src="resources/videoframe-copyto-color-space-and-alpha.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("copyTo() of the VideoFrame of a WebGL canvas element or OffscreenCanvas gives straight alpha values in the requested color space, and drawing the frame gives the same values, for every combination of the alpha, premultipliedAlpha and drawingBufferColorSpace of the context.");
+window.jsTestIsAsync = true;
+testWebGLCanvasVideoFrames(["canvas element", "OffscreenCanvas"]).then(finishJSTest, error => {
+    testFailed(`${error.name}: ${error.message}`);
+    finishJSTest();
+});
+</script>
+</body>
+</html>
