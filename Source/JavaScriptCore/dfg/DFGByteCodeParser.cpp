@@ -479,6 +479,13 @@ private:
     void makeBlockTargetable(BasicBlock*, BytecodeIndex);
     void addJumpTo(BasicBlock*);
     void addJumpTo(unsigned bytecodeIndex);
+    struct FusedBranch {
+        unsigned taken;
+        unsigned notTaken;
+        unsigned fallThrough;
+    };
+    std::optional<FusedBranch> findFusedBranch(VirtualRegister condition, BytecodeIndex branchIndex, unsigned limit);
+    void addFusedBranch(const FusedBranch&, Node* condition);
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     enum Terminality { Terminal, NonTerminal };
     Terminality handleCall(
@@ -588,7 +595,7 @@ private:
     void handleCheckTraps();
 
     void handleIteratorOpen(const JSInstruction* pc, BytecodeIndex osrExitIndex);
-    void handleIteratorNext(const JSInstruction* pc, BytecodeIndex osrExitIndex);
+    void handleIteratorNext(const JSInstruction* pc, BytecodeIndex osrExitIndex, std::optional<FusedBranch>);
     void handleAsyncIteratorOpen(const JSInstruction* pc, BytecodeIndex osrExitIndex);
     void handleAsyncIteratorNext(const JSInstruction* pc, BytecodeIndex osrExitIndex);
 
@@ -1733,6 +1740,31 @@ void ByteCodeParser::addJumpTo(unsigned bytecodeIndex)
 {
     ASSERT(!m_currentBlock->terminal());
     addToGraph(Jump, OpInfo(bytecodeIndex));
+    m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
+}
+
+auto ByteCodeParser::findFusedBranch(VirtualRegister condition, BytecodeIndex branchIndex, unsigned limit) -> std::optional<FusedBranch>
+{
+    if (branchIndex.offset() >= limit)
+        return std::nullopt;
+    CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
+    auto next = codeBlock->instructions().at(branchIndex);
+    unsigned fallThrough = branchIndex.offset() + next->size();
+    if (next->is<OpJtrue>() && next->as<OpJtrue>().m_condition == condition)
+        return FusedBranch { branchIndex.offset() + jumpTargetForInstruction<OpJtrue>(codeBlock, next), fallThrough, fallThrough };
+    if (next->is<OpJfalse>() && next->as<OpJfalse>().m_condition == condition)
+        return FusedBranch { fallThrough, branchIndex.offset() + jumpTargetForInstruction<OpJfalse>(codeBlock, next), fallThrough };
+    return std::nullopt;
+}
+
+void ByteCodeParser::addFusedBranch(const FusedBranch& fusedBranch, Node* condition)
+{
+    // The fused jump is never visited by the parse loop, so count it here.
+    if (m_graph.compilation()) [[unlikely]] {
+        addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
+            Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
+    }
+    addToGraph(Branch, OpInfo(branchData(fusedBranch.taken, fusedBranch.notTaken)), condition);
     m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
 }
 
@@ -8997,24 +9029,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             // If a jtrue / jfalse on the result follows, each arm branches by itself instead of
             // joining at a boolean Phi, so an arm whose result is or folds to a constant keeps it.
-            const JSInstruction* fusedBranch = nullptr;
-            unsigned fusedTaken = 0;
-            unsigned fusedNotTaken = 0;
-            unsigned fusedFallThrough = 0;
-            BytecodeIndex branchIndex = nextOpcodeIndex();
-            if (branchIndex.offset() < limit) {
-                auto next = instructions.at(branchIndex);
-                fusedFallThrough = branchIndex.offset() + next->size();
-                if (next->is<OpJtrue>() && next->as<OpJtrue>().m_condition == bytecode.m_dst) {
-                    fusedBranch = next.ptr();
-                    fusedTaken = branchIndex.offset() + jumpTargetForInstruction<OpJtrue>(codeBlock, next);
-                    fusedNotTaken = fusedFallThrough;
-                } else if (next->is<OpJfalse>() && next->as<OpJfalse>().m_condition == bytecode.m_dst) {
-                    fusedBranch = next.ptr();
-                    fusedTaken = fusedFallThrough;
-                    fusedNotTaken = branchIndex.offset() + jumpTargetForInstruction<OpJfalse>(codeBlock, next);
-                }
-            }
+            auto fusedBranch = findFusedBranch(bytecode.m_dst, nextOpcodeIndex(), limit);
 
             BytecodeIndex startIndex = m_currentIndex;
             BytecodeIndex itermediateIndex = m_currentIndex;
@@ -9035,13 +9050,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(Jump, OpInfo(continuation));
                     return;
                 }
-                // The fused jump is never visited by the parse loop, so count it here.
-                if (m_graph.compilation()) [[unlikely]] {
-                    addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
-                        Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
-                }
-                addToGraph(Branch, OpInfo(branchData(fusedTaken, fusedNotTaken)), get(bytecode.m_dst));
-                m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
+                addFusedBranch(*fusedBranch, get(bytecode.m_dst));
             };
 
             // 1. Get hasInstance
@@ -9194,7 +9203,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (fusedBranch) {
-                m_currentIndex = BytecodeIndex(fusedFallThrough);
+                m_currentIndex = BytecodeIndex(fusedBranch->fallThrough);
                 m_exitOK = false;
                 return;
             }
@@ -10500,7 +10509,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_iterator_next: {
-            handleIteratorNext(currentInstruction, nextOpcodeIndex());
+            auto fusedBranch = findFusedBranch(currentInstruction->as<OpIteratorNext>().m_done, nextOpcodeIndex(), limit);
+            handleIteratorNext(currentInstruction, nextOpcodeIndex(), fusedBranch);
+            if (fusedBranch) {
+                m_currentIndex = BytecodeIndex(fusedBranch->fallThrough);
+                m_exitOK = false;
+                return;
+            }
             NEXT_OPCODE(op_iterator_next);
         }
 
@@ -12698,7 +12713,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
     clearCaches();
 }
 
-void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex)
+void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex, std::optional<FusedBranch> fusedBranch)
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     auto bytecode = currentInstruction->as<OpIteratorNext>();
@@ -12739,9 +12754,16 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         }
     };
 
-    BasicBlock* continuation = allocateUntargetableBlock();
+    BasicBlock* continuation = fusedBranch ? nullptr : allocateUntargetableBlock();
 
     BytecodeIndex startIndex = m_currentIndex;
+
+    auto branchOnDone = [&] {
+        if (fusedBranch)
+            addFusedBranch(*fusedBranch, get(bytecode.m_done));
+        else
+            addToGraph(Jump, OpInfo(continuation));
+    };
 
     auto speculatedGet = [&](VirtualRegister operand, SpeculatedType type, UseKind useKind) {
         Node* node = addToGraph(IdentityWithProfile, OpInfo(type), get(operand));
@@ -12873,7 +12895,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         // Roll back the checkpoint.
@@ -12896,7 +12918,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         m_currentIndex = startIndex;
@@ -13034,7 +13056,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         // Roll back the checkpoint.
@@ -13061,7 +13083,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         m_currentIndex = startIndex;
@@ -13178,7 +13200,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         // Roll back the checkpoint.
@@ -13205,7 +13227,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         m_currentIndex = startIndex;
@@ -13278,7 +13300,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
         }
 
         m_currentIndex = startIndex;
@@ -13300,6 +13322,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
         BasicBlock* notObjectBlock = allocateUntargetableBlock();
         BasicBlock* isObjectBlock = allocateUntargetableBlock();
+        BasicBlock* doneBlock = allocateUntargetableBlock();
         BasicBlock* notDoneBlock = allocateUntargetableBlock();
 
         Operand nextResult = Operand::tmp(OpIteratorNext::nextResult);
@@ -13346,7 +13369,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             progressToNextCheckpoint();
 
             BranchData* branchData = m_graph.m_branchData.add();
-            branchData->taken = BranchTarget(continuation);
+            branchData->taken = BranchTarget(doneBlock);
             branchData->notTaken = BranchTarget(notDoneBlock);
             addToGraph(Branch, OpInfo(branchData), get(bytecode.m_done));
         }
@@ -13372,7 +13395,13 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_exitOK = true;
             processSetLocalQueue();
 
-            addToGraph(Jump, OpInfo(continuation));
+            branchOnDone();
+        }
+
+        {
+            m_currentBlock = doneBlock;
+            clearCaches();
+            branchOnDone();
         }
 
         m_currentIndex = startIndex;
@@ -13394,9 +13423,12 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         m_exitOK = true;
         processSetLocalQueue();
 
-        addToGraph(Jump, OpInfo(continuation));
+        branchOnDone();
         m_currentIndex = startIndex;
     }
+
+    if (fusedBranch)
+        return;
 
     m_currentBlock = continuation;
     clearCaches();
