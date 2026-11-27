@@ -23,11 +23,5 @@ var instance = new WebAssembly.Instance(wasm_module);
 
 const { throw_null_ref } = instance.exports
 
-for (let i = 0; i < wasmTestLoopCount; ++i) {
-    try {
-        throw_null_ref();
-        print("bad!");
-        break;
-    } catch (e) {
-    }
-}
+for (let i = 0; i < wasmTestLoopCount; ++i)
+    assert.throws(() => throw_null_ref(), WebAssembly.RuntimeError, "throw_ref on a null reference");

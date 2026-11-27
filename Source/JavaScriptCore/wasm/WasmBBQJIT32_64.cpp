@@ -2923,7 +2923,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     }
 
     // Check for a null exception
-    auto noexnref = m_jit.branch32(CCallHelpers::Equal, GPRInfo::argumentGPR2, TrustedImm32(JSValue::NullTag));
+    auto noexnref = m_jit.branch32(CCallHelpers::Equal, GPRInfo::argumentGPR3, TrustedImm32(JSValue::NullTag));
 
     m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
     emitThrowRefImpl(m_jit);
