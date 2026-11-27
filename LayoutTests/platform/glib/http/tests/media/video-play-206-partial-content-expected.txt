@@ -1,0 +1,18 @@
+
+Setting video source: http://127.0.0.1:8206/media?cl=0
+durationchange: currentTime=0.00 duration=2100 seekable=[0.0-2100.0]
+loadedmetadata: currentTime=0.00 duration=2100 seekable=[0.0-2100.0]
+canplay: currentTime=0.00 duration=2100 seekable=[0.0-2100.0]
+playing: currentTime=0.00 duration=2100 seekable=[0.0-2100.0]
+before seek: currentTime=5.00 duration=2100 seekable=[0.0-2100.0]
+seeking: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+canplay: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+seeked: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+playing: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+canplay: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+playing: currentTime=1200.00 duration=2100 seekable=[0.0-2100.0]
+after seek: currentTime=1204.94 duration=2100 seekable=[0.0-2100.0]
+requests before seek: (no Range)
+requests after seek: bytes=13764514-
+PASS: seek issued Range bytes=13764514- (cl=0)
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Seek with 206 and no Content-Length</title>
+    <style>
+        body { font: 14px monospace; }
+    </style>
+</head>
+<body>
+<!--
+Same flow as HbbTV HTML52090: start playback, 5 s after canplay seek to
+1200 s, wait 5 s, then check that a request with a Range header starting
+deep into the file reached the server.
+Add ?cl=1 to the page URL for the control case (server sends Content-Length).
+-->
+<video id="v" controls muted preload="metadata"></video>
+<pre id="log"></pre>
+<script>
+const customServerPort = 8206;
+const customServerBaseUrl = 'http://127.0.0.1:' + customServerPort;
+
+var SEEK_TO = 1200, PLAY_BEFORE_SEEK = 5, WAIT_AFTER_SEEK = 5;
+var cl = /[?&]cl=1/.test(location.search) ? "1" : "0";
+var v = document.getElementById("v");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The media server lives as a CGI script that logs its status on stdout and starts another independent
+// webserver in background at the specified port (8086 here), where the actual media_file will be served.
+// This is needed because the script needs to be in full control of what and how is served, and a regular
+// CGI managed by Apache is not enough for that (Apache would control the kind of response and other
+// parameters, defeating the purpose of the script of being in control of the 206 Partial Content response).
+function startServer(callback) {
+    const serverUrl = 'http://127.0.0.1:8000/resources/206-partial-content-no-content-length.py'
+        + '?port=' + customServerPort + '&media_file=../../../http/tests/media/resources/long-audio.mp4';
+    var request = new XMLHttpRequest();
+    request.open("GET", serverUrl, true);
+    request.send();
+    if (callback) {
+        // Give the server a moment to start itself before running the callback.
+        setTimeout(callback, 500);
+    }
+}
+
+function ranges(r) {
+    var s = [];
+    for (var i = 0; i < r.length; i++)
+        s.push(r.start(i).toFixed(1) + "-" + r.end(i).toFixed(1));
+    return "[" + s.join(", ") + "]";
+}
+
+function log(msg) {
+    document.getElementById("log").textContent += msg + "\n";
+}
+
+function state(tag) {
+    // Printing the buffered ranges would make the test flaky, but it's useful for debugging.
+    const isPrintBuffered = false;
+    log(tag + ": currentTime=" + v.currentTime.toFixed(2) + " duration=" + v.duration
+        + " seekable=" + ranges(v.seekable) + (isPrintBuffered ? (" buffered=" + ranges(v.buffered)) : ""));
+}
+
+function finish(pass, msg) {
+    v.removeEventListener("error", onError);
+    msg = (pass ? "PASS: " : "FAIL: ") + msg + " (cl=" + cl + ")";
+    log(msg);
+    var x = new XMLHttpRequest();
+    x.open("GET", customServerBaseUrl + "/result?msg=" + encodeURIComponent(msg + " | " + document.getElementById("log").textContent));
+    x.send();
+    var x2 = new XMLHttpRequest();
+    x2.open("GET", customServerBaseUrl + "/kill");
+    x2.send();
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+function onError() {
+    finish(false, "media error " + (v.error && v.error.code));
+}
+
+["loadedmetadata", "canplay", "playing", "seeking", "seeked", "durationchange"].forEach(function (e) {
+    v.addEventListener(e, function () { state(e); });
+});
+v.addEventListener("error", onError);
+
+var started = false;
+v.addEventListener("canplay", function () {
+    if (started)
+        return;
+    started = true;
+    setTimeout(function () {
+        report(function (before) {
+            state("before seek");
+            v.currentTime = SEEK_TO;
+            setTimeout(function () {
+                state("after seek");
+                report(function (seen) {
+                    // Only requests made after the seek count, and their Range must start
+                    // past the middle of the file (1200 s of a 2100 s file is at ~57%).
+                    var after = seen.slice(before.length);
+                    var hit = after.filter(function (r) { return r.range && r.start > r.total / 2; });
+                    log("requests before seek: " + before.map(describe).join(", "));
+                    log("requests after seek: " + (after.map(describe).join(", ") || "none"));
+                    if (hit.length)
+                        finish(true, "seek issued Range " + hit[0].range);
+                    else
+                        finish(false, "no Range request for the seek position");
+                });
+            }, WAIT_AFTER_SEEK * 1000);
+        });
+    }, PLAY_BEFORE_SEEK * 1000);
+});
+
+function describe(r) {
+    return r.range || "(no Range)";
+}
+
+function report(callback) {
+    var x = new XMLHttpRequest();
+    x.open("GET", customServerBaseUrl + "/report");
+    x.onload = function () { callback(JSON.parse(x.responseText)); };
+    x.send();
+}
+
+startServer(function() {
+    // Muted so that autoplay is allowed without a user gesture.
+    v.muted = true;
+    const src = customServerBaseUrl + "/media?cl=" + cl;
+    log("Setting video source: " + src);
+    v.src = src;
+    v.play().catch(function (e) { log("play(): " + e); });
+});
+</script>
+</body>
+</html>
