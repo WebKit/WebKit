@@ -2850,17 +2850,7 @@ webkit.org/b/201110 imported/w3c/web-platform-tests/svg/extensibility/foreignObj
 webkit.org/b/201946 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/composited-inside-object.html [ Skip ]
 webkit.org/b/201946 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/compositing-backface-visibility.html [ Skip ]
 webkit.org/b/201992 imported/w3c/web-platform-tests/svg/linking/reftests/href-filter-element.html [ Skip ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-img-element.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-last-wins.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-overflow-clamped-nonzero-origin.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-img-element.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-nonsquare.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixel-explicit.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixel-implicit.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-viewbox-only.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-viewbox-width.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/svgview-and-xywh.html [ ImageOnlyFailure ]
+webkit.org/b/333229 imported/w3c/web-platform-tests/svg/linking/reftests/svgview-and-xywh.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/svgview-spaces-around-semicolon.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/svgview-spaces.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-image.html [ ImageOnlyFailure ]
@@ -3053,7 +3043,7 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg [ Image
 imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
 
 imported/w3c/web-platform-tests/svg/animations/scripted/syncbase-after-removal.html [ Skip ]
-imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html [ ImageOnlyFailure ]
+webkit.org/b/333230 imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html [ ImageOnlyFailure ]
 
 webkit.org/b/283954 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
@@ -8678,8 +8668,7 @@ webkit.org/b/329527 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 webkit.org/b/329533 webgl/2.0.y/conformance2/offscreencanvas/methods-2-worker.html [ Failure ]
 webkit.org/b/329533 webgl/2.0.y/conformance2/offscreencanvas/methods-2.html [ Failure ]
 
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-no-natural-size.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-viewbox-no-size.html [ ImageOnlyFailure ]
+webkit.org/b/333147 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-viewbox-no-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/distance/path-length-css-zoom.tentative.svg [ ImageOnlyFailure ]
 [ x86_64 ] imported/w3c/web-platform-tests/svg/struct/reftests/image-symbol.svg [ Skip ] # Flaky
 

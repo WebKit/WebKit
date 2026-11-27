@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: spatial clipping of an SVG document in an iframe</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="A space segment in the URL of an SVG document sets the initial view of that document, not only of SVG images.">
+<style>
+  iframe { display: block; width: 100px; height: 100px; border: 0; }
+</style>
+<iframe src="support/red-green-viewbox-only.svg#xywh=100,100,100,100"></iframe>

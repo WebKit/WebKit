@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: a view name combined with a space segment is ignored</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="help" href="https://github.com/w3c/svgwg/issues/1112">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="A BareName cannot be combined with a space segment, before or after it, whether or not it names a view element. The whole fragment is ignored, so neither the view nor the xywh= applies.">
+<style>
+  div { width: 100px; height: 25px; background-repeat: no-repeat; }
+</style>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied, so the test fails where spatial media fragments are not supported. -->
+<div style="background-image: url('support/red-green-200x200.svg#xywh=100,100,100,100')"></div>
+<!-- Must be ignored: green-red-view-200x200.svg is green at its top-left when no fragment applies; its view "red" and these xywh= values both select the red quarter. -->
+<div style="background-image: url('support/green-red-view-200x200.svg#red&xywh=100,100,100,100')"></div>
+<div style="background-image: url('support/green-red-view-200x200.svg#nosuchid&xywh=100,100,100,100')"></div>
+<div style="background-image: url('support/green-red-view-200x200.svg#xywh=100,100,100,100&red')"></div>

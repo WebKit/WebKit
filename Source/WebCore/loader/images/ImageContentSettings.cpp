@@ -33,6 +33,7 @@ namespace WebCore {
 ImageContentSettings::ImageContentSettings(const Settings& settings)
     : layerBasedSVGEngineEnabled(settings.layerBasedSVGEngineEnabled())
     , cssDPropertyEnabled(settings.cssDPropertyEnabled())
+    , svgSpatialMediaFragmentsEnabled(settings.svgSpatialMediaFragmentsEnabled())
     , downloadableBinaryFontTrustedTypes(settings.downloadableBinaryFontTrustedTypes())
     , fontGenericFamilies(settings.fontGenericFamilies())
 {

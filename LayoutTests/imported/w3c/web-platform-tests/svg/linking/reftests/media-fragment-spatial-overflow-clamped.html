@@ -4,9 +4,15 @@
 <link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#LinksIntoSVG">
 <link rel="match" href="../../struct/reftests/reference/green-100x100.html">
 <style>
-  div {
+  .control {
     width: 100px;
-    height: 100px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-image: url("support/red-green-200x200.svg#xywh=100,100,100,100");
+  }
+  .case {
+    width: 100px;
+    height: 50px;
     background-repeat: no-repeat;
     /* Per the spec, when x+w > image width or y+h > image height, the UA
        should clamp to the actual image dimensions. Here 0+200 > 100 for both
@@ -14,4 +20,6 @@
     background-image: url("support/green-100x100.svg#xywh=0,0,200,200");
   }
 </style>
-<div></div>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied, so the test fails where spatial media fragments are not supported. -->
+<div class="control"></div>
+<div class="case"></div>

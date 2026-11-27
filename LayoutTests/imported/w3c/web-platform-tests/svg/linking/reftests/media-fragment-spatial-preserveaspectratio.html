@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: the root element's preserveAspectRatio still applies</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="A space segment overrides only the viewBox; the outermost svg element's other view attributes, here preserveAspectRatio=none, still apply.">
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    /* The 100x200 region is stretched to the 200x200 image with preserveAspectRatio="none", so the
+       green right half fills it. With the default xMidYMid meet it is centred and red shows at the left. */
+    background-image: url("support/red-green-par-none-200x200.svg#xywh=100,0,100,200");
+  }
+</style>
+<div></div>

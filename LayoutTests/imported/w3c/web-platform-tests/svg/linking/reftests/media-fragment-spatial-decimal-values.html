@@ -4,11 +4,19 @@
 <link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#LinksIntoSVG">
 <link rel="match" href="../../struct/reftests/reference/green-100x100.html">
 <style>
-  div {
+  .control {
     width: 100px;
-    height: 100px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-image: url("support/red-green-200x200.svg#xywh=100,100,100,100");
+  }
+  .case {
+    width: 100px;
+    height: 50px;
     background-repeat: no-repeat;
     background-image: url("support/green-red-200x200.svg#xywh=100.0,100.0,100.0,100.0");
   }
 </style>
-<div></div>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied, so the test fails where spatial media fragments are not supported. -->
+<div class="control"></div>
+<div class="case"></div>

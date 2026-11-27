@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: a space segment combined with a time segment applies</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="help" href="https://www.w3.org/TR/media-frags/#naming-time">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="A time segment may be combined with a space segment, in either order; the space segment still selects the view.">
+<style>
+  div { width: 100px; height: 25px; background-repeat: no-repeat; }
+</style>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied. -->
+<div style="background-image: url('support/red-green-200x200.svg#xywh=100,100,100,100&t=1')"></div>
+<div style="background-image: url('support/red-green-200x200.svg#t=1&xywh=100,100,100,100')"></div>
+<div style="background-image: url('support/red-green-200x200.svg#xywh=pixel:100,100,100,100&t=npt:1,2')"></div>
+<div style="background-image: url('support/red-green-200x200.svg#t=1,2&xywh=percent:50,50,50,50')"></div>

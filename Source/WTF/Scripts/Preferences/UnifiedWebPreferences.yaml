@@ -5527,6 +5527,14 @@ SVGExternalResourcesEnabled:
   humanReadableDescription: "Enable referencing SVG resources (paint servers, etc.) via external or data: URLs"
   defaultValue: true
 
+SVGSpatialMediaFragmentsEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "SVG spatial media fragments"
+  humanReadableDescription: "Enable #xywh= spatial media fragments on SVG documents"
+  defaultValue: false
+
 SWVPDecodersAlwaysEnabled:
   type: bool
   status: internal

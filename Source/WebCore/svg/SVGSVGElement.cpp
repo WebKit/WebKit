@@ -62,6 +62,7 @@
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #include "Settings.h"
+#include "SpatialMediaFragment.h"
 #include "StaticNodeList.h"
 #include "TransformState.h"
 #include "TreeScopeInlines.h"
@@ -969,6 +970,21 @@ bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
             if (CheckedPtr renderer = rootElement->renderer())
                 invalidateCurrentView(*renderer);
             m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
+            return true;
+        }
+    }
+
+    // https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions
+    if (document().settings().svgSpatialMediaFragmentsEnabled()) {
+        if (auto fragmentViewBox = viewBoxForSpatialMediaFragment(fragmentIdentifier, naturalDimensions())) {
+            if (!view)
+                view = currentView(); // Create the SVGViewSpec.
+            view->setViewBox(*fragmentViewBox);
+            view->setPreserveAspectRatio(preserveAspectRatio());
+            view->setZoomAndPan(zoomAndPan());
+            m_useCurrentView = true;
+            if (renderer)
+                invalidateCurrentView(*renderer);
             return true;
         }
     }

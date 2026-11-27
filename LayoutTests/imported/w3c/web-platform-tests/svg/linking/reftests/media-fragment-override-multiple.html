@@ -1,19 +1,20 @@
 <!doctype html>
 <title>background-image with multiple layers using different views of the same image</title>
 <link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#LinksIntoSVG">
+<!-- red-green-random-rects.svg is red where no fragment applies, so each layer is green only through its own xywh= view. -->
 <link rel="match" href="../../struct/reftests/reference/green-100x100.html">
 <style>
   .one {
     width: 100px;
     height: 20px;
     background-repeat: no-repeat;
-    background-image: url("support/green-random-rects.svg#xywh=200,0,100,20");
+    background-image: url("support/red-green-random-rects.svg#xywh=200,0,100,20");
   }
   .two {
     width: 100px;
     height: 80px;
     background-repeat: no-repeat;
-    background-image: url("support/green-random-rects.svg#xywh=pixel:0,0,100,80");
+    background-image: url("support/red-green-random-rects.svg#xywh=pixel:100,0,100,80");
     position: absolute;
     left: 0;
     top: 20px;

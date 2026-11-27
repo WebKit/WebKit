@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: a region whose top-left corner is outside the image is ignored</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://www.w3.org/TR/media-frags/#error-media-spatial">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="xywh=a,b,c,d with a or b at or past the image width or height selects nothing from the image, so the spatial fragment is ignored.">
+<style>
+  div { width: 100px; height: 25px; background-repeat: no-repeat; }
+</style>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied, so the test fails where spatial media fragments are not supported. -->
+<div style="background-image: url('support/red-green-200x200.svg#xywh=100,100,100,100')"></div>
+<!-- Must be ignored: green-red-200x200.svg is green at its top-left when no fragment applies, and red where these fragments point. -->
+<div style="background-image: url('support/green-red-200x200.svg#xywh=200,0,10,10')"></div>
+<div style="background-image: url('support/green-red-200x200.svg#xywh=0,200,10,10')"></div>
+<div style="background-image: url('support/green-red-200x200.svg#xywh=250,250,10,10')"></div>

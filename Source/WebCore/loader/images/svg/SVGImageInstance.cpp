@@ -93,6 +93,7 @@ Ref<SVGImageInstance> SVGImageInstance::create(SVGImage& image, const std::optio
         settings->setLayerBasedSVGEngineEnabled(contentSettings->layerBasedSVGEngineEnabled);
         settings->setFontGenericFamilies(contentSettings->fontGenericFamilies);
         settings->setCSSDPropertyEnabled(contentSettings->cssDPropertyEnabled);
+        settings->setSVGSpatialMediaFragmentsEnabled(contentSettings->svgSpatialMediaFragmentsEnabled);
         settings->setDownloadableBinaryFontTrustedTypes(contentSettings->downloadableBinaryFontTrustedTypes);
         instance->m_appliedDocumentState.rendition.contentSettings = contentSettings;
     }
@@ -350,6 +351,7 @@ void SVGImageInstance::applyDocumentState(const DocumentState& state)
         Ref settings = page->settings();
         settings->setFontGenericFamilies(state.rendition.contentSettings->fontGenericFamilies);
         settings->setDownloadableBinaryFontTrustedTypes(state.rendition.contentSettings->downloadableBinaryFontTrustedTypes);
+        settings->setSVGSpatialMediaFragmentsEnabled(state.rendition.contentSettings->svgSpatialMediaFragmentsEnabled);
         updateStyle = true;
     }
 

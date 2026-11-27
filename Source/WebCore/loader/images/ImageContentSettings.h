@@ -38,6 +38,7 @@ struct ImageContentSettings {
 
     bool layerBasedSVGEngineEnabled { false };
     bool cssDPropertyEnabled { false };
+    bool svgSpatialMediaFragmentsEnabled { false };
     DownloadableBinaryFontTrustedTypes downloadableBinaryFontTrustedTypes { DownloadableBinaryFontTrustedTypes::Any };
     FontGenericFamilies fontGenericFamilies;
 

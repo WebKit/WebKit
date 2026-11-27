@@ -7798,6 +7798,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		666BF828E7FF1F26C532E90A /* SpatialMediaFragment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialMediaFragment.cpp; sourceTree = "<group>"; };
 		86CFA5D131AA05AA716D0512 /* DOMWindow+DocumentPictureInPicture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "DOMWindow+DocumentPictureInPicture.idl"; sourceTree = "<group>"; };
 		995B9A9688FE73824BE0085A /* DocumentPictureInPictureEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentPictureInPictureEvent.idl; sourceTree = "<group>"; };
 		A72BABAD95B13D76675E99DB /* DocumentPictureInPictureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentPictureInPictureEvent.cpp; sourceTree = "<group>"; };
@@ -7815,6 +7816,7 @@
 		6FB56D21AAA406EA604436C0 /* SchedulerPostTaskCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SchedulerPostTaskCallback.idl; sourceTree = "<group>"; };
 		8043CB6724C0B22E411A9370 /* SchedulerPostTaskCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SchedulerPostTaskCallback.h; sourceTree = "<group>"; };
 		8658DD44198899B89A81F189 /* Scheduler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scheduler.cpp; sourceTree = "<group>"; };
+		D96CADB27C79C5D73A98BC2E /* SpatialMediaFragment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialMediaFragment.h; sourceTree = "<group>"; };
 		DC3D85B02BAD915A9307F45D /* TaskPriority.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TaskPriority.idl; sourceTree = "<group>"; };
 		F4545C832C4D153807E9E90E /* RasterDrawingOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RasterDrawingOptions.cpp; sourceTree = "<group>"; };
 		02C7A954E7356C44F0D32986 /* WorkerInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerInternals.h; sourceTree = "<group>"; };
@@ -36425,6 +36427,8 @@
 				B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */,
 				B22277DB0D00BF1F0071B782 /* PatternAttributes.h */,
 				B22277DC0D00BF1F0071B782 /* RadialGradientAttributes.h */,
+				666BF828E7FF1F26C532E90A /* SpatialMediaFragment.cpp */,
+				D96CADB27C79C5D73A98BC2E /* SpatialMediaFragment.h */,
 				B22277DD0D00BF1F0071B782 /* SVGAElement.cpp */,
 				B22277DE0D00BF1F0071B782 /* SVGAElement.h */,
 				B22277DF0D00BF1F0071B782 /* SVGAElement.idl */,

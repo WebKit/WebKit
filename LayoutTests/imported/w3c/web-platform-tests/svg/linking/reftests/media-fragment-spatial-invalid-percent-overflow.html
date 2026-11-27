@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SVG media fragment: a percent region past 100% is invalid</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://www.w3.org/TR/media-frags/#error-uri-spatial">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<link rel="match" href="../../struct/reftests/reference/green-100x100.html">
+<meta name="assert" content="With percent:, x + w and y + h must not exceed 100. Otherwise the spatial fragment is invalid and ignored, rather than clamped.">
+<style>
+  div { width: 100px; height: 25px; background-repeat: no-repeat; }
+</style>
+<!-- Must apply: red-green-200x200.svg shows green here only once xywh= is applied, so the test fails where spatial media fragments are not supported. -->
+<div style="background-image: url('support/red-green-200x200.svg#xywh=100,100,100,100')"></div>
+<!-- Must be ignored: green-red-200x200.svg is green at its top-left when no fragment applies, and red where these fragments point. -->
+<div style="background-image: url('support/green-red-200x200.svg#xywh=percent:60,60,50,50')"></div>
+<div style="background-image: url('support/green-red-200x200.svg#xywh=percent:50,50,60,40')"></div>
+<div style="background-image: url('support/green-red-200x200.svg#xywh=percent:50,50,40,60')"></div>
