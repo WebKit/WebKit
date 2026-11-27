@@ -1605,6 +1605,20 @@ void WebAnimation::tick(ShouldDispatchProgressEvent shouldDispatchProgressEvent)
 
 void WebAnimation::maybeMarkAsReady()
 {
+    if (!pending() || !isReady())
+        return;
+
+    if (hasPendingPauseTask())
+        runPendingPauseTask();
+
+    if (hasPendingPlayTask() && isReady())
+        runPendingPlayTask();
+
+    m_pendingStartTime = std::nullopt;
+}
+
+bool WebAnimation::isReady() const
+{
     // https://drafts.csswg.org/web-animations-2/#ready
     // An animation is ready at the first moment where all of the following conditions are true:
     //     - the user agent has completed any setup required to begin the playback of each inclusive
@@ -1612,27 +1626,18 @@ void WebAnimation::maybeMarkAsReady()
     //       any keyframe effect or executing any custom effects associated with an animation effect.
     //     - the animation is associated with a timeline that is not inactive.
     //     - the animation’s hold time or start time is resolved.
-    if (!pending())
-        return;
-
-    auto isReady = m_timeline && protect(m_timeline)->currentTime() && (m_holdTime || m_startTime);
-    if (!isReady)
-        return;
+    if (!m_timeline || !protect(m_timeline)->currentTime() || (!m_holdTime && !m_startTime))
+        return false;
 
     // Monotonic animations also require a pending start time.
     if (!m_pendingStartTime && m_timeline->isMonotonic())
-        return;
+        return false;
 
     // The effect can also prevent readines.
     if (m_effect && protect(m_effect)->preventsAnimationReadiness())
-        return;
+        return false;
 
-    if (hasPendingPauseTask())
-        runPendingPauseTask();
-    if (hasPendingPlayTask())
-        runPendingPlayTask();
-
-    m_pendingStartTime = std::nullopt;
+    return true;
 }
 
 void WebAnimation::setPendingStartTime(WebAnimationTime pendingStartTime)

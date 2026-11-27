@@ -231,6 +231,7 @@ private:
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
     void autoAlignStartTime();
     void maybeMarkAsReady();
+    bool isReady() const;
     NODELETE bool isTimeValid(const std::optional<WebAnimationTime>&) const;
 
     // ActiveDOMObject.
