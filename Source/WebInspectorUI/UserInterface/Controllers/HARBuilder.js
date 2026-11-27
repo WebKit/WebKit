@@ -112,9 +112,15 @@ WI.HARBuilder = class HARBuilder
             let redirect = entryOrResource.redirect;
             let parentResource = entryOrResource.parentResource;
 
+            // A redirect entry starts when its own request was sent: at the page start for the
+            // first hop, and when the previous redirect's response arrived for later hops. The
+            // walltime stored on the redirect is the end of its hop, not the start.
+            let redirectIndex = parentResource.redirects.indexOf(redirect);
+            let startWalltime = redirectIndex > 0 ? parentResource.redirects[redirectIndex - 1].walltime : parentResource.requestSentWalltime;
+
             return {
                 pageref: "page_0",
-                startedDateTime: HARBuilder.date(new Date(redirect.timestamp * 1000)),
+                startedDateTime: HARBuilder.date(startWalltime ? new Date(startWalltime * 1000) : parentResource.requestSentDate),
                 time: 0, // Redirects don't have detailed timing
                 request: HARBuilder.requestForRedirect(redirect, parentResource),
                 response: HARBuilder.responseForRedirect(redirect),

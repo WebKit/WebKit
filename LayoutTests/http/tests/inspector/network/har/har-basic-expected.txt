@@ -223,3 +223,12 @@ PASS: HAR Timings for entry3 should add up to ~500ms before wait.
 PASS: PageTimings.onContentLoad should be milliseconds since page start (250ms).
 PASS: PageTimings.onLoad should be milliseconds since page start (500ms).
 
+-- Running test case: HAR.Basic.Redirect
+PASS: First hop entry startedDateTime should be the request's wall-clock time ('2017-10-23T01:55:52.694Z').
+PASS: Second hop entry startedDateTime should be the first hop's wall-clock time ('2017-10-23T01:55:53.694Z').
+PASS: First hop entry request method should be 'GET'.
+PASS: First hop entry request URL should be 'https://example.com/fake.js'.
+PASS: Second hop entry request URL should be 'https://example.com/redirected.js'.
+PASS: First hop entry response status should be 302.
+PASS: Final entry startedDateTime should be the request's wall-clock time ('2017-10-23T01:55:52.694Z').
+
