@@ -40,7 +40,7 @@ LayoutRepainter::LayoutRepainter(RenderElement& renderer, std::optional<CheckFor
     if (!m_checkForRepaint)
         return;
 
-    m_repaintContainer = m_renderer->containerForRepaint().renderer.unsafeGet();
+    m_repaintContainer = m_renderer->containerForRepaint().renderer;
     m_oldRects = m_renderer->rectsForRepaintingAfterLayout(m_repaintContainer, m_repaintOutlineBounds);
 }
 
@@ -52,7 +52,7 @@ bool LayoutRepainter::repaintAfterLayout()
     auto requiresFullRepaint = m_forceFullRepaint || m_renderer->selfNeedsLayout() ? RequiresFullRepaint::Yes : RequiresFullRepaint::No;
     // Outline bounds are not used if we're doing a full repaint.
     auto newRects = m_renderer->rectsForRepaintingAfterLayout(m_repaintContainer, (requiresFullRepaint == RequiresFullRepaint::Yes) ? RepaintOutlineBounds::No : m_repaintOutlineBounds);
-    return m_renderer->repaintAfterLayoutIfNeeded(m_repaintContainer, requiresFullRepaint, m_oldRects, newRects);
+    return m_renderer->repaintAfterLayoutIfNeeded(m_repaintContainer.get(), requiresFullRepaint, m_oldRects, newRects);
 }
 
 } // namespace WebCore

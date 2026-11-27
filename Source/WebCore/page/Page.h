@@ -758,7 +758,7 @@ public:
     const Seconds fullscreenAutoHideDuration() const { return m_fullscreenAutoHideDuration; }
     WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
 
-    Document* outermostFullscreenDocument() const;
+    RefPtr<Document> outermostFullscreenDocument() const;
 
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);

@@ -74,7 +74,7 @@ static RetainPtr<NSMutableDictionary> localPasteboards WTF_GUARDED_BY_LOCK(local
         return pasteboard;
     auto pasteboard = adoptNS([[LocalPasteboard alloc] initWithName:name]);
     [localPasteboards setObject:pasteboard.get() forKey:name];
-    return pasteboard.unsafeGet();
+    return pasteboard.autorelease();
 }
 
 + (void)releaseLocalPasteboards

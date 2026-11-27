@@ -1041,14 +1041,14 @@ FocusableElementSearchResult FocusController::previousFocusableElementWithinScop
     }
 }
 
-Element* FocusController::findFocusableElementOrScopeOwner(FocusDirection direction, const FocusNavigationScope& scope, Node* node, const FocusEventData& focusEventData)
+RefPtr<Element> FocusController::findFocusableElementOrScopeOwner(FocusDirection direction, const FocusNavigationScope& scope, Node* node, const FocusEventData& focusEventData)
 {
     return (direction == FocusDirection::Forward)
         ? nextFocusableElementOrScopeOwner(scope, node, focusEventData)
         : previousFocusableElementOrScopeOwner(scope, node, focusEventData);
 }
 
-Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, const FocusEventData& focusEventData, FocusDirection direction)
+RefPtr<Element> FocusController::findElementWithExactTabIndex(const FocusNavigationScope& scope, Node* start, int tabIndex, const FocusEventData& focusEventData, FocusDirection direction)
 {
     // Search is inclusive of start
     for (RefPtr node = start; node; node = direction == FocusDirection::Forward ? scope.nextInScope(node.get()) : scope.previousInScope(node.get())) {
@@ -1056,7 +1056,7 @@ Element* FocusController::findElementWithExactTabIndex(const FocusNavigationScop
         if (!element)
             continue;
         if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) == tabIndex)
-            return element.unsafeGet();
+            return element;
     }
     return nullptr;
 }
@@ -1112,7 +1112,7 @@ FocusableElementSearchResult FocusController::previousFocusableElement(Node& sta
     return findFocusableElementAcrossFocusScope(FocusDirection::Backward, FocusNavigationScope::scopeOf(start), &start, { }, ShouldFocusElement::No);
 }
 
-Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, const FocusEventData& focusEventData)
+RefPtr<Element> FocusController::nextFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, const FocusEventData& focusEventData)
 {
     int startTabIndex = 0;
     if (RefPtr element = dynamicDowncast<Element>(start))
@@ -1126,11 +1126,11 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
                 if (!element)
                     continue;
                 if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
-                    return element.unsafeGet();
+                    return element;
             }
         } else {
             // First try to find a node with the same tabindex as start that comes after start in the scope.
-            if (auto* winner = findElementWithExactTabIndex(scope, RefPtr { scope.nextInScope(start) }.get(), startTabIndex, focusEventData, FocusDirection::Forward))
+            if (RefPtr winner = findElementWithExactTabIndex(scope, RefPtr { scope.nextInScope(start) }.get(), startTabIndex, focusEventData, FocusDirection::Forward))
                 return winner;
 
             if (!startTabIndex)
@@ -1149,7 +1149,7 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
     return findElementWithExactTabIndex(scope, protect(scope.firstNodeInScope()), 0, focusEventData, FocusDirection::Forward);
 }
 
-Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, const FocusEventData& focusEventData)
+RefPtr<Element> FocusController::previousFocusableElementOrScopeOwner(const FocusNavigationScope& scope, Node* start, const FocusEventData& focusEventData)
 {
     RefPtr<Node> last = nullptr;
     for (RefPtr node = scope.lastNodeInScope(); node; node = scope.lastChildInScope(*node))
@@ -1175,10 +1175,10 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
             if (!element)
                 continue;
             if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
-                return element.unsafeGet();
+                return element;
         }
     } else {
-        if (auto* winner = findElementWithExactTabIndex(scope, startingNode.get(), startingTabIndex, focusEventData, FocusDirection::Backward))
+        if (RefPtr winner = findElementWithExactTabIndex(scope, startingNode.get(), startingTabIndex, focusEventData, FocusDirection::Backward))
             return winner;
     }
 

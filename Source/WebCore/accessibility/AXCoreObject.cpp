@@ -567,13 +567,15 @@ AXCoreObject* AXCoreObject::crossFrameParentObjectUnignored() const
     // presentational iframe). crossFrameParentObject() already returns an unignored object in the
     // parent frame, so it needs no further ignored check. Returning no parent causes lots of issues
     // for assistive technologies.
+    RefPtr<const AXCoreObject> child = this;
     for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (!ancestor->isIgnored())
-            return ancestor.unsafeGet();
+            return child->parentObject();
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
         if (auto* crossParent = ancestor->crossFrameParentObject())
             return crossParent;
 #endif
+        child = ancestor;
     }
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
@@ -1814,7 +1816,7 @@ RefPtr<AXCoreObject> AXCoreObject::activeDescendant() const
     return nullptr;
 }
 
-AXCoreObject* AXCoreObject::selfOrFirstTextDescendant()
+RefPtr<AXCoreObject> AXCoreObject::selfOrFirstTextDescendant()
 {
     return Accessibility::findUnignoredDescendant(*this, /* includeSelf */ true, [] (auto& descendant) {
         return descendant.isStaticText();

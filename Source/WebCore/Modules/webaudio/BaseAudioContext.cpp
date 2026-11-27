@@ -679,7 +679,9 @@ void BaseAudioContext::handleDeferredDecrementConnectionCounts()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isGraphOwner());
     while (!m_deferredBreakConnectionList.isEmpty()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredBreakConnectionList.takeLast().unsafeGet(); // NOLINT.
+        // Remove the CheckedPtr from the list before decrementing, since this may destroy the node.
+        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredBreakConnectionList.last().get();
+        m_deferredBreakConnectionList.removeLast();
         node->decrementConnectionCountWithLock();
     }
 }
@@ -688,7 +690,9 @@ void BaseAudioContext::handleDeferredDerefs()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isGraphOwner());
     while (!m_deferredDerefList.isEmpty()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredDerefList.takeLast().unsafeGet(); // NOLINT.
+        // Remove the CheckedPtr from the list before dereferencing, since this may destroy the node.
+        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredDerefList.last().get();
+        m_deferredDerefList.removeLast();
         node->derefWithLock();
     }
 }
@@ -864,7 +868,8 @@ void BaseAudioContext::deleteMarkedNodes()
         ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
 
         // Finally, delete it.
-        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT.
+        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = node.get();
+        node = nullptr;
         delete nodePtr;
     }
     m_isDeletionScheduled = false;

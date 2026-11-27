@@ -954,7 +954,7 @@ static inline LayoutPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIt
     return LayoutPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
-static Element* rootEditableOrDocumentElement(Node& node, EditableType editableType)
+static RefPtr<Element> rootEditableOrDocumentElement(Node& node, EditableType editableType)
 {
     if (hasEditableStyle(node, editableType))
         return editableRootForPosition(firstPositionInOrBeforeNode(&node), editableType);

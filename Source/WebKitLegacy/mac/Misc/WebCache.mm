@@ -163,7 +163,7 @@
     if (!nativeImage)
         return nullptr;
 
-    return nativeImage->platformImage().unsafeGet();
+    return nativeImage->platformImage().autorelease();
 }
 
 #endif // PLATFORM(IOS_FAMILY)

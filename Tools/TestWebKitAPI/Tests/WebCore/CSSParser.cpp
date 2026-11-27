@@ -52,7 +52,7 @@ TEST(CSSParser, ParseColorInput)
     auto properties = MutableStyleProperties::create();
 
     ASSERT_TRUE(CSSParser::parseDeclarationList(properties, "color: #ff0000;"_s, strictCSSParserContext()));
-    auto value = properties->getPropertyCSSValue(CSSPropertyID::Color).unsafeGet();
+    RefPtr value = properties->getPropertyCSSValue(CSSPropertyID::Color);
 
     ASSERT_TRUE(is<CSSValue>(value));
     Color valueColor(Color::red);
@@ -66,7 +66,7 @@ TEST(CSSParser, ParseColorWithNewlineAndWhitespacesInput)
     auto properties = MutableStyleProperties::create();
 
     ASSERT_TRUE(CSSParser::parseDeclarationList(properties, "color:  \n    #ff0000;"_s, strictCSSParserContext()));
-    auto value = properties->getPropertyCSSValue(CSSPropertyID::Color).unsafeGet();
+    RefPtr value = properties->getPropertyCSSValue(CSSPropertyID::Color);
 
     ASSERT_TRUE(is<CSSValue>(value));
     Color valueColor(Color::red);

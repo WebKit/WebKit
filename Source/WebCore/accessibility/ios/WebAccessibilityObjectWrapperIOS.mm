@@ -414,7 +414,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
 
     if (RetainPtr remoteElement = axObject->remoteFramePlatformElement())
-        return remoteElement.unsafeGet();
+        return remoteElement.autorelease();
 
     // If this is a good accessible object to return, no extra work is required.
     RetainPtr axObjectWrapper = axObject->wrapper();

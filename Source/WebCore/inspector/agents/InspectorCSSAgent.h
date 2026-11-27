@@ -177,8 +177,8 @@ private:
     using PseudoClassHashSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>>;
 
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
-    Element* elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
-    Node* nodeForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Element> elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Node> nodeForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     void collectAllStyleSheets(Vector<InspectorStyleSheet*>&);
     void collectAllDocumentStyleSheets(Document&, Vector<CSSStyleSheet*>&);

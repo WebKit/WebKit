@@ -1000,7 +1000,7 @@ void InspectorCanvasAgent::reset()
     m_recordingCanvasIdentifiers.clear();
 }
 
-InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& context, bool captureBacktrace)
+Ref<InspectorCanvas> InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& context, bool captureBacktrace)
 {
     auto inspectorCanvas = InspectorCanvas::create(context);
     m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas.copyRef());
@@ -1021,17 +1021,17 @@ InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& contex
     }
 #endif
 
-    return inspectorCanvas.unsafeGet();
+    return inspectorCanvas;
 }
 
-InspectorCanvas& InspectorCanvasAgent::bindCanvas(GPUDevice& device, bool captureBacktrace)
+Ref<InspectorCanvas> InspectorCanvasAgent::bindCanvas(GPUDevice& device, bool captureBacktrace)
 {
     auto inspectorCanvas = InspectorCanvas::create(device);
     m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas.copyRef());
 
     m_frontendDispatcher->canvasAdded(buildObjectForCanvas(inspectorCanvas, captureBacktrace));
 
-    return inspectorCanvas.unsafeGet();
+    return inspectorCanvas;
 }
 
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvasAgent::buildObjectForCanvas(InspectorCanvas& inspectorCanvas, bool captureBacktrace)

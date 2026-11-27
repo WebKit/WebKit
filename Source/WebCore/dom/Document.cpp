@@ -5554,7 +5554,7 @@ bool Document::isViewportDocument() const
         return false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (auto* outermostFullscreenDocument = page->outermostFullscreenDocument())
+    if (RefPtr outermostFullscreenDocument = page->outermostFullscreenDocument())
         return outermostFullscreenDocument == this;
 #endif
 
@@ -10090,7 +10090,7 @@ bool Document::allowsContentJavaScript() const
     return protect(frame()->loader().client())->allowsContentJavaScriptFromMostRecentNavigation() == AllowsContentJavaScript::Yes;
 }
 
-Element* eventTargetElementForDocument(Document* document)
+RefPtr<Element> eventTargetElementForDocument(Document* document)
 {
     if (!document)
         return nullptr;
@@ -10098,7 +10098,7 @@ Element* eventTargetElementForDocument(Document* document)
     if (RefPtr documentFullscreen = document->fullscreenIfExists(); documentFullscreen && documentFullscreen->isFullscreen() && is<HTMLVideoElement>(documentFullscreen->fullscreenElement()))
         return documentFullscreen->fullscreenElement();
 #endif
-    CheckedPtr element = document->focusedElement();
+    RefPtr element = document->focusedElement();
     if (!element) {
         if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*document))
             element = pluginDocument->pluginElement();
@@ -10107,7 +10107,7 @@ Element* eventTargetElementForDocument(Document* document)
         element = document->bodyOrFrameset();
     if (!element)
         element = document->documentElement();
-    return element.unsafeGet();
+    return element;
 }
 
 // get(Bounding)ClientRect APIs now returns scaled (=zoomed) rect.

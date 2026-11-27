@@ -92,7 +92,7 @@ protected:
 
 private:
     NODELETE String findAnimationId(WebAnimation&);
-    WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
+    RefPtr<WebAnimation> assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
     void bindAnimation(WebAnimation&, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace);
     void animationBindingTimerFired();
     void unbindAnimation(const String& animationId);

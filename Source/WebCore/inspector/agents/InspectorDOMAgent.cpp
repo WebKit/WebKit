@@ -393,17 +393,17 @@ void InspectorDOMAgent::unbind(Node& node)
     }
 }
 
-Node* InspectorDOMAgent::assertNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Node> InspectorDOMAgent::assertNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = nodeForId(nodeId);
     if (!node) {
         errorString = "Missing node for given nodeId"_s;
         return nullptr;
     }
-    return node.unsafeGet();
+    return node;
 }
 
-Document* InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Document> InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertNode(errorString, nodeId);
     if (!node)
@@ -411,7 +411,7 @@ Document* InspectorDOMAgent::assertDocument(Inspector::Protocol::ErrorString& er
     RefPtr document = dynamicDowncast<Document>(*node);
     if (!document)
         errorString = "Node for given nodeId is not a document"_s;
-    return document.unsafeGet();
+    return document;
 }
 
 RefPtr<Frame> InspectorDOMAgent::assertFrame(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
@@ -441,7 +441,7 @@ RefPtr<Frame> InspectorDOMAgent::assertFrame(Inspector::Protocol::ErrorString& e
     return nullptr;
 }
 
-Element* InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Element> InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertNode(errorString, nodeId);
     if (!node)
@@ -449,10 +449,10 @@ Element* InspectorDOMAgent::assertElement(Inspector::Protocol::ErrorString& erro
     RefPtr element = dynamicDowncast<Element>(*node);
     if (!element)
         errorString = "Node for given nodeId is not an element"_s;
-    return element.unsafeGet();
+    return element;
 }
 
-Node* InspectorDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Node> InspectorDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertNode(errorString, nodeId);
     if (!node)
@@ -465,10 +465,10 @@ Node* InspectorDOMAgent::assertEditableNode(Inspector::Protocol::ErrorString& er
         errorString = "Node for given nodeId is a pseudo-element"_s;
         return nullptr;
     }
-    return node.unsafeGet();
+    return node;
 }
 
-Element* InspectorDOMAgent::assertEditableElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Element> InspectorDOMAgent::assertEditableElement(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     RefPtr node = assertEditableNode(errorString, nodeId);
     if (!node)
@@ -476,7 +476,7 @@ Element* InspectorDOMAgent::assertEditableElement(Inspector::Protocol::ErrorStri
     RefPtr element = dynamicDowncast<Element>(node);
     if (!element)
         errorString = "Node for given nodeId is not an element"_s;
-    return element.unsafeGet();
+    return element;
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::getDocument()

@@ -120,7 +120,7 @@ public:
 
     // Start table-row-related methods.
     // FIXME: this method (and all references) should be renamed to something more accurate, like "containingTable".
-    AccessibilityObject* parentTable() const final;
+    RefPtr<AXCoreObject> parentTable() const final;
     void setRowIndex(unsigned);
     unsigned rowIndex() const final { return hasRareData() ? rareData()->rowIndex() : 0; }
 
@@ -131,7 +131,7 @@ public:
     AccessibilityChildrenVector disclosedRows() final;
     RefPtr<AXCoreObject> disclosedByRow() const final;
 
-    AXCoreObject* parentTableIfExposedTableRow() const final;
+    RefPtr<AXCoreObject> parentTableIfExposedTableRow() const final;
     bool isExposedTableRow() const final { return parentTableIfExposedTableRow(); }
     bool isTableRow() const final;
     // End table-row-related methods.
@@ -140,7 +140,7 @@ public:
     bool isTableCell() const final;
     bool isARIAGridCell() const;
     bool isExposedTableCell() const final;
-    AccessibilityObject* parentTableIfTableCell() const final;
+    RefPtr<AXCoreObject> parentTableIfTableCell() const final;
     bool isTableHeaderCell() const;
     bool isColumnHeader() const final;
     bool isRowHeader() const final;
@@ -208,8 +208,8 @@ public:
 
     void setIsExpanded(bool) final;
 
-    Element* actionElement() const override;
-    Element* anchorElement() const override;
+    RefPtr<Element> actionElement() const override;
+    RefPtr<Element> anchorElement() const override;
     RefPtr<Element> popoverTargetElement() const final;
     RefPtr<Element> commandForElement() const final;
     CommandType commandType() const final;
@@ -324,7 +324,7 @@ protected:
     void addTableChildrenAndCellSlots();
 
     // Start of table-cell-related methods.
-    AccessibilityNodeObject* parentRow() const;
+    RefPtr<AccessibilityNodeObject> parentRow() const;
     // End of table-cell-related methods.
 
     bool isValidTree() const;

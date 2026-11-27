@@ -573,13 +573,12 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
             ancestorElement = remoteFrameView->frame().ownerElement();
     }
 
-    RefPtr<AccessibilityObject> ancestorAccessibilityObject;
-    while (ancestorElement && !ancestorAccessibilityObject) {
-        if ((ancestorAccessibilityObject = cache->getOrCreate(*ancestorElement)))
-            break;
+    while (ancestorElement) {
+        if (auto* ancestorAccessibilityObject = cache->getOrCreate(*ancestorElement))
+            return ancestorAccessibilityObject;
         ancestorElement = ancestorElement->parentElementInComposedTree();
     }
-    return ancestorAccessibilityObject.unsafeGet();
+    return nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -617,21 +616,18 @@ AccessibilityObject* AccessibilityScrollView::crossFrameParentObject() const
     if (!ancestorCache)
         return nullptr;
 
-    RefPtr<AccessibilityObject> ancestorAccessibilityObject;
-    while (ancestorElement && !ancestorAccessibilityObject) {
-        if ((ancestorAccessibilityObject = ancestorCache->getOrCreate(*ancestorElement)))
-            break;
+    while (ancestorElement) {
+        if (RefPtr ancestorAccessibilityObject = ancestorCache->getOrCreate(*ancestorElement)) {
+            // An ignored owner (e.g. a role="presentation" iframe) may itself be in a frame whose root is
+            // ignored, as when a presentational iframe hosts a document that contains another iframe, so the
+            // walk to an unignored parent must be able to cross more than one frame boundary.
+            if (ancestorAccessibilityObject->isIgnored())
+                return downcast<AccessibilityObject>(ancestorAccessibilityObject->crossFrameParentObjectUnignored());
+            return ancestorCache->get(*ancestorElement);
+        }
         ancestorElement = ancestorElement->parentElementInComposedTree();
     }
-
-    // An ignored owner (e.g. a role="presentation" iframe) may itself be in a frame whose root is
-    // ignored, as when a presentational iframe hosts a document that contains another iframe, so the
-    // walk to an unignored parent must be able to cross more than one frame boundary.
-    if (ancestorAccessibilityObject && ancestorAccessibilityObject->isIgnored())
-        return downcast<AccessibilityObject>(ancestorAccessibilityObject->crossFrameParentObjectUnignored());
-
-    // TODO: this should return a RefPtr
-    return ancestorAccessibilityObject.unsafeGet();  // NOLINT
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityScrollView::crossFrameChildObject() const

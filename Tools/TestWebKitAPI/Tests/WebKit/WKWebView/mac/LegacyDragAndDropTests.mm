@@ -243,7 +243,7 @@ static WebView *webViewAfterPerformingDragOperation(NSPasteboard *pasteboard)
     [[destination mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"full-page-contenteditable" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&isDone);
-    return destination.unsafeGet();
+    return destination.autorelease();
 }
 
 TEST(LegacyDragAndDropTests, DropUTF8PlainText)

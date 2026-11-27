@@ -415,7 +415,7 @@ RenderObject* RenderObject::lastLeafChild() const
 }
 
 // Non-recursive version of the DFS search.
-RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction inclusionFunction, int& currentDepth, int& newFixedDepth) const
+CheckedPtr<RenderObject> RenderObject::traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction inclusionFunction, int& currentDepth, int& newFixedDepth) const
 {
     BlockContentHeightType overflowType;
 
@@ -427,7 +427,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
             if (overflowType == OverflowHeight)
                 newFixedDepth = currentDepth;
             ASSERT(!stayWithin || child->isDescendantOf(stayWithin));
-            return child.unsafeGet();
+            return child;
         }
     }
 
@@ -450,7 +450,7 @@ RenderObject* RenderObject::traverseNext(const RenderObject* stayWithin, HeightT
                 if (overflowType == OverflowHeight)
                     newFixedDepth = currentDepth;
                 ASSERT(!stayWithin || !n->nextSibling() || n->nextSibling()->isDescendantOf(stayWithin));
-                return sibling.unsafeGet();
+                return sibling;
             }
         }
         if (!stayWithin || n->parent() != stayWithin) {
@@ -593,7 +593,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
     if (is<RenderView>(*this))
         return downcast<RenderElement>(this);
 
-    CheckedPtr ancestor = container();
+    auto* ancestor = container();
 
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
     bool hasOutOfFlowPosition = isOutOfFlowPositioned();
@@ -604,7 +604,7 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
 
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
-        CheckedPtr container = ancestor->container();
+        auto* container = ancestor->container();
         if (!container && !ancestor->isRenderView()) {
             // Internal render tree shuffle.
             return { };
@@ -640,13 +640,13 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             if (ancestor == layoutRoot)
                 return layoutRoot;
         } else if (isLayoutBoundary(*ancestor))
-            return ancestor.unsafeGet();
+            return ancestor;
 
-        if (auto* renderGrid = dynamicDowncast<RenderGrid>(container.get()); renderGrid && renderGrid->isExtrinsicallySized())
+        if (auto* renderGrid = dynamicDowncast<RenderGrid>(container); renderGrid && renderGrid->isExtrinsicallySized())
             simplifiedNormalFlowLayout = true;
 
         hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
-        ancestor = WTF::move(container);
+        ancestor = container;
     }
     return { };
 }
@@ -1841,13 +1841,13 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
     auto position = renderElement->style().position();
     if (position == PositionType::Static || position == PositionType::Relative || position == PositionType::Sticky)
         return renderElement->parent();
-    CheckedPtr parent = renderElement->parent();
+    auto* parent = renderElement->parent();
     if (position == PositionType::Absolute) {
         for (; parent && !parent->canContainAbsolutelyPositionedObjects(); parent = parent->parent()) {
             if (repaintContainerSkipped && repaintContainer == parent)
                 *repaintContainerSkipped = true;
         }
-        return parent.unsafeGet();
+        return parent;
     }
     for (; parent && !parent->canContainFixedPositionObjects(); parent = parent->parent()) {
         if (isInTopLayerOrBackdrop(parent->style(), parent->element())) {
@@ -1857,7 +1857,7 @@ static inline RenderElement* containerForElement(const RenderObject& renderer, c
         if (repaintContainerSkipped && repaintContainer == parent)
             *repaintContainerSkipped = true;
     }
-    return parent.unsafeGet();
+    return parent;
 }
 
 RenderElement* RenderObject::container() const

@@ -63,7 +63,7 @@ RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node*);
 NODELETE NodeName elementName(Node*);
 NODELETE NodeName elementName(Node&);
 
-RenderImage* toSimpleImage(RenderObject&);
+CheckedPtr<RenderImage> toSimpleImage(RenderObject&);
 
 // Returns true if the element has an attribute that will result in an accname being computed.
 // https://www.w3.org/TR/accname-1.2/

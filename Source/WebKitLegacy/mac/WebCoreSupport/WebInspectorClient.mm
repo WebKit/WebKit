@@ -574,7 +574,7 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
     [window setTitlebarAppearsTransparent:YES];
 
     [self setWindow:window.get()];
-    return window.unsafeGet();
+    return window.autorelease();
 }
 
 // MARK: -

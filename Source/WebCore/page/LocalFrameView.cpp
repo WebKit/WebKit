@@ -5779,10 +5779,10 @@ Color LocalFrameView::documentBackgroundColor() const
     // Background images are unfortunately impractical to include.
 
     // Return invalid Color objects whenever there is insufficient information.
-    RefPtr backgroundDocument = [&] {
+    RefPtr backgroundDocument = [&] -> RefPtr<Document> {
 #if ENABLE(FULLSCREEN_API)
         if (RefPtr page = m_frame->page()) {
-            if (auto* fullscreenDocument = page->outermostFullscreenDocument())
+            if (RefPtr fullscreenDocument = page->outermostFullscreenDocument())
                 return fullscreenDocument;
         }
 #endif

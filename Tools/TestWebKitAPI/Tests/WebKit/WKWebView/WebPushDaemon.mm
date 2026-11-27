@@ -1243,12 +1243,12 @@ public:
 
     _WKNotificationData *mostRecentNotification()
     {
-        return m_delegate.get().mostRecentNotification.unsafeGet();
+        return m_delegate.get().mostRecentNotification.autorelease();
     }
 
     NSURL *mostRecentActionURL()
     {
-        return m_delegate.get().mostRecentActionURL.unsafeGet();
+        return m_delegate.get().mostRecentActionURL.autorelease();
     }
 
     std::optional<uint64_t> mostRecentAppBadge()

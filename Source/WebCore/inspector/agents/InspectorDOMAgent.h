@@ -253,9 +253,9 @@ public:
     Vector<size_t> flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject&) const;
     void reset();
 
-    Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
-    Element* assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
-    Document* assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Node> assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Element> assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Document> assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Frame> assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
     RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
@@ -277,8 +277,8 @@ private:
     void unbind(Node&);
     void resendFrameOwner(HTMLFrameOwnerElement&);
 
-    Node* assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
-    Element* assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Node> assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    RefPtr<Element> assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     void pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeId, int depth = 1);
 

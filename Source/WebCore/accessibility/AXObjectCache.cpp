@@ -726,7 +726,7 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
 
 void AXObjectCache::updateCurrentModalNode()
 {
-    auto recomputeModalElement = [&] () -> Element* {
+    auto recomputeModalElement = [&] -> RefPtr<Element> {
         // There might be multiple modal dialog nodes.
         // We use this function to pick the one we want.
         if (m_modalElements.isEmpty())
@@ -739,7 +739,7 @@ void AXObjectCache::updateCurrentModalNode()
         // Pick the document active modal <dialog> element if it exists.
         if (RefPtr activeModalDialog = document->activeModalDialog()) {
             AX_ASSERT(m_modalElements.contains(activeModalDialog.get()));
-            return activeModalDialog.unsafeGet();
+            return activeModalDialog;
         }
 
         SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
@@ -778,7 +778,7 @@ void AXObjectCache::updateCurrentModalNode()
         RefPtr object = getOrCreate(modalElementToReturn.get());
         if (!object || object->isAXHidden())
             return nullptr;
-        return modalElementToReturn.unsafeGet();
+        return modalElementToReturn;
     };
 
     RefPtr previousModal = m_currentModalElement.get();
@@ -872,7 +872,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement& ar
     return nullptr;
 }
 
-AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
+RefPtr<AccessibilityObject> AXObjectCache::focusedObjectForPage(const Page* page)
 {
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     return focusedObjectForLocalFrame();
@@ -898,7 +898,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
         // so ATs can follow it to the remote process to get the actual focused element.
         if (RefPtr remoteFrameView = remoteFrame->view()) {
             if (RefPtr scrollView = dynamicDowncast<AccessibilityScrollView>(getOrCreate(remoteFrameView.get())))
-                return scrollView->remoteFrame().unsafeGet();
+                return scrollView->remoteFrame();
         }
     }
 
@@ -907,7 +907,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
     return focusedObjectForNode(document.get());
 }
 
-AccessibilityObject* AXObjectCache::focusedObjectForLocalFrame()
+RefPtr<AccessibilityObject> AXObjectCache::focusedObjectForLocalFrame()
 {
     AX_ASSERT(isMainThread());
 
@@ -939,7 +939,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForLocalFrame()
         // so ATs can follow it to the remote process to get the actual focused element.
         if (RefPtr remoteFrameView = remoteFrame->view()) {
             if (RefPtr scrollView = dynamicDowncast<AccessibilityScrollView>(getOrCreate(remoteFrameView.get())))
-                return scrollView->remoteFrame().unsafeGet();
+                return scrollView->remoteFrame();
         }
     }
 
@@ -994,7 +994,7 @@ void AXObjectCache::updateAncestorFramesFocusedObject()
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 
-AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
+RefPtr<AccessibilityObject> AXObjectCache::focusedObjectForNode(Node* focusedNode)
 {
     if (auto* area = dynamicDowncast<HTMLAreaElement>(focusedNode))
         return focusedImageMapUIElement(*area);
@@ -1005,12 +1005,12 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 
     if (focus->shouldFocusActiveDescendant()) {
         if (RefPtr descendant = focus->activeDescendant())
-            return dynamicDowncast<AccessibilityObject>(descendant.unsafeGet());
+            return dynamicDowncast<AccessibilityObject>(WTF::move(descendant));
     }
 
     if (focus->isIgnored())
         return focus->parentObjectUnignored();
-    return focus.unsafeGet();
+    return focus;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1287,7 +1287,7 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Widget& widget)
         return nullptr;
 
     cacheAndInitializeWrapper(*newObject, &widget);
-    return newObject.unsafeGet();
+    return m_objects.get(newObject->objectID());
 }
 
 AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation isPartOfRelation)
@@ -1335,7 +1335,7 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
         } else
             object = AccessibilityListBoxOption::create(AXID::generate(), downcast<HTMLElement>(node), *this);
         cacheAndInitializeWrapper(*object, &node);
-        return object.unsafeGet();
+        return m_objects.get(object->objectID());
     }
 
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*composedParent).first();
@@ -1363,8 +1363,8 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
     }
 
     // The object may have already been created during relations update.
-    if (RefPtr object = get(node))
-        return object.unsafeGet();
+    if (auto* object = get(node))
+        return object;
 
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.
@@ -1382,7 +1382,7 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
     // it will disappear when this function is finished, leading to a use-after-free.
     if (newObject->isDetached())
         return nullptr;
-    return newObject.unsafeGet();
+    return m_objects.get(newObject->objectID());
 }
 
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
@@ -1390,8 +1390,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
     if (renderer.isYouTubeReplacement()) [[unlikely]]
         return getOrCreate(protect(renderer.node()));
 
-    if (RefPtr object = get(renderer))
-        return object.unsafeGet();
+    if (auto* object = get(renderer))
+        return object;
 
     // Don't create an object for this renderer if it's being destroyed.
     if (renderer.beingDestroyed())
@@ -1602,7 +1602,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
     // root's wrapper on the AXLocalFrame via setWrapperFrom(); attaching one here would
     // immediately be discarded.
     cacheAndInitializeWrapper(*object, /* DOMObjectVariant */ nullptr, role == AccessibilityRole::LocalFrame ? ShouldAttachWrapper::No : ShouldAttachWrapper::Yes);
-    return object.unsafeGet();
+    return m_objects.get(object->objectID());
 }
 
 Ref<AccessibilitySpinButton> AXObjectCache::createSpinButton(SpinButtonElement& spinButtonElement)
@@ -1958,7 +1958,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         return;
     } else if (RefPtr nodeObject = dynamicDowncast<AccessibilityNodeObject>(object); nodeObject && nodeObject->isTable())
         deferRecomputeTableCellSlots(*nodeObject);
-    else if (auto* parentTable = dynamicDowncast<AccessibilityNodeObject>(object.parentTableIfExposedTableRow()))
+    else if (RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(object.parentTableIfExposedTableRow()))
         deferRecomputeTableCellSlots(*parentTable);
     else if (RefPtr scrollView = dynamicDowncast<AccessibilityScrollView>(object)) {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -2083,7 +2083,7 @@ void AXObjectCache::remoteFrameDidChangeProcess(RemoteFrame& frame)
 
 void AXObjectCache::repostFocusedUIElementChanged()
 {
-    platformHandleFocusedUIElementChanged(nullptr, protect(focusedObjectForLocalFrame()).get());
+    platformHandleFocusedUIElementChanged(nullptr, focusedObjectForLocalFrame().get());
 }
 
 void AXObjectCache::onRemoteFrameInitialized(AXRemoteFrame& remoteFrame)
@@ -2238,8 +2238,8 @@ void AXObjectCache::deferAddUnconnectedNode(AccessibilityObject& axObject)
 AccessibilityObject* AXObjectCache::getIncludingAncestors(RenderObject& renderer) const
 {
     for (CheckedPtr current = &renderer; current; current = current->parent()) {
-        if (RefPtr object = get(*current))
-            return object.unsafeGet();
+        if (auto* object = get(*current))
+            return object;
     }
     return nullptr;
 }
@@ -3056,7 +3056,7 @@ void AXObjectCache::handleFocusedUIElementChanged(Element* oldElement, Element* 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // Use focusedObjectForLocalFrame() instead of focusedObjectForNode() to properly handle
     // the case where focus is in a site-isolated sub-frame (returns the AXRemoteFrame).
-    setIsolatedTreeFocusedObject(protect(focusedObjectForLocalFrame()));
+    setIsolatedTreeFocusedObject(focusedObjectForLocalFrame().get());
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     // Only the focused frame's own cache runs this handler, so also refresh the isolated-tree focus
     // of each ancestor local frame. This keeps an ancestor tree (e.g. the main frame's, which
@@ -5997,7 +5997,7 @@ NODELETE static bool characterOffsetNodeIsBR(const CharacterOffset& characterOff
     return WebCore::elementName(*characterOffset.node) == ElementName::HTML_br;
 }
 
-static Node* parentEditingBoundary(Node* node)
+static RefPtr<Node> parentEditingBoundary(Node* node)
 {
     if (!node)
         return nullptr;
@@ -6011,7 +6011,7 @@ static Node* parentEditingBoundary(Node* node)
     while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && nodeHasEditableStyle == protect(boundary->parentNode())->hasEditableStyle())
         boundary = boundary->nonShadowBoundaryParentNode();
 
-    return boundary.unsafeGet();
+    return boundary;
 }
 
 CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
@@ -6402,10 +6402,10 @@ CharacterOffset AXObjectCache::characterOffsetForIndex(int index, const AXCoreOb
     return result;
 }
 
-const Element* AXObjectCache::rootAXEditableElement(const Node* node)
+RefPtr<Element> AXObjectCache::rootAXEditableElement(const Node* node)
 {
-    CheckedPtr<const Element> result = node->rootEditableElement();
-    CheckedPtr element = dynamicDowncast<Element>(*node);
+    RefPtr result = node->rootEditableElement();
+    RefPtr element = dynamicDowncast<Element>(const_cast<Node&>(*node));
     if (!element)
         element = node->parentElement();
 
@@ -6414,7 +6414,7 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
             result = element;
     }
 
-    return result.unsafeGet();
+    return result;
 }
 
 static void conditionallyAddNodeToFilterList(Node* node, const Document& document, HashSet<Ref<Node>>& nodesToRemove)

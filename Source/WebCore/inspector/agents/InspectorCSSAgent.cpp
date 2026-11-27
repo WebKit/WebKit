@@ -1126,7 +1126,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
     return m_nodeToInspectorStyleSheet.set(&element, WTF::move(inspectorStyleSheet)).iterator->value;
 }
 
-Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Element> InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     Ref agents = m_instrumentingAgents.get();
     CheckedPtr domAgent = agents->persistentDOMAgent();
@@ -1138,7 +1138,7 @@ Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& error
     return domAgent->assertElement(errorString, nodeId);
 }
 
-Node* InspectorCSSAgent::nodeForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
+RefPtr<Node> InspectorCSSAgent::nodeForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
     Ref agents = m_instrumentingAgents.get();
     CheckedPtr domAgent = agents->persistentDOMAgent();

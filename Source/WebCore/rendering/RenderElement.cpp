@@ -2465,7 +2465,7 @@ const RenderElement* RenderElement::pushMappingToContainer(const RenderLayerMode
 {
     ASSERT_UNUSED(ancestorToStopAt, ancestorToStopAt != this);
 
-    CheckedPtr container = parent();
+    auto* container = parent();
     if (!container)
         return nullptr;
 
@@ -2476,7 +2476,7 @@ const RenderElement* RenderElement::pushMappingToContainer(const RenderLayerMode
 
     geometryMap.push(this, offset, false);
 
-    return container.unsafeGet();
+    return container;
 }
 
 RenderBoxModelObject* RenderElement::offsetParent() const
@@ -2504,7 +2504,7 @@ RenderBoxModelObject* RenderElement::offsetParent() const
 
     bool skipTables = isPositioned();
     float currZoom = style().usedZoom();
-    CheckedPtr current = parent();
+    auto* current = parent();
     while (current && (!current->element() || (!current->isBody() && !(isFixedPositioned() ? current->canContainFixedPositionObjects() : current->canContainAbsolutelyPositionedObjects())))) {
         auto* element = current->element();
         if (!skipTables && isAnyOf<HTMLTableElement, HTMLTableCellElement>(element))
@@ -2517,7 +2517,7 @@ RenderBoxModelObject* RenderElement::offsetParent() const
         current = current->parent();
     }
 
-    return dynamicDowncast<RenderBoxModelObject>(current.unsafeGet());
+    return dynamicDowncast<RenderBoxModelObject>(current);
 }
 
 bool RenderElement::hasViewTransitionName() const

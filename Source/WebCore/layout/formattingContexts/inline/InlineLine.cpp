@@ -191,10 +191,10 @@ const Box* Line::removeOverflowingOutOfFlowContent()
     }
     if (!lastTrailingOutOfFlowItemIndex)
         return { };
-    CheckedPtr lastTrailingOutOfFlowBox = &m_runs[*lastTrailingOutOfFlowItemIndex].layoutBox();
+    auto* lastTrailingOutOfFlowBox = &m_runs[*lastTrailingOutOfFlowItemIndex].layoutBox();
     m_runs.removeAt(*lastTrailingOutOfFlowItemIndex, m_runs.size() - *lastTrailingOutOfFlowItemIndex);
     ASSERT(!m_runs.isEmpty());
-    return lastTrailingOutOfFlowBox.unsafeGet();
+    return lastTrailingOutOfFlowBox;
 }
 
 void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrinsicWidthMode, InlineLayoutUnit horizontalAvailableSpaceForContent, bool isLastFormattedLine)

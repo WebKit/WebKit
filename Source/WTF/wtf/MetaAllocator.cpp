@@ -487,7 +487,8 @@ void MetaAllocator::freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&& node)
 #ifndef NDEBUG
     m_mallocBalance--;
 #endif
-    SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT
+    SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = node.get();
+    node = nullptr;
     delete nodePtr;
 }
 

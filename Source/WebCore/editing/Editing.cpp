@@ -133,7 +133,7 @@ static bool isEditableToAccessibility(const Node& node)
     ASSERT(node.document().existingAXObjectCache());
 
     if (CheckedPtr cache = protect(node.document())->existingAXObjectCache())
-        return cache->rootAXEditableElement(&node);
+        return !!cache->rootAXEditableElement(&node);
 
     return false;
 }
@@ -181,7 +181,7 @@ bool isRichlyEditablePosition(const Position& position)
     return node && node->hasRichlyEditableStyle();
 }
 
-Element* editableRootForPosition(const Position& position, EditableType editableType)
+RefPtr<Element> editableRootForPosition(const Position& position, EditableType editableType)
 {
     RefPtr node = position.containerNode();
     if (!node)
@@ -189,9 +189,8 @@ Element* editableRootForPosition(const Position& position, EditableType editable
 
     switch (editableType) {
     case EditableType::AXRole:
-        if (CheckedPtr cache = protect(node->document())->existingAXObjectCache()) {
-            return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
-        }
+        if (CheckedPtr cache = protect(node->document())->existingAXObjectCache())
+            return cache->rootAXEditableElement(node.get());
         [[fallthrough]];
     case EditableType::Content:
         return node->rootEditableElement();

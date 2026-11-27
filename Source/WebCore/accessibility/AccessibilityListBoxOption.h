@@ -50,7 +50,7 @@ private:
     bool isEnabled() const final;
     bool isSelectedOptionActive() const final;
     String stringValue() const final;
-    Element* actionElement() const final;
+    RefPtr<Element> actionElement() const final;
     bool canSetSelectedAttribute() const final;
 
     LayoutRect elementRect() const final;

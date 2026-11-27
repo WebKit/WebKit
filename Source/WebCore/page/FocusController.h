@@ -124,12 +124,12 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Element* findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, const FocusEventData&);
+    RefPtr<Element> findFocusableElementOrScopeOwner(FocusDirection, const FocusNavigationScope&, Node* start, const FocusEventData&);
 
-    Element* findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, const FocusEventData&, FocusDirection);
+    RefPtr<Element> findElementWithExactTabIndex(const FocusNavigationScope&, Node* start, int tabIndex, const FocusEventData&, FocusDirection);
     
-    Element* nextFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
-    Element* previousFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
+    RefPtr<Element> nextFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
+    RefPtr<Element> previousFocusableElementOrScopeOwner(const FocusNavigationScope&, Node* start, const FocusEventData&);
 
     bool advanceFocusDirectionallyInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, const FocusEventData&);
     void findFocusCandidateInContainer(const ContainerNode&, const LayoutRect& startingRect, FocusDirection, const FocusEventData&, FocusCandidate& closest);

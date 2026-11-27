@@ -1864,8 +1864,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::horizontalScrollbar() 
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id scrollbar = attributeValue(NSAccessibilityHorizontalScrollBarAttribute).unsafeGet())
-        return AccessibilityUIElementMac::create(scrollbar);
+    if (RetainPtr scrollbar = attributeValue(NSAccessibilityHorizontalScrollBarAttribute))
+        return AccessibilityUIElementMac::create(scrollbar.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -1877,8 +1877,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::verticalScrollbar() co
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id scrollbar = attributeValue(NSAccessibilityVerticalScrollBarAttribute).unsafeGet())
-        return AccessibilityUIElementMac::create(scrollbar);
+    if (RetainPtr scrollbar = attributeValue(NSAccessibilityVerticalScrollBarAttribute))
+        return AccessibilityUIElementMac::create(scrollbar.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2262,8 +2262,8 @@ RefPtr<OpaqueJSString> AccessibilityUIElementMac::popupValue() const
 RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::focusableAncestor()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id ancestor = attributeValue(@"AXFocusableAncestor").unsafeGet())
-        return AccessibilityUIElementMac::create(ancestor);
+    if (RetainPtr ancestor = attributeValue(@"AXFocusableAncestor"))
+        return AccessibilityUIElementMac::create(ancestor.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2272,8 +2272,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::focusableAncestor()
 RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::editableAncestor()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id ancestor = attributeValue(@"AXEditableAncestor").unsafeGet())
-        return AccessibilityUIElementMac::create(ancestor);
+    if (RetainPtr ancestor = attributeValue(@"AXEditableAncestor"))
+        return AccessibilityUIElementMac::create(ancestor.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2282,8 +2282,8 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::editableAncestor()
 RefPtr<AccessibilityUIElement> AccessibilityUIElementMac::highestEditableAncestor()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    if (id ancestor = attributeValue(@"AXHighestEditableAncestor").unsafeGet())
-        return AccessibilityUIElementMac::create(ancestor);
+    if (RetainPtr ancestor = attributeValue(@"AXHighestEditableAncestor"))
+        return AccessibilityUIElementMac::create(ancestor.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

@@ -2314,11 +2314,11 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node) const
         }
 
         if (RefPtr plugin = dynamicDowncast<RenderEmbeddedObject>(*renderer)) {
-            if (CheckedPtr scrollableArea = plugin->scrollableArea()) {
-                Ref frame = m_frame.get();
-                RefPtr page = frame->page();
-                if (!page || page->chrome().client().usePluginRendererScrollableArea(frame))
-                    return scrollableArea.unsafeGet();
+            Ref frame = m_frame;
+            RefPtr page = frame->page();
+            if (!page || page->chrome().client().usePluginRendererScrollableArea(frame)) {
+                if (auto* scrollableArea = plugin->scrollableArea())
+                    return scrollableArea;
             }
         }
 

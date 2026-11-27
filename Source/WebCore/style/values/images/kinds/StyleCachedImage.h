@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -127,9 +128,9 @@ private:
     };
     ReferencedSVGResource referencedSVGResource(const RenderElement&) const;
     RefPtr<SVGSVGElement> svgImageRootElement(const RenderElement&) const;
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
-    LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
-    LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
+    CheckedPtr<LegacyRenderSVGResourceContainer> uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
+    CheckedPtr<LegacyRenderSVGResourceContainer> uncheckedRenderSVGResource(const RenderElement*) const;
+    CheckedPtr<LegacyRenderSVGResourceContainer> legacyRenderSVGResource(const RenderElement*) const;
     RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
     bool isRenderSVGResource(const RenderElement*) const;
     ImageDrawResult drawSVGResource(GraphicsContext&, const ReferencedSVGResource&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source) const;

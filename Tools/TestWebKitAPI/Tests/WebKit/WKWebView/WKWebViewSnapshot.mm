@@ -255,9 +255,9 @@ TEST(WKWebView, SnapshotImageEmptyWithOutOfScopeCompletionHandler)
 
     EXPECT_NULL([snapshotWrapper error]);
 
-    auto image = [snapshotWrapper image].unsafeGet();
-    EXPECT_EQ(0UL, CGImageGetWidth(image));
-    EXPECT_EQ(0UL, CGImageGetHeight(image));
+    RetainPtr image = [snapshotWrapper image];
+    EXPECT_EQ(0UL, CGImageGetWidth(image.get()));
+    EXPECT_EQ(0UL, CGImageGetHeight(image.get()));
 
     EXPECT_EQ(pid, [webView _webProcessIdentifier]); // Make sure the WebProcess did not crash.
 }

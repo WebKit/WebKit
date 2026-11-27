@@ -46,11 +46,37 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+static RetainPtr<NSURL>& testStoreURL()
+{
+    static RetainPtr<NSURL> url;
+    return url;
+}
+
+static RetainPtr<WKContentRuleListStore>& testStore()
+{
+    static RetainPtr<WKContentRuleListStore> store;
+    return store;
+}
+
+// Each test uses its own store, backed by a unique temporary directory, so that tests can safely run in parallel.
+static WKContentRuleListStore *testRuleListStore()
+{
+    return testStore().get();
+}
+
 class WKContentRuleListStoreTest : public testing::Test {
 public:
-    virtual void SetUp()
+    void SetUp() override
     {
-        [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
+        testStoreURL() = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"ContentRuleListTest-%@", NSUUID.UUID.UUIDString]] isDirectory:YES];
+        testStore() = [WKContentRuleListStore storeWithURL:testStoreURL().get()];
+    }
+
+    void TearDown() override
+    {
+        testStore() = nil;
+        [NSFileManager.defaultManager removeItemAtURL:testStoreURL().get() error:nil];
+        testStoreURL() = nil;
     }
 };
 
@@ -59,7 +85,7 @@ static NSString *basicFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{
 TEST_F(WKContentRuleListStoreTest, Compile)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -79,7 +105,7 @@ static void checkDomain(NSError *error)
 TEST_F(WKContentRuleListStoreTest, InvalidRuleList)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:invalidFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:invalidFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
@@ -95,7 +121,7 @@ TEST_F(WKContentRuleListStoreTest, InvalidRuleList)
 TEST_F(WKContentRuleListStoreTest, Lookup)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -105,7 +131,7 @@ TEST_F(WKContentRuleListStoreTest, Lookup)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
 
         EXPECT_STREQ(filter.identifier.UTF8String, "TestRuleList");
         EXPECT_NOT_NULL(filter);
@@ -122,11 +148,11 @@ TEST_F(WKContentRuleListStoreTest, EncodedIdentifier)
     // the filesystem changes it to U+0041 followed by U+0308
     NSString *identifier = @":;%25%+25И😍";
     __block bool done = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:identifier encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
 
         EXPECT_STREQ(filter.identifier.UTF8String, identifier.UTF8String);
 
-        [[WKContentRuleListStore defaultStore] getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
+        [testRuleListStore() getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
             EXPECT_EQ(identifiers.count, 1u);
             EXPECT_EQ(identifiers[0].length, identifier.length);
             EXPECT_STREQ(identifiers[0].UTF8String, identifier.UTF8String);
@@ -140,7 +166,7 @@ TEST_F(WKContentRuleListStoreTest, EncodedIdentifier)
 TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierLookup)
 {
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
@@ -156,7 +182,7 @@ TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierLookup)
 TEST_F(WKContentRuleListStoreTest, VersionMismatch)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
@@ -165,10 +191,10 @@ TEST_F(WKContentRuleListStoreTest, VersionMismatch)
 
     TestWebKitAPI::Util::run(&doneCompiling);
 
-    [[WKContentRuleListStore defaultStore] _invalidateContentRuleListVersionForIdentifier:@"TestRuleList"];
+    [testRuleListStore() _invalidateContentRuleListVersionForIdentifier:@"TestRuleList"];
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
@@ -178,7 +204,7 @@ TEST_F(WKContentRuleListStoreTest, VersionMismatch)
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
-    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+    [testRuleListStore() _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NOT_NULL(source);
         EXPECT_NS_EQUAL(source, basicFilter);
 
@@ -191,7 +217,7 @@ TEST_F(WKContentRuleListStoreTest, VersionMismatch)
 TEST_F(WKContentRuleListStoreTest, CorruptHeaderEmpty)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
@@ -200,10 +226,10 @@ TEST_F(WKContentRuleListStoreTest, CorruptHeaderEmpty)
 
     TestWebKitAPI::Util::run(&doneCompiling);
 
-    [[WKContentRuleListStore defaultStore] _corruptContentRuleListHeaderForIdentifier:@"TestRuleList" usingCurrentVersion:NO];
+    [testRuleListStore() _corruptContentRuleListHeaderForIdentifier:@"TestRuleList" usingCurrentVersion:NO];
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
@@ -216,7 +242,7 @@ TEST_F(WKContentRuleListStoreTest, CorruptHeaderEmpty)
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
-    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+    [testRuleListStore() _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NULL(source);
 
         doneGettingSource = true;
@@ -228,7 +254,7 @@ TEST_F(WKContentRuleListStoreTest, CorruptHeaderEmpty)
 TEST_F(WKContentRuleListStoreTest, CorruptHeaderRandom)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error)
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error)
     {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -238,10 +264,10 @@ TEST_F(WKContentRuleListStoreTest, CorruptHeaderRandom)
 
     TestWebKitAPI::Util::run(&doneCompiling);
 
-    [[WKContentRuleListStore defaultStore] _corruptContentRuleListHeaderForIdentifier:@"TestRuleList" usingCurrentVersion:YES];
+    [testRuleListStore() _corruptContentRuleListHeaderForIdentifier:@"TestRuleList" usingCurrentVersion:YES];
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error)
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error)
     {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
@@ -255,7 +281,7 @@ TEST_F(WKContentRuleListStoreTest, CorruptHeaderRandom)
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
-    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+    [testRuleListStore() _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NULL(source);
 
         doneGettingSource = true;
@@ -268,7 +294,7 @@ TEST_F(WKContentRuleListStoreTest, CorruptURLFilter)
 {
     NSString* contentBlocker = @"[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]";
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"CorruptURLFilter" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"CorruptURLFilter" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *filter, NSError *error) {
 
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -276,10 +302,10 @@ TEST_F(WKContentRuleListStoreTest, CorruptURLFilter)
         doneCompiling = true;
     }];
     TestWebKitAPI::Util::run(&doneCompiling);
-    [[WKContentRuleListStore defaultStore] _corruptContentRuleListActionsMatchingEverythingForIdentifier:@"CorruptURLFilter"];
+    [testRuleListStore() _corruptContentRuleListActionsMatchingEverythingForIdentifier:@"CorruptURLFilter"];
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"CorruptURLFilter" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"CorruptURLFilter" completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
@@ -294,7 +320,7 @@ TEST_F(WKContentRuleListStoreTest, CorruptURLFilter)
 TEST_F(WKContentRuleListStoreTest, InvalidHeader)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
 
@@ -303,10 +329,10 @@ TEST_F(WKContentRuleListStoreTest, InvalidHeader)
 
     TestWebKitAPI::Util::run(&doneCompiling);
 
-    [[WKContentRuleListStore defaultStore] _invalidateContentRuleListHeaderForIdentifier:@"TestRuleList"];
+    [testRuleListStore() _invalidateContentRuleListHeaderForIdentifier:@"TestRuleList"];
 
     __block bool doneLookingUp = false;
-    [[WKContentRuleListStore defaultStore] lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() lookUpContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         checkDomain(error);
@@ -319,7 +345,7 @@ TEST_F(WKContentRuleListStoreTest, InvalidHeader)
     TestWebKitAPI::Util::run(&doneLookingUp);
 
     __block bool doneGettingSource = false;
-    [[WKContentRuleListStore defaultStore] _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
+    [testRuleListStore() _getContentRuleListSourceForIdentifier:@"TestRuleList" completionHandler:^(NSString* source) {
         EXPECT_NULL(source);
 
         doneGettingSource = true;
@@ -331,7 +357,7 @@ TEST_F(WKContentRuleListStoreTest, InvalidHeader)
 TEST_F(WKContentRuleListStoreTest, Removal)
 {
     __block bool doneCompiling = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
     
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
@@ -341,7 +367,7 @@ TEST_F(WKContentRuleListStoreTest, Removal)
     TestWebKitAPI::Util::run(&doneCompiling);
 
     __block bool doneRemoving = false;
-    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(NSError *error) {
+    [testRuleListStore() removeContentRuleListForIdentifier:@"TestRuleList" completionHandler:^(NSError *error) {
         EXPECT_NULL(error);
 
         doneRemoving = true;
@@ -406,7 +432,7 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
         if (blockCookies) {
             __block bool doneCompiling { false };
             NSString *json = @"[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"cookie-check\"}}]";
-            [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestBlockCookies" encodedContentRuleList:json completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
+            [testRuleListStore() compileContentRuleListForIdentifier:@"TestBlockCookies" encodedContentRuleList:json completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
                 EXPECT_FALSE(error);
                 [[viewConfiguration userContentController] addContentRuleList:compiledRuleList];
                 doneCompiling = true;
@@ -437,7 +463,7 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
 TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierRemove)
 {
     __block bool doneRemoving = false;
-    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(NSError *error) {
+    [testRuleListStore() removeContentRuleListForIdentifier:@"DoesNotExist" completionHandler:^(NSError *error) {
         EXPECT_NOT_NULL(error);
         checkDomain(error);
         EXPECT_EQ(error.code, WKErrorContentRuleListStoreRemoveFailed);
@@ -450,7 +476,7 @@ TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierRemove)
 
 TEST_F(WKContentRuleListStoreTest, NonDefaultStore)
 {
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    NSURL *tempDir = [testStoreURL() URLByAppendingPathComponent:@"NonDefaultStore" isDirectory:YES];
     WKContentRuleListStore *store = [WKContentRuleListStore storeWithURL:tempDir];
     NSString *identifier = @"TestRuleList";
     NSString *fileName = @"ContentRuleList-TestRuleList";
@@ -506,13 +532,13 @@ TEST_F(WKContentRuleListStoreTest, NonDefaultStore)
 TEST_F(WKContentRuleListStoreTest, MultipleRuleLists)
 {
     __block bool done = false;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"FirstRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"FirstRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NOT_NULL(filter);
         EXPECT_NULL(error);
-        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"SecondRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        [testRuleListStore() compileContentRuleListForIdentifier:@"SecondRuleList" encodedContentRuleList:basicFilter completionHandler:^(WKContentRuleList *filter, NSError *error) {
             EXPECT_NOT_NULL(filter);
             EXPECT_NULL(error);
-            [[WKContentRuleListStore defaultStore] getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
+            [testRuleListStore() getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
                 EXPECT_NOT_NULL(identifiers);
                 EXPECT_EQ(identifiers.count, 2u);
                 EXPECT_STREQ(identifiers[0].UTF8String, "FirstRuleList");
@@ -527,7 +553,7 @@ TEST_F(WKContentRuleListStoreTest, MultipleRuleLists)
 TEST_F(WKContentRuleListStoreTest, NonASCIISource)
 {
     static NSString *nonASCIIFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*webkit.org\"}, \"unused\":\"ðŸ’©\"}]";
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    NSURL *tempDir = [testStoreURL() URLByAppendingPathComponent:@"NonASCIISource" isDirectory:YES];
     WKContentRuleListStore *store = [WKContentRuleListStore storeWithURL:tempDir];
     NSString *identifier = @"TestRuleList";
     NSString *fileName = @"ContentRuleList-TestRuleList";
@@ -581,12 +607,12 @@ static bool contentExtensionReceivedAlert { false };
 
 TEST_F(WKContentRuleListStoreTest, AddRemove)
 {
-    [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
+    [testRuleListStore() _removeAllContentRuleLists];
 
     __block bool doneCompiling = false;
     NSString* contentBlocker = @"[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]";
     __block RetainPtr<WKContentRuleList> ruleList;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestAddRemove" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"TestAddRemove" encodedContentRuleList:contentBlocker completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
         EXPECT_TRUE(error == nil);
         ruleList = compiledRuleList;
         doneCompiling = true;
@@ -618,7 +644,7 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
 #if PLATFORM(IOS_FAMILY)
 TEST_F(WKContentRuleListStoreTest, UnsafeMMap)
 {
-    RetainPtr<NSString> tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"UnsafeMMapTest"];
+    RetainPtr<NSString> tempDir = [testStoreURL() URLByAppendingPathComponent:@"UnsafeMMapTest" isDirectory:YES].path;
     RetainPtr<WKContentRuleListStore> store = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:tempDir.get() isDirectory:YES]];
     static NSString *compiledIdentifier = @"CompiledRuleList";
     static NSString *copiedIdentifier = @"CopiedRuleList";
@@ -675,10 +701,10 @@ TEST_F(WKContentRuleListStoreTest, UnsafeMMap)
 static RetainPtr<WKContentRuleList> compileContentRuleList(const char* json, NSString *identifier = @"testidentifier")
 {
     if ([identifier isEqualToString:@"testidentifier"])
-        [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
+        [testRuleListStore() _removeAllContentRuleLists];
 
     __block RetainPtr<WKContentRuleList> list;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:identifier encodedContentRuleList:[NSString stringWithFormat:@"%s", json] completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(error);
         list = filter;
     }];
@@ -765,11 +791,11 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
     [[configuration userContentController] addContentRuleList:list.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urls;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urls.append(url.absoluteString);
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
@@ -851,11 +877,11 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereAppendWin
     [[configuration userContentController] addContentRuleList:list.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urls;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urls.append(url.absoluteString);
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
@@ -940,11 +966,11 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereSetWins)
     [[configuration userContentController] addContentRuleList:list.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urls;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urls.append(url.absoluteString);
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
@@ -1006,11 +1032,11 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithCompetingRulesWhereRemoveWin
     [[configuration userContentController] addContentRuleList:list.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urls;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urls.append(url.absoluteString);
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
@@ -1078,11 +1104,11 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeadersWithMultipleRuleLists)
     [[configuration userContentController] addContentRuleList:secondList.get()];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urls;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urls.append(url.absoluteString);
         EXPECT_TRUE(action.modifiedHeaders);
         receivedActionNotification = true;
@@ -1198,11 +1224,11 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testscheme"];
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"othertestscheme"];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
-    auto delegate = navigationDelegateAllowingActiveActionsOnTestHost().unsafeGet();
-    webView.get().navigationDelegate = delegate;
+    RetainPtr delegate = navigationDelegateAllowingActiveActionsOnTestHost();
+    webView.get().navigationDelegate = delegate.get();
     __block bool receivedActionNotification { false };
     __block Vector<String> urlsFromCallback;
-    delegate.contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+    delegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
         urlsFromCallback.append(url.absoluteString);
         EXPECT_TRUE(action.redirected);
         receivedActionNotification = true;
@@ -1444,7 +1470,7 @@ TEST_F(WKContentRuleListStoreTest, NonASCIIEscaped)
 {
     NSString *source = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"t,[{`\\\\\\\\\\\\20442=OvI6\",\"\":[\"\"]}}]";
     __block bool done { false };
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"test" encodedContentRuleList:source completionHandler:^(WKContentRuleList *filter, NSError *error) {
+    [testRuleListStore() compileContentRuleListForIdentifier:@"test" encodedContentRuleList:source completionHandler:^(WKContentRuleList *filter, NSError *error) {
         EXPECT_NULL(filter);
         EXPECT_NOT_NULL(error);
         done = true;
@@ -1479,7 +1505,7 @@ TEST_F(WKContentRuleListStoreTest, ConcurrentCompilationsSingleStore)
     static constexpr unsigned totalRequests = 30;
     __block unsigned finishedCount = 0;
     for (unsigned i = 0; i < totalRequests; ++i) {
-        [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"test" encodedContentRuleList:string.get() completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        [testRuleListStore() compileContentRuleListForIdentifier:@"test" encodedContentRuleList:string.get() completionHandler:^(WKContentRuleList *filter, NSError *error) {
             EXPECT_NOT_NULL(filter);
             EXPECT_NULL(error);
             ++finishedCount;
@@ -1494,7 +1520,7 @@ TEST_F(WKContentRuleListStoreTest, ConcurrentCompilationsMultipleStores)
     static constexpr unsigned totalRequests = 30;
 
     Vector<RetainPtr<WKContentRuleListStore>> stores;
-    RetainPtr tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTest"] isDirectory:YES];
+    RetainPtr tempDir = [testStoreURL() URLByAppendingPathComponent:@"MultipleStores" isDirectory:YES];
     for (unsigned i = 0; i < totalRequests; ++i)
         stores.append([WKContentRuleListStore storeWithURL:tempDir.get()]);
 

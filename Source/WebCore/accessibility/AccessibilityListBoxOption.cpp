@@ -199,7 +199,7 @@ String AccessibilityListBoxOption::stringValue() const
     return { };
 }
 
-Element* AccessibilityListBoxOption::actionElement() const
+RefPtr<Element> AccessibilityListBoxOption::actionElement() const
 {
     AX_ASSERT(is<HTMLElement>(m_node));
     return dynamicDowncast<Element>(m_node);

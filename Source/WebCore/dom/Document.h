@@ -3033,7 +3033,7 @@ inline bool Document::hasBrowsingContext() const
     return hasFrame();
 }
 
-Element* eventTargetElementForDocument(Document*);
+RefPtr<Element> eventTargetElementForDocument(Document*);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Document&);
 WTF::TextStream& operator<<(WTF::TextStream&, const Document::VisualUpdatesPreventedReason&);

@@ -812,9 +812,9 @@ inline RenderBox* RenderBox::previousSiblingBox() const
 
 inline RenderBox* RenderBox::previousInFlowSiblingBox() const
 {
-    for (CheckedPtr curr = previousSiblingBox(); curr; curr = curr->previousSiblingBox()) {
+    for (auto* curr = previousSiblingBox(); curr; curr = curr->previousSiblingBox()) {
         if (!curr->isFloatingOrOutOfFlowPositioned())
-            return curr.unsafeGet();
+            return curr;
     }
     return nullptr;
 }
@@ -830,9 +830,9 @@ inline RenderBox* RenderBox::nextSiblingBox() const
 
 inline RenderBox* RenderBox::nextInFlowSiblingBox() const
 {
-    for (CheckedPtr curr = nextSiblingBox(); curr; curr = curr->nextSiblingBox()) {
+    for (auto* curr = nextSiblingBox(); curr; curr = curr->nextSiblingBox()) {
         if (!curr->isFloatingOrOutOfFlowPositioned())
-            return curr.unsafeGet();
+            return curr;
     }
     return nullptr;
 }

@@ -94,7 +94,7 @@ private:
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 
-    WebCore::LocalFrame* frameForFoundTextRange(const WebFoundTextRange&) const;
+    RefPtr<WebCore::LocalFrame> frameForFoundTextRange(const WebFoundTextRange&) const;
     WebCore::Document* documentForFoundTextRange(const WebFoundTextRange&) const;
     std::optional<WebCore::SimpleRange> simpleRangeFromFoundTextRange(WebFoundTextRange);
 

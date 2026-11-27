@@ -194,7 +194,7 @@ public:
     // Table cell support.
     bool isTableCell() const override { return false; }
     bool isExposedTableCell() const override { return false; }
-    AXCoreObject* parentTableIfTableCell() const override { return nullptr; }
+    RefPtr<AXCoreObject> parentTableIfTableCell() const override { return nullptr; }
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
     // Returns the start location and column span of the cell.
@@ -208,9 +208,9 @@ public:
     unsigned columnIndex() const override { return 0; }
 
     // Table row support.
-    AccessibilityObject* parentTable() const override { return nullptr; }
+    RefPtr<AXCoreObject> parentTable() const override { return nullptr; }
     bool isTableRow() const override { return false; }
-    AXCoreObject* parentTableIfExposedTableRow() const override { return nullptr; };
+    RefPtr<AXCoreObject> parentTableIfExposedTableRow() const override { return nullptr; };
     bool isExposedTableRow() const override { return false; }
     unsigned rowIndex() const override { return 0; }
     bool ignoredByRowAncestor() const;
@@ -369,8 +369,8 @@ public:
     // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
     virtual RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const;
 
-    AccessibilityObject* focusedUIElement() const final;
-    AccessibilityObject* focusedUIElementInAnyLocalFrame() const final;
+    RefPtr<AXCoreObject> focusedUIElement() const final;
+    RefPtr<AXCoreObject> focusedUIElementInAnyLocalFrame() const final;
 
     virtual AccessibilityObject* firstChild() const { return nullptr; }
     virtual AccessibilityObject* previousSibling() const { return nullptr; }
@@ -395,7 +395,7 @@ public:
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;
     Vector<String> performTextOperation(const AccessibilityTextOperation&) final;
 
-    virtual AccessibilityObject* observableObject() const { return nullptr; }
+    virtual RefPtr<AccessibilityObject> observableObject() const { return nullptr; }
     virtual AccessibilityObject* controlForLabelElement() const { return nullptr; }
     AccessibilityObject* scrollBar(AccessibilityOrientation) override { return nullptr; }
     AccessibilityObject* internalLinkElement() const override { return nullptr; }
@@ -511,10 +511,10 @@ public:
 
     static AccessibilityObject* anchorElementForNode(Node&);
     static AccessibilityObject* headingElementForNode(Node*);
-    virtual Element* anchorElement() const { return nullptr; }
+    virtual RefPtr<Element> anchorElement() const { return nullptr; }
     virtual RefPtr<Element> popoverTargetElement() const { return nullptr; }
     virtual RefPtr<Element> commandForElement() const { return nullptr; }
-    Element* actionElement() const override { return nullptr; }
+    RefPtr<Element> actionElement() const override { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return { }; }
     LayoutRect elementRect() const override = 0;
 #if PLATFORM(COCOA)

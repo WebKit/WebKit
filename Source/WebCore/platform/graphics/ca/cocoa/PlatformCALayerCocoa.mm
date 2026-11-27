@@ -475,7 +475,12 @@ void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 
 PlatformCALayer* PlatformCALayerCocoa::superlayer() const
 {
-    return platformCALayerForLayer((__bridge void*)[m_layer superlayer]).unsafeGet();
+    void* superlayer = (__bridge void*)[m_layer superlayer];
+    if (!superlayer)
+        return nullptr;
+
+    Locker locker { layerToPlatformLayerMapLock };
+    return layerToPlatformLayerMap().get(superlayer);
 }
 
 void PlatformCALayerCocoa::removeFromSuperlayer()

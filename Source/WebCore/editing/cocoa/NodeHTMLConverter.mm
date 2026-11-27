@@ -163,7 +163,7 @@ public:
     RefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
     RefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
-    Node* cacheAncestorsOfStartToBeConverted(const Position&, const Position&);
+    RefPtr<Node> cacheAncestorsOfStartToBeConverted(const Position&, const Position&);
     NODELETE bool isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
@@ -2694,7 +2694,7 @@ void HTMLConverter::_adjustTrailingNewline()
         [_attrStr replaceCharactersInRange:NSMakeRange(textLength, 0) withString:@"\n"];
 }
 
-Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
+RefPtr<Node> HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
 {
     RefPtr commonAncestor = commonInclusiveAncestor(start, end);
     RefPtr ancestor = start.containerNode();
@@ -2706,7 +2706,7 @@ Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& st
         ancestor = ancestor->parentInComposedTree();
     }
 
-    return commonAncestor.unsafeGet();
+    return commonAncestor;
 }
 
 namespace WebCore {

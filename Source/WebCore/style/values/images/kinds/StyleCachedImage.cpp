@@ -137,14 +137,14 @@ RefPtr<SVGSVGElement> CachedImage::svgImageRootElement(const RenderElement& rend
     return image->rootElement(descriptorForRenderer(renderer, ImageDrawDescriptor { DefaultSizing { }.resolve(image->naturalDimensions()) }));
 }
 
-LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, const AtomString& fragment) const
+CheckedPtr<LegacyRenderSVGResourceContainer> CachedImage::uncheckedRenderSVGResource(TreeScope& treeScope, const AtomString& fragment) const
 {
     CheckedPtr renderSVGResource = ReferencedSVGResources::referencedRenderResource(treeScope, fragment);
     m_isRenderSVGResource = !!renderSVGResource;
-    return renderSVGResource.unsafeGet();
+    return renderSVGResource;
 }
 
-LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const RenderElement* renderer) const
+CheckedPtr<LegacyRenderSVGResourceContainer> CachedImage::uncheckedRenderSVGResource(const RenderElement* renderer) const
 {
     if (!renderer)
         return nullptr;
@@ -166,7 +166,7 @@ LegacyRenderSVGResourceContainer* CachedImage::uncheckedRenderSVGResource(const 
     return uncheckedRenderSVGResource(protect(rootElement->treeScopeForSVGReferences()), m_url.resolved.fragmentIdentifier().toAtomString());
 }
 
-LegacyRenderSVGResourceContainer* CachedImage::legacyRenderSVGResource(const RenderElement* renderer) const
+CheckedPtr<LegacyRenderSVGResourceContainer> CachedImage::legacyRenderSVGResource(const RenderElement* renderer) const
 {
     if (m_isRenderSVGResource && !*m_isRenderSVGResource)
         return nullptr;
@@ -341,7 +341,8 @@ CachedImage::ReferencedSVGResource CachedImage::referencedSVGResource(const Rend
     if (CheckedPtr resource = renderSVGResource(&renderer))
         return { resource.get(), nullptr };
 
-    return { nullptr, legacyRenderSVGResource(&renderer) };
+    CheckedPtr legacyResource = legacyRenderSVGResource(&renderer);
+    return { nullptr, legacyResource.get() };
 }
 
 ImageDrawResult CachedImage::drawSVGResource(GraphicsContext& context, const ReferencedSVGResource& referenced, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source) const

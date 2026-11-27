@@ -758,8 +758,13 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, NOESCAPE co
     if (!cache)
         return nullptr;
 
-    RefPtr accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
-    while (accessibleObject && !isAccessible(*accessibleObject)) {
+    while (true) {
+        RefPtr accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
+        if (!accessibleObject)
+            return nullptr;
+        if (isAccessible(*accessibleObject))
+            return cache->get(const_cast<Node&>(*axNode));
+
         axNode = NodeTraversal::next(*axNode);
 
         while (axNode && !axNode->renderer())
@@ -767,11 +772,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node* node, NOESCAPE co
 
         if (!axNode)
             return nullptr;
-
-        accessibleObject = cache->getOrCreate(const_cast<Node&>(*axNode));
     }
-
-    return accessibleObject.unsafeGet();
 }
 
 // FIXME: Usages of this function should be replaced by a new flag in AccessibilityObject::m_ancestorFlags.
@@ -2546,7 +2547,7 @@ String AccessibilityObject::readOnlyValue() const
     if (!hasReadOnlyAttribute && isTableCell()) {
         // ARIA 1.1 requires user agents to propagate the grid's aria-readonly value to all
         // gridcell elements if the property is not present on the gridcell element itself.
-        if (RefPtr parent = parentTable())
+        if (RefPtr parent = dynamicDowncast<AccessibilityObject>(parentTable()))
             return parent->readOnlyValue();
     }
 
@@ -3772,13 +3773,13 @@ RefPtr<AccessibilityObject> AccessibilityObject::elementAccessibilityHitTest(con
     return const_cast<AccessibilityObject*>(this);
 }
 
-AccessibilityObject* AccessibilityObject::focusedUIElement() const
+RefPtr<AXCoreObject> AccessibilityObject::focusedUIElement() const
 {
     CheckedPtr cache = axObjectCache();
     return cache ? cache->focusedObjectForLocalFrame() : nullptr;
 }
 
-AccessibilityObject* AccessibilityObject::focusedUIElementInAnyLocalFrame() const
+RefPtr<AXCoreObject> AccessibilityObject::focusedUIElementInAnyLocalFrame() const
 {
     RefPtr page = this->page();
     if (!page)

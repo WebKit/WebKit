@@ -283,8 +283,8 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     // FIXME: This compiler directive can be removed after https://bugs.webkit.org/show_bug.cgi?id=282117 is fixed.
     RefPtr node = this->node();
     if (RefPtr parentNode = composedParentIgnoringDocumentFragments(node.get())) {
-        if (RefPtr parent = cache->getOrCreate(*parentNode))
-            return parent.unsafeGet();
+        if (auto* parent = cache->getOrCreate(*parentNode))
+            return parent;
     }
 
     if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(m_renderer.get()); renderElement && renderElement->isBeforeOrAfterContent()) {
@@ -292,8 +292,8 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         // and ::after as children, so we must match that here by making sure ::before and ::after regard the
         // generating element as their parent rather than their "natural" render tree parent. This avoids
         // a parent-child mismatch which can cause issues for ATs.
-        if (RefPtr parent = cache->getOrCreate(protect(renderElement->generatingElement())))
-            return parent.unsafeGet();
+        if (auto* parent = cache->getOrCreate(protect(renderElement->generatingElement())))
+            return parent;
     }
 #endif // !USE(ATSPI)
 
@@ -301,7 +301,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     if (m_renderer->isListMarkerBox()) {
         if (CheckedPtr listItem = RenderListItem::listItemForMarker(protect(*m_renderer))) {
             if (RefPtr parent = cache->getOrCreate(*listItem); parent && parent->isListItem())
-                return parent.unsafeGet();
+                return cache->get(*listItem);
         }
     }
 
@@ -361,7 +361,7 @@ bool AccessibilityRenderObject::isOffScreen() const
     return viewRect.isEmpty();
 }
 
-Element* AccessibilityRenderObject::anchorElement() const
+RefPtr<Element> AccessibilityRenderObject::anchorElement() const
 {
     if (!m_renderer)
         return AccessibilityNodeObject::anchorElement();
@@ -382,12 +382,12 @@ Element* AccessibilityRenderObject::anchorElement() const
     // Search up the DOM tree for an anchor element.
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement.
     for (RefPtr node = currentRenderer->node(); node; node = node->parentNode()) {
-        if (auto* anchor = dynamicDowncast<HTMLAnchorElement>(node.get()))
+        if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node))
             return anchor;
 
         RefPtr object = cache ? cache->getOrCreate(*node) : nullptr;
         if (object && object->isLink())
-            return dynamicDowncast<Element>(node.unsafeGet());
+            return dynamicDowncast<Element>(WTF::move(node));
     }
 
     return nullptr;
@@ -2326,7 +2326,7 @@ RefPtr<AccessibilityObject> AccessibilityRenderObject::elementAccessibilityHitTe
             }
 
             if (listBoxOption && !listBoxOption->isIgnored())
-                return listBoxOption.unsafeGet();
+                return listBoxOption;
 
             CheckedPtr cache = axObjectCache();
             return cache ? cache->getOrCreate(*renderListBox) : nullptr;
@@ -2417,11 +2417,11 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
     return contentEditableAttributeIsEnabled(*element) || hasRole(*element, "textbox"_s);
 }
 
-AccessibilityObject* AccessibilityRenderObject::observableObject() const
+RefPtr<AccessibilityObject> AccessibilityRenderObject::observableObject() const
 {
     // This allows the table to be the one who sends notifications about tables.
     if (RefPtr parentTable = parentTableIfExposedTableRow())
-        return dynamicDowncast<AccessibilityObject>(parentTable.unsafeGet());
+        return dynamicDowncast<AccessibilityObject>(WTF::move(parentTable));
 
     // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
     for (CheckedPtr renderer = this->renderer(); renderer && renderer->node(); renderer = renderer->parent()) {
@@ -2746,7 +2746,7 @@ void AccessibilityRenderObject::addTextFieldChildren()
 
 bool AccessibilityRenderObject::isSVGImage() const
 {
-    return remoteSVGRootElement(CreateIfNecessary::Yes);
+    return !!remoteSVGRootElement(CreateIfNecessary::Yes);
 }
 
 void AccessibilityRenderObject::detachRemoteSVGRoot()
@@ -2755,7 +2755,7 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
         root->setParent(nullptr);
 }
 
-AccessibilitySVGObject* AccessibilityRenderObject::remoteSVGRootElement(CreateIfNecessary createIfNecessary) const
+RefPtr<AccessibilitySVGObject> AccessibilityRenderObject::remoteSVGRootElement(CreateIfNecessary createIfNecessary) const
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
     if (!renderImage)
@@ -2793,7 +2793,7 @@ AccessibilitySVGObject* AccessibilityRenderObject::remoteSVGRootElement(CreateIf
 
     RefPtr rootSVGObject = createIfNecessary == CreateIfNecessary::Yes ? cache->getOrCreate(*rendererRoot) : cache->get(rendererRoot.get());
     AX_ASSERT(createIfNecessary == CreateIfNecessary::No || rootSVGObject);
-    return dynamicDowncast<AccessibilitySVGObject>(rootSVGObject.unsafeGet());
+    return dynamicDowncast<AccessibilitySVGObject>(WTF::move(rootSVGObject));
 }
 
 void AccessibilityRenderObject::addRemoteSVGChildren()

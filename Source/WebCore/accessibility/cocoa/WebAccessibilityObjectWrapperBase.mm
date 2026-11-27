@@ -623,15 +623,12 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 - (WebCore::AXCoreObject*)baseUpdateBackingStore
 {
 #if PLATFORM(MAC)
-    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
-    if (!backingObject)
-        return nullptr;
+    return self.updateObjectBackingStore;
 #else
     if (![self _prepareAccessibilityCall])
         return nullptr;
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    return self.axBackingObject;
 #endif
-    return backingObject.unsafeGet();
 }
 
 - (NSArray<NSDictionary *> *)lineRectsAndText
@@ -1011,7 +1008,7 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
             criteria.startRange = *nsRange;
 
         if (!criteria.startObject)
-            criteria.startObject = markerRange.start().object().unsafeGet();
+            criteria.startObject = markerRange.start().object();
     }
 #endif
 

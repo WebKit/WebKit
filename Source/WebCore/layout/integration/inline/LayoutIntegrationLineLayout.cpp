@@ -313,13 +313,13 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
                 return parent->inlineLayout();
             return { };
         }
-        auto adjustedContainingBlock = [&]() -> RenderBlockFlow* {
+        auto adjustedContainingBlock = [&] -> CheckedPtr<RenderBlockFlow> {
             if (renderer.isOutOfFlowPositioned()) {
                 // Here we are looking for the containing block as if the out-of-flow box was inflow (for static position purpose).
                 CheckedPtr containingBlock = renderer.parent();
                 if (containingBlock && containingBlock->isInlineBox())
                     containingBlock = containingBlock->containingBlock();
-                return dynamicDowncast<RenderBlockFlow>(containingBlock.unsafeGet());
+                return dynamicDowncast<RenderBlockFlow>(WTF::move(containingBlock));
             }
             if (renderer.isFloating()) {
                 // Note that containigBlock() on boxes in top layer (i.e. dialog) may return incorrect result during style change even with not-yet-updated style.

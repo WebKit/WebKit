@@ -599,7 +599,7 @@ public:
 
     // Table cell support.
     virtual bool isTableCell() const = 0;
-    virtual AXCoreObject* parentTableIfTableCell() const = 0;
+    virtual RefPtr<AXCoreObject> parentTableIfTableCell() const = 0;
     virtual bool isExposedTableCell() const = 0;
     virtual bool isColumnHeader() const { return false; }
     virtual bool isRowHeader() const { return false; }
@@ -621,9 +621,9 @@ public:
     AXCoreObject* columnHeader();
 
     // Table row support.
-    virtual AXCoreObject* parentTable() const = 0;
+    virtual RefPtr<AXCoreObject> parentTable() const = 0;
     virtual bool isTableRow() const = 0;
-    virtual AXCoreObject* parentTableIfExposedTableRow() const = 0;
+    virtual RefPtr<AXCoreObject> parentTableIfExposedTableRow() const = 0;
     virtual bool isExposedTableRow() const = 0;
     virtual unsigned rowIndex() const = 0;
     RefPtr<AXCoreObject> rowHeader();
@@ -870,8 +870,8 @@ public:
     // Called on the root AX object to return the deepest available element.
     virtual RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const = 0;
 
-    virtual AXCoreObject* focusedUIElement() const = 0;
-    virtual AXCoreObject* focusedUIElementInAnyLocalFrame() const = 0;
+    virtual RefPtr<AXCoreObject> focusedUIElement() const = 0;
+    virtual RefPtr<AXCoreObject> focusedUIElementInAnyLocalFrame() const = 0;
 
 #if PLATFORM(COCOA)
     virtual RetainPtr<RemoteAXObjectRef> remoteParent() const = 0;
@@ -923,7 +923,7 @@ public:
     // Finds objects within |this| object matching the given search criteria.
     virtual AccessibilityChildrenVector findMatchingObjectsWithin(AccessibilitySearchCriteria&&);
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
-    AXCoreObject* selfOrFirstTextDescendant();
+    RefPtr<AXCoreObject> selfOrFirstTextDescendant();
 
     virtual bool isInDescriptionListTerm() const = 0;
 
@@ -1042,7 +1042,7 @@ public:
     virtual String subrolePlatformString() const = 0;
 
     bool supportsPressAction() const;
-    virtual Element* actionElement() const = 0;
+    virtual RefPtr<Element> actionElement() const = 0;
 
     // Rect relative to root document origin (i.e. absolute coordinates), disregarding viewport state.
     // This does not change when the viewport does (i.e via scrolling).
@@ -1448,10 +1448,10 @@ public:
     // style of pointer-events:none.
     virtual bool hasPointerEventsNone() const = 0;
     AXCoreObject* clickableSelfOrNonInteractiveAncestor();
-    AXCoreObject* clickableSelfOrAncestor(ClickHandlerFilter = ClickHandlerFilter::ExcludeBody) const;
+    RefPtr<AXCoreObject> clickableSelfOrAncestor(ClickHandlerFilter = ClickHandlerFilter::ExcludeBody) const;
     AXCoreObject* focusableAncestor() const;
     AXCoreObject* editableAncestor() const;
-    AXCoreObject* highestEditableAncestor() const;
+    RefPtr<AXCoreObject> highestEditableAncestor() const;
     AXCoreObject* exposedTableAncestor(bool includeSelf = false) const;
     AXCoreObject* detailsAncestor() const;
 
@@ -1711,18 +1711,24 @@ constexpr unsigned maxDescendantTraversalIterations = 100000;
 template<typename T, typename MatchFunctionT, typename StopFunctionT>
 T* crossFrameFindAncestor(const T& object, bool includeSelf, NOESCAPE const MatchFunctionT& matches, NOESCAPE const StopFunctionT& shouldStop)
 {
-    RefPtr<T> current;
-    if (includeSelf)
-        current = const_cast<T*>(&object);
-    else
-        current = object.parentObjectIncludingCrossFrame();
+    if (includeSelf) {
+        if (shouldStop(const_cast<T&>(object)))
+            return nullptr;
+        if (matches(const_cast<T&>(object)))
+            return const_cast<T*>(&object);
+    }
 
-    for (; current; current = current->parentObjectIncludingCrossFrame()) {
+    // Keep both the current ancestor and its child alive while running the callbacks, then
+    // return the match by fetching it again from its child.
+    RefPtr<const T> child = &object;
+    for (RefPtr<T> current = object.parentObjectIncludingCrossFrame(); current; current = current->parentObjectIncludingCrossFrame()) {
         if (shouldStop(*current))
             return nullptr;
 
         if (matches(*current))
-            return current.unsafeGet();
+            return child->parentObjectIncludingCrossFrame();
+
+        child = current;
     }
     return nullptr;
 }
@@ -1730,18 +1736,24 @@ T* crossFrameFindAncestor(const T& object, bool includeSelf, NOESCAPE const Matc
 template<typename T, typename MatchFunctionT, typename StopFunctionT>
 T* findAncestor(const T& object, bool includeSelf, NOESCAPE const MatchFunctionT& matches, NOESCAPE const StopFunctionT& shouldStop)
 {
-    RefPtr<T> current;
-    if (includeSelf)
-        current = const_cast<T*>(&object);
-    else
-        current = object.parentObject();
+    if (includeSelf) {
+        if (shouldStop(const_cast<T&>(object)))
+            return nullptr;
+        if (matches(const_cast<T&>(object)))
+            return const_cast<T*>(&object);
+    }
 
-    for (; current; current = current->parentObject()) {
+    // Keep both the current ancestor and its child alive while running the callbacks, then
+    // return the match by fetching it again from its child.
+    RefPtr<const T> child = &object;
+    for (RefPtr<T> current = object.parentObject(); current; current = current->parentObject()) {
         if (shouldStop(*current))
             return nullptr;
 
         if (matches(*current))
-            return current.unsafeGet();
+            return child->parentObject();
+
+        child = current;
     }
     return nullptr;
 }
@@ -1763,7 +1775,7 @@ T* crossFrameFindAncestor(const T& object, bool includeSelf, NOESCAPE const Matc
 }
 
 template<typename T, typename F>
-T* clickableSelfOrAncestor(const T& startObject, NOESCAPE const F& shouldStop)
+RefPtr<T> clickableSelfOrAncestor(const T& startObject, NOESCAPE const F& shouldStop)
 {
     RefPtr<T> ancestor = findAncestor<T>(startObject, true, [](const auto& ancestor) {
         return ancestor.hasClickHandler();
@@ -1772,11 +1784,11 @@ T* clickableSelfOrAncestor(const T& startObject, NOESCAPE const F& shouldStop)
     // Presentational objects should not be allowed to be clicked.
     if (ancestor && ancestor->role() == AccessibilityRole::Presentational)
         return nullptr;
-    return ancestor.unsafeGet();
+    return ancestor;
 }
 
 template<typename T>
-T* findRelatedObjectInAncestry(const T& object, AXRelation relation, const T& descendant)
+RefPtr<T> findRelatedObjectInAncestry(const T& object, AXRelation relation, const T& descendant)
 {
     auto relatedObjects = object.relatedObjects(relation);
     for (const auto& relatedObject : relatedObjects) {
@@ -1784,13 +1796,13 @@ T* findRelatedObjectInAncestry(const T& object, AXRelation relation, const T& de
             return relatedObject.get() == &ancestor;
         });
         if (ancestor)
-            return ancestor.unsafeGet();
+            return ancestor;
     }
     return nullptr;
 }
 
 template<typename T, typename F>
-AXCoreObject* findUnignoredDescendant(T& object, bool includeSelf, NOESCAPE const F& matches)
+RefPtr<AXCoreObject> findUnignoredDescendant(T& object, bool includeSelf, NOESCAPE const F& matches)
 {
     if (includeSelf && matches(object) && !object.isIgnored())
         return &object;
@@ -1824,7 +1836,7 @@ AXCoreObject* findUnignoredDescendant(T& object, bool includeSelf, NOESCAPE cons
         for (const auto& child : current->childrenIncludingIgnored())
             stack.append(child);
     }
-    return result.unsafeGet();
+    return result;
 }
 
 template<typename T, typename F>
@@ -2120,7 +2132,7 @@ inline AXCoreObject* AXCoreObject::editableAncestor() const
     });
 }
 
-inline AXCoreObject* AXCoreObject::highestEditableAncestor() const
+inline RefPtr<AXCoreObject> AXCoreObject::highestEditableAncestor() const
 {
     RefPtr editableAncestor = this->editableAncestor();
     RefPtr<AXCoreObject> previousEditableAncestor;
@@ -2135,7 +2147,7 @@ inline AXCoreObject* AXCoreObject::highestEditableAncestor() const
         previousEditableAncestor = editableAncestor;
         editableAncestor = editableAncestor->editableAncestor();
     }
-    return previousEditableAncestor.unsafeGet();
+    return previousEditableAncestor;
 }
 
 inline AXCoreObject* AXCoreObject::focusableAncestor() const
@@ -2145,7 +2157,7 @@ inline AXCoreObject* AXCoreObject::focusableAncestor() const
     });
 }
 
-inline AXCoreObject* AXCoreObject::clickableSelfOrAncestor(ClickHandlerFilter filter) const
+inline RefPtr<AXCoreObject> AXCoreObject::clickableSelfOrAncestor(ClickHandlerFilter filter) const
 {
     if (filter == ClickHandlerFilter::IncludeBody) {
         return Accessibility::clickableSelfOrAncestor(*this, [] (const AXCoreObject&) {

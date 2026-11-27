@@ -570,8 +570,8 @@ public:
     static bool shouldSpellCheck() { return true; }
 #endif
 
-    WEBCORE_EXPORT AccessibilityObject* focusedObjectForPage(const Page*);
-    WEBCORE_EXPORT AccessibilityObject* focusedObjectForLocalFrame();
+    WEBCORE_EXPORT RefPtr<AccessibilityObject> focusedObjectForPage(const Page*);
+    WEBCORE_EXPORT RefPtr<AccessibilityObject> focusedObjectForLocalFrame();
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
@@ -598,7 +598,7 @@ public:
     static bool shouldServeInitialCachedFrame();
 #endif
 
-    const Element* rootAXEditableElement(const Node*);
+    RefPtr<Element> rootAXEditableElement(const Node*);
     bool elementIsTextControl(const Element&);
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
@@ -931,7 +931,7 @@ private:
     AccessibilityObject* getIncludingAncestors(RenderObject&) const;
 
     // The AX focus is more finegrained than the notion of focused Node. This method handles those cases where the focused AX object is a descendant or a sub-part of the focused Node.
-    AccessibilityObject* focusedObjectForNode(Node*);
+    RefPtr<AccessibilityObject> focusedObjectForNode(Node*);
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement&);
 
     void notificationPostTimerFired();

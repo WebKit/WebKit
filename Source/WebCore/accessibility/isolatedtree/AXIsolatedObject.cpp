@@ -2329,7 +2329,7 @@ bool AXIsolatedObject::isFrameGeometryInitialized() const
 
 #endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
-AXIsolatedObject* AXIsolatedObject::focusedUIElementInAnyLocalFrame() const
+RefPtr<AXCoreObject> AXIsolatedObject::focusedUIElementInAnyLocalFrame() const
 {
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     // Each frame's isolated tree tracks focus independently in its own focusedNodeID. Follow the
@@ -2338,22 +2338,17 @@ AXIsolatedObject* AXIsolatedObject::focusedUIElementInAnyLocalFrame() const
     // inside that child frame, so descend into the child tree's focused node. Returning the deepest
     // focused node yields the actual focused element (e.g. a text field inside an iframe). This
     // mirrors the cross-frame walk in AccessibilityObject::focusedUIElementInAnyLocalFrame().
-    RefPtr<AXIsolatedTree> focusTree = &tree();
-    RefPtr focus = focusTree->focusedNode();
+    RefPtr focus = tree().focusedNode();
     while (focus) {
         RefPtr crossFrameChild = focus->crossFrameChildObject();
         if (!crossFrameChild)
             break;
-        RefPtr childTree = &crossFrameChild->tree();
-        RefPtr childFocus = childTree->focusedNode();
+        RefPtr childFocus = protect(crossFrameChild->tree())->focusedNode();
         if (!childFocus)
             break;
-        focusTree = WTF::move(childTree);
         focus = WTF::move(childFocus);
     }
-    // focusTree now holds the deepest focused node; return it via objectForID (a raw, non-lifetime-bound
-    // accessor, as parentObject() uses) so we neither leak an uncounted raw pointer nor need unsafeGet().
-    return focusTree->objectForID(focusTree->focusedNodeID());
+    return focus;
 #else
     return tree().objectForID(tree().focusedNodeID());
 #endif
@@ -2400,13 +2395,13 @@ bool AXIsolatedObject::isTableCell() const
     return false;
 }
 
-AXCoreObject* AXIsolatedObject::parentTableIfTableCell() const
+RefPtr<AXCoreObject> AXIsolatedObject::parentTableIfTableCell() const
 {
     AX_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-AXCoreObject* AXIsolatedObject::parentTable() const
+RefPtr<AXCoreObject> AXIsolatedObject::parentTable() const
 {
     AX_ASSERT_NOT_REACHED();
     return nullptr;
@@ -2418,7 +2413,7 @@ bool AXIsolatedObject::isTableRow() const
     return false;
 }
 
-AXCoreObject* AXIsolatedObject::parentTableIfExposedTableRow() const
+RefPtr<AXCoreObject> AXIsolatedObject::parentTableIfExposedTableRow() const
 {
     AX_ASSERT_NOT_REACHED();
     return nullptr;
@@ -2507,7 +2502,7 @@ AXObjectCache* AXIsolatedObject::axObjectCache() const
     return tree().axObjectCache();
 }
 
-Element* AXIsolatedObject::actionElement() const
+RefPtr<Element> AXIsolatedObject::actionElement() const
 {
     AX_ASSERT_NOT_REACHED();
     return nullptr;
@@ -2522,7 +2517,15 @@ Widget* AXIsolatedObject::widget() const
 PlatformWidget AXIsolatedObject::platformWidget() const
 {
 #if PLATFORM(COCOA)
-    return propertyValue<RetainPtr<NSView>>(AXProperty::PlatformWidget).unsafeGet();
+    size_t index = indexOfProperty(AXProperty::PlatformWidget);
+    if (index == notFound)
+        return nil;
+
+    // Return the view held in the property storage directly rather than a copy of the RetainPtr.
+    return WTF::switchOn(m_properties[index].second,
+        [](const RetainPtr<NSView>& typedValue) -> NSView * { return typedValue.get(); },
+        [](auto&) -> NSView * { return nil; }
+    );
 #else
     return m_platformWidget;
 #endif

@@ -55,7 +55,7 @@ HTMLOptionElement* AccessibilityMenuListOption::optionElement() const
     return downcast<HTMLOptionElement>(node());
 }
 
-Element* AccessibilityMenuListOption::actionElement() const
+RefPtr<Element> AccessibilityMenuListOption::actionElement() const
 {
     return downcast<Element>(node());
 }

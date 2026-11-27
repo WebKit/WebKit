@@ -394,7 +394,7 @@ public:
     };
 
     typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject&);
-    RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
+    CheckedPtr<RenderObject> traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
 
     NODELETE WEBCORE_EXPORT RenderLayer* enclosingLayer() const;
 
@@ -1460,18 +1460,18 @@ inline RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScop
 
 inline RenderObject* RenderObject::previousInFlowSibling() const
 {
-    CheckedPtr previousSibling = this->previousSibling();
+    auto* previousSibling = this->previousSibling();
     while (previousSibling && !previousSibling->isInFlow())
         previousSibling = previousSibling->previousSibling();
-    return previousSibling.unsafeGet();
+    return previousSibling;
 }
 
 inline RenderObject* RenderObject::nextInFlowSibling() const
 {
-    CheckedPtr nextSibling = this->nextSibling();
+    auto* nextSibling = this->nextSibling();
     while (nextSibling && !nextSibling->isInFlow())
         nextSibling = nextSibling->nextSibling();
-    return nextSibling.unsafeGet();
+    return nextSibling;
 }
 
 #if ENABLE(MATHML)

@@ -93,7 +93,7 @@ public:
     AccessibilityObject* previousSibling() const final;
     AccessibilityObject* nextSibling() const final;
     AccessibilityObject* parentObject() const override;
-    AccessibilityObject* observableObject() const override;
+    RefPtr<AccessibilityObject> observableObject() const override;
     RefPtr<AXCoreObject> titleUIElement() const final;
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
@@ -104,7 +104,7 @@ public:
     // Should be called on the root accessibility object to kick off a hit test.
     RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const final;
 
-    Element* anchorElement() const final;
+    RefPtr<Element> anchorElement() const final;
 
     LayoutRect boundingBoxRect() const final;
 
@@ -204,7 +204,7 @@ private:
     bool isSVGImage() const;
     void detachRemoteSVGRoot();
     enum class CreateIfNecessary : bool { No, Yes };
-    AccessibilitySVGObject* remoteSVGRootElement(CreateIfNecessary) const;
+    RefPtr<AccessibilitySVGObject> remoteSVGRootElement(CreateIfNecessary) const;
     RefPtr<AccessibilityObject> remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
 

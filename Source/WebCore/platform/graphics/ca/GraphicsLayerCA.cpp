@@ -4309,20 +4309,21 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const Gr
         propertyAnim->setTimingFunction(anim->timingFunction().get());
 }
 
-const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const GraphicsLayerAnimationValue& animValue, const GraphicsLayerAnimation& anim, bool keyframesShouldUseAnimationWideTimingFunction)
+Ref<const TimingFunction> GraphicsLayerCA::timingFunctionForAnimationValue(const GraphicsLayerAnimationValue& animValue, const GraphicsLayerAnimation& anim, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    if (keyframesShouldUseAnimationWideTimingFunction && anim.timingFunction()) {
+    if (keyframesShouldUseAnimationWideTimingFunction) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215918
         // A CSS Transition is the only scenario where Animation::property() will have
         // its mode set to SingleProperty. In this case, we chose not to set set the
         // animation-wide timing function, so we set it on the single keyframe interval
         // to work around a Core Animation limitation.
-        return *anim.timingFunction().unsafeGet();
+        if (RefPtr timingFunction = anim.timingFunction())
+            return timingFunction.releaseNonNull();
     }
-    if (animValue.timingFunction())
-        return *animValue.timingFunction();
-    if (anim.defaultTimingFunctionForKeyframes())
-        return *anim.defaultTimingFunctionForKeyframes().unsafeGet();
+    if (auto* timingFunction = animValue.timingFunction())
+        return *timingFunction;
+    if (RefPtr timingFunction = anim.defaultTimingFunctionForKeyframes())
+        return timingFunction.releaseNonNull();
     return LinearTimingFunction::identity();
 }
 
@@ -4372,7 +4373,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const GraphicsLayerKeyframeValueList
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(Ref { timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction) });
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
 
     keyframeAnim->setKeyTimes(keyTimes);
@@ -4482,7 +4483,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const GraphicsLayerKeyframe
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(Ref { timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction) });
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
@@ -4562,7 +4563,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const GraphicsLayerKeyframeVal
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(Ref { timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction) });
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);

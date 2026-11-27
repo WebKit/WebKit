@@ -154,7 +154,7 @@ bool hasAccNameAttribute(Element& element)
     return false;
 }
 
-RenderImage* toSimpleImage(RenderObject& renderer)
+CheckedPtr<RenderImage> toSimpleImage(RenderObject& renderer)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
     if (!renderImage)
@@ -178,7 +178,7 @@ RenderImage* toSimpleImage(RenderObject& renderer)
         return nullptr;
 #endif // ENABLE(VIDEO)
 
-    return renderImage.unsafeGet();
+    return renderImage;
 }
 
 // FIXME: This probably belongs on Element.

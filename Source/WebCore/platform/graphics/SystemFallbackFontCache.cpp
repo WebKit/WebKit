@@ -56,6 +56,8 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(cons
     auto fontAddResult = m_characterFallbackMaps.add(font, CharacterFallbackMap());
 
     auto key = CharacterFallbackMapKey { description.usedLocale(), characterCluster.toString(), isForPlatformFont != IsForPlatformFont::No, resolvedEmojiPolicy };
+    // Keeps a newly created fallback font alive until it is returned, since the map only holds raw pointers.
+    RefPtr<Font> fallbackFont;
     return fontAddResult.iterator->value.ensure(WTF::move(key), [&] {
         StringBuilder stringBuilder;
         stringBuilder.append(FontCascade::normalizeSpaces(characterCluster));
@@ -77,10 +79,10 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacterCluster(cons
             break;
         }
 
-        RefPtr fallbackFont = protect(FontCache::forCurrentThread())->systemFallbackForCharacterCluster(description, *font, isForPlatformFont, FontCache::PreferColoredFont::No, stringBuilder);
+        fallbackFont = protect(FontCache::forCurrentThread())->systemFallbackForCharacterCluster(description, *font, isForPlatformFont, FontCache::PreferColoredFont::No, stringBuilder);
         if (fallbackFont)
             fallbackFont->setIsUsedInSystemFallbackFontCache();
-        return fallbackFont.unsafeGet();
+        return fallbackFont.get();
     }).iterator->value;
 }
 

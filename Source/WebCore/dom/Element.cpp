@@ -3770,10 +3770,8 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
 ShadowRoot& Element::createUserAgentShadowRoot()
 {
     ASSERT(!userAgentShadowRoot());
-    Ref newShadow = ShadowRoot::create(protect(document()), ShadowRootMode::UserAgent);
-    SUPPRESS_UNCHECKED_LOCAL auto& shadow = newShadow.unsafeGet();
-    addShadowRoot(WTF::move(newShadow));
-    return shadow;
+    addShadowRoot(ShadowRoot::create(protect(document()), ShadowRootMode::UserAgent));
+    return *userAgentShadowRoot();
 }
 
 inline void Node::setCustomElementState(CustomElementState state)
@@ -3859,12 +3857,9 @@ CustomElementRegistry* Element::customElementRegistry() const
 CustomElementDefaultARIA& Element::customElementDefaultARIA()
 {
     ASSERT(isPrecustomizedOrDefinedCustomElement());
-    CheckedPtr defaultARIA = elementRareData()->customElementDefaultARIA();
-    if (!defaultARIA) {
+    if (!elementRareData()->customElementDefaultARIA())
         elementRareData()->initializeCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
-        defaultARIA = elementRareData()->customElementDefaultARIA();
-    }
-    return *defaultARIA.unsafeGet();
+    return *elementRareData()->customElementDefaultARIA();
 }
 
 CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists() const
@@ -5065,10 +5060,9 @@ const Style::ComputedStyle& Element::resolvePseudoElementStyle(const Style::Pseu
         style->setPseudoElementIdentifier(pseudoElementIdentifier);
     }
 
-    CheckedPtr computedStyle = style.get();
     const_cast<Style::ComputedStyle*>(parentStyle.get())->addPseudoElementStyle(WTF::move(style));
     ASSERT(parentStyle->pseudoElementStyle(pseudoElementIdentifier));
-    return *computedStyle.unsafeGet();
+    return *parentStyle->pseudoElementStyle(pseudoElementIdentifier);
 }
 
 const Style::ComputedStyle* Element::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
@@ -5082,17 +5076,19 @@ const Style::ComputedStyle* Element::computedStyle(const std::optional<Style::Ps
     }
 
     // FIXME: This should call resolveComputedStyle() unconditionally so we check if the style is valid.
+    if (!pseudoElementIdentifier) {
+        if (auto* style = existingComputedStyle())
+            return style;
+        return resolveComputedStyle();
+    }
+
     CheckedPtr style = existingComputedStyle();
     if (!style)
         style = resolveComputedStyle();
 
-    if (pseudoElementIdentifier) {
-        if (auto* cachedPseudoStyle = style->pseudoElementStyle(*pseudoElementIdentifier))
-            return cachedPseudoStyle;
-        return &resolvePseudoElementStyle(*pseudoElementIdentifier);
-    }
-
-    return style.unsafeGet();
+    if (auto* cachedPseudoStyle = style->pseudoElementStyle(*pseudoElementIdentifier))
+        return cachedPseudoStyle;
+    return &resolvePseudoElementStyle(*pseudoElementIdentifier);
 }
 
 // FIXME: The caller should be able to just use computedStyle().

@@ -1073,14 +1073,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if ([additionalAttributes count])
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes.get()];
 
-    return objectAttributes.unsafeGet();
+    return objectAttributes.autorelease();
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)remoteAccessibilityParentObject
 {
     RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    return backingObject ? backingObject->remoteParent().unsafeGet() : nil;
+    return backingObject ? backingObject->remoteParent().autorelease() : nil;
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
@@ -1207,7 +1207,7 @@ static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const
 
     if (!unignoredChildren.size()) {
         if (RetainPtr widgetChildren = renderWidgetChildren(backingObject))
-            return widgetChildren.unsafeGet();
+            return widgetChildren.autorelease();
     }
     return nil;
 }
@@ -1217,7 +1217,7 @@ static NSArray *children(AXCoreObject& backingObject)
     const auto& unignoredChildren = backingObject.crossFrameUnignoredChildren();
     RetainPtr<NSArray> specialChildren = transformSpecialChildrenCases(backingObject, unignoredChildren);
     if ([specialChildren count])
-        return specialChildren.unsafeGet();
+        return specialChildren.autorelease();
 
     // The tree's (AXOutline) children are supposed to be its rows and columns.
     // The ARIA spec doesn't have columns, so we just need rows.
@@ -1284,7 +1284,7 @@ static id scrollViewParent(AXCoreObject& axObject)
     if (RetainPtr platformWidget = axObject.platformWidget())
         return NSAccessibilityUnignoredAncestor(platformWidget.get());
 
-    return axObject.remoteParent().unsafeGet();
+    return axObject.remoteParent().autorelease();
 }
 
 - (id)windowElement:(NSString *)attributeName
@@ -1348,7 +1348,7 @@ static id handleRoleAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& back
 static id handleParentAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
     if (RetainPtr scrollView = scrollViewParent(backingObject))
-        return scrollView.unsafeGet();
+        return scrollView.autorelease();
 
     if (backingObject.isTreeItem()) {
         RefPtr ancestor = backingObject.parentObjectUnignored();

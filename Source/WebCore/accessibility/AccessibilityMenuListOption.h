@@ -47,7 +47,7 @@ private:
     AccessibilityObject* parentObject() const final { return m_parent.get(); }
 
     NODELETE HTMLOptionElement* optionElement() const;
-    Element* actionElement() const final;
+    RefPtr<Element> actionElement() const final;
     bool isEnabled() const final;
     bool isVisible() const final;
     bool isOffScreen() const final;

@@ -49,7 +49,7 @@ public:
     AccessibilityObject* webAreaObject() const final;
     void setNeedsToUpdateChildren() final { m_childrenDirty = true; }
 
-    RefPtr<AXRemoteFrame> remoteFrame() const { return m_remoteFrame; }
+    AXRemoteFrame* remoteFrame() const { return m_remoteFrame.get(); }
     // Binds the remote frame child to the process now hosting the frame, after the frame moved to another process.
     void rebindRemoteFrame();
 

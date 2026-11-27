@@ -4783,7 +4783,7 @@ void Page::setFullscreenAutoHideDuration(Seconds duration)
     });
 }
 
-Document* Page::outermostFullscreenDocument() const
+RefPtr<Document> Page::outermostFullscreenDocument() const
 {
 #if ENABLE(FULLSCREEN_API)
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
@@ -4804,7 +4804,7 @@ Document* Page::outermostFullscreenDocument() const
 
         currentDocument = fullscreenFrame->contentDocument();
     }
-    return outermostFullscreenDocument.unsafeGet();
+    return outermostFullscreenDocument;
 #else
     return nullptr;
 #endif

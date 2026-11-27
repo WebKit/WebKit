@@ -46,7 +46,7 @@
 
 - (TestInspectorBar *)inspectorBar
 {
-    return _testInspectorBar.get().unsafeGet();
+    return _testInspectorBar.get().autorelease();
 }
 
 - (void)updateSelectedAttributes
@@ -156,7 +156,7 @@
 
 - (TestInspectorBarItemController *)itemController
 {
-    return _testItemController.get().unsafeGet();
+    return _testItemController.get().autorelease();
 }
 
 - (void)setItemController:(TestInspectorBarItemController *)itemController

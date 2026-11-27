@@ -243,12 +243,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_pickerClient)
         return nil;
 
-    return _pickerClient->imageForCurrentSharingServicePickerItem(*self).unsafeGet();
+    return _pickerClient->imageForCurrentSharingServicePickerItem(*self).autorelease();
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
 {
-    return _pickerClient->windowForSharingServicePicker(*self).unsafeGet();
+    return _pickerClient->windowForSharingServicePicker(*self).autorelease();
 }
 
 @end

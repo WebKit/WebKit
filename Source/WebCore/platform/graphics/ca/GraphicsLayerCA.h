@@ -371,7 +371,7 @@ private:
     Ref<PlatformCAAnimation> createSpringAnimation(const GraphicsLayerAnimation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     void setupAnimation(PlatformCAAnimation*, const GraphicsLayerAnimation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    const TimingFunction& timingFunctionForAnimationValue(const GraphicsLayerAnimationValue&, const GraphicsLayerAnimation&, bool keyframesShouldUseAnimationWideTimingFunction);
+    Ref<const TimingFunction> timingFunctionForAnimationValue(const GraphicsLayerAnimationValue&, const GraphicsLayerAnimation&, bool keyframesShouldUseAnimationWideTimingFunction);
     
     bool setAnimationEndpoints(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*);
     bool setAnimationKeyframes(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, PlatformCAAnimation*, bool keyframesShouldUseAnimationWideTimingFunction);

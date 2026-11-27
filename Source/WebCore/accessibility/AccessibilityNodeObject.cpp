@@ -198,18 +198,19 @@ AccessibilityObject* AccessibilityNodeObject::firstChild() const
     if (!cache)
         return nullptr;
 
-    RefPtr<AccessibilityObject> axCurrentChild;
     if (RefPtr element = dynamicDowncast<Element>(*node); element && element->hasDisplayContents()) {
         for (Ref currentChild : composedTreeChildren</* InlineContextCapacity */ 0>(*element)) {
-            axCurrentChild = cache->getOrCreate(currentChild.get());
-            if (axCurrentChild)
-                break;
+            if (auto* axCurrentChild = cache->getOrCreate(currentChild.get()))
+                return axCurrentChild;
         }
-    } else {
-        for (RefPtr currentChild = node->firstChild(); currentChild && !axCurrentChild; currentChild = currentChild->nextSibling())
-            axCurrentChild = cache->getOrCreate(*currentChild);
+        return nullptr;
     }
-    return axCurrentChild.unsafeGet();
+
+    for (RefPtr currentChild = node->firstChild(); currentChild; currentChild = currentChild->nextSibling()) {
+        if (auto* axCurrentChild = cache->getOrCreate(*currentChild))
+            return axCurrentChild;
+    }
+    return nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::previousSibling() const
@@ -245,7 +246,12 @@ AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
 
     auto owners = this->owners();
     AX_ASSERT(owners.size() <= 1);
-    return owners.size() ? dynamicDowncast<AccessibilityObject>(owners.first().unsafeGet()) : nullptr;
+    if (owners.isEmpty())
+        return nullptr;
+
+    // The owner is kept alive by the cache, so look it up there instead of returning a pointer into the local vector.
+    CheckedPtr cache = axObjectCache();
+    return cache ? cache->objectForID(owners.first()->objectID()) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::parentObject() const
@@ -282,8 +288,8 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
         // connected to the AX tree instead of being orphaned.
     }
 
-    if (RefPtr ownerParent = ownerParentObject()) [[unlikely]]
-        return ownerParent.unsafeGet();
+    if (auto* ownerParent = ownerParentObject()) [[unlikely]]
+        return ownerParent;
 
     return cache->getOrCreate(*domParent);
 }
@@ -1539,13 +1545,13 @@ TextEmissionBehavior AccessibilityNodeObject::textEmissionBehavior() const
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-Element* AccessibilityNodeObject::anchorElement() const
+RefPtr<Element> AccessibilityNodeObject::anchorElement() const
 {
     RefPtr node = this->node();
     if (!node)
         return nullptr;
 
-    if (auto* areaElement = dynamicDowncast<HTMLAreaElement>(*node))
+    if (RefPtr areaElement = dynamicDowncast<HTMLAreaElement>(*node))
         return areaElement;
 
     CheckedPtr cache = axObjectCache();
@@ -1556,7 +1562,7 @@ Element* AccessibilityNodeObject::anchorElement() const
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     for ( ; node; node = node->parentNode()) {
         if (is<HTMLAnchorElement>(*node) || (node->renderer() && cache->getOrCreate(*node)->isLink()))
-            return downcast<Element>(node.unsafeGet());
+            return downcast<Element>(WTF::move(node));
     }
 
     return nullptr;
@@ -1652,7 +1658,7 @@ static RefPtr<Element> nodeActionElement(Node& node)
     return nullptr;
 }
 
-static Element* nativeActionElement(Node* start)
+static RefPtr<Element> nativeActionElement(Node* start)
 {
     if (!start)
         return nullptr;
@@ -1663,25 +1669,25 @@ static Element* nativeActionElement(Node* start)
 
     for (RefPtr child = start->firstChild(); child; child = child->nextSibling()) {
         if (RefPtr element = nodeActionElement(*child))
-            return element.unsafeGet();
+            return element;
 
         if (RefPtr subChild = nativeActionElement(child.get()))
-            return subChild.unsafeGet();
+            return subChild;
     }
     return nullptr;
 }
 
-Element* AccessibilityNodeObject::actionElement() const
+RefPtr<Element> AccessibilityNodeObject::actionElement() const
 {
     RefPtr node = this->node();
     if (!node)
         return nullptr;
 
     if (RefPtr element = nodeActionElement(*node))
-        return element.unsafeGet();
+        return element;
 
     if (AccessibilityObject::isARIAInput(ariaRoleAttribute()))
-        return downcast<Element>(node.unsafeGet());
+        return downcast<Element>(WTF::move(node));
 
     switch (role()) {
     case AccessibilityRole::Button:
@@ -1694,14 +1700,14 @@ Element* AccessibilityNodeObject::actionElement() const
     case AccessibilityRole::ListItem:
         // Check if the author is hiding the real control element inside the ARIA element.
         if (RefPtr nativeElement = nativeActionElement(node.get()))
-            return nativeElement.unsafeGet();
-        return downcast<Element>(node.unsafeGet());
+            return nativeElement;
+        return downcast<Element>(WTF::move(node));
     default:
         break;
     }
 
     if (RefPtr element = anchorElement())
-        return element.unsafeGet();
+        return element;
 
     if (RefPtr clickableObject = this->clickableSelfOrAncestor())
         return clickableObject->element();
@@ -2744,7 +2750,7 @@ void AccessibilityNodeObject::recomputeIsExposableIfNecessary()
     }
 }
 
-AccessibilityObject* AccessibilityNodeObject::parentTable() const
+RefPtr<AXCoreObject> AccessibilityNodeObject::parentTable() const
 {
     CheckedPtr cache = axObjectCache();
     // If the document no longer exists, we might not have an axObjectCache.
@@ -2787,7 +2793,7 @@ AccessibilityObject* AccessibilityNodeObject::parentTable() const
                 // we don't want to choose another ancestor table as this cell's table.
                 if (ancestor->isTable()) {
                     if (ancestor->isExposableTable())
-                        return ancestor.unsafeGet();
+                        return ancestor;
                     if (ancestor->node())
                         break;
                 }
@@ -2795,7 +2801,7 @@ AccessibilityObject* AccessibilityNodeObject::parentTable() const
             return nullptr;
         }
 
-        return tableFromRenderTree.unsafeGet();
+        return tableFromRenderTree;
     }
 
     if (isTableRow()) {
@@ -2805,7 +2811,7 @@ AccessibilityObject* AccessibilityNodeObject::parentTable() const
             if (ancestor->isTable()) {
                 bool isNonGridRowOrValidAriaTable = !isARIAGridRow() || ancestor->isAriaTable() || elementName() == ElementName::HTML_tr;
                 if (ancestor->isExposableTable() && isNonGridRowOrValidAriaTable)
-                    return ancestor.unsafeGet();
+                    return ancestor;
 
                 // If this is a non-anonymous table object, but not an accessibility table, we should stop because we don't want to
                 // choose another ancestor table as this row's table.
@@ -2961,14 +2967,16 @@ bool AccessibilityNodeObject::isTableRow() const
     return element && AXTableHelpers::isTableRowElement(*element);
 }
 
-AXCoreObject* AccessibilityNodeObject::parentTableIfExposedTableRow() const
+RefPtr<AXCoreObject> AccessibilityNodeObject::parentTableIfExposedTableRow() const
 {
     RefPtr element = this->element();
     if (!element || !AXTableHelpers::isTableRowElement(*element))
         return nullptr;
 
     RefPtr table = parentTable();
-    return table && table->isExposableTable() ? table.unsafeGet() : nullptr;
+    if (!table || !table->isExposableTable())
+        return nullptr;
+    return table;
 }
 
 bool AccessibilityNodeObject::isTableCell() const
@@ -2995,7 +3003,7 @@ bool AccessibilityNodeObject::isExposedTableCell() const
     return parentTable && parentTable->isExposableTable();
 }
 
-AccessibilityObject* AccessibilityNodeObject::parentTableIfTableCell() const
+RefPtr<AXCoreObject> AccessibilityNodeObject::parentTableIfTableCell() const
 {
     return isTableCell() ? parentTable() : nullptr;
 }
@@ -3173,10 +3181,10 @@ void AccessibilityNodeObject::setColumnIndex(unsigned index)
 #endif
 }
 
-AccessibilityNodeObject* AccessibilityNodeObject::parentRow() const
+RefPtr<AccessibilityNodeObject> AccessibilityNodeObject::parentRow() const
 {
     RefPtr parent = isTableCell() ? parentObjectUnignored() : nullptr;
-    return parent && parent->isExposedTableRow() ? dynamicDowncast<AccessibilityRenderObject>(parent.unsafeGet()) : nullptr;
+    return parent && parent->isExposedTableRow() ? dynamicDowncast<AccessibilityRenderObject>(WTF::move(parent)) : nullptr;
 }
 
 #if USE(ATSPI)
@@ -3214,7 +3222,7 @@ int AccessibilityNodeObject::axRowSpan() const
 
 void AccessibilityNodeObject::ensureIndexesUpToDate() const
 {
-    if (RefPtr parentTable = this->parentTable())
+    if (RefPtr parentTable = dynamicDowncast<AccessibilityObject>(this->parentTable()))
         parentTable->ensureCellIndexesUpToDate();
 }
 

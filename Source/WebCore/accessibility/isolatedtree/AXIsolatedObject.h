@@ -260,7 +260,7 @@ private:
     // Table cell support.
     bool isTableCell() const final;
     bool isExposedTableCell() const final { return boolAttributeValue(AXProperty::IsExposedTableCell); }
-    AXCoreObject* parentTableIfTableCell() const final;
+    RefPtr<AXCoreObject> parentTableIfTableCell() const final;
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const final { return indexRangePairAttributeValue(AXProperty::RowIndexRange); }
     // Returns the start location and column span of the cell.
@@ -277,9 +277,9 @@ private:
     unsigned columnIndex() const final { return unsignedAttributeValue(AXProperty::ColumnIndex); }
 
     // Table row support.
-    AXCoreObject* parentTable() const final;
+    RefPtr<AXCoreObject> parentTable() const final;
     bool isTableRow() const final;
-    AXCoreObject* parentTableIfExposedTableRow() const final;
+    RefPtr<AXCoreObject> parentTableIfExposedTableRow() const final;
     bool isExposedTableRow() const final { return boolAttributeValue(AXProperty::IsExposedTableRow); }
     unsigned rowIndex() const final { return unsignedAttributeValue(AXProperty::RowIndex); }
 
@@ -355,11 +355,11 @@ private:
 
     RefPtr<AXCoreObject> accessibilityHitTest(const IntPoint&) const final;
 
-    AXIsolatedObject* focusedUIElement() const final
+    RefPtr<AXCoreObject> focusedUIElement() const final
     {
-        return tree().focusedNode().unsafeGet();
+        return tree().focusedNode();
     }
-    AXIsolatedObject* focusedUIElementInAnyLocalFrame() const final;
+    RefPtr<AXCoreObject> focusedUIElementInAnyLocalFrame() const final;
     AXIsolatedObject* internalLinkElement() const final { return objectAttributeValue(AXProperty::InternalLinkElement); }
     AccessibilityChildrenVector radioButtonGroup() const final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::RadioButtonGroupMembers)); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
@@ -589,7 +589,7 @@ private:
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const final;
 #endif
     NODELETE AXObjectCache* axObjectCache() const;
-    Element* actionElement() const final;
+    RefPtr<Element> actionElement() const final;
     Path elementPath() const final;
     bool supportsPath() const final;
 

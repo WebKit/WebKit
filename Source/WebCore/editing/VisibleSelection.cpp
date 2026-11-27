@@ -698,7 +698,8 @@ bool VisibleSelection::isContentRichlyEditable() const
 
 Element* VisibleSelection::rootEditableElement() const
 {
-    return editableRootForPosition(start());
+    RefPtr node = start().containerNode();
+    return node ? node->rootEditableElement() : nullptr;
 }
 
 Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const

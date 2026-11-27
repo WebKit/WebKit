@@ -4594,8 +4594,8 @@ GraphicsLayer* RenderLayerBacking::childForSuperlayersExcludingViewTransitions()
     if (m_ancestorClippingStack)
         return m_ancestorClippingStack->firstLayer();
 
-    if (RefPtr viewportConstrainedLayer = viewportClippingOrAnchorLayer())
-        return viewportConstrainedLayer.unsafeGet();
+    if (auto* viewportConstrainedLayer = viewportClippingOrAnchorLayer())
+        return viewportConstrainedLayer;
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     if (m_systemPreviewWrapperLayer)

@@ -594,12 +594,12 @@ String InspectorAnimationAgent::findAnimationId(WebAnimation& animation)
     return nullString();
 }
 
-WebAnimation* InspectorAnimationAgent::assertAnimation(Inspector::Protocol::ErrorString& errorString, const String& animationId)
+RefPtr<WebAnimation> InspectorAnimationAgent::assertAnimation(Inspector::Protocol::ErrorString& errorString, const String& animationId)
 {
     RefPtr animation = m_animationIdMap.get(animationId);
     if (!animation)
         errorString = "Missing animation for given animationId"_s;
-    return animation.unsafeGet();
+    return animation;
 }
 
 void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace)

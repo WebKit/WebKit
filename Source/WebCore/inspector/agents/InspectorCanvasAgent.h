@@ -177,8 +177,8 @@ private:
     void canvasDestroyedTimerFired();
     void programDestroyedTimerFired();
 
-    InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
-    InspectorCanvas& bindCanvas(GPUDevice&, bool captureBacktrace);
+    Ref<InspectorCanvas> bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
+    Ref<InspectorCanvas> bindCanvas(GPUDevice&, bool captureBacktrace);
     void dispatchCanvasSizeChanged(InspectorCanvas&);
 
     void unbindProgram(InspectorShaderProgram&);
