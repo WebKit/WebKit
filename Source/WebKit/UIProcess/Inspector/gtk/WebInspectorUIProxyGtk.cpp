@@ -335,8 +335,9 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
 
 void WebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
-    if (m_inspectorView) {
-        g_signal_handlers_disconnect_by_func(m_inspectorView.get(), reinterpret_cast<void*>(inspectorViewDestroyed), this);
+    // Sink and release the floating ref in case nothing took ownership of the view.
+    if (GRefPtr inspectorView = m_inspectorView.get()) {
+        g_signal_handlers_disconnect_by_func(inspectorView.get(), reinterpret_cast<void*>(inspectorViewDestroyed), this);
         m_inspectorView = nullptr;
     }
 
