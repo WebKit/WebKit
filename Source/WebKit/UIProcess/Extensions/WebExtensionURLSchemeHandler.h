@@ -55,6 +55,8 @@ private:
     WeakPtr<WebExtensionController> m_webExtensionController;
 #if PLATFORM(COCOA)
     HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    HashMap<Ref<WebURLSchemeTask>, GRefPtr<GCancellable>> m_operations;
 #endif
 }; // class WebExtensionURLSchemeHandler
 

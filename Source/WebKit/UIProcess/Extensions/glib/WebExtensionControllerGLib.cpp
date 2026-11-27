@@ -22,48 +22,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include <WebCore/NotImplemented.h>
-
 namespace WebKit {
 
 void WebExtensionController::initializePlatform()
 {
-    notImplemented();
-}
-
-void WebExtensionController::testResult(bool, String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testEqual(bool, String, String, String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testLogMessage(String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testSentMessage(String, String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testAdded(String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testStarted(String, String, unsigned)
-{
-    notImplemented();
-}
-
-void WebExtensionController::testFinished(String, bool, String, String, unsigned)
-{
-    notImplemented();
 }
 
 } // namespace WebKit

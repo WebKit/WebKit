@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "WebKitWebsiteDataPrivate.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStore.h"
 #include <wtf/glib/GUniquePtr.h>
@@ -26,7 +27,9 @@
 
 #if ENABLE(2022_GLIB_API)
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(UTF8CString&&, UTF8CString&&);
+void webkitWebsiteDataManagerSetDataStore(WebKitWebsiteDataManager*, RefPtr<WebKit::WebsiteDataStore>);
 #endif
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
 
 WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::ITPThirdPartyData&&);
+OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes);
