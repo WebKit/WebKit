@@ -31,6 +31,7 @@
 namespace WebCore {
 
 namespace Layout {
+class FloatingContext;
 class PlacedFloats;
 }
 
@@ -162,6 +163,10 @@ public:
     bool hasRightObjects() const { return m_rightObjectsCount > 0; }
     const FloatingObjectSet& set() const LIFETIME_BOUND { return m_set; }
     const Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
+    const Layout::PlacedFloats* keptPlacedFloats() const LIFETIME_BOUND { return m_placedFloats.get(); }
+    std::unique_ptr<Layout::PlacedFloats> makePlacedFloats() const;
+    // Built on placedFloats() and dropped with it, so that FloatingContext::constraints() continues from its last position during the child layout.
+    const Layout::FloatingContext& floatingContext() LIFETIME_BOUND;
     // The list refers to the layout boxes of the floats, and a float's renderer can be destroyed without being removed from the set
     // (when the whole render tree is), so the list is only kept while the block lays out its children.
     void clearPlacedFloats();
@@ -171,8 +176,6 @@ public:
 
     LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
     LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
-
-    LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
     void shiftFloatsBy(LayoutUnit blockShift);
 
@@ -187,6 +190,7 @@ private:
     FloatingObjectSet m_set;
     std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;
     std::unique_ptr<Layout::PlacedFloats> m_placedFloats;
+    std::unique_ptr<Layout::FloatingContext> m_floatingContext;
     unsigned m_leftObjectsCount { 0 };
     unsigned m_rightObjectsCount { 0 };
     bool m_horizontalWritingMode { false };

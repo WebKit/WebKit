@@ -24,6 +24,8 @@
 #include "config.h"
 #include "FloatingObjects.h"
 
+#include "FloatingContext.h"
+
 #include "PODIntervalTree.h"
 #include "PlacedFloats.h"
 #include "RenderBlockFlowInlines.h"
@@ -197,56 +199,6 @@ protected:
     bool updateOffsetIfNeeded(const FloatingObject&) final;
 };
 
-class FindNextFloatLogicalBottomAdapter {
-public:
-    typedef FloatingObjectInterval IntervalType;
-
-    FindNextFloatLogicalBottomAdapter(const RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
-        : m_renderer(renderer)
-        , m_belowLogicalHeight(belowLogicalHeight)
-    {
-    }
-
-    NODELETE LayoutUnit lowValue() const { return LayoutUnit { m_belowLogicalHeight.floor() }; }
-    NODELETE LayoutUnit highValue() const { return LayoutUnit::max(); }
-    void collectIfNeeded(const IntervalType&);
-
-    NODELETE LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-
-private:
-    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
-    LayoutUnit m_belowLogicalHeight;
-    std::optional<LayoutUnit> m_nextLogicalBottom;
-};
-
-inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)
-{
-    const auto& floatingObject = *interval.data();
-    if (!floatingObject.height() || !rangesIntersect(m_renderer->logicalTopForFloat(floatingObject), m_renderer->logicalBottomForFloat(floatingObject), m_belowLogicalHeight, LayoutUnit::max()))
-        return;
-
-    // All the objects returned from the tree should be already placed.
-    ASSERT(floatingObject.isPlaced());
-
-    LayoutUnit floatBottom = m_renderer->logicalBottomForFloat(floatingObject);
-    if (m_nextLogicalBottom && m_nextLogicalBottom.value() < floatBottom)
-        return;
-
-    if (!floatingObject.renderer())
-        return;
-
-    m_nextLogicalBottom = floatBottom;
-}
-
-LayoutUnit FloatingObjects::findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight)
-{
-    FindNextFloatLogicalBottomAdapter adapter(renderer(), logicalHeight);
-    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
-        placedFloatsTree->allOverlapsWithAdapter(adapter);
-
-    return adapter.nextLogicalBottom();
-}
-
 static Layout::PlacedFloats::Item placedFloatItem(const RenderBlockFlow& block, const FloatingObject& floatingObject)
 {
     CheckedRef floatBox = *floatingObject.renderer();
@@ -295,6 +247,7 @@ void FloatingObjects::clear()
 {
     m_set.clear();
     m_placedFloatsTree = nullptr;
+    m_floatingContext = nullptr;
     m_placedFloats = nullptr;
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
@@ -336,8 +289,12 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
         floatingObject->setIsInPlacedTree(true);
 #endif
     }
-    if (m_placedFloats && floatingObject->renderer())
+    if (m_placedFloats && floatingObject->renderer()) {
         m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
+        // FloatingContext::constraints() skips the floats it found ending above its last position, and a float inserted among them would be skipped too.
+        if (m_floatingContext && m_placedFloats->list().last().layoutBox() != &floatingObject->renderer()->layoutBox())
+            m_floatingContext = nullptr;
+    }
 }
 
 void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
@@ -351,8 +308,10 @@ void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
         floatingObject->setIsInPlacedTree(false);
 #endif
     }
-    if (m_placedFloats && floatingObject->renderer())
+    if (m_placedFloats && floatingObject->renderer()) {
         m_placedFloats->remove(floatingObject->renderer()->layoutBox());
+        m_floatingContext = nullptr;
+    }
     floatingObject->setIsPlaced(false);
 }
 
@@ -407,21 +366,33 @@ inline const FloatingObjectTree* FloatingObjects::placedFloatsTree()
     return m_placedFloatsTree.get();
 }
 
-const Layout::PlacedFloats& FloatingObjects::placedFloats()
+std::unique_ptr<Layout::PlacedFloats> FloatingObjects::makePlacedFloats() const
 {
-    if (m_placedFloats)
-        return *m_placedFloats;
-
-    m_placedFloats = makeUnique<Layout::PlacedFloats>(renderer().layoutBox());
+    auto placedFloats = makeUnique<Layout::PlacedFloats>(renderer().layoutBox());
     for (auto& floatingObject : m_set) {
         if (floatingObject->isPlaced() && floatingObject->renderer())
-            m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
+            placedFloats->add(placedFloatItem(renderer(), *floatingObject));
     }
+    return placedFloats;
+}
+
+const Layout::PlacedFloats& FloatingObjects::placedFloats()
+{
+    if (!m_placedFloats)
+        m_placedFloats = makePlacedFloats();
     return *m_placedFloats;
+}
+
+const Layout::FloatingContext& FloatingObjects::floatingContext()
+{
+    if (!m_floatingContext)
+        m_floatingContext = makeUnique<Layout::FloatingContext>(renderer().layoutBox(), placedFloats(), Layout::Point<Layout::ParentFormattingContextRoot> { }, renderer().logicalWidth());
+    return *m_floatingContext;
 }
 
 void FloatingObjects::clearPlacedFloats()
 {
+    m_floatingContext = nullptr;
     m_placedFloats = nullptr;
 }
 
