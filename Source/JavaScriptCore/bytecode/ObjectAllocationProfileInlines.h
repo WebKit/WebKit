@@ -155,14 +155,15 @@ ALWAYS_INLINE unsigned ObjectAllocationProfileBase<Derived>::possibleDefaultProp
     prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArrayBuilder, DontEnumPropertiesMode::Include);
     PropertyNameArray::PropertyNameVector& propertyNameVector = propertyNameArrayBuilder.data()->propertyNameVector();
     for (size_t i = 0; i < propertyNameVector.size(); ++i) {
-        JSValue value = prototype->getDirect(vm, propertyNameVector[i]);
+        unsigned attributes = 0;
+        JSValue value = prototype->getDirect(vm, propertyNameVector[i], attributes);
 
         // Functions are common, and are usually class-level objects that are not overridden.
-        if (is<JSFunction>(value))
+        // Assigning to a read-only or accessor property's name through an instance does not create an own property, unlike a CustomValue's.
+        if (is<JSFunction>(value) || (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor))
             continue;
 
         ++count;
-
     }
     return count;
 }
