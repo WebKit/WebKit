@@ -611,7 +611,7 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     }
 
     if (!topOrigin) {
-        authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
+        authenticationChallenge->listener().completeChallenge(AuthenticationChallengeDisposition::Cancel);
         return;
     }
 
@@ -1875,6 +1875,11 @@ void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIde
     if (auto* store = websiteDataStoreFromSessionID(sessionID))
         cookiesVersion = store->cookiesVersion();
     send(Messages::NetworkProcess::PreconnectTo(sessionID, webPageProxyID, webPageID, WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain, advancedPrivacyProtections, cookiesVersion), 0);
+}
+
+void NetworkProcessProxy::cancelPreconnectTasks(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID)
+{
+    send(Messages::NetworkProcess::CancelPreconnectTasks(sessionID, webPageProxyID), 0);
 }
 
 static bool anyProcessPoolHasForegroundWebProcesses()

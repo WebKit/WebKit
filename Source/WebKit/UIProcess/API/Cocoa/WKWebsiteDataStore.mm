@@ -1647,6 +1647,14 @@ struct WKWebsiteData {
     });
 }
 
+- (void)_activePreconnectTaskCountForTesting:(void(^)(NSUInteger))completionHandler
+{
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    protect(*_websiteDataStore)->activePreconnectTaskCountForTesting([completionHandlerCopy = WTF::move(completionHandlerCopy)](auto result) {
+        completionHandlerCopy(result);
+    });
+}
+
 - (void)_fetchDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(void(^)(NSData *))completionHandler
 {
     completionHandler(nullptr);

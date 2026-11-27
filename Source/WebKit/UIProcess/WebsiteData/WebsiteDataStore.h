@@ -246,6 +246,7 @@ public:
     bool hasServiceWorkerBackgroundActivityForTesting() const;
     void runningOrTerminatingServiceWorkerCountForTesting(CompletionHandler<void(unsigned)>&&);
     void loadersAwaitingWebProcessTransferCountForTesting(CompletionHandler<void(uint64_t)>&&);
+    void activePreconnectTaskCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
     void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Vector<WebCore::RegistrableDomain>&&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);
     void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);

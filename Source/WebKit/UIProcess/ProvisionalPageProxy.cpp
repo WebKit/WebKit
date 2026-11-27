@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
+#include "NetworkProcessProxy.h"
 #include "PageClient.h"
 #include "ProvisionalFrameCreationParameters.h"
 #include "RemotePageProxy.h"
@@ -184,8 +185,11 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         page->inspectorController().willDestroyProvisionalPage(*this, m_mainFrame->frameID(), protect(m_frameProcess->process())->coreProcessIdentifier());
 
         RefPtr dataStore = process->websiteDataStore();
-        if (dataStore && dataStore!= &page->websiteDataStore())
+        if (dataStore && dataStore != &page->websiteDataStore()) {
+            if (RefPtr networkProcess = dataStore->networkProcessIfExists())
+                networkProcess->cancelPreconnectTasks(dataStore->sessionID(), page->identifier());
             protect(process->processPool())->pageEndUsingWebsiteDataStore(page, *dataStore);
+        }
 
         if (process->hasConnection() && m_shouldClosePage)
             process->sendPageCloseMessage(page->identifier(), m_webPageID);

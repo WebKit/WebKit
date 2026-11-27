@@ -1153,6 +1153,11 @@ void WebsiteDataStore::loadersAwaitingWebProcessTransferCountForTesting(Completi
     protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::LoadersAwaitingWebProcessTransferCountForTesting(sessionID()), WTF::move(completionHandler));
 }
 
+void WebsiteDataStore::activePreconnectTaskCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::ActivePreconnectTaskCountForTesting(sessionID()), WTF::move(completionHandler));
+}
+
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

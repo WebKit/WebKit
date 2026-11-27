@@ -354,6 +354,7 @@ public:
 #endif
 
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>, OptionSet<WebCore::AdvancedPrivacyProtections>, uint64_t requiredCookiesVersion);
+    void cancelPreconnectTasks(PAL::SessionID, WebPageProxyIdentifier);
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     NODELETE bool sessionIsControlledByAutomation(PAL::SessionID) const;
@@ -639,6 +640,7 @@ private:
     void terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType, PAL::SessionID, const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
     void runningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID, CompletionHandler<void(unsigned)>&&) const;
     void loadersAwaitingWebProcessTransferCountForTesting(PAL::SessionID, CompletionHandler<void(uint64_t)>&&) const;
+    void activePreconnectTaskCountForTesting(PAL::SessionID, CompletionHandler<void(uint64_t)>&&) const;
     void platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;

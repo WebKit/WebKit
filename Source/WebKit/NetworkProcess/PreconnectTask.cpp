@@ -32,6 +32,7 @@
 #include "NetworkLoad.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "WebErrors.h"
 #include <WebCore/ResourceError.h>
 
@@ -49,11 +50,17 @@ Ref<PreconnectTask> PreconnectTask::create(NetworkSession& networkSession, Netwo
 }
 
 PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters)
-    : m_networkLoad(NetworkLoad::create(*this, WTF::move(parameters), networkSession))
+    : m_networkSession(networkSession)
+    , m_networkLoad(NetworkLoad::create(*this, WTF::move(parameters), networkSession))
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
     RELEASE_ASSERT(m_networkLoad->parameters().shouldPreconnectOnly == PreconnectOnly::Yes);
+}
+
+std::optional<WebPageProxyIdentifier> PreconnectTask::webPageProxyID() const
+{
+    return m_networkLoad->parameters().webPageProxyID;
 }
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(std::expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
@@ -69,9 +76,30 @@ void PreconnectTask::start(CompletionHandler<void(const WebCore::ResourceError&,
         if (completionHandler)
             completionHandler(error, metrics);
     };
+    if (CheckedPtr session = m_networkSession)
+        session->registerPreconnectTask(*this);
     lazyInitialize(m_timeoutTimer, makeUnique<WebCore::Timer>(*this, &PreconnectTask::didTimeout));
     m_timeoutTimer->startOneShot(timeout);
     m_networkLoad->start();
+}
+
+void PreconnectTask::cancel()
+{
+    RELEASE_LOG(Network, "%p - PreconnectTask::cancel", this);
+    cancel(cancelledError(m_networkLoad->parameters().request));
+}
+
+void PreconnectTask::cancel(const ResourceError& error)
+{
+    Ref protectedThis { *this };
+    if (m_timeoutTimer)
+        m_timeoutTimer->stop();
+    if (CheckedPtr session = m_networkSession)
+        session->unregisterPreconnectTask(*this);
+    auto completionHandler = std::exchange(m_completionHandler, { });
+    m_networkLoad->cancel();
+    if (completionHandler)
+        completionHandler(error, { });
 }
 
 PreconnectTask::~PreconnectTask()
@@ -104,23 +132,33 @@ void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&)
     ASSERT_NOT_REACHED();
 }
 
+void PreconnectTask::finish(const ResourceError& error, const NetworkLoadMetrics& metrics)
+{
+    Ref protectedThis { *this };
+    if (m_timeoutTimer)
+        m_timeoutTimer->stop();
+    if (CheckedPtr session = m_networkSession)
+        session->unregisterPreconnectTask(*this);
+    if (auto completionHandler = std::exchange(m_completionHandler, { }))
+        completionHandler(error, metrics);
+}
+
 void PreconnectTask::didFinishLoading(const NetworkLoadMetrics& metrics)
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::didFinishLoading", this);
-    m_completionHandler({ }, metrics); // Deletes this.
+    finish({ }, metrics);
 }
 
 void PreconnectTask::didFailLoading(const ResourceError& error)
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::didFailLoading, error_code=%d", this, error.errorCode());
-    m_completionHandler(error, NetworkLoadMetrics::emptyMetrics()); // Deletes this.
+    finish(error, NetworkLoadMetrics::emptyMetrics());
 }
 
 void PreconnectTask::didTimeout()
 {
     RELEASE_LOG_ERROR(Network, "%p - PreconnectTask::didTimeout", this);
-    m_networkLoad->cancel();
-    m_completionHandler(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }, { }); // Deletes this.
+    cancel(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout });
 }
 
 void PreconnectTask::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
