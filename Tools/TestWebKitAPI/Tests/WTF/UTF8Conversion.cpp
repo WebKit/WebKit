@@ -31,6 +31,8 @@
 #include "config.h"
 
 #include "Helpers/Test.h"
+#include <unicode/utf16.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace TestWebKitAPI {
 
@@ -456,6 +458,142 @@ TEST(WTF_UTF8Conversion, UTF8ToUTF16ReplacingInvalidSequences)
     EXPECT_STREQ("FFFD FFFD target exhausted", serialize(convertReplacingInvalidSequences(char8Array(0xED, 0xBF, 0xBF), buffer2)));
     EXPECT_STREQ("FFFD FFFD target exhausted", serialize(convertReplacingInvalidSequences(char8Array(0xF4, 0x90, 0x80, 0x80), buffer2)));
     EXPECT_STREQ("FFFD FFFD target exhausted", serialize(convertReplacingInvalidSequences(char8Array(0xED, 0xA0, 0x80, 0), buffer2)));
+}
+
+static std::string serializeCodeUnits(const String& string)
+{
+    std::ostringstream stream;
+    stream << std::hex << std::uppercase;
+    auto separator = "";
+    for (unsigned i = 0; i < string.length(); ++i)
+        stream << std::exchange(separator, " ") << std::setfill('0') << std::setw(4) << static_cast<unsigned>(string[i]);
+    return stream.str();
+}
+
+TEST(WTF_UTF8Conversion, StringFromUTF8ReplacingInvalidSequences)
+{
+    auto convert = [](std::span<const char8_t> source) {
+        return serializeCodeUnits(String::fromUTF8ReplacingInvalidSequences(source));
+    };
+
+    EXPECT_TRUE(String::fromUTF8ReplacingInvalidSequences(std::span<const char8_t> { }).isNull());
+    EXPECT_EQ("", convert(char8Array()));
+    EXPECT_EQ("0000", convert(char8Array(0)));
+    EXPECT_EQ("0061", convert(char8Array('a')));
+
+    EXPECT_EQ("D7FF", convert(char8Array(0xED, 0x9F, 0xBF)));
+    EXPECT_EQ("E000", convert(char8Array(0xEE, 0x80, 0x80)));
+    EXPECT_EQ("FFFD", convert(char8Array(0xEF, 0xBF, 0xBD)));
+    EXPECT_EQ("FFFE", convert(char8Array(0xEF, 0xBF, 0xBE)));
+    EXPECT_EQ("FFFF", convert(char8Array(0xEF, 0xBF, 0xBF)));
+    EXPECT_EQ("D800 DC00", convert(char8Array(0xF0, 0x90, 0x80, 0x80)));
+    EXPECT_EQ("DBFF DFFF", convert(char8Array(0xF4, 0x8F, 0xBF, 0xBF)));
+
+    EXPECT_EQ("0000 0000", convert(char8Array(0, 0)));
+    EXPECT_EQ("0061 0000", convert(char8Array('a', 0)));
+    EXPECT_EQ("D7FF 0000", convert(char8Array(0xED, 0x9F, 0xBF, 0)));
+
+    EXPECT_EQ("FFFD", convert(char8Array(0x80)));
+    EXPECT_EQ("FFFD 0000", convert(char8Array(0x80, 0)));
+
+    EXPECT_EQ("FFFD FFFD FFFD", convert(char8Array(0xED, 0xA0, 0x80)));
+    EXPECT_EQ("FFFD FFFD FFFD", convert(char8Array(0xED, 0xAF, 0xBF)));
+    EXPECT_EQ("FFFD FFFD FFFD", convert(char8Array(0xED, 0xB0, 0x80)));
+    EXPECT_EQ("FFFD FFFD FFFD", convert(char8Array(0xED, 0xBF, 0xBF)));
+    EXPECT_EQ("FFFD FFFD FFFD FFFD", convert(char8Array(0xF4, 0x90, 0x80, 0x80)));
+    EXPECT_EQ("FFFD FFFD FFFD FFFD FFFD FFFD", convert(char8Array(0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF)));
+
+    EXPECT_EQ("FFFD FFFD FFFD 0000", convert(char8Array(0xED, 0xA0, 0x80, 0)));
+
+    EXPECT_EQ("0080 FFFD", convert(char8Array(0xC2, 0x80, 0x80)));
+
+    // Each maximal subpart of an invalid sequence becomes one replacement character.
+    EXPECT_EQ("FFFD", convert(char8Array(0xF0, 0x9F, 0x98)));
+    EXPECT_EQ("FFFD 0061", convert(char8Array(0xF0, 0x9F, 0x98, 'a')));
+    EXPECT_EQ("FFFD", convert(char8Array(0xE0, 0xA0)));
+    EXPECT_EQ("FFFD FFFD", convert(char8Array(0xC0, 0x80)));
+    EXPECT_EQ("FFFD FFFD FFFD", convert(char8Array(0xE0, 0x80, 0x80)));
+    EXPECT_EQ("FFFD", convert(char8Array(0xFF)));
+}
+
+static Vector<char16_t> referenceUTF8DecodeReplacingInvalidSequences(std::span<const char8_t> source)
+{
+    using namespace WTF;
+
+    Vector<char16_t> result;
+    for (size_t offset = 0; offset < source.size(); ) {
+        char32_t character;
+        U8_NEXT_OR_FFFD_SPAN(source, offset, character);
+        if (U_IS_BMP(character))
+            result.append(character);
+        else {
+            result.append(U16_LEAD(character));
+            result.append(U16_TRAIL(character));
+        }
+    }
+    return result;
+}
+
+TEST(WTF_UTF8Conversion, StringFromUTF8ReplacingInvalidSequencesMatchesReference)
+{
+    static constexpr std::array<std::span<const char8_t>, 6> validPieces { {
+        u8"a"_span, u8"abcdefgh"_span, u8"\u00E9"_span, u8"\u4E00"_span, u8"\U0001F600"_span, u8"\uFFFD"_span,
+    } };
+    static constexpr auto invalid1 = char8Array(0x80);
+    static constexpr auto invalid2 = char8Array(0xFF);
+    static constexpr auto invalid3 = char8Array(0xC0, 0x80);
+    static constexpr auto invalid4 = char8Array(0xE4, 0xB8);
+    static constexpr auto invalid5 = char8Array(0xF0, 0x9F, 0x98);
+    static constexpr auto invalid6 = char8Array(0xED, 0xA0, 0x80);
+    static constexpr auto invalid7 = char8Array(0xE0, 0x80, 0x80);
+    static constexpr auto invalid8 = char8Array(0xF4, 0x90, 0x80, 0x80);
+    static constexpr std::array<std::span<const char8_t>, 8> invalidPieces { {
+        invalid1, invalid2, invalid3, invalid4, invalid5, invalid6, invalid7, invalid8,
+    } };
+
+    uint32_t state = 0x12345678;
+    auto random = [&] {
+        state ^= state << 13;
+        state ^= state >> 17;
+        state ^= state << 5;
+        return state;
+    };
+
+    for (unsigned iteration = 0; iteration < 3000; ++iteration) {
+        unsigned pieceCount = 1 + random() % 80;
+        unsigned errorRate = std::array { 0u, 2u, 10u, 50u }[iteration % 4];
+        Vector<char8_t> source;
+        bool hasInvalidSequence = false;
+        for (unsigned i = 0; i < pieceCount; ++i) {
+            if (random() % 100 < errorRate) {
+                source.append(invalidPieces[random() % invalidPieces.size()]);
+                hasInvalidSequence = true;
+            } else
+                source.append(validPieces[random() % validPieces.size()]);
+        }
+        auto expected = referenceUTF8DecodeReplacingInvalidSequences(source.span());
+        auto replacing = String::fromUTF8ReplacingInvalidSequences(source.span());
+        EXPECT_EQ(String { expected.span() }, replacing);
+        String strict { source.span() };
+        EXPECT_EQ(hasInvalidSequence, strict.isNull());
+        if (!hasInvalidSequence)
+            EXPECT_EQ(replacing, strict);
+    }
+
+    // simdutf records the positions of the first 16 invalid sequences, and finds the others as it converts.
+    for (size_t invalidSequenceCount : std::array<size_t, 4> { 15, 16, 17, 40 }) {
+        for (size_t spacing : std::array<size_t, 5> { 0, 1, 63, 64, 65 }) {
+            Vector<char8_t> source;
+            for (size_t i = 0; i < invalidSequenceCount; ++i) {
+                for (size_t j = 0; j < spacing; ++j)
+                    source.append('a');
+                source.append(invalidPieces[i % invalidPieces.size()]);
+                source.append(u8"\u00E9"_span);
+            }
+            auto expected = referenceUTF8DecodeReplacingInvalidSequences(source.span());
+            EXPECT_EQ(String { expected.span() }, String::fromUTF8ReplacingInvalidSequences(source.span()));
+        }
+    }
 }
 
 TEST(WTF_UTF8Conversion, UTF16ToUTF8ReplacingInvalidSequences)

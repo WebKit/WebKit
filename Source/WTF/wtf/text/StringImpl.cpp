@@ -272,17 +272,29 @@ Ref<StringImpl> StringImpl::create(std::span<const Latin1Character> characters)
     return createInternal(characters);
 }
 
-RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
+// convert_utf8_to_utf16_with_errors() stops at the first invalid sequence. Then convert everything again, one code
+// point at a time, so that the length always comes from the conversion that wrote the buffer (see the TOCTOU issue
+// described below). simdutf's convert_utf8_to_utf16_with_replacement() has that issue, and is slower when there are
+// invalid sequences.
+static size_t convertToUTF16ReplacingInvalidSequences(std::span<const char8_t> codeUnits, std::span<char16_t> buffer)
 {
-    RELEASE_ASSERT(isValidLength<char8_t>(codeUnits.size()));
+    auto result = simdutf::convert_utf8_to_utf16_with_errors(codeUnits, buffer);
+    if (result.error == simdutf::error_code::SUCCESS)
+        return result.count;
+    return Unicode::convertReplacingInvalidSequences(codeUnits, buffer).buffer.size();
+}
+
+template<ConversionMode mode> static RefPtr<StringImpl> createFromUTF8(std::span<const char8_t> codeUnits)
+{
+    RELEASE_ASSERT(StringImpl::isValidLength<char8_t>(codeUnits.size()));
 
     if (!codeUnits.data())
         return nullptr;
     if (codeUnits.empty())
-        return empty();
+        return StringImpl::empty();
 
     if (charactersAreAllASCII(codeUnits))
-        return create(byteCast<Latin1Character>(codeUnits));
+        return StringImpl::create(byteCast<Latin1Character>(codeUnits));
 
     auto inputLength = codeUnits.size();
 
@@ -291,11 +303,25 @@ RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
     // because of TOCTOU issue. For now, we use pre-allocated Vector (with maximally possible length)
     // and use convert_utf8_to_utf16 instead.
     Vector<char16_t, 1024> buffer(inputLength);
-    size_t written = simdutf::convert_utf8_to_utf16(codeUnits, buffer.mutableSpan());
-    if (!written)
-        return nullptr;
+    size_t written;
+    if constexpr (mode == ConversionMode::Strict) {
+        written = simdutf::convert_utf8_to_utf16(codeUnits, buffer.mutableSpan());
+        if (!written)
+            return nullptr;
+    } else
+        written = convertToUTF16ReplacingInvalidSequences(codeUnits, buffer.mutableSpan());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(written <= inputLength);
-    return create(buffer.span().first(written));
+    return StringImpl::create(buffer.span().first(written));
+}
+
+RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
+{
+    return createFromUTF8<ConversionMode::Strict>(codeUnits);
+}
+
+RefPtr<StringImpl> StringImpl::createReplacingInvalidSequences(std::span<const char8_t> codeUnits)
+{
+    return createFromUTF8<ConversionMode::Lenient>(codeUnits);
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const Latin1Character> characters)

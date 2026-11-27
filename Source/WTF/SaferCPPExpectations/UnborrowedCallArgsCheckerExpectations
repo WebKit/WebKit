@@ -18,5 +18,4 @@ wtf/cocoa/FileSystemCocoa.mm
 wtf/cocoa/NSURLExtras.mm
 wtf/text/Base64.cpp
 wtf/text/StringImpl.cpp
-wtf/text/WTFString.cpp
 wtf/text/cf/AtomStringImplCF.cpp

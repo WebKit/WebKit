@@ -35,7 +35,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
-#include <wtf/unicode/UTF8Conversion.h>
 
 namespace WTF {
 
@@ -437,25 +436,7 @@ String String::fromUTF8(std::span<const char8_t> codeUnits)
 
 String String::fromUTF8ReplacingInvalidSequences(std::span<const char8_t> string)
 {
-    if (!string.data())
-        return { };
-
-    RELEASE_ASSERT(string.size() <= String::MaxLength);
-
-    if (string.empty())
-        return emptyString();
-
-    if (charactersAreAllASCII(string))
-        return StringImpl::create(byteCast<Latin1Character>(string));
-
-    Vector<char16_t, 1024> buffer(string.size());
-
-    auto result = Unicode::convertReplacingInvalidSequences(string, buffer.mutableSpan());
-    if (result.code != Unicode::ConversionResultCode::Success)
-        return { };
-
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.buffer.size() <= string.size());
-    return StringImpl::create(result.buffer);
+    return StringImpl::createReplacingInvalidSequences(string);
 }
 
 String String::fromUTF8WithLatin1Fallback(std::span<const char8_t> string)

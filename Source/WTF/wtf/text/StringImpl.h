@@ -275,6 +275,7 @@ public:
 
     // Construct a string with UTF-8 data, null if it contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE static RefPtr<StringImpl> create(std::span<const char8_t>);
+    static RefPtr<StringImpl> createReplacingInvalidSequences(std::span<const char8_t>);
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
