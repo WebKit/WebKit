@@ -15,6 +15,6 @@ if [ ! "$CC" ]; then
     export CC="`xcrun -find clang`"
 fi
 
-if [ "${ACTION}" = "analyze" -o "${ACTION}" = "build" -o "${ACTION}" = "install" ]; then
+if [ "${ACTION}" = "analyze" -o "${ACTION}" = "build" -o "${ACTION}" = "indexbuild" -o "${ACTION}" = "install" ]; then
     make -f "${DumpRenderTree}/DerivedSources.make" -j `/usr/sbin/sysctl -n hw.activecpu` SDKROOT="${SDKROOT}" "${ARGS[@]}"
 fi
