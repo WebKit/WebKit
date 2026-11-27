@@ -956,6 +956,10 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimatedContentVisibilityIfNeeded
         animatedLayers.append({ animatedNodeLayerID, WTF::move(animatedNode), animationStack.releaseNonNull() });
     }
 
+    // Contrary to macOS where we pass the layer three host's root layer as the root layer to recurse up to
+    // so that animation target visibility can be determined, on iOS we provide the WKWebView's layer because
+    // viewport clipping for the root scroller is performed by the WKScrollView sitting between the WKWebView
+    // and the layer tree host's root layer.
     RetainPtr<CALayer> webViewLayer = [protect(webPageProxy())->cocoaView() layer];
     auto animatedLayersThatBecameVisible = m_animationVisibility.update(webViewLayer.get(), animatedLayers, [](auto& node) -> RefPtr<const RemoteAnimationStack> {
         return node.animationStack();
