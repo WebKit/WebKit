@@ -182,15 +182,13 @@ public:
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
-    void preparePlacedFloats(size_t layoutStartLineIndex);
-    FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
+    FloatRect constructContent(Layout::BlockFormattingState&, const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);
     void setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&);
-    Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout, size_t layoutStartLineIndex);
-    void updateRenderTreePositions(const Vector<LineAdjustment>&, bool didDiscardContent, size_t layoutStartLineIndex);
+    Vector<LineAdjustment> adjustContentForPagination(Layout::BlockFormattingState&, const Layout::BlockLayoutState&, bool isPartialLayout, size_t layoutStartLineIndex);
+    void updateRenderTreePositions(const Layout::BlockFormattingState&, const Vector<LineAdjustment>&, bool didDiscardContent, size_t layoutStartLineIndex);
 
     InlineContent& ensureInlineContent() LIFETIME_BOUND;
-    Layout::BlockFormattingState& ensureBlockFormattingState() LIFETIME_BOUND;
     Layout::InlineContentCache& ensureInlineContentCache() LIFETIME_BOUND;
     NODELETE const Layout::InlineItemList& inlineItemsForInvalidation() const LIFETIME_BOUND;
 
@@ -213,14 +211,13 @@ private:
     // The list items whose outside marker aligns with our first formatted line.
     using OutsideMarkerList = Vector<CheckedPtr<RenderListItem>>;
     OutsideMarkerList outsideMarkersForFirstFormattedLine(Layout::InlineLayoutState&);
-    void setOutsideMarkerPositions(const OutsideMarkerList&);
+    void setOutsideMarkerPositions(const Layout::BlockFormattingState&, const OutsideMarkerList&);
 
 private:
     CheckedPtr<Layout::ElementBox> m_rootLayoutBox;
     CheckedPtr<Document> m_document;
     WeakPtr<Layout::LayoutState> m_layoutState;
     // Inline formatting context state, created on first use. The SVG text fast path does not need it.
-    Layout::BlockFormattingState* m_blockFormattingState { nullptr };
     Layout::InlineContentCache* m_inlineContentCache { nullptr };
     std::optional<Layout::ConstraintsForInlineContent> m_inlineContentConstraints;
     // FIXME: This should be part of LayoutState.
