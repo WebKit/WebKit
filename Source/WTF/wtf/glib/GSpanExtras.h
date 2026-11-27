@@ -132,6 +132,21 @@ inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant LIFETIME_B
     return span(variant.get());
 }
 
+template<typename T, typename = std::enable_if_t<std::is_pointer_v<T>>>
+static inline std::span<T> span(T* array LIFETIME_BOUND)
+{
+    if (!array)
+        return { };
+
+    size_t size = 0;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib ports
+    T* arrayPtr = array;
+    for (; *arrayPtr != nullptr; arrayPtr++)
+        size++;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    return unsafeMakeSpan(array, size);
+}
+
 static inline std::span<char*> span(char** strv LIFETIME_BOUND)
 {
     if (!strv)
