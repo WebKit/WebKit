@@ -1,0 +1,84 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Many drawIndexed calls in one render pass after a single setScissorRect call. Each draw takes the " +
+           "index buffer clamp path, and on GPUs with a memory barrier limit the implementation splits the pass " +
+           "into a new Metal render command encoder once that limit is reached. The scissor rect (and stencil " +
+           "reference) must be reapplied to the new encoder; otherwise draws after the split cover the whole " +
+           "attachment instead of only the scissored pixel.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    let module = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) p: vec2f) -> @builtin(position) vec4f {
+            return vec4f(p, 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(0, 1, 0, 1); }
+    ` });
+    // A vertex buffer layout so minVertexCount is finite and every drawIndexed runs the index clamp.
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    // One triangle covering the whole target.
+    let vertexBuffer = device.createBuffer({ size: 24, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true });
+    new Float32Array(vertexBuffer.getMappedRange()).set([-1, -3, -1, 1, 3, 1]);
+    vertexBuffer.unmap();
+    let indexBuffer = device.createBuffer({ size: 12, usage: GPUBufferUsage.INDEX, mappedAtCreation: true });
+    new Uint32Array(indexBuffer.getMappedRange()).set([0, 1, 2]);
+    indexBuffer.unmap();
+
+    let texture = device.createTexture({ size: [2, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    let commandEncoder = device.createCommandEncoder();
+    let pass = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setVertexBuffer(0, vertexBuffer);
+    pass.setIndexBuffer(indexBuffer, 'uint32');
+    // Only the left pixel may be drawn to.
+    pass.setScissorRect(0, 0, 1, 1);
+    // Comfortably more draws than the memory barrier limit (512), so the pass is split at least twice.
+    for (let i = 0; i < 1200; ++i)
+        pass.drawIndexed(3);
+    pass.end();
+    commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [2, 1]);
+    device.queue.submit([commandEncoder.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let pixels = new Uint8Array(readback.getMappedRange(0, 8));
+    window.leftPixel = [...pixels.subarray(0, 4)];
+    window.rightPixel = [...pixels.subarray(4, 8)];
+    readback.unmap();
+
+    shouldBeEqualToString('leftPixel.join()', '0,255,0,255');
+    shouldBeEqualToString('rightPixel.join()', '255,0,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
