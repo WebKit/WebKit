@@ -1,0 +1,26 @@
+Test that under Site Isolation, the frame targets of frames in one process each take heap snapshots of their own frame.
+
+
+
+== Running test suite: SiteIsolation.Heap.SameProcessFramesSnapshot
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshot.Setup
+PASS: The same-origin iframe should be in the main frame's process.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshot.Snapshot
+PASS: The main frame's snapshot should include the main frame's marker.
+PASS: The main frame's snapshot should not include the iframe's marker.
+PASS: The main frame's snapshot should not include the iframe's object that the main frame holds.
+PASS: The iframe's snapshot should include the iframe's marker.
+PASS: The iframe's snapshot should not include the main frame's marker.
+PASS: The iframe's snapshot should include the iframe's object that the main frame holds.
+PASS: The iframe's target should preview the iframe's object that the main frame holds.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshot.ObjectOfOtherFrame
+PASS: The main frame's target should preview the main frame's marker.
+PASS: The iframe's target should not preview the main frame's marker.
+PASS: The iframe's target should not create a remote object for the main frame's marker.
+PASS: The iframe's target should preview the label string of the main frame's marker.
+
+-- Running test case: SiteIsolation.Heap.SameProcessFramesSnapshot.GarbageCollected
+PASS: Both frame targets should report a full garbage collection.
+
