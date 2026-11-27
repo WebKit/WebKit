@@ -91,119 +91,17 @@ static constexpr std::array requiredValuesForType { 0, 6, 1, 1, 1, 1, 1 };
 static constexpr std::array optionalValuesForType { 0, 0, 1, 1, 2, 0, 0 };
 
 template<typename CharacterType>
-bool SVGTransformList::parseAndReplaceTransform(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer, SVGTransform& transform)
-{
-    ASSERT(type == transform.value().type());
-
-    if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return false;
-
-    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
-    int valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type]);
-    if (valueCount < 0)
-        return false;
-
-    switch (type) {
-    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
-        ASSERT_NOT_REACHED();
-        return false;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
-        transform.value().setSkewX(values[0]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
-        transform.value().setSkewY(values[0]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_SCALE:
-        if (valueCount == 1)
-            transform.value().setScale(values[0], values[0]);
-        else
-            transform.value().setScale(values[0], values[1]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
-        if (valueCount == 1)
-            transform.value().setTranslate(values[0], 0);
-        else
-            transform.value().setTranslate(values[0], values[1]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_ROTATE:
-        if (valueCount == 1)
-            transform.value().setRotate(values[0], 0, 0);
-        else
-            transform.value().setRotate(values[0], values[1], values[2]);
-        return true;
-
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
-        transform.value().setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
-        return true;
-    }
-
-    return false;
-}
-
-template<typename CharacterType>
-RefPtr<SVGTransform> SVGTransformList::parseTransform(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
+std::optional<SVGTransformList::ParsedTransform> SVGTransformList::parseTransform(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
 {
     if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return nullptr;
+        return std::nullopt;
 
-    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
-    int valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type]);
-    if (valueCount < 0)
-        return nullptr;
+    ParsedTransform transform { type, { 0, 0, 0, 0, 0, 0 }, 0 };
+    transform.valueCount = parseTransformParamList(buffer, transform.values, requiredValuesForType[type], optionalValuesForType[type]);
+    if (transform.valueCount < 0)
+        return std::nullopt;
 
-    switch (type) {
-    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-
-    case SVGTransformValue::SVG_TRANSFORM_SKEWX: {
-        SVGTransformValue transform;
-        transform.setSkewX(values[0]);
-        return SVGTransform::create(WTF::move(transform));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_SKEWY: {
-        SVGTransformValue transform;
-        transform.setSkewY(values[0]);
-        return SVGTransform::create(WTF::move(transform));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_SCALE: {
-        auto resultValue = [&]() {
-            if (valueCount == 1) // Spec: if only one param given, assume uniform scaling
-                return SVGTransformValue::scaleTransformValue({ values[0], values[0] });
-
-            return SVGTransformValue::scaleTransformValue({ values[0], values[1] });
-        };
-
-        return SVGTransform::create(resultValue());
-    }
-    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE: {
-        if (valueCount == 1) // Spec: if only one param given, assume 2nd param to be 0
-            return SVGTransform::create(SVGTransformValue::translateTransformValue({ values[0], 0 }));
-
-        return SVGTransform::create(SVGTransformValue::translateTransformValue({ values[0], values[1] }));
-    }
-    case SVGTransformValue::SVG_TRANSFORM_ROTATE: {
-        auto resultValue = [&]() {
-            if (valueCount == 1)
-                return SVGTransformValue::rotateTransformValue(values[0], { });
-
-            return SVGTransformValue::rotateTransformValue(values[0], { values[1], values[2] });
-        };
-        return SVGTransform::create(resultValue());
-    }
-    case SVGTransformValue::SVG_TRANSFORM_MATRIX: {
-        SVGTransformValue transform;
-        transform.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
-        return SVGTransform::create(transform);
-    }
-    }
-
-    return nullptr;
+    return transform;
 }
 
 }
