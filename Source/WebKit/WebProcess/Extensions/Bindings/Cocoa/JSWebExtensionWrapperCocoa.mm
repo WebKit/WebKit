@@ -182,26 +182,6 @@ JSValueRef toJSValueRef(JSContextRef context, id object)
     return [JSValue valueWithObject:object inContext:toJSContext(context)].JSValueRef;
 }
 
-// This function lexicographically sorts the JSON output. The WTF JSON implementation does not yet support sorting keys,
-// so this function has to stay on Cocoa for now.
-String toSortedJSONString(JSContextRef context, JSValueRef value)
-{
-    // This double-JSON approach works best since it avoids JSC's Cocoa object conversion, which can produce JSValue's that NSJSONSerialization can't convert.
-    auto* data = [nsStringNilIfEmpty(toJSONString(context, value)).autorelease() dataUsingEncoding:NSUTF8StringEncoding];
-    if (!data)
-        return nullString();
-
-    id object = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingFragmentsAllowed error:nullptr];
-    if (!object)
-        return nullString();
-
-    data = [NSJSONSerialization dataWithJSONObject:object options:NSJSONWritingFragmentsAllowed | NSJSONWritingSortedKeys error:nullptr];
-    if (!data)
-        return nullString();
-
-    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

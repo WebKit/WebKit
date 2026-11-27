@@ -33,6 +33,7 @@
 #include "config.h"
 #include <wtf/JSONValues.h>
 
+#include <algorithm>
 #include <functional>
 #include <wtf/ASCIICType.h>
 #include <wtf/CommaPrinter.h>
@@ -567,11 +568,11 @@ std::optional<Ref<Value>> Value::optionalParseJSON(StringView json)
     return std::nullopt;
 }
 
-String Value::toJSONString() const
+String Value::toJSONString(bool sort) const
 {
     StringBuilder result;
     result.reserveCapacity(512);
-    writeJSON(result);
+    writeJSON(result, sort);
     return result.toString();
 }
 
@@ -648,15 +649,16 @@ void Value::dump(PrintStream& out) const
     }), m_value);
 }
 
-void Value::writeJSON(StringBuilder& output) const
+void Value::writeJSON(StringBuilder& output, bool sort) const
 {
     visitDerived([&](auto& derived) {
-        derived.writeJSONImpl(output);
+        derived.writeJSONImpl(output, sort);
     });
 }
 
-void Value::writeJSONImpl(StringBuilder& output) const
+void Value::writeJSONImpl(StringBuilder& output, bool sort) const
 {
+    UNUSED_PARAM(sort);
     WTF::visit(WTF::makeVisitor([&](std::monostate) {
         output.append("null"_s);
     }, [&](bool boolean) {
@@ -767,17 +769,34 @@ void ObjectBase::remove(const String& name)
     m_order.removeFirst(name);
 }
 
-void ObjectBase::writeJSONImpl(StringBuilder& output) const
+void ObjectBase::writeJSONImpl(StringBuilder& output, bool sort) const
 {
+    auto order = m_order;
+    if (sort) {
+        OrderStorage sorted = m_order;
+        std::sort(sorted.mutableSpan().begin(), sorted.mutableSpan().end(), [](const String& a, const String& b) {
+            if (a.is8Bit() && b.is8Bit()) {
+                const auto first = a.span8();
+                const auto last = b.span8();
+                return std::lexicographical_compare(first.begin(), first.end(), last.begin(), last.end());
+            }
+
+            const auto first = a.span16();
+            const auto last = b.span16();
+            return std::lexicographical_compare(first.begin(), first.end(), last.begin(), last.end());
+        });
+        order = sorted;
+    }
+
     output.append('{');
-    for (size_t i = 0; i < m_order.size(); ++i) {
-        auto findResult = m_map.find(m_order[i]);
+    for (size_t i = 0; i < order.size(); ++i) {
+        auto findResult = m_map.find(order[i]);
         ASSERT(findResult != m_map.end());
         if (i)
             output.append(',');
         output.appendQuotedJSONString(findResult->key);
         output.append(':');
-        Ref { findResult->value }->writeJSON(output);
+        Ref { findResult->value }->writeJSON(output, sort);
     }
     output.append('}');
 }
@@ -789,7 +808,7 @@ ObjectBase::ObjectBase()
 
 ArrayBase::~ArrayBase() = default;
 
-void ArrayBase::writeJSONImpl(StringBuilder& output) const
+void ArrayBase::writeJSONImpl(StringBuilder& output, bool sort) const
 {
     output.append('[');
     bool isFirst = true;
@@ -798,7 +817,7 @@ void ArrayBase::writeJSONImpl(StringBuilder& output) const
             isFirst = false;
         else
             output.append(',');
-        value->writeJSON(output);
+        value->writeJSON(output, sort);
     }
     output.append(']');
 }

@@ -895,4 +895,55 @@ TEST(JSONValue, MemoryCost)
     }
 }
 
+TEST(JSONValue, Sort)
+{
+    {
+        Ref<JSON::Object> object = JSON::Object::create();
+
+        object->setString("a"_s, "string"_s);
+        object->setString("c"_s, "string"_s);
+        object->setBoolean("b"_s, true);
+
+        EXPECT_EQ(object->toJSONString(), "{\"a\":\"string\",\"c\":\"string\",\"b\":true}"_s);
+        EXPECT_EQ(object->toJSONString(true), "{\"a\":\"string\",\"b\":true,\"c\":\"string\"}"_s);
+
+        // Ensure that sorting does not change the original order
+        EXPECT_EQ(object->toJSONString(), "{\"a\":\"string\",\"c\":\"string\",\"b\":true}"_s);
+    }
+
+    {
+        Ref<JSON::Object> object = JSON::Object::create();
+        Ref<JSON::Object> subObject = JSON::Object::create();
+
+        object->setString("b"_s, "string"_s);
+
+        subObject->setBoolean("c"_s, false);
+        subObject->setInteger("a"_s, 1);
+
+        object->setObject("a"_s, WTF::move(subObject));
+
+        EXPECT_EQ(object->toJSONString(), "{\"b\":\"string\",\"a\":{\"c\":false,\"a\":1}}"_s);
+        EXPECT_EQ(object->toJSONString(true), "{\"a\":{\"a\":1,\"c\":false},\"b\":\"string\"}"_s);
+    }
+
+    {
+        Ref<JSON::Array> array = JSON::Array::create();
+
+        Ref<JSON::Object> object1 = JSON::Object::create();
+        Ref<JSON::Object> object2 = JSON::Object::create();
+
+        object1->setString("b"_s, "string"_s);
+        object1->setBoolean("a"_s, true);
+
+        object2->setBoolean("c"_s, false);
+        object2->setInteger("a"_s, 1);
+
+        array->pushObject(object1);
+        array->pushObject(object2);
+
+        EXPECT_EQ(array->toJSONString(), "[{\"b\":\"string\",\"a\":true},{\"c\":false,\"a\":1}]"_s);
+        EXPECT_EQ(array->toJSONString(true), "[{\"a\":true,\"b\":\"string\"},{\"a\":1,\"c\":false}]"_s);
+    }
+}
+
 } // namespace TestWebKitAPI
