@@ -224,7 +224,7 @@ void ViewTimeline::cacheCurrentTime()
         if (!subjectRenderer)
             return { };
 
-        CheckedPtr sourceRenderer = sourceScrollerRenderer();
+        CheckedPtr sourceRenderer = downcast<RenderBox>(this->sourceRenderer());
         CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), protect(subject->element->document()));
         if (!sourceScrollableArea)
             return { };
@@ -350,12 +350,12 @@ RefPtr<Element> ViewTimeline::bindingsSource() const
 
 RefPtr<Element> ViewTimeline::source() const
 {
-    if (CheckedPtr sourceRender = sourceScrollerRenderer())
+    if (CheckedPtr sourceRender = sourceRenderer())
         return sourceRender->element();
     return nullptr;
 }
 
-const RenderBox* ViewTimeline::sourceScrollerRenderer() const
+const RenderElement* ViewTimeline::sourceRenderer() const
 {
     auto subject = m_subject.styleable();
     if (!subject)
@@ -378,7 +378,7 @@ CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const
 
     CheckedPtr renderer = subject->renderer();
 
-    CheckedPtr scrollerRenderer = sourceScrollerRenderer();
+    CheckedPtr scrollerRenderer = sourceRenderer();
     for (; renderer && renderer.get() != scrollerRenderer; renderer = renderer->parent()) {
         if (renderer->isStickilyPositioned())
             return renderer;
