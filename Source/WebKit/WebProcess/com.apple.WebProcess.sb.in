@@ -1084,6 +1084,9 @@
             F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
             F_SETCONFINED
             F_SETFD ;; libwebrtc.dylib (no backtrace)
+#if UBSAN_ENABLED
+            F_SETFL
+#endif
             F_SETPROTECTIONCLASS)))
 
 (when (defined? 'process-codesigning*)
@@ -1167,6 +1170,9 @@
         SYS_open
         SYS_open_nocancel
         SYS_openat
+#if UBSAN_ENABLED
+        SYS_pipe
+#endif
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad

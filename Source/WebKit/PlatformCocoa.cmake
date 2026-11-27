@@ -2601,7 +2601,7 @@ function(WEBKIT_DEFINE_MACOS_RESOURCES)
     if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures/AppleFeatures.h")
         list(APPEND _sb_extra_includes "-isystem" "${CMAKE_BINARY_DIR}/generated-stubs")
     endif ()
-    # Pass -fsanitize so sandbox preprocessor sees __has_feature(address_sanitizer).
+    # Pass -fsanitize so the sandbox preprocessor sees ASAN_ENABLED and UBSAN_ENABLED.
     if (ENABLE_SANITIZERS)
         foreach (_san IN LISTS ENABLE_SANITIZERS)
             list(APPEND _sb_extra_includes "-fsanitize=${_san}")

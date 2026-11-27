@@ -316,6 +316,9 @@
         SYS_openat
         SYS_os_fault_with_payload
         SYS_pathconf
+#if UBSAN_ENABLED
+        SYS_pipe
+#endif
         SYS_pread
         SYS_proc_info
         SYS_proc_info_extended_id

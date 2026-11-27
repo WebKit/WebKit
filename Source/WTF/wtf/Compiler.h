@@ -163,6 +163,10 @@
 #define SUPPRESS_ASAN
 #endif
 
+/* UBSAN_ENABLED */
+
+#define UBSAN_ENABLED COMPILER_HAS_CLANG_FEATURE(undefined_behavior_sanitizer)
+
 /* TSAN_ENABLED and SUPPRESS_TSAN */
 
 #ifdef __SANITIZE_THREAD__

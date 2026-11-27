@@ -399,6 +399,9 @@
     (syscall-number
         SYS_fgetxattr
         SYS_getxattr
+#if UBSAN_ENABLED
+        SYS_pipe
+#endif
         SYS_psynch_rw_wrlock
 #if ASAN_ENABLED
         SYS_sigaltstack
