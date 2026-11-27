@@ -2166,7 +2166,10 @@ $(PROJECT_DIR)/svg/SVGMatrix.idl
 $(PROJECT_DIR)/svg/SVGMetadataElement.idl
 $(PROJECT_DIR)/svg/SVGNumber.idl
 $(PROJECT_DIR)/svg/SVGNumberList.idl
+$(PROJECT_DIR)/svg/SVGPathData.idl
+$(PROJECT_DIR)/svg/SVGPathDataSettings.idl
 $(PROJECT_DIR)/svg/SVGPathElement.idl
+$(PROJECT_DIR)/svg/SVGPathSegment.idl
 $(PROJECT_DIR)/svg/SVGPatternElement.idl
 $(PROJECT_DIR)/svg/SVGPoint.idl
 $(PROJECT_DIR)/svg/SVGPointList.idl

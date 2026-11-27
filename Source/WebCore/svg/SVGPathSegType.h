@@ -48,4 +48,100 @@ enum class SVGPathSegType : uint8_t {
     CurveToQuadraticSmoothRel = 19
 };
 
+// https://w3c.github.io/svgwg/specs/paths/#PathDataBNF
+constexpr SVGPathSegType pathSegTypeForLetter(char16_t letter)
+{
+    switch (letter) {
+    case 'Z':
+    case 'z':
+        return SVGPathSegType::ClosePath;
+    case 'M':
+        return SVGPathSegType::MoveToAbs;
+    case 'm':
+        return SVGPathSegType::MoveToRel;
+    case 'L':
+        return SVGPathSegType::LineToAbs;
+    case 'l':
+        return SVGPathSegType::LineToRel;
+    case 'C':
+        return SVGPathSegType::CurveToCubicAbs;
+    case 'c':
+        return SVGPathSegType::CurveToCubicRel;
+    case 'Q':
+        return SVGPathSegType::CurveToQuadraticAbs;
+    case 'q':
+        return SVGPathSegType::CurveToQuadraticRel;
+    case 'A':
+        return SVGPathSegType::ArcAbs;
+    case 'a':
+        return SVGPathSegType::ArcRel;
+    case 'H':
+        return SVGPathSegType::LineToHorizontalAbs;
+    case 'h':
+        return SVGPathSegType::LineToHorizontalRel;
+    case 'V':
+        return SVGPathSegType::LineToVerticalAbs;
+    case 'v':
+        return SVGPathSegType::LineToVerticalRel;
+    case 'S':
+        return SVGPathSegType::CurveToCubicSmoothAbs;
+    case 's':
+        return SVGPathSegType::CurveToCubicSmoothRel;
+    case 'T':
+        return SVGPathSegType::CurveToQuadraticSmoothAbs;
+    case 't':
+        return SVGPathSegType::CurveToQuadraticSmoothRel;
+    default:
+        return SVGPathSegType::Unknown;
+    }
+}
+
+// ClosePath gives 'Z': the grammar has no relative closepath, so 'z' comes back as 'Z'.
+constexpr char letterForPathSegType(SVGPathSegType type)
+{
+    switch (type) {
+    case SVGPathSegType::ClosePath:
+        return 'Z';
+    case SVGPathSegType::MoveToAbs:
+        return 'M';
+    case SVGPathSegType::MoveToRel:
+        return 'm';
+    case SVGPathSegType::LineToAbs:
+        return 'L';
+    case SVGPathSegType::LineToRel:
+        return 'l';
+    case SVGPathSegType::CurveToCubicAbs:
+        return 'C';
+    case SVGPathSegType::CurveToCubicRel:
+        return 'c';
+    case SVGPathSegType::CurveToQuadraticAbs:
+        return 'Q';
+    case SVGPathSegType::CurveToQuadraticRel:
+        return 'q';
+    case SVGPathSegType::ArcAbs:
+        return 'A';
+    case SVGPathSegType::ArcRel:
+        return 'a';
+    case SVGPathSegType::LineToHorizontalAbs:
+        return 'H';
+    case SVGPathSegType::LineToHorizontalRel:
+        return 'h';
+    case SVGPathSegType::LineToVerticalAbs:
+        return 'V';
+    case SVGPathSegType::LineToVerticalRel:
+        return 'v';
+    case SVGPathSegType::CurveToCubicSmoothAbs:
+        return 'S';
+    case SVGPathSegType::CurveToCubicSmoothRel:
+        return 's';
+    case SVGPathSegType::CurveToQuadraticSmoothAbs:
+        return 'T';
+    case SVGPathSegType::CurveToQuadraticSmoothRel:
+        return 't';
+    case SVGPathSegType::Unknown:
+        return '\0';
+    }
+    return '\0';
+}
+
 } // namespace WebCore

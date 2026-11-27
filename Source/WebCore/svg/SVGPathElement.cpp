@@ -32,12 +32,18 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
+#include "SVGPathByteStreamSource.h"
+#include "SVGPathDataSettings.h"
+#include "SVGPathParser.h"
+#include "SVGPathSegmentsBuilder.h"
+#include "SVGPathSegmentsSource.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "SVGTextPathElement.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -136,6 +142,68 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
 void SVGPathElement::clearCache()
 {
     PathCache::singleton().clear();
+}
+
+Vector<SVGPathSegment> SVGPathElement::getPathData(SVGPathDataSettings&& settings) const
+{
+    // Not pathByteStream(), which prefers the CSS "d" property and then the
+    // animated value. The spec reads the base value of the attribute.
+    auto& byteStream = Ref { m_path }->baseVal()->pathByteStream();
+    if (byteStream.isEmpty())
+        return { };
+
+    Vector<SVGPathSegment> result;
+    SVGPathSegmentsBuilder builder(result);
+    SVGPathByteStreamSource source(byteStream);
+    SVGPathParser::parse(source, builder, settings.normalize ? NormalizedParsing : UnalteredParsing);
+    return result;
+}
+
+void SVGPathElement::setPathData(Vector<SVGPathSegment>&& pathData)
+{
+    SVGPathByteStream byteStream;
+    SVGPathSegmentsSource source(pathData);
+    SVGPathParser::parseToByteStream(source, byteStream, UnalteredParsing);
+
+    if (byteStream.isEmpty()) {
+        removeAttribute(SVGNames::dAttr);
+        return;
+    }
+
+    String d;
+    buildStringFromByteStream(byteStream, d, UnalteredParsing);
+
+    // Through setAttribute, so mutation observers fire and <use> instances and
+    // markers are invalidated.
+    setAttribute(SVGNames::dAttr, AtomString { d });
+}
+
+std::optional<SVGPathSegment> SVGPathElement::getPathSegmentAtLength(float distance) const
+{
+    auto& byteStream = Ref { m_path }->baseVal()->pathByteStream();
+    if (byteStream.isEmpty())
+        return std::nullopt;
+
+    // The spec clamps to [0, total length] first. Without the upper clamp, a
+    // path ending in a zero-length segment (such as "L 0 0 Z") would return
+    // that segment instead of the last one with length.
+    distance = std::clamp(distance, 0.0f, getTotalLengthOfSVGPathByteStream(byteStream));
+
+    // Stops on the first segment whose end reaches the distance, which is the
+    // earlier segment on a boundary.
+    auto index = getSVGPathSegAtLengthFromSVGPathByteStream(byteStream, distance);
+
+    Vector<SVGPathSegment> segments;
+    SVGPathSegmentsBuilder builder(segments);
+    SVGPathByteStreamSource source(byteStream);
+    SVGPathParser::parse(source, builder, UnalteredParsing);
+
+    if (index >= segments.size())
+        return std::nullopt;
+
+    auto segment = WTF::move(borrow(segments)[index]);
+    segment.index = index;
+    return segment;
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)

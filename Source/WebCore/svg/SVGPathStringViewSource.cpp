@@ -90,49 +90,7 @@ std::optional<SVGPathSegType> SVGPathStringViewSource::parseSVGSegmentType()
     return parse([](auto& buffer) -> SVGPathSegType {
         auto character = *buffer;
         buffer++;
-        switch (character) {
-        case 'Z':
-        case 'z':
-            return SVGPathSegType::ClosePath;
-        case 'M':
-            return SVGPathSegType::MoveToAbs;
-        case 'm':
-            return SVGPathSegType::MoveToRel;
-        case 'L':
-            return SVGPathSegType::LineToAbs;
-        case 'l':
-            return SVGPathSegType::LineToRel;
-        case 'C':
-            return SVGPathSegType::CurveToCubicAbs;
-        case 'c':
-            return SVGPathSegType::CurveToCubicRel;
-        case 'Q':
-            return SVGPathSegType::CurveToQuadraticAbs;
-        case 'q':
-            return SVGPathSegType::CurveToQuadraticRel;
-        case 'A':
-            return SVGPathSegType::ArcAbs;
-        case 'a':
-            return SVGPathSegType::ArcRel;
-        case 'H':
-            return SVGPathSegType::LineToHorizontalAbs;
-        case 'h':
-            return SVGPathSegType::LineToHorizontalRel;
-        case 'V':
-            return SVGPathSegType::LineToVerticalAbs;
-        case 'v':
-            return SVGPathSegType::LineToVerticalRel;
-        case 'S':
-            return SVGPathSegType::CurveToCubicSmoothAbs;
-        case 's':
-            return SVGPathSegType::CurveToCubicSmoothRel;
-        case 'T':
-            return SVGPathSegType::CurveToQuadraticSmoothAbs;
-        case 't':
-            return SVGPathSegType::CurveToQuadraticSmoothRel;
-        default:
-            return SVGPathSegType::Unknown;
-        }
+        return pathSegTypeForLetter(character);
     });
 }
 

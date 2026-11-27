@@ -21,4 +21,18 @@ test(() => {
       path.getPathSegmentAtLength(1000), { type: "L", values: [100, 100] });
 }, "distance beyond the path returns the last segment");
 
+test(() => {
+  // L(0,0) [100..200] brings the path back to its start, then Z adds no length.
+  const path = createPath("M 0 0 L 100 0 L 0 0 Z");
+  assert_path_segment_equals(
+      path.getPathSegmentAtLength(1000), { type: "L", values: [0, 0] });
+}, "distance beyond the path skips a trailing zero-length closepath");
+
+test(() => {
+  // The trailing M(200,0) starts a new subpath with no length.
+  const path = createPath("M 0 0 L 100 0 M 200 0");
+  assert_path_segment_equals(
+      path.getPathSegmentAtLength(1000), { type: "L", values: [100, 0] });
+}, "distance beyond the path skips a trailing moveto");
+
 </script>
