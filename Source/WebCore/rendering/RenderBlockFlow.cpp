@@ -3187,10 +3187,14 @@ bool RenderBlockFlow::positionNewFloats()
 
         setLogicalHeightForFloat(floatingObject, logicalHeightForChildForFragmentation(childBox) + (logicalTopForChild(childBox) - logicalTop) + marginAfterForChild(childBox));
 
+        // The placed float takes its shape from the float's layout box.
+        if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo()) {
+            shapeOutside->invalidateForSizeChangeIfNeeded();
+            childBox.layoutBox().setShape(&shapeOutside->computedShape());
+        } else if (childBox.layoutBox().shape())
+            childBox.layoutBox().setShape({ });
         m_floatingObjects->addPlacedObject(&floatingObject);
 
-        if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo())
-            shapeOutside->invalidateForSizeChangeIfNeeded();
         // If the child moved, we have to repaint it.
         if (childBox.checkForRepaintDuringLayout())
             childBox.repaintDuringLayoutIfMoved(oldRect);
