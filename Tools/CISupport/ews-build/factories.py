@@ -43,8 +43,9 @@ class Factory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target))
-        if self.changeRelevance:
-            self.addStep(CheckChangeRelevance(self.changeRelevance))
+        changeRelevance = relevance.narrowed_to_platform(self.changeRelevance, platform)
+        if changeRelevance:
+            self.addStep(CheckChangeRelevance(changeRelevance))
         excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
         self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded, excludeFeatureBranches=self.excludeFeatureBranches))
         self.addStep(PrintConfiguration())
@@ -97,7 +98,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
-        self.addStep(CheckChangeRelevance(self.changeRelevance))
+        self.addStep(CheckChangeRelevance(relevance.narrowed_to_platform(self.changeRelevance, platform)))
         excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
         self.addStep(ValidateChange(excluded_branches=excluded))
         self.addStep(PrintConfiguration())
