@@ -646,9 +646,13 @@ angle::Result GetPackPixelsParams(const gl::InternalFormat &sizedFormatInfo,
                                   rx::PackPixelsParams *paramsOut,
                                   GLuint *skipBytesOut)
 {
+    // With reversed row order, the first packed row is the top row of |area|, so the rows clipped
+    // off the top of |area| are skipped.
+    const GLuint skipRows =
+        packState.reverseRowOrder ? area.y1() - clippedArea.y1() : clippedArea.y - area.y;
     angle::CheckedNumeric<GLuint> checkedSkipBytes = *skipBytesOut;
-    checkedSkipBytes += (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes +
-                        (clippedArea.y - area.y) * outputPitch;
+    checkedSkipBytes += (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes;
+    checkedSkipBytes += angle::CheckedNumeric<GLuint>(skipRows) * outputPitch;
     if (!checkedSkipBytes.AssignIfValid(skipBytesOut))
     {
         return angle::Result::Stop;

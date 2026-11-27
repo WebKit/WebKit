@@ -260,6 +260,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->EGLImageExternalWrapModesEXT = true;
     glExtensions->requiredInternalformatOES    = true;
     glExtensions->copyTextureCHROMIUM          = true;
+    glExtensions->packReverseRowOrderANGLE     = true;
 
     // Depth/stencil extensions
     glExtensions->packedDepthStencilOES = true;
