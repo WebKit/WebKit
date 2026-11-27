@@ -1522,4 +1522,293 @@ TEST(EnhancedSecurityPrecedence, RequestedLockdownWithoutSystemLockdownMode)
     EXPECT_STREQ("lockdown", processVariant(webView.get()));
 }
 
+TEST(EnhancedSecurity, ForceLockdownModeUsesLockdownProcess)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeOverridesLockdownModeOptOut)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = NO;
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeTakesPrecedenceOverEnhancedSecurity)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeOverridesNavigationPolicyOptOut)
+{
+    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    setFeatureEnabled(webViewConfiguration.get(), @"ForceLockdownMode", true);
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.lockdownModeEnabled = NO;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+}
+
+static RetainPtr<WKWebViewConfiguration> forceLockdownModePSONConfiguration(const HTTPServer& server, WKProcessPool *processPool, bool forceLockdownMode = true)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration setProcessPool:processPool];
+    setFeatureEnabled(configuration.get(), @"ForceLockdownMode", forceLockdownMode);
+    return configuration;
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeCrossSiteNavigationStaysInLockdownProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+    pid_t examplePID = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_NE(examplePID, [webView _webProcessIdentifier]);
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeCrossSiteNavigationOverridesEnhancedSecurityPolicy)
+{
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+    pid_t examplePID = [webView _webProcessIdentifier];
+
+    __block bool decidedPolicy = false;
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+        decidedPolicy = true;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(decidedPolicy);
+    EXPECT_NE(examplePID, [webView _webProcessIdentifier]);
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeToggledOnLivePageSwapsProcess)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get(), false);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("standard", processVariant(webView.get()));
+    pid_t standardPID = [webView _webProcessIdentifier];
+
+    // The page's preferences are live, so turning the preference on reloads the page into a Lockdown Mode process.
+    setFeatureEnabled([webView configuration], @"ForceLockdownMode", true);
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+    pid_t lockdownPID = [webView _webProcessIdentifier];
+    EXPECT_NE(standardPID, lockdownPID);
+    EXPECT_WK_STREQ("https://webkit.org/webkit", [webView URL].absoluteString);
+
+    // Turning it off again swaps back to a standard process.
+    setFeatureEnabled([webView configuration], @"ForceLockdownMode", false);
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("standard", processVariant(webView.get()));
+    EXPECT_NE(lockdownPID, [webView _webProcessIdentifier]);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeToggledOffOnLivePageSwapsProcess)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("lockdown", processVariant(webView.get()));
+    pid_t lockdownPID = [webView _webProcessIdentifier];
+
+    // The page was created with the preference on, so the first change it sees must be the preference turning off.
+    setFeatureEnabled([webView configuration], @"ForceLockdownMode", false);
+    [delegate waitForDidFinishNavigation];
+    EXPECT_STREQ("standard", processVariant(webView.get()));
+    EXPECT_NE(lockdownPID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ("https://webkit.org/webkit", [webView URL].absoluteString);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeWindowOpenUsesLockdownProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get());
+    webViewConfiguration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr openerDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerDelegate allowAnyTLSCertificate];
+    [openerWebView setNavigationDelegate:openerDelegate.get()];
+
+    __block RetainPtr<WKWebView> openedWebView;
+    __block bool openedDidFinishNavigation = false;
+    RetainPtr openedDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedDelegate allowAnyTLSCertificate];
+    openedDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        openedDidFinishNavigation = true;
+    };
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        [openedWebView setNavigationDelegate:openedDelegate.get()];
+        return openedWebView.get();
+    };
+    [openerWebView setUIDelegate:uiDelegate.get()];
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerDelegate waitForDidFinishNavigation];
+    TestWebKitAPI::Util::run(&openedDidFinishNavigation);
+
+    EXPECT_WK_STREQ("https://webkit.org/webkit", [openedWebView URL].absoluteString);
+    EXPECT_STREQ("lockdown", processVariant(openerWebView.get()));
+    EXPECT_STREQ("lockdown", processVariant(openedWebView.get()));
+
+    // With an opener, the cross-site popup shares the opener's process unless site isolation gives it its own.
+    if (isSiteIsolationEnabled(openerWebView.get()))
+        EXPECT_NE([openerWebView _webProcessIdentifier], [openedWebView _webProcessIdentifier]);
+    else
+        EXPECT_EQ([openerWebView _webProcessIdentifier], [openedWebView _webProcessIdentifier]);
+}
+
+TEST(EnhancedSecurity, ForceLockdownModeWindowOpenNoopenerUsesNewLockdownProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>function openWithNoopener() { window.open('https://webkit.org/webkit', '_blank', 'noopener') }</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = forceLockdownModePSONConfiguration(server, processPool.get());
+    webViewConfiguration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr openerDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerDelegate allowAnyTLSCertificate];
+    [openerWebView setNavigationDelegate:openerDelegate.get()];
+
+    __block RetainPtr<TestWKWebView> openedWebView;
+    __block bool openedDidFinishNavigation = false;
+    RetainPtr openedDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedDelegate allowAnyTLSCertificate];
+    openedDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        openedDidFinishNavigation = true;
+    };
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        [openedWebView setNavigationDelegate:openedDelegate.get()];
+        return openedWebView.get();
+    };
+    [openerWebView setUIDelegate:uiDelegate.get()];
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [openerDelegate waitForDidFinishNavigation];
+    pid_t openerPID = [openerWebView _webProcessIdentifier];
+
+    [openerWebView evaluateJavaScript:@"openWithNoopener()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&openedDidFinishNavigation);
+
+    // noopener puts the popup in a new browsing context group, so it gets a new process, which must also be Lockdown Mode.
+    EXPECT_WK_STREQ("https://webkit.org/webkit", [openedWebView URL].absoluteString);
+    EXPECT_FALSE([[openedWebView objectByEvaluatingJavaScript:@"!!window.opener"] boolValue]);
+    EXPECT_NE(openerPID, [openedWebView _webProcessIdentifier]);
+    EXPECT_STREQ("lockdown", processVariant(openedWebView.get()));
+    EXPECT_STREQ("lockdown", processVariant(openerWebView.get()));
+}
+
 } // namespace TestWebKitAPI

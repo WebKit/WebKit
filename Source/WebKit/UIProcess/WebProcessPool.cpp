@@ -729,9 +729,9 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         static NeverDestroyed<Ref<WebProcessPool>> remoteWorkerProcessPool(WebProcessPool::create(API::ProcessPoolConfiguration::create().get()));
 
     RefPtr requestingProcess = requestingProcessIdentifier ? WebProcessProxy::processForIdentifier(*requestingProcessIdentifier) : nullptr;
-    auto lockdownMode = requestingProcess ? requestingProcess->lockdownMode() : (lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
     auto crossOriginMode = isCompatibleWithCrossOriginIsolation(workerCrossOriginEmbedderPolicy) ? CrossOriginMode::Isolated : CrossOriginMode::Shared;
     Ref processPool = requestingProcess ? requestingProcess->processPool() : processPools()[0].get();
+    auto lockdownMode = requestingProcess ? requestingProcess->lockdownMode() : ((protect(processPool->defaultPageGroup().preferences())->forceLockdownMode() || lockdownModeEnabledBySystem()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
     auto enhancedSecurity = requestingProcess ? requestingProcess->enhancedSecurity() : defaultEnhancedSecurity(processPool, lockdownMode, protect(processPool->defaultPageGroup().preferences()));
 
     struct WebPreferencesStoreRef {
