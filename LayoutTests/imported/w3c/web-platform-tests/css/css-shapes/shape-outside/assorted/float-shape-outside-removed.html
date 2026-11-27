@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Lines wrap around the margin box of a float whose shape-outside changes to none</title>
+<link rel="help" href="https://drafts.csswg.org/css-shapes-1/#shape-outside-property">
+<link rel="match" href="float-shape-outside-removed-ref.html">
+<meta name="assert" content="After shape-outside changes to none, lines wrap around the float's margin box, not around the shape it had.">
+<style>
+.container { width: 200px; line-height: 0; }
+.float { float: left; width: 100px; height: 100px; background: green; }
+.shape { shape-outside: polygon(0px 0px, 50px 0px, 50px 50px, 0px 50px); }
+.box { display: inline-block; width: 100px; height: 50px; background: blue; }
+</style>
+<div class="container"><div id="target" class="float shape"></div><span class="box"></span><span class="box"></span></div>
+<script>
+document.body.offsetTop;
+target.classList.remove("shape");
+</script>

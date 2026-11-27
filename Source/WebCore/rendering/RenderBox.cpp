@@ -5653,6 +5653,8 @@ void RenderBox::removeShapeOutsideInfo()
 
     setRenderBoxHasShapeOutsideInfo(false);
     shapeOutsideInfoMap().remove(*this);
+    if (layoutBox().shape())
+        layoutBox().setShape({ });
 }
 
 bool RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants updatePercentageDescendants) const
