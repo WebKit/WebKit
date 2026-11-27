@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x271
   RenderBlock {HTML} at (0,0) size 800x271
     RenderBody {BODY} at (8,8) size 784x255
-      RenderMathMLMath {math} at (0,0) size 115x38
-        RenderMathMLRow {mrow} at (0,0) size 115x38
+      RenderMathMLMath {math} at (0,0) size 106x38
+        RenderMathMLRow {mrow} at (0,0) size 106x38
           RenderMathMLOperator {mo} at (0,5) size 7x28
             RenderBlock (anonymous) at (0,0) size 6x15
               RenderText {#text} at (0,-1) size 6x17
@@ -57,12 +57,12 @@ layer at (0,0) size 800x271
             RenderBlock (anonymous) at (0,0) size 7x15
               RenderText {#text} at (0,-1) size 7x17
                 text run at (0,0) width 7: "\x{2016}"
-          RenderMathMLOperator {mo} at (97,7) size 18x16
+          RenderMathMLOperator {mo} at (97,11) size 9x15
             RenderBlock (anonymous) at (0,0) size 9x15
               RenderText {#text} at (0,-1) size 9x17
                 text run at (0,0) width 9: "\x{2225}"
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (114,8) size 1x19
+      RenderBR {BR} at (105,8) size 1x19
       RenderMathMLMath {math} at (0,37) size 136x143
         RenderMathMLRow {mrow} at (0,0) size 136x142
           RenderMathMLOperator {mo} at (0,0) size 8x142
