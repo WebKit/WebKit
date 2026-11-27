@@ -202,6 +202,7 @@ struct WebPageCreationParameters {
 
     bool controlledByAutomation { false };
     Inspector::NetworkInterception networkInterception { };
+    bool resourceCachingDisabledByAutomation { false };
     bool isProcessSwap { false };
 
     bool useDarkAppearance { false };

@@ -3509,6 +3509,10 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
 
     m_controlledByAutomation = controlled;
 
+    // Automation's settings shouldn't outlive its control of the page.
+    if (!controlled)
+        setResourceCachingDisabledByAutomation(false);
+
     if (!hasRunningProcess())
         return;
 
@@ -3516,6 +3520,21 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
         process.send(Messages::WebPage::SetControlledByAutomation(controlled), pageID);
     });
     protect(protect(websiteDataStore())->networkProcess())->send(Messages::NetworkProcess::SetSessionIsControlledByAutomation(sessionID(), m_controlledByAutomation), 0);
+}
+
+void WebPageProxy::setResourceCachingDisabledByAutomation(bool disabled)
+{
+    if (m_resourceCachingDisabledByAutomation == disabled)
+        return;
+
+    m_resourceCachingDisabledByAutomation = disabled;
+
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::SetResourceCachingDisabledByAutomation(disabled), pageID);
+    });
 }
 
 RefPtr<WebAutomationSession> WebPageProxy::activeAutomationSession() const
@@ -17452,6 +17471,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.controlledByAutomation = m_controlledByAutomation;
     parameters.networkInterception = internals().networkInterception;
+    parameters.resourceCachingDisabledByAutomation = m_resourceCachingDisabledByAutomation;
     parameters.isProcessSwap = isProcessSwap;
     parameters.useDarkAppearance = useDarkAppearance();
     parameters.useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel();

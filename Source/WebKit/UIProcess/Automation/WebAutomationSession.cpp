@@ -92,6 +92,7 @@
 #include "BidiEmulationAgent.h"
 #include "BidiEventNames.h"
 #include "BidiInputAgent.h"
+#include "BidiNetworkAgent.h"
 #include "BidiScriptAgent.h"
 #include "IdentifierTypes.h"
 #include "WebDriverBidiProcessor.h"
@@ -226,8 +227,13 @@ void WebAutomationSession::setClient(std::unique_ptr<API::AutomationSessionClien
 
 void WebAutomationSession::setProcessPool(WebKit::WebProcessPool* processPool)
 {
-    if (RefPtr pool = m_processPool.get())
+    if (RefPtr pool = m_processPool) {
+#if ENABLE(WEBDRIVER_BIDI)
+        // The session is ending. Pages can stay open, e.g. for debugging, and the spec resets some state for them.
+        m_bidiProcessor->sessionWillEnd();
+#endif
         pool->removeMessageReceiver(Messages::WebAutomationSession::messageReceiverName());
+    }
 
     m_processPool = processPool;
 
@@ -380,6 +386,22 @@ void WebAutomationSession::disconnectAllInspectorPassthroughChannels()
     }
 }
 #endif // ENABLE(REMOTE_INSPECTOR)
+
+Vector<Ref<WebPageProxy>> WebAutomationSession::pagesControlledByAutomation() const
+{
+    Vector<Ref<WebPageProxy>> pages;
+    RefPtr processPool = m_processPool;
+    if (!processPool)
+        return pages;
+
+    for (Ref process : borrow(processPool->processes())) {
+        for (Ref page : process->mainPages()) {
+            if (page->isControlledByAutomation())
+                pages.append(WTF::move(page));
+        }
+    }
+    return pages;
+}
 
 RefPtr<WebPageProxy> WebAutomationSession::webPageProxyForHandle(const String& handle)
 {
@@ -567,6 +589,33 @@ std::expected<PageAndFrameHandle, AutomationCommandError> WebAutomationSession::
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+std::expected<Vector<Ref<WebPageProxy>>, AutomationCommandError> WebAutomationSession::pagesForTopLevelBrowsingContexts(const JSON::Array& contexts)
+{
+    // https://w3c.github.io/webdriver-bidi/#get-valid-top-level-traversables-by-ids
+    if (!contexts.length())
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The parameter 'contexts' cannot be empty."_s));
+
+    Vector<Ref<WebPageProxy>> pages;
+    for (const auto& contextValue : contexts) {
+        auto context = contextValue->asString();
+        if (context.isNull())
+            return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The parameter 'contexts' must contain strings."_s));
+
+        auto handles = extractBrowsingContextHandles(context);
+        if (!handles)
+            return makeUnexpected(handles.error());
+        auto& [pageHandle, frameHandle] = handles.value();
+        if (!frameHandle.isEmpty())
+            return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "The parameter 'contexts' must contain top-level browsing contexts."_s));
+
+        RefPtr page = webPageProxyForHandle(pageHandle);
+        if (!page)
+            return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+        pages.append(page.releaseNonNull());
+    }
+    return pages;
+}
+
 bool WebAutomationSession::isValidUserContext(const String& userContextID) const
 {
     return m_bidiProcessor->browserAgent().isValidUserContext(userContextID);
@@ -605,17 +654,7 @@ void WebAutomationSession::getNextContext(Vector<Ref<WebPageProxy>>&& pages, Ref
 
 void WebAutomationSession::getBrowsingContexts(CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&& callback)
 {
-    Ref processPool = *m_processPool;
-    Vector<Ref<WebPageProxy>> pages;
-    for (Ref process : borrow(processPool->processes())) {
-        for (Ref page : process->mainPages()) {
-            if (!page->isControlledByAutomation())
-                continue;
-            pages.append(WTF::move(page));
-        }
-    }
-
-    getNextContext(WTF::move(pages), JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>::create(), WTF::move(callback));
+    getNextContext(pagesControlledByAutomation(), JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>::create(), WTF::move(callback));
 }
 
 void WebAutomationSession::getBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, CommandCallback<Ref<Inspector::Protocol::Automation::BrowsingContext>>&& callback)
@@ -1666,6 +1705,7 @@ void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
     m_bidiProcessor->browserAgent().didCreatePage(page);
     m_bidiProcessor->emulationAgent().didCreatePage(page);
+    m_bidiProcessor->networkAgent().didCreatePage(page);
     emitContextCreatedEvent(page);
 }
 

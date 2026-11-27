@@ -4172,13 +4172,10 @@
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288100"}}
     },
     "imported/w3c/webdriver/tests/bidi/network/set_cache_behavior/contexts.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288095"}}
-    },
-    "imported/w3c/webdriver/tests/bidi/network/set_cache_behavior/invalid.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288095"}}
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288099", "notes": "Also needs an HTTP cache, which a non-persistent data store doesn't have; MiniBrowser uses one under automation."}}
     },
     "imported/w3c/webdriver/tests/bidi/network/set_cache_behavior/set_cache_behavior.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288095"}}
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288099", "notes": "Also needs an HTTP cache, which a non-persistent data store doesn't have; MiniBrowser uses one under automation."}}
     },
     "imported/w3c/webdriver/tests/bidi/network/set_extra_headers/contexts.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/303193"}}

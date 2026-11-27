@@ -1105,6 +1105,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     page->setControlledByAutomation(parameters.controlledByAutomation);
     page->setNetworkInterception(Inspector::NetworkInterception { parameters.networkInterception });
+    page->setResourceCachingDisabledByAutomation(parameters.resourceCachingDisabledByAutomation);
     page->setHasResourceLoadClient(parameters.hasResourceLoadClient);
 
     page->setCanStartMedia(false);
@@ -1895,6 +1896,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
     setContentInversion(parameters.contentInversion);
     setScrollbarStyleOverride(parameters.scrollbarStyleOverride);
+    setResourceCachingDisabledByAutomation(parameters.resourceCachingDisabledByAutomation);
 
     if (auto& remotePageParameters = parameters.remotePageParameters) {
         if (RefPtr page = m_page; page && is<RemoteFrame>(page->mainFrame()))
@@ -4982,6 +4984,11 @@ void WebPage::setNetworkInterception(Inspector::NetworkInterception&& configurat
 void WebPage::resolveNetworkInterception(WebCore::ResourceLoaderIdentifier identifier, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution&& resolution)
 {
     networkInterceptionSink().resolveInterception(identifier, owner, phase, WTF::move(resolution));
+}
+
+void WebPage::setResourceCachingDisabledByAutomation(bool disabled)
+{
+    protect(corePage())->setResourceCachingDisabledByAutomation(disabled);
 }
 
 CheckedRef<PageInspectorTarget> WebPage::ensureInspectorTarget()

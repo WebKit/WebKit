@@ -1172,8 +1172,10 @@ public:
     NODELETE String captionUserPreferencesStyleSheet();
     void setCaptionUserPreferencesStyleSheet(const String&);
 
-    bool isResourceCachingDisabledByWebInspector() const { return m_resourceCachingDisabledByWebInspector; }
+    // Web Inspector and WebDriver each have a flag, so that they don't undo each other's setting.
+    bool isResourceCachingDisabledByDeveloperTools() const { return m_resourceCachingDisabledByWebInspector || m_resourceCachingDisabledByAutomation; }
     void setResourceCachingDisabledByWebInspector(bool disabled) { m_resourceCachingDisabledByWebInspector = disabled; }
+    void setResourceCachingDisabledByAutomation(bool disabled) { m_resourceCachingDisabledByAutomation = disabled; }
 
     // The network interception configuration active in this process for this page. Under Site
     // Isolation the authoritative copy lives in the UI process, which pushes it down to every
@@ -1786,6 +1788,7 @@ private:
     bool m_showAllPlugins { false };
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabledByWebInspector { false };
+    bool m_resourceCachingDisabledByAutomation { false };
     Inspector::NetworkInterception m_networkInterception;
     bool m_isUtilityPage;
     bool m_shouldEnableICECandidateFilteringByDefault { true };

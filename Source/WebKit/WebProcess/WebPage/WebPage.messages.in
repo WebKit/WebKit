@@ -182,6 +182,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetControlledByAutomation(bool controlled)
     SetNetworkInterception(Inspector::NetworkInterception configuration) -> ()
     ResolveNetworkInterception(WebCore::ResourceLoaderIdentifier identifier, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution resolution)
+    SetResourceCachingDisabledByAutomation(bool disabled)
 
     ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
     DisconnectInspector()

@@ -1975,7 +1975,7 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
         return frame->loader().subresourceCachePolicy(url);
 
     if (auto* page = frame->page()) {
-        if (page->isResourceCachingDisabledByWebInspector())
+        if (page->isResourceCachingDisabledByDeveloperTools())
             return CachePolicy::Reload;
     }
 

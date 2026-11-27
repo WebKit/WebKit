@@ -381,6 +381,7 @@ public:
     // re-keyed or they read as never having existed.
     void transferKnownNodeReferences(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
+    Vector<Ref<WebPageProxy>> pagesControlledByAutomation() const;
     RefPtr<WebPageProxy> webPageProxyForHandle(const String&);
     std::optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
     static bool isInFrameTreeOfItsPage(const WebFrameProxy&);
@@ -394,6 +395,8 @@ public:
     std::expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
 
 #if ENABLE(WEBDRIVER_BIDI)
+    // For the 'contexts' parameter of BiDi commands, which only take top-level browsing contexts.
+    std::expected<Vector<Ref<WebPageProxy>>, AutomationCommandError> pagesForTopLevelBrowsingContexts(const JSON::Array& contexts);
     bool isValidUserContext(const String& userContextID) const;
     std::expected<String, AutomationCommandError> nodeHandleForSharedReference(const JSON::Object& sharedReference) const;
     void setFilesForBidi(const String& pageHandle, const String& frameHandle, const String& nodeHandle, Vector<String>&& paths, AutomationCompletionHandler&&);

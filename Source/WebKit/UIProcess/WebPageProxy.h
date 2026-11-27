@@ -953,6 +953,7 @@ public:
 
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool);
+    void setResourceCachingDisabledByAutomation(bool);
 
     RefPtr<WebAutomationSession> activeAutomationSession() const;
 
@@ -4481,6 +4482,7 @@ private:
     bool m_addsVisitedLinks { true };
 
     bool m_controlledByAutomation { false };
+    bool m_resourceCachingDisabledByAutomation { false };
 
     unsigned m_inspectorFrontendCount { 0 };
 

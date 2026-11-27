@@ -110,6 +110,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool controlledByAutomation;
     Inspector::NetworkInterception networkInterception;
+    bool resourceCachingDisabledByAutomation;
     bool isProcessSwap;
 
     bool useDarkAppearance;
