@@ -73,6 +73,11 @@ RetainPtr<PKDisbursementPaymentRequest> platformDisbursementRequest(const AppleP
     if (requiredRecipientContactFields)
         [disbursementRequest setRequiredRecipientContactFields:createNSArray(*requiredRecipientContactFields, platformContactField).get()];
 
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+    if (auto isDelegatedRequest = request.isDelegatedRequest())
+        [disbursementRequest setIsDelegatedRequest:*isDelegatedRequest];
+#endif
+
     auto disbursementPaymentRequest = adoptNS([PAL::allocPKDisbursementPaymentRequestInstance() initWithDisbursementRequest:disbursementRequest.get()]);
     [disbursementPaymentRequest setOriginatingURL:originatingURL.createNSURL().get()];
     [disbursementPaymentRequest setAPIType:PKPaymentRequestAPITypeWebPaymentRequest];

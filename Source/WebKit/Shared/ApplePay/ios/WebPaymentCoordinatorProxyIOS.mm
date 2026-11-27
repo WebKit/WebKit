@@ -29,9 +29,11 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY)
 
 #import "APIUIClient.h"
+#import "DisbursementRequest.h"
 #import "PaymentAuthorizationPresenter.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIViewController.h>
+#import <WebCore/ApplePayDisbursementRequest.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebKit {
@@ -50,7 +52,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 
     RetainPtr<PKPaymentRequest> paymentRequest;
 #if HAVE(PASSKIT_DISBURSEMENTS)
-    std::optional<ApplePayDisbursementRequest> webDisbursementRequest = request.disbursementRequest();
+    std::optional<WebCore::ApplePayDisbursementRequest> webDisbursementRequest = request.disbursementRequest();
     if (webDisbursementRequest) {
         auto disbursementRequest = platformDisbursementRequest(request, originatingURL, webDisbursementRequest->requiredRecipientContactFields);
         paymentRequest = RetainPtr<PKPaymentRequest>((PKPaymentRequest *)disbursementRequest.get());
