@@ -167,6 +167,7 @@ private:
     void resetIndexBuffer();
     void splitICB(bool needsPipelineReset = true);
     id<MTLIndirectCommandBuffer> makeICB(uint64_t);
+    uint64_t nextICBCommandCount() const;
     void cleanup(bool resetPipeline);
 
     const Ref<Device> m_device;
@@ -186,6 +187,13 @@ private:
     uint64_t m_debugGroupStackSize { 0 };
     uint64_t m_currentCommandIndex { 0 };
     uint64_t m_previousCommandCount { 0 };
+    // The number of commands between the ICB splits that pipeline changes cause, counted while recording so
+    // that finish() can allocate every ICB at its final size. Trimming an oversized ICB instead copies its
+    // commands with copyIndirectCommandBuffer, and the copies render incorrectly on Intel and AMD GPUs.
+    Vector<uint64_t> m_icbCommandCounts;
+    uint64_t m_commandIndexAtLastICBSplit { 0 };
+    size_t m_icbCommandCountsIndex { 0 };
+    uint64_t m_commandsLeftForCurrentICBs { 0 };
     id<MTLRenderPipelineState> m_currentPipelineState { nil };
     id<MTLDepthStencilState> m_depthStencilState { nil };
     MTLCullMode m_cullMode { MTLCullModeNone };
