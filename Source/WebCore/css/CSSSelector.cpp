@@ -88,7 +88,7 @@ struct SelectorSpecificity {
     SelectorSpecificity() = default;
     NODELETE SelectorSpecificity(unsigned);
     NODELETE SelectorSpecificity(SelectorSpecificityIncrement);
-    SelectorSpecificity& operator+=(SelectorSpecificity);
+    NODELETE SelectorSpecificity& operator+=(SelectorSpecificity);
 
     NODELETE std::array<uint8_t, 3> specificityTuple() const
     {
@@ -254,22 +254,23 @@ unsigned CSSSelector::specificityForPage() const
 {
     ASSERT(isForPage());
 
-    // See http://dev.w3.org/csswg/css3-page/#cascading-and-page-context
-    unsigned s = 0;
+    // https://drafts.csswg.org/css-page/#cascading-and-page-context
+    SelectorSpecificity total;
 
     for (const CSSSelector* component = this; component; component = component->precedingInComplexSelector()) {
         switch (component->match()) {
         case Match::Tag:
-            s += tagQName().localName() == starAtom() ? 0 : 4;
+            if (component->tagQName().localName() != starAtom())
+                total += SelectorSpecificityIncrement::ClassA;
             break;
         case Match::PagePseudoClass:
             switch (component->pagePseudoClass()) {
             case PagePseudoClass::First:
-                s += 2;
+                total += SelectorSpecificityIncrement::ClassB;
                 break;
             case PagePseudoClass::Left:
             case PagePseudoClass::Right:
-                s += 1;
+                total += SelectorSpecificityIncrement::ClassC;
                 break;
             }
             break;
@@ -277,7 +278,7 @@ unsigned CSSSelector::specificityForPage() const
             break;
         }
     }
-    return s;
+    return total.specificity;
 }
 
 std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoElement type)
