@@ -1,0 +1,15 @@
+Tests that pages with an active immersive WebXR session are not put in the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Main page opening resources/no-back-forward-cache-1.html
+resources/no-back-forward-cache-1.html pageshow fired, count = 1
+resources/no-back-forward-cache-1.html started an immersive session and is about to navigate to resources/no-back-forward-cache-2.html
+resources/no-back-forward-cache-2.html about to go back to resources/no-back-forward-cache-1.html
+resources/no-back-forward-cache-1.html pageshow fired, count = 2
+PASS resources/no-back-forward-cache-1.html was loaded again instead of restored from the back/forward cache
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

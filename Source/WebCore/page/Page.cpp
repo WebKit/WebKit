@@ -5970,12 +5970,10 @@ void Page::setAccessibilityRootObject(AccessibilityRootAtspi* rootObject)
 #endif // USE(ATSPI)
 
 #if ENABLE(WEBXR)
-#if PLATFORM(IOS_FAMILY)
 bool Page::hasActiveImmersiveSession() const
 {
     return !!activeImmersiveXRSession();
 }
-#endif // PLATFORM(IOS_FAMILY)
 
 RefPtr<WebXRSession> Page::activeImmersiveXRSession() const
 {

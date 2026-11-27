@@ -523,6 +523,11 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
 
 void WebXRSession::stop()
 {
+    Ref protectedThis { *this };
+    shutdown(InitiatedBySystem::No);
+
+    if (RefPtr device = m_device)
+        device->setTrackingAndRenderingClient(nullptr);
 }
 
 void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::FrameData::InputSource>&& inputSources)

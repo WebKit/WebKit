@@ -585,7 +585,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
                 return;
             }
-            if (!requestedFeatures) {
+            if (!requestedFeatures || strongThis->isContextStopped()) {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
                 strongThis->m_pendingImmersiveSession = false;
                 return;

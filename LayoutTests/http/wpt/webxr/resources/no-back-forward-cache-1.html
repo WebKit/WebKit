@@ -1,0 +1,21 @@
+<script src="../../../webxr/resources/webxr_test_constants.js"></script>
+<script>
+window.addEventListener('pageshow', async (event) => {
+    if (event.persisted) {
+        window.opener.testFailed('resources/no-back-forward-cache-1.html was restored from the back/forward cache');
+        window.opener.finishJSTest();
+        return;
+    }
+
+    if (window.opener.reportPageOneShown() != 1)
+        return;
+
+    navigator.xr.test = internals.xrTest;
+    await navigator.xr.test.simulateDeviceConnection(TRACKED_IMMERSIVE_DEVICE);
+    navigator.xr.test.simulateUserActivation(async () => {
+        await navigator.xr.requestSession('immersive-vr');
+        window.opener.debug('resources/no-back-forward-cache-1.html started an immersive session and is about to navigate to resources/no-back-forward-cache-2.html');
+        location.href = 'no-back-forward-cache-2.html';
+    });
+});
+</script>

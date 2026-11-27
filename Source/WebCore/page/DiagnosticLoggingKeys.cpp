@@ -655,6 +655,13 @@ String DiagnosticLoggingKeys::webViewKey()
     return "webView"_s;
 }
 
+#if ENABLE(WEBXR)
+String DiagnosticLoggingKeys::webXRKey()
+{
+    return "webXR"_s;
+}
+#endif
+
 String DiagnosticLoggingKeys::yesKey()
 {
     return "yes"_s;

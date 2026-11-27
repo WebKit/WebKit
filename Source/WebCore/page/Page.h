@@ -1355,7 +1355,7 @@ public:
     NODELETE const String& quirksTopDocumentHostForTesting() const LIFETIME_BOUND { return m_quirksTopDocumentHostForTesting; }
     WEBCORE_EXPORT void setQuirksTopDocumentHostForTesting(String&&);
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
+#if ENABLE(WEBXR)
     WEBCORE_EXPORT bool hasActiveImmersiveSession() const;
 #endif
 
