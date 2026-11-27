@@ -121,6 +121,12 @@ void SVGStyleElement::removingSteps(RemovalType removalType, ContainerNode& oldP
         m_styleSheetOwner.removedFromDocument(*this);
 }
 
+void SVGStyleElement::movingSteps(MovingType movingType, ContainerNode& oldParent)
+{
+    SVGElement::movingSteps(movingType, oldParent);
+    m_styleSheetOwner.moved(*this);
+}
+
 void SVGStyleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);

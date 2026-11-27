@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<title>moveBefore() updates style element cascade order</title>
+<link rel="help" href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="target" class="target">target</div>
+
+<script>
+const PURPLE = "rgb(128, 0, 128)";
+const BLUE = "rgb(0, 0, 255)";
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function createStyle(color, isSVG) {
+  const style = isSVG ? document.createElementNS(SVG_NS, "style") : document.createElement("style");
+  style.textContent = `.target { color: ${color}; }`;
+  return style;
+}
+
+function documentContainer(t, isSVG) {
+  if (!isSVG)
+    return document.head;
+  const svg = document.createElementNS(SVG_NS, "svg");
+  document.body.append(svg);
+  t.add_cleanup(() => svg.remove());
+  return svg;
+}
+
+function shadowContainer(root, isSVG) {
+  if (!isSVG)
+    return root;
+  const svg = document.createElementNS(SVG_NS, "svg");
+  root.append(svg);
+  return svg;
+}
+
+function createHost(t) {
+  const host = document.createElement("div");
+  const root = host.attachShadow({mode: "open"});
+  const shadowTarget = document.createElement("div");
+  shadowTarget.className = "target";
+  root.append(shadowTarget);
+  document.body.append(host);
+  t.add_cleanup(() => host.remove());
+  return {root, shadowTarget};
+}
+
+for (const [name, isSVG] of [["style", false], ["SVG style", true]]) {
+  test(t => {
+    const container = documentContainer(t, isSVG);
+    const purple = createStyle("purple", isSVG);
+    const blue = createStyle("blue", isSVG);
+    t.add_cleanup(() => {
+      purple.remove();
+      blue.remove();
+    });
+    container.append(purple, blue);
+
+    const target = document.getElementById("target");
+    assert_equals(getComputedStyle(target).color, BLUE,
+                  "the second style element initially wins");
+
+    container.moveBefore(blue, purple);
+    assert_equals(getComputedStyle(target).color, PURPLE,
+                  "moving the blue style element first makes purple win");
+
+    container.moveBefore(purple, blue);
+    assert_equals(getComputedStyle(target).color, BLUE,
+                  "moving the purple style element first makes blue win");
+
+    purple.remove();
+    assert_equals(getComputedStyle(target).color, BLUE,
+                  "removing the purple style element leaves blue applied");
+  }, `Moving ${name} elements in the document updates their cascade order`);
+
+  test(t => {
+    const {root, shadowTarget} = createHost(t);
+    const container = shadowContainer(root, isSVG);
+    const purple = createStyle("purple", isSVG);
+    const blue = createStyle("blue", isSVG);
+    container.append(purple, blue);
+
+    assert_equals(getComputedStyle(shadowTarget).color, BLUE,
+                  "the second style element initially wins");
+
+    container.moveBefore(blue, purple);
+    assert_equals(getComputedStyle(shadowTarget).color, PURPLE,
+                  "moving the blue style element first makes purple win");
+
+    purple.remove();
+    assert_equals(getComputedStyle(shadowTarget).color, BLUE,
+                  "removing the purple style element leaves blue applied");
+  }, `Moving ${name} elements inside a shadow root updates their cascade order`);
+
+  test(t => {
+    const {root, shadowTarget} = createHost(t);
+    const shadowParent = shadowContainer(root, isSVG);
+    const documentParent = documentContainer(t, isSVG);
+    const purple = createStyle("purple", isSVG);
+    shadowParent.append(purple);
+    const blue = createStyle("blue", isSVG);
+    t.add_cleanup(() => blue.remove());
+    documentParent.append(blue);
+
+    const target = document.getElementById("target");
+    assert_equals(getComputedStyle(target).color, BLUE,
+                  "the blue style element initially styles the document");
+    assert_equals(getComputedStyle(shadowTarget).color, PURPLE,
+                  "the purple style element initially styles the shadow tree");
+
+    shadowParent.moveBefore(blue, purple);
+    assert_not_equals(getComputedStyle(target).color, BLUE,
+                      "the moved style element no longer styles the document");
+    assert_equals(getComputedStyle(shadowTarget).color, PURPLE,
+                  "the moved style element comes before purple in the shadow tree");
+
+    shadowParent.moveBefore(blue, null);
+    assert_equals(getComputedStyle(shadowTarget).color, BLUE,
+                  "the moved style element comes after purple in the shadow tree");
+
+    documentParent.moveBefore(blue, null);
+    assert_equals(getComputedStyle(target).color, BLUE,
+                  "moving the style element back styles the document again");
+    assert_equals(getComputedStyle(shadowTarget).color, PURPLE,
+                  "moving the style element back stops it styling the shadow tree");
+  }, `Moving a ${name} element between the document and a shadow root changes which tree it styles`);
+}
+</script>

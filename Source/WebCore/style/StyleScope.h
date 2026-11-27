@@ -92,6 +92,7 @@ public:
 
     void addStyleSheetCandidateNode(Node&, bool createdByParser);
     void removeStyleSheetCandidateNode(Node&);
+    Scope& styleSheetCandidateNodeMoved(Element&);
 
     void establishPreferredStylesheetSetName(const Element&, const CSSStyleSheet&);
 

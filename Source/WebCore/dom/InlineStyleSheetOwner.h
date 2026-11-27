@@ -46,6 +46,7 @@ public:
 
     void insertedIntoDocument(Element&);
     void removedFromDocument(Element&);
+    void moved(Element&);
     void clearDocumentData(Element&);
     void childrenChanged(Element&);
     void finishParsingChildren(Element&);

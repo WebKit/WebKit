@@ -1,0 +1,9 @@
+target
+
+PASS Moving style elements in the document updates their cascade order
+PASS Moving style elements inside a shadow root updates their cascade order
+PASS Moving a style element between the document and a shadow root changes which tree it styles
+PASS Moving SVG style elements in the document updates their cascade order
+PASS Moving SVG style elements inside a shadow root updates their cascade order
+PASS Moving a SVG style element between the document and a shadow root changes which tree it styles
+

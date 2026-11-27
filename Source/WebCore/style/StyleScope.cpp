@@ -395,6 +395,27 @@ void Scope::removeStyleSheetCandidateNode(Node& node)
         didChangeActiveStyleSheetCandidates();
 }
 
+Scope& Scope::styleSheetCandidateNodeMoved(Element& element)
+{
+    CheckedRef newScope = forNode(element);
+    if (newScope.ptr() == this) {
+        if (m_styleSheetCandidateNodes.remove(element)) {
+            addStyleSheetCandidateNode(element, false);
+            didChangeActiveStyleSheetCandidates();
+        }
+        return *this;
+    }
+
+    if (hasPendingSheet(element)) {
+        newScope->addPendingSheet(element);
+        removePendingSheet(element);
+    }
+    removeStyleSheetCandidateNode(element);
+    newScope->addStyleSheetCandidateNode(element, false);
+    newScope->didChangeActiveStyleSheetCandidates();
+    return forNode(element);
+}
+
 #if ENABLE(XSLT)
 // FIXME: <https://webkit.org/b/178830> Remove XSLT relaed code from Style::Scope.
 Vector<Ref<ProcessingInstruction>> Scope::collectXSLTransforms()
