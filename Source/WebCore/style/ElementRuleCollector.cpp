@@ -57,6 +57,7 @@
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
 #include "UserAgentStyle.h"
+#include "ViewTransition.h"
 #if ENABLE(VIDEO)
 #include "ElementAncestorIteratorInlines.h"
 #include "TextTrack.h"
@@ -100,13 +101,23 @@ struct MatchRequest {
     bool orderAfterUnscopedRules { false };
 };
 
+// The generated view transition rules are selected by pseudo-element and name only;
+// restricting them to the hosting transition keeps concurrent scoped transitions
+// with equal participant names independent.
+static const RuleSet* dynamicViewTransitionStylesForElement(const Element& element)
+{
+    Ref document = element.document();
+    RefPtr viewTransition = &element == document->documentElement() ? document->activeViewTransition() : document->activeViewTransitionForScope(element);
+    return viewTransition ? viewTransition->dynamicStyleRules() : nullptr;
+}
+
 ElementRuleCollector::ElementRuleCollector(const Element& element, const ScopeRuleSets& ruleSets, SelectorMatchingState* selectorMatchingState, SelectorChecker::Mode mode)
     : m_element(element)
     , m_authorStyle(ruleSets.authorStyle())
     , m_userStyle(ruleSets.userStyle())
     , m_quirkStyle(ruleSets.quirkStyle())
     , m_userAgentMediaQueryStyle(ruleSets.userAgentMediaQueryStyle())
-    , m_dynamicViewTransitionsStyle(ruleSets.dynamicViewTransitionsStyle())
+    , m_dynamicViewTransitionsStyle(dynamicViewTransitionStylesForElement(element))
     , m_selectorMatchingState(selectorMatchingState)
     , m_mode(mode)
     , m_result(MatchResult::create(element.isLink()))

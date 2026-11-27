@@ -567,6 +567,15 @@ TextStream& operator<<(TextStream& ts, FieldSizing sizing)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ViewTransitionScope scope)
+{
+    switch (scope) {
+    case ViewTransitionScope::None: ts << "none"_s; break;
+    case ViewTransitionScope::All: ts << "all"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, BaselineSource source)
 {
     switch (source) {

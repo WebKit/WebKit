@@ -682,12 +682,19 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
             || (is<HTMLCanvasElement>(m_element.get()) && downcast<HTMLCanvasElement>(*m_element).hasDrawableContent())
             || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle.usedTransformStyle3D() == TransformStyle3D::Preserve3D)
             || shouldTreatAutoZIndexAsZero(style)
-            || isInTopLayerOrBackdrop(style, m_element.get()))
+            || isInTopLayerOrBackdrop(style, m_element.get())
+            || (m_element && m_element->hasActiveScopedViewTransition()))
             style.setUsedZIndex(0);
         else
             style.setUsedZIndex(CSS::Keyword::Auto { });
     } else
         style.setUsedZIndex(style.specifiedZIndex());
+
+    // https://drafts.csswg.org/css-view-transitions-2/#view-transition-scope-prop
+    // Starting a view transition forces view-transition-scope: all on its root
+    // for the duration of the transition.
+    if (m_element && m_element->hasActiveScopedViewTransition())
+        style.setViewTransitionScope(ViewTransitionScope::All);
 
     if (RefPtr element = m_element) {
         // Textarea considers overflow visible as auto.

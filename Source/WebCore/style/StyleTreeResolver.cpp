@@ -423,11 +423,9 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
     resolveAndAddPseudoElementStyle({ PseudoElementType::Checkmark });
     resolveAndAddPseudoElementStyle({ PseudoElementType::PickerIcon });
 
-    if (isDocumentElement && m_document->hasViewTransitionPseudoElementTree()) {
+    if (RefPtr activeViewTransition = m_document->viewTransitionHostedOn(element)) {
         resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransition });
 
-        RefPtr activeViewTransition = m_document->activeViewTransition();
-        ASSERT(activeViewTransition);
         for (auto& name : activeViewTransition->namedElements().keys()) {
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionGroup, name });
             resolveAndAddPseudoElementStyle({ PseudoElementType::ViewTransitionImagePair, name });
@@ -563,7 +561,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionImagePair
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionNew
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionOld,
-        m_document->hasViewTransitionPseudoElementTree() && &element == m_document->documentElement());
+        !!m_document->viewTransitionHostedOn(element));
 
     if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.type))
         return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);

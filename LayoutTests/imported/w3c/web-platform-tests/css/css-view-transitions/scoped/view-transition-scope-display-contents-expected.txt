@@ -1,0 +1,3 @@
+
+PASS Setting view-transition-scope to auto blocks propagation of name discovery.
+

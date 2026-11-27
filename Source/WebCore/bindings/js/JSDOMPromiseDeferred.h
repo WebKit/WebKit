@@ -227,6 +227,8 @@ public:
 
     void markAsHandled() const
     {
+        if (shouldIgnoreRequestToFulfill())
+            return;
         deferred()->markAsHandled();
     }
 

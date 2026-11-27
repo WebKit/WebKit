@@ -90,6 +90,8 @@ class TrustedScript;
 class TrustedScriptURL;
 class UniqueElementData;
 class ValidatedFormListedElement;
+class ViewTransition;
+class JSViewTransitionUpdateCallback;
 class WebAnimation;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -151,6 +153,7 @@ struct ScrollIntoViewOptions;
 struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
+struct StartViewTransitionOptions;
 
 using AnimatableCSSProperty = Variant<CSSPropertyID, AtomString>;
 using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
@@ -753,6 +756,12 @@ public:
     WEBCORE_EXPORT void webkitRequestFullscreen();
     virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
+
+    // https://drafts.csswg.org/css-view-transitions-2/#additions-to-element-api
+    using StartViewTransitionCallbackOptions = Variant<RefPtr<JSViewTransitionUpdateCallback>, StartViewTransitionOptions>;
+    RefPtr<ViewTransition> startViewTransition(StartViewTransitionCallbackOptions&&);
+    bool hasActiveScopedViewTransition() const;
+    NODELETE ViewTransition* activeViewTransition() const;
 
     NODELETE PopoverData* popoverData() const LIFETIME_BOUND;
     PopoverData& ensurePopoverData() LIFETIME_BOUND;

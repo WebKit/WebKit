@@ -59,6 +59,7 @@ class HTMLSlotElement;
 class Node;
 class ProcessingInstruction;
 class RenderBoxModelObject;
+class StyleRuleKeyframes;
 class StyleSheet;
 class StyleSheetContents;
 class ShadowRoot;
@@ -128,6 +129,11 @@ public:
 #endif
 
     WEBCORE_EXPORT Resolver& resolver();
+    // Returns a resolver that has the dynamic view transition rule set wired in and is
+    // not shared with other shadow tree scopes.
+    Resolver& resolverForViewTransition();
+    void clearViewTransitionStyles();
+    void addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&&);
     Resolver* resolverIfExists() { return m_resolver.get(); }
     const Resolver* resolverIfExists() const { return m_resolver.get(); }
     void clearResolver();
@@ -211,6 +217,8 @@ private:
     const CheckedPtr<ShadowRoot> m_shadowRoot;
 
     RefPtr<Resolver> m_resolver;
+    bool m_hasViewTransitionStyles { false };
+    Vector<Ref<StyleRuleKeyframes>> m_viewTransitionKeyframes;
 
     Vector<Ref<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<Ref<CSSStyleSheet>> m_activeStyleSheets;

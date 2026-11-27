@@ -51,6 +51,8 @@ public:
     inline bool isSkippedContentRoot() const;
 
 private:
+    inline bool generatesAtomicInlineLevelBox() const;
+
     const CheckedRef<const Style::ComputedStyle> m_style;
     const Ref<const Element> m_element;
 };

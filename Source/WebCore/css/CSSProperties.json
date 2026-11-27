@@ -14186,6 +14186,25 @@
                 "url": "https://drafts.csswg.org/css-view-transitions/#view-transition-name-prop"
             }
         },
+        "view-transition-scope": {
+            "animation-type": "discrete",
+            "initial": "none",
+            "values": [
+                "none",
+                "all"
+            ],
+            "codegen-properties": {
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "ViewTransitionScope",
+                "parser-grammar": "<<values>>",
+                "settings-flag": "scopedViewTransitionsEnabled"
+            },
+            "specification": {
+                "category": "css-view-transitions",
+                "url": "https://drafts.csswg.org/css-view-transitions-2/#view-transition-scope-prop"
+            }
+        },
         "anchor-name": {
             "animation-type": "discrete",
             "initial": "none",
