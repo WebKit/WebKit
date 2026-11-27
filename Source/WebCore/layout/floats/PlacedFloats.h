@@ -63,11 +63,11 @@ public:
 
         BoxGeometry boxGeometry() const;
 
-        AxisPosition<ParentFormattingContextRoot> marginBoxTop() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).top() }; }
-        AxisPosition<ParentFormattingContextRoot> marginBoxBottom() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).bottom() }; }
-        AxisPosition<ParentFormattingContextRoot> marginBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).left() }; }
-        AxisPosition<ParentFormattingContextRoot> marginBoxRight() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).right() }; }
-        LayoutSize marginBoxSize() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry).size(); }
+        AxisPosition<ParentFormattingContextRoot> marginBoxTop() const { return AxisPosition<ParentFormattingContextRoot> { m_marginBoxRect.top() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxBottom() const { return AxisPosition<ParentFormattingContextRoot> { m_marginBoxRect.bottom() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { m_marginBoxRect.left() }; }
+        AxisPosition<ParentFormattingContextRoot> marginBoxRight() const { return AxisPosition<ParentFormattingContextRoot> { m_marginBoxRect.right() }; }
+        LayoutSize marginBoxSize() const { return m_marginBoxRect.size(); }
         AxisPosition<ParentFormattingContextRoot> borderBoxTop() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).top() }; }
         AxisPosition<ParentFormattingContextRoot> borderBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).left() }; }
         BoxGeometry::HorizontalEdges inlineAxisMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
@@ -81,6 +81,7 @@ public:
         CheckedPtr<const Box> m_layoutBox;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
+        Rect m_marginBoxRect;
         LayoutPoint m_localTopLeft;
         RefPtr<const LayoutShape> m_shape;
         std::optional<size_t> m_placedByLine;
