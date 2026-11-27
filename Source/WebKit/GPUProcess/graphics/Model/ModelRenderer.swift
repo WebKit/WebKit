@@ -79,11 +79,6 @@ final class Renderer {
             return v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4);
         }
 
-        static float encodeSRGB(float v)
-        {
-            return v <= 0.0031308 ? v * 12.92 : 1.055 * pow(v, 1.0 / 2.4) - 0.055;
-        }
-
         static float inverseFilmic(float y)
         {
             y = clamp(y, 0.0, 1.1683);
@@ -108,9 +103,22 @@ final class Renderer {
         {
             float4 pixel = source.read(position);
             float alpha = parameters.isOpaque ? 1.0 : pixel.a;
-            if (alpha <= 0.0) {
-                destination.write(float4(0.0), position);
-                return;
+            bool isTransparent = alpha <= 0.0;
+            if (isTransparent) {
+                int2 maximum = int2(source.get_width(), source.get_height()) - 1;
+                float4 neighbors = float4(0.0);
+                for (int dy = -1; dy <= 1; ++dy) {
+                    for (int dx = -1; dx <= 1; ++dx)
+                        neighbors += source.read(uint2(clamp(int2(position) + int2(dx, dy), int2(0), maximum)));
+                }
+
+                if (neighbors.a <= 0.0) {
+                    destination.write(float4(0.0), position);
+                    return;
+                }
+
+                pixel = neighbors / neighbors.a;
+                alpha = 1.0;
             }
 
             float3 straight = saturate(pixel.rgb / alpha);
@@ -118,16 +126,11 @@ final class Renderer {
             float3 target = float3(dot(srgb, float3(0.8224621, 0.1775380, 0.0)),
                                    dot(srgb, float3(0.0331941, 0.9668058, 0.0)),
                                    dot(srgb, float3(0.0170827, 0.0723974, 0.9105199)));
-            float3 scene;
-            if (parameters.isHDR) {
-                float3 premultiplied = target * alpha / kHDRGain;
-                scene = float3(inverseFilmic(premultiplied.r), inverseFilmic(premultiplied.g), inverseFilmic(premultiplied.b)) / alpha;
-            } else {
-                float3 premultiplied = alpha * float3(encodeSRGB(target.r), encodeSRGB(target.g), encodeSRGB(target.b));
-                float3 linear = float3(decodeSRGB(premultiplied.r), decodeSRGB(premultiplied.g), decodeSRGB(premultiplied.b)) / (alpha * alpha);
-                scene = float3(inverseFilmic(linear.r), inverseFilmic(linear.g), inverseFilmic(linear.b));
-            }
-            destination.write(float4(scene, alpha), position);
+            float3 premultiplied = target * alpha;
+            if (parameters.isHDR)
+                premultiplied /= kHDRGain;
+            float3 scene = float3(inverseFilmic(premultiplied.r), inverseFilmic(premultiplied.g), inverseFilmic(premultiplied.b)) / alpha;
+            destination.write(float4(scene, isTransparent ? 0.0 : alpha), position);
         }
         """
 
