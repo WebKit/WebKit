@@ -151,6 +151,7 @@ public:
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
     void reconcileWeakReferencesAtGCEnd(const ConcurrentJSLockerBase&, CodeBlock*);
+    bool hasDeadWeakReferenceAtGCEnd(VM&) const;
 
     // This returns true if it has marked everything that it will ever mark.
     template<typename Visitor> void propagateTransitions(Visitor&);
@@ -536,6 +537,7 @@ public:
     ALWAYS_INLINE bool considerBufferingStructure(VM&, CodeBlock*, Structure*, CacheableIdentifier);
     template<typename Visitor> void visitBufferedStructures(Visitor&);
     void pruneDeadBufferedStructures(VM&);
+    bool hasDeadBufferedStructure(VM&) const;
 
     void clearBufferedStructures()
     {
@@ -569,7 +571,7 @@ public:
     Registers m_registers;
     uint8_t bufferingCountdown;
 private:
-    Lock m_bufferedStructuresLock;
+    mutable Lock m_bufferedStructuresLock;
 public:
 
     uint32_t inlineCodeSize() const

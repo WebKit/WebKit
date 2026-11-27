@@ -151,6 +151,17 @@ void RecordedStatuses::reconcileWeakReferences(VM& vm)
     forEachVector(reconcile);
 }
 
+bool RecordedStatuses::hasStatusToRemove(VM& vm) const
+{
+    bool result = false;
+    forEachVector([&](const auto& vector) {
+        result = result || std::ranges::any_of(vector, [&](const auto& pair) {
+            return !*pair.second || !pair.second->isStillLive(vm);
+        });
+    });
+    return result;
+}
+
 void RecordedStatuses::shrinkToFit()
 {
     forEachVector([] (auto& vector) { vector.shrinkToFit(); });

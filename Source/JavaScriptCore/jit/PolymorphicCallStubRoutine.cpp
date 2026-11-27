@@ -177,6 +177,16 @@ bool PolymorphicCallStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
     return isStillLive;
 }
 
+bool PolymorphicCallStubRoutine::hasDeadWeakReferenceAtGCEndImpl(VM& vm) const
+{
+    for (unsigned i = 0, size = std::size(trailingSpan()) - 1; i < size; ++i) {
+        auto& slot = trailingSpan()[i];
+        if (!slot.m_calleeOrExecutable || !vm.heap.isMarked(slot.m_calleeOrExecutable))
+            return true;
+    }
+    return false;
+}
+
 void PolymorphicCallStubRoutine::markRequiredObjectsImpl(AbstractSlotVisitor&)
 {
 }

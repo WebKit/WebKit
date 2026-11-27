@@ -407,6 +407,25 @@ void RepatchingPropertyInlineCache::visitBufferedStructures(Visitor& visitor)
         });
 }
 
+bool RepatchingPropertyInlineCache::hasDeadBufferedStructure(VM& vm) const
+{
+    Locker locker { m_bufferedStructuresLock };
+    return WTF::switchOn(m_bufferedStructures,
+        [&](std::monostate) {
+            return false;
+        },
+        [&](const Vector<StructureID>& structures) {
+            return std::ranges::any_of(structures, [&](StructureID structureID) {
+                return !vm.heap.isMarked(structureID.decode());
+            });
+        },
+        [&](const Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+            return std::ranges::any_of(structures, [&](const auto& tuple) {
+                return !vm.heap.isMarked(std::get<0>(tuple).decode());
+            });
+        });
+}
+
 void RepatchingPropertyInlineCache::pruneDeadBufferedStructures(VM& vm)
 {
     Locker locker { m_bufferedStructuresLock };
@@ -478,6 +497,29 @@ void PropertyInlineCache::reconcileWeakReferencesAtGCEnd(const ConcurrentJSLocke
 
     reset(locker, codeBlock);
     resetByGC = true;
+}
+
+bool PropertyInlineCache::hasDeadWeakReferenceAtGCEnd(VM& vm) const
+{
+    if (Structure* structure = inlineAccessBaseStructure(); structure && !vm.heap.isMarked(structure))
+        return true;
+
+    if (auto* handlerIC = dynamicDowncast<HandlerPropertyInlineCache>(*this)) {
+        if (handlerIC->m_inlinedHandler && handlerIC->m_inlinedHandler->hasDeadWeakReferenceAtGCEnd(vm))
+            return true;
+    }
+    for (auto* cursor = m_handler.get(); cursor; cursor = cursor->next()) {
+        if (cursor->hasDeadWeakReferenceAtGCEnd(vm))
+            return true;
+    }
+
+    if (auto* repatchingIC = dynamicDowncast<RepatchingPropertyInlineCache>(*this)) {
+        if (repatchingIC->hasDeadBufferedStructure(vm))
+            return true;
+        if (repatchingIC->m_stub && !repatchingIC->m_stub->isStillLive(vm))
+            return true;
+    }
+    return false;
 }
 
 template<typename Visitor>

@@ -706,15 +706,6 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
     assertIsConductorWithWorldStopped(conn);
     m_scheduler->endCollection();
 
-    // Stop dispatching helpers first, so that one which returns below is not handed this client again.
-    HelperThreadPool::singleton().setDemand(*m_helperClient, 0);
-    {
-        Locker locker { m_markingMutex };
-        m_parallelMarkersShouldExit = true;
-        m_markingConditionVariable.notifyAll();
-    }
-    HelperThreadPool::singleton().waitUntilIdle(*m_helperClient);
-
     assertMarkStacksEmpty();
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());
 
@@ -764,6 +755,8 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
 
 void Collector::endCollectionInEachHeap(GCConductor conn)
 {
+    // Marking has converged with the world stopped, so no mark bit changes from here on. The marking helpers
+    // have not exited: they wait idle in drainFromShared() until told to exit below.
     forEachHeap([&](Heap& heap) {
         assertIsConductorWithWorldStopped(conn);
         ASSERT(heap.m_mutatorMarkStack->isEmpty());
@@ -782,6 +775,27 @@ void Collector::endCollectionInEachHeap(GCConductor conn)
     forEachHeap([&](Heap& heap) {
         assertIsConductorWithWorldStopped(conn);
         heap.verifyHeapAfterMarking();
+    });
+
+    // Waiting helpers pick this up through runTaskInParallel(), so it must run before they exit. Their concurrent
+    // isMarked() reads are safe because mark bits are final.
+    forEachHeap([&](Heap& heap) {
+        assertIsConductorWithWorldStopped(conn);
+        heap.reconcileCodeBlockOwnDataInParallel();
+    });
+
+    // Stop dispatching helpers first, so that one which returns below is not handed this client again.
+    HelperThreadPool::singleton().setDemand(*m_helperClient, 0);
+    {
+        Locker locker { m_markingMutex };
+        m_parallelMarkersShouldExit = true;
+        m_markingConditionVariable.notifyAll();
+    }
+    HelperThreadPool::singleton().waitUntilIdle(*m_helperClient);
+
+    // Every helper has returned its SlotVisitor and none can be dispatched again, so only the conductor runs from here.
+    forEachHeap([&](Heap& heap) {
+        assertIsConductorWithWorldStopped(conn);
         heap.pruneDeadReferences();
         heap.prepareForAllocation();
         heap.didFinishCollection();

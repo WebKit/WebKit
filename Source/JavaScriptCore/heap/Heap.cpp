@@ -710,6 +710,17 @@ void Heap::reconcileWeakReferencesInMarkedCells(CellSet& cellSet, CollectionScop
         });
 }
 
+void Heap::reconcileCodeBlockOwnDataInParallel()
+{
+    forEachCodeBlockSpace(
+        [&](auto& space) {
+            m_collector->runTaskInParallel(space.set.template forEachMarkedCellInParallel<SlotVisitor>(
+                [](SlotVisitor&, HeapCell* cell, HeapCell::Kind) {
+                    static_cast<CodeBlock*>(cell)->reconcileOwnDataAtGCEnd();
+                }));
+        });
+}
+
 // Weak reference reconciliation: settle every untraced pointer against the liveness that
 // marking just established. Must run after marking, because isMarked() only means "dead"
 // once the closure is complete, and before sweeping, because a dying referent may still

@@ -150,6 +150,7 @@ public:
     }
 
     bool reconcileWeakReferencesAtGCEndImpl(VM&);
+    bool hasDeadWeakReferenceAtGCEndImpl(VM&) const;
 
 protected:
     void observeZeroRefCountImpl();
@@ -174,6 +175,7 @@ public:
     MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, bool isCodeImmutable);
 
     bool reconcileWeakReferencesAtGCEndImpl(VM&);
+    bool hasDeadWeakReferenceAtGCEndImpl(VM&) const;
     NODELETE CallLinkInfo* callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
 
 protected:

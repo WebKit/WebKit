@@ -619,6 +619,7 @@ public:
     void allowCollection();
     
     uint64_t mutatorExecutionVersion() const { return m_mutatorExecutionVersion; }
+    void reconcileCodeBlockOwnDataInParallel() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
 
     
     JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
