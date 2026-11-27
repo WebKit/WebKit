@@ -1059,6 +1059,18 @@ class TestExpectedBuildSteps(unittest.TestCase):
                     builder['name'], step_class.__name__, step_class.suite,
                 ))
 
+    def test_linux_queues_run_on_sdk_changes(self):
+        sdk_change = b'+++ .wkdev-sdk-version'
+        relevance_by_builder = {}
+        for builder in self.config['builders']:
+            for step in builder['factory'].steps:
+                if step.step_class.name == 'check-change-relevance':
+                    relevance_by_builder[builder['name']] = step.kwargs.get('relevance', step.args[0] if step.args else None)
+        self.assertTrue(relevance_by_builder['JSC-Tests-WPE-EWS'].is_relevant(sdk_change))
+        self.assertFalse(relevance_by_builder['JSC-Tests-x86-64-EWS'].is_relevant(sdk_change))
+        self.assertFalse(relevance_by_builder['JSC-Tests-O3-Debug-arm64-EWS'].is_relevant(sdk_change))
+        self.assertFalse(relevance_by_builder['WebKitPy-Tests-EWS'].is_relevant(sdk_change))
+
     def test_unnecessary_expected_steps(self):
         builders = set()
         for builder in self.config['builders']:

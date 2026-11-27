@@ -57,6 +57,9 @@ class Relevance(object):
             return True
         return any(self._is_relevant_line(line) for line in lines)
 
+    def including(self, include):
+        return Relevance(include=self.include + list(include), exclude=self.exclude)
+
 
 # Changes that only touch these paths have no build inputs.
 NO_BUILD_INPUTS = [
@@ -68,6 +71,11 @@ NO_BUILD_INPUTS = [
 ]
 
 BUILD = Relevance(exclude=NO_BUILD_INPUTS)
+
+# Queues on Linux platforms run inside the wkdev SDK container, so a new SDK can change their results.
+LINUX_SDK = [
+    re.compile(rb'^\.wkdev-sdk-version$'),
+]
 
 BINDINGS_TESTS = Relevance(include=[
     re.compile(rb'Source/WebCore', re.IGNORECASE),
