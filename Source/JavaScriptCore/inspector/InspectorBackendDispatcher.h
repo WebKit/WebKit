@@ -100,12 +100,7 @@ public:
     JS_EXPORT_PRIVATE void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
     JS_EXPORT_PRIVATE void dispatch(const String& message);
 
-    // Note that 'unused' is a workaround so the compiler can pick the right sendResponse based on arity.
-    // When <http://webkit.org/b/179847> is fixed or this class is renamed for the JSON::Object case,
-    // then this alternate method with a dummy parameter can be removed in favor of the one without it.
-    void sendResponse(long requestId, RefPtr<JSON::Object>&& result);
-    void sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool unused);
-    void sendResponse(long requestId, Ref<JSON::Object>&& result);
+    // The unused bool is the exported signature. See https://bugs.webkit.org/show_bug.cgi?id=179847.
     JS_EXPORT_PRIVATE void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
     JS_EXPORT_PRIVATE void sendPendingErrors();
     JS_EXPORT_PRIVATE void sendErrorResponse(long requestId, CommonErrorCode, const String& errorMessage);
