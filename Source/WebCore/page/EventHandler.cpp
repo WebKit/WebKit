@@ -1998,7 +1998,8 @@ std::optional<RemoteUserInputEventData> EventHandler::userInputEventDataForRemot
     if (!remoteFrame)
         return std::nullopt;
 
-    RefPtr frameView = m_frame->view();
+    RefPtr parentFrame = dynamicDowncast<LocalFrame>(remoteFrame->tree().parent());
+    RefPtr frameView = parentFrame ? parentFrame->view() : m_frame->view();
     if (!frameView)
         return std::nullopt;
 
