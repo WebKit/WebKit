@@ -56,8 +56,8 @@ public:
 
     size_t decodeQueueSize() const { return codecQueueSize(); }
 
-    WebCodecsVideoFrameOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
-    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+    WebCodecsVideoFrameOutputCallback& outputCallbackConcurrently() LIFETIME_BOUND { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() LIFETIME_BOUND { return m_error.get(); }
 
     ExceptionOr<void> configure(ScriptExecutionContext&, WebCodecsVideoDecoderConfig&&);
     ExceptionOr<void> decode(Ref<WebCodecsEncodedVideoChunk>&&);

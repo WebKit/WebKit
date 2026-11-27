@@ -78,7 +78,7 @@ public:
     unsigned videoBitsPerSecond() const { return m_videoBitsPerSecond; }
     unsigned audioBitsPerSecond() const { return m_audioBitsPerSecond; }
 
-    MediaStream& stream() { return m_stream.get(); }
+    MediaStream& stream() LIFETIME_BOUND { return m_stream.get(); }
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 

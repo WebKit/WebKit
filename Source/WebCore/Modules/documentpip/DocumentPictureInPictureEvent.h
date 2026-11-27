@@ -43,7 +43,7 @@ public:
     static Ref<DocumentPictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     ~DocumentPictureInPictureEvent();
 
-    WindowProxy& window() const { return m_window.get(); }
+    WindowProxy& window() const LIFETIME_BOUND { return m_window.get(); }
 
 private:
     DocumentPictureInPictureEvent(const AtomString&, Init&&, IsTrusted);

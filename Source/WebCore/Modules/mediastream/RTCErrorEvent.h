@@ -42,7 +42,7 @@ public:
     NODELETE static Ref<RTCErrorEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     NODELETE static Ref<RTCErrorEvent> create(const AtomString& type, Ref<RTCError>&&);
 
-    RTCError& error() const { return m_error.get(); }
+    RTCError& error() const LIFETIME_BOUND { return m_error.get(); }
 
 private:
     RTCErrorEvent(const AtomString& type, Init&&, IsTrusted);

@@ -50,8 +50,8 @@ public:
     Type type() const final { return Type::Validation; }
     NODELETE const String& message() const LIFETIME_BOUND final;
 
-    WebGPUValidationError* backing() { return m_backing.get(); }
-    const WebGPUValidationError* backing() const { return m_backing.get(); }
+    WebGPUValidationError* backing() LIFETIME_BOUND { return m_backing.get(); }
+    const WebGPUValidationError* backing() const LIFETIME_BOUND { return m_backing.get(); }
     String stack() const { return "_"_s; }
 
 private:

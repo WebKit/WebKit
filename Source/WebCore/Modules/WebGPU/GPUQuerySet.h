@@ -50,8 +50,8 @@ public:
 
     void destroy();
 
-    ::WebGPU::QuerySet& backing() { return m_backing; }
-    const ::WebGPU::QuerySet& backing() const { return m_backing; }
+    ::WebGPU::QuerySet& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::QuerySet& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUQueryType type() const;
     NODELETE GPUSize32Out count() const;

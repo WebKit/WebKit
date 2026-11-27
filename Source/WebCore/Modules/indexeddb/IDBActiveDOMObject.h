@@ -32,7 +32,7 @@ namespace WebCore {
 
 class IDBActiveDOMObject : public ActiveDOMObject {
 public:
-    Thread& originThread() const { return m_originThread.get(); }
+    Thread& originThread() const LIFETIME_BOUND { return m_originThread.get(); }
 
     void contextDestroyed() final {
         ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));

@@ -98,7 +98,7 @@ private:
     void stop() final;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     NODELETE WTFLogChannel& logChannel() const;
     ASCIILiteral logClassName() const { return "RemotePlayback"_s; }

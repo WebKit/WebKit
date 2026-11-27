@@ -55,7 +55,7 @@ public:
     static bool isTypeSupported(const Document&, const String& keySystem, const String& mimeType);
     const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
 
-    LegacyCDM& cdm() { return m_cdm; }
+    LegacyCDM& cdm() LIFETIME_BOUND { return m_cdm; }
 
     void setMediaElement(HTMLMediaElement*);
 

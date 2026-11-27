@@ -38,8 +38,8 @@ public:
     NODELETE static Ref<WebTransportBidirectionalStream> create(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);
     ~WebTransportBidirectionalStream();
 
-    WebTransportReceiveStream& readable() { return m_readable.get(); }
-    WebTransportSendStream& writable() { return m_writable.get(); }
+    WebTransportReceiveStream& readable() LIFETIME_BOUND { return m_readable.get(); }
+    WebTransportSendStream& writable() LIFETIME_BOUND { return m_writable.get(); }
 
 private:
     WebTransportBidirectionalStream(Ref<WebTransportReceiveStream>&&, Ref<WebTransportSendStream>&&);

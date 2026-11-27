@@ -55,9 +55,9 @@ public:
     using CompilationInfoPromise = DOMPromiseDeferred<IDLInterface<GPUCompilationInfo>>;
     void getCompilationInfo(ScriptExecutionContext&, CompilationInfoPromise&&);
 
-    ::WebGPU::ShaderModule& backing() { return m_backing; }
-    const ::WebGPU::ShaderModule& backing() const { return m_backing; }
-    const WebGPUShaderModuleDescriptor& descriptor() const { return m_descriptor; }
+    ::WebGPU::ShaderModule& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::ShaderModule& backing() const LIFETIME_BOUND { return m_backing; }
+    const WebGPUShaderModuleDescriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
 
     NODELETE GPUDevice* device() const;
 

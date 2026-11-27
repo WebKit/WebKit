@@ -77,7 +77,7 @@ public:
     MonotonicTime startTime() const { return m_platformUtterance->startTime(); }
     void setStartTime(MonotonicTime startTime) { m_platformUtterance->setStartTime(startTime); }
 
-    PlatformSpeechSynthesisUtterance& platformUtterance() const { return m_platformUtterance.get(); }
+    PlatformSpeechSynthesisUtterance& platformUtterance() const LIFETIME_BOUND { return m_platformUtterance.get(); }
 
     void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) final;
     void errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode);
@@ -122,7 +122,7 @@ public:
         m_utterance->decrementActivityCountForEventDispatch();
     }
 
-    SpeechSynthesisUtterance& utterance() { return m_utterance.get(); }
+    SpeechSynthesisUtterance& utterance() LIFETIME_BOUND { return m_utterance.get(); }
 
 private:
     const Ref<SpeechSynthesisUtterance> m_utterance;

@@ -56,9 +56,9 @@ public:
 
     ScriptExecutionContextIdentifier trackContextIdentifier() const { return m_contextIdentifier; }
     WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData> track() const { return m_track; }
-    MediaStreamTrackPrivateSourceObserver& trackSourceObserver() const { return m_trackSourceObserver; }
+    MediaStreamTrackPrivateSourceObserver& trackSourceObserver() const LIFETIME_BOUND { return m_trackSourceObserver; }
 
-    const MediaStreamTrack::Keeper& trackKeeper() const { return m_trackKeeper.get(); }
+    const MediaStreamTrack::Keeper& trackKeeper() const LIFETIME_BOUND { return m_trackKeeper.get(); }
 
 private:
     MediaStreamTrackHandle(ScriptExecutionContextIdentifier, WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData>&&, Ref<MediaStreamTrack::Keeper>&&, Ref<MediaStreamTrackPrivateSourceObserver>&&);

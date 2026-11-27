@@ -50,7 +50,7 @@ public:
         return adoptRef(*new GamepadEvent(eventType, WTF::move(initializer), isTrusted));
     }
 
-    Gamepad* gamepad() const { return m_gamepad; }
+    Gamepad* gamepad() const LIFETIME_BOUND { return m_gamepad; }
 
 private:
     explicit GamepadEvent(const AtomString& eventType, Ref<Gamepad>&&);

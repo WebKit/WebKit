@@ -55,7 +55,7 @@ public:
         return adoptRef(*new OverconstrainedErrorEvent(type, initializer, isTrusted));
     }
 
-    OverconstrainedError* error() const { return m_error.get(); }
+    OverconstrainedError* error() const LIFETIME_BOUND { return m_error.get(); }
 
 private:
     explicit OverconstrainedErrorEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, OverconstrainedError* error)

@@ -51,7 +51,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
+    RTCIceTransport& iceTransport() LIFETIME_BOUND { return m_iceTransport.get(); }
     RTCDtlsTransportState state() { return m_state; }
     Vector<Ref<JSC::ArrayBuffer>> getRemoteCertificates();
 

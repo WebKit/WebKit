@@ -60,12 +60,12 @@ public:
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
-    ::WebGPU::RenderPipeline& backing() { return m_backing; }
-    const ::WebGPU::RenderPipeline& backing() const { return m_backing; }
+    ::WebGPU::RenderPipeline& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::RenderPipeline& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
-    const String& vertexShaderSource() const { return m_vertexShaderModuleDescriptor.code; }
-    const String& fragmentShaderSource() const { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
+    const String& vertexShaderSource() const LIFETIME_BOUND { return m_vertexShaderModuleDescriptor.code; }
+    const String& fragmentShaderSource() const LIFETIME_BOUND { return m_fragmentShaderModuleDescriptor ? m_fragmentShaderModuleDescriptor->code : nullString(); }
     bool sharesVertexFragmentShader() const { return m_sharesVertexFragmentShader; }
     void updateVertexShader(const String&, CompletionHandler<void(bool)>&&);
     void updateFragmentShader(const String&, CompletionHandler<void(bool)>&&);

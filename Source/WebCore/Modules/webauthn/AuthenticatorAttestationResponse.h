@@ -41,7 +41,7 @@ public:
 
     virtual ~AuthenticatorAttestationResponse() = default;
 
-    ArrayBuffer& attestationObject() const { return m_attestationObject; }
+    ArrayBuffer& attestationObject() const LIFETIME_BOUND { return m_attestationObject; }
     const Vector<AuthenticatorTransport>& getTransports() const LIFETIME_BOUND { return m_transports; }
     RefPtr<ArrayBuffer> getAuthenticatorData() const;
     RefPtr<ArrayBuffer> getPublicKey() const;

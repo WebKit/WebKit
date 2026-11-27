@@ -43,10 +43,10 @@ public:
         return adoptRef(*new IDBRecord(WTF::move(key), WTF::move(primaryKey), WTF::move(value), keyPath));
     }
 
-    const IDBKeyData& key() const { return m_key; }
-    const IDBKeyData& primaryKey() const { return m_primaryKey; }
-    const IDBValue& value() const { return m_value; }
-    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const IDBKeyData& key() const LIFETIME_BOUND { return m_key; }
+    const IDBKeyData& primaryKey() const LIFETIME_BOUND { return m_primaryKey; }
+    const IDBValue& value() const LIFETIME_BOUND { return m_value; }
+    const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
 
 private:
     IDBRecord(IDBKeyData&& key, IDBKeyData&& primaryKey, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath)

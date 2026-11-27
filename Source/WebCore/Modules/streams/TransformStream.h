@@ -53,8 +53,8 @@ public:
 
     ~TransformStream();
 
-    ReadableStream& readable() { return m_readable.get(); }
-    WritableStream& writable() { return m_writable.get(); }
+    ReadableStream& readable() LIFETIME_BOUND { return m_readable.get(); }
+    WritableStream& writable() LIFETIME_BOUND { return m_writable.get(); }
 
     JSValueInWrappedObject& internalTransformStream() LIFETIME_BOUND { return m_internalTransformStream; }
 

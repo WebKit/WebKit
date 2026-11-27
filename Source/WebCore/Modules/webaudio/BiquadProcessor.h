@@ -60,10 +60,10 @@ public:
     bool filterCoefficientsDirty() const { return m_filterCoefficientsDirty; }
     bool hasSampleAccurateValues() const { return m_hasSampleAccurateValues; }
 
-    AudioParam& parameter1() { return m_parameter1.get(); }
-    AudioParam& parameter2() { return m_parameter2.get(); }
-    AudioParam& parameter3() { return m_parameter3.get(); }
-    AudioParam& parameter4() { return m_parameter4.get(); }
+    AudioParam& parameter1() LIFETIME_BOUND { return m_parameter1.get(); }
+    AudioParam& parameter2() LIFETIME_BOUND { return m_parameter2.get(); }
+    AudioParam& parameter3() LIFETIME_BOUND { return m_parameter3.get(); }
+    AudioParam& parameter4() LIFETIME_BOUND { return m_parameter4.get(); }
 
     BiquadFilterType type() const { return m_type; }
     void setType(BiquadFilterType);

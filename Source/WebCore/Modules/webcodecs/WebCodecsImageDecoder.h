@@ -84,7 +84,7 @@ public:
     bool complete() const { return m_completedPromise->isFulfilled(); }
 
     using CompletedPromise = DOMPromiseProxy<IDLUndefined>;
-    CompletedPromise& completed() { return m_completedPromise.get(); }
+    CompletedPromise& completed() LIFETIME_BOUND { return m_completedPromise.get(); }
 
     Ref<WebCodecsImageTrackList> tracks() const { return m_tracks; }
 

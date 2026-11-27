@@ -72,7 +72,7 @@ public:
     static Ref<WebXRFrame> create(WebXRSession&, IsAnimationFrame);
     ~WebXRFrame();
 
-    WebXRSession& session() const { return m_session.get(); }
+    WebXRSession& session() const LIFETIME_BOUND { return m_session.get(); }
 
     ExceptionOr<RefPtr<WebXRViewerPose>> getViewerPose(const Document&, const WebXRReferenceSpace&);
     ExceptionOr<RefPtr<WebXRPose>> getPose(const Document&, const WebXRSpace&, const WebXRSpace&);

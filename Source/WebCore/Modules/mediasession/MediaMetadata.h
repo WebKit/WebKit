@@ -98,7 +98,7 @@ public:
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
 
     const String& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
-    const std::optional<SizedImage>& artworkImage() const { return m_artworkImage; }
+    const std::optional<SizedImage>& artworkImage() const LIFETIME_BOUND { return m_artworkImage; }
 
     const MediaSessionMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
 

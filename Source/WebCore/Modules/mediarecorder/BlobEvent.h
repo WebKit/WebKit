@@ -42,7 +42,7 @@ public:
     
     NODELETE static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
-    Blob& data() const { return m_blob.get(); }
+    Blob& data() const LIFETIME_BOUND { return m_blob.get(); }
     double timecode() const { return m_timecode; }
 
 private:

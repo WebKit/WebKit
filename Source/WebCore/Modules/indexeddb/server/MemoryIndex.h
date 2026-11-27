@@ -83,7 +83,7 @@ public:
     void objectStoreCleared();
 
     MemoryIndexCursor* maybeOpenCursor(const IDBCursorInfo&, MemoryBackingStoreTransaction&);
-    IndexValueStore* valueStore() { return m_records.get(); }
+    IndexValueStore* valueStore() LIFETIME_BOUND { return m_records.get(); }
 
     NODELETE MemoryObjectStore* objectStore();
 

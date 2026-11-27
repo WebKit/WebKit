@@ -48,9 +48,9 @@ public:
 #endif
     virtual ~AuthenticatorAssertionResponse() = default;
 
-    ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
-    ArrayBuffer* signature() const { return m_signature.get(); }
-    ArrayBuffer* userHandle() const { return m_userHandle.get(); }
+    ArrayBuffer* authenticatorData() const LIFETIME_BOUND { return m_authenticatorData.get(); }
+    ArrayBuffer* signature() const LIFETIME_BOUND { return m_signature.get(); }
+    ArrayBuffer* userHandle() const LIFETIME_BOUND { return m_userHandle.get(); }
     const String& name() const LIFETIME_BOUND { return m_name; }
     const String& displayName() const LIFETIME_BOUND { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
@@ -58,7 +58,7 @@ public:
     bool synchronizable() const { return m_synchronizable; }
 #if PLATFORM(COCOA)
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
-    LAContext * laContext() const { return m_laContext.get(); }
+    LAContext * laContext() const LIFETIME_BOUND { return m_laContext.get(); }
 #endif
     RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
     const String& accessGroup() const LIFETIME_BOUND { return m_accessGroup; }

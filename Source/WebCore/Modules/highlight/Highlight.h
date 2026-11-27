@@ -44,7 +44,7 @@ public:
         return adoptRef(*new HighlightRange(WTF::move(range)));
     }
 
-    AbstractRange& range() const { return m_range.get(); }
+    AbstractRange& range() const LIFETIME_BOUND { return m_range.get(); }
     const Position& startPosition() const LIFETIME_BOUND { return m_startPosition; }
     void setStartPosition(Position&& startPosition) { m_startPosition = WTF::move(startPosition); }
     const Position& endPosition() const LIFETIME_BOUND { return m_endPosition; }

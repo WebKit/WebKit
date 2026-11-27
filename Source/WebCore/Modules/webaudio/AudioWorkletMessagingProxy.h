@@ -52,7 +52,7 @@ public:
     // This method is used in the main thread to post task back to the worklet thread.
     bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
 
-    AudioWorkletThread& workletThread() { return m_workletThread.get(); }
+    AudioWorkletThread& workletThread() LIFETIME_BOUND { return m_workletThread.get(); }
 
     enum class StopThread : bool { ReleaseProcessors, ThreadOnly };
     void stopThread(StopThread = StopThread::ReleaseProcessors);

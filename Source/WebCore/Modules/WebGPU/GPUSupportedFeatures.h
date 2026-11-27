@@ -45,8 +45,8 @@ public:
 
     void initializeSetLike(DOMSetAdapter&) const;
 
-    WebGPUSupportedFeatures& backing() { return m_backing; }
-    const WebGPUSupportedFeatures& backing() const { return m_backing; }
+    WebGPUSupportedFeatures& backing() LIFETIME_BOUND { return m_backing; }
+    const WebGPUSupportedFeatures& backing() const LIFETIME_BOUND { return m_backing; }
 
 private:
     GPUSupportedFeatures(Ref<WebGPUSupportedFeatures>&& backing)

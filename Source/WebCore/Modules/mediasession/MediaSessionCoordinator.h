@@ -106,7 +106,7 @@ private:
 
     bool currentPositionApproximatelyEqualTo(double) const;
 
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     NODELETE static WTFLogChannel& logChannel();
     static ASCIILiteral logClassName() { return "MediaSessionCoordinator"_s; }

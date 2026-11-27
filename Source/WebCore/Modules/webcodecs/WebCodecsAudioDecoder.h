@@ -67,8 +67,8 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsAudioDecoderConfig&&, Ref<DeferredPromise>&&);
 
-    WebCodecsAudioDataOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
-    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+    WebCodecsAudioDataOutputCallback& outputCallbackConcurrently() LIFETIME_BOUND { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() LIFETIME_BOUND { return m_error.get(); }
 
 private:
     WebCodecsAudioDecoder(ScriptExecutionContext&, Init&&);

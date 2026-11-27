@@ -57,10 +57,10 @@ public:
     };
     NODELETE static Ref<RTCTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    RTCRtpReceiver& receiver() const { return m_receiver; }
-    MediaStreamTrack& track() const  { return m_track; }
+    RTCRtpReceiver& receiver() const LIFETIME_BOUND { return m_receiver; }
+    MediaStreamTrack& track() const LIFETIME_BOUND  { return m_track; }
     const MediaStreamArray& streams() const LIFETIME_BOUND { return m_streams; }
-    RTCRtpTransceiver& transceiver() const  { return m_transceiver; }
+    RTCRtpTransceiver& transceiver() const LIFETIME_BOUND  { return m_transceiver; }
 
 private:
     RTCTrackEvent(const AtomString& type, CanBubble, IsCancelable, Ref<RTCRtpReceiver>&&, Ref<MediaStreamTrack>&&, MediaStreamArray&&, Ref<RTCRtpTransceiver>&&);

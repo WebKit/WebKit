@@ -124,14 +124,14 @@ public:
     // Asynchronous audio file data decoding.
     void decodeAudioData(Ref<JSC::ArrayBuffer>&&, RefPtr<DecodeSuccessCallback>&&, RefPtr<DecodeErrorCallback>&&, Ref<DeferredPromise>&&);
 
-    AudioListener& listener() { return m_listener; }
+    AudioListener& listener() LIFETIME_BOUND { return m_listener; }
 
     using State = AudioContextState;
     State state() const { return m_state; }
     bool isClosed() const { return m_state == State::Closed; }
     bool isRunning() const { return m_state == State::Running; }
 
-    AudioWorklet& audioWorklet() { return m_worklet.get(); }
+    AudioWorklet& audioWorklet() LIFETIME_BOUND { return m_worklet.get(); }
 
     bool wouldTaintOrigin(const URL&) const;
 
@@ -339,8 +339,8 @@ private:
         }
         TailProcessingNode& operator=(const TailProcessingNode&) = delete;
         TailProcessingNode& operator=(TailProcessingNode&&) = delete;
-        AudioNode* operator->() const { return m_node.get(); }
-        AudioNode* node() const { return m_node.get(); }
+        AudioNode* operator->() const LIFETIME_BOUND { return m_node.get(); }
+        AudioNode* node() const LIFETIME_BOUND { return m_node.get(); }
         friend bool operator==(const TailProcessingNode&, const TailProcessingNode&) = default;
         bool operator==(const AudioNode& node) const { return m_node == &node; }
     private:

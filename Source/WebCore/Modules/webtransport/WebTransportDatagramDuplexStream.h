@@ -49,7 +49,7 @@ public:
     NODELETE static Ref<WebTransportDatagramDuplexStream> create(Ref<ReadableStream>&&);
     ~WebTransportDatagramDuplexStream();
 
-    ReadableStream& readable() { return m_readable; }
+    ReadableStream& readable() LIFETIME_BOUND { return m_readable; }
     ExceptionOr<Ref<WebTransportDatagramsWritable>> createWritable(ScriptExecutionContext&, WebTransportSendOptions&&);
     NODELETE unsigned maxDatagramSize() const;
     std::optional<double> incomingMaxAge() const { return m_incomingMaxAge; }

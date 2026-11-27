@@ -45,7 +45,7 @@ public:
     
     ~StereoPannerNode();
     
-    AudioParam& pan() { return m_pan.get(); }
+    AudioParam& pan() LIFETIME_BOUND { return m_pan.get(); }
     
 private:
     StereoPannerNode(BaseAudioContext&, float pan);

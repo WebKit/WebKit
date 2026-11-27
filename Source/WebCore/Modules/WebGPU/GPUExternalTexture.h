@@ -49,8 +49,8 @@ public:
     NODELETE String label() const;
     void setLabel(String&&);
 
-    ::WebGPU::ExternalTexture& backing() { return m_backing; }
-    const ::WebGPU::ExternalTexture& backing() const { return m_backing; }
+    ::WebGPU::ExternalTexture& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::ExternalTexture& backing() const LIFETIME_BOUND { return m_backing; }
     void destroy();
     void undestroy();
     bool isDestroyed() const { return m_destroyed; }

@@ -53,13 +53,13 @@ public:
     static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
 
-    WebKitMediaKeyError* error() { return m_error.get(); }
+    WebKitMediaKeyError* error() LIFETIME_BOUND { return m_error.get(); }
     const String& keySystem() const LIFETIME_BOUND { return m_keySystem; }
     const String& sessionId() const LIFETIME_BOUND { return m_sessionId; }
     ExceptionOr<void> update(Ref<Uint8Array>&& key);
     void close();
 
-    LegacyCDMSession* session() { return m_session.get(); }
+    LegacyCDMSession* session() LIFETIME_BOUND { return m_session.get(); }
 
     void detachKeys() { m_keys = nullptr; }
 

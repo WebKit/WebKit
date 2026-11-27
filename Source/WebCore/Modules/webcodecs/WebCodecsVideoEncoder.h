@@ -66,8 +66,8 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsVideoEncoderConfig&&, Ref<DeferredPromise>&&);
 
-    WebCodecsEncodedVideoChunkOutputCallback& outputCallbackConcurrently() { return m_output.get(); }
-    WebCodecsErrorCallback& errorCallbackConcurrently() { return m_error.get(); }
+    WebCodecsEncodedVideoChunkOutputCallback& outputCallbackConcurrently() LIFETIME_BOUND { return m_output.get(); }
+    WebCodecsErrorCallback& errorCallbackConcurrently() LIFETIME_BOUND { return m_error.get(); }
 
 private:
     WebCodecsVideoEncoder(ScriptExecutionContext&, Init&&);

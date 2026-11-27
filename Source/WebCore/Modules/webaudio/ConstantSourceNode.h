@@ -40,7 +40,7 @@ public:
     
     virtual ~ConstantSourceNode();
     
-    AudioParam& offset() { return m_offset.get(); }
+    AudioParam& offset() LIFETIME_BOUND { return m_offset.get(); }
     
 private:
     void process(size_t framesToProcess) final;

@@ -49,11 +49,11 @@ public:
     void uninitialize() final;
 
     // Static compression curve parameters.
-    AudioParam& threshold() { return m_threshold.get(); }
-    AudioParam& knee() { return m_knee.get(); }
-    AudioParam& ratio() { return m_ratio.get(); }
-    AudioParam& attack() { return m_attack.get(); }
-    AudioParam& release() { return m_release.get(); }
+    AudioParam& threshold() LIFETIME_BOUND { return m_threshold.get(); }
+    AudioParam& knee() LIFETIME_BOUND { return m_knee.get(); }
+    AudioParam& ratio() LIFETIME_BOUND { return m_ratio.get(); }
+    AudioParam& attack() LIFETIME_BOUND { return m_attack.get(); }
+    AudioParam& release() LIFETIME_BOUND { return m_release.get(); }
 
     // Amount by which the compressor is currently compressing the signal in decibels.
     float reduction() const { return m_reduction; }

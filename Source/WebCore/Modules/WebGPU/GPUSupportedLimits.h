@@ -72,8 +72,8 @@ public:
     NODELETE uint32_t maxStorageBuffersInVertexStage() const;
     NODELETE uint32_t maxStorageTexturesInVertexStage() const;
 
-    WebGPUSupportedLimits& backing() { return m_backing; }
-    const WebGPUSupportedLimits& backing() const { return m_backing; }
+    WebGPUSupportedLimits& backing() LIFETIME_BOUND { return m_backing; }
+    const WebGPUSupportedLimits& backing() const LIFETIME_BOUND { return m_backing; }
 
 private:
     GPUSupportedLimits(Ref<WebGPUSupportedLimits>&& backing)

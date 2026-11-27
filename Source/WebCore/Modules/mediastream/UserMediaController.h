@@ -43,7 +43,7 @@ class UserMediaController : public Supplement<Page> {
 public:
     explicit UserMediaController(Ref<UserMediaClient>&&);
 
-    UserMediaClient* client() const { return m_client.get(); }
+    UserMediaClient* client() const LIFETIME_BOUND { return m_client.get(); }
 
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);

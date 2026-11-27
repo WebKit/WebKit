@@ -40,7 +40,7 @@ public:
 
     NODELETE static Ref<SpeechSynthesisEvent> create(const AtomString& type, Init&&);
 
-    const SpeechSynthesisUtterance& utterance() const { return m_utterance; }
+    const SpeechSynthesisUtterance& utterance() const LIFETIME_BOUND { return m_utterance; }
     unsigned long charIndex() const { return m_charIndex; }
     unsigned long charLength() const { return m_charLength; }
     float elapsedTime() const { return m_elapsedTime; }

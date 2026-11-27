@@ -97,8 +97,8 @@ public:
     FetchBody createProxy(JSDOMGlobalObject&);
 
     bool hasReadableStream() const { return !!m_readableStream; }
-    const ReadableStream* readableStream() const { return m_readableStream.get(); }
-    ReadableStream* readableStream() { return m_readableStream.get(); }
+    const ReadableStream* readableStream() const LIFETIME_BOUND { return m_readableStream.get(); }
+    ReadableStream* readableStream() LIFETIME_BOUND { return m_readableStream.get(); }
     void setReadableStream(Ref<ReadableStream>&& stream)
     {
         ASSERT(!m_readableStream);
@@ -113,7 +113,7 @@ public:
     void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
     Ref<ReadableStreamToSharedBufferSink> startPendingStreamUpload(ScriptExecutionContext&);
-    PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+    PendingStreamState* pendingStreamState() const LIFETIME_BOUND { return m_pendingStreamState.get(); }
     void cancelReadableStream();
 
     bool isBlob() const { return std::holds_alternative<Ref<Blob>>(m_data); }

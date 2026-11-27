@@ -105,7 +105,7 @@ public:
     NODELETE Ref<WebTransportSendGroup> createSendGroup();
     NODELETE static bool supportsReliableOnly();
 
-    const Ref<WebTransportSession>& session() const { return m_session; };
+    const Ref<WebTransportSession>& session() const LIFETIME_BOUND { return m_session; };
     void datagramsWritableCreated(WebTransportDatagramsWritable&);
     void cleanupContext();
 

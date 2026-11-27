@@ -76,7 +76,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "ImageCapture"_s; }
     NODELETE WTFLogChannel& logChannel() const;

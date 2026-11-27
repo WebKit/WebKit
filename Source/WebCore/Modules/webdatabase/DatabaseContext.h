@@ -50,7 +50,7 @@ public:
 
     virtual ~DatabaseContext();
 
-    DatabaseThread* existingDatabaseThread() const { return m_databaseThread.get(); }
+    DatabaseThread* existingDatabaseThread() const LIFETIME_BOUND { return m_databaseThread.get(); }
     DatabaseThread* databaseThread();
 
     void setHasOpenDatabases() { m_hasOpenDatabases = true; }

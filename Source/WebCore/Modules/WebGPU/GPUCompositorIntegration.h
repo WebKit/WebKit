@@ -53,8 +53,8 @@ public:
     Seconds lastFrameGPUCost() const { return m_backing->lastFrameGPUCost(); }
     Seconds lastFramePresentStall() const { return m_backing->lastFramePresentStall(); }
 
-    WebGPUCompositorIntegration& backing() { return m_backing; }
-    const WebGPUCompositorIntegration& backing() const { return m_backing; }
+    WebGPUCompositorIntegration& backing() LIFETIME_BOUND { return m_backing; }
+    const WebGPUCompositorIntegration& backing() const LIFETIME_BOUND { return m_backing; }
 
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t);
     void updateContentsHeadroom(float);

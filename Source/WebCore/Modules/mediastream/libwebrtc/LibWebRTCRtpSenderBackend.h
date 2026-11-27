@@ -57,7 +57,7 @@ public:
     void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
 
     void setRTCSender(RefPtr<webrtc::RtpSenderInterface>&& rtcSender) { m_rtcSender = WTF::move(rtcSender); }
-    webrtc::RtpSenderInterface* rtcSender() { return m_rtcSender.get(); }
+    webrtc::RtpSenderInterface* rtcSender() LIFETIME_BOUND { return m_rtcSender.get(); }
 
     RealtimeOutgoingVideoSource* videoSource();
     void clearSource() { setSource(nullptr); }

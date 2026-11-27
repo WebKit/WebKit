@@ -86,8 +86,8 @@ public:
 
     ExceptionOr<Ref<GPURenderBundle>> finish(const std::optional<GPURenderBundleDescriptor>&);
 
-    ::WebGPU::RenderBundleEncoder& backing() { return m_backing; }
-    const ::WebGPU::RenderBundleEncoder& backing() const { return m_backing; }
+    ::WebGPU::RenderBundleEncoder& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::RenderBundleEncoder& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
 

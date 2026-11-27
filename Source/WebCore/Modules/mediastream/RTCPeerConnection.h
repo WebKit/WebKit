@@ -124,9 +124,9 @@ public:
     RefPtr<RTCSessionDescription> pendingLocalDescription() const { return m_pendingLocalDescription.get(); }
 
     void setRemoteDescription(RTCSessionDescriptionInit&&, Ref<DeferredPromise>&&);
-    RTCSessionDescription* remoteDescription() const { return m_pendingRemoteDescription ? m_pendingRemoteDescription.get() : m_currentRemoteDescription.get(); }
-    RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
-    RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
+    RTCSessionDescription* remoteDescription() const LIFETIME_BOUND { return m_pendingRemoteDescription ? m_pendingRemoteDescription.get() : m_currentRemoteDescription.get(); }
+    RTCSessionDescription* currentRemoteDescription() const LIFETIME_BOUND { return m_currentRemoteDescription.get(); }
+    RTCSessionDescription* pendingRemoteDescription() const LIFETIME_BOUND { return m_pendingRemoteDescription.get(); }
 
     using Candidate = Variant<RTCIceCandidateInit, Ref<RTCIceCandidate>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
@@ -197,7 +197,7 @@ public:
     void processIceTransportStateChange(RTCIceTransport&);
     void processIceTransportChanges();
 
-    RTCSctpTransport* sctp() { return m_sctpTransport.get(); }
+    RTCSctpTransport* sctp() LIFETIME_BOUND { return m_sctpTransport.get(); }
 
     // EventTarget implementation.
     void dispatchEvent(Event&) final;
@@ -260,7 +260,7 @@ private:
 
     void setSignalingState(RTCSignalingState);
 
-    PeerConnectionBackend* backend() const { return m_backend.get(); }
+    PeerConnectionBackend* backend() const LIFETIME_BOUND { return m_backend.get(); }
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };

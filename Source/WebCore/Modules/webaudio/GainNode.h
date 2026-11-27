@@ -49,7 +49,7 @@ public:
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
     // JavaScript interface
-    AudioParam& gain() { return m_gain.get(); }
+    AudioParam& gain() LIFETIME_BOUND { return m_gain.get(); }
 
 private:
     double tailTime() const override { return 0; }

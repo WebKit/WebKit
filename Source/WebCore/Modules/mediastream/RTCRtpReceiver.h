@@ -72,9 +72,9 @@ public:
     Vector<RTCRtpContributingSource> getContributingSources() const { return m_backend->getContributingSources(); }
     Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return m_backend->getSynchronizationSources(); }
 
-    MediaStreamTrack& track() { return m_track.get(); }
+    MediaStreamTrack& track() LIFETIME_BOUND { return m_track.get(); }
 
-    RTCDtlsTransport* transport() { return m_transport.get(); }
+    RTCDtlsTransport* transport() LIFETIME_BOUND { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
     RTCRtpReceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }

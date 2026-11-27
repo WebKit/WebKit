@@ -133,7 +133,7 @@ public:
     };
     const Vector<View>& views() const LIFETIME_BOUND { return m_views; }
     const PlatformXR::FrameData& frameData() const LIFETIME_BOUND { return m_frameData; }
-    const WebXRReferenceSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
+    const WebXRReferenceSpace& viewerReferenceSpace() const LIFETIME_BOUND { return m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
 
 #if ENABLE(WEBXR_HANDS)

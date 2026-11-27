@@ -46,8 +46,8 @@ public:
     NODELETE String label() const;
     void setLabel(String&&);
 
-    ::WebGPU::PipelineLayout& backing() { return m_backing; }
-    const ::WebGPU::PipelineLayout& backing() const { return m_backing; }
+    ::WebGPU::PipelineLayout& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::PipelineLayout& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
 

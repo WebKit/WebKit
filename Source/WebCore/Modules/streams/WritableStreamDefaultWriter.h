@@ -47,7 +47,7 @@ public:
     ExceptionOr<std::optional<double>> desiredSize(JSDOMGlobalObject&);
     ExceptionOr<void> releaseLock(JSDOMGlobalObject&);
 
-    NODELETE InternalWritableStreamWriter& internalWriter() { return m_internalWriter.get(); }
+    NODELETE InternalWritableStreamWriter& internalWriter() LIFETIME_BOUND { return m_internalWriter.get(); }
 
 protected:
     explicit WritableStreamDefaultWriter(Ref<InternalWritableStreamWriter>&&);

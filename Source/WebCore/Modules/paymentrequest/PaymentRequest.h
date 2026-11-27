@@ -72,7 +72,7 @@ public:
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
     NODELETE const String& id() const;
-    PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
+    PaymentAddress* shippingAddress() const LIFETIME_BOUND { return m_shippingAddress.get(); }
     const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
     NODELETE std::optional<PaymentShippingType> shippingType() const;
 
@@ -126,7 +126,7 @@ private:
     void settleDetailsPromise(UpdateReason);
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
-    PaymentHandler* activePaymentHandler() { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
+    PaymentHandler* activePaymentHandler() LIFETIME_BOUND { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
     void settleShowPromise(ExceptionOr<PaymentResponse&>&&);
     void closeActivePaymentHandler();
 

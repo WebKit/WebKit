@@ -37,8 +37,8 @@ public:
     NODELETE static Ref<PushSubscriptionChangeEvent> create(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
     ~PushSubscriptionChangeEvent();
 
-    PushSubscription* newSubscription() { return m_newSubscription.get(); }
-    PushSubscription* oldSubscription() { return m_oldSubscription.get(); }
+    PushSubscription* newSubscription() LIFETIME_BOUND { return m_newSubscription.get(); }
+    PushSubscription* oldSubscription() LIFETIME_BOUND { return m_oldSubscription.get(); }
 
 private:
     PushSubscriptionChangeEvent(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);

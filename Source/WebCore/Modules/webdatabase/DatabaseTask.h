@@ -132,7 +132,7 @@ public:
     explicit DatabaseTransactionTask(RefPtr<SQLTransaction>&&);
     virtual ~DatabaseTransactionTask();
 
-    SQLTransaction* transaction() const { return m_transaction.get(); }
+    SQLTransaction* transaction() const LIFETIME_BOUND { return m_transaction.get(); }
 
 private:
     void doPerformTask() final;

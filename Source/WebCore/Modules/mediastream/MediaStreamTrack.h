@@ -154,8 +154,8 @@ public:
 
     RealtimeMediaSource& source() const { return m_private->source(); }
     RealtimeMediaSource& sourceForProcessor() const { return m_private->sourceForProcessor(); }
-    MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
-    const MediaStreamTrackPrivate& privateTrack() const { return m_private.get(); }
+    MediaStreamTrackPrivate& privateTrack() LIFETIME_BOUND { return m_private.get(); }
+    const MediaStreamTrackPrivate& privateTrack() const LIFETIME_BOUND { return m_private.get(); }
 
 #if ENABLE(WEB_AUDIO)
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();

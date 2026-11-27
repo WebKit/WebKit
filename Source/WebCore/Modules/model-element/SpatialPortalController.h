@@ -113,7 +113,7 @@ public:
 
     void updatePortalTransform(const RenderBox&);
     void updatePortalTransform();
-    const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
+    const std::optional<TransformationMatrix>& resolvedPortalTransform() const LIFETIME_BOUND { return m_resolvedPortalTransform; }
 
     void setPortalAction(PortalActionKind);
 

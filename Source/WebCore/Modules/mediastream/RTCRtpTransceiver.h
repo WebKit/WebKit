@@ -58,8 +58,8 @@ public:
     ExceptionOr<void> setDirection(RTCRtpTransceiverDirection);
     String mid() const;
 
-    RTCRtpSender& sender() { return m_sender.get(); }
-    RTCRtpReceiver& receiver() { return m_receiver.get(); }
+    RTCRtpSender& sender() LIFETIME_BOUND { return m_sender.get(); }
+    RTCRtpReceiver& receiver() LIFETIME_BOUND { return m_receiver.get(); }
 
     bool stopped() const;
     ExceptionOr<void> stop();

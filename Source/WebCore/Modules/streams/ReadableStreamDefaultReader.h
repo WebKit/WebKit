@@ -57,7 +57,7 @@ public:
 
     ExceptionOr<void> releaseLock(JSDOMGlobalObject&);
 
-    InternalReadableStreamDefaultReader* internalDefaultReader() { return m_internalDefaultReader.get(); }
+    InternalReadableStreamDefaultReader* internalDefaultReader() LIFETIME_BOUND { return m_internalDefaultReader.get(); }
     size_t getNumReadRequests() const { return m_readRequests.size(); }
     void addReadRequest(Ref<ReadableStreamReadRequest>&&);
     Ref<ReadableStreamReadRequest> takeFirstReadRequest();

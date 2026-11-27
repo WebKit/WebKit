@@ -62,8 +62,8 @@ public:
 
     const String& method() const LIFETIME_BOUND { return m_request.httpMethod(); }
     NODELETE const String& urlString() const;
-    FetchHeaders& headers() { return m_headers.get(); }
-    const FetchHeaders& headers() const { return m_headers.get(); }
+    FetchHeaders& headers() LIFETIME_BOUND { return m_headers.get(); }
+    const FetchHeaders& headers() const LIFETIME_BOUND { return m_headers.get(); }
 
     Destination destination() const { return m_options.destination; }
     String referrer() const;
@@ -74,7 +74,7 @@ public:
     Redirect redirect() const { return m_options.redirect; }
     bool keepalive() const { return m_options.keepAlive; };
     FetchRequestDuplex duplex() const { return m_duplex.value_or(FetchRequestDuplex::Half); }
-    AbortSignal& signal() { return m_signal.get(); }
+    AbortSignal& signal() LIFETIME_BOUND { return m_signal.get(); }
 
     const String& integrity() const LIFETIME_BOUND { return m_options.integrity; }
 

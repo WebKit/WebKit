@@ -41,7 +41,7 @@ public:
 
     Vector<Ref<GPUCompilationMessage>> messages() const;
 
-    const ::WebGPU::CompilationInfo& backing() const { return m_backing; }
+    const ::WebGPU::CompilationInfo& backing() const LIFETIME_BOUND { return m_backing; }
 
 private:
     GPUCompilationInfo(::WebGPU::CompilationInfo&& backing)

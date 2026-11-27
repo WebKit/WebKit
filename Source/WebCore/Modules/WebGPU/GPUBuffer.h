@@ -66,8 +66,8 @@ public:
 
     void destroy(ScriptExecutionContext&);
 
-    ::WebGPU::Buffer& backing() { return m_backing; }
-    const ::WebGPU::Buffer& backing() const { return m_backing; }
+    ::WebGPU::Buffer& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::Buffer& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
 

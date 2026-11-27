@@ -43,7 +43,7 @@ public:
     
     std::unique_ptr<AudioDSPKernel> createKernel() override;
         
-    AudioParam& delayTime() const { return m_delayTime.get(); }
+    AudioParam& delayTime() const LIFETIME_BOUND { return m_delayTime.get(); }
     double maxDelayTime() { return delayTime().maxValue(); }
 
 private:

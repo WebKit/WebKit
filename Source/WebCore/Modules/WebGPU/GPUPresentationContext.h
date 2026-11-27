@@ -56,8 +56,8 @@ public:
     void present();
     void renderBufferWasReplaced(uint32_t frameIndex);
 
-    ::WebGPU::PresentationContext& backing() { return m_backing; }
-    const ::WebGPU::PresentationContext& backing() const { return m_backing; }
+    ::WebGPU::PresentationContext& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::PresentationContext& backing() const LIFETIME_BOUND { return m_backing; }
 
 private:
     GPUPresentationContext(Ref<::WebGPU::PresentationContext>&& backing)

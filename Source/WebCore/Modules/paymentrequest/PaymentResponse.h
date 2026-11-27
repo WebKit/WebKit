@@ -79,7 +79,7 @@ public:
 
     JSValueInWrappedObject& cachedDetails() LIFETIME_BOUND { return m_cachedDetails; }
 
-    PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
+    PaymentAddress* shippingAddress() const LIFETIME_BOUND { return m_shippingAddress.get(); }
     void setShippingAddress(PaymentAddress* shippingAddress) { m_shippingAddress = shippingAddress; }
 
     const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }

@@ -50,8 +50,8 @@ public:
     Type type() const final { return Type::Internal; }
     NODELETE const String& message() const LIFETIME_BOUND final;
 
-    WebGPUInternalError* backing() { return m_backing.get(); }
-    const WebGPUInternalError* backing() const { return m_backing.get(); }
+    WebGPUInternalError* backing() LIFETIME_BOUND { return m_backing.get(); }
+    const WebGPUInternalError* backing() const LIFETIME_BOUND { return m_backing.get(); }
     String stack() const { return "_"_s; }
 
 private:

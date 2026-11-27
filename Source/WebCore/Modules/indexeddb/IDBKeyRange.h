@@ -48,8 +48,8 @@ public:
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&&);
     ~IDBKeyRange();
 
-    IDBKey* lower() const { return m_lower.get(); }
-    IDBKey* upper() const { return m_upper.get(); }
+    IDBKey* lower() const LIFETIME_BOUND { return m_lower.get(); }
+    IDBKey* upper() const LIFETIME_BOUND { return m_upper.get(); }
     bool lowerOpen() const { return m_isLowerOpen; }
     bool upperOpen() const { return m_isUpperOpen; }
 

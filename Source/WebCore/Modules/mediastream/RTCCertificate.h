@@ -46,7 +46,7 @@ public:
 
     const String& pemCertificate() const LIFETIME_BOUND { return m_pemCertificate; }
     const String& pemPrivateKey() const LIFETIME_BOUND { return m_pemPrivateKey; }
-    const SecurityOrigin& origin() const { return m_origin.get(); }
+    const SecurityOrigin& origin() const LIFETIME_BOUND { return m_origin.get(); }
 
 private:
     RTCCertificate(Ref<SecurityOrigin>&&, double expires, Vector<DtlsFingerprint>&&, String&& pemCertificate, String&& pemPrivateKey);

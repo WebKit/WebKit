@@ -44,7 +44,7 @@ class ServerOpenDBRequest : public RefCounted<ServerOpenDBRequest> {
 public:
     NODELETE static Ref<ServerOpenDBRequest> create(IDBConnectionToClient&, const IDBOpenRequestData&);
 
-    IDBConnectionToClient& connection() { return m_connection; }
+    IDBConnectionToClient& connection() LIFETIME_BOUND { return m_connection; }
     const IDBOpenRequestData& requestData() const LIFETIME_BOUND { return m_requestData; }
 
     NODELETE bool isOpenRequest() const;

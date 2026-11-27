@@ -103,7 +103,7 @@ public:
     void didCloseFromServer(const IDBError&);
     void connectionToServerLost(const IDBError&);
 
-    IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
+    IDBClient::IDBConnectionProxy& connectionProxy() LIFETIME_BOUND { return m_connectionProxy.get(); }
 
     void didCreateIndexInfo(const IDBIndexInfo&);
     void didDeleteIndexInfo(const IDBIndexInfo&);

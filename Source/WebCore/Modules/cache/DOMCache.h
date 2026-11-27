@@ -64,7 +64,7 @@ public:
     using MatchCallback = CompletionHandler<void(ExceptionOr<RefPtr<FetchResponse>>)>;
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
 
-    CacheStorageConnection& connection() { return m_connection.get(); }
+    CacheStorageConnection& connection() LIFETIME_BOUND { return m_connection.get(); }
 
 private:
     DOMCache(ScriptExecutionContext&, String&& name, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);

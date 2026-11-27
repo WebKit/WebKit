@@ -46,8 +46,8 @@ public:
     void setLabel(String&&);
     void setOverrideLabel(String&&);
 
-    ::WebGPU::CommandBuffer& backing() { return m_backing; }
-    const ::WebGPU::CommandBuffer& backing() const { return m_backing; }
+    ::WebGPU::CommandBuffer& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::CommandBuffer& backing() const LIFETIME_BOUND { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&, ::WebGPU::CommandBuffer&);
 
     NODELETE GPUDevice* device() const;

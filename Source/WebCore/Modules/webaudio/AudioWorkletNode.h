@@ -69,8 +69,8 @@ public:
     void ref() const final { AudioNode::ref(); }
     void deref() const final { AudioNode::deref(); }
 
-    AudioParamMap& parameters() { return m_parameters.get(); }
-    MessagePort& port() { return m_port.get(); }
+    AudioParamMap& parameters() LIFETIME_BOUND { return m_parameters.get(); }
+    MessagePort& port() LIFETIME_BOUND { return m_port.get(); }
 
     void setProcessor(RefPtr<AudioWorkletProcessor>&&);
     RefPtr<AudioWorkletProcessor> takeProcessorForThreadShutdown();

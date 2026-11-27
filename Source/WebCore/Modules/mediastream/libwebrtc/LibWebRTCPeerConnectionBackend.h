@@ -97,7 +97,7 @@ private:
 
     void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) final;
 
-    const HashMap<String, String>& trackIds() const { return m_trackIds; }
+    const HashMap<String, String>& trackIds() const LIFETIME_BOUND { return m_trackIds; }
 
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }

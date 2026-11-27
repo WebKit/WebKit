@@ -49,7 +49,7 @@ public:
     NODELETE static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<NotificationEvent> create(const AtomString&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
-    Notification& notification() { return m_notification; }
+    Notification& notification() LIFETIME_BOUND { return m_notification; }
     const String& action() const LIFETIME_BOUND { return m_action; }
 
 private:

@@ -65,16 +65,16 @@ public:
     PlatformXR::InputSourceHandle handle() const { return m_source.handle; }
     XRHandedness handedness() const { return m_source.handedness; }
     XRTargetRayMode targetRayMode() const { return m_source.targetRayMode; };
-    WebXRSpace& targetRaySpace() const { return m_targetRaySpace.get(); };
-    WebXRSpace* gripSpace() const { return m_gripSpace.get(); }
+    WebXRSpace& targetRaySpace() const LIFETIME_BOUND { return m_targetRaySpace.get(); };
+    WebXRSpace* gripSpace() const LIFETIME_BOUND { return m_gripSpace.get(); }
     const Vector<String>& profiles() const LIFETIME_BOUND { return m_source.profiles; };
     double connectTime() const { return m_connectTime; }
 #if ENABLE(GAMEPAD)
-    Gamepad* gamepad() const { return m_gamepad.ptr(); }
+    Gamepad* gamepad() const LIFETIME_BOUND { return m_gamepad.ptr(); }
 #endif
 
 #if ENABLE(WEBXR_HANDS)
-    WebXRHand* hand() const { return m_hand.get(); }
+    WebXRHand* hand() const LIFETIME_BOUND { return m_hand.get(); }
 #endif
 
     void update(double timestamp, const InputSource&);

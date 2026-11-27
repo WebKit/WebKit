@@ -68,9 +68,9 @@ public:
 
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
-    MediaStreamTrack* track() { return m_track.get(); }
+    MediaStreamTrack* track() LIFETIME_BOUND { return m_track.get(); }
 
-    RTCDtlsTransport* transport() { return m_transport.get(); }
+    RTCDtlsTransport* transport() LIFETIME_BOUND { return m_transport.get(); }
     void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
     const String& trackId() const LIFETIME_BOUND { return m_trackId; }
@@ -89,7 +89,7 @@ public:
     RTCRtpSendParameters getParameters();
     void setParameters(RTCRtpSendParameters&&, DOMPromiseDeferred<void>&&);
 
-    RTCRtpSenderBackend& backend() { return m_backend.get(); }
+    RTCRtpSenderBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
     std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
 

@@ -43,7 +43,7 @@ public:
     }
 
     void setIcon(RefPtr<NativeImage>&& icon) { m_icon = WTF::move(icon); }
-    const RefPtr<NativeImage>& icon() const { return m_icon; }
+    const RefPtr<NativeImage>& icon() const LIFETIME_BOUND { return m_icon; }
 
 private:
     NotificationResources(RefPtr<NativeImage>&& image)

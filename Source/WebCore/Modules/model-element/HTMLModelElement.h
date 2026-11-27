@@ -134,7 +134,7 @@ public:
     // MARK: DOM Functions and Attributes
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
-    ReadyPromise& ready() { return m_readyPromise.get(); }
+    ReadyPromise& ready() LIFETIME_BOUND { return m_readyPromise.get(); }
 
     NODELETE WEBCORE_EXPORT RefPtr<Model> model() const;
 
@@ -150,7 +150,7 @@ public:
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     using EnvironmentMapPromise = DOMPromiseProxy<IDLUndefined>;
-    EnvironmentMapPromise& environmentMapReady() { return m_environmentMapReadyPromise.get(); }
+    EnvironmentMapPromise& environmentMapReady() LIFETIME_BOUND { return m_environmentMapReadyPromise.get(); }
 
     const URL& environmentMap() const;
 #if ENABLE(SPATIAL_PORTAL)

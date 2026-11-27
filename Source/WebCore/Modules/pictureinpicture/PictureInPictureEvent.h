@@ -43,7 +43,7 @@ public:
 
     NODELETE static Ref<PictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
 
-    PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }
+    PictureInPictureWindow& pictureInPictureWindow() const LIFETIME_BOUND { return m_pictureInPictureWindow.get(); }
 
 private:
     PictureInPictureEvent(const AtomString&, Init&&, IsTrusted = IsTrusted::No);

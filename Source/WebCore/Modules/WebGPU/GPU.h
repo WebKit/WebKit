@@ -62,7 +62,7 @@ public:
     void requestAdapter(ScriptExecutionContext&, const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
     NODELETE GPUTextureFormat getPreferredCanvasFormat() const;
-    WGSLLanguageFeatures& wgslLanguageFeatures() const { return m_wgslLanguageFeatures; }
+    WGSLLanguageFeatures& wgslLanguageFeatures() const LIFETIME_BOUND { return m_wgslLanguageFeatures; }
 
     static RefPtr<GPUPresentationContext> createPresentationContext(WebGPUIntegration&, const GPUPresentationContextDescriptor&);
 

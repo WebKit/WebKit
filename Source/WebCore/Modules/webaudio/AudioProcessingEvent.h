@@ -45,8 +45,8 @@ public:
     
     virtual ~AudioProcessingEvent();
 
-    AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
-    AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
+    AudioBuffer* inputBuffer() LIFETIME_BOUND { return m_inputBuffer.get(); }
+    AudioBuffer* outputBuffer() LIFETIME_BOUND { return m_outputBuffer.get(); }
     double playbackTime() const { return m_playbackTime; }
 
 private:

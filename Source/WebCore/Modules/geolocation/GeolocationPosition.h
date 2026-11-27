@@ -45,7 +45,7 @@ public:
     }
 
     EpochTimeStamp timestamp() const { return m_timestamp; }
-    const GeolocationCoordinates& coords() const { return m_coordinates.get(); }
+    const GeolocationCoordinates& coords() const LIFETIME_BOUND { return m_coordinates.get(); }
     
 private:
     GeolocationPosition(Ref<GeolocationCoordinates>&& coordinates, EpochTimeStamp timestamp)

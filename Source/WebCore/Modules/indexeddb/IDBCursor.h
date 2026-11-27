@@ -55,8 +55,8 @@ public:
     const Source& source() const;
     IDBCursorDirection direction() const;
 
-    IDBKey* key() { return m_key.get(); }
-    IDBKey* primaryKey() { return m_primaryKey.get(); }
+    IDBKey* key() LIFETIME_BOUND { return m_key.get(); }
+    IDBKey* primaryKey() LIFETIME_BOUND { return m_primaryKey.get(); }
     IDBValue value() { return m_value; }
     const std::optional<IDBKeyPath>& primaryKeyPath() LIFETIME_BOUND { return m_keyPath; }
     JSValueInWrappedObject& keyWrapper() LIFETIME_BOUND { return m_keyWrapper; }

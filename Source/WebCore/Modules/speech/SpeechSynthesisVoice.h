@@ -44,7 +44,7 @@ public:
     bool localService() const { return m_platformVoice->localService(); }
     bool isDefault() const { return m_platformVoice->isDefault(); }
 
-    PlatformSpeechSynthesisVoice& platformVoice() { return m_platformVoice; }
+    PlatformSpeechSynthesisVoice& platformVoice() LIFETIME_BOUND { return m_platformVoice; }
 
 private:
     explicit SpeechSynthesisVoice(PlatformSpeechSynthesisVoice&);

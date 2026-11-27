@@ -109,8 +109,8 @@ public:
 
     ExceptionOr<Ref<GPUCommandBuffer>> finish(const std::optional<GPUCommandBufferDescriptor>&);
 
-    ::WebGPU::CommandEncoder& backing() { return m_backing; }
-    const ::WebGPU::CommandEncoder& backing() const { return m_backing; }
+    ::WebGPU::CommandEncoder& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::CommandEncoder& backing() const LIFETIME_BOUND { return m_backing; }
     void setBacking(::WebGPU::CommandEncoder&);
 
     NODELETE GPUDevice* device() const;

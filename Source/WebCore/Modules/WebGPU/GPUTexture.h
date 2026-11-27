@@ -63,8 +63,8 @@ public:
     void destroy();
     bool isDestroyed() const { return m_isDestroyed; }
 
-    ::WebGPU::Texture& backing() { return m_backing; }
-    const ::WebGPU::Texture& backing() const { return m_backing; }
+    ::WebGPU::Texture& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::Texture& backing() const LIFETIME_BOUND { return m_backing; }
     GPUTextureFormat format() const { return m_format; }
     bool isCanvasBacking() const { return m_isCanvasBacking; }
 

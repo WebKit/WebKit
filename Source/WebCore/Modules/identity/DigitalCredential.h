@@ -53,7 +53,7 @@ public:
 
     virtual ~DigitalCredential();
 
-    const JSC::Strong<JSC::JSObject>& data() const
+    const JSC::Strong<JSC::JSObject>& data() const LIFETIME_BOUND
     {
         return m_data;
     };

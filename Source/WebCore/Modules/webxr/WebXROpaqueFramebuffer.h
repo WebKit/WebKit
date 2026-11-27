@@ -95,7 +95,7 @@ public:
     bool supportsDynamicViewportScaling() const;
 
     PlatformXR::LayerHandle handle() const { return m_handle; }
-    const WebGLFramebuffer& framebuffer() const { return m_drawFramebuffer.get(); }
+    const WebGLFramebuffer& framebuffer() const LIFETIME_BOUND { return m_drawFramebuffer.get(); }
     // Return the size of the framebuffer is Screen Space
     IntSize drawFramebufferSize() const;
     // Return the viewport for eye in Screen Space

@@ -74,8 +74,8 @@ public:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    ::WebGPU::ComputePassEncoder& backing() { return m_backing; }
-    const ::WebGPU::ComputePassEncoder& backing() const { return m_backing; }
+    ::WebGPU::ComputePassEncoder& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::ComputePassEncoder& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
 

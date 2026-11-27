@@ -125,7 +125,7 @@ public:
     void willIterateCursor(IDBCursor&);
     void didOpenOrIterateCursor(const IDBResultData&);
 
-    IDBCursor* pendingCursor() const { return m_pendingCursor ? m_pendingCursor.get() : nullptr; }
+    IDBCursor* pendingCursor() const LIFETIME_BOUND { return m_pendingCursor ? m_pendingCursor.get() : nullptr; }
 
     void setSource(IDBCursor&);
     void setVersionChangeTransaction(IDBTransaction&);
@@ -148,7 +148,7 @@ protected:
     
     void setShouldExposeTransactionToDOM(bool shouldExposeTransactionToDOM) { m_shouldExposeTransactionToDOM = shouldExposeTransactionToDOM; }
 
-    IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
+    IDBClient::IDBConnectionProxy& connectionProxy() LIFETIME_BOUND { return m_connectionProxy.get(); }
 
 private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);

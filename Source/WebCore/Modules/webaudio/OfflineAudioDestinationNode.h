@@ -48,7 +48,7 @@ public:
     OfflineAudioContext& context();
     const OfflineAudioContext& context() const;
 
-    AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
+    AudioBuffer* renderTarget() const LIFETIME_BOUND { return m_renderTarget.get(); }
     
     // AudioNode   
     void initialize() final;

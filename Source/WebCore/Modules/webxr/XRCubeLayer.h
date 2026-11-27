@@ -49,7 +49,7 @@ public:
 
     virtual ~XRCubeLayer();
 
-    const DOMPointReadOnly& orientation() const { return m_orientation.get(); }
+    const DOMPointReadOnly& orientation() const LIFETIME_BOUND { return m_orientation.get(); }
     void setOrientation(DOMPointReadOnly&);
 
 private:

@@ -43,7 +43,7 @@ public:
     NODELETE static Ref<WorkerFileSystemStorageConnection> create(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
     ~WorkerFileSystemStorageConnection();
 
-    FileSystemStorageConnection* mainThreadConnection() const { return m_mainThreadConnection.get(); }
+    FileSystemStorageConnection* mainThreadConnection() const LIFETIME_BOUND { return m_mainThreadConnection.get(); }
     void connectionClosed();
     void scopeClosed();
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);

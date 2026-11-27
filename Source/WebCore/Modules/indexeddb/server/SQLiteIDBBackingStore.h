@@ -132,7 +132,7 @@ protected:
     // Protected accessors for subclasses
     const IDBDatabaseIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    SQLiteDatabase* sqliteDB() const { return m_sqliteDB.get(); }
+    SQLiteDatabase* sqliteDB() const LIFETIME_BOUND { return m_sqliteDB.get(); }
     void setSqliteDB(std::unique_ptr<SQLiteDatabase>&&);
 
     IDBDatabaseInfo* databaseInfo() const LIFETIME_BOUND { return m_databaseInfo.get(); }

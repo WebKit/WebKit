@@ -58,11 +58,11 @@ public:
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
-    ::WebGPU::ComputePipeline& backing() { return m_backing; }
-    const ::WebGPU::ComputePipeline& backing() const { return m_backing; }
+    ::WebGPU::ComputePipeline& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::ComputePipeline& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
-    const String& shaderSource() const { return m_shaderModuleDescriptor.code; }
+    const String& shaderSource() const LIFETIME_BOUND { return m_shaderModuleDescriptor.code; }
     void updateShader(const String&, CompletionHandler<void(bool)>&&);
 
     bool hasActiveInspectorCanvasCallTracer() const;

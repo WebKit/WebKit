@@ -47,7 +47,7 @@ public:
 
     ~MediaStreamAudioSourceNode();
 
-    MediaStream& mediaStream() { return m_mediaStream; }
+    MediaStream& mediaStream() LIFETIME_BOUND { return m_mediaStream; }
 
     void ref() const final { AudioNode::ref(); }
     void deref() const final { AudioNode::deref(); }

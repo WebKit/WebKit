@@ -62,8 +62,8 @@ public:
 
     bool isVideo() const { return m_isVideo; }
     RTCEncodedStreams streams() { return { m_readable.get(), m_writable.get() }; }
-    ReadableStream& readable() { return m_readable.get(); }
-    WritableStream& writable() { return *m_writable; }
+    ReadableStream& readable() LIFETIME_BOUND { return m_readable.get(); }
+    WritableStream& writable() LIFETIME_BOUND { return *m_writable; }
 
 private:
     RTCEncodedStreamProducer(ScriptExecutionContext&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);

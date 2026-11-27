@@ -90,11 +90,11 @@ public:
     ExceptionOr<void> setTimestampOffset(double);
 
     VideoTrackList& videoTracks();
-    VideoTrackList* videoTracksIfExists() const { return m_videoTracks.get(); }
+    VideoTrackList* videoTracksIfExists() const LIFETIME_BOUND { return m_videoTracks.get(); }
     AudioTrackList& audioTracks();
-    AudioTrackList* audioTracksIfExists() const { return m_audioTracks.get(); }
+    AudioTrackList* audioTracksIfExists() const LIFETIME_BOUND { return m_audioTracks.get(); }
     TextTrackList& textTracks();
-    TextTrackList* textTracksIfExists() const { return m_textTracks.get(); }
+    TextTrackList* textTracksIfExists() const LIFETIME_BOUND { return m_textTracks.get(); }
 
     NODELETE double appendWindowStart() const;
     ExceptionOr<void> setAppendWindowStart(double);

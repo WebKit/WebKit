@@ -47,14 +47,14 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    RTCDtlsTransport& transport() { return m_transport.get(); }
+    RTCDtlsTransport& transport() LIFETIME_BOUND { return m_transport.get(); }
     RTCSctpTransportState state() const { return m_state; }
     double maxMessageSize() const { return m_maxMessageSize.value_or(std::numeric_limits<double>::infinity()); }
     std::optional<unsigned short>  maxChannels() const { return m_maxChannels; }
 
     NODELETE void updateMaxMessageSize(std::optional<double>);
 
-    const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
+    const RTCSctpTransportBackend& backend() const LIFETIME_BOUND { return m_backend.get(); }
 
 private:
     RTCSctpTransport(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);

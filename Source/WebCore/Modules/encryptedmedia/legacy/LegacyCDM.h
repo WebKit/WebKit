@@ -76,7 +76,7 @@ public:
     void setClient(LegacyCDMClient* client) { m_client = client; }
 
     RefPtr<MediaPlayer> mediaPlayer() const;
-    CDMPrivateInterface* cdmPrivate() const { return m_private.get(); }
+    CDMPrivateInterface* cdmPrivate() const LIFETIME_BOUND { return m_private.get(); }
 
 private:
     explicit LegacyCDM(const String& keySystem);

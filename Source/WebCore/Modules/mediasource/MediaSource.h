@@ -179,7 +179,7 @@ protected:
 
     virtual void elementDetached() { }
 
-    MediaSourcePrivate* mediaSourcePrivate() const { return m_private; }
+    MediaSourcePrivate* mediaSourcePrivate() const LIFETIME_BOUND { return m_private; }
 
     WeakPtr<HTMLMediaElement> m_mediaElement;
     bool m_detachable { false };

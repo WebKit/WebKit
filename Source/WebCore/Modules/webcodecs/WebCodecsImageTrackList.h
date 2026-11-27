@@ -46,7 +46,7 @@ public:
     bool isEstablished() const { return length() > 0; }
 
     using ReadyPromise = DOMPromiseProxy<IDLUndefined>;
-    ReadyPromise& ready() { return m_readyPromise.get(); }
+    ReadyPromise& ready() LIFETIME_BOUND { return m_readyPromise.get(); }
 
     size_t length() const { return m_list.size(); };
     int selectedIndex() const { return m_selectedIndex; }

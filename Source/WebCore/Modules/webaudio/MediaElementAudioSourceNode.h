@@ -49,7 +49,7 @@ public:
 
     USING_CAN_MAKE_WEAKPTR(AudioNode);
 
-    HTMLMediaElement& mediaElement() { return m_mediaElement; }
+    HTMLMediaElement& mediaElement() LIFETIME_BOUND { return m_mediaElement; }
 
     // AudioNode
     void process(size_t framesToProcess) final;

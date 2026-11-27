@@ -52,7 +52,7 @@ public:
         XRLayerInit,
         XRProjectionLayerInit
     >;
-    const WebXRLayerInit& init() const { return m_init; }
+    const WebXRLayerInit& init() const LIFETIME_BOUND { return m_init; }
 
     XRLayerLayout layout() const { return m_layout; }
     void setLayout(XRLayerLayout layout) { m_layout = layout; }
@@ -87,10 +87,10 @@ public:
     bool isDestroyed() const final { return m_destroyed; }
     void destroy();
 
-    const Vector<RefPtr<WebGLOpaqueTexture>>& colorTextures() const { return m_colorTextures; }
+    const Vector<RefPtr<WebGLOpaqueTexture>>& colorTextures() const LIFETIME_BOUND { return m_colorTextures; }
     void setColorTextures(Vector<RefPtr<WebGLOpaqueTexture>>&&);
 
-    const Vector<RefPtr<WebGLOpaqueTexture>>& depthStencilTextures() const { return m_depthStencilTextures; }
+    const Vector<RefPtr<WebGLOpaqueTexture>>& depthStencilTextures() const LIFETIME_BOUND { return m_depthStencilTextures; }
     void setDepthStencilTextures(Vector<RefPtr<WebGLOpaqueTexture>>&&);
 
     const WebXRSpace& space() const;
@@ -112,7 +112,7 @@ protected:
     // Composition layers fill in their specific data in their overrides.
     virtual void fillInTypeSpecificDeviceLayerData(PlatformXR::DeviceLayer&) const { }
 
-    const PlatformXR::Pose& poseInLocalSpace() const { return m_poseInLocalSpace; }
+    const PlatformXR::Pose& poseInLocalSpace() const LIFETIME_BOUND { return m_poseInLocalSpace; }
 
     const Ref<XRLayerBacking> m_backing;
     const WebXRLayerInit m_init;

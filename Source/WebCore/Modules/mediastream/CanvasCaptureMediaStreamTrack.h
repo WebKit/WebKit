@@ -50,7 +50,7 @@ class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
 public:
     static Ref<CanvasCaptureMediaStreamTrack> create(Document&, Ref<HTMLCanvasElement>&&, std::optional<double>&& frameRequestRate);
 
-    HTMLCanvasElement& canvas() { return m_canvas.get(); }
+    HTMLCanvasElement& canvas() LIFETIME_BOUND { return m_canvas.get(); }
     NODELETE void requestFrame();
 
     RefPtr<VideoFrame> grabFrame();

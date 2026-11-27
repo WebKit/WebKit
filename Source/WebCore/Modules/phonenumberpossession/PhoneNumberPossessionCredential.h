@@ -52,7 +52,7 @@ public:
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
     Ref<ArrayBuffer> encryptedResult() const { return m_encryptedResult; }
-    const String& carrierDomain() const { return m_carrierDomain; }
+    const String& carrierDomain() const LIFETIME_BOUND { return m_carrierDomain; }
     uint16_t carrierConfigurationID() const { return m_carrierConfigurationID; }
     RefPtr<ArrayBuffer> encryptedDecryptionKey() const { return m_encryptedDecryptionKey; }
     RefPtr<ArrayBuffer> carrierPubKey() const { return m_carrierPubKey; }

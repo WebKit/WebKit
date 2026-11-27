@@ -58,7 +58,7 @@ public:
 
     void recordDatabaseOpen(Database&);
     void recordDatabaseClosed(Database&);
-    Thread* getThread() { return m_thread.get(); }
+    Thread* getThread() LIFETIME_BOUND { return m_thread.get(); }
 
     SQLTransactionCoordinator& transactionCoordinator() LIFETIME_BOUND { return m_transactionCoordinator; }
 

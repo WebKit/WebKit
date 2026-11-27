@@ -89,7 +89,7 @@ public:
     static Ref<MediaSession> create(Navigator&);
     WEBCORE_EXPORT virtual ~MediaSession();
 
-    MediaMetadata* metadata() const { return m_metadata.get(); };
+    MediaMetadata* metadata() const LIFETIME_BOUND { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
     void metadataUpdated(const MediaMetadata&);
 
@@ -119,7 +119,7 @@ public:
     MediaSessionReadyState readyState() const { return m_readyState; };
     void setReadyState(MediaSessionReadyState);
 
-    MediaSessionCoordinator& coordinator() const { return m_coordinator.get(); }
+    MediaSessionCoordinator& coordinator() const LIFETIME_BOUND { return m_coordinator.get(); }
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
@@ -136,7 +136,7 @@ public:
     WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return *m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND { return *m_logger.get(); }
 #endif
 
     NODELETE bool hasObserver(MediaSessionObserver&) const;
@@ -163,7 +163,7 @@ public:
     CaptionUserPreferencesDisplayMode captionDisplayMode();
 
     void setCaptionTracks(Vector<MediaSessionCaptionTrack>&&);
-    const Vector<MediaSessionCaptionTrack>& captionTracks() const { return m_captionTracks; }
+    const Vector<MediaSessionCaptionTrack>& captionTracks() const LIFETIME_BOUND { return m_captionTracks; }
 
     void setCaptionsEnabled(bool);
     bool captionsEnabled() const { return m_captionsEnabled; }

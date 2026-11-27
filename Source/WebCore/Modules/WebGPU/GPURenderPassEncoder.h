@@ -104,8 +104,8 @@ public:
     void executeBundles(Vector<Ref<GPURenderBundle>>&&);
     void end();
 
-    ::WebGPU::RenderPassEncoder& backing() { return m_backing; }
-    const ::WebGPU::RenderPassEncoder& backing() const { return m_backing; }
+    ::WebGPU::RenderPassEncoder& backing() LIFETIME_BOUND { return m_backing; }
+    const ::WebGPU::RenderPassEncoder& backing() const LIFETIME_BOUND { return m_backing; }
 
     NODELETE GPUDevice* device() const;
 

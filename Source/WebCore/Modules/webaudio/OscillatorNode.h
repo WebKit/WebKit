@@ -45,8 +45,8 @@ public:
     OscillatorType typeForBindings() const { ASSERT(isMainThread()); return m_type; }
     ExceptionOr<void> setTypeForBindings(OscillatorType);
 
-    AudioParam& frequency() { return m_frequency.get(); }
-    AudioParam& detune() { return m_detune.get(); }
+    AudioParam& frequency() LIFETIME_BOUND { return m_frequency.get(); }
+    AudioParam& detune() LIFETIME_BOUND { return m_detune.get(); }
 
     void setPeriodicWave(PeriodicWave&);
 

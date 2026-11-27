@@ -47,7 +47,7 @@ public:
     LibWebRTCRtpReceiverBackendAndSource createReceiverBackend(Document&);
     Ref<LibWebRTCRtpSenderBackend> createSenderBackend(LibWebRTCPeerConnectionBackend&, LibWebRTCRtpSenderBackend::Source&&);
 
-    webrtc::RtpTransceiverInterface* rtcTransceiver() { return m_rtcTransceiver.ptr(); }
+    webrtc::RtpTransceiverInterface* rtcTransceiver() LIFETIME_BOUND { return m_rtcTransceiver.ptr(); }
 
 private:
     bool isLibWebRTCRtpTransceiverBackend() const final { return true; }

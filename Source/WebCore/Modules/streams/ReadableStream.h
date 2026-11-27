@@ -108,14 +108,14 @@ public:
     Ref<DOMPromise> cancel(JSDOMGlobalObject&, JSC::JSValue);
     void cancel(Exception&&);
 
-    InternalReadableStream* internalReadableStream() { return m_internalReadableStream.get(); }
+    InternalReadableStream* internalReadableStream() LIFETIME_BOUND { return m_internalReadableStream.get(); }
 
     NODELETE void setDefaultReader(ReadableStreamDefaultReader*);
     NODELETE ReadableStreamDefaultReader* defaultReader();
 
     bool hasByteStreamController() { return !!m_controller; }
-    ReadableByteStreamController* controller() { return m_controller.get(); }
-    const ReadableByteStreamController* controller() const { return m_controller.get(); }
+    ReadableByteStreamController* controller() LIFETIME_BOUND { return m_controller.get(); }
+    const ReadableByteStreamController* controller() const LIFETIME_BOUND { return m_controller.get(); }
 
     NODELETE void setByobReader(ReadableStreamBYOBReader*);
     NODELETE ReadableStreamBYOBReader* byobReader();

@@ -52,15 +52,15 @@ public:
     }
     ~AudioListener();
 
-    AudioParam& positionX() { return m_positionX.get(); }
-    AudioParam& positionY() { return m_positionY.get(); }
-    AudioParam& positionZ() { return m_positionZ.get(); }
-    AudioParam& forwardX() { return m_forwardX.get(); }
-    AudioParam& forwardY() { return m_forwardY.get(); }
-    AudioParam& forwardZ() { return m_forwardZ.get(); }
-    AudioParam& upX() { return m_upX.get(); }
-    AudioParam& upY() { return m_upY.get(); }
-    AudioParam& upZ() { return m_upZ.get(); }
+    AudioParam& positionX() LIFETIME_BOUND { return m_positionX.get(); }
+    AudioParam& positionY() LIFETIME_BOUND { return m_positionY.get(); }
+    AudioParam& positionZ() LIFETIME_BOUND { return m_positionZ.get(); }
+    AudioParam& forwardX() LIFETIME_BOUND { return m_forwardX.get(); }
+    AudioParam& forwardY() LIFETIME_BOUND { return m_forwardY.get(); }
+    AudioParam& forwardZ() LIFETIME_BOUND { return m_forwardZ.get(); }
+    AudioParam& upX() LIFETIME_BOUND { return m_upX.get(); }
+    AudioParam& upY() LIFETIME_BOUND { return m_upY.get(); }
+    AudioParam& upZ() LIFETIME_BOUND { return m_upZ.get(); }
 
     // Position
     ExceptionOr<void> setPosition(float x, float y, float z);

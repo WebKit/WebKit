@@ -55,7 +55,7 @@ public:
     UniqueIDBDatabase* database() { return m_database.get(); }
     NODELETE WEBCORE_EXPORT CheckedPtr<UniqueIDBDatabase> checkedDatabase();
     NODELETE UniqueIDBDatabaseManager* manager();
-    IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
+    IDBConnectionToClient& connectionToClient() LIFETIME_BOUND { return m_connectionToClient; }
 
     NODELETE WEBCORE_EXPORT void connectionPendingCloseFromClient();
     WEBCORE_EXPORT void connectionClosedFromClient();

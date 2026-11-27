@@ -87,8 +87,8 @@ public:
     bool ok() const { return filteredResponse().isSuccessful(); }
     const String& statusText() const LIFETIME_BOUND { return filteredResponse().httpStatusText(); }
 
-    const FetchHeaders& headers() const { return m_headers; }
-    FetchHeaders& headers() { return m_headers; }
+    const FetchHeaders& headers() const LIFETIME_BOUND { return m_headers; }
+    FetchHeaders& headers() LIFETIME_BOUND { return m_headers; }
     ExceptionOr<Ref<FetchResponse>> clone(JSDOMGlobalObject&);
 
     void consumeBodyAsStream() final;
@@ -192,7 +192,7 @@ private:
         const RefPtr<ReadableStreamToSharedBufferSink> m_pendingUpload;
     };
 
-    Loader* loader() const { return m_loader.get(); }
+    Loader* loader() const LIFETIME_BOUND { return m_loader.get(); }
 
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;

@@ -39,7 +39,7 @@ public:
     
     virtual ~OfflineAudioCompletionEvent();
 
-    AudioBuffer& renderedBuffer() { return m_renderedBuffer.get(); }
+    AudioBuffer& renderedBuffer() LIFETIME_BOUND { return m_renderedBuffer.get(); }
 
 private:
     explicit OfflineAudioCompletionEvent(Ref<AudioBuffer>&& renderedBuffer);

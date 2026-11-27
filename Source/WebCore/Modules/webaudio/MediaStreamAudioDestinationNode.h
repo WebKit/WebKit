@@ -44,7 +44,7 @@ public:
 
     virtual ~MediaStreamAudioDestinationNode();
 
-    MediaStream& stream() { return m_stream.get(); }
+    MediaStream& stream() LIFETIME_BOUND { return m_stream.get(); }
 
     // AudioNode.
     void process(size_t framesToProcess) final;

@@ -45,7 +45,7 @@ public:
     { }
 
     const String& name() const LIFETIME_BOUND { return m_name; }
-    MessagePort& port() const { return m_port.get(); }
+    MessagePort& port() const LIFETIME_BOUND { return m_port.get(); }
 
 private:
     String m_name;

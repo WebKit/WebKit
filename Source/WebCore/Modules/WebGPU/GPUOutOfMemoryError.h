@@ -48,8 +48,8 @@ public:
     Type type() const final { return Type::OutOfMemory; }
     const String& message() const LIFETIME_BOUND final { return m_message; }
 
-    WebGPUOutOfMemoryError* backing() { return m_backing.get(); }
-    const WebGPUOutOfMemoryError* backing() const { return m_backing.get(); }
+    WebGPUOutOfMemoryError* backing() LIFETIME_BOUND { return m_backing.get(); }
+    const WebGPUOutOfMemoryError* backing() const LIFETIME_BOUND { return m_backing.get(); }
 
 private:
     GPUOutOfMemoryError(String&& message)

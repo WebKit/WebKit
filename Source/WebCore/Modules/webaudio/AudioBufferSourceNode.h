@@ -75,8 +75,8 @@ public:
     NODELETE void setLoopStartForBindings(double);
     NODELETE void setLoopEndForBindings(double);
 
-    AudioParam& detune() { return m_detune.get(); }
-    AudioParam& playbackRate() { return m_playbackRate.get(); }
+    AudioParam& detune() LIFETIME_BOUND { return m_detune.get(); }
+    AudioParam& playbackRate() LIFETIME_BOUND { return m_playbackRate.get(); }
 
     // If we are no longer playing, propogate silence ahead to downstream nodes.
     bool propagatesSilence() const final;

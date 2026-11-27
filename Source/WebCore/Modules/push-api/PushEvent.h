@@ -41,7 +41,7 @@ public:
     NODELETE static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
     ~PushEvent();
 
-    PushMessageData* data() { return m_data.get(); }
+    PushMessageData* data() LIFETIME_BOUND { return m_data.get(); }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, Ref<Notification>, std::optional<uint64_t> appBadge, IsTrusted);
@@ -49,7 +49,7 @@ public:
     NODELETE Notification* notification();
     NODELETE std::optional<uint64_t> appBadge();
 
-    Notification* proposedNotification() const { return m_proposedNotification.get(); }
+    Notification* proposedNotification() const LIFETIME_BOUND { return m_proposedNotification.get(); }
     std::optional<uint64_t> proposedAppBadge() const { return m_proposedAppBadge; }
 
     void setUpdatedNotification(Notification* notification) { m_updatedNotification = notification; }

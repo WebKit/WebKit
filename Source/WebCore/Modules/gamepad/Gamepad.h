@@ -62,7 +62,7 @@ public:
     void updateFromPlatformGamepad(const PlatformGamepad&);
     void setConnected(bool connected) { m_connected = connected; }
 
-    GamepadHapticActuator* vibrationActuator() { return m_vibrationActuator.get(); }
+    GamepadHapticActuator* vibrationActuator() LIFETIME_BOUND { return m_vibrationActuator.get(); }
 
 private:
     Gamepad(Document*, const PlatformGamepad&);

@@ -39,7 +39,7 @@ class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
 public:
     static Ref<SQLResultSet> create() { return adoptRef(*new SQLResultSet); }
 
-    SQLResultSetRowList& rows() { return m_rows.get(); }
+    SQLResultSetRowList& rows() LIFETIME_BOUND { return m_rows.get(); }
 
     ExceptionOr<int64_t> insertId() const;
     int rowsAffected() const { return m_rowsAffected; }

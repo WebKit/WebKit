@@ -60,10 +60,10 @@ public:
     WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<UnderlyingView>&&, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();
 
-    const WebXRFrame& frame() const { return m_frame.get(); }
+    const WebXRFrame& frame() const LIFETIME_BOUND { return m_frame.get(); }
     XREye eye() const { return m_eye; }
-    const Float32Array& projectionMatrix() const { return m_projection.get(); }
-    const WebXRRigidTransform& transform() const { return m_transform.get(); }
+    const Float32Array& projectionMatrix() const LIFETIME_BOUND { return m_projection.get(); }
+    const WebXRRigidTransform& transform() const LIFETIME_BOUND { return m_transform.get(); }
 
     std::optional<double> recommendedViewportScale() const;
     void requestViewportScale(std::optional<double>);

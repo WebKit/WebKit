@@ -88,7 +88,7 @@ public:
     void remove(Ref<DeferredPromise>&&);
 
     using ClosedPromise = DOMPromiseProxy<IDLUndefined>;
-    ClosedPromise& closed() { return m_closedPromise.get(); }
+    ClosedPromise& closed() LIFETIME_BOUND { return m_closedPromise.get(); }
 
     const Vector<std::pair<CDMKeyID, MediaKeyStatus>>& statuses() const LIFETIME_BOUND { return m_statuses; }
 
@@ -125,7 +125,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
     NODELETE WTFLogChannel& logChannel() const;
     uint64_t logIdentifier() const { return m_logIdentifier; }

@@ -94,7 +94,7 @@ public:
     NODELETE unsigned long long estimatedSize() const;
     String fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
-    SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
+    SQLiteDatabase& sqliteDatabase() LIFETIME_BOUND { return m_sqliteDatabase; }
 
     NODELETE void disableAuthorizer();
     NODELETE void enableAuthorizer();
@@ -105,9 +105,9 @@ public:
     NODELETE bool hadDeletes();
     NODELETE void resetAuthorizer();
 
-    DatabaseContext& databaseContext() { return m_databaseContext; }
+    DatabaseContext& databaseContext() LIFETIME_BOUND { return m_databaseContext; }
     NODELETE DatabaseThread& databaseThread();
-    Document& document() { return m_document; }
+    Document& document() LIFETIME_BOUND { return m_document; }
     void logErrorMessage(const String& message);
 
     Vector<String> tableNames();

@@ -137,7 +137,7 @@ private:
 
 struct SetPinRequest {
 public:
-    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
+    const WebCore::CryptoKeyAES& sharedKey() const LIFETIME_BOUND { return m_sharedKey.get(); }
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(PINUVAuthProtocol, const String& newPin, const WebCore::CryptoKeyEC&);
     NODELETE WEBCORE_EXPORT const Vector<uint8_t>& pinAuth() const;
 
@@ -164,7 +164,7 @@ public:
 
     // sharedKey returns the shared ECDH key that was used to encrypt the PIN.
     // This is needed to decrypt the response.
-    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
+    const WebCore::CryptoKeyAES& sharedKey() const LIFETIME_BOUND { return m_sharedKey.get(); }
 
     friend Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
 
@@ -206,7 +206,7 @@ public:
     HmacSecretRequest(HmacSecretRequest&&) = default;
     HmacSecretRequest& operator=(HmacSecretRequest&&) = default;
 
-    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
+    const WebCore::CryptoKeyAES& sharedKey() const LIFETIME_BOUND { return m_sharedKey.get(); }
 
     const cbor::CBORValue::MapValue& coseKey() const LIFETIME_BOUND { return m_coseKey; }
 

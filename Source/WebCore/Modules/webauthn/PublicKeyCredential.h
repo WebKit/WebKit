@@ -59,7 +59,7 @@ public:
     NODELETE static Ref<PublicKeyCredential> create(Ref<AuthenticatorResponse>&&);
 
     NODELETE ArrayBuffer& rawId() const;
-    AuthenticatorResponse& response() const { return m_response; }
+    AuthenticatorResponse& response() const LIFETIME_BOUND { return m_response; }
     NODELETE AuthenticatorAttachment authenticatorAttachment() const;
     AuthenticationExtensionsClientOutputs getClientExtensionResults() const;
     PublicKeyCredentialJSON toJSON();

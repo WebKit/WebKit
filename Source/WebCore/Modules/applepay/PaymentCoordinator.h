@@ -64,7 +64,7 @@ public:
     NODELETE WEBCORE_EXPORT static Ref<PaymentCoordinator> create(Ref<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();
 
-    PaymentCoordinatorClient& client() { return m_client.get(); }
+    PaymentCoordinatorClient& client() LIFETIME_BOUND { return m_client.get(); }
 
     bool supportsVersion(Document&, unsigned version) const;
     bool canMakePayments();

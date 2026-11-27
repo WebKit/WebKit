@@ -37,7 +37,7 @@ class RTCTransformEvent final : public Event {
 public:
     NODELETE static Ref<RTCTransformEvent> create(const AtomString& type, Ref<RTCRtpScriptTransformer>&&, IsTrusted = IsTrusted::No);
 
-    RTCRtpScriptTransformer& transformer() { return m_transformer; }
+    RTCRtpScriptTransformer& transformer() LIFETIME_BOUND { return m_transformer; }
 
 private:
     RTCTransformEvent(const AtomString& type, Ref<RTCRtpScriptTransformer>&&, IsTrusted);

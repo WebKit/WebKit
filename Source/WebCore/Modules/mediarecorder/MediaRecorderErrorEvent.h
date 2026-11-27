@@ -42,7 +42,7 @@ public:
     NODELETE static Ref<MediaRecorderErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     NODELETE static Ref<MediaRecorderErrorEvent> create(const AtomString&, Exception&&);
 
-    DOMException& error() const { return m_error; }
+    DOMException& error() const LIFETIME_BOUND { return m_error; }
 
 private:
     MediaRecorderErrorEvent(const AtomString&, Init&&, IsTrusted);

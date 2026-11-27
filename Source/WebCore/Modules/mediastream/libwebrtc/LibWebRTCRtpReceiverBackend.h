@@ -51,7 +51,7 @@ public:
     LibWebRTCRtpReceiverBackend(Ref<webrtc::RtpReceiverInterface>&&, RealtimeMediaSource&);
     ~LibWebRTCRtpReceiverBackend();
 
-    webrtc::RtpReceiverInterface& rtcReceiver() { return m_rtcReceiver.get(); }
+    webrtc::RtpReceiverInterface& rtcReceiver() LIFETIME_BOUND { return m_rtcReceiver.get(); }
 
 private:
 

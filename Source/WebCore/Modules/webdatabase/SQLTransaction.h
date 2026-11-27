@@ -67,7 +67,7 @@ public:
     void performNextStep();
     void performPendingCallback();
 
-    Database& database() { return m_database; }
+    Database& database() LIFETIME_BOUND { return m_database; }
     bool isReadOnly() const { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();
 

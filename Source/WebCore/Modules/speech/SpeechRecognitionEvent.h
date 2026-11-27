@@ -45,7 +45,7 @@ public:
     virtual ~SpeechRecognitionEvent();
 
     uint32_t resultIndex() const { return m_resultIndex; }
-    const SpeechRecognitionResultList* results() const { return m_results.get(); }
+    const SpeechRecognitionResultList* results() const LIFETIME_BOUND { return m_results.get(); }
 
 private:
     SpeechRecognitionEvent(const AtomString&, Init&&, IsTrusted);

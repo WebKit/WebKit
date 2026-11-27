@@ -98,10 +98,10 @@ public:
 
     const IDBResourceIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    Thread& originThread() const { return m_originThread.get(); }
+    Thread& originThread() const LIFETIME_BOUND { return m_originThread.get(); }
 
-    IDBRequest* idbRequest() { return m_idbRequest.get(); }
-    IDBTransaction& transaction() const { return m_transaction.get(); }
+    IDBRequest* idbRequest() LIFETIME_BOUND { return m_idbRequest.get(); }
+    IDBTransaction& transaction() const LIFETIME_BOUND { return m_transaction.get(); }
 
     bool nextRequestCanGoToServer() const { return m_nextRequestCanGoToServer && m_idbRequest; }
     void setNextRequestCanGoToServer(bool nextRequestCanGoToServer) { m_nextRequestCanGoToServer = nextRequestCanGoToServer; }

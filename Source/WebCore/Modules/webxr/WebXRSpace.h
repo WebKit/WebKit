@@ -66,7 +66,7 @@ public:
 protected:
     WebXRSpace(Document&, Ref<WebXRRigidTransform>&&);
 
-    const WebXRRigidTransform& originOffset() const { return m_originOffset.get(); }
+    const WebXRRigidTransform& originOffset() const LIFETIME_BOUND { return m_originOffset.get(); }
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final;

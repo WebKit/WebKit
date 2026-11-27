@@ -77,8 +77,8 @@ public:
 
     bool hasOpenSessions() const;
     bool hasOpenSessionWithIdForOrigin(const String& sessionId, const String& origin) const;
-    CDMInstance& cdmInstance() { return m_instance; }
-    const CDMInstance& cdmInstance() const { return m_instance; }
+    CDMInstance& cdmInstance() LIFETIME_BOUND { return m_instance; }
+    const CDMInstance& cdmInstance() const LIFETIME_BOUND { return m_instance; }
 
 #if !RELEASE_LOG_DISABLED
     NODELETE uint64_t nextChildIdentifier() const;

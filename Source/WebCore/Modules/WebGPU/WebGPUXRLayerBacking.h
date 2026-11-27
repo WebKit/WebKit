@@ -42,7 +42,7 @@ public:
         return adoptRef(*new WebGPUXRLayerBacking(WTF::move(projectionLayer)));
     }
 
-    ::WebGPU::XRProjectionLayer& projectionLayer() const { return m_projectionLayer; }
+    ::WebGPU::XRProjectionLayer& projectionLayer() const LIFETIME_BOUND { return m_projectionLayer; }
 
     uint32_t colorTextureWidth() const final { return 0; }
     uint32_t colorTextureHeight() const final { return 0; }

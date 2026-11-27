@@ -78,7 +78,7 @@ public:
 protected:
     explicit MediaSessionCoordinatorPrivate() = default;
 
-    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const LIFETIME_BOUND { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
 
     WeakPtr<MediaSessionCoordinatorClient> client() const { return m_client; }
