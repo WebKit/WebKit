@@ -418,12 +418,12 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
             }
         } else
             baseProperties.offset = nullptr;
-        baseProperties.easing = baseKeyframe.easing;
+        baseProperties.easing = WTF::move(baseKeyframe.easing);
         baseProperties.composite = baseKeyframe.composite;
     }
 
     KeyframeEffect::KeyframeLikeObject keyframeOuput;
-    keyframeOuput.baseProperties = baseProperties;
+    keyframeOuput.baseProperties = WTF::move(baseProperties);
 
     // 2. Build up a list of animatable properties as follows:
     //
@@ -477,10 +477,10 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     sortPropertiesInAscendingOrder(physicalLonghands);
 
     Vector<JSC::Identifier> animationProperties;
-    animationProperties.appendVector(logicalShorthands);
-    animationProperties.appendVector(physicalShorthands);
-    animationProperties.appendVector(logicalLonghands);
-    animationProperties.appendVector(physicalLonghands);
+    animationProperties.appendVector(WTF::move(logicalShorthands));
+    animationProperties.appendVector(WTF::move(physicalShorthands));
+    animationProperties.appendVector(WTF::move(logicalLonghands));
+    animationProperties.appendVector(WTF::move(physicalLonghands));
 
     // 6. For each property name in animation properties,
     size_t numberOfAnimationProperties = animationProperties.size();
@@ -529,9 +529,9 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
 
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
         if (cssPropertyID == CSSPropertyID::Custom)
-            keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyName, propertyValues });
+            keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyName, WTF::move(propertyValues) });
         else
-            keyframeOuput.propertiesAndValues.append({ cssPropertyID, emptyAtom(), propertyValues });
+            keyframeOuput.propertiesAndValues.append({ cssPropertyID, emptyAtom(), WTF::move(propertyValues) });
     }
 
     // 7. Return keyframe output.
@@ -563,7 +563,7 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
         auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, Strong<JSObject>(vm, nextValue.toObject(&lexicalGlobalObject)), false);
         if (processKeyframeLikeObjectResult.hasException())
             return processKeyframeLikeObjectResult.releaseException();
-        auto keyframeLikeObject = processKeyframeLikeObjectResult.returnValue();
+        auto keyframeLikeObject = processKeyframeLikeObjectResult.releaseReturnValue();
 
         KeyframeEffect::ParsedKeyframe keyframeOutput;
 
@@ -594,9 +594,9 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
             // When calling processKeyframeLikeObject() with the "allow lists" flag set to false,
             // there should only ever be a single value for a given property.
             ASSERT(propertyAndValue.values.size() == 1);
-            auto stringValue = propertyAndValue.values[0];
+            auto& stringValue = propertyAndValue.values[0];
             if (cssPropertyId == CSSPropertyID::Custom) {
-                auto customProperty = propertyAndValue.customProperty;
+                auto& customProperty = propertyAndValue.customProperty;
                 if (protect(keyframeOutput.style)->setCustomProperty(customProperty, stringValue, parserContext))
                     keyframeOutput.customStyleStrings.set(customProperty, stringValue);
             } else if (protect(keyframeOutput.style)->setProperty(cssPropertyId, stringValue, parserContext))
@@ -617,7 +617,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     auto processKeyframeLikeObjectResult = processKeyframeLikeObject(lexicalGlobalObject, document, WTF::move(keyframesInput), true);
     if (processKeyframeLikeObjectResult.hasException())
         return processKeyframeLikeObjectResult.releaseException();
-    auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.returnValue();
+    auto propertyIndexedKeyframe = processKeyframeLikeObjectResult.releaseReturnValue();
 
     CSSParserContext parserContext(document);
 
@@ -629,7 +629,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         //    keyframe after m.
         //    We skip this test since we split those properties and the actual CSS properties that we're currently iterating over.
         // 3. Let property values be the value for m.
-        auto propertyValues = m.values;
+        auto& propertyValues = m.values;
         // 4. Let property keyframes be an empty sequence of keyframes.
         Vector<KeyframeEffect::ParsedKeyframe> propertyKeyframes;
         // 5. For each value, v, in property values perform the following steps:
@@ -650,7 +650,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
         computeMissingKeyframeOffsets(propertyKeyframes, nullptr, nullptr);
 
         // 7. Add keyframes in property keyframes to processed keyframes.
-        parsedKeyframes.appendVector(propertyKeyframes);
+        parsedKeyframes.appendVector(WTF::move(propertyKeyframes));
     }
 
     // 3. Sort processed keyframes by the computed keyframe offset of each keyframe in increasing order.
@@ -731,7 +731,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     //    - DOMString, a sequence of length one with the value of “easing” as its single item, i.e. « easing »,
     Vector<String> easings;
     if (std::holds_alternative<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing))
-        easings = std::get<Vector<String>>(propertyIndexedKeyframe.baseProperties.easing);
+        easings = std::get<Vector<String>>(WTF::move(propertyIndexedKeyframe.baseProperties.easing));
     else if (std::holds_alternative<String>(propertyIndexedKeyframe.baseProperties.easing))
         easings.append(std::get<String>(propertyIndexedKeyframe.baseProperties.easing));
 
@@ -759,7 +759,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     // 12. If the “composite” member of the property-indexed keyframe is not an empty sequence:
     Vector<CompositeOperationOrAuto> compositeModes;
     if (std::holds_alternative<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes = std::get<Vector<CompositeOperationOrAuto>>(propertyIndexedKeyframe.baseProperties.composite);
+        compositeModes = std::get<Vector<CompositeOperationOrAuto>>(WTF::move(propertyIndexedKeyframe.baseProperties.composite));
     else if (std::holds_alternative<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite))
         compositeModes.append(std::get<CompositeOperationOrAuto>(propertyIndexedKeyframe.baseProperties.composite));
     if (!compositeModes.isEmpty()) {
@@ -814,7 +814,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
                 options.iterations,
                 *convertedDuration,
                 options.direction,
-                options.easing
+                WTF::move(options.easing)
             };
         }
     );
