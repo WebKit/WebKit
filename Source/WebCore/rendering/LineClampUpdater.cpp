@@ -64,6 +64,19 @@ bool LineClampUpdater::shouldDiscardOverflow(const RenderBlock& blockContainer)
     return overflowContinue == OverflowContinue::Discard || overflowContinue == OverflowContinue::Collapse;
 }
 
+static bool isSkippedOverWhileCountingLineBoxes(const RenderBlock& block)
+{
+    // "Only line boxes in the same block formatting context are counted: the contents of descendants that establish independent formatting contexts are skipped over while counting line boxes."
+    // https://drafts.csswg.org/css-overflow-4/#max-lines
+    if (block.establishesIndependentFormattingContext())
+        return true;
+    // So are the contents of flex containers (e.g. a <button>), table cells and table captions. A flex container with its own line-clamp is a line-clamp container, so its flex items still get its line clamp, just not the one of a line-clamp container around it.
+    if (block.isRenderFlexibleBox() || block.isRenderTableCell() || block.isRenderTableCaption())
+        return true;
+    // A ruby annotation belongs to the line of its base: it is clamped with that line, not line by line on its own.
+    return block.style().display() == Style::DisplayType::RubyText;
+}
+
 LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     : m_blockContainer(blockContainer)
 {
@@ -108,15 +121,7 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     if (m_previousLineClamp) {
         // Propagated line clamp.
         auto shouldIgnoreLineClamp = [&] {
-            // Contents of descendants that establish independent formatting contexts are skipped over while counting line boxes.
-            if (blockContainer.establishesIndependentFormattingContext())
-                return true;
-            // So are the contents of flex containers (e.g. a <button>) and table cells. A flex container with its own line-clamp is a
-            // line-clamp container (see above), so its flex items still get its line clamp, just not the one of a line-clamp container around it.
-            if (!is<RenderBlockFlow>(blockContainer) || blockContainer.isRenderTableCell())
-                return true;
-            // A ruby annotation belongs to the line of its base: it is clamped with that line, not line by line on its own.
-            if (blockContainer.style().display() == Style::DisplayType::RubyText)
+            if (isSkippedOverWhileCountingLineBoxes(blockContainer))
                 return true;
             // The list item's line clamp does not reach into its outside marker, whose own line would otherwise use up the list item's lines.
             return blockContainer.isOutsideListMarker();
@@ -234,14 +239,13 @@ Vector<LineClampUpdater::AutoClampPoint> LineClampUpdater::autoClampPoints() con
         size_t lineCount = 0;
         size_t fittingLineCount = 0;
         for (CheckedPtr<const RenderObject> descendant = &root; descendant;) {
-            CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant);
-            // As in the constructor, blocks that a flex, grid or table container lays out are not in this block formatting context.
-            auto isSkippedOver = descendant != &lineClampContainer && (descendant->isFloatingOrOutOfFlowPositioned() || (blockFlow && (blockFlow->establishesIndependentFormattingContext() || !is<RenderBlockFlow>(blockFlow->containingBlock()) || blockFlow->style().display() == Style::DisplayType::RubyText)));
+            CheckedPtr block = dynamicDowncast<RenderBlock>(*descendant);
+            auto isSkippedOver = descendant != &lineClampContainer && (descendant->isFloatingOrOutOfFlowPositioned() || (block && isSkippedOverWhileCountingLineBoxes(*block)));
             if (isSkippedOver) {
                 descendant = descendant->nextInPreOrderAfterChildren(&root);
                 continue;
             }
-            if (blockFlow && blockFlow->inlineLayout()) {
+            if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*descendant); blockFlow && blockFlow->inlineLayout()) {
                 // The line-clamp container's block size limit in this block's coordinates, less the border and padding (of the block and its ancestors) still following its lines.
                 auto availableHeightForLines = blockSizeLimit;
                 for (CheckedPtr<const RenderBlock> ancestor = blockFlow; ancestor && ancestor != &lineClampContainer; ancestor = ancestor->containingBlock())

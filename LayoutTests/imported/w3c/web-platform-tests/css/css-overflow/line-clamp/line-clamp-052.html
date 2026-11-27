@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: line-clamp does not count or clamp the lines inside table captions</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#max-lines">
+<link rel="match" href="reference/line-clamp-052-ref.html">
+<meta name="assert" content="A table caption has a flow-root inner display type, so it establishes an independent formatting context and its lines are not lines of the line-clamp container: they are neither counted nor clamped.">
+<style>
+.clamp {
+  line-clamp: 2;
+  font: 16px / 32px monospace;
+  width: 20ch;
+  background: yellow;
+}
+</style>
+<div class="clamp">
+  AAA
+  <table><caption>BBB<br>BBB<br>BBB</caption></table>
+  CCC<br>
+  DDD
+</div>
