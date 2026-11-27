@@ -628,7 +628,8 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCo
 {
     m_currentCommand = nil;
 
-    if (isValid() && m_currentCommandIndex >= maxCommandCount && !m_requiresCommandReplay && m_indirectCommandBuffer)
+    // Every ICB is allocated at its final size, at most maxCommandCount, so a full ICB ends here.
+    if (isValid() && m_indirectCommandBuffer && m_currentCommandIndex >= m_indirectCommandBuffer.size && !m_requiresCommandReplay)
         splitICB();
 
     return FinalizeRenderCommand { };
@@ -1017,6 +1018,13 @@ id<MTLIndirectCommandBuffer> RenderBundleEncoder::makeICB(uint64_t commandCount)
     return icb;
 }
 
+uint64_t RenderBundleEncoder::nextICBCommandCount() const
+{
+    // Fall back to every remaining command if replaying encoded fewer commands than recording counted;
+    // splitICB() then trims the ICB.
+    return m_commandsLeftForCurrentICBs ?: m_previousCommandCount;
+}
+
 void RenderBundleEncoder::cleanup(bool resetPipeline)
 {
     m_currentCommand = nil;
@@ -1069,8 +1077,14 @@ void RenderBundleEncoder::endCurrentICB()
     }
     m_fragmentDynamicOffset = 0;
 
+    if (commandCount > m_commandIndexAtLastICBSplit)
+        m_icbCommandCounts.append(commandCount - m_commandIndexAtLastICBSplit);
+    m_commandIndexAtLastICBSplit = 0;
+    m_icbCommandCountsIndex = 0;
+    m_commandsLeftForCurrentICBs = m_icbCommandCounts.isEmpty() ? 0 : m_icbCommandCounts[0];
+
     if (!m_renderPassEncoder.get() && !m_requiresCommandReplay)
-        m_indirectCommandBuffer = makeICB(commandCount);
+        m_indirectCommandBuffer = makeICB(nextICBCommandCount());
 
     for (auto& command : m_recordedCommands)
         command();
@@ -1078,6 +1092,8 @@ void RenderBundleEncoder::endCurrentICB()
     m_pipeline = nullptr;
     splitICB();
     m_currentCommandIndex = 0;
+    m_icbCommandCounts.clear();
+    m_commandsLeftForCurrentICBs = 0;
 
     m_indirectCommandBuffer = nil;
     m_dynamicOffsetsFragmentBuffer = nil;
@@ -1476,13 +1492,16 @@ void RenderBundleEncoder::splitICB(bool needsPipelineReset)
             m_indirectCommandBuffer = nil;
     }
     m_previousCommandCount -= m_currentCommandIndex;
+    m_commandsLeftForCurrentICBs -= std::min(m_currentCommandIndex, m_commandsLeftForCurrentICBs);
+    if (!m_commandsLeftForCurrentICBs && ++m_icbCommandCountsIndex < m_icbCommandCounts.size())
+        m_commandsLeftForCurrentICBs = m_icbCommandCounts[m_icbCommandCountsIndex];
     m_currentCommandIndex = 0;
 
     if (m_indirectCommandBuffer.size)
         [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand, m_indirectDrawsForSlot, m_fragmentDynamicOffsetsHeaderOffsets)];
 
     if (m_previousCommandCount)
-        m_indirectCommandBuffer = makeICB(m_previousCommandCount);
+        m_indirectCommandBuffer = makeICB(nextICBCommandCount());
     cleanup(needsPipelineReset);
 }
 
@@ -1562,6 +1581,12 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         // FIXME: Remove after https://bugs.webkit.org/show_bug.cgi?id=26499 is implemented
         if (pipeline.sampleMask() != defaultSampleMask)
             m_requiresCommandReplay = true;
+
+        // Replaying this setPipeline() splits the ICB at the same point.
+        if (RefPtr previousPipeline = m_pipeline; previousPipeline && m_currentCommandIndex > m_commandIndexAtLastICBSplit && icbNeedsToBeSplit(*previousPipeline, pipeline)) {
+            m_icbCommandCounts.append(m_currentCommandIndex - m_commandIndexAtLastICBSplit);
+            m_commandIndexAtLastICBSplit = m_currentCommandIndex;
+        }
 
         recordCommand([pipeline = protect(pipeline), protectedThis = protect(*this)] {
             protectedThis->setPipeline(pipeline);
