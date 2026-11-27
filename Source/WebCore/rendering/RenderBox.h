@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class FloatingObject;
 class LayoutRoundedRectRadii;
 class LocalFrameView;
 class RenderBlockFlow;
