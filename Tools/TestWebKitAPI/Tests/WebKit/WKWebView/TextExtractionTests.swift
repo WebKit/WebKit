@@ -2749,6 +2749,83 @@ struct TextExtractionTests {
         }
     }
 
+    #if ENABLE_UNIFIED_PDF && WTF_PLATFORM_MAC
+    @Test
+    func pdfLinkRectsIncludeSubframePositionWithSiteIsolation() async throws {
+        func mainFrameMarkupWithPDFSubframe(from subframeHost: String) -> String {
+            """
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <body style='margin: 0'>
+            <iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 300px; border: none;'></iframe>
+            <script>
+                subframeLoaded = false;
+                const iframe = document.querySelector('iframe');
+                iframe.addEventListener('load', () => subframeLoaded = true, { once: true });
+                iframe.src = `http://\(subframeHost):${location.port}/test.pdf`;
+            </script>
+            </body>
+            """
+        }
+
+        let pdfData = TestPDFBuilder.pdfDataWithLink()
+        var server = try HTTPServer(protocol: .http) {
+            Route("/same-site.html") {
+                mainFrameMarkupWithPDFSubframe(from: "127.0.0.1")
+            }
+            Route("/cross-site.html") {
+                mainFrameMarkupWithPDFSubframe(from: "localhost")
+            }
+            Route("/test.pdf", headerFields: ["Content-Type": "application/pdf"]) {
+                pdfData
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            @MainActor
+            func linkRect(crossSite: Bool) async throws -> [String: Any] {
+                let webView = makeWebViewForTextExtractionTesting(webFeatures: ["SiteIsolationEnabled", "UnifiedPDFEnabled"])
+                let subframes = SubframeCollector()
+                let navigationDelegate = TestNavigationDelegate()
+                subframes.install(on: navigationDelegate)
+                webView.navigationDelegate = navigationDelegate
+
+                let urlString = "http://127.0.0.1:\(serverConfiguration.port)/\(crossSite ? "cross-site" : "same-site").html"
+                let url = try #require(URL(string: urlString))
+                webView.load(URLRequest(url: url))
+                try await navigationDelegate.waitForDidFinishNavigation()
+                try await waitForCondition("subframe to finish loading", timeout: .seconds(2)) {
+                    try await webView.callJavaScript(returning: Bool.self) { "return subframeLoaded" }
+                }
+
+                let configuration = _WKTextExtractionConfiguration()
+                configuration.outputFormat = .JSON
+                configuration.includeRects = true
+                configuration.includeSameOriginSubframes = false
+                configuration.additionalFrames = subframes.frames
+
+                var link: [String: Any]?
+                try await waitForCondition("the PDF's link to be extracted") {
+                    let json = try decodeJSONObject(await webView.debugText(configuration))
+                    link = firstJSONNode(in: json) { $0["nodeName"] as? String == "a" }
+                    return link != nil
+                }
+                return try #require(link?["rect"] as? [String: Any])
+            }
+
+            let sameSiteRect = try await linkRect(crossSite: false)
+            let crossSiteRect = try await linkRect(crossSite: true)
+
+            let sameSiteX = sameSiteRect["x"] as? Int ?? 0
+            let sameSiteY = sameSiteRect["y"] as? Int ?? 0
+            #expect(sameSiteX >= 100 && sameSiteX < 100 + 400)
+            #expect(sameSiteY >= 150 && sameSiteY < 150 + 300)
+            for key in ["x", "y", "width", "height"] {
+                #expect(crossSiteRect[key] as? Int == sameSiteRect[key] as? Int)
+            }
+        }
+    }
+    #endif // ENABLE_UNIFIED_PDF && WTF_PLATFORM_MAC
+
     @Test(arguments: [false, true])
     func subframeRectsIncludeSubframePositionWithSiteIsolation(crossSite: Bool) async throws {
         // The button is at (20, 30) in the iframe, which is at (100, 150) in the main frame, so its bounds in
@@ -2792,7 +2869,9 @@ struct TextExtractionTests {
             subframes.install(on: navigationDelegate)
             webView.navigationDelegate = navigationDelegate
 
-            let url = try #require(URL(string: "http://127.0.0.1:\(serverConfiguration.port)/\(crossSite ? "cross-site" : "same-site").html"))
+            let url = try #require(
+                URL(string: "http://127.0.0.1:\(serverConfiguration.port)/\(crossSite ? "cross-site" : "same-site").html")
+            )
             webView.load(URLRequest(url: url))
             try await navigationDelegate.waitForDidFinishNavigation()
             try await waitForCondition("subframe to finish loading", timeout: .seconds(2)) {

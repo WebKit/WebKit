@@ -2029,7 +2029,7 @@ static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(String&& text, Vecto
 
         TextExtraction::Item linkItem;
         linkItem.data = TextExtraction::LinkItemData { { }, link.url, TextExtraction::shortenedURLString(link.url), false, { } };
-        linkItem.rectInRootView = link.rectInRootView;
+        linkItem.rectInRootView = link.rectInMainFrameView;
         linkItem.nodeName = "a"_s;
         linkItem.children = { WTF::move(linkTextItem) };
         items.append(WTF::move(linkItem));

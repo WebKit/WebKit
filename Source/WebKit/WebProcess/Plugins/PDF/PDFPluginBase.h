@@ -121,7 +121,7 @@ struct PDFPluginPasteboardItem {
 struct PDFPluginTextExtractionLink {
     URL url;
     WebCore::CharacterRange rangeInText;
-    WebCore::FloatRect rectInRootView;
+    WebCore::FloatRect rectInMainFrameView;
 };
 
 struct PDFPluginTextExtractionContent {

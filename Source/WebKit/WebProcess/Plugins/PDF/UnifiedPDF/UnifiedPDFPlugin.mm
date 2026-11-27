@@ -3404,7 +3404,8 @@ PDFPluginTextExtractionContent UnifiedPDFPlugin::textExtractionContent() const
 
             searchOffset = offset + linkText.length();
 
-            links.append(PDFPluginTextExtractionLink { WTF::move(url), CharacterRange { pageTextStart + offset, linkText.length() }, pageToRootView([annotation bounds], page) });
+            auto rectInMainFrameView = convertFromRootViewToMainFrameView(pageToRootView([annotation bounds], page));
+            links.append(PDFPluginTextExtractionLink { WTF::move(url), CharacterRange { pageTextStart + offset, linkText.length() }, rectInMainFrameView });
         }
     }
 
