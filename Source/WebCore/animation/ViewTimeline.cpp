@@ -357,17 +357,23 @@ RefPtr<Element> ViewTimeline::source() const
 
 const RenderBox* ViewTimeline::sourceScrollerRenderer() const
 {
+    auto nearestScrollContainer = sourceFromNearestScrollContainer();
+    return nearestScrollContainer ? nearestScrollContainer->renderer.get() : nullptr;
+}
+
+auto ViewTimeline::sourceFromNearestScrollContainer() const -> std::optional<NearestScrollContainer>
+{
     auto subject = m_subject.styleable();
     if (!subject)
-        return nullptr;
+        return std::nullopt;
 
     CheckedPtr subjectRenderer = subject->renderer();
     if (!subjectRenderer)
-        return { };
+        return std::nullopt;
 
     // https://drafts.csswg.org/scroll-animations-1/#dom-scrolltimeline-source
     // Determine source renderer by looking for the nearest ancestor that establishes a scroll container
-    return subjectRenderer->enclosingScrollableContainer();
+    return nearestScrollContainer(*subjectRenderer);
 }
 
 CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const

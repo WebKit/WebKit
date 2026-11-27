@@ -49,6 +49,7 @@ class Box;
 }
 
 class AffineTransform;
+enum class BoxAxis : uint8_t;
 class Color;
 class ControlPart;
 class Cursor;
@@ -401,6 +402,8 @@ public:
     NODELETE WEBCORE_EXPORT RenderBox& enclosingBox() const;
     NODELETE RenderBoxModelObject& enclosingBoxModelObject() const;
     RenderBox* enclosingScrollableContainer() const;
+    // The nearest scroll container that can scroll in the given axis, skipping single-axis scroll containers that clip it.
+    RenderBox* enclosingScrollableContainer(BoxAxis) const;
 
     // Return our enclosing flow thread if we are contained inside one. Follows the containing block chain.
     RenderFragmentedFlow* enclosingFragmentedFlow() const;
