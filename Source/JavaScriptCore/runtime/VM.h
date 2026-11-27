@@ -44,6 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/NativeFunction.h>
 #include <JavaScriptCore/NumericStrings.h>
 #include <JavaScriptCore/SmallStrings.h>
+#include <JavaScriptCore/SourceTaintedness.h>
 #include <JavaScriptCore/StringReplaceCache.h>
 #include <JavaScriptCore/StrongForward.h>
 #include <JavaScriptCore/VMThreadContext.h>
@@ -53,6 +54,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
+#include <wtf/EnumSet.h>
 #include <wtf/LazyRef.h>
 #include <wtf/LazyUniqueRef.h>
 #include <wtf/Lock.h>
@@ -518,7 +520,7 @@ public:
 
     VMType vmType;
     bool m_mightBeExecutingTaintedCode { false };
-    bool m_mightHavePrevalentDomainTaintedCode { false };
+    EnumSet<SourceTaintKind> m_kindsOfMarkedTaintedCode;
     ClientData* clientData { nullptr };
 #if ENABLE(WEBASSEMBLY)
     Wasm::Context wasmContext;
@@ -641,8 +643,8 @@ public:
     bool* addressOfMightBeExecutingTaintedCode() LIFETIME_BOUND { return &m_mightBeExecutingTaintedCode; }
     void setMightBeExecutingTaintedCode(bool value = true) { m_mightBeExecutingTaintedCode = value; }
 
-    bool mightHavePrevalentDomainTaintedCode() const { return m_mightHavePrevalentDomainTaintedCode; }
-    void setMightHavePrevalentDomainTaintedCode() { m_mightHavePrevalentDomainTaintedCode = true; }
+    bool mightHaveMarkedTaintedCode(SourceTaintKind kind) const { return m_kindsOfMarkedTaintedCode.contains(kind); }
+    void setMightHaveMarkedTaintedCode(SourceTaintKind kind) { m_kindsOfMarkedTaintedCode.add(kind); }
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry.get(); }

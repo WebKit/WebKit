@@ -124,20 +124,20 @@ SourceTaintedness computeNewSourceTaintednessFromStack(VM& vm, CallFrame* callFr
     return result;
 }
 
-void markSourceAsPrevalentDomainTainted(VM& vm, SourceProvider& provider)
+void markSourceAsTainted(VM& vm, SourceProvider& provider, SourceTaintKind kind)
 {
-    provider.setSourceTaintedOrigin(SourceTaintKind::PrevalentDomain, SourceTaintedOrigin::KnownTainted);
-    vm.setMightHavePrevalentDomainTaintedCode();
+    provider.setSourceTaintedOrigin(kind, SourceTaintedOrigin::KnownTainted);
+    vm.setMightHaveMarkedTaintedCode(kind);
 }
 
-bool isPrevalentDomainTaintedCodeOnStack(VM& vm, CallFrame* callFrame)
+bool isTaintedCodeOnStack(VM& vm, CallFrame* callFrame, SourceTaintKind kind)
 {
-    if (!callFrame || !vm.mightHavePrevalentDomainTaintedCode())
+    if (!callFrame || !vm.mightHaveMarkedTaintedCode(kind))
         return false;
 
     bool mightBeExecutingTaintedCode = vm.mightBeExecutingTaintedCode();
 
-    bool foundPrevalentDomainTaintedCode = false;
+    bool foundTaintedCode = false;
     bool foundOtherNonBuiltinCodeSinceVMEntry = false;
     bool isBeforeVMEntry = true;
     StackVisitor::visit(callFrame, vm, [&](StackVisitor& visitor) -> IterationStatus {
@@ -150,8 +150,8 @@ bool isPrevalentDomainTaintedCodeOnStack(VM& vm, CallFrame* callFrame)
             sourceProvider = codeBlock->source().provider();
 
         if (sourceProvider) {
-            if (sourceProvider->sourceTaintedOrigin(SourceTaintKind::PrevalentDomain) >= SourceTaintedOrigin::IndirectlyTainted) {
-                foundPrevalentDomainTaintedCode = true;
+            if (sourceProvider->sourceTaintedOrigin(kind) >= SourceTaintedOrigin::IndirectlyTainted) {
+                foundTaintedCode = true;
                 return IterationStatus::Done;
             }
             if (isBeforeVMEntry)
@@ -167,7 +167,7 @@ bool isPrevalentDomainTaintedCodeOnStack(VM& vm, CallFrame* callFrame)
         return IterationStatus::Continue;
     });
 
-    return foundPrevalentDomainTaintedCode || !foundOtherNonBuiltinCodeSinceVMEntry;
+    return foundTaintedCode || !foundOtherNonBuiltinCodeSinceVMEntry;
 }
 
 } // namespace JSC

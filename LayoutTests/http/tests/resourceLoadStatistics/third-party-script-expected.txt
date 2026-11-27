@@ -1,0 +1,21 @@
+Tests that code from a third-party script, and code that such a script creates, counts as third-party script code, even when first-party script runs it later.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Third-party script: true
+PASS First-party function called by third-party script: true
+PASS First-party script: false
+PASS Third-party script is not a prevalent domain script: false
+PASS Function defined by third-party script: true
+PASS Function created with eval() by third-party script: true
+PASS Function created with the Function constructor by third-party script: true
+PASS Script element created by third-party script: true
+PASS Event handler attribute set by third-party script: true
+PASS String passed to setTimeout() by third-party script: true
+PASS First-party script after running code created by third-party script: false
+PASS Native function called by the Promise machinery: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

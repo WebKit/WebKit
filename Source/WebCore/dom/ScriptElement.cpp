@@ -472,16 +472,23 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
     return true;
 }
 
-static void markSourceAsPrevalentDomainTaintedIfNeeded(Document& document, const ScriptSourceCode& sourceCode)
+static void markSourceAsTaintedIfNeeded(Document& document, const ScriptSourceCode& sourceCode)
 {
     RefPtr script = sourceCode.cachedScript();
-    if (!script || !script->response().isFromPrevalentDomain())
+    if (!script)
         return;
 
-    if (RegistrableDomain { script->response().url() }.matches(document.topOrigin().data()))
+    auto& responseURL = script->response().url();
+    if (!responseURL.protocolIsInHTTPFamily())
         return;
 
-    JSC::markSourceAsPrevalentDomainTainted(document.vm(), sourceCode.provider());
+    if (RegistrableDomain { responseURL }.matches(document.topOrigin().data()))
+        return;
+
+    JSC::markSourceAsTainted(document.vm(), sourceCode.provider(), JSC::SourceTaintKind::ThirdParty);
+
+    if (script->response().isFromPrevalentDomain())
+        JSC::markSourceAsTainted(document.vm(), sourceCode.provider(), JSC::SourceTaintKind::PrevalentDomain);
 }
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
@@ -508,7 +515,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!frame)
         return;
 
-    markSourceAsPrevalentDomainTaintedIfNeeded(document, sourceCode);
+    markSourceAsTaintedIfNeeded(document, sourceCode);
 
     IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_isExternalScript ? document.ptr() : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);

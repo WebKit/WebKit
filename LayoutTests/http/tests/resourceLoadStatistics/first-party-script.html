@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/load-script.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a script from the top site does not count as a third-party script.");
+jsTestIsAsync = true;
+
+loadScript("is-third-party-script-on-stack.js").then(() => {
+    shouldBeFalse("resultFromScript");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

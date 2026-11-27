@@ -60,9 +60,10 @@ inline TriState taintednessToTriState(SourceTaintedOrigin origin)
 enum class SourceTaintKind : uint8_t {
     ScriptTrackingPrivacy,
     PrevalentDomain,
+    ThirdParty,
 };
 
-static constexpr std::array allSourceTaintKinds { SourceTaintKind::ScriptTrackingPrivacy, SourceTaintKind::PrevalentDomain };
+static constexpr std::array allSourceTaintKinds { SourceTaintKind::ScriptTrackingPrivacy, SourceTaintKind::PrevalentDomain, SourceTaintKind::ThirdParty };
 
 class SourceTaintedness {
 public:
@@ -113,8 +114,8 @@ JS_EXPORT_PRIVATE SourceTaintedness computeNewSourceTaintednessFromStack(VM&, Ca
 
 JS_EXPORT_PRIVATE String sourceTaintedOriginToString(SourceTaintedOrigin taintedness);
 
-JS_EXPORT_PRIVATE void markSourceAsPrevalentDomainTainted(VM&, SourceProvider&);
-JS_EXPORT_PRIVATE bool isPrevalentDomainTaintedCodeOnStack(VM&, CallFrame*);
+JS_EXPORT_PRIVATE void markSourceAsTainted(VM&, SourceProvider&, SourceTaintKind);
+JS_EXPORT_PRIVATE bool isTaintedCodeOnStack(VM&, CallFrame*, SourceTaintKind);
 
 }
 
