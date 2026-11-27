@@ -707,7 +707,7 @@ void WebAnimation::updatePlaybackRate(double newPlaybackRate)
             return;
         
         auto newStartTime = protect(m_timeline)->currentTime().value();
-        if (m_pendingPlaybackRate)
+        if (*m_pendingPlaybackRate)
             newStartTime -= (unconstrainedCurrentTime.value() / m_pendingPlaybackRate.value());
         m_startTime = newStartTime;
         // 3. Apply any pending playback rate on animation.

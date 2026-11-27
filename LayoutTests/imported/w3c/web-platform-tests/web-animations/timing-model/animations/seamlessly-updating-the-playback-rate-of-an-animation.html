@@ -162,6 +162,17 @@ promise_test(async t => {
 
 promise_test(async t => {
   const animation = createDiv(t).animate(null, 100 * MS_PER_SEC);
+  animation.finish();
+  assert_false(animation.pending);
+
+  animation.updatePlaybackRate(0);
+  assert_equals(animation.playbackRate, 0);
+  assert_times_equal(animation.startTime, animation.timeline.currentTime);
+}, 'Updating the playback rate to zero on a finished animation sets the'
+   + ' start time to the timeline time');
+
+promise_test(async t => {
+  const animation = createDiv(t).animate(null, 100 * MS_PER_SEC);
   await animation.ready;
 
   // Get the animation in a state where it has an unresolved current time,
