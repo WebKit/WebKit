@@ -1,0 +1,11 @@
+Many drawIndexed calls in one render pass after a single setScissorRect call. Each draw takes the index buffer clamp path, and on GPUs with a memory barrier limit the implementation splits the pass into a new Metal render command encoder once that limit is reached. The scissor rect (and stencil reference) must be reapplied to the new encoder; otherwise draws after the split cover the whole attachment instead of only the scissored pixel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS leftPixel.join() is "0,255,0,255"
+PASS rightPixel.join() is "255,0,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

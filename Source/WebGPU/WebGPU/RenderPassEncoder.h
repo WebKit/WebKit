@@ -251,6 +251,8 @@ private:
     std::optional<WebGPU::Color> m_blendColor;
     std::optional<MTLScissorRect> m_scissorRect;
     std::optional<uint32_t> m_stencilReferenceValue;
+    bool m_scissorRectNeedsApplying { false };
+    bool m_stencilReferenceValueNeedsApplying { false };
     float m_depthClearValue { 0 };
     uint64_t m_drawCount { 0 };
     const uint64_t m_maxDrawCount { 0 };

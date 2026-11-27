@@ -617,13 +617,13 @@ void RenderPassEncoder::setCachedRenderPassState(id<MTLRenderCommandEncoder> com
     }
     if (m_blendColor)
         [commandEncoder setBlendColorRed:m_blendColor->r green:m_blendColor->g blue:m_blendColor->b alpha:m_blendColor->a];
-    if (m_stencilReferenceValue) {
+    if (m_stencilReferenceValue && m_stencilReferenceValueNeedsApplying) {
         [commandEncoder setStencilReferenceValue:*m_stencilReferenceValue];
-        m_stencilReferenceValue = std::nullopt;
+        m_stencilReferenceValueNeedsApplying = false;
     }
-    if (m_scissorRect) {
+    if (m_scissorRect && m_scissorRectNeedsApplying) {
         [commandEncoder setScissorRect:*m_scissorRect];
-        m_scissorRect = std::nullopt;
+        m_scissorRectNeedsApplying = false;
     }
 }
 
@@ -2091,17 +2091,20 @@ void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, u
             std::min(screenSize.width, static_cast<NSUInteger>(roundf(scissorEnd.x - scissorStart.x))),
             std::min(screenSize.height, static_cast<NSUInteger>(roundf(scissorEnd.y - scissorStart.y))),
         };
+        m_scissorRectNeedsApplying = true;
 
         return;
     }
 
     m_scissorRect = MTLScissorRect { x, y, width, height };
+    m_scissorRectNeedsApplying = true;
 }
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
     RETURN_IF_FINISHED();
     m_stencilReferenceValue = reference & 0xFF;
+    m_stencilReferenceValueNeedsApplying = true;
 }
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuffer, uint64_t offset, std::optional<uint64_t> optionalSize)
