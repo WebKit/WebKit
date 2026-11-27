@@ -50,8 +50,8 @@ struct Box {
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
-        StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
+        StringView originalContent() const LIFETIME_BOUND { return StringView(m_originalContent).substring(m_start, m_length); }
+        StringView renderedContent() const LIFETIME_BOUND { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
         bool isAtShapingBoundaryStart() const { return m_shapingBoundary == ShapingBoundary::Start; }
         bool isAtShapingBoundaryEnd() const { return m_shapingBoundary == ShapingBoundary::End; }
         bool isInsideShapingBoundary() const { return m_shapingBoundary == ShapingBoundary::Inside; }

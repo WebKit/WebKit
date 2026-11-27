@@ -127,8 +127,8 @@ private:
         size_t gridOrFlexItemPosition { 0 };
     };
 
-    const Parent& parent() const { return m_parentStack.last(); }
-    Parent& parent() { return m_parentStack.last(); }
+    const Parent& parent() const LIFETIME_BOUND { return m_parentStack.last(); }
+    Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
 
     Event firstSelfEvent() const { return m_direction == Direction::Forward ? Event::BeforeContents : Event::AfterContents; }
     Event lastSelfEvent() const { return m_direction == Direction::Forward ? Event::AfterContents : Event::BeforeContents; }

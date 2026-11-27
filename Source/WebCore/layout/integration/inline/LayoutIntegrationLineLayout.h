@@ -179,7 +179,7 @@ public:
         size_t reusedLineCount { 0 };
     };
     NODELETE WEBCORE_EXPORT static void setCollectsLayoutInfoForTesting(bool);
-    const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
+    const LayoutInfoForTesting* layoutInfoForTesting() const LIFETIME_BOUND { return m_layoutInfoForTesting.get(); }
 
 private:
     void preparePlacedFloats();

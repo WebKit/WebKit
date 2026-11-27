@@ -233,7 +233,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
     return CGRectZero;
 }
 
-Node* LocalFrame::deepestNodeAtLocation(const FloatPoint& viewportLocation)
+RefPtr<Node> LocalFrame::deepestNodeAtLocation(const FloatPoint& viewportLocation)
 {
     IntPoint center;
     HitTestResult hitTestResult;

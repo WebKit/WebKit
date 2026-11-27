@@ -41,7 +41,7 @@ public:
     RenderMathMLFenced(MathMLRowElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLFenced();
 
-    StringImpl* separators() const { return m_separators.get(); }
+    StringImpl* separators() const LIFETIME_BOUND { return m_separators.get(); }
     String openingBrace() const { return m_open; }
     String closingBrace() const { return m_close; }
 

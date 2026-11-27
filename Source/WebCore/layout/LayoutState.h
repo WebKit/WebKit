@@ -81,7 +81,7 @@ public:
     bool inQuirksMode() const { return m_quirksMode == QuirksMode::Yes; }
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inStandardsMode() const { return m_quirksMode == QuirksMode::No; }
-    const SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
+    const SecurityOrigin& securityOrigin() const LIFETIME_BOUND { return m_securityOrigin.get(); }
     bool isTextShapingAcrossInlineBoxesEnabled() const { return m_isTextShapingAcrossInlineBoxesEnabled; }
     bool isAlignmentBaselineOnInlineBoxesEnabled() const { return m_isAlignmentBaselineOnInlineBoxesEnabled; }
 

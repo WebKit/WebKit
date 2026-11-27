@@ -125,10 +125,10 @@ RenderPtr<RenderElement> SVGFEImageElement::createElementRenderer(UniqueRef<Styl
 
 RenderImageResource* SVGFEImageElement::imageResource() const
 {
-    if (CheckedPtr renderer = dynamicDowncast<RenderSVGResourceFEImage>(this->renderer()))
-        return &renderer->imageResource();
-    if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFEImage>(this->renderer()))
-        return &renderer->imageResource();
+    if (is<RenderSVGResourceFEImage>(renderer()))
+        return &downcast<RenderSVGResourceFEImage>(*renderer()).imageResource();
+    if (is<LegacyRenderSVGResourceFEImage>(renderer()))
+        return &downcast<LegacyRenderSVGResourceFEImage>(*renderer()).imageResource();
     return nullptr;
 }
 

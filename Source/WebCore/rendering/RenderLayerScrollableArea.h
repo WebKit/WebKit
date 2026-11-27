@@ -72,7 +72,7 @@ public:
 
     void clear();
 
-    RenderMarquee* marquee() const { return m_marquee.get(); }
+    RenderMarquee* marquee() const LIFETIME_BOUND { return m_marquee.get(); }
     void updateMarqueePosition();
     void createOrDestroyMarquee();
 

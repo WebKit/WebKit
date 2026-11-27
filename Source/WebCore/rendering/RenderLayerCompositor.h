@@ -284,16 +284,16 @@ public:
     NODELETE WEBCORE_EXPORT RenderLayer& rootRenderLayer() const;
     NODELETE GraphicsLayer* rootGraphicsLayer() const;
 
-    GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
-    GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
-    GraphicsLayer* clipLayer() const { return m_clipLayer.get(); }
-    GraphicsLayer* rootContentsLayer() const { return m_rootContentsLayer.get(); }
+    GraphicsLayer* scrollContainerLayer() const LIFETIME_BOUND { return m_scrollContainerLayer.get(); }
+    GraphicsLayer* scrolledContentsLayer() const LIFETIME_BOUND { return m_scrolledContentsLayer.get(); }
+    GraphicsLayer* clipLayer() const LIFETIME_BOUND { return m_clipLayer.get(); }
+    GraphicsLayer* rootContentsLayer() const LIFETIME_BOUND { return m_rootContentsLayer.get(); }
 
-    GraphicsLayer* layerForClipping() const {  return m_clipLayer ? m_clipLayer.get() : m_scrollContainerLayer.get();  }
+    GraphicsLayer* layerForClipping() const LIFETIME_BOUND { return m_clipLayer ? m_clipLayer.get() : m_scrollContainerLayer.get();  }
 
 #if HAVE(RUBBER_BANDING)
-    GraphicsLayer* headerLayer() const { return m_layerForHeader.get(); }
-    GraphicsLayer* footerLayer() const { return m_layerForFooter.get(); }
+    GraphicsLayer* headerLayer() const LIFETIME_BOUND { return m_layerForHeader.get(); }
+    GraphicsLayer* footerLayer() const LIFETIME_BOUND { return m_layerForFooter.get(); }
 #endif
 
     enum RootLayerAttachment {
@@ -381,12 +381,12 @@ public:
 
     void deviceOrPageScaleFactorChanged();
 
-    GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
-    GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
-    GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
+    GraphicsLayer* layerForHorizontalScrollbar() const LIFETIME_BOUND { return m_layerForHorizontalScrollbar.get(); }
+    GraphicsLayer* layerForVerticalScrollbar() const LIFETIME_BOUND { return m_layerForVerticalScrollbar.get(); }
+    GraphicsLayer* layerForScrollCorner() const LIFETIME_BOUND { return m_layerForScrollCorner.get(); }
 #if HAVE(RUBBER_BANDING)
-    GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
-    GraphicsLayer* layerForContentShadow() const { return m_contentShadowLayer.get(); }
+    GraphicsLayer* layerForOverhangAreas() const LIFETIME_BOUND { return m_layerForOverhangAreas.get(); }
+    GraphicsLayer* layerForContentShadow() const LIFETIME_BOUND { return m_contentShadowLayer.get(); }
 
     GraphicsLayer* updateLayerForTopOverhangColorExtension(bool wantsLayer);
     GraphicsLayer* updateLayerForTopOverhangImage(bool wantsLayer);

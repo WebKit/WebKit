@@ -269,7 +269,7 @@ public:
     const ViewportArguments& viewportArguments() const LIFETIME_BOUND;
     WEBCORE_EXPORT void setViewportArguments(const ViewportArguments&);
 
-    WEBCORE_EXPORT Node* deepestNodeAtLocation(const FloatPoint& viewportLocation);
+    WEBCORE_EXPORT RefPtr<Node> deepestNodeAtLocation(const FloatPoint& viewportLocation);
     WEBCORE_EXPORT RefPtr<Node> nodeRespondingToScrollWheelEvents(const FloatPoint& viewportLocation);
     WEBCORE_EXPORT RefPtr<Node> approximateNodeAtViewportLocationLegacy(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation);
 

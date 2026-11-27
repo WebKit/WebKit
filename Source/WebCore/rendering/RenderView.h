@@ -75,9 +75,9 @@ public:
 
     NODELETE inline LocalFrameView& frameView() const LIFETIME_BOUND; // Defined in LocalFrameViewInlines.h.
 
-    Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
-    const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
-    Layout::LayoutState& layoutState() { return m_layoutState; }
+    Layout::InitialContainingBlock& initialContainingBlock() LIFETIME_BOUND { return m_initialContainingBlock.get(); }
+    const Layout::InitialContainingBlock& initialContainingBlock() const LIFETIME_BOUND { return m_initialContainingBlock.get(); }
+    Layout::LayoutState& layoutState() LIFETIME_BOUND { return m_layoutState; }
     void updateQuirksMode();
 
     bool needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly() const { return m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly; };

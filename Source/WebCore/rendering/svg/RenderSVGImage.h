@@ -41,8 +41,8 @@ public:
 
     NODELETE SVGImageElement& imageElement() const;
 
-    RenderImageResource& imageResource() { return m_imageResource; }
-    const RenderImageResource& imageResource() const { return m_imageResource; }
+    RenderImageResource& imageResource() LIFETIME_BOUND { return m_imageResource; }
+    const RenderImageResource& imageResource() const LIFETIME_BOUND { return m_imageResource; }
 
     bool updateImageViewport();
 

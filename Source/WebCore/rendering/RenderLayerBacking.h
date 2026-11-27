@@ -112,7 +112,7 @@ public:
     
     void updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint);
     
-    GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
+    GraphicsLayer* graphicsLayer() const LIFETIME_BOUND { return m_graphicsLayer.get(); }
     bool hasContentsDisplayDelegate() const;
 
     // Layer to clip children
@@ -126,12 +126,12 @@ public:
     void ensureOverflowControlsHostLayerAncestorClippingStack(const RenderLayer* compositedAncestor);
     LayerAncestorClippingStack* overflowControlsHostLayerAncestorClippingStack() const LIFETIME_BOUND { return m_overflowControlsHostLayerAncestorClippingStack.get(); }
 
-    GraphicsLayer* contentsContainmentLayer() const { return m_contentsContainmentLayer.get(); }
-    GraphicsLayer* viewportAnchorLayer() const { return m_viewportAnchorLayer.get(); }
-    GraphicsLayer* viewportClippingOrAnchorLayer() const { return m_viewportClippingLayer.get() ?: viewportAnchorLayer(); }
+    GraphicsLayer* contentsContainmentLayer() const LIFETIME_BOUND { return m_contentsContainmentLayer.get(); }
+    GraphicsLayer* viewportAnchorLayer() const LIFETIME_BOUND { return m_viewportAnchorLayer.get(); }
+    GraphicsLayer* viewportClippingOrAnchorLayer() const LIFETIME_BOUND { return m_viewportClippingLayer.get() ?: viewportAnchorLayer(); }
 
-    GraphicsLayer* foregroundLayer() const { return m_foregroundLayer.get(); }
-    GraphicsLayer* backgroundLayer() const { return m_backgroundLayer.get(); }
+    GraphicsLayer* foregroundLayer() const LIFETIME_BOUND { return m_foregroundLayer.get(); }
+    GraphicsLayer* backgroundLayer() const LIFETIME_BOUND { return m_backgroundLayer.get(); }
     bool backgroundLayerPaintsFixedRootBackground() const { return m_backgroundLayerPaintsFixedRootBackground; }
 
     bool hasSVGPaintOrderSegments() const { return !m_svgPaintOrderSegments.isEmpty(); }
@@ -139,7 +139,7 @@ public:
     NODELETE std::optional<WTF::Range<unsigned>> svgSegmentRangeForGraphicsLayer(const GraphicsLayer&) const;
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
-    GraphicsLayer* systemPreviewBadgeLayer() const { return m_systemPreviewBadgeLayer.get(); }
+    GraphicsLayer* systemPreviewBadgeLayer() const LIFETIME_BOUND { return m_systemPreviewBadgeLayer.get(); }
 #endif
 
     bool needsRepaintOnCompositedScroll() const;
@@ -148,8 +148,8 @@ public:
     NODELETE void setRequiresBackgroundLayer(bool);
 
     bool hasScrollingLayer() const { return m_scrollContainerLayer != nullptr; }
-    GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
-    GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
+    GraphicsLayer* scrollContainerLayer() const LIFETIME_BOUND { return m_scrollContainerLayer.get(); }
+    GraphicsLayer* scrolledContentsLayer() const LIFETIME_BOUND { return m_scrolledContentsLayer.get(); }
 
     void detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole>);
 
@@ -215,7 +215,7 @@ public:
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();
 
-    const IntOutsets& filterAnimationOutsets() const { return m_filterAnimationOutsets; }
+    const IntOutsets& filterAnimationOutsets() const LIFETIME_BOUND { return m_filterAnimationOutsets; }
 
 #if ENABLE(THREADED_ANIMATIONS)
     NODELETE const AcceleratedEffectStack* acceleratedEffectStack() const;
@@ -326,10 +326,10 @@ public:
     // For informative purposes only.
     WEBCORE_EXPORT CompositingLayerType compositingLayerType() const;
     
-    GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
-    GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
-    GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
-    GraphicsLayer* overflowControlsContainer() const { return m_overflowControlsContainer.get(); }
+    GraphicsLayer* layerForHorizontalScrollbar() const LIFETIME_BOUND { return m_layerForHorizontalScrollbar.get(); }
+    GraphicsLayer* layerForVerticalScrollbar() const LIFETIME_BOUND { return m_layerForVerticalScrollbar.get(); }
+    GraphicsLayer* layerForScrollCorner() const LIFETIME_BOUND { return m_layerForScrollCorner.get(); }
+    GraphicsLayer* overflowControlsContainer() const LIFETIME_BOUND { return m_overflowControlsContainer.get(); }
 
     GraphicsLayer* layerForContents() const;
 
@@ -500,7 +500,7 @@ private:
     void updateFilterAnimationOutsets();
 
     bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_isFrameLayerWithTiledBacking); }
-    GraphicsLayer* tileCacheFlatteningLayer() const { return m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
+    GraphicsLayer* tileCacheFlatteningLayer() const LIFETIME_BOUND { return m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
 
     void paintIntoLayer(const GraphicsLayer*, GraphicsContext&, const IntRect& paintDirtyRect, OptionSet<PaintBehavior>, RegionContext* = nullptr);
     OptionSet<RenderLayer::PaintLayerFlag> paintFlagsForLayer(const GraphicsLayer&) const;
