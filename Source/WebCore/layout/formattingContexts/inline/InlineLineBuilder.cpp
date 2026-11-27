@@ -1376,12 +1376,12 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         return false;
 
     auto& floatingContext = this->floatingContext();
-    auto& boxGeometry = formattingContext().geometryForBox(floatBox);
     if (isInIntrinsicWidthMode()) {
         // The float is not given a position here, only listed with the line it is on, so that IntrinsicWidthHandler adds its width to that line.
-        m_placedFloats.append(PlacedFloats::Item { floatBox, floatingContext.isStartPositioned(floatBox) ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End, boxGeometry, { }, { } });
+        m_placedFloats.append(PlacedFloats::Item { floatBox, floatingContext.isStartPositioned(floatBox) ? PlacedFloats::Item::Position::Start : PlacedFloats::Item::Position::End });
         return true;
     }
+    auto& boxGeometry = formattingContext().geometryForBox(floatBox);
 
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
