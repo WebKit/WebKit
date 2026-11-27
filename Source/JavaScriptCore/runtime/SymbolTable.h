@@ -585,14 +585,14 @@ public:
     {
         ASSERT(key && !key->isSymbol());
         auto& rareData = ensureRareData();
-        ASSERT(rareData.m_privateNames.find(key) == rareData.m_privateNames.end());
+        ASSERT(rareData.m_privateNames.find(key.get()) == rareData.m_privateNames.end());
         rareData.m_privateNames.add(key, value);
     }
 
     bool hasPrivateName(const RefPtr<UniquedStringImpl>& key) const
     {
         if (auto* rareData = m_rareData.get())
-            return rareData->m_privateNames.contains(key);
+            return rareData->m_privateNames.contains(key.get());
         return false;
     }
 

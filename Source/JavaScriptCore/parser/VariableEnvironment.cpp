@@ -133,7 +133,7 @@ VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declarePrivat
     if (!m_rareData)
         m_rareData = WTF::makeUnique<VariableEnvironment::RareData>();
 
-    auto findResult = m_rareData->m_privateNames.find(identifier);
+    auto findResult = m_rareData->m_privateNames.find(identifier.get());
 
     if (findResult == m_rareData->m_privateNames.end()) {
         PrivateNameEntry meta(accessorTraits.bits());
@@ -162,7 +162,7 @@ VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declarePrivat
         return PrivateDeclarationResult::InvalidStaticNonStatic;
 
     PrivateNameEntry meta(currentEntry.bits() | accessorTraits.bits());
-    m_rareData->m_privateNames.set(identifier, meta);
+    findResult->value = meta;
 
     auto entryIterator = m_map.find(identifier);
     ASSERT(entryIterator != m_map.end());
@@ -191,7 +191,7 @@ bool VariableEnvironment::declarePrivateMethod(const RefPtr<UniquedStringImpl>& 
     if (!m_rareData)
         m_rareData = makeUnique<VariableEnvironment::RareData>();
 
-    auto findResult = m_rareData->m_privateNames.find(identifier);
+    auto findResult = m_rareData->m_privateNames.find(identifier.get());
 
     if (findResult == m_rareData->m_privateNames.end()) {
         PrivateNameEntry meta(PrivateNameEntry::Traits::IsMethod | addionalTraits);
