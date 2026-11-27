@@ -3490,6 +3490,17 @@ void WebProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType worke
     updateRemoteWorkerProcessAssertion(workerType);
 }
 
+bool WebProcessProxy::hasSharedWorkerClientProcessWithPages() const
+{
+    if (!m_sharedWorkerInformation)
+        return false;
+    for (Ref clientProcess : m_sharedWorkerInformation->clientProcesses) {
+        if (clientProcess->pageCount() || clientProcess->provisionalPageCount())
+            return true;
+    }
+    return false;
+}
+
 bool WebProcessProxy::hasServiceWorkerForegroundActivityForTesting() const
 {
     return m_serviceWorkerInformation && ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity.get());

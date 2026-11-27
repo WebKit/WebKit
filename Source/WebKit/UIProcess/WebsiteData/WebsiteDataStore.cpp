@@ -885,7 +885,7 @@ HashSet<WebCore::ProcessIdentifier> WebsiteDataStore::activeWebProcesses() const
             if (process->isPrewarmed() || process->websiteDataStore() != this)
                 continue;
 
-            if (process->pageCount() || process->provisionalPageCount() || process->isRunningServiceWorkers())
+            if (process->pageCount() || process->provisionalPageCount() || process->isRunningServiceWorkers() || process->hasSharedWorkerClientProcessWithPages())
                 identifiers.add(process->coreProcessIdentifier());
         }
     }
