@@ -910,7 +910,7 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ ios ] TestWGSL.WebGPUUncapturedErrorCallback.IsOptional
 [ ios ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIs
 [ ios ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIsAfterMultiplePSON
-[ ios ] TestWebKitAPI.CopyHTML.EmojiImgWithNonSVGSourcePreserved
+[ ios ] TestWebKitAPI.CopyHTMLTests/emojiImgWithNonSVGSourcePreserved()
 [ ios ] TestWebKitAPI.PasteHTML.TransformColorsDependsOnUsedInlineStyle
 [ ios ] TestWebKitAPI.PasteHTML.TransformColorsOfDarkContent
 [ ios ] TestWebKitAPI.PasteHTML.TransformColorsOfDarkContentButNotSemanticColor

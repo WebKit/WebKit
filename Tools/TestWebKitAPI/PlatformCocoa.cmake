@@ -764,6 +764,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/JavaScriptMessages.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/JavaScriptTypes.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/PDFTestHelpers.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/PasteboardUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/ProcessSwapTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Recap+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SafeBrowsingTestUtilities.swift
@@ -819,6 +820,9 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/Challenge.swift
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/ContentAutoSizing.swift
+    Tests/WebKit/WKWebView/CopyHTML.swift
+    Tests/WebKit/WKWebView/CopyRTF.swift
+    Tests/WebKit/WKWebView/CopyURL.swift
     Tests/WebKit/WKWebView/CrossOriginOpenerPolicyAboutBlankTests.swift
     Tests/WebKit/WKWebView/DigitalCredentialsNetworkProcess.swift
     Tests/WebKit/WKWebView/HTTP2Server.swift

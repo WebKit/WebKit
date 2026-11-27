@@ -104,6 +104,8 @@ extension WKWebView {
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
     ///   - contentWorld: The content world to call the function body in.
     ///   - arguments: The arguments to pass to the function body, available in it as local variables.
+    ///   - userGesture: Whether the function body runs with a user gesture, which changes whether a page can open
+    ///     windows, whether its navigations lock the history, and whether focusing an element shows the keyboard on iOS.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Returns: The value the function body returned.
     /// - Throws: ``UnexpectedJavaScriptResult`` if the function body returned a value of a
@@ -113,10 +115,20 @@ extension WKWebView {
         in frame: WKFrameInfo? = nil,
         contentWorld: WKContentWorld = .page,
         arguments: [String: Any] = [:],
+        userGesture: Bool = true,
         _ functionBody: () -> String
     ) async throws -> Result {
         let script = functionBody()
-        let result = try await __callAsyncJavaScript(script, arguments: arguments, inFrame: frame, in: contentWorld)
+
+        // WKWebViewPrivate.h isn't nullability-audited, so this imports as returning `Any?` like the public API does:
+        // `nil` when the function body returns `undefined` or `null`.
+        let result: Any? = try await _callAsyncJavaScript(
+            script,
+            arguments: arguments,
+            inFrame: frame,
+            in: contentWorld,
+            withUserGesture: userGesture
+        )
 
         guard let value = result as? Result else {
             throw UnexpectedJavaScriptResult(
@@ -135,21 +147,30 @@ extension WKWebView {
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
     ///   - contentWorld: The content world to call the function body in.
     ///   - arguments: The arguments to pass to the function body, available in it as local variables.
+    ///   - userGesture: Whether the function body runs with a user gesture, which changes whether a page can open
+    ///     windows, whether its navigations lock the history, and whether focusing an element shows the keyboard on iOS.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Throws: Any error raised while running the function body.
     public func callJavaScript(
         in frame: WKFrameInfo? = nil,
         contentWorld: WKContentWorld = .page,
         arguments: [String: Any] = [:],
+        userGesture: Bool = true,
         _ functionBody: () -> String
     ) async throws {
-        _ = try await __callAsyncJavaScript(functionBody(), arguments: arguments, inFrame: frame, in: contentWorld)
+        _ = try await _callAsyncJavaScript(
+            functionBody(),
+            arguments: arguments,
+            inFrame: frame,
+            in: contentWorld,
+            withUserGesture: userGesture
+        )
     }
 
     /// Evaluates a script without a user gesture, and discards the result.
     ///
-    /// The `callJavaScript` functions always run with a user gesture, which changes whether a page can open windows and
-    /// whether its navigations lock the history.
+    /// Unlike the `callJavaScript` functions, which call a function body, this evaluates a script, such as an
+    /// expression. `callJavaScript(userGesture: false)` is the function-body equivalent.
     ///
     /// - Parameter script: The script to evaluate.
     /// - Throws: Any error raised while evaluating the script.
