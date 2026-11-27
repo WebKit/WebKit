@@ -1,0 +1,18 @@
+
+PASS setHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS setHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS appendHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS appendHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS prependHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS prependHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS beforeHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS beforeHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS afterHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS afterHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS replaceWithHTMLUnsafe: createParserOptions doesn't mutate original object
+PASS replaceWithHTMLUnsafe: createParserOptions doesn't mutate sanitizer object
+PASS TrustedHTMLParserOptions interface has no public members
+PASS TrustedHTMLParserOptions with config input applies sanitization without public members
+PASS TrustedHTMLParserOptions clone testing with Sanitizer object input
+PASS TrustedHTMLParserOptions with Preset string input
+

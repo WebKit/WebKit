@@ -1,0 +1,10 @@
+
+PASS Element.setHTML with a sanitizer runs custom element reactions before returning
+PASS Element.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning
+PASS Element.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+PASS Element.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning
+PASS ShadowRoot.setHTML with a sanitizer runs custom element reactions before returning
+PASS ShadowRoot.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning
+PASS ShadowRoot.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+PASS ShadowRoot.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning
+

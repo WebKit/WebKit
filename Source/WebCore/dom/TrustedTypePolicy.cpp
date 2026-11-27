@@ -34,6 +34,7 @@
 #include "TrustedScriptURL.h"
 #include "TrustedType.h"
 #include "TrustedTypePolicyOptions.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -94,6 +95,30 @@ ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const Stri
     return TrustedScriptURL::create(dataString);
 }
 
+// https://w3c.github.io/trusted-types/dist/spec/#create-a-trusted-type-algorithm
+ExceptionOr<Ref<TrustedHTMLParserOptions>> TrustedTypePolicy::createParserOptions(SetHTMLUnsafeOptions&& options, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    RefPtr callback = m_options.createParserOptions;
+    if (!callback || !callback->hasCallback()) {
+        return Exception {
+            ExceptionCode::TypeError,
+            makeString("Policy "_s, m_name, "'s TrustedTypePolicyOptions did not specify a 'createParserOptions' member."_s)
+        };
+    }
+
+    auto argument = createParserOptionsCallbackArgument(WTF::move(options));
+    if (argument.hasException())
+        return argument.releaseException();
+
+    auto policyValue = callback->invokeRethrowingException(argument.releaseReturnValue(), WTF::move(arguments));
+    if (policyValue.type() == CallbackResultType::ExceptionThrown)
+        return Exception { ExceptionCode::ExistingExceptionError };
+    if (policyValue.type() != CallbackResultType::Success)
+        return Exception { ExceptionCode::TypeError };
+
+    return trustedHTMLParserOptionsFromPolicyValue(policyValue.releaseReturnValue());
+}
+
 // https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-policy-value-algorithm
 ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments, IfMissing ifMissing)
 {
@@ -147,6 +172,8 @@ void TrustedTypePolicy::visitAdditionalChildrenInGCThread(Visitor& visitor)
         SUPPRESS_UNCOUNTED_ARG createScript->visitJSFunctionInGCThread(visitor);
     SUPPRESS_UNCOUNTED_LOCAL if (auto* createScriptURL = m_options.createScriptURL.get())
         SUPPRESS_UNCOUNTED_ARG createScriptURL->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createParserOptions = m_options.createParserOptions.get())
+        SUPPRESS_UNCOUNTED_ARG createParserOptions->visitJSFunctionInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(TrustedTypePolicy);

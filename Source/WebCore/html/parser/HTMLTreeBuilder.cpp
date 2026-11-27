@@ -52,6 +52,7 @@
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -252,10 +253,10 @@ inline bool HTMLTreeBuilder::isParsingFragmentOrTemplateContents() const
     return isParsingFragment() || isParsingTemplateContents();
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& document, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& document, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
     : m_parser(parser)
     , m_options(options)
-    , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth)
+    , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth, WTF::move(sanitizer))
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
@@ -263,11 +264,11 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
 #endif
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options, CustomElementRegistry* registry)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
     : m_parser(parser)
     , m_options(options)
     , m_fragmentContext(fragment, contextElement)
-    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth, registry)
+    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth, registry, WTF::move(sanitizer))
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
     ASSERT_WITH_SECURITY_IMPLICATION(isMainThread());
@@ -1615,8 +1616,19 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
         auto* node = furthestBlock;
         auto* lastNode = furthestBlock;
         auto* nextNode = node->next();
+        // 4.12. (sanitizer steps)
+        auto* sanitizer = m_tree.sanitizer();
+        Vector<Ref<Element>> pendingRedirects;
+        if (sanitizer) [[unlikely]] {
+            auto action = sanitizer->actionForElement(furthestBlock->element().localName(), furthestBlock->element().namespaceURI());
+            if (action != SanitizerAction::Keep)
+                lastNode = nullptr;
+            if (action == SanitizerAction::ReplaceWithChildren)
+                pendingRedirects.append(protect(furthestBlock->element()));
+        }
         // 4.13.
         unsigned innerLoopCounter = 0;
+        bool bookmarkMoved = false;
         while (true) {
             ++innerLoopCounter;
             // 4.13.2.
@@ -1644,24 +1656,70 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomHTMLToken& token)
             node->replaceElement(WTF::move(newItem));
 
             // 4.13.7.
-            if (lastNode == furthestBlock)
+            if (!bookmarkMoved) {
                 bookmark.moveToAfter(*nodeEntry);
-            // 4.13.8.
-            m_tree.reparent(*node, *lastNode);
-            // 4.13.9.
-            lastNode = node;
+                bookmarkMoved = true;
+            }
+            // 4.13.8-9.
+            auto nodeAction = SanitizerAction::Keep;
+            if (sanitizer) [[unlikely]]
+                nodeAction = sanitizer->actionForElement(node->element().localName(), node->element().namespaceURI());
+            if (nodeAction != SanitizerAction::ReplaceWithChildren && !pendingRedirects.isEmpty()) {
+                for (auto& replacedElement : borrow(pendingRedirects).get())
+                    m_tree.setSanitizerRedirect(replacedElement, protect(node->element()));
+                pendingRedirects.clear();
+            }
+            switch (nodeAction) {
+            case SanitizerAction::Keep:
+                if (lastNode)
+                    m_tree.reparent(*node, *lastNode);
+                lastNode = node;
+                break;
+            case SanitizerAction::Remove:
+                if (lastNode) {
+                    Ref removedNode = lastNode->element();
+                    if (RefPtr parent = removedNode->parentNode())
+                        parent->parserRemoveChild(removedNode);
+                    lastNode = nullptr;
+                }
+                break;
+            case SanitizerAction::ReplaceWithChildren:
+                pendingRedirects.append(protect(node->element()));
+                break;
+            }
         }
         // 14.
-        m_tree.insertAlreadyParsedChild(commonAncestor, *lastNode);
+        if (!pendingRedirects.isEmpty()) {
+            for (auto& replacedElement : borrow(pendingRedirects).get())
+                m_tree.setSanitizerRedirectToInsertionLocation(replacedElement, commonAncestor);
+            pendingRedirects.clear();
+        }
+        if (lastNode)
+            m_tree.insertAlreadyParsedChild(commonAncestor, *lastNode);
         // 15.
         auto newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem());
+        Ref<Element> newElement = newItem.element();
         // 16.
-        m_tree.takeAllChildrenAndReparent(newItem, *furthestBlock);
+        m_tree.adoptionAgencyReparentNewElement(newItem, *furthestBlock);
         m_tree.openElements().insertAbove(HTMLStackItem(newItem), *furthestBlock);
         // 18.
         m_tree.activeFormattingElements().swapTo(*formattingElement, WTF::move(newItem), bookmark);
         // 19.
         m_tree.openElements().remove(*formattingElement);
+        // Stack entries above newElement that were replaced with their children now insert into newElement.
+        if (sanitizer) [[unlikely]] {
+            Vector<Ref<Element>> aboveNewElement;
+            for (auto* record = &m_tree.openElements().topRecord(); record; record = record->next()) {
+                if (&record->element() == newElement.ptr())
+                    break;
+                aboveNewElement.append(protect(record->element()));
+            }
+            for (size_t i = aboveNewElement.size(); i--; ) {
+                if (!m_tree.hasSanitizerRedirect(aboveNewElement[i]))
+                    break;
+                m_tree.setSanitizerRedirect(aboveNewElement[i], newElement);
+            }
+        }
     }
 }
 
@@ -2734,7 +2792,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomHTMLToken&& token)
     case InsertionMode::Text:
         parseError(token);
         if (m_tree.currentStackItem().elementName() == HTML::script)
-            notImplemented(); // mark the script element as "already started".
+            downcast<HTMLScriptElement>(m_tree.currentStackItem().element()).markAlreadyStarted();
         m_tree.openElements().pop();
         ASSERT(m_originalInsertionMode != InsertionMode::Text);
         m_insertionMode = m_originalInsertionMode;

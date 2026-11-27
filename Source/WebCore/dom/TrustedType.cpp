@@ -28,13 +28,17 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentSettingsValues.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSTrustedScript.h"
 #include "LocalDOMWindow.h"
+#include "Sanitizer.h"
 #include "TrustedTypePolicy.h"
 #include "TrustedTypePolicyFactory.h"
+#include "TrustedTypePolicyOptions.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ArgList.h>
@@ -204,6 +208,216 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExe
             return html->toString();
         }
     );
+}
+
+static bool isEmptySanitizerConfig(const SanitizerConfig& config)
+{
+    return !config.elements && !config.removeElements && !config.replaceWithChildrenElements
+        && !config.processingInstructions && !config.removeProcessingInstructions
+        && !config.attributes && !config.removeAttributes
+        && !config.comments && !config.dataAttributes && !config.javascriptURLs;
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#parser-options-need-vetting
+static bool parserOptionsNeedVetting(const SetHTMLUnsafeOptions& options)
+{
+    if (options.runScripts)
+        return true;
+    if (!options.sanitizer)
+        return false;
+    if (auto* config = std::get_if<SanitizerConfig>(&*options.sanitizer))
+        return !isEmptySanitizerConfig(*config);
+    return true;
+}
+
+static std::optional<SanitizerBinding> copySanitizerBinding(const std::optional<SanitizerBinding>& binding)
+{
+    if (!binding)
+        return std::nullopt;
+    return WTF::switchOn(*binding,
+        [](const Ref<Sanitizer>& sanitizer) -> SanitizerBinding {
+            return sanitizer.copyRef();
+        },
+        [](const SanitizerConfig& config) -> SanitizerBinding {
+            return SanitizerConfig { config };
+        },
+        [](SanitizerPresets preset) -> SanitizerBinding {
+            return preset;
+        });
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#abstract-opdef-get-a-sanitizer-from-dictionary
+static ExceptionOr<RefPtr<Sanitizer>> sanitizerFromDictionary(std::optional<SanitizerBinding>&& binding)
+{
+    if (!binding)
+        return RefPtr<Sanitizer> { };
+    return WTF::switchOn(WTF::move(*binding),
+        [](Ref<Sanitizer>&& sanitizer) -> ExceptionOr<RefPtr<Sanitizer>> {
+            return RefPtr<Sanitizer> { Sanitizer::create(SanitizerCanonicalConfig { sanitizer->configuration() }) };
+        },
+        [](SanitizerConfig&& config) -> ExceptionOr<RefPtr<Sanitizer>> {
+            auto result = Sanitizer::create(Variant<SanitizerConfig, SanitizerPresets> { WTF::move(config) });
+            if (result.hasException())
+                return result.releaseException();
+            return RefPtr<Sanitizer> { result.releaseReturnValue() };
+        },
+        [](SanitizerPresets) -> ExceptionOr<RefPtr<Sanitizer>> {
+            return RefPtr<Sanitizer> { Sanitizer::create(Sanitizer::defaultConfiguration()) };
+        });
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#abstract-opdef-create-a-parser-options-callback-argument
+ExceptionOr<SetHTMLUnsafeOptions> createParserOptionsCallbackArgument(SetHTMLUnsafeOptions&& options)
+{
+    SetHTMLUnsafeOptions argument;
+    argument.runScripts = options.runScripts;
+    auto sanitizer = sanitizerFromDictionary(WTF::move(options.sanitizer));
+    if (sanitizer.hasException())
+        return sanitizer.releaseException();
+    if (RefPtr result = sanitizer.releaseReturnValue())
+        argument.sanitizer = SanitizerBinding { result.releaseNonNull() };
+    return argument;
+}
+
+ExceptionOr<Ref<TrustedHTMLParserOptions>> trustedHTMLParserOptionsFromPolicyValue(std::optional<SetHTMLUnsafeOptions>&& policyValue)
+{
+    if (!policyValue)
+        return Exception { ExceptionCode::TypeError, "createParserOptions returned null"_s };
+    bool runScripts = policyValue->runScripts;
+    auto sanitizer = sanitizerFromDictionary(WTF::move(policyValue->sanitizer));
+    if (sanitizer.hasException())
+        return sanitizer.releaseException();
+    RefPtr<ParserSanitizerConfiguration> configuration;
+    if (RefPtr result = sanitizer.releaseReturnValue())
+        configuration = ParserSanitizerConfiguration::create(result->configuration());
+    return TrustedHTMLParserOptions::create(WTF::move(configuration), runScripts);
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-compliant-parser-options-algorithm
+ExceptionOr<UnsafeHTMLParserOptions> trustedTypeCompliantParserOptions(ScriptExecutionContext& scriptExecutionContext, UnsafeHTMLParserOptions&& options, bool throwIfMissing, const String& sink, bool optionsFromAuthor)
+{
+    if (std::holds_alternative<Ref<TrustedHTMLParserOptions>>(options))
+        return WTF::move(options);
+
+    if (!scriptExecutionContext.settingsValues().trustedTypesEnabled || !scriptExecutionContext.settingsValues().sanitizerAPIEnabled)
+        return WTF::move(options);
+
+    auto requireTrustedTypes = false;
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext))
+        requireTrustedTypes = document->requiresTrustedTypes();
+    else {
+        CheckedPtr contentSecurityPolicy = scriptExecutionContext.contentSecurityPolicy();
+        requireTrustedTypes = contentSecurityPolicy && contentSecurityPolicy->requireTrustedTypesForSinkGroup("script"_s);
+    }
+    if (!requireTrustedTypes)
+        return WTF::move(options);
+
+    auto& dictionary = std::get<SetHTMLUnsafeOptions>(options);
+    bool requirePolicy = throwIfMissing || (optionsFromAuthor && parserOptionsNeedVetting(dictionary));
+
+    RefPtr<TrustedTypePolicy> protectedPolicy;
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        if (RefPtr window = document->window())
+            protectedPolicy = WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(*window)->defaultPolicy();
+    } else if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+        protectedPolicy = WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(*workerGlobalScope)->defaultPolicy();
+
+    RefPtr<CreateParserOptionsCallback> callback;
+    if (protectedPolicy)
+        callback = protectedPolicy->options().createParserOptions;
+
+    auto handleMissingPolicyValue = [&options, &scriptExecutionContext, &sink, requirePolicy] -> ExceptionOr<UnsafeHTMLParserOptions> {
+        if (!requirePolicy)
+            return WTF::move(options);
+        auto allowMissingTrustedTypes = protect(scriptExecutionContext.contentSecurityPolicy())->allowMissingTrustedTypesForSinkGroup("TrustedHTMLParserOptions"_s, sink, "script"_s, emptyString());
+        if (allowMissingTrustedTypes)
+            return WTF::move(options);
+        return Exception { ExceptionCode::TypeError, "This assignment requires a TrustedHTMLParserOptions"_s };
+    };
+
+    if (!callback || !callback->hasCallback())
+        return handleMissingPolicyValue();
+
+    auto argument = createParserOptionsCallbackArgument(SetHTMLUnsafeOptions { copySanitizerBinding(dictionary.sanitizer), dictionary.runScripts });
+    if (argument.hasException())
+        return argument.releaseException();
+
+    VM& vm = scriptExecutionContext.vm();
+    JSC::JSLockHolder locker(vm);
+    auto jsTypeName = JSC::jsString(vm, String("TrustedHTMLParserOptions"_s));
+    auto jsSink = JSC::jsString(vm, sink);
+    FixedVector<JSC::Strong<JSC::Unknown>> arguments({ { vm, jsTypeName }, { vm, jsSink } });
+
+    auto policyValueHolder = callback->invokeRethrowingException(argument.releaseReturnValue(), WTF::move(arguments));
+    if (policyValueHolder.type() == CallbackResultType::ExceptionThrown)
+        return Exception { ExceptionCode::ExistingExceptionError };
+    if (policyValueHolder.type() != CallbackResultType::Success)
+        return WTF::move(options);
+
+    auto policyValue = policyValueHolder.releaseReturnValue();
+    if (!policyValue) {
+        auto allowMissingTrustedTypes = protect(scriptExecutionContext.contentSecurityPolicy())->allowMissingTrustedTypesForSinkGroup("TrustedHTMLParserOptions"_s, sink, "script"_s, emptyString());
+        if (allowMissingTrustedTypes)
+            return WTF::move(options);
+        return Exception { ExceptionCode::TypeError, "createParserOptions returned null"_s };
+    }
+
+    auto result = trustedHTMLParserOptionsFromPolicyValue(WTF::move(policyValue));
+    if (result.hasException())
+        return result.releaseException();
+    return UnsafeHTMLParserOptions { result.releaseReturnValue() };
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-compliant-input-algorithm
+ExceptionOr<TrustedHTMLInput> trustedTypeCompliantInput(ScriptExecutionContext& scriptExecutionContext, Variant<Ref<TrustedHTML>, String>&& input, UnsafeHTMLParserOptions&& options, const String& sink, bool isHTMLDocument, bool optionsFromAuthor)
+{
+    UnsafeHTMLParserOptions compliantOptions = WTF::move(options);
+    if (isHTMLDocument) {
+        auto optionsHolder = trustedTypeCompliantParserOptions(scriptExecutionContext, WTF::move(compliantOptions), false, sink, optionsFromAuthor);
+        if (optionsHolder.hasException())
+            return optionsHolder.releaseException();
+        compliantOptions = optionsHolder.releaseReturnValue();
+        if (std::holds_alternative<Ref<TrustedHTMLParserOptions>>(compliantOptions)) {
+            auto stringified = WTF::switchOn(WTF::move(input),
+                [](Ref<TrustedHTML>&& html) {
+                    return html->toString();
+                }, [](String&& string) {
+                    return string;
+                });
+            return TrustedHTMLInput { WTF::move(stringified), WTF::move(compliantOptions) };
+        }
+    }
+    auto compliantHTML = trustedTypeCompliantString(scriptExecutionContext, WTF::move(input), sink);
+    if (compliantHTML.hasException())
+        return compliantHTML.releaseException();
+    return TrustedHTMLInput { compliantHTML.releaseReturnValue(), WTF::move(compliantOptions) };
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#get-a-sanitizer-config-from-options
+ExceptionOr<ResolvedUnsafeParserOptions> resolveUnsafeParserOptions(UnsafeHTMLParserOptions&& options, bool sanitizerEnabled)
+{
+    return WTF::switchOn(WTF::move(options),
+        [](Ref<TrustedHTMLParserOptions>&& trustedOptions) -> ExceptionOr<ResolvedUnsafeParserOptions> {
+            return ResolvedUnsafeParserOptions { trustedOptions->sanitizerConfiguration(), trustedOptions->runScripts() };
+        },
+        [sanitizerEnabled](SetHTMLUnsafeOptions&& dictionary) -> ExceptionOr<ResolvedUnsafeParserOptions> {
+            if (!sanitizerEnabled)
+                return ResolvedUnsafeParserOptions { };
+            auto sanitizer = Sanitizer::parserConfigurationFromOptions(WTF::move(dictionary.sanitizer), false);
+            if (sanitizer.hasException())
+                return sanitizer.releaseException();
+            return ResolvedUnsafeParserOptions { sanitizer.releaseReturnValue(), dictionary.runScripts };
+        });
+}
+
+ExceptionOr<ResolvedUnsafeParserOptions> resolveUnsafeHTMLInput(Document& document, Variant<Ref<TrustedHTML>, String>&& input, UnsafeHTMLParserOptions&& options, const String& sink, String& markup, bool optionsFromAuthor, bool parsesAsHTML)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document.contextDocument()), WTF::move(input), WTF::move(options), sink, parsesAsHTML, optionsFromAuthor);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    markup = WTF::move(compliantInput.html);
+    return resolveUnsafeParserOptions(WTF::move(compliantInput.options), document.settingsValues().sanitizerAPIEnabled);
 }
 
 ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext& scriptExecutionContext, Variant<Ref<TrustedScript>, String>&& input, const String& sink)

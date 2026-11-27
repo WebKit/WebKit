@@ -1483,6 +1483,7 @@ dom/QualifiedNameCache.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
 dom/RejectedPromiseTracker.cpp
+dom/Sanitizer.cpp
 dom/Scheduler.cpp
 dom/ScopedEventQueue.cpp
 dom/ScriptElement.cpp
@@ -1528,6 +1529,7 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TreeWalker.cpp
 dom/TrustedHTML.cpp
+dom/TrustedHTMLParserOptions.cpp
 dom/TrustedScript.cpp
 dom/TrustedScriptURL.cpp
 dom/TrustedType.cpp
@@ -4212,6 +4214,7 @@ JSCookieStoreGetOptions.cpp
 JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
 JSCreateHTMLCallback.cpp
+JSCreateParserOptionsCallback.cpp
 JSCreateScriptCallback.cpp
 JSCreateScriptURLCallback.cpp
 JSCredentialCreationOptions.cpp
@@ -5191,6 +5194,16 @@ JSSVGUseElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
+JSParseHTMLUnsafeOptions.cpp
+JSSanitizer.cpp
+JSSanitizerAttributeNamespace.cpp
+JSSanitizerConfig.cpp
+JSSanitizerElementNamespace.cpp
+JSSanitizerElementNamespaceWithAttributes.cpp
+JSSanitizerPresets.cpp
+JSSanitizerProcessingInstruction.cpp
+JSSetHTMLOptions.cpp
+JSSetHTMLUnsafeOptions.cpp
 JSScheduler.cpp
 JSSchedulerPostTaskCallback.cpp
 JSSchedulerPostTaskOptions.cpp
@@ -5289,6 +5302,7 @@ JSTransformStream.cpp
 JSTransformStreamDefaultController.cpp
 JSTreeWalker.cpp
 JSTrustedHTML.cpp
+JSTrustedHTMLParserOptions.cpp
 JSTrustedScript.cpp
 JSTrustedScriptURL.cpp
 JSTrustedTypePolicy.cpp

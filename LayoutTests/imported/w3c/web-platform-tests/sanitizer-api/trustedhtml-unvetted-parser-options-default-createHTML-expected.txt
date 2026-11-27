@@ -1,0 +1,182 @@
+
+PASS Element.setHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.setHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.setHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.setHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.setHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.setHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.setHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.setHTMLUnsafe: string with no options is converted by createHTML
+PASS Element.setHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Element.setHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Element.setHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Element.appendHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.appendHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.appendHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.appendHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.appendHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.appendHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.appendHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.appendHTMLUnsafe: string with no options is converted by createHTML
+PASS Element.appendHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Element.appendHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Element.appendHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Element.prependHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.prependHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.prependHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.prependHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.prependHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.prependHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.prependHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.prependHTMLUnsafe: string with no options is converted by createHTML
+PASS Element.prependHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Element.prependHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Element.prependHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.setHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.setHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.setHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.setHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.setHTMLUnsafe: string with no options is converted by createHTML
+PASS ShadowRoot.setHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS ShadowRoot.setHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS ShadowRoot.setHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.appendHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.appendHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.appendHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.appendHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.appendHTMLUnsafe: string with no options is converted by createHTML
+PASS ShadowRoot.appendHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS ShadowRoot.appendHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS ShadowRoot.appendHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.prependHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.prependHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.prependHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.prependHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.prependHTMLUnsafe: string with no options is converted by createHTML
+PASS ShadowRoot.prependHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS ShadowRoot.prependHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS ShadowRoot.prependHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.beforeHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.beforeHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.beforeHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.beforeHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.beforeHTMLUnsafe: string with no options is converted by createHTML
+PASS Node.beforeHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Node.beforeHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Node.beforeHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Node.afterHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.afterHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.afterHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.afterHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.afterHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.afterHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.afterHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.afterHTMLUnsafe: string with no options is converted by createHTML
+PASS Node.afterHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Node.afterHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Node.afterHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.replaceWithHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.replaceWithHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.replaceWithHTMLUnsafe: string with runScripts true throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.replaceWithHTMLUnsafe: string with runScripts true and an empty sanitizer config throws without calling createHTML
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.replaceWithHTMLUnsafe: string with no options is converted by createHTML
+PASS Node.replaceWithHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Node.replaceWithHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Node.replaceWithHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with a sanitizer config throws without calling createHTML
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Document.parseHTMLUnsafe: string with a sanitizer config without effect throws without calling createHTML
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Document.parseHTMLUnsafe: string with a Sanitizer throws without calling createHTML
+PASS Document.parseHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Document.parseHTMLUnsafe: string with the "default" sanitizer preset throws without calling createHTML
+PASS Document.parseHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Document.parseHTMLUnsafe: string with a sanitizer config and runScripts false throws without calling createHTML
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Document.parseHTMLUnsafe: string with no options is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with an empty dictionary is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with an empty sanitizer config is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with runScripts false is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with runScripts true is converted by createHTML
+PASS Document.parseHTMLUnsafe: string with runScripts true and an empty sanitizer config is converted by createHTML
+PASS Range.createContextualFragment: string is converted by createHTML, as its runScripts is not author-supplied
+PASS Element.innerHTML: string is converted by createHTML
+

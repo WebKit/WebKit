@@ -1157,6 +1157,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/CompositionEvent.idl
     dom/ContentVisibilityAutoStateChangeEvent.idl
     dom/CreateHTMLCallback.idl
+    dom/CreateParserOptionsCallback.idl
     dom/CreateScriptCallback.idl
     dom/CreateScriptURLCallback.idl
     dom/CustomElementRegistry.idl
@@ -1227,6 +1228,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/PageRevealEvent.idl
     dom/PageSwapEvent.idl
     dom/PageTransitionEvent.idl
+    dom/ParseHTMLUnsafeOptions.idl
     dom/PointerEvent.idl
     dom/PointerLockOptions.idl
     dom/PopStateEvent.idl
@@ -1239,11 +1241,20 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Range.idl
     dom/ReducerCallback.idl
     dom/RequestAnimationFrameCallback.idl
+    dom/Sanitizer.idl
+    dom/SanitizerAttributeNamespace.idl
+    dom/SanitizerConfig.idl
+    dom/SanitizerElementNamespace.idl
+    dom/SanitizerElementNamespaceWithAttributes.idl
+    dom/SanitizerPresets.idl
+    dom/SanitizerProcessingInstruction.idl
     dom/Scheduler.idl
     dom/SchedulerPostTaskCallback.idl
     dom/SchedulerPostTaskOptions.idl
     dom/SecurityPolicyViolationEvent.idl
     dom/SecurityPolicyViolationEventDisposition.idl
+    dom/SetHTMLOptions.idl
+    dom/SetHTMLUnsafeOptions.idl
     dom/ShadowRoot.idl
     dom/ShadowRootInit.idl
     dom/ShadowRootMode.idl
@@ -1271,6 +1282,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TouchList.idl
     dom/TreeWalker.idl
     dom/TrustedHTML.idl
+    dom/TrustedHTMLParserOptions.idl
     dom/TrustedScript.idl
     dom/TrustedScriptURL.idl
     dom/TrustedTypePolicy.idl

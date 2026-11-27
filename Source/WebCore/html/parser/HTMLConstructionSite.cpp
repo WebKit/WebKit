@@ -58,6 +58,7 @@
 #include "NotImplemented.h"
 #include "ProcessingInstruction.h"
 #include "SVGElementInlines.h"
+#include "Sanitizer.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShadowRootMode.h"
@@ -73,17 +74,32 @@ using namespace ElementNames;
 using namespace HTMLNames;
 
 enum class HasDuplicateAttribute : bool { No, Yes };
-static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, OptionSet<ParserContentPolicy> parserContentPolicy)
+
+static void removeDisallowedAttributes(Element& element, Vector<Attribute>& attributes, const ParserSanitizerConfiguration& sanitizer)
+{
+    attributes.removeAllMatching([&](auto& attribute) {
+        return !sanitizer.allowsAttribute(attribute.name().localName(), attribute.name().namespaceURI(), attribute.value(), element.localName(), element.namespaceURI());
+    });
+}
+
+static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, OptionSet<ParserContentPolicy> parserContentPolicy, const ParserSanitizerConfiguration* sanitizer)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element.stripScriptingAttributes(attributes);
-    element.parserSetAttributes(attributes.span());
+    if (sanitizer) [[unlikely]] {
+        // The Noah's Ark clause and adoption agency clones compare and reuse the token's
+        // original attributes, so the token's list must keep the removed attributes.
+        Vector<Attribute> filteredAttributes = attributes;
+        removeDisallowedAttributes(element, filteredAttributes, *sanitizer);
+        element.parserSetAttributes(filteredAttributes.span());
+    } else
+        element.parserSetAttributes(attributes.span());
     element.setHasDuplicateAttribute(hasDuplicateAttribute == HasDuplicateAttribute::Yes);
 }
 
-static inline void setAttributes(Element& element, AtomHTMLToken& token, OptionSet<ParserContentPolicy> parserContentPolicy)
+static inline void setAttributes(Element& element, AtomHTMLToken& token, OptionSet<ParserContentPolicy> parserContentPolicy, const ParserSanitizerConfiguration* sanitizer)
 {
-    setAttributes(element, token.attributes(), token.hasDuplicateAttribute() ? HasDuplicateAttribute::Yes : HasDuplicateAttribute::No, parserContentPolicy);
+    setAttributes(element, token.attributes(), token.hasDuplicateAttribute() ? HasDuplicateAttribute::Yes : HasDuplicateAttribute::No, parserContentPolicy, sanitizer);
 }
 
 NODELETE static bool hasImpliedEndTag(const HTMLStackItem& item)
@@ -216,6 +232,15 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
     insert(task);
 }
 
+static inline void executeTakeAllChildrenTask(HTMLConstructionSiteTask& task)
+{
+    ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildren);
+    ASSERT(!task.nextChild);
+
+    RefPtr oldParent = task.oldParent();
+    protect(task.parent)->takeAllChildrenFrom(oldParent.get());
+}
+
 static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTask& task)
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
@@ -241,6 +266,9 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
     case HTMLConstructionSiteTask::Reparent:
         executeReparentTask(task);
         return;
+    case HTMLConstructionSiteTask::TakeAllChildren:
+        executeTakeAllChildrenTask(task);
+        return;
     case HTMLConstructionSiteTask::TakeAllChildrenAndReparent:
         executeTakeAllChildrenAndReparentTask(task);
         return;
@@ -248,25 +276,102 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
     ASSERT_NOT_REACHED();
 }
 
+void HTMLConstructionSite::setSanitizerRedirect(Element& replaced, ContainerNode& target)
+{
+    auto it = m_sanitizerRedirects.find(Ref<ContainerNode> { target });
+    if (it != m_sanitizerRedirects.end())
+        m_sanitizerRedirects.set(Ref<ContainerNode> { replaced }, it->value);
+    else
+        m_sanitizerRedirects.set(Ref<ContainerNode> { replaced }, std::pair<Ref<ContainerNode>, RefPtr<Node>> { target, nullptr });
+}
+
+// https://html.spec.whatwg.org/multipage/parsing.html#adoption-agency-algorithm (pendingRedirects):
+// the recorded location is the adjusted insertion location given the appropriate place for
+// inserting a node given |target|, so foster parenting and existing redirects apply.
+void HTMLConstructionSite::setSanitizerRedirectToInsertionLocation(Element& replaced, HTMLStackItem& target)
+{
+    HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
+    task.parent = target.node();
+    if (causesFosterParenting(target))
+        recordFosterSite(task);
+    applySanitizerRedirect(task);
+    m_sanitizerRedirects.set(Ref<ContainerNode> { replaced }, std::pair<Ref<ContainerNode>, RefPtr<Node>> { *task.parent, task.nextChild });
+}
+
+bool HTMLConstructionSite::hasSanitizerRedirect(Element& element) const
+{
+    return m_sanitizerRedirects.contains(Ref<ContainerNode> { element });
+}
+
+Ref<ContainerNode> HTMLConstructionSite::sanitizerAdjustedParent(Ref<ContainerNode>&& parent) const
+{
+    if (m_sanitizerRedirects.isEmpty())
+        return WTF::move(parent);
+    auto it = m_sanitizerRedirects.find(parent);
+    if (it != m_sanitizerRedirects.end())
+        return it->value.first;
+    return WTF::move(parent);
+}
+
+// https://html.spec.whatwg.org/multipage/parsing.html#adjusted-insertion-location
+void HTMLConstructionSite::applySanitizerRedirect(HTMLConstructionSiteTask& task) const
+{
+    if (m_sanitizerRedirects.isEmpty())
+        return;
+    auto it = m_sanitizerRedirects.find(Ref<ContainerNode> { *task.parent });
+    if (it == m_sanitizerRedirects.end())
+        return;
+    task.parent = it->value.first.copyRef();
+    task.nextChild = it->value.second;
+}
+
+// https://html.spec.whatwg.org/multipage/parsing.html#insert-an-element-at-the-adjusted-insertion-location (sanitizer steps),
+// https://html.spec.whatwg.org/multipage/parsing.html#insert-a-comment and
+// https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
+bool HTMLConstructionSite::sanitizerRejectsChild(HTMLConstructionSiteTask& task, bool selfClosing)
+{
+    if (RefPtr element = dynamicDowncast<Element>(*task.child)) {
+        auto action = m_sanitizer->actionForElement(element->localName(), element->namespaceURI());
+        if (action == SanitizerAction::Keep)
+            return false;
+        element->beginParsingChildren();
+        if (selfClosing)
+            element->finishParsingChildren();
+        // A removed or replaced template is never inserted and its parsed contents stay in
+        // its template contents fragment, so it gets no redirection map entry.
+        if (action == SanitizerAction::ReplaceWithChildren && !is<HTMLTemplateElement>(*element))
+            m_sanitizerRedirects.set(element.releaseNonNull(), std::pair<Ref<ContainerNode>, RefPtr<Node>> { *task.parent, task.nextChild });
+        return true;
+    }
+    if (is<Comment>(*task.child))
+        return !m_sanitizer->allowsComments();
+    if (RefPtr instruction = dynamicDowncast<ProcessingInstruction>(*task.child))
+        return !m_sanitizer->allowsProcessingInstructionTarget(instruction->target());
+    return false;
+}
+
 void HTMLConstructionSite::attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& child, bool selfClosing)
 {
-    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child) || !isScriptElement(downcast<Element>(child.get())));
-
-    if (shouldFosterParent()) {
-        fosterParent(WTF::move(child));
-        return;
-    }
+    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child) || !isScriptElement(downcast<Element>(child)));
 
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
     task.parent = WTF::move(parent);
     task.child = WTF::move(child);
     task.selfClosing = selfClosing;
 
-    // Close the last open tag and add as a sibling of the parent if we have reached the maximum depth allowed.
-    if (m_openElements.stackDepth() >= m_maximumDOMTreeDepth && task.parent->parentNode()) {
+    if (shouldFosterParent())
+        recordFosterSite(task);
+    else if (m_openElements.stackDepth() >= m_maximumDOMTreeDepth && task.parent->parentNode()) {
+        // Close the last open tag and add as a sibling of the parent if we have reached the maximum depth allowed.
         m_openElements.pop();
         task.parent = task.parent->parentNode();
         m_hasReachedMaxDOMTreeDepth = true;
+    }
+
+    if (m_sanitizer) [[unlikely]] {
+        applySanitizerRedirect(task);
+        if (sanitizerRejectsChild(task, selfClosing))
+            return;
     }
 
     ASSERT(task.parent);
@@ -288,7 +393,7 @@ void HTMLConstructionSite::executeQueuedTasks()
     // We might be detached now.
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
+HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
     : m_document(document)
     , m_attachmentRoot(document)
     , m_parserContentPolicy(parserContentPolicy)
@@ -296,10 +401,11 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document.inQuirksMode())
+    , m_sanitizer(WTF::move(sanitizer))
 {
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth, CustomElementRegistry* registry)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
     : m_document(fragment.document())
     , m_attachmentRoot(fragment)
     , m_parserContentPolicy(parserContentPolicy)
@@ -308,6 +414,7 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment.document().inQuirksMode())
+    , m_sanitizer(WTF::move(sanitizer))
 {
 }
 
@@ -337,7 +444,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& token)
 {
     auto element = HTMLHtmlElement::create(protect(m_document));
-    setAttributes(element, token, m_parserContentPolicy);
+    setAttributes(element, token, m_parserContentPolicy, m_sanitizer.get());
     attachLater(protect(m_attachmentRoot), element.copyRef());
     m_openElements.pushHTMLHtmlElement(HTMLStackItem(element.copyRef(), WTF::move(token)));
 
@@ -349,6 +456,9 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& t
 {
     if (!scriptingContentIsAllowed(m_parserContentPolicy))
         element.stripScriptingAttributes(token.attributes());
+
+    if (m_sanitizer) [[unlikely]]
+        removeDisallowedAttributes(element, token.attributes(), *m_sanitizer);
 
     for (auto& tokenAttribute : token.attributes()) {
         auto& attributeName = tokenAttribute.name();
@@ -595,7 +705,11 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
-    if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhead (template start tag):
+    // a template the sanitizer drops is parsed as a plain template, so no shadow root is
+    // attached, and shadowroot* attributes removed by the sanitizer are ignored.
+    bool sanitizerAllowsTemplate = !m_sanitizer || m_sanitizer->actionForElement(token.name(), HTMLNames::xhtmlNamespaceURI) == SanitizerAction::Keep;
+    if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots) && sanitizerAllowsTemplate) {
         std::optional<ShadowRootMode> mode;
         auto delegatesFocus = ShadowRootDelegatesFocus::No;
         auto clonable = ShadowRootClonable::No;
@@ -604,6 +718,8 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
         String referenceTarget;
         auto registryKind = Element::CustomElementRegistryKind::Window;
         for (auto& attribute : token.attributes()) {
+            if (m_sanitizer && !m_sanitizer->allowsAttribute(attribute.name().localName(), attribute.name().namespaceURI(), attribute.value(), HTMLNames::templateTag->localName(), HTMLNames::xhtmlNamespaceURI)) [[unlikely]]
+                continue;
             if (attribute.name() == HTMLNames::shadowrootmodeAttr)
                 mode = parseShadowRootMode(attribute.value());
             else if (attribute.name() == HTMLNames::shadowrootdelegatesfocusAttr)
@@ -619,7 +735,8 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             else if (attribute.name() == HTMLNames::shadowrootcustomelementregistryAttr)
                 registryKind = Element::CustomElementRegistryKind::Null;
         }
-        if (mode && is<Element>(currentNode())) {
+        bool hostWasReplaced = m_sanitizer && is<Element>(currentNode()) && hasSanitizerRedirect(protect(currentElement()));
+        if (mode && is<Element>(currentNode()) && !hostWasReplaced) {
             auto exceptionOrShadowRoot = protect(currentElement())->attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable, slotAssignment, referenceTarget, registryKind);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
@@ -647,7 +764,7 @@ std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLE
 
 void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, Vector<Attribute>&& attributes)
 {
-    setAttributes(element, attributes, HasDuplicateAttribute::No, m_parserContentPolicy);
+    setAttributes(element, attributes, HasDuplicateAttribute::No, m_parserContentPolicy, m_sanitizer.get());
     attachLater(protect(currentNode()), element.copyRef());
     m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(attributes)));
     executeQueuedTasks();
@@ -684,7 +801,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     const bool parserInserted = !m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted);
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
     SUPPRESS_UNCOUNTED_ARG auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
-    setAttributes(element, token, m_parserContentPolicy);
+    setAttributes(element, token, m_parserContentPolicy, m_sanitizer.get());
     if (scriptingContentIsAllowed(m_parserContentPolicy))
         attachLater(protect(currentNode()), element.copyRef());
     m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
@@ -741,6 +858,9 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         // The parent is read below and these tasks run inline, so resolve now rather than in insert().
         resolveFosterSite(task);
     }
+
+    if (m_sanitizer) [[unlikely]]
+        applySanitizerRedirect(task);
 
     unsigned currentPosition = 0;
     unsigned lengthLimit = shouldUseLengthLimit(*task.parent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
@@ -809,6 +929,8 @@ void HTMLConstructionSite::insertAlreadyParsedChild(HTMLStackItem& newParent, HT
         ASSERT(task.parent);
     } else
         task.parent = newParent.node();
+    if (m_sanitizer) [[unlikely]]
+        applySanitizerRedirect(task);
     task.child = child.element();
     m_taskQueue.append(WTF::move(task));
 }
@@ -819,6 +941,42 @@ void HTMLConstructionSite::takeAllChildrenAndReparent(HTMLStackItem& newParent, 
     task.parent = newParent.node();
     task.child = oldParent.node();
     m_taskQueue.append(WTF::move(task));
+}
+
+// https://html.spec.whatwg.org/multipage/parsing.html#adoption-agency-algorithm (sanitizer handling of newElement)
+void HTMLConstructionSite::adoptionAgencyReparentNewElement(HTMLStackItem& newItem, HTMLElementStack::ElementRecord& furthestBlock)
+{
+    if (!m_sanitizer) [[likely]] {
+        takeAllChildrenAndReparent(newItem, furthestBlock);
+        return;
+    }
+
+    Ref<Element> newElement = newItem.element();
+    switch (m_sanitizer->actionForElement(newElement->localName(), newElement->namespaceURI())) {
+    case SanitizerAction::Keep:
+        if (hasSanitizerRedirect(protect(furthestBlock.element()))) {
+            // A furthestBlock that was replaced with its children has no children to take;
+            // newElement goes where furthestBlock's children were being placed.
+            HTMLConstructionSiteTask task(HTMLConstructionSiteTask::InsertAlreadyParsedChild);
+            task.parent = furthestBlock.node();
+            applySanitizerRedirect(task);
+            task.child = WTF::move(newElement);
+            m_taskQueue.append(WTF::move(task));
+        } else
+            takeAllChildrenAndReparent(newItem, furthestBlock);
+        break;
+    case SanitizerAction::Remove: {
+        // newElement stays detached, taking furthestBlock's children out of the tree.
+        HTMLConstructionSiteTask task(HTMLConstructionSiteTask::TakeAllChildren);
+        task.parent = WTF::move(newElement);
+        task.child = furthestBlock.node();
+        m_taskQueue.append(WTF::move(task));
+        break;
+    }
+    case SanitizerAction::ReplaceWithChildren:
+        setSanitizerRedirect(newElement, protect(furthestBlock.node()));
+        break;
+    }
 }
 
 static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, const AtomString& namespaceURI)
@@ -838,20 +996,38 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
     return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName };
 }
 
-Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
+// https://html.spec.whatwg.org/multipage/scripting.html#appropriate-template-contents-owner-document
+static Document& appropriateTemplateContentsOwnerDocument(Document& document)
 {
-    SUPPRESS_UNCOUNTED_ARG auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
-    if (containerForCurrentNode().usesNullCustomElementRegistry() && element->document().customElementRegistry()) [[unlikely]]
-        element->setUsesNullCustomElementRegistry();
-    setAttributes(element, token, m_parserContentPolicy);
-    return element;
+    if (document.isTemplateDocument())
+        return document;
+    return document.ensureTemplateDocument();
 }
 
-inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
+static inline TreeScope& treeScopeFor(ContainerNode& node)
 {
-    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(node))
         return templateElement->fragmentForInsertion().treeScope();
-    return currentNode().treeScope();
+    return node.treeScope();
+}
+
+Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
+{
+    Ref<Document> ownerDocument = ownerDocumentForCurrentNode();
+    // https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token
+    // Elements the sanitizer will drop are created in an inert document so that creating them
+    // has no side effects such as starting resource loads.
+    if (m_sanitizer) [[unlikely]] {
+        Ref<ContainerNode> creationContext = sanitizerAdjustedParent(protect(currentNode()));
+        ownerDocument = treeScopeFor(creationContext).documentScope();
+        if (m_sanitizer->actionForElement(token.name(), namespaceURI) != SanitizerAction::Keep)
+            ownerDocument = appropriateTemplateContentsOwnerDocument(ownerDocument);
+    }
+    SUPPRESS_UNCOUNTED_ARG auto element = ownerDocument->createElement(qualifiedNameForTag(token, namespaceURI), true);
+    if (containerForCurrentNode().usesNullCustomElementRegistry() && element->document().customElementRegistry()) [[unlikely]]
+        element->setUsesNullCustomElementRegistry();
+    setAttributes(element, token, m_parserContentPolicy, m_sanitizer.get());
+    return element;
 }
 
 inline ContainerNode& HTMLConstructionSite::containerForCurrentNode()
@@ -880,10 +1056,27 @@ static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScop
 
 std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token)
 {
-    Ref treeScope = treeScopeForCurrentNode();
-    Ref ownerDocument = treeScope->documentScope();
+    // https://html.spec.whatwg.org/multipage/parsing.html#create-an-element-for-the-token
+    // The creation context follows the insertion target redirection map so children of a
+    // replaced element are created in the redirection target's document and registry.
+    Ref<ContainerNode> creationContext = currentNode();
+    auto sanitizerAction = SanitizerAction::Keep;
+    if (m_sanitizer) [[unlikely]] {
+        creationContext = sanitizerAdjustedParent(WTF::move(creationContext));
+        sanitizerAction = m_sanitizer->actionForElement(token.name(), HTMLNames::xhtmlNamespaceURI);
+    }
+    Ref treeScope = treeScopeFor(creationContext);
+    Ref<Document> ownerDocument = treeScope->documentScope();
+    // Elements the sanitizer will drop are created in an inert document with a null custom
+    // element registry, so they trigger no loads and no custom element constructors.
+    if (sanitizerAction != SanitizerAction::Keep) [[unlikely]]
+        ownerDocument = appropriateTemplateContentsOwnerDocument(ownerDocument);
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, true);
-    RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(protect(currentNode()), treeScope) } : m_registry;
+    RefPtr<CustomElementRegistry> registry;
+    if (sanitizerAction == SanitizerAction::Keep) [[likely]] {
+        bool atRoot = m_openElements.stackDepth() <= 1 || creationContext.ptr() == &m_openElements.rootNode();
+        registry = atRoot ? m_registry : RefPtr { registryForCurrentNode(creationContext, treeScope) };
+    }
     if (!element) [[unlikely]] {
         RefPtr elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
@@ -935,7 +1128,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             imageElement->setPictureElement(currentPictureElement.get());
     }
 
-    setAttributes(*element, token, m_parserContentPolicy);
+    setAttributes(*element, token, m_parserContentPolicy, m_sanitizer.get());
     return { element, nullptr, nullptr };
 }
 

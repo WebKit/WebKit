@@ -1,0 +1,11 @@
+
+PASS Sorting of attributes
+PASS Sorting of removeAttributes
+PASS Sorting of elements
+PASS Sorting of removeElements
+PASS Sorting of replaceWithChildrenElements
+PASS Sorting of element's attributes
+PASS Sorting of element's removeAttributes
+PASS Sorting of processingInstructions
+PASS Sorting of removeProcessingInstructions
+

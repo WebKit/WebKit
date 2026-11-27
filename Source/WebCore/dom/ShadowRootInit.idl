@@ -31,5 +31,5 @@ dictionary ShadowRootInit {
     boolean serializable = false;
     SlotAssignmentMode slotAssignment = "named";
     CustomElementRegistry? customElementRegistry;
-    [EnabledBySetting=ShadowRootReferenceTargetEnabled] DOMString referenceTarget;
+    [EnabledBySetting=ShadowRootReferenceTargetEnabled] DOMString? referenceTarget = null;
 };

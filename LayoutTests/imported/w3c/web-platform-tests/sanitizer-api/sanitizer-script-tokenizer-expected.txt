@@ -1,0 +1,12 @@
+
+PASS Sanitizer script and raw text tokenizer testcases from sub.dat
+PASS Testcase #0 [setHTML], "<script><img src=x onerror='window.scriptRan=true;'><div>content</div></script>", config: "{}"
+PASS Testcase #1 [setHTML], "<script><img src=x onerror='window.scriptRan=true;'><div>content</div></script>", config: "{ "removeElements": ["script"] }"
+PASS Testcase #2 [setHTMLUnsafe], "<script><b>bold text</b><img src=x></script>", config: "{ "replaceWithChildrenElements": ["script"] }"
+PASS Testcase #3 [setHTMLUnsafe], "<style><img src=x><div>test</div></style>", config: "{ "replaceWithChildrenElements": ["style"] }"
+PASS Testcase #4 [setHTMLUnsafe], "<textarea><img src=x><div>test</div></textarea>", config: "{ "replaceWithChildrenElements": ["textarea"] }"
+PASS Testcase #5 [setHTML], "<script><b>Hello</b></script>", config: "{ "replaceWithChildrenElements": ["script"] }"
+PASS Testcase #6 [setHTMLUnsafe], "<script><b>Hello</b></script>", config: "{ "removeElements": ["script"] }"
+PASS Testcase #7 [setHTMLUnsafe], "<p>before</p><script><b>bold text</b><img src=x></script><p>after</p>", config: "{ "replaceWithChildrenElements": ["script"] }"
+PASS Testcase #8 [setHTML], "<p>before</p><script><b>bold text</b><img src=x></script><p>after</p>", config: "{}"
+

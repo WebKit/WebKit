@@ -1,0 +1,168 @@
+
+PASS ShadowRoot.setHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS ShadowRoot.setHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS ShadowRoot.setHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.appendHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS ShadowRoot.appendHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS ShadowRoot.appendHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.prependHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS ShadowRoot.prependHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS ShadowRoot.prependHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.innerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS ShadowRoot.innerHTML: sending TrustedHTML does not call default policy createHTML
+PASS ShadowRoot.innerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS ShadowRoot.innerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.innerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS ShadowRoot.setHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS ShadowRoot.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS ShadowRoot.appendHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS ShadowRoot.appendHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS ShadowRoot.appendHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS ShadowRoot.appendHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS ShadowRoot.appendHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS ShadowRoot.prependHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS ShadowRoot.prependHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS ShadowRoot.prependHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS ShadowRoot.prependHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS ShadowRoot.prependHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS ShadowRoot.innerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.setHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.setHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.setHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.setHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.setHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.appendHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.appendHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.appendHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.appendHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.appendHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.prependHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.prependHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.prependHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.prependHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.prependHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.beforeHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.beforeHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.beforeHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.beforeHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.beforeHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.afterHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.afterHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.afterHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.afterHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.afterHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.replaceWithHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.replaceWithHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.replaceWithHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.replaceWithHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.replaceWithHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.innerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.innerHTML: sending TrustedHTML does not call default policy createHTML
+PASS Element.innerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.innerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.innerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.outerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.outerHTML: sending TrustedHTML does not call default policy createHTML
+PASS Element.outerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.outerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.outerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.createContextualFragment: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.createContextualFragment: sending TrustedHTML does not call default policy createHTML
+PASS Element.createContextualFragment: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.createContextualFragment: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.createContextualFragment: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.afterbegin: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.afterbegin: sending TrustedHTML does not call default policy createHTML
+PASS Element.afterbegin: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.afterbegin: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.afterbegin: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.beforeend: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.beforeend: sending TrustedHTML does not call default policy createHTML
+PASS Element.beforeend: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.beforeend: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.beforeend: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.beforebegin: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.beforebegin: sending TrustedHTML does not call default policy createHTML
+PASS Element.beforebegin: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.beforebegin: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.beforebegin: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.afterend: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.afterend: sending TrustedHTML does not call default policy createHTML
+PASS Element.afterend: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.afterend: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.afterend: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.parseHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions
+PASS Element.parseHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+PASS Element.parseHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed
+PASS Element.parseHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed
+PASS Element.parseHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed
+PASS Element.setHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.setHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.setHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.setHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.setHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.appendHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.appendHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.appendHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.appendHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.appendHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.appendHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.prependHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.prependHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.prependHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.prependHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.prependHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.prependHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.beforeHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.beforeHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.beforeHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.beforeHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.beforeHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.beforeHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.afterHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.afterHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.afterHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.afterHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.afterHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.afterHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.replaceWithHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Element.replaceWithHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Element.replaceWithHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS Element.replaceWithHTMLUnsafe: default policy createParserOptions can disable runScripts
+PASS Element.replaceWithHTMLUnsafe: default policy createParserOptions can enable runScripts
+PASS Element.replaceWithHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it
+PASS Element.innerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.outerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.afterbegin: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.beforeend: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.beforebegin: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element.afterend: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML
+PASS Element: createContextualFragment with TrustedHTML and createParserOptions(runScripts=false) does not run scripts
+PASS Element: createContextualFragment with TrustedHTML runs scripts by default
+PASS Document.parseHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML
+PASS Document.parseHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through
+PASS Document.parseHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed
+PASS innerHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS outerHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS insertAdjacentHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS createContextualFragment on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS setHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+PASS appendHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+PASS prependHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+PASS beforeHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+PASS afterHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+PASS replaceWithHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed
+

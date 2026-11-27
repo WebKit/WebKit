@@ -38,6 +38,7 @@
 #include "DataTransfer.h"
 #include "DocumentInlines.h"
 #include "DocumentQuirks.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentType.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -50,10 +51,12 @@
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
+#include "HTMLTemplateElement.h"
 #include "InputEvent.h"
 #include "InspectorInstrumentation.h"
 #include "JSNodeCustom.h"
@@ -81,7 +84,10 @@
 #include "SVGElementInlines.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
+#include "SetHTMLOptions.h"
+#include "SetHTMLUnsafeOptions.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -91,10 +97,13 @@
 #include "TextManipulationController.h"
 #include "TouchEvent.h"
 #include "TreeScopeInlines.h"
+#include "TrustedType.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WheelEvent.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
+#include "markup.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/HexNumber.h>
 #include <wtf/SHA1.h>
@@ -726,6 +735,125 @@ ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVect
     if (RefPtr node = result.releaseReturnValue())
         return parent->insertBefore(*node, WTF::move(viableNextSibling));
     return { };
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#parent-for-html-insertion
+ExceptionOr<RefPtr<ContainerNode>> Node::parentForHTMLInsertion()
+{
+    RefPtr parent = parentNode();
+    if (!parent)
+        return RefPtr<ContainerNode> { };
+    if (is<HTMLTemplateElement>(*parent))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    if (is<Element>(*parent))
+        return parent;
+    if (RefPtr fragment = dynamicDowncast<DocumentFragment>(*parent)) {
+        if (is<ShadowRoot>(*fragment) || is<TemplateContentDocumentFragment>(*fragment))
+            return parent;
+    }
+    return Exception { ExceptionCode::HierarchyRequestError };
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-beforehtml
+ExceptionOr<void> Node::beforeHTML(String&& html, SetHTMLOptions&& options)
+{
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    return filterAndPreInsertHTML(*parent, this, html, WTF::move(options));
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-afterhtml
+ExceptionOr<void> Node::afterHTML(String&& html, SetHTMLOptions&& options)
+{
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    return filterAndPreInsertHTML(*parent, protect(nextSibling()).get(), html, WTF::move(options));
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-replacewithhtml
+ExceptionOr<void> Node::replaceWithHTML(String&& html, SetHTMLOptions&& options)
+{
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    return filterAndReplaceWithHTML(*parent, *this, html, WTF::move(options));
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-beforehtmlunsafe
+ExceptionOr<void> Node::beforeHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document().contextDocument()), WTF::move(html), WTF::move(options), "Node beforeHTMLUnsafe"_s);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    if (is<HTMLHtmlElement>(*parent))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    auto resolved = resolveUnsafeParserOptions(WTF::move(compliantInput.options), document().settingsValues().sanitizerAPIEnabled);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
+    return filterAndPreInsertHTMLUnsafe(*parent, this, compliantInput.html, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-afterhtmlunsafe
+ExceptionOr<void> Node::afterHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document().contextDocument()), WTF::move(html), WTF::move(options), "Node afterHTMLUnsafe"_s);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    if (is<HTMLHtmlElement>(*parent))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    auto resolved = resolveUnsafeParserOptions(WTF::move(compliantInput.options), document().settingsValues().sanitizerAPIEnabled);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
+    return filterAndPreInsertHTMLUnsafe(*parent, protect(nextSibling()).get(), compliantInput.html, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-ndtcn-replacewithhtmlunsafe
+ExceptionOr<void> Node::replaceWithHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document().contextDocument()), WTF::move(html), WTF::move(options), "Node replaceWithHTMLUnsafe"_s);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    auto parentOrException = parentForHTMLInsertion();
+    if (parentOrException.hasException())
+        return parentOrException.releaseException();
+    RefPtr parent = parentOrException.releaseReturnValue();
+    if (!parent)
+        return { };
+    if (is<HTMLHtmlElement>(*parent))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    auto resolved = resolveUnsafeParserOptions(WTF::move(compliantInput.options), document().settingsValues().sanitizerAPIEnabled);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
+    return filterAndReplaceWithHTMLUnsafe(*parent, *this, compliantInput.html, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
 }
 
 ExceptionOr<void> Node::remove()

@@ -50,8 +50,10 @@ sub applyPreprocessor
         # Strip block comments.
         $content =~ s|/\*.*?\*/||gs;
         # Strip // line comments only when requested. CSS files use // in URLs
-        # so callers processing CSS must not pass $stripLineComments.
-        $content =~ s|//[^\n]*||g if $stripLineComments;
+        # so callers processing CSS must not pass $stripLineComments. Double
+        # quoted string literals may contain // (e.g. default values that are
+        # URLs) and must be preserved.
+        $content =~ s{("[^"\n]*")|//[^\n]*}{defined $1 ? $1 : ""}ge if $stripLineComments;
     }
 
     if ($content !~ /^\s*#/m) {

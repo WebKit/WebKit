@@ -91,10 +91,10 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperati
     return clone;
 }
 
-void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
+void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
 {
     Ref document = this->document();
-    if ((!registry || !registry->isScoped()) && !usesNullCustomElementRegistry() && tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
+    if (!sanitizer && (!registry || !registry->isScoped()) && !usesNullCustomElementRegistry() && tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
         setWasParsedWithFastPath();
 #if ASSERT_ENABLED
         // As a sanity check for the fast-path, create another fragment using the full parser and compare the results.
@@ -108,7 +108,7 @@ void DocumentFragment::parseHTML(const String& source, Element& contextElement, 
     if (hasChildNodes())
         removeChildren();
 
-    HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy, registry);
+    HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy, registry, WTF::move(sanitizer));
 }
 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)

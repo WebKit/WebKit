@@ -1,0 +1,12 @@
+
+PASS Top-level template and script testcases from sub.dat
+PASS Top-level <script> parsed through setHTMLUnsafe() without runScripts does not execute
+PASS Top-level <script> parsed through setHTMLUnsafe() with runScripts: true executes
+PASS Testcase #0 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{}"
+PASS Testcase #1 [setHTMLUnsafe], "<template shadowrootmode="open"><span>Inside</span></template>", config: "{}"
+PASS Testcase #2 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{ "replaceWithChildrenElements": ["template"] }"
+PASS Testcase #3 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{ "removeElements": ["template"] }"
+PASS Testcase #4 [setHTMLUnsafe], "<script>alert(1);</script>", config: "{}"
+PASS Testcase #5 [setHTMLUnsafe], "<script><b>Hello</b></script>", config: "{ "replaceWithChildrenElements": ["script"] }"
+PASS Testcase #6 [setHTMLUnsafe], "<template><p>Text</p><div>More</div></template>", config: "{}"
+

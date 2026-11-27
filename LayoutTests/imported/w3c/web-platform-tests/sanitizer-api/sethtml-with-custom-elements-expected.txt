@@ -1,0 +1,25 @@
+
+PASS Custom element that is removed during sanitization.
+PASS Custom element that is allowed.
+PASS Custom element that is allowed, on a disconnected element.
+PASS Custom element on a disconnected element, setHTMLUnsafe().
+PASS Custom element inside an element that is replaced with its children, on a disconnected element, setHTML().
+PASS Custom element inside nested elements that are replaced with their children, setHTML().
+PASS Custom element inside an element that is replaced with its children uses the target's scoped registry, setHTML().
+PASS Custom element inside an element that is replaced with its children, on a disconnected element, setHTMLUnsafe().
+PASS Custom element inside nested elements that are replaced with their children, setHTMLUnsafe().
+PASS Custom element inside an element that is replaced with its children uses the target's scoped registry, setHTMLUnsafe().
+PASS Custom element in a declarative shadow root on a removed host is not constructed.
+PASS Custom element inside a removed element is not constructed.
+PASS attributeChangedCallback only fires for attributes the sanitizer keeps.
+PASS Custom element via is-attribute, where is attribute is not default-allowed.
+PASS Custom element via is-attribute, where is attribute is removed.
+PASS Custom element via is-attribute, where is attribute is removed but the custom element would have been allowed.
+PASS Custom element with an is-attribute, where the is=-attribute is blocked.
+PASS Custom element via is-attribute, where is attribute is allowed, but the element is not.
+PASS Custom element via is-attribute, where is attribute is allowed, but the element is removed.
+PASS Custom element via is-attribute, where is attribute is allowed, but the element is replaced.
+PASS Custom element via is-attribute with unsafe, where is attribute is not default-allowed.
+FAIL Sanity check, that is= processing still works when allowed. assert_equals: expected 1 but got 0
+PASS Custom element via is-attribute on script element, where is attribute is not allowed.
+

@@ -1,0 +1,8 @@
+
+
+
+PASS Test whether setHTML executes the fail handler.
+PASS Test whether setHTMLUnsafe executes the fail handler.
+PASS Test whether setHTML loads the image.
+PASS Test whether setHTMLUnsafe loads the image.
+

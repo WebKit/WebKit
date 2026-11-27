@@ -1,0 +1,8 @@
+
+PASS document is in quirks mode
+PASS setHTML parses in quirks mode
+PASS setHTML with a config parses in quirks mode
+PASS setHTMLUnsafe parses in quirks mode
+PASS setHTMLUnsafe with a config parses in quirks mode
+PASS innerHTML parses in quirks mode (control)
+

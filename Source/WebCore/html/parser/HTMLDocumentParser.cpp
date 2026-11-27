@@ -71,7 +71,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserC
     , m_options(document)
     , m_tokenizer(m_options)
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
-    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
+    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options, document.takeParserSanitizerConfiguration()))
     , m_parserScheduler(HTMLParserScheduler::create(*this))
     , m_preloader(HTMLResourcePreloader::create(document))
     , m_shouldEmitTracePoints(isMainDocumentLoadingFromHTTP(document))
@@ -83,11 +83,11 @@ Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document, Optio
     return adoptRef(*new HTMLDocumentParser(document, policy));
 }
 
-inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy, CustomElementRegistry* registry)
+inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
     : ScriptableDocumentParser(protect(fragment.document()), rawPolicy)
     , m_options(protect(fragment.document()))
     , m_tokenizer(m_options)
-    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry))
+    , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry, WTF::move(sanitizer)))
     , m_shouldEmitTracePoints(false) // Avoid emitting trace points when parsing fragments like outerHTML.
 {
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
@@ -95,9 +95,9 @@ inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Elemen
         m_tokenizer.updateStateFor(contextElement.tagQName().localName());
 }
 
-inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
+inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
 {
-    return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy, registry));
+    return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy, registry, WTF::move(sanitizer)));
 }
 
 HTMLDocumentParser::~HTMLDocumentParser()
@@ -659,9 +659,9 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
 {
-    auto parser = create(fragment, contextElement, parserContentPolicy, registry);
+    auto parser = create(fragment, contextElement, parserContentPolicy, registry, WTF::move(sanitizer));
     parser->insert(source); // Use insert() so that the parser will not yield.
     parser->finish();
     ASSERT(!parser->processingData());

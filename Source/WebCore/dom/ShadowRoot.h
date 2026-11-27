@@ -29,6 +29,7 @@
 
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/Element.h>
+#include <WebCore/ParserSanitizerConfiguration.h>
 #include <WebCore/ShadowRootMode.h>
 #include <WebCore/SlotAssignmentMode.h>
 #include <WebCore/StyleScopeOrdinal.h>
@@ -48,6 +49,9 @@ enum class ShadowRootAvailableToElementInternals : bool { No, Yes };
 enum class ShadowRootKeepsCustomElementRegistryNull : bool { No, Yes };
 
 struct GetHTMLOptions;
+struct SetHTMLOptions;
+struct SetHTMLUnsafeOptions;
+class TrustedHTMLParserOptions;
 
 namespace Style {
 class Scope;
@@ -105,7 +109,12 @@ public:
 
     bool keepsCustomElementRegistryNull() const { return m_keepsCustomElementRegistryNull; }
 
-    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
+    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> setHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> appendHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> prependHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> appendHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> prependHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
     String getHTML(GetHTMLOptions&&) const;
 
     String innerHTML() const;
@@ -168,7 +177,7 @@ private:
 
     void childrenChanged(const ChildChange&) override;
 
-    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
+    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
 
     bool m_hasBegunDeletingDetachedChildren : 1 { false };
     bool m_delegatesFocus : 1 { false };

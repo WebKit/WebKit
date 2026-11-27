@@ -1296,6 +1296,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeType.h
     dom/OriginKeyed.h
     dom/ParserContentPolicy.h
+    dom/ParserSanitizerConfiguration.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
     dom/PointerLockOptions.h

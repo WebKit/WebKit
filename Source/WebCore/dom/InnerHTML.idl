@@ -26,7 +26,12 @@
 // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-parsing-and-serialization
 
 interface mixin InnerHTML {
-    [CEReactions=Needed] undefined setHTMLUnsafe((TrustedHTML or DOMString) html);
+    [CEReactions=Needed, EnabledBySetting=SanitizerAPIEnabled] undefined setHTML(DOMString html, optional SetHTMLOptions options = {});
+    [CEReactions=Needed] undefined setHTMLUnsafe((TrustedHTML or DOMString) html, optional (TrustedHTMLParserOptions or SetHTMLUnsafeOptions) options = {});
+    [CEReactions=Needed, EnabledBySetting=SanitizerAPIEnabled] undefined appendHTML(DOMString html, optional SetHTMLOptions options = {});
+    [CEReactions=Needed, EnabledBySetting=SanitizerAPIEnabled] undefined prependHTML(DOMString html, optional SetHTMLOptions options = {});
+    [CEReactions=Needed, EnabledBySetting=SanitizerAPIEnabled] undefined appendHTMLUnsafe((TrustedHTML or DOMString) html, optional (TrustedHTMLParserOptions or SetHTMLUnsafeOptions) options = {});
+    [CEReactions=Needed, EnabledBySetting=SanitizerAPIEnabled] undefined prependHTMLUnsafe((TrustedHTML or DOMString) html, optional (TrustedHTMLParserOptions or SetHTMLUnsafeOptions) options = {});
     [CEReactions=NotNeeded] DOMString getHTML(optional GetHTMLOptions options = {});
     [CEReactions=Needed] attribute (TrustedHTML or [LegacyNullToEmptyString] DOMString) innerHTML;
 };

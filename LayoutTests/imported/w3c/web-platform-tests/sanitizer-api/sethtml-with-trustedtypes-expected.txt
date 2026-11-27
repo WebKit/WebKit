@@ -1,0 +1,255 @@
+
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning null fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning undefined fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning 0 fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning 123 fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning "foo" fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning true fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions returning false fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning null fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning undefined fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning 0 fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning 123 fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning "foo" fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning true fails
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions returning false fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning null fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning undefined fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning 0 fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning 123 fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning "foo" fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning true fails
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions returning false fails
+PASS ShadowRoot.innerHTML: createParserOptions can inject a sanitizer config
+PASS ShadowRoot.innerHTML: createParserOptions receives correct type and sink name
+PASS ShadowRoot.innerHTML: createParserOptions can inject a sanitizer
+PASS ShadowRoot.innerHTML: createParserOptions returning null fails
+PASS ShadowRoot.innerHTML: createParserOptions returning undefined fails
+PASS ShadowRoot.innerHTML: createParserOptions returning 0 fails
+PASS ShadowRoot.innerHTML: createParserOptions returning 123 fails
+PASS ShadowRoot.innerHTML: createParserOptions returning "foo" fails
+PASS ShadowRoot.innerHTML: createParserOptions returning true fails
+PASS ShadowRoot.innerHTML: createParserOptions returning false fails
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS ShadowRoot.setHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS ShadowRoot.appendHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS ShadowRoot.prependHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS ShadowRoot.innerHTML: createParserOptions returning {runScripts: true} enables script execution
+PASS ShadowRoot.setHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS ShadowRoot.appendHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS ShadowRoot.prependHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS ShadowRoot.innerHTML: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.setHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.setHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.setHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.setHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.setHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.setHTMLUnsafe: createParserOptions returning null fails
+PASS Element.setHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.setHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.setHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.setHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.setHTMLUnsafe: createParserOptions returning true fails
+PASS Element.setHTMLUnsafe: createParserOptions returning false fails
+PASS Element.appendHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.appendHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.appendHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.appendHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.appendHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.appendHTMLUnsafe: createParserOptions returning null fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning true fails
+PASS Element.appendHTMLUnsafe: createParserOptions returning false fails
+PASS Element.prependHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.prependHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.prependHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.prependHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.prependHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.prependHTMLUnsafe: createParserOptions returning null fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning true fails
+PASS Element.prependHTMLUnsafe: createParserOptions returning false fails
+PASS Element.beforeHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.beforeHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.beforeHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.beforeHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.beforeHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.beforeHTMLUnsafe: createParserOptions returning null fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning true fails
+PASS Element.beforeHTMLUnsafe: createParserOptions returning false fails
+PASS Element.afterHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.afterHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.afterHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.afterHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.afterHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.afterHTMLUnsafe: createParserOptions returning null fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning true fails
+PASS Element.afterHTMLUnsafe: createParserOptions returning false fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.replaceWithHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning null fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning true fails
+PASS Element.replaceWithHTMLUnsafe: createParserOptions returning false fails
+PASS Element.innerHTML: createParserOptions can inject a sanitizer config
+PASS Element.innerHTML: createParserOptions receives correct type and sink name
+PASS Element.innerHTML: createParserOptions can inject a sanitizer
+PASS Element.innerHTML: createParserOptions returning null fails
+PASS Element.innerHTML: createParserOptions returning undefined fails
+PASS Element.innerHTML: createParserOptions returning 0 fails
+PASS Element.innerHTML: createParserOptions returning 123 fails
+PASS Element.innerHTML: createParserOptions returning "foo" fails
+PASS Element.innerHTML: createParserOptions returning true fails
+PASS Element.innerHTML: createParserOptions returning false fails
+PASS Element.outerHTML: createParserOptions can inject a sanitizer config
+PASS Element.outerHTML: createParserOptions receives correct type and sink name
+PASS Element.outerHTML: createParserOptions can inject a sanitizer
+PASS Element.outerHTML: createParserOptions returning null fails
+PASS Element.outerHTML: createParserOptions returning undefined fails
+PASS Element.outerHTML: createParserOptions returning 0 fails
+PASS Element.outerHTML: createParserOptions returning 123 fails
+PASS Element.outerHTML: createParserOptions returning "foo" fails
+PASS Element.outerHTML: createParserOptions returning true fails
+PASS Element.outerHTML: createParserOptions returning false fails
+PASS Element.createContextualFragment: createParserOptions can inject a sanitizer config
+PASS Element.createContextualFragment: createParserOptions receives correct type and sink name
+PASS Element.createContextualFragment: createParserOptions can inject a sanitizer
+PASS Element.createContextualFragment: createParserOptions returning null fails
+PASS Element.createContextualFragment: createParserOptions returning undefined fails
+PASS Element.createContextualFragment: createParserOptions returning 0 fails
+PASS Element.createContextualFragment: createParserOptions returning 123 fails
+PASS Element.createContextualFragment: createParserOptions returning "foo" fails
+PASS Element.createContextualFragment: createParserOptions returning true fails
+PASS Element.createContextualFragment: createParserOptions returning false fails
+PASS Element.afterbegin: createParserOptions can inject a sanitizer config
+PASS Element.afterbegin: createParserOptions receives correct type and sink name
+PASS Element.afterbegin: createParserOptions can inject a sanitizer
+PASS Element.afterbegin: createParserOptions returning null fails
+PASS Element.afterbegin: createParserOptions returning undefined fails
+PASS Element.afterbegin: createParserOptions returning 0 fails
+PASS Element.afterbegin: createParserOptions returning 123 fails
+PASS Element.afterbegin: createParserOptions returning "foo" fails
+PASS Element.afterbegin: createParserOptions returning true fails
+PASS Element.afterbegin: createParserOptions returning false fails
+PASS Element.beforeend: createParserOptions can inject a sanitizer config
+PASS Element.beforeend: createParserOptions receives correct type and sink name
+PASS Element.beforeend: createParserOptions can inject a sanitizer
+PASS Element.beforeend: createParserOptions returning null fails
+PASS Element.beforeend: createParserOptions returning undefined fails
+PASS Element.beforeend: createParserOptions returning 0 fails
+PASS Element.beforeend: createParserOptions returning 123 fails
+PASS Element.beforeend: createParserOptions returning "foo" fails
+PASS Element.beforeend: createParserOptions returning true fails
+PASS Element.beforeend: createParserOptions returning false fails
+PASS Element.beforebegin: createParserOptions can inject a sanitizer config
+PASS Element.beforebegin: createParserOptions receives correct type and sink name
+PASS Element.beforebegin: createParserOptions can inject a sanitizer
+PASS Element.beforebegin: createParserOptions returning null fails
+PASS Element.beforebegin: createParserOptions returning undefined fails
+PASS Element.beforebegin: createParserOptions returning 0 fails
+PASS Element.beforebegin: createParserOptions returning 123 fails
+PASS Element.beforebegin: createParserOptions returning "foo" fails
+PASS Element.beforebegin: createParserOptions returning true fails
+PASS Element.beforebegin: createParserOptions returning false fails
+PASS Element.afterend: createParserOptions can inject a sanitizer config
+PASS Element.afterend: createParserOptions receives correct type and sink name
+PASS Element.afterend: createParserOptions can inject a sanitizer
+PASS Element.afterend: createParserOptions returning null fails
+PASS Element.afterend: createParserOptions returning undefined fails
+PASS Element.afterend: createParserOptions returning 0 fails
+PASS Element.afterend: createParserOptions returning 123 fails
+PASS Element.afterend: createParserOptions returning "foo" fails
+PASS Element.afterend: createParserOptions returning true fails
+PASS Element.afterend: createParserOptions returning false fails
+PASS Element.parseHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Element.parseHTMLUnsafe: createParserOptions receives correct type and sink name
+PASS Element.parseHTMLUnsafe: createParserOptions can inject a sanitizer
+PASS Element.parseHTMLUnsafe: createParserOptions can override a sanitizer config
+PASS Element.parseHTMLUnsafe: createParserOptions can remove a sanitizer
+PASS Element.parseHTMLUnsafe: createParserOptions returning null fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning undefined fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning 0 fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning 123 fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning "foo" fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning true fails
+PASS Element.parseHTMLUnsafe: createParserOptions returning false fails
+PASS Element.setHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.setHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.setHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.appendHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.appendHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.appendHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.prependHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.prependHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.prependHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.beforeHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.beforeHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.beforeHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.afterHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.afterHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.afterHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can override runScripts from true to false
+PASS Element.replaceWithHTMLUnsafe: createParserOptions can override runScripts from false to true
+PASS Element.replaceWithHTMLUnsafe: createParserOptions with sanitizer prevents createHTML from running
+PASS Element.innerHTML: createParserOptions returning {runScripts: true} enables script execution
+PASS Element.outerHTML: createParserOptions returning {runScripts: true} enables script execution
+PASS Element.afterbegin: createParserOptions returning {runScripts: true} enables script execution
+PASS Element.beforeend: createParserOptions returning {runScripts: true} enables script execution
+PASS Element.beforebegin: createParserOptions returning {runScripts: true} enables script execution
+PASS Element.afterend: createParserOptions returning {runScripts: true} enables script execution
+PASS Element: createContextualFragment with createParserOptions(runScripts=false) does not run scripts
+PASS Element: createContextualFragment runs scripts by default
+PASS Element.setHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.appendHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.prependHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.beforeHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.afterHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.replaceWithHTMLUnsafe: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.innerHTML: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.outerHTML: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.createContextualFragment: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.afterbegin: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.beforeend: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.beforebegin: exception in createParserOptions is rethrown and prevents createHTML
+PASS Element.afterend: exception in createParserOptions is rethrown and prevents createHTML
+

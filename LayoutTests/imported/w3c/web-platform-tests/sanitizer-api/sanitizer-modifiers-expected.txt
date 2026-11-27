@@ -1,0 +1,24 @@
+
+PASS sanitizer.allowAttribute() with global attributes
+PASS sanitizer.allowAttribute() with global removeAttributes
+PASS sanitizer.allowAttribute() with global attributes and elements
+PASS sanitizer.allowAttribute() with global removeAttributes and element's attributes
+PASS sanitizer.allowAttribute() with global removeAttributes and element's removeAttributes
+PASS sanitizer.removeAttribute() with global attributes
+PASS sanitizer.removeAttribute() with global removeAttributes
+PASS sanitizer.removeAttribute() with global attributes and elements
+PASS sanitizer.removeAttribute() with global removeAttributes and element's attributes
+PASS sanitizer.removeAttribute() with global removeAttributes and element's removeAttributes
+PASS sanitizer.removeElement() with global elements
+PASS sanitizer.removeElement() with global removeElements
+PASS sanitizer.replaceElementWithChildren() with global elements
+PASS sanitizer.replaceElementWithChildren() with global removeElements
+PASS sanitizer.allowElement() with global elements
+PASS sanitizer.allowElement() with global removeElements
+PASS sanitizer.allowElement() with global elements and attributes
+PASS sanitizer.allowElement() with global elements and removeAttributes
+PASS sanitizer.replaceElementWithChildren() does not allow non-replaceable elements.
+PASS sanitizer.setJavascriptURLs()
+PASS sanitizer.setComments()
+PASS sanitizer.setDataAttributes()
+

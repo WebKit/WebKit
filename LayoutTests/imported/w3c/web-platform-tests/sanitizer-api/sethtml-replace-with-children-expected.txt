@@ -1,0 +1,8 @@
+
+PASS setHTML: children of a replaced element get the target's node document
+PASS setHTML: a declarative shadow root inside a replaced element is not attached
+PASS setHTMLUnsafe: children of a replaced element get the target's node document
+PASS setHTMLUnsafe: a declarative shadow root inside a replaced element is not attached
+PASS setHTMLUnsafe: a custom element inside a replaced element is constructed and connected to the target
+PASS setHTMLUnsafe: a custom element inside a foster-parented replaced element is connected before the table
+

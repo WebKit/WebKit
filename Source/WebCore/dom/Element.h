@@ -30,6 +30,7 @@
 #include <WebCore/EventOptions.h>
 #include <WebCore/FocusOptions.h>
 #include <WebCore/HitTestRequest.h>
+#include <WebCore/ParserSanitizerConfiguration.h>
 #include <WebCore/QualifiedName.h>
 #include <WebCore/RenderPtr.h>
 #include <WebCore/ScrollTypes.h>
@@ -148,6 +149,9 @@ struct ElementLargestContentfulPaintData;
 struct PointerLockOptions;
 struct ResizeObserverData;
 struct ScrollIntoViewOptions;
+struct SetHTMLOptions;
+struct SetHTMLUnsafeOptions;
+class TrustedHTMLParserOptions;
 struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
@@ -539,7 +543,7 @@ public:
     WEBCORE_EXPORT void setNonce(const AtomString&);
     inline void hideNonce(); // Defined in ElementInlines.h.
 
-    ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
+    ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes, RefPtr<ParserSanitizerConfiguration>&& = nullptr, bool runScripts = false);
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, Variant<Ref<TrustedHTML>, String>&&);
@@ -620,7 +624,13 @@ public:
     virtual void blur();
     virtual void runFocusingStepsForAutofocus();
 
-    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&);
+    ExceptionOr<void> setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> setHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> appendHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> prependHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> appendHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> prependHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ContainerNode& targetForHTMLInsertion();
     String getHTML(GetHTMLOptions&&) const;
 
     WEBCORE_EXPORT String innerHTML() const;
@@ -972,7 +982,7 @@ protected:
     void classAttributeChanged(const AtomString& newClassString, AttributeModificationReason);
     void partAttributeChanged(const AtomString& newValue);
 
-    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
+    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 

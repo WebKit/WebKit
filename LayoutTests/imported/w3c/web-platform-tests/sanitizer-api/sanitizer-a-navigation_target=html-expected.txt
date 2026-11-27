@@ -1,0 +1,29 @@
+
+PASS [SAFE] [setHTML] HTML <a> with href (STANDARD)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (STANDARD)
+PASS [SAFE] [parseHTML] HTML <a> with href (STANDARD)
+PASS [SAFE] [setHTML] HTML <a> with href (CASE_MIXED)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (CASE_MIXED)
+PASS [SAFE] [parseHTML] HTML <a> with href (CASE_MIXED)
+PASS [SAFE] [setHTML] HTML <a> with href (TAB_ENTITY)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (TAB_ENTITY)
+PASS [SAFE] [parseHTML] HTML <a> with href (TAB_ENTITY)
+PASS [SAFE] [setHTML] HTML <a> with href (NEWLINE_ENTITY)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (NEWLINE_ENTITY)
+PASS [SAFE] [parseHTML] HTML <a> with href (NEWLINE_ENTITY)
+PASS [SAFE] [setHTML] HTML <a> with href (COLON_ENTITY)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (COLON_ENTITY)
+PASS [SAFE] [parseHTML] HTML <a> with href (COLON_ENTITY)
+PASS [SAFE] [setHTML] HTML <a> with href (LEADING_WHITESPACE)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (LEADING_WHITESPACE)
+PASS [SAFE] [parseHTML] HTML <a> with href (LEADING_WHITESPACE)
+PASS [SAFE] [setHTML] HTML <a> with href (TAB_RAW)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (TAB_RAW)
+PASS [SAFE] [parseHTML] HTML <a> with href (TAB_RAW)
+PASS [SAFE] [setHTML] HTML <a> with href (NEWLINE_RAW)
+PASS [SAFE] [ShadowRoot.setHTML] HTML <a> with href (NEWLINE_RAW)
+PASS [SAFE] [parseHTML] HTML <a> with href (NEWLINE_RAW)
+PASS [UNSAFE] [setHTMLUnsafe] HTML <a> with href
+PASS [UNSAFE] [ShadowRoot.setHTMLUnsafe] HTML <a> with href
+PASS [UNSAFE] [parseHTMLUnsafe] HTML <a> with href
+

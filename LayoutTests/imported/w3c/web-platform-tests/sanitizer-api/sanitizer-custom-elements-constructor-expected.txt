@@ -1,0 +1,16 @@
+
+PASS setHTML blocks CE constructor when element is dropped by explicit sanitizer config (removeElements)
+PASS setHTML blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (removeElements)
+PASS setHTML blocks CE constructor when element is dropped by explicit sanitizer config (allowElements)
+PASS setHTML blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (allowElements)
+PASS setHTML blocks CE constructor when element is dropped by explicit sanitizer config (replaceWithChildrenElements)
+PASS setHTML blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (replaceWithChildrenElements)
+PASS setHTMLUnsafe blocks CE constructor when element is dropped by explicit sanitizer config (removeElements)
+PASS setHTMLUnsafe blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (removeElements)
+PASS setHTMLUnsafe blocks CE constructor when element is dropped by explicit sanitizer config (allowElements)
+PASS setHTMLUnsafe blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (allowElements)
+PASS setHTMLUnsafe blocks CE constructor when element is dropped by explicit sanitizer config (replaceWithChildrenElements)
+PASS setHTMLUnsafe blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (replaceWithChildrenElements)
+PASS setHTML constructs an allowed CE from the scoped registry
+PASS setHTMLUnsafe constructs an allowed CE from the scoped registry
+
