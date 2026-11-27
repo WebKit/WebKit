@@ -345,6 +345,22 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
     }
 
     Ref pipelineLayout = pipeline->pipelineLayout();
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to draw");
+        return false;
+    }
+
+    uint64_t currentImmediateOffset = m_immediateBufferOffset;
+    if (pipeline->usesVertexImmediates() || pipeline->usesFragmentImmediates()) {
+        auto immediateOffsetSum = checkedSum<uint64_t>(m_immediateBufferOffset, 256);
+        if (immediateOffsetSum.hasOverflowed()) {
+            makeInvalid(@"Invalid immediateBufferOffset");
+            return false;
+        }
+        m_immediateBufferOffset = immediateOffsetSum.value();
+    }
+
     auto vertexDynamicOffsetSum = checkedSum<uint64_t>(m_vertexDynamicOffset, sizeof(uint32_t) * pipelineLayout->sizeOfVertexDynamicOffsets());
     if (vertexDynamicOffsetSum.hasOverflowed()) {
         makeInvalid(@"Invalid vertexDynamicOffset");
@@ -500,6 +516,21 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
             [icbCommand setFragmentBuffer:m_dynamicOffsetsFragmentBuffer offset:fragmentDynamicOffset atIndex:fragmentDynamicOffsetsBufferIndex];
     }
 
+    if (pipeline->usesVertexImmediates() || pipeline->usesFragmentImmediates()) {
+        if (renderPassEncoder) {
+            if (pipeline->usesVertexImmediates())
+                [renderPassEncoder->renderCommandEncoder() setVertexBytes:m_immediateData.data() length:m_immediateData.size() atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1];
+            if (pipeline->usesFragmentImmediates())
+                [renderPassEncoder->renderCommandEncoder() setFragmentBytes:m_immediateData.data() length:m_immediateData.size() atIndex:m_device->maxBuffersForFragmentStage() + 1];
+        } else if (m_immediatesBuffer && currentImmediateOffset + m_immediateData.size() <= m_immediatesBuffer.length) {
+            memcpySpan(makeSpanFromBuffer<uint8_t>(m_immediatesBuffer).subspan(currentImmediateOffset, m_immediateData.size()), std::span<const uint8_t> { m_immediateData });
+            if (pipeline->usesVertexImmediates())
+                [icbCommand setVertexBuffer:m_immediatesBuffer offset:currentImmediateOffset atIndex:m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1];
+            if (pipeline->usesFragmentImmediates())
+                [icbCommand setFragmentBuffer:m_immediatesBuffer offset:currentImmediateOffset atIndex:m_device->maxBuffersForFragmentStage() + 1];
+        }
+    }
+
     return true;
 }
 
@@ -531,6 +562,30 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, WebGPU::Buffer* buffer,
 void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
+void RenderBundleEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"GPURenderBundleEncoder.setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+    }
+
+    if (!replayingCommands()) {
+        recordCommand([rangeOffset, ownedData = Vector<uint8_t> { data }, protectedThis = protect(*this)] {
+            protectedThis->setImmediates(rangeOffset, borrow(ownedData)->span());
+            return false;
+        });
+    }
 }
 
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::encodeDraw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
@@ -1051,14 +1106,23 @@ void RenderBundleEncoder::endCurrentICB()
 
     Ref device = m_device;
 
-    m_icbDescriptor.maxVertexBufferBindCount = device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
-    m_icbDescriptor.maxFragmentBufferBindCount = device->maxBuffersForFragmentStage() + 1;
+    m_icbDescriptor.maxVertexBufferBindCount = device->maxBuffersPlusVertexBuffersForVertexStage() + 2;
+    m_icbDescriptor.maxFragmentBufferBindCount = device->maxBuffersForFragmentStage() + 2;
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
         m_dynamicOffsetsVertexBuffer = device->safeCreateBuffer(m_vertexDynamicOffset);
         if (!addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex))
             return;
     }
     m_vertexDynamicOffset = 0;
+
+    if (m_immediateBufferOffset && !m_renderPassEncoder.get() && !m_immediatesBuffer) {
+        m_immediatesBuffer = device->safeCreateBuffer(m_immediateBufferOffset);
+        if (!addResource(m_resources, m_immediatesBuffer, MTLRenderStageVertex | MTLRenderStageFragment))
+            return;
+    }
+    m_immediateBufferOffset = 0;
+    m_immediateData.fill(0);
+    m_setImmediateSlots = 0;
 
     if (!m_dynamicOffsetsFragmentBuffer) {
         m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(std::max<uint64_t>(m_fragmentDynamicOffset, RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float)));
@@ -1082,6 +1146,9 @@ void RenderBundleEncoder::endCurrentICB()
     m_indirectCommandBuffer = nil;
     m_dynamicOffsetsFragmentBuffer = nil;
     m_dynamicOffsetsVertexBuffer = nil;
+    m_immediatesBuffer = nil;
+    m_immediateData.fill(0);
+    m_setImmediateSlots = 0;
 }
 
 bool RenderBundleEncoder::validToEncodeCommand() const
@@ -1363,12 +1430,12 @@ void RenderBundleEncoder::setBindGroupWithOwnedDynamicOffsets(uint32_t groupInde
     if (auto vertexBindGroupBufferIndex = m_device->vertexBufferIndexForBindGroup(groupIndex); group.vertexArgumentBuffer() && m_vertexBuffers.size() > vertexBindGroupBufferIndex) {
         if (!addResource(m_resources, group.vertexArgumentBuffer(), MTLRenderStageVertex))
             return;
-        m_vertexBuffers[vertexBindGroupBufferIndex] = { .buffer = group.vertexArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.vertexArgumentBuffer().length };
+        m_vertexBuffers[vertexBindGroupBufferIndex] = { .buffer = group.vertexArgumentBuffer(), .offset = group.vertexArgumentBufferOffset(), .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.vertexArgumentBufferLength() };
     }
     if (group.fragmentArgumentBuffer() && m_fragmentBuffers.size() > groupIndex) {
         if (!addResource(m_resources, group.fragmentArgumentBuffer(), MTLRenderStageFragment))
             return;
-        m_fragmentBuffers[groupIndex] = { .buffer = group.fragmentArgumentBuffer(), .offset = 0, .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.fragmentArgumentBuffer().length };
+        m_fragmentBuffers[groupIndex] = { .buffer = group.fragmentArgumentBuffer(), .offset = group.fragmentArgumentBufferOffset(), .dynamicOffsetCount = dynamicOffsetCount, .dynamicOffsets = dynamicOffsets->span().data(), .size = group.fragmentArgumentBufferLength() };
     }
 }
 

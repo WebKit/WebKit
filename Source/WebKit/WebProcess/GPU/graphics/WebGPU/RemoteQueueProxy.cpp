@@ -136,6 +136,29 @@ void RemoteQueueProxy::copyExternalImageToTexture(
 #endif
 
 
+    if (!source.pixelData.empty() && !(source.pixelData.size() % sizeof(uint32_t)) && source.pixelDataFormat && source.pixelData.size() <= maxCrossProcessResourceCopySize) {
+        auto convertedDestination = serialize(destination);
+        ASSERT(convertedDestination);
+        if (!convertedDestination)
+            return;
+        ImageCopyExternalImageData dataSource {
+            .origin = source.origin,
+            .flipY = source.flipY,
+            .premultipliedAlpha = source.premultipliedAlpha,
+            .hasAlpha = source.pixelDataHasAlpha,
+            .isDisplayP3 = source.pixelDataColorSpace == ::WebGPU::PredefinedColorSpace::DisplayP3,
+            .format = *source.pixelDataFormat,
+            .width = source.pixelDataSize.width,
+            .height = source.pixelDataSize.height,
+            .bytesPerRow = source.pixelDataBytesPerRow,
+        };
+        Vector<uint32_t> wordData(source.pixelData.size() / sizeof(uint32_t));
+        memcpySpan(asMutableByteSpan(wordData.mutableSpan()), source.pixelData);
+        auto sendResult = send(Messages::RemoteQueue::CopyExternalImageDataToTexture(dataSource, WTF::move(wordData), *convertedDestination, copySize));
+        UNUSED_VARIABLE(sendResult);
+        return;
+    }
+
     // The GPU process resolves the source by identifier through its RemoteRenderingBackend, so make
     // sure every drawing command recorded against the source buffer has been submitted first.
     RefPtr sourceImageBuffer = source.imageBuffer;

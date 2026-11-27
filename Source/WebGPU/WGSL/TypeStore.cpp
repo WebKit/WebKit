@@ -27,7 +27,9 @@
 #include "TypeStore.h"
 
 #include "Types.h"
+#include <mutex>
 #include <wtf/EnumTraits.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WGSL {
 
@@ -66,6 +68,26 @@ struct ArrayKey {
                 return { address >> 32, address };
             });
         return std::tuple(TypeCache::Array, 0, std::get<0>(encodedSize), std::get<1>(encodedSize), std::bit_cast<uintptr_t>(elementType));
+    }
+};
+
+struct BufferKey {
+    Types::Buffer::Size size;
+
+    TypeCache::EncodedKey encode() const
+    {
+        auto encodedSize = WTF::switchOn(size,
+            [&](unsigned size) -> std::tuple<uint8_t, uint16_t, unsigned> {
+                return { 1, 0, size };
+            },
+            [&](std::monostate) -> std::tuple<uint8_t, uint16_t, unsigned> {
+                return { 0, 0, 0 };
+            },
+            [&](AST::Expression* expression) -> std::tuple<uint8_t, uint16_t, unsigned> {
+                auto address = static_cast<uint64_t>(std::bit_cast<uintptr_t>(expression));
+                return { 2, address >> 32, address };
+            });
+        return std::tuple(TypeCache::Buffer, std::get<0>(encodedSize), std::get<1>(encodedSize), std::get<2>(encodedSize), 0);
     }
 };
 
@@ -120,11 +142,24 @@ const Type* TypeCache::find(const Key& key) const
 template<typename Key>
 void TypeCache::insert(const Key& key, const Type* type)
 {
-    auto it = m_storage.add(key.encode(), type);
+    auto encoded = key.encode();
+    auto it = m_storage.add(encoded, type);
     ASSERT_UNUSED(it, it.isNewEntry);
+    m_insertedKeys.append(encoded);
 }
 
-TypeStore::TypeStore()
+TypeStore& TypeStore::sharedBuiltinTypes()
+{
+    static LazyNeverDestroyed<TypeStore> s_shared;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        s_shared.construct(ConstructSharedBuiltins);
+    });
+    return s_shared.get();
+}
+
+TypeStore::TypeStore(ConstructSharedBuiltinsTag)
+    : m_isSharedStore(true)
 {
     m_abstractInt = allocateType<Primitive>(Primitive::AbstractInt);
     m_abstractFloat = allocateType<Primitive>(Primitive::AbstractFloat);
@@ -147,6 +182,88 @@ TypeStore::TypeStore()
     m_textureDepthMultisampled2d = allocateType<TextureDepth>(TextureDepth::Kind::TextureDepthMultisampled2d);
     m_atomicI32 = allocateType<Atomic>(m_i32);
     m_atomicU32 = allocateType<Atomic>(m_u32);
+    atomicCompareExchangeResultType(m_i32);
+    atomicCompareExchangeResultType(m_u32);
+
+    const Type* scalarElements[] = { m_bool, m_i32, m_u32, m_f32, m_f16, m_abstractInt, m_abstractFloat };
+    for (uint8_t size = 2; size <= 4; ++size) {
+        for (const Type* element : scalarElements)
+            vectorType(size, element);
+    }
+
+    const Type* floatElements[] = { m_f32, m_f16, m_abstractFloat };
+    for (uint8_t columns = 2; columns <= 4; ++columns) {
+        for (uint8_t rows = 2; rows <= 4; ++rows) {
+            for (const Type* element : floatElements)
+                matrixType(columns, rows, element);
+        }
+    }
+
+    const Texture::Kind textureKinds[] = {
+        Texture::Kind::Texture1d,
+        Texture::Kind::Texture2d,
+        Texture::Kind::TextureMultisampled2d,
+        Texture::Kind::Texture2dArray,
+        Texture::Kind::Texture3d,
+        Texture::Kind::TextureCube,
+        Texture::Kind::TextureCubeArray,
+    };
+    const Type* sampledElements[] = { m_i32, m_u32, m_f32 };
+    for (auto kind : textureKinds) {
+        for (const Type* element : sampledElements)
+            textureType(kind, element);
+    }
+
+    const std::pair<const Type*, const Type*> frexpPairs[] = {
+        { m_f32, m_i32 },
+        { m_f16, m_i32 },
+        { m_abstractFloat, m_abstractInt },
+    };
+    for (auto [fractType, expType] : frexpPairs) {
+        frexpResultType(fractType, expType);
+        for (uint8_t size = 2; size <= 4; ++size)
+            frexpResultType(vectorType(size, fractType), vectorType(size, expType));
+    }
+
+    for (const Type* element : floatElements) {
+        modfResultType(element, element);
+        for (uint8_t size = 2; size <= 4; ++size) {
+            const Type* vec = vectorType(size, element);
+            modfResultType(vec, vec);
+        }
+    }
+
+#if ASSERT_ENABLED
+    m_readOnly = true;
+#endif
+}
+
+TypeStore::TypeStore()
+{
+    const auto& shared = sharedBuiltinTypes();
+    m_abstractInt = shared.m_abstractInt;
+    m_abstractFloat = shared.m_abstractFloat;
+    m_void = shared.m_void;
+    m_bool = shared.m_bool;
+    m_i32 = shared.m_i32;
+    m_u32 = shared.m_u32;
+    m_f32 = shared.m_f32;
+    m_f16 = shared.m_f16;
+    m_sampler = shared.m_sampler;
+    m_samplerComparison = shared.m_samplerComparison;
+    m_textureExternal = shared.m_textureExternal;
+    m_accessMode = shared.m_accessMode;
+    m_texelFormat = shared.m_texelFormat;
+    m_addressSpace = shared.m_addressSpace;
+    m_textureDepth2d = shared.m_textureDepth2d;
+    m_textureDepthArray2d = shared.m_textureDepthArray2d;
+    m_textureDepthCube = shared.m_textureDepthCube;
+    m_textureDepthArrayCube = shared.m_textureDepthArrayCube;
+    m_textureDepthMultisampled2d = shared.m_textureDepthMultisampled2d;
+    m_atomicI32 = shared.m_atomicI32;
+    m_atomicU32 = shared.m_atomicU32;
+    m_atomicCompareExchangeResultI32 = shared.m_atomicCompareExchangeResultI32;
+    m_atomicCompareExchangeResultU32 = shared.m_atomicCompareExchangeResultU32;
 }
 
 const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
@@ -165,9 +282,24 @@ const Type* TypeStore::arrayType(const Type* elementType, Types::Array::Size siz
     return type;
 }
 
+const Type* TypeStore::bufferType(Types::Buffer::Size size)
+{
+    BufferKey key { size };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Buffer>(size);
+    m_cache.insert(key, type);
+    return type;
+}
+
 const Type* TypeStore::vectorType(uint8_t size, const Type* elementType)
 {
     VectorKey key { elementType, size };
+    if (!m_isSharedStore) {
+        if (const Type* shared = sharedBuiltinTypes().m_cache.find(key))
+            return shared;
+    }
     const Type* type = m_cache.find(key);
     if (type)
         return type;
@@ -179,6 +311,10 @@ const Type* TypeStore::vectorType(uint8_t size, const Type* elementType)
 const Type* TypeStore::matrixType(uint8_t columns, uint8_t rows, const Type* elementType)
 {
     MatrixKey key { elementType, columns, rows };
+    if (!m_isSharedStore) {
+        if (const Type* shared = sharedBuiltinTypes().m_cache.find(key))
+            return shared;
+    }
     const Type* type = m_cache.find(key);
     if (type)
         return type;
@@ -190,6 +326,10 @@ const Type* TypeStore::matrixType(uint8_t columns, uint8_t rows, const Type* ele
 const Type* TypeStore::textureType(Texture::Kind kind, const Type* elementType)
 {
     TextureKey key { elementType, kind };
+    if (!m_isSharedStore) {
+        if (const Type* shared = sharedBuiltinTypes().m_cache.find(key))
+            return shared;
+    }
     const Type* type = m_cache.find(key);
     if (type)
         return type;
@@ -244,7 +384,7 @@ const Type* TypeStore::atomicType(const Type* type)
     return m_atomicU32;
 }
 
-const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&& constructor)
+const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<Result<const Type*>(TypeChecker&, AST::ElaboratedTypeExpression&)>&& constructor)
 {
     return allocateType<TypeConstructor>(name, WTF::move(constructor));
 }
@@ -252,6 +392,10 @@ const Type* TypeStore::typeConstructorType(ASCIILiteral name, std::function<Resu
 const Type* TypeStore::frexpResultType(const Type* fract, const Type* exp)
 {
     PrimitiveStructKey key { PrimitiveStruct::FrexpResult::kind, fract };
+    if (!m_isSharedStore) {
+        if (const Type* shared = sharedBuiltinTypes().m_cache.find(key))
+            return shared;
+    }
     const Type* type = m_cache.find(key);
     if (type)
         return type;
@@ -267,6 +411,10 @@ const Type* TypeStore::frexpResultType(const Type* fract, const Type* exp)
 const Type* TypeStore::modfResultType(const Type* fract, const Type* whole)
 {
     PrimitiveStructKey key { PrimitiveStruct::ModfResult::kind, fract };
+    if (!m_isSharedStore) {
+        if (const Type* shared = sharedBuiltinTypes().m_cache.find(key))
+            return shared;
+    }
     const Type* type = m_cache.find(key);
     if (type)
         return type;
@@ -297,9 +445,17 @@ const Type* TypeStore::atomicCompareExchangeResultType(const Type* type)
     return load(m_atomicCompareExchangeResultU32);
 }
 
+size_t TypeStore::memoryFootprint() const
+{
+    return m_types.size() * sizeof(Type) + m_types.capacity() * sizeof(std::unique_ptr<const Type>) + m_cache.memoryFootprint();
+}
+
 template<typename TypeKind, typename... Arguments>
 const Type* TypeStore::allocateType(Arguments&&... arguments)
 {
+#if ASSERT_ENABLED
+    ASSERT(!m_readOnly);
+#endif
     m_types.append(std::unique_ptr<Type>(new Type(TypeKind { std::forward<Arguments>(arguments)... })));
     return m_types.last().get();
 }

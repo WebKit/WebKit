@@ -58,6 +58,12 @@ struct WebGPUExternalImageSource {
     VideoFrameRotation videoSourceRotation { VideoFrameRotation::None };
     bool videoSourceIsMirrored { false };
 #endif
+    std::span<const uint8_t> pixelData { };
+    uint32_t pixelDataBytesPerRow { 0 };
+    ::WebGPU::Extent2D pixelDataSize { };
+    std::optional<::WebGPU::TextureFormat> pixelDataFormat { };
+    bool pixelDataHasAlpha { true };
+    ::WebGPU::PredefinedColorSpace pixelDataColorSpace { ::WebGPU::PredefinedColorSpace::SRGB };
 };
 
 } // namespace WebCore

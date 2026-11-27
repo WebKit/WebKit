@@ -86,6 +86,15 @@ void RemoteComputePassEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU:
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteComputePassEncoderProxy::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    Vector<uint32_t> words(data.size() / sizeof(uint32_t));
+    if (!data.empty())
+        memcpySpan(asMutableByteSpan(words.mutableSpan()), data);
+    auto sendResult = send(Messages::RemoteComputePassEncoder::SetImmediates(rangeOffset, WTF::move(words)));
+    UNUSED_VARIABLE(sendResult);
+}
+
 void RemoteComputePassEncoderProxy::pushDebugGroup(String&& groupLabel)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::PushDebugGroup(WTF::move(groupLabel)));

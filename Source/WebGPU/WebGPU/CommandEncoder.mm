@@ -228,6 +228,33 @@ void CommandEncoder::rotateCommandBufferIfNeeded()
     m_renderCommandEncoderCount = 0;
 }
 
+void CommandEncoder::addDeferredPassReplay(Function<void(id<MTLCommandBuffer>)>&& replay)
+{
+    finalizeBlitCommandEncoder();
+    if (!m_commandBuffer || m_existingCommandEncoder || m_commandBuffer.status >= MTLCommandBufferStatusEnqueued)
+        return;
+
+    Ref queue = m_device->getQueue();
+    id<MTLCommandBuffer> deferredCommandBuffer = queue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    id<MTLCommandBuffer> nextCommandBuffer = queue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!deferredCommandBuffer || !nextCommandBuffer) {
+        if (deferredCommandBuffer)
+            queue->removeMTLCommandBuffer(deferredCommandBuffer);
+        if (nextCommandBuffer)
+            queue->removeMTLCommandBuffer(nextCommandBuffer);
+        replay(m_commandBuffer);
+        return;
+    }
+
+    deferredCommandBuffer.label = m_commandBuffer.label;
+    nextCommandBuffer.label = m_commandBuffer.label;
+    queue->registerDeferredPassReplay(deferredCommandBuffer, WTF::move(replay));
+    m_priorCommandBuffers.append(m_commandBuffer);
+    m_priorCommandBuffers.append(deferredCommandBuffer);
+    m_commandBuffer = nextCommandBuffer;
+    m_renderCommandEncoderCount = 0;
+}
+
 id<MTLRenderCommandEncoder> CommandEncoder::makeRenderCommandEncoder(MTLRenderPassDescriptor* descriptor)
 {
     ASSERT(!m_existingCommandEncoder);
@@ -394,8 +421,12 @@ void CommandEncoder::resolveQuerySet(const WebGPU::QuerySet& querySet, uint32_t 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePassDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    if (isWebGPUSwiftEnabled())
-        return commandEncoderBeginComputePass(this, descriptor);
+    if (isWebGPUSwiftEnabled()) {
+        auto encoder = commandEncoderBeginComputePass(this, descriptor);
+        if (encoder->isValid() && descriptor.timestampWrites)
+            recordTimestampWrites(*descriptor.timestampWrites);
+        return encoder;
+    }
 #endif
 
     if (!prepareTheEncoderState()) {
@@ -424,6 +455,7 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePa
         Ref timestampWrites = metal(apiTimestampWrites->querySet);
         counterSampleBuffer = timestampWrites->counterSampleBufferWithOffset();
         timestampWrites->setCommandEncoder(*this);
+        recordTimestampWrites(*apiTimestampWrites);
     }
 
     if (m_device->enableEncoderTimestamps() || counterSampleBuffer.buffer) {
@@ -527,51 +559,153 @@ id<MTLFunction> Device::nopVertexFunction(id<MTLDevice> device)
     return function;
 }
 
-static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, id<MTLDevice> device)
+id<MTLDepthStencilState> Device::clearDepthStencilState() const
 {
-    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    if (!m_device)
+        return nil;
+    if (!m_clearDepthStencilState) {
+        MTLDepthStencilDescriptor *depthStencilDescriptor = [MTLDepthStencilDescriptor new];
+        depthStencilDescriptor.depthWriteEnabled = NO;
+        m_clearDepthStencilState = [m_device newDepthStencilStateWithDescriptor:depthStencilDescriptor];
+    }
+    return m_clearDepthStencilState;
+}
 
+struct ClearRenderPipelineKey {
+    uintptr_t devicePtr { 0 };
+    uint32_t sampleCount { 0 };
+    std::array<uint16_t, 8> colorFormats { };
+    uint16_t depthFormat { 0 };
+    uint16_t stencilFormat { 0 };
+    bool isEmptyValue { false };
+    bool isDeletedValue { false };
+
+    friend bool operator==(const ClearRenderPipelineKey&, const ClearRenderPipelineKey&) = default;
+};
+
+struct ClearRenderPipelineKeyHash {
+    static unsigned hash(const ClearRenderPipelineKey& key)
+    {
+        unsigned h = WTF::pairIntHash(WTF::intHash(static_cast<uint64_t>(key.devicePtr)), WTF::intHash(key.sampleCount));
+        for (size_t i = 0; i < key.colorFormats.size(); i += 2)
+            h = WTF::pairIntHash(h, WTF::intHash((static_cast<uint32_t>(key.colorFormats[i]) << 16) | key.colorFormats[i + 1]));
+        uint64_t depthStencilAndFlags = (static_cast<uint64_t>(key.depthFormat) << 24)
+            | (static_cast<uint64_t>(key.stencilFormat) << 8)
+            | (key.isEmptyValue ? 2u : 0u)
+            | (key.isDeletedValue ? 1u : 0u);
+        return WTF::pairIntHash(h, WTF::intHash(depthStencilAndFlags));
+    }
+    static bool equal(const ClearRenderPipelineKey& a, const ClearRenderPipelineKey& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct ClearRenderPipelineKeyTraits : WTF::SimpleClassHashTraits<ClearRenderPipelineKey> {
+    static constexpr bool emptyValueIsZero = false;
+    static ClearRenderPipelineKey emptyValue()
+    {
+        ClearRenderPipelineKey key;
+        key.isEmptyValue = true;
+        return key;
+    }
+    static void constructDeletedValue(ClearRenderPipelineKey& slot)
+    {
+        slot = ClearRenderPipelineKey { };
+        slot.isDeletedValue = true;
+    }
+    static bool isDeletedValue(const ClearRenderPipelineKey& value) { return value.isDeletedValue; }
+};
+
+id<MTLRenderPipelineState> Device::clearRenderPipelineState(NSUInteger sampleCount, MTLPixelFormat color0, MTLPixelFormat color1, MTLPixelFormat color2, MTLPixelFormat color3, MTLPixelFormat color4, MTLPixelFormat color5, MTLPixelFormat color6, MTLPixelFormat color7, MTLPixelFormat depthFormat, MTLPixelFormat stencilFormat) const
+{
+    if (!m_device || !sampleCount)
+        return nil;
+
+    ClearRenderPipelineKey key {
+        .devicePtr = reinterpret_cast<uintptr_t>((__bridge void*)m_device),
+        .sampleCount = static_cast<uint32_t>(sampleCount),
+        .colorFormats = {
+            static_cast<uint16_t>(color0), static_cast<uint16_t>(color1),
+            static_cast<uint16_t>(color2), static_cast<uint16_t>(color3),
+            static_cast<uint16_t>(color4), static_cast<uint16_t>(color5),
+            static_cast<uint16_t>(color6), static_cast<uint16_t>(color7),
+        },
+        .depthFormat = static_cast<uint16_t>(depthFormat),
+        .stencilFormat = static_cast<uint16_t>(stencilFormat),
+    };
+
+    static WTF::Lock cacheLock;
+    static LazyNeverDestroyed<HashMap<ClearRenderPipelineKey, RetainPtr<id<MTLRenderPipelineState>>, ClearRenderPipelineKeyHash, ClearRenderPipelineKeyTraits>> cache;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        cache.construct();
+    });
+
+    {
+        Locker locker { cacheLock };
+        if (auto it = cache->find(key); it != cache->end())
+            return it->value.get();
+    }
+
+    MTLRenderPipelineDescriptor *mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    const std::array<MTLPixelFormat, 8> colors { color0, color1, color2, color3, color4, color5, color6, color7 };
+    for (size_t i = 0; i < colors.size(); ++i) {
+        if (colors[i] != MTLPixelFormatInvalid) {
+            const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
+            mtlColorAttachment.pixelFormat = colors[i];
+            mtlColorAttachment.blendingEnabled = NO;
+        }
+    }
+    mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = depthFormat;
+    mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = stencilFormat;
+
+    id<MTLFunction> function = Device::nopVertexFunction(m_device);
+    RELEASE_ASSERT(function);
+    mtlRenderPipelineDescriptor.vertexFunction = function;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+    mtlRenderPipelineDescriptor.rasterSampleCount = sampleCount;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    NSError *error = nil;
+    id<MTLRenderPipelineState> pso = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    RELEASE_ASSERT(!error);
+    ASSERT_UNUSED(error, !error);
+
+    if (pso) {
+        Locker locker { cacheLock };
+        if (cache->size() >= 1024)
+            cache->clear();
+        cache->set(key, pso);
+    }
+    return pso;
+}
+
+static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, const Device& device)
+{
     NSUInteger sampleCount = 0;
-    MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
+    std::array<MTLPixelFormat, 8> colorFormats { MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid, MTLPixelFormatInvalid };
     for (NSNumber *key in attachmentsToClear) {
         int i = key.intValue;
         TextureAndClearColor *textureAndClearColor = [attachmentsToClear objectForKey:key];
         id<MTLTexture> t = textureAndClearColor.texture;
         sampleCount = t.sampleCount;
-
-        const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
-        mtlColorAttachment.pixelFormat = t.pixelFormat;
-        mtlColorAttachment.blendingEnabled = NO;
+        if (i >= 0 && static_cast<size_t>(i) < colorFormats.size())
+            colorFormats[static_cast<size_t>(i)] = t.pixelFormat;
     }
 
+    MTLPixelFormat depthFormat = MTLPixelFormatInvalid;
+    MTLPixelFormat stencilFormat = MTLPixelFormatInvalid;
+    id<MTLDepthStencilState> depthStencil = nil;
     if (depthStencilAttachmentToClear) {
-        depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         id<MTLTexture> t = depthStencilAttachmentToClear;
         sampleCount = t.sampleCount;
-        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = (!depthAttachmentToClear || Device::isStencilOnlyFormat(t.pixelFormat)) ? MTLPixelFormatInvalid : t.pixelFormat;
-        depthStencilDescriptor.depthWriteEnabled = NO;
-
-        // The clear pass has the stencil attachment also when it clears only the depth: it loads the stencil.
+        depthFormat = (!depthAttachmentToClear || Device::isStencilOnlyFormat(t.pixelFormat)) ? MTLPixelFormatInvalid : t.pixelFormat;
         if ((stencilAttachmentToClear || depthAttachmentToClear) && (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8))
-            mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = t.pixelFormat;
+            stencilFormat = t.pixelFormat;
+        depthStencil = device.clearDepthStencilState();
     }
 
-    id<MTLFunction> function = Device::nopVertexFunction(device);
-    RELEASE_ASSERT(function);
-
-    mtlRenderPipelineDescriptor.vertexFunction = function;
-    mtlRenderPipelineDescriptor.fragmentFunction = nil;
-
     RELEASE_ASSERT(sampleCount);
-    mtlRenderPipelineDescriptor.rasterSampleCount = sampleCount;
-    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
-
-    NSError* error;
-    id<MTLRenderPipelineState> pso = [device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
-    id<MTLDepthStencilState> depthStencil = depthStencilDescriptor ? [device newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil;
-    RELEASE_ASSERT(!error);
-    ASSERT_UNUSED(error, !error);
-
+    id<MTLRenderPipelineState> pso = device.clearRenderPipelineState(sampleCount, colorFormats[0], colorFormats[1], colorFormats[2], colorFormats[3], colorFormats[4], colorFormats[5], colorFormats[6], colorFormats[7], depthFormat, stencilFormat);
     return std::make_pair(pso, depthStencil);
 }
 
@@ -652,7 +786,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         didCreateRenderCommandEncoder();
     }
 
-    auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, device);
+    auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, m_device.get());
     [clearRenderCommandEncoder setRenderPipelineState:pso];
     if (depthStencil)
         [clearRenderCommandEncoder setDepthStencilState:depthStencil];
@@ -670,8 +804,12 @@ static bool isMultisampleTexture(id<MTLTexture> texture)
 RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    if (isWebGPUSwiftEnabled())
-        return commandEncoderBeginRenderPass(this, descriptor);
+    if (isWebGPUSwiftEnabled()) {
+        RefPtr encoder = commandEncoderBeginRenderPass(this, descriptor);
+        if (encoder && encoder->isValid() && descriptor.timestampWrites)
+            recordTimestampWrites(*descriptor.timestampWrites);
+        return encoder;
+    }
 #endif
 
     auto maxDrawCount = descriptor.maxDrawCount.value_or(std::numeric_limits<uint64_t>::max());
@@ -700,6 +838,7 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
         Ref timestampWrites = metal(apiTimestampWrites->querySet);
         timestampWrites->setCommandEncoder(*this);
         counterSampleBuffer = timestampWrites->counterSampleBufferWithOffset();
+        recordTimestampWrites(*apiTimestampWrites);
     }
 
     if (m_device->enableEncoderTimestamps() || counterSampleBuffer.buffer) {
@@ -1171,7 +1310,7 @@ NSString* CommandEncoder::errorValidatingCopyBufferToTexture(const WebGPU::Texel
             return ERROR_STRING(@"source.layout.offset is not a multiple of four for depth stencil format");
     }
 
-    if (NSString* errorString = Texture::errorValidatingLinearTextureData(source.layout, metal(source.buffer).initialSize(), aspectSpecificFormat, copySize))
+    if (NSString* errorString = Texture::errorValidatingLinearTextureData(source.layout, Ref { metal(source.buffer) }->initialSize(), aspectSpecificFormat, copySize))
         return ERROR_STRING(errorString);
 #undef ERROR_STRING
     return nil;
@@ -1479,7 +1618,7 @@ NSString* CommandEncoder::errorValidatingCopyTextureToBuffer(const WebGPU::Texel
             return ERROR_STRING(@"destination.layout.offset is not a multiple of 4");
     }
 
-    if (NSString* errorString = Texture::errorValidatingLinearTextureData(destination.layout, metal(destination.buffer).initialSize(), aspectSpecificFormat, copySize))
+    if (NSString* errorString = Texture::errorValidatingLinearTextureData(destination.layout, Ref { metal(destination.buffer) }->initialSize(), aspectSpecificFormat, copySize))
         return ERROR_STRING(errorString);
 #undef ERROR_STRING
     return nil;
@@ -2035,7 +2174,7 @@ NSString* CommandEncoder::errorValidatingCopyTextureToTexture(const WebGPU::Texe
     if (source.texture == destination.texture) {
         // Mip levels are never ranges.
         if (source.mipLevel == destination.mipLevel) {
-            switch (metal(source.texture).dimension()) {
+            switch (Ref { metal(source.texture) }->dimension()) {
             case WebGPU::TextureDimension::_1d:
                 return ERROR_STRING(@"can't copy 1D texture to itself");
             case WebGPU::TextureDimension::_2d: {
@@ -2455,6 +2594,8 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
     // FIXME: rdar://138047285 const_cast is needed as a workaround.
     if (isWebGPUSwiftEnabled()) {
         commandEncoderResolveQuerySet(this, const_cast<QuerySet*>(&querySet), firstQuery, queryCount, &destination, destinationOffset);
+        if (querySet.type() == WebGPU::QueryType::Timestamp)
+            clearUnusedTimestampSlots(querySet, firstQuery, queryCount, destination, destinationOffset);
         return;
     }
 #endif
@@ -2493,6 +2634,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
         ensureBlitCommandEncoder();
         auto counterSampleBuffer = querySet.counterSampleBufferWithOffset();
         [m_blitCommandEncoder resolveCounters:counterSampleBuffer.buffer inRange:NSMakeRange(firstQuery + counterSampleBuffer.offset, queryCount) destinationBuffer:destination.buffer() destinationOffset:destinationOffset];
+        clearUnusedTimestampSlots(querySet, firstQuery, queryCount, destination, destinationOffset);
         break;
     }
     default:
@@ -2634,6 +2776,52 @@ void CommandEncoder::skippedBundleIndirectDrawValidation(uint64_t bufferIdentifi
 void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 {
     m_bindGroups.append(group);
+}
+
+void CommandEncoder::recordTimestampWrites(const WebGPU::PassTimestampWrites& timestampWrites)
+{
+    Ref querySet = metal(timestampWrites.querySet);
+    auto& slots = m_writtenTimestampSlots.add(querySet.ptr(), BitVector { }).iterator->value;
+    std::optional<uint32_t> beginningIndex = timestampWrites.beginningOfPassWriteIndex;
+    std::optional<uint32_t> endIndex = timestampWrites.endOfPassWriteIndex;
+    if (beginningIndex && *beginningIndex < querySet->count())
+        slots.set(*beginningIndex);
+    if (endIndex && *endIndex < querySet->count())
+        slots.set(*endIndex);
+    addOnCommitHandler([querySet, beginningIndex, endIndex](CommandBuffer&, CommandEncoder&) {
+        if (beginningIndex)
+            querySet->markSlotWritten(*beginningIndex);
+        if (endIndex)
+            querySet->markSlotWritten(*endIndex);
+        return true;
+    });
+}
+
+void CommandEncoder::clearUnusedTimestampSlots(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset)
+{
+    if (!m_blitCommandEncoder || querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
+        return;
+    auto it = m_writtenTimestampSlots.find(&querySet);
+    const BitVector* encoderSlots = it != m_writtenTimestampSlots.end() ? &it->value : nullptr;
+    uint32_t endQuery = firstQuery + queryCount;
+    uint32_t query = firstQuery;
+    while (query < endQuery) {
+        bool isWritten = querySet.isSlotWritten(query) || (encoderSlots && query < encoderSlots->size() && encoderSlots->get(query));
+        if (isWritten) {
+            ++query;
+            continue;
+        }
+        uint32_t runStart = query;
+        while (query < endQuery) {
+            bool written = querySet.isSlotWritten(query) || (encoderSlots && query < encoderSlots->size() && encoderSlots->get(query));
+            if (written)
+                break;
+            ++query;
+        }
+        NSUInteger byteOffset = static_cast<NSUInteger>(destinationOffset + static_cast<uint64_t>(runStart - firstQuery) * sizeof(uint64_t));
+        NSUInteger byteLength = static_cast<NSUInteger>(query - runStart) * sizeof(uint64_t);
+        [m_blitCommandEncoder fillBuffer:destination.buffer() range:NSMakeRange(byteOffset, byteLength) value:0];
+    }
 }
 
 } // namespace WebGPU::Metal

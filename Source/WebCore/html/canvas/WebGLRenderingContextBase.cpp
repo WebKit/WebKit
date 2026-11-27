@@ -821,6 +821,7 @@ void WebGLRenderingContextBase::ReadSurfaceBuffer::clear()
 {
     image = nullptr;
     buffer = nullptr;
+    pixelData = nullptr;
 }
 
 size_t WebGLRenderingContextBase::ReadSurfaceBuffer::memoryCost() const
@@ -830,6 +831,8 @@ size_t WebGLRenderingContextBase::ReadSurfaceBuffer::memoryCost() const
         cost += image->sizeInBytes();
     if (RefPtr buffer = this->buffer)
         cost += buffer->memoryCost();
+    if (RefPtr pixelData = this->pixelData)
+        cost += Ref { pixelData->data() }->byteLength();
     return cost;
 }
 
@@ -1041,6 +1044,7 @@ void WebGLRenderingContextBase::setDrawingBufferColorSpace(PredefinedColorSpace 
         return;
 
     m_drawingBufferColorSpace = colorSpace;
+    m_readDrawingBuffer.clear();
 
     if (isContextLost())
         return;
@@ -3186,6 +3190,22 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     auto data = pixels->mutableSpan().subspan(packSizes->initialSkipBytes, packSizes->imageBytes);
     const bool packReverseRowOrder = false;
     protect(graphicsContextGL())->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength, packReverseRowOrder);
+
+    if (!isContextLost() && isDefaultFramebufferBoundForRead() && format == GraphicsContextGL::RGBA && type == GraphicsContextGL::UNSIGNED_BYTE
+        && !m_packParameters.rowLength && m_packParameters.alignment <= 4 && !packSizes->initialSkipBytes
+        && rect == IntRect { { }, clampedCanvasSize() } && rect.size().unclampedArea() > 0 && rect.size().unclampedArea() <= 256 * 256) {
+        size_t rowBytes = static_cast<size_t>(width) * 4;
+        if (data.size() == rowBytes * static_cast<size_t>(height)) {
+            PixelBufferFormat cachedFormat { m_attributes.premultipliedAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toColorSpace(m_drawingBufferColorSpace) };
+            if (RefPtr cached = ByteArrayPixelBuffer::tryCreate(cachedFormat, rect.size())) {
+                Ref dstView = cached->data();
+                auto dstSpan = dstView->mutableSpan();
+                for (int y = 0; y < height; ++y)
+                    memcpySpan(dstSpan.subspan(static_cast<size_t>(y) * rowBytes, rowBytes), data.subspan(static_cast<size_t>(height - 1 - y) * rowBytes, rowBytes));
+                m_readDrawingBuffer.pixelData = WTF::move(cached);
+            }
+        }
+    }
 }
 
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)

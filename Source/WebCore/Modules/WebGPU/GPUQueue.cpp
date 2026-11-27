@@ -29,6 +29,7 @@
 #include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2DBase.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "EventLoop.h"
 #include "GPUBuffer.h"
@@ -55,6 +56,9 @@
 #include "SecurityOrigin.h"
 #include "VideoFrame.h"
 #include "WebCodecsVideoFrame.h"
+#if ENABLE(WEBGL)
+#include "WebGLRenderingContextBase.h"
+#endif
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <array>
 #include <wtf/Borrow.h>
@@ -77,6 +81,8 @@ GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, Ref<WebGPUIntegration>&& gpu, G
     , m_device(device)
 {
 }
+
+GPUQueue::~GPUQueue() = default;
 
 bool GPUQueue::hasActiveInspectorCanvasCallTracer() const
 {
@@ -546,7 +552,8 @@ static void imageBytesForSource(WebGPUIntegration& gpu, WebGPU::Queue& backing, 
             else if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
                 // An <img> can also hold a PDFDocumentImage, which is neither a BitmapImage nor an
                 // SVGImage; there is nothing to read pixels from in that case.
-                nativeImage = svgImage->nativeImage(ImageDrawDescriptor { ConcreteObjectSize::fixed(FloatSize(destination.texture->width(), destination.texture->height())) });
+                Ref destinationTexture = destination.texture;
+                nativeImage = svgImage->nativeImage(ImageDrawDescriptor { ConcreteObjectSize::fixed(FloatSize(destinationTexture->width(), destinationTexture->height())) });
                 isSVG = true;
             }
 
@@ -802,9 +809,70 @@ struct GPUResidentSource {
     // it is a CVPixelBuffer the GPU process already holds.
     std::optional<WebGPUVideoSourceIdentifier> videoSource { };
     IntSize videoSourceSize { };
+    // Set when CPU-resident pixels can be shipped directly on the WebGPU stream without round-tripping
+    // through RemoteRenderingBackend / CA::CG::Queue.
+    RefPtr<JSC::ArrayBufferView> retainedPixelDataView { };
+    std::span<const uint8_t> pixelData { };
+    uint32_t pixelDataBytesPerRow { 0 };
+    ::WebGPU::Extent2D pixelDataSize { };
+    std::optional<::WebGPU::TextureFormat> pixelDataFormat { };
+    bool pixelDataHasAlpha { true };
+    ::WebGPU::PredefinedColorSpace pixelDataColorSpace { ::WebGPU::PredefinedColorSpace::SRGB };
 
-    NODELETE bool isGPUResident() const { return imageBuffer || videoSource; }
+    NODELETE bool isGPUResident() const { return imageBuffer || videoSource || !pixelData.empty(); }
 };
+
+#if HAVE(IOSURFACE)
+static std::optional<::WebGPU::TextureFormat> directPixelDataTextureFormat(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::RGBX8:
+        return ::WebGPU::TextureFormat::Rgba8unorm;
+    case PixelFormat::BGRA8:
+    case PixelFormat::BGRX8:
+        return ::WebGPU::TextureFormat::Bgra8unorm;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        return ::WebGPU::TextureFormat::Rgba16float;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        return ::WebGPU::TextureFormat::Rgba16unorm;
+#endif
+    default:
+        return std::nullopt;
+    }
+}
+
+static GPUResidentSource gpuResidentSourceForPixelData(RefPtr<JSC::ArrayBufferView>&& retainedView, std::span<const uint8_t> bytes, IntSize size, PixelFormat pixelFormat, const ColorSpace& colorSpace, bool premultipliedAlpha, bool hasAlpha)
+{
+    constexpr size_t maxInlineDirectCopyBytes = 16 * 1024 * 1024;
+    if (size.width() <= 0 || size.height() <= 0 || bytes.empty() || bytes.size() > maxInlineDirectCopyBytes)
+        return { };
+    if (!isSupportedGPUSourceColorSpace(colorSpace))
+        return { };
+    auto textureFormat = directPixelDataTextureFormat(pixelFormat);
+    if (!textureFormat)
+        return { };
+    uint32_t width = static_cast<uint32_t>(size.width());
+    uint32_t height = static_cast<uint32_t>(size.height());
+    uint32_t bytesPerRow = width * PixelBuffer::bytesPerPixel(pixelFormat);
+    if (static_cast<uint64_t>(bytesPerRow) * height > bytes.size())
+        return { };
+
+    GPUResidentSource result;
+    result.premultipliedAlpha = premultipliedAlpha;
+    result.retainedPixelDataView = WTF::move(retainedView);
+    result.pixelData = bytes;
+    result.pixelDataBytesPerRow = bytesPerRow;
+    result.pixelDataSize = { width, height };
+    result.pixelDataFormat = *textureFormat;
+    result.pixelDataHasAlpha = hasAlpha;
+    result.pixelDataColorSpace = (colorSpace == ColorSpace::DisplayP3()) ? ::WebGPU::PredefinedColorSpace::DisplayP3 : ::WebGPU::PredefinedColorSpace::SRGB;
+    return result;
+}
+#endif // HAVE(IOSURFACE)
 
 #if HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
 // A video's current frame is decoded in the GPU process, so the copy only has to name it: either by
@@ -830,13 +898,16 @@ static GPUResidentSource gpuResidentSourceForVideo(const GPUVideoSource& source)
     return { nullptr, true, WTF::move(videoSource), GPUExternalTextureDescriptor::visibleSizeForSource(source) };
 }
 
-// An ImageData is a plain byte array, so it has to be moved into an accelerated buffer before Metal
-// can read it. Its channels go in unpremultiplied, exactly as the caller supplied them: 8-bit
-// channels do not survive being premultiplied here and unpremultiplied again in the shader.
 static GPUResidentSource gpuResidentSourceForImageData(ScriptExecutionContext& context, const ImageData& imageData)
 {
     IntSize size { imageData.width(), imageData.height() };
-    RefPtr imageBuffer = ImageBitmap::createImageBuffer(context, size, toColorSpace(imageData.colorSpace()));
+    auto colorSpace = toColorSpace(imageData.colorSpace());
+    auto pixelFormat = toPixelFormat(imageData.pixelFormat());
+    Ref view = imageData.data().arrayBufferView();
+    if (auto direct = gpuResidentSourceForPixelData(view.ptr(), view->span(), size, pixelFormat, colorSpace, false, true); direct.isGPUResident())
+        return direct;
+
+    RefPtr imageBuffer = ImageBitmap::createImageBuffer(context, size, colorSpace);
     if (!imageBuffer)
         return { };
 
@@ -849,7 +920,8 @@ static GPUResidentSource gpuResidentSourceForImageData(ScriptExecutionContext& c
 // EXIF orientation, indexed palettes and the image's color space, which is what the CPU path below
 // hand-rolls. Only bitmap images come this way: a vector image has no pixels of its own, and the CPU
 // path rasterizes it at the destination texture's size.
-static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext& context, HTMLImageElement& imageElement)
+template<typename CacheVector>
+static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext& context, HTMLImageElement& imageElement, CacheVector& cache)
 {
     RefPtr cachedImage = imageElement.cachedImage();
     if (!cachedImage)
@@ -866,11 +938,32 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
     if (sourceRect.isEmpty() || destinationRect.isEmpty())
         return { };
 
+    IntSize destIntSize { destinationRect.size() };
+    RefPtr nativeImage = image->nativeImage();
+    if (nativeImage) {
+        auto id = nativeImage->renderingResourceIdentifier();
+        for (const auto& entry : borrow(cache)) {
+            RefPtr entryBuffer = entry.imageBuffer;
+            if (entry.nativeImageIdentifier == id && entry.size == destIntSize && entryBuffer && !entryBuffer->backendSize().isEmpty())
+                return { WTF::move(entryBuffer), entry.premultipliedAlpha };
+        }
+    }
+
+    auto cacheResult = [&](RefPtr<ImageBuffer>&& buffer, bool premultiplied) -> GPUResidentSource {
+        if (buffer && nativeImage && destIntSize.unclampedArea() <= 1024 * 1024) {
+            buffer->flushDrawingContext();
+            if (cache.size() >= 4)
+                cache.removeAt(0);
+            cache.append({ nativeImage->renderingResourceIdentifier(), destIntSize, premultiplied, buffer });
+        }
+        return { WTF::move(buffer), premultiplied };
+    };
+
     auto drawsHDRContent = image->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
 
     if (RefPtr unpremultipliedBuffer = ImageBitmap::unpremultipliedImageBuffer(context, *image, enclosingIntRect(sourceRect), destinationRect.size(), { }, drawsHDRContent)) {
         if (isSupportedGPUSourceColorSpace(unpremultipliedBuffer->colorSpace()) && isSupportedGPUSourcePixelFormat(unpremultipliedBuffer->pixelFormat()))
-            return { WTF::move(unpremultipliedBuffer), false };
+            return cacheResult(WTF::move(unpremultipliedBuffer), false);
     }
 
     // The image is converted into sRGB rather than kept in its own color space, because that is the
@@ -884,19 +977,43 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
     // black leaves the decoded channels untouched; the copy is lossless for as long as the
     // destination wants premultiplied alpha too.
     image->draw(imageBuffer->context(), ImageDrawDescriptor { ConcreteObjectSize::fixed(image->size()), CompositeOperator::Copy }, destinationRect, sourceRect);
-    return { WTF::move(imageBuffer) };
+    return cacheResult(WTF::move(imageBuffer), true);
 }
 #endif // HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
 
-static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionContext& context, const GPUImageCopyExternalImage::SourceType& source)
+template<typename CacheVector>
+static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionContext& context, const GPUImageCopyExternalImage::SourceType& source, [[maybe_unused]] CacheVector& externalImageCache)
 {
 #if !HAVE(IOSURFACE)
     UNUSED_PARAM(source);
     return { };
 #else
+    auto tryCanvasCachedPixelData = [](CanvasBase& canvas) -> GPUResidentSource {
+        if (RefPtr context2d = dynamicDowncast<CanvasRenderingContext2DBase>(canvas.renderingContext())) {
+            if (RefPtr cachedPixels = context2d->cachedContentsImageData()) {
+                Ref view = cachedPixels->data();
+                return gpuResidentSourceForPixelData(view.ptr(), view->span(), cachedPixels->size(), cachedPixels->format().pixelFormat, cachedPixels->format().colorSpace, cachedPixels->format().alphaFormat == AlphaPremultiplication::Premultiplied, true);
+            }
+        }
+#if ENABLE(WEBGL)
+        if (RefPtr webglContext = dynamicDowncast<WebGLRenderingContextBase>(canvas.renderingContext())) {
+            if (RefPtr cachedPixels = webglContext->cachedDrawingBufferPixels()) {
+                Ref view = cachedPixels->data();
+                return gpuResidentSourceForPixelData(view.ptr(), view->span(), cachedPixels->size(), cachedPixels->format().pixelFormat, cachedPixels->format().colorSpace, cachedPixels->format().alphaFormat == AlphaPremultiplication::Premultiplied, webglContext->attributes().alpha);
+            }
+        }
+#endif
+        return { };
+    };
+
     using ResultType = GPUResidentSource;
     auto result = WTF::switchOn(source,
         [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
+            if (RefPtr cachedPixels = imageBitmap->cachedPixelData()) {
+                Ref view = cachedPixels->data();
+                if (auto direct = gpuResidentSourceForPixelData(view.ptr(), view->span(), cachedPixels->size(), cachedPixels->format().pixelFormat, cachedPixels->format().colorSpace, imageBitmap->bufferAlphaFormat() == AlphaPremultiplication::Premultiplied, true); direct.isGPUResident())
+                    return direct;
+            }
             // bufferAlphaFormat(), because premultiplyAlpha() is what was asked for, not what is stored.
             return { imageBitmap->buffer(), imageBitmap->bufferAlphaFormat() == AlphaPremultiplication::Premultiplied };
         },
@@ -905,7 +1022,7 @@ static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionCo
             return gpuResidentSourceForImageData(context, imageData);
         },
         [&](const Ref<HTMLImageElement>& imageElement) -> ResultType {
-            return gpuResidentSourceForImageElement(context, imageElement);
+            return gpuResidentSourceForImageElement(context, imageElement, externalImageCache);
         },
         [&](const Ref<HTMLVideoElement>& videoElement) -> ResultType {
             return gpuResidentSourceForVideo(videoElement);
@@ -915,19 +1032,20 @@ static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionCo
         },
 #endif
         [&](const Ref<HTMLCanvasElement>& canvasElement) -> ResultType {
+            if (auto direct = tryCanvasCachedPixelData(canvasElement.get()); direct.isGPUResident())
+                return direct;
             return { canvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No) };
         }
 #if ENABLE(OFFSCREEN_CANVAS)
         , [&](const Ref<OffscreenCanvas>& offscreenCanvasElement) -> ResultType {
+            if (auto direct = tryCanvasCachedPixelData(offscreenCanvasElement.get()); direct.isGPUResident())
+                return direct;
             return { offscreenCanvasElement->makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No) };
         }
 #endif
     );
 
-    // A video source is a CVPixelBuffer rather than an ImageBuffer, so none of the checks below apply
-    // to it: it is not resampled, it has no unpremultiplied channels to preserve, and the backing
-    // queue converts out of its own color space using the matrices the frame itself carries.
-    if (result.videoSource)
+    if (result.videoSource || !result.pixelData.empty())
         return result;
 
     RefPtr imageBuffer = result.imageBuffer;
@@ -1464,17 +1582,19 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     // wrapping the source's IOSurface, or the planes of a decoded video frame, in MTLTextures and
     // rendering into the destination texture, so no pixels are read back and no format conversion
     // happens on the CPU.
-    if (auto gpuResidentSource = imageBufferForSource(context, source.source); gpuResidentSource.isGPUResident()) {
-        // Drawing into a canvas source is still outstanding here: a 2D context hands back the buffer
-        // it is drawing into untouched, and WebGLRenderingContextBase::surfaceBufferToImageBuffer
-        // paints the drawing buffer into it *after* flushing it. The backing queue wraps the buffer's
-        // IOSurface rather than reading its pixels, so unlike the readback below nothing else forces
-        // those commands out. RemoteQueueProxy flushes again for the same reason, because there the
-        // source travels by identifier on a stream unordered against the rendering backend's; this
-        // call is what covers the in-process backing, which has no proxy to do it.
+    if (auto gpuResidentSource = imageBufferForSource(context, source.source, m_cachedExternalImageBuffers); gpuResidentSource.isGPUResident()) {
         if (RefPtr sourceImageBuffer = gpuResidentSource.imageBuffer)
             sourceImageBuffer->flushDrawingContext();
-        m_gpu->copyExternalImageToTexture(m_backing, source.convertToBacking(WTF::move(gpuResidentSource.imageBuffer), gpuResidentSource.premultipliedAlpha, WTF::move(gpuResidentSource.videoSource), gpuResidentSource.videoSourceSize), destination.convertToBacking(), backingCopySize);
+        auto backingSource = source.convertToBacking(WTF::move(gpuResidentSource.imageBuffer), gpuResidentSource.premultipliedAlpha, WTF::move(gpuResidentSource.videoSource), gpuResidentSource.videoSourceSize);
+        if (!gpuResidentSource.pixelData.empty()) {
+            backingSource.pixelData = gpuResidentSource.pixelData;
+            backingSource.pixelDataBytesPerRow = gpuResidentSource.pixelDataBytesPerRow;
+            backingSource.pixelDataSize = gpuResidentSource.pixelDataSize;
+            backingSource.pixelDataFormat = gpuResidentSource.pixelDataFormat;
+            backingSource.pixelDataHasAlpha = gpuResidentSource.pixelDataHasAlpha;
+            backingSource.pixelDataColorSpace = gpuResidentSource.pixelDataColorSpace;
+        }
+        m_gpu->copyExternalImageToTexture(m_backing, backingSource, destination.convertToBacking(), backingCopySize);
         return { };
     }
 

@@ -178,6 +178,17 @@ void Type::dump(PrintStream& out) const
         [&](const Atomic& atomic) {
             out.print("atomic<", *atomic.element, ">");
         },
+        [&](const Buffer& buffer) {
+            out.print("buffer");
+            WTF::switchOn(buffer.size,
+                [&](unsigned size) { out.print("<", size, ">"); },
+                [&](std::monostate) { },
+                [&](AST::Expression* size) {
+                    out.print("<");
+                    dumpNode(out, *size);
+                    out.print(">");
+                });
+        },
         [&](const TypeConstructor& constructor) {
             out.print(constructor.name);
         });
@@ -375,6 +386,16 @@ std::optional<unsigned> Type::maybeSize() const
             RELEASE_ASSERT(a.element);
             return a.element->size();
         },
+        [&](const Buffer& buffer) -> std::optional<unsigned> {
+            if (auto* constantSize = std::get_if<unsigned>(&buffer.size))
+                return *constantSize;
+            if (auto* expression = std::get_if<AST::Expression*>(&buffer.size)) {
+                if (const auto& maybeConstantValue = (*expression)->constantValue())
+                    return maybeConstantValue->integerValue();
+                return 1;
+            }
+            return 0;
+        },
         [&](const TypeConstructor&) -> std::optional<unsigned> {
             return std::nullopt;
         });
@@ -455,6 +476,9 @@ unsigned Type::alignment() const
         [&](const Atomic& a) -> unsigned {
             RELEASE_ASSERT(a.element);
             return a.element->alignment();
+        },
+        [&](const Buffer&) -> unsigned {
+            return 16;
         },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -550,6 +574,9 @@ bool Type::isConstructible() const
         [&](const Atomic&) -> bool {
             return false;
         },
+        [&](const Buffer&) -> bool {
+            return false;
+        },
         [&](const TypeConstructor&) -> bool {
             return false;
         });
@@ -602,6 +629,9 @@ bool Type::isStorable() const
             return true;
         },
         [&](const Atomic&) -> bool {
+            return true;
+        },
+        [&](const Buffer&) -> bool {
             return true;
         },
 
@@ -666,6 +696,9 @@ bool Type::isHostShareable() const
             return true;
         },
         [&](const Atomic&) -> bool {
+            return true;
+        },
+        [&](const Buffer&) -> bool {
             return true;
         },
 
@@ -738,6 +771,9 @@ bool Type::hasFixedFootprint() const
         [&](const Atomic&) -> bool {
             return true;
         },
+        [&](const Buffer& buffer) -> bool {
+            return !buffer.isUnsized();
+        },
 
         [&](const TextureStorage&) -> bool {
             return false;
@@ -808,6 +844,9 @@ bool Type::hasCreationFixedFootprint() const
         [&](const Atomic&) -> bool {
             return true;
         },
+        [&](const Buffer&) -> bool {
+            return false;
+        },
 
         [&](const TextureStorage&) -> bool {
             return false;
@@ -855,6 +894,60 @@ bool Type::containsOverrideArray() const
     if (auto* reference = std::get_if<Types::Reference>(this))
         return reference->element->containsOverrideArray();
     return false;
+}
+
+bool Type::containsArray() const
+{
+    if (std::holds_alternative<Types::Array>(*this))
+        return true;
+    if (auto* structure = std::get_if<Types::Struct>(this)) {
+        for (auto& member : structure->structure.members()) {
+            if (member.type().inferredType()->containsArray())
+                return true;
+        }
+    }
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsArray();
+    return false;
+}
+
+bool Type::containsOverrideBuffer() const
+{
+    if (auto* buffer = std::get_if<Types::Buffer>(this))
+        return buffer->isOverrideSized();
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsOverrideBuffer();
+    return false;
+}
+
+bool Type::containsAtomic() const
+{
+    if (std::holds_alternative<Types::Atomic>(*this))
+        return true;
+    if (auto* array = std::get_if<Types::Array>(this))
+        return array->element->containsAtomic();
+    if (auto* structure = std::get_if<Types::Struct>(this)) {
+        for (auto& member : structure->structure.members()) {
+            if (member.type().inferredType()->containsAtomic())
+                return true;
+        }
+    }
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsAtomic();
+    return false;
+}
+
+unsigned Type::minBufferViewSize() const
+{
+    if (auto* array = std::get_if<Types::Array>(this)) {
+        if (array->isRuntimeSized())
+            return array->stride();
+    } else if (auto* structure = std::get_if<Types::Struct>(this)) {
+        auto& lastMember = structure->structure.members().last();
+        if (auto* lastArray = std::get_if<Types::Array>(lastMember.type().inferredType()); lastArray && lastArray->isRuntimeSized())
+            return lastMember.offset() + lastArray->stride();
+    }
+    return size();
 }
 
 bool Type::isTexture() const

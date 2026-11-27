@@ -122,7 +122,7 @@ struct OverloadCandidate {
     AbstractType result;
 };
 
-using ValidationFunction = std::optional<String>(*)(const FixedVector<std::optional<ConstantValue>>&, const FixedVector<const Type*>&);
+using ValidationFunction = std::optional<String>(*)(const FixedVector<std::optional<ConstantValue>>&, std::span<const Type* const>);
 
 struct OverloadedDeclaration {
     enum Kind : uint8_t {
@@ -137,18 +137,16 @@ struct OverloadedDeclaration {
     std::expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
     ValidationFunction validationFunction;
     OptionSet<ShaderStage> visibility;
-    // A shader calls only a few builtins, so `overloads` stays empty until the type checker first
-    // looks the declaration up and builds them.
     Vector<OverloadCandidate> (*buildOverloads)(TypeStore&);
-    mutable Vector<OverloadCandidate> overloads;
+    Vector<OverloadCandidate> overloads { };
 };
 
 struct SelectedOverload {
-    FixedVector<const Type*> parameters;
+    WTF::Vector<const Type*, 8> parameters;
     const Type* result;
 };
 
-std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
+std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, std::span<const Type* const> valueArguments, std::span<const Type* const> typeArguments);
 
 template<typename T>
 AbstractType allocateAbstractType(T&& type)

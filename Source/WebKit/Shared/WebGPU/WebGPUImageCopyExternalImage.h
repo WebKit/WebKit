@@ -31,6 +31,7 @@
 #include "WebGPUOrigin2D.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
@@ -43,6 +44,18 @@ struct ImageCopyExternalImage {
     std::optional<WebCore::RenderingResourceIdentifier> imageBufferIdentifier;
     // Whether that buffer's pixels are premultiplied by their alpha.
     bool premultipliedAlpha { true };
+};
+
+struct ImageCopyExternalImageData {
+    std::optional<Origin2D> origin;
+    bool flipY { false };
+    bool premultipliedAlpha { true };
+    bool hasAlpha { true };
+    bool isDisplayP3 { false };
+    ::WebGPU::TextureFormat format { ::WebGPU::TextureFormat::Rgba8unorm };
+    uint32_t width { 0 };
+    uint32_t height { 0 };
+    uint32_t bytesPerRow { 0 };
 };
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

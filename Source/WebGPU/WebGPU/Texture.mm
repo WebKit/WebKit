@@ -2960,37 +2960,8 @@ std::optional<ResolvedTextureViewDescriptor> Texture::resolveTextureViewDescript
     }
 
     auto dimension = descriptor.dimension;
-    if (!dimension) {
-        switch (m_texture.textureType) {
-        case MTLTextureType1D:
-            dimension = WebGPU::TextureViewDimension::_1d;
-            break;
-        case MTLTextureType1DArray:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        case MTLTextureType2D:
-        case MTLTextureType2DMultisample:
-            dimension = WebGPU::TextureViewDimension::_2d;
-            break;
-        case MTLTextureType2DArray:
-        case MTLTextureType2DMultisampleArray:
-            dimension = WebGPU::TextureViewDimension::_2dArray;
-            break;
-        case MTLTextureTypeCube:
-            dimension = WebGPU::TextureViewDimension::Cube;
-            break;
-        case MTLTextureTypeCubeArray:
-            dimension = WebGPU::TextureViewDimension::CubeArray;
-            break;
-        case MTLTextureType3D:
-            dimension = WebGPU::TextureViewDimension::_3d;
-            break;
-        case MTLTextureTypeTextureBuffer:
-        default:
-            ASSERT_NOT_REACHED();
-            return std::nullopt;
-        }
-    }
+    if (!dimension)
+        dimension = viewDimension();
 
     auto arrayLayerCount = descriptor.arrayLayerCount;
     if (!arrayLayerCount) {
@@ -3060,6 +3031,19 @@ uint32_t Texture::arrayLayerCount() const
 WebGPU::TextureDimension Texture::dimension() const
 {
     return m_dimension;
+}
+
+WebGPU::TextureViewDimension Texture::viewDimension() const
+{
+    switch (m_dimension) {
+    case WebGPU::TextureDimension::_1d:
+        return WebGPU::TextureViewDimension::_1d;
+    case WebGPU::TextureDimension::_2d:
+        return m_depthOrArrayLayers > 1 ? WebGPU::TextureViewDimension::_2dArray : WebGPU::TextureViewDimension::_2d;
+    case WebGPU::TextureDimension::_3d:
+        return WebGPU::TextureViewDimension::_3d;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 WebGPU::TextureFormat Texture::format() const
@@ -3252,9 +3236,6 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
 {
     auto device = m_device;
 
-    if (m_destroyed)
-        return TextureView::createInvalid(*this, device.get());
-
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
     if (!isValid()) {
@@ -3322,6 +3303,13 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
         break;
     }
 
+    std::optional<WebGPU::Extent3D> renderExtent;
+    if (m_usage.contains(WebGPU::TextureUsage::RenderAttachment))
+        renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
+
+    if (m_destroyed)
+        return TextureView::create(device->placeholderTexture(descriptor->format), nil, *descriptor, renderExtent, *this, device.get());
+
     auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
 
     auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
@@ -3348,10 +3336,6 @@ RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::Text
             sampledTexture.label = texture.label;
         }
     }
-
-    std::optional<WebGPU::Extent3D> renderExtent;
-    if (m_usage.contains(WebGPU::TextureUsage::RenderAttachment))
-        renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
     auto result = TextureView::create(texture, sampledTexture, *descriptor, renderExtent, *this, device.get());
     m_textureViews.add(result.get());
@@ -3635,6 +3619,8 @@ void Texture::undestroy()
 void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
+    if (!isValid())
+        return;
     if (!m_canvasBacking)
         m_texture = protect(m_device)->placeholderTexture(format());
     m_destroyed = true;
@@ -3753,7 +3739,7 @@ NSString* Texture::errorValidatingImageCopyTexture(const WebGPU::TexelCopyTextur
 
     uint32_t blockHeight = Texture::texelBlockHeight(metal(imageCopyTexture.texture).format());
 
-    if (!metal(imageCopyTexture.texture).isValid())
+    if (!protect(metal(imageCopyTexture.texture))->isValid())
         return @"imageCopyTexture is not valid";
 
     if (imageCopyTexture.mipLevel >= metal(imageCopyTexture.texture).mipLevelCount())

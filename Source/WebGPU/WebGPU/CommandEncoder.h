@@ -35,6 +35,7 @@
 #import "Device.h"
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
+#import <wtf/BitVector.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -191,6 +192,9 @@ public:
     void skippedDrawIndexedValidation(uint64_t bufferIdentifier, DrawIndexCacheContainerIterator);
     void skippedBundleIndirectDrawValidation(uint64_t bufferIdentifier, ReusedIndirectIndexedDraw&&);
     void rebindSamplersPreCommit(const BindGroup&);
+    void recordTimestampWrites(const WebGPU::PassTimestampWrites&);
+    void clearUnusedTimestampSlots(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset);
+    void addDeferredPassReplay(Function<void(id<MTLCommandBuffer>)>&&);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&, uint64_t uniqueId);
@@ -238,6 +242,7 @@ private:
     Vector<Ref<const TextureView>> m_trackedTextureViews;
     Vector<Ref<const ExternalTexture>> m_trackedExternalTextures;
     Vector<Ref<const QuerySet>> m_trackedQuerySets;
+    HashMap<RefPtr<const QuerySet>, BitVector> m_writtenTimestampSlots;
 
     int m_bufferMapCount { 0 };
     bool m_makeSubmitInvalid { false };

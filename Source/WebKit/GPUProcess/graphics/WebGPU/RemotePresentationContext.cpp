@@ -76,6 +76,12 @@ void RemotePresentationContext::unconfigure()
     protect(m_backing)->unconfigure();
 }
 
+void RemotePresentationContext::destruct()
+{
+    protect(m_backing)->unconfigure();
+    protect(m_objectHeap)->removeObject(m_identifier);
+}
+
 void RemotePresentationContext::getCurrentTexture(WebGPUTextureIdentifier identifier, uint32_t frameIndex)
 {
     auto texture = protect(m_backing)->getCurrentTexture(frameIndex);

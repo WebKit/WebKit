@@ -30,6 +30,7 @@
 #import "Parser.h"
 #import "TestWGSLAPI.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <thread>
 #import <wtf/Assertions.h>
 
 namespace TestWGSLAPI {
@@ -527,15 +528,15 @@ TEST_F(WGSLMetalCompilationTests, If)
 
 TEST_F(WGSLMetalCompilationTests, LargeStruct)
 {
-    expectPrepareError(file("large-struct.wgsl"_s), "The combined byte size of all variables in this function exceeds 8192 bytes"_s);
+    expectPrepareError(file("large-struct.wgsl"_s), "The combined byte size of all variables in this function exceeds 32768 bytes"_s);
 }
 
 TEST_F(WGSLMetalCompilationTests, Limits)
 {
-    expectPrepareError(file("limits-function-vars.wgsl"_s), "The combined byte size of all variables in this function exceeds 8192 bytes"_s);
+    expectPrepareError(file("limits-function-vars.wgsl"_s), "The combined byte size of all variables in this function exceeds 32768 bytes"_s);
 
     // These can depend on overrides, so they are only checked at generation time
-    expectGenerateError(file("limits-private-vars.wgsl"_s), "The combined byte size of all variables in the private address space exceeds 8192 bytes"_s);
+    expectGenerateError(file("limits-private-vars.wgsl"_s), "The combined byte size of all variables in the private address space exceeds 32768 bytes"_s);
     expectGenerateError(file("limits-workgroup-vars.wgsl"_s), "The combined byte size of all variables in the workgroup address space exceeds 16384 bytes"_s);
 }
 
@@ -1027,6 +1028,78 @@ TEST_F(WGSLMetalCompilationTests, VarInitialization)
 TEST_F(WGSLMetalCompilationTests, While)
 {
     testCompilation(file("while.wgsl"_s));
+}
+
+TEST_F(WGSLMetalCompilationTests, ASTMemoryFootprintAndSharing)
+{
+    static_assert(sizeof(WGSL::AST::Expression) <= 48);
+
+    auto smallResult = staticCheck("@compute @workgroup_size(1) fn main() { }"_s);
+    ASSERT_TRUE(std::holds_alternative<WGSL::SuccessfulCheck>(smallResult));
+    size_t smallFootprint = std::get<WGSL::SuccessfulCheck>(smallResult).ast->memoryFootprint();
+    EXPECT_GE(smallFootprint, 16384u);
+    EXPECT_LT(smallFootprint, 65536u);
+
+    auto constArrayShader =
+        "const kTable = array<vec4f, 1024>();\n"
+        "@group(0) @binding(0) var<storage, read_write> outBuf: vec4f;\n"
+        "@compute @workgroup_size(1)\n"
+        "fn main(@builtin(global_invocation_id) id: vec3u) {\n"
+        "    let i = id.x & 255u;\n"
+        "    outBuf = kTable[i] + kTable[i + 1u] + kTable[i + 2u] + kTable[i + 3u];\n"
+        "}\n"_s;
+    auto arrayResult = staticCheck(constArrayShader);
+    ASSERT_TRUE(std::holds_alternative<WGSL::SuccessfulCheck>(arrayResult));
+    auto& arrayCheck = std::get<WGSL::SuccessfulCheck>(arrayResult);
+    size_t arrayFootprint = arrayCheck.ast->memoryFootprint();
+    EXPECT_GT(arrayFootprint, smallFootprint + 1024 * sizeof(WGSL::ConstantValue));
+    EXPECT_LT(arrayFootprint, smallFootprint + 2 * 1024 * (5 * sizeof(WGSL::ConstantValue) + 32));
+
+    size_t afterFirstPassFootprint = 0;
+    for (unsigned pass = 0; pass < 3; ++pass) {
+        auto maybePrepareResult = prepare(arrayCheck);
+        ASSERT_TRUE(std::holds_alternative<WGSL::PrepareResult>(maybePrepareResult));
+        auto generationResult = generate(arrayCheck, std::get<WGSL::PrepareResult>(maybePrepareResult));
+        ASSERT_TRUE(std::holds_alternative<String>(generationResult));
+        auto metalCompilationResult = metalCompile(std::get<String>(generationResult));
+        EXPECT_TRUE(std::holds_alternative<id<MTLLibrary>>(metalCompilationResult));
+        if (!pass)
+            afterFirstPassFootprint = arrayCheck.ast->memoryFootprint();
+        else
+            EXPECT_EQ(arrayCheck.ast->memoryFootprint(), afterFirstPassFootprint);
+    }
+}
+
+TEST_F(WGSLMetalCompilationTests, ConcurrentStaticCheck)
+{
+    std::atomic<unsigned> failures { 0 };
+    Vector<std::thread> workers;
+    for (unsigned t = 0; t < 8; ++t) {
+        workers.append(std::thread([&failures, t] {
+            WGSL::Configuration config { .supportedExtensions = OptionSet<WGSL::Extension> { WGSL::Extension::F16 } };
+            for (unsigned i = 0; i < 32; ++i) {
+                String validCode = makeString(
+                    "enable f16;\n"
+                    "@group(0) @binding(0) var<storage, read_write> outBuf: vec4f;\n"
+                    "@compute @workgroup_size(1) fn main(@builtin(global_invocation_id) id: vec3u) {\n"
+                    "    let a = frexp(vec4f(f32(id.x + "_s, t * 32 + i, "u)));\n"
+                    "    let b = modf(vec4h(1.5h));\n"
+                    "    outBuf = clamp(a.fract + vec4f(b.whole), vec4f(0.0), vec4f(1.0));\n"
+                    "}\n"_s);
+                auto ok = WGSL::staticCheck(validCode, std::nullopt, config);
+                if (!std::holds_alternative<WGSL::SuccessfulCheck>(ok))
+                    ++failures;
+
+                String invalidCode = "@compute @workgroup_size(1) fn main() { let x: i32 = 1.5; }"_s;
+                auto bad = WGSL::staticCheck(invalidCode, std::nullopt, config);
+                if (!std::holds_alternative<WGSL::FailedCheck>(bad))
+                    ++failures;
+            }
+        }));
+    }
+    for (auto& worker : workers)
+        worker.join();
+    EXPECT_EQ(failures.load(), 0u);
 }
 
 }

@@ -30,7 +30,7 @@
 ]
 messages -> RemoteBuffer Stream {
     void GetMappedRange(uint64_t offset, std::optional<uint64_t> size) -> (std::optional<Vector<uint8_t>> data) Synchronous
-    void MapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size) -> (bool success) ReplyCanDispatchOutOfOrder
+    void MapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size) -> (bool success, std::optional<Vector<uint8_t>> data) ReplyCanDispatchOutOfOrder
     void Copy(std::optional<WebCore::SharedMemory::Handle> data, uint64_t offset) -> (bool success) NotStreamEncodable
     void CopyWithCopy(Vector<uint8_t> data, uint64_t offset)
     void Unmap()
