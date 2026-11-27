@@ -16,13 +16,14 @@ function hasShowWritingTools() {
 }
 
 window.addEventListener("message", function(event) {
-    if (event.data !== "report-writing-tools")
+    if (event.data !== "report-writing-tools" && event.data !== "report-writing-tools-unfocused")
         return;
+    const requireFocus = event.data === "report-writing-tools";
 
     const start = Date.now();
     const intervalID = setInterval(function() {
         const focused = !!document.activeElement && document.activeElement.id === "iframe-textarea";
-        const hasAction = focused && hasShowWritingTools();
+        const hasAction = (focused || !requireFocus) && hasShowWritingTools();
         if (hasAction || Date.now() - start > 3000) {
             clearInterval(intervalID);
             window.parent.postMessage({
