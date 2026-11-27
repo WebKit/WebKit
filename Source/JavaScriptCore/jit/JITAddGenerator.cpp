@@ -46,6 +46,16 @@ JITMathICInlineResult JITAddGenerator::generateInline(CCallHelpers& jit, MathICG
     if (lhs.isOnlyNonNumber() && rhs.isOnlyNonNumber())
         return JITMathICInlineResult::DontGenerate;
 
+    if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
+        ASSERT(m_left != InvalidGPRReg);
+        ASSERT(m_right != InvalidGPRReg);
+        state.slowPathJumps.append(jit.unboxDoubleOrBranchIfNotDouble(m_left, m_scratchGPR, m_leftFPR));
+        state.slowPathJumps.append(jit.unboxDoubleOrBranchIfNotDouble(m_right, m_scratchGPR, m_rightFPR));
+        jit.addDouble(m_rightFPR, m_leftFPR);
+        jit.boxDouble(m_leftFPR, m_result);
+        return JITMathICInlineResult::GeneratedFastPath;
+    }
+
     if ((lhs.isOnlyInt32() || m_leftOperand.isConstInt32()) && (rhs.isOnlyInt32() || m_rightOperand.isConstInt32())) {
         ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
         if (!m_leftOperand.isConstInt32())

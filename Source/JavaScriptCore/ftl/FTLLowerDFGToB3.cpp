@@ -2890,7 +2890,7 @@ private:
                 mathIC->m_generator = Generator(params[0].gpr(), params[1].gpr(), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
-                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
+                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, JITType::FTLJIT, shouldEmitProfiling);
 
                 if (generatedInline) {
                     ASSERT(!mathICGenerationState->slowPathJumps.empty());
@@ -2986,7 +2986,7 @@ private:
                     params.fpScratch(1), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
-                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
+                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, JITType::FTLJIT, shouldEmitProfiling);
 
                 if (generatedInline) {
                     ASSERT(!mathICGenerationState->slowPathJumps.empty());

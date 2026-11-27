@@ -4445,7 +4445,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
     mathIC->m_generator = Generator(leftOperand, rightOperand, resultGPR, leftGPR, rightGPR, leftFPR, rightFPR, scratchGPR);
 
     bool shouldEmitProfiling = false;
-    bool generatedInline = mathIC->generateInline(*this, *addICGenerationState, shouldEmitProfiling);
+    bool generatedInline = mathIC->generateInline(*this, *addICGenerationState, JITType::DFGJIT, shouldEmitProfiling);
     if (generatedInline) {
         ASSERT(!addICGenerationState->slowPathJumps.empty());
 
@@ -5169,7 +5169,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
     mathIC->m_generator = Generator(resultGPR, childGPR, scratchGPR);
 
     bool shouldEmitProfiling = false;
-    bool generatedInline = mathIC->generateInline(*this, *icGenerationState, shouldEmitProfiling);
+    bool generatedInline = mathIC->generateInline(*this, *icGenerationState, JITType::DFGJIT, shouldEmitProfiling);
     if (generatedInline) {
         ASSERT(!icGenerationState->slowPathJumps.empty());
 

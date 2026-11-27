@@ -4777,6 +4777,15 @@ public:
         return Jump(makeBranch(cond));
     }
 
+    // Compares left against (right << amount).
+    Jump branch64LeftShift(RelationalCondition cond, RegisterID left, RegisterID right, TrustedImm32 amount)
+    {
+        ASSERT(left != ARM64Registers::sp);
+        ASSERT(right != ARM64Registers::sp);
+        m_assembler.cmp<64>(left, right, Assembler::LSL, amount.m_value);
+        return Jump(makeBranch(cond));
+    }
+
     Jump branch64(RelationalCondition cond, RegisterID left, TrustedImm32 right)
     {
         auto immediate = right.m_value;

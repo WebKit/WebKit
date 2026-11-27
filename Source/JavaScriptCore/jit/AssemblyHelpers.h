@@ -1056,6 +1056,23 @@ public:
         unboxDouble(gpr, gpr, fpr);
     }
 
+    // Unboxing yields bits below NumberTag << 1 for every boxed double, NaNs included because a boxed
+    // NaN is never impure, and bits at or above it for every other JSValue.
+    Jump unboxDoubleOrBranchIfNotDouble(GPRReg gpr, GPRReg scratchGPR, FPRReg fpr)
+    {
+        constexpr uint64_t firstNonDoubleBits = static_cast<uint64_t>(JSValue::NumberTag) << 1;
+        static_assert(isImpureNaN(std::bit_cast<double>(firstNonDoubleBits)));
+        static_assert(!isImpureNaN(std::bit_cast<double>(firstNonDoubleBits - 1)));
+        add64(GPRInfo::numberTagRegister, gpr, scratchGPR);
+#if CPU(ARM64)
+        Jump notDouble = branch64LeftShift(AboveOrEqual, scratchGPR, GPRInfo::numberTagRegister, TrustedImm32(1));
+#else
+        Jump notDouble = branch64(AboveOrEqual, scratchGPR, TrustedImm64(static_cast<int64_t>(firstNonDoubleBits)));
+#endif
+        move64ToDouble(scratchGPR, fpr);
+        return notDouble;
+    }
+
     Jump isStrictInt52(GPRReg valueGPR, GPRReg scratchGPR)
     {
 #if CPU(ARM64)

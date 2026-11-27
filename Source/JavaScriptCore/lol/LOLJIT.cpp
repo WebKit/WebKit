@@ -2584,7 +2584,7 @@ void LOLJIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruct
 
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, makeUniqueRef<MathICGenerationState>()).iterator->value.get();
 
-    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
+    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState, JITType::BaselineJIT);
     if (!generatedInlineCode) {
         // FIXME: We should consider doing a handler IC for math bytecodes.
         BinaryArithProfile* arithProfile = mathIC->arithProfile();
@@ -2690,7 +2690,7 @@ void LOLJIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const JSInstructi
 
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, makeUniqueRef<MathICGenerationState>()).iterator->value.get();
 
-    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
+    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState, JITType::BaselineJIT);
     if (!generatedInlineCode) {
         UnaryArithProfile* arithProfile = mathIC->arithProfile();
         // FIXME: We should consider doing a handler IC for math bytecodes.

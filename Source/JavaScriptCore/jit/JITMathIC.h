@@ -67,17 +67,19 @@ public:
     CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return m_slowPathCallLocation; }
     CodeLocationLabel<JSInternalPtrTag> slowPathStartLocation() { return m_slowPathStartLocation; }
 
-    bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
+    bool generateInline(CCallHelpers& jit, MathICGenerationState& state, JITType jitType, bool shouldEmitProfiling = true)
     {
         jit.padBeforePatch(); // Make sure that the first patchable jump below is aligned, but don't count alignment in the inline size.
         state.fastPathStart = jit.label();
         size_t startSize = jit.m_assembler.buffer().codeSize();
 
-        if (m_arithProfile && m_arithProfile->isObservedTypeEmpty()) {
-            // It looks like the MathIC has yet to execute. We don't want to emit code in this
-            // case for a couple reasons. First, the operation may never execute, so if we don't emit
-            // code, it's a win. Second, if the operation does execute, we can emit better code
-            // once we have an idea about the types.
+        // Baseline emits the full snippet for a binary operation before it first executes, since
+        // patching on first execution allocates and flushes executable memory on the main thread.
+        // The snippet does not record operand types, which the DFG only reads for unary operations
+        // and for its own math ICs. Those, and DFG and FTL binary ICs, keep waiting so that the
+        // first execution records the types and specializes on them.
+        bool generateSnippetBeforeFirstExecution = jitType == JITType::BaselineJIT && std::is_same_v<ArithProfileType, BinaryArithProfile>;
+        if (!generateSnippetBeforeFirstExecution && m_arithProfile && m_arithProfile->isObservedTypeEmpty()) {
             state.slowPathJumps.append(jit.patchableJump());
             size_t inlineSize = jit.m_assembler.buffer().codeSize() - startSize;
             ASSERT_UNUSED(inlineSize, static_cast<ptrdiff_t>(inlineSize) <= MacroAssembler::patchableJumpSize());
@@ -143,7 +145,7 @@ public:
 
             CCallHelpers jit(codeBlock);
             MathICGenerationState generationState;
-            bool generatedInline = generateInline(jit, generationState, shouldEmitProfiling);
+            bool generatedInline = generateInline(jit, generationState, codeBlock->jitType(), shouldEmitProfiling);
 
             // We no longer want to try to regenerate the fast path.
             m_generateFastPathOnRepatch = false;

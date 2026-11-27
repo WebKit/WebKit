@@ -892,7 +892,7 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const JSInstruction*
 
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, makeUniqueRef<MathICGenerationState>()).iterator->value.get();
 
-    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
+    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState, JITType::BaselineJIT);
     if (!generatedInlineCode) {
         UnaryArithProfile* arithProfile = mathIC->arithProfile();
         loadGlobalObject(globalObjectGPR);
@@ -955,7 +955,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
 
     MathICGenerationState& mathICGenerationState = m_instructionToMathICGenerationState.add(currentInstruction, makeUniqueRef<MathICGenerationState>()).iterator->value.get();
 
-    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
+    bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState, JITType::BaselineJIT);
     if (!generatedInlineCode) {
         if (leftOperand.isConst())
             emitGetVirtualRegister(op1, leftGPR);

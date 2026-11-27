@@ -3103,6 +3103,57 @@ void testAddWithLeftShift64()
     }
 }
 
+void testBranch64LeftShift()
+{
+    auto compare = [](CCallHelpers::RelationalCondition cond, uint64_t left, uint64_t right) -> int {
+        switch (cond) {
+        case CCallHelpers::LessThan:
+            return static_cast<int64_t>(left) < static_cast<int64_t>(right);
+        case CCallHelpers::GreaterThanOrEqual:
+            return static_cast<int64_t>(left) >= static_cast<int64_t>(right);
+        case CCallHelpers::Below:
+            return left < right;
+        case CCallHelpers::AboveOrEqual:
+            return left >= right;
+        case CCallHelpers::Equal:
+            return left == right;
+        case CCallHelpers::NotEqual:
+            return left != right;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return 0;
+    };
+
+    Vector<int32_t> amounts = { 0, 1, 34, 63 };
+    Vector<CCallHelpers::RelationalCondition> conditions = { CCallHelpers::LessThan, CCallHelpers::GreaterThanOrEqual, CCallHelpers::Below, CCallHelpers::AboveOrEqual, CCallHelpers::Equal, CCallHelpers::NotEqual };
+    Vector<int64_t> operands = int64Operands();
+    operands.append(static_cast<int64_t>(0xfffc000000000000ULL));
+    operands.append(static_cast<int64_t>(0xfffbffffffffffffULL));
+    operands.append(static_cast<int64_t>(0xfffe000000000000ULL));
+    for (auto amount : amounts) {
+        for (auto cond : conditions) {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                auto branch = jit.branch64LeftShift(cond, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TrustedImm32(amount));
+                jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+                auto done = jit.jump();
+                branch.link(&jit);
+                jit.move(CCallHelpers::TrustedImm32(1), GPRInfo::returnValueGPR);
+                done.link(&jit);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            for (auto left : operands) {
+                for (auto right : operands)
+                    CHECK_EQ(invoke<int>(test, left, right), compare(cond, left, static_cast<uint64_t>(right) << amount));
+            }
+        }
+    }
+}
+
 void testAddWithRightShift64()
 {
     Vector<int32_t> amounts = { 0, 34, 63 };
@@ -10968,6 +11019,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testAddWithRightShift32());
     RUN(testAddWithUnsignedRightShift32());
     RUN(testAddWithLeftShift64());
+    RUN(testBranch64LeftShift());
     RUN(testAddWithRightShift64());
     RUN(testAddWithUnsignedRightShift64());
     RUN(testSubWithLeftShift32());

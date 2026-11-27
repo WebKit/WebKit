@@ -49,14 +49,8 @@ JITMathICInlineResult JITMulGenerator::generateInline(CCallHelpers& jit, MathICG
     if (lhs.isOnlyNumber() && rhs.isOnlyNumber() && !m_leftOperand.isConst() && !m_rightOperand.isConst()) {
         ASSERT(m_left != InvalidGPRReg);
         ASSERT(m_right != InvalidGPRReg);
-        if (!m_leftOperand.definitelyIsNumber())
-            state.slowPathJumps.append(jit.branchIfNotNumber(m_left));
-        if (!m_rightOperand.definitelyIsNumber())
-            state.slowPathJumps.append(jit.branchIfNotNumber(m_right));
-        state.slowPathJumps.append(jit.branchIfInt32(m_left));
-        state.slowPathJumps.append(jit.branchIfInt32(m_right));
-        jit.unboxDouble(m_left, m_scratchGPR, m_leftFPR);
-        jit.unboxDouble(m_right, m_scratchGPR, m_rightFPR);
+        state.slowPathJumps.append(jit.unboxDoubleOrBranchIfNotDouble(m_left, m_scratchGPR, m_leftFPR));
+        state.slowPathJumps.append(jit.unboxDoubleOrBranchIfNotDouble(m_right, m_scratchGPR, m_rightFPR));
         jit.mulDouble(m_rightFPR, m_leftFPR);
         jit.boxDouble(m_leftFPR, m_result);
 
