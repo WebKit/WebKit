@@ -33,7 +33,7 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 11);
+plan(tests => 12);
 
 no warnings qw(redefine prototype);
 *webkitdirs::isAppleCocoaWebKit = sub () { 1 };
@@ -42,10 +42,12 @@ use warnings qw(redefine prototype);
 my $base = tempdir(CLEANUP => 1);
 setBaseProductDir($base);
 
-# A setting recorded earlier that this command line does not mention.
+# A setting recorded earlier that this command line does not mention, and one
+# that --no-tsan clears.
+writeBuildSetting("UBSan", "YES");
 writeBuildSetting("TSan", "YES");
 
-@ARGV = ("--debug", "--cmake", "--asan", "--force-opt=O3", "leftover");
+@ARGV = ("--debug", "--cmake", "--asan", "--no-tsan", "--force-opt=O3", "leftover");
 setConfiguration();
 recordBuildSettings();
 
@@ -64,7 +66,8 @@ sub settingIs($)
 is(settingIs("Configuration"), "Debug", "--debug is recorded");
 is(settingIs("BuildSystem"), "CMake", "--cmake is recorded");
 is(settingIs("ASan"), "YES", "--asan is recorded");
-is(settingIs("TSan"), "YES", "a setting not given is left alone");
+is(settingIs("TSan"), undef, "--no-tsan removes the setting");
+is(settingIs("UBSan"), "YES", "a setting not given is left alone");
 is(settingIs("ForceOptimizationLevel"), "3", "--force-opt is recorded");
 
 # "none" stops forcing a level, which is the absence of the setting.

@@ -780,6 +780,14 @@ sub passedSanitizer($)
     return $passedSanitizers{$sanitizer};
 }
 
+my %passedNoSanitizers;
+sub passedNoSanitizer($)
+{
+    my ($sanitizer) = @_;
+    $passedNoSanitizers{$sanitizer} = checkForArgumentAndRemoveFromARGV("--no-" . lc $sanitizer) ? 1 : 0 unless defined $passedNoSanitizers{$sanitizer};
+    return $passedNoSanitizers{$sanitizer};
+}
+
 # The optimization level given on this command line, under either spelling, or
 # "none" to stop forcing one.
 my $passedForceOptimizationLevel;
@@ -817,15 +825,15 @@ sub determineASanIsEnabled
 {
     return if defined $asanIsEnabled;
     determineBaseProductDir();
-    # Honor an explicit --asan (like --cmake) in addition to the marker file.
-    $asanIsEnabled = passedSanitizer("ASan") || readSanitizerConfiguration("ASan");
+    # Honor an explicit --asan/--no-asan (like --cmake) in addition to the marker file.
+    $asanIsEnabled = passedSanitizer("ASan") || (!passedNoSanitizer("ASan") && readSanitizerConfiguration("ASan"));
 }
 
 sub determineTSanIsEnabled
 {
     return if defined $tsanIsEnabled;
     determineBaseProductDir();
-    $tsanIsEnabled = passedSanitizer("TSan") || readSanitizerConfiguration("TSan");
+    $tsanIsEnabled = passedSanitizer("TSan") || (!passedNoSanitizer("TSan") && readSanitizerConfiguration("TSan"));
 }
 
 sub determineUBSanIsEnabled
@@ -1345,6 +1353,7 @@ sub xcodeConfigurationProductDir
     return $baseProductDir if usesPerConfigurationBuildDirectory();
     my $dir = File::Spec->catdir($baseProductDir, $configuration);
     $dir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
+    $dir .= sanitizerSuffix();
     return $dir;
 }
 
@@ -1488,6 +1497,14 @@ sub asanIsEnabled()
 {
     determineASanIsEnabled();
     return $asanIsEnabled;
+}
+
+sub sanitizerSuffix()
+{
+    return "" unless configuration() =~ /^(Debug|Release)/;
+    return "-asan" if asanIsEnabled();
+    return "-tsan" if tsanIsEnabled();
+    return "";
 }
 
 sub tsanIsEnabled()
@@ -3758,6 +3775,10 @@ sub recordBuildSettings()
     writeBuildSetting("BuildSystem", passedBuildSystem()) if passedBuildSystem() && isAppleCocoaWebKit();
     for my $sanitizer ("ASan", "TSan") {
         writeBuildSetting($sanitizer, "YES") if passedSanitizer($sanitizer);
+        if (passedNoSanitizer($sanitizer)) {
+            determineBaseProductDir();
+            unlink File::Spec->catfile($baseProductDir, $sanitizer);
+        }
     }
     if (my $level = passedForceOptimizationLevel()) {
         die "Unknown optimization level \"$level\".\n" unless isValidForceOptimizationLevel($level);

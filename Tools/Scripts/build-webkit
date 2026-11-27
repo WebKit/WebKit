@@ -127,8 +127,8 @@ Usage: $programName [options] [options to pass to build system]
   --release                         Compile with Release configuration
   --cmake                           Build with CMake
   --xcode                           Build with Xcode
-  --asan                            Compile with the clang address sanitizer
-  --tsan                            Compile with the clang thread sanitizer
+  --[no-]asan                       Compile with (or without) the clang address sanitizer
+  --[no-]tsan                       Compile with (or without) the clang thread sanitizer
   --force-optimization-level=<level>, --force-opt=<level>
                                     Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
 
