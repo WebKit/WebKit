@@ -832,6 +832,8 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/ProcessSwapCOOPProcessReuseTests.swift
     Tests/WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift
     Tests/WebKit/WKWebView/ProcessSwapWebInspectorTests.swift
+    Tests/WebKit/WKWebView/RestoreLocalStorage.swift
+    Tests/WebKit/WKWebView/RestoreSessionStorage.swift
     Tests/WebKit/WKWebView/SiteIsolationAnimationControlTests.swift
     Tests/WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationBackForwardTests.swift
