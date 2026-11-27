@@ -1343,6 +1343,9 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
         LLINT_END();
     }
 
+    baseValue.requireObjectCoercible(globalObject);
+    LLINT_CHECK_EXCEPTION();
+
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
     PutPropertySlot slot(baseValue, isStrictMode);

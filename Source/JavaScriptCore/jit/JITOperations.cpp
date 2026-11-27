@@ -1580,6 +1580,9 @@ static ALWAYS_INLINE void putByVal(JSGlobalObject* globalObject, JSValue baseVal
         }
     }
 
+    baseValue.requireObjectCoercible(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
     GCOwnedDataScope<AtomStringImpl*> propertyName;
     Identifier propertyKey;
     UniquedStringImpl* uid = nullptr;
