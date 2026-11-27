@@ -434,128 +434,101 @@ void SVGResources::removeClientFromCacheAndMarkForInvalidation(RenderElement& re
     }
 }
 
-bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
+template<typename Callback>
+IterationStatus SVGResources::forEachResource(NOESCAPE const Callback& callback) const
 {
     if (isEmpty())
-        return false;
+        return IterationStatus::Continue;
+
+    if (CheckedPtr linkedResource = m_linkedResource) {
+        ASSERT(!m_clipperFilterMaskerData);
+        ASSERT(!m_markerData);
+        ASSERT(!m_fillStrokeData);
+        return callback(*linkedResource);
+    }
+
+    auto check = [&](CheckedPtr<LegacyRenderSVGResourceContainer> resource) {
+        return resource && callback(*resource) == IterationStatus::Done;
+    };
+
+    if (m_clipperFilterMaskerData && (check(m_clipperFilterMaskerData->clipper.get()) || check(m_clipperFilterMaskerData->filter.get()) || check(m_clipperFilterMaskerData->masker.get())))
+        return IterationStatus::Done;
+
+    if (m_markerData && (check(m_markerData->markerStart.get()) || check(m_markerData->markerMid.get()) || check(m_markerData->markerEnd.get())))
+        return IterationStatus::Done;
+
+    if (m_fillStrokeData && (check(m_fillStrokeData->fill.get()) || check(m_fillStrokeData->stroke.get())))
+        return IterationStatus::Done;
+
+    return IterationStatus::Continue;
+}
+
+bool SVGResources::referencesResource(const LegacyRenderSVGResourceContainer& resource) const
+{
+    auto status = forEachResource([&](auto& candidate) {
+        return &candidate == &resource ? IterationStatus::Done : IterationStatus::Continue;
+    });
+    return status == IterationStatus::Done;
+}
+
+void SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
+{
+    if (isEmpty())
+        return;
 
     if (m_linkedResource == &resource) {
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        m_linkedResource->removeAllClientsFromCacheAndMarkForInvalidation();
         m_linkedResource = nullptr;
-        return true;
+        return;
     }
 
-    bool foundResources = false;
     switch (resource.resourceType()) {
     case MaskerResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->masker == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->masker == &resource)
             m_clipperFilterMaskerData->masker = nullptr;
-            foundResources = true;
-        }
         break;
     case MarkerResourceType:
         if (!m_markerData)
             break;
-        if (m_markerData->markerStart == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerStart == &resource)
             m_markerData->markerStart = nullptr;
-            foundResources = true;
-        }
-        if (m_markerData->markerMid == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerMid == &resource)
             m_markerData->markerMid = nullptr;
-            foundResources = true;
-        }
-        if (m_markerData->markerEnd == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_markerData->markerEnd == &resource)
             m_markerData->markerEnd = nullptr;
-            foundResources = true;
-        }
         break;
     case PatternResourceType:
     case LinearGradientResourceType:
     case RadialGradientResourceType:
         if (!m_fillStrokeData)
             break;
-        if (m_fillStrokeData->fill == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_fillStrokeData->fill == &resource)
             m_fillStrokeData->fill = nullptr;
-            foundResources = true;
-        }
-        if (m_fillStrokeData->stroke == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_fillStrokeData->stroke == &resource)
             m_fillStrokeData->stroke = nullptr;
-            foundResources = true;
-        }
         break;
     case FilterResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->filter == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->filter == &resource)
             m_clipperFilterMaskerData->filter = nullptr;
-            foundResources = true;
-        }
         break;
     case ClipperResourceType:
-        if (!m_clipperFilterMaskerData)
-            break;
-        if (m_clipperFilterMaskerData->clipper == &resource) {
-            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+        if (m_clipperFilterMaskerData && m_clipperFilterMaskerData->clipper == &resource)
             m_clipperFilterMaskerData->clipper = nullptr;
-            foundResources = true;
-        }
         break;
     case SolidColorResourceType:
         ASSERT_NOT_REACHED();
         break;
     }
-    return foundResources;
 }
 
 void SVGResources::buildSetOfResources(SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& set)
 {
-    if (isEmpty())
-        return;
-
-    if (CheckedPtr linkedResource = m_linkedResource) {
-        ASSERT(!m_clipperFilterMaskerData);
-        ASSERT(!m_markerData);
-        ASSERT(!m_fillStrokeData);
-        set.add(*linkedResource);
-        return;
-    }
-
-    if (m_clipperFilterMaskerData) {
-        if (CheckedPtr clipper = m_clipperFilterMaskerData->clipper.get())
-            set.add(*clipper);
-        if (CheckedPtr filter = m_clipperFilterMaskerData->filter.get())
-            set.add(*filter);
-        if (CheckedPtr masker = m_clipperFilterMaskerData->masker.get())
-            set.add(*masker);
-    }
-
-    if (m_markerData) {
-        if (CheckedPtr markerStart = m_markerData->markerStart.get())
-            set.add(*markerStart);
-        if (CheckedPtr markerMid = m_markerData->markerMid.get())
-            set.add(*markerMid);
-        if (CheckedPtr markerEnd = m_markerData->markerEnd.get())
-            set.add(*markerEnd);
-    }
-
-    if (m_fillStrokeData) {
-        if (CheckedPtr fill = m_fillStrokeData->fill.get())
-            set.add(*fill);
-        if (CheckedPtr stroke = m_fillStrokeData->stroke.get())
-            set.add(*stroke);
-    }
+    forEachResource([&](auto& resource) {
+        set.add(resource);
+        return IterationStatus::Continue;
+    });
 }
 
 bool SVGResources::setClipper(LegacyRenderSVGResourceClipper* clipper)
