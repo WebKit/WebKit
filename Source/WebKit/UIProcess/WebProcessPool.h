@@ -277,6 +277,7 @@ public:
     HashSet<ProcessID> prewarmedProcessIdentifiers();
     HashSet<ProcessID> crossOriginIsolatedProcessIdentifiers();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
+    void unhandledMessagesInWebProcessForTesting(ProcessID, CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&&);
     void countWebPagesInAllProcessesForTesting(CompletionHandler<void(unsigned)>&&);
 
     WebPageGroup& defaultPageGroup() LIFETIME_BOUND { return m_defaultPageGroup.get(); }

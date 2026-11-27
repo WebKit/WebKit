@@ -38,6 +38,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
+enum class ShouldNotifyWebProcess : bool { No, Yes };
+
 // FIXME: move this to Inspector namespace when remaining agents move.
 struct WebPageAgentContext {
     Ref<Inspector::FrontendRouter> frontendRouter;

@@ -193,6 +193,7 @@
 #include "WebPageGroup.h"
 #include "WebPageGroupData.h"
 #include "WebPageInjectedBundleClient.h"
+#include "WebPageInspectorAgentBase.h"
 #include "WebPageInspectorController.h"
 #include "WebPageLoadTiming.h"
 #include "WebPageMessages.h"
@@ -7403,7 +7404,8 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
 
     // There is no way we'll be able to return to the page in the previous page so close it.
-    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage)) {
+    bool closedPreviousPage = !didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage);
+    if (closedPreviousPage) {
         // Keep the process alive until message reply, so the current active document could finish dispatching necessary events.
         auto scope = Box<WebProcessProxy::ShutdownPreventingScopeCounter::Token>::create(protect(legacyMainFrameProcess())->shutdownPreventingScope());
         RunLoop::mainSingleton().dispatchAfter(WebFrameProxy::unloadEventsExpirationDelay, [scope] {
@@ -7433,7 +7435,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     didCommitLoadForFrame(connection, frameID, WTF::move(frameInfo), WTF::move(untrustedReportedOrigin), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, hasCertificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), IPC::Untrusted<HashSet<WebCore::SecurityOriginData>> { WTF::move(cspOriginsThatUpgradeInsecureNavigations) }, userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
 
-    m_inspectorController->didCommitProvisionalPage(oldMainFrameID, oldProcessID, oldWebPageID, m_webPageID);
+    m_inspectorController->didCommitProvisionalPage(oldMainFrameID, oldProcessID, oldWebPageID, m_webPageID, closedPreviousPage ? ShouldNotifyWebProcess::No : ShouldNotifyWebProcess::Yes);
 }
 
 bool WebPageProxy::shouldClosePreviousPage(const ProvisionalPageProxy& provisionalPage)

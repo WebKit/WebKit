@@ -320,7 +320,7 @@ void WebPageInspectorController::willDestroyProvisionalPage(const ProvisionalPag
         removeTarget(FrameInspectorTarget::toTargetID(mainFrameID, mainFrameProcessID));
 }
 
-void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore::FrameIdentifier> oldMainFrameID, WebCore::ProcessIdentifier oldProcessID, WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID)
+void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore::FrameIdentifier> oldMainFrameID, WebCore::ProcessIdentifier oldProcessID, WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID, ShouldNotifyWebProcess shouldNotifyWebProcess)
 {
     String oldPageTargetID = PageInspectorTarget::toTargetID(oldWebPageID);
     String newPageTargetID = PageInspectorTarget::toTargetID(newWebPageID);
@@ -372,7 +372,7 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
         if (hasFrontends) {
             // PageInspectorTargetProxy would route through the WebPageProxy, which already points at the new process.
             if (targetID == oldPageTargetID) {
-                if (oldProcess)
+                if (oldProcess && shouldNotifyWebProcess == ShouldNotifyWebProcess::Yes)
                     oldProcess->send(Messages::WebPage::DisconnectInspector(), oldWebPageID);
             } else
                 target->disconnect();
@@ -393,13 +393,13 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
 
     if (m_pageAgent && m_pageAgent->isEnabled()) {
         if (oldProcess)
-            m_pageAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
+            m_pageAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID, shouldNotifyWebProcess);
         m_pageAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
 
     if (m_networkAgent && m_networkAgent->isEnabled()) {
         if (oldProcess)
-            m_networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
+            m_networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID, shouldNotifyWebProcess);
         m_networkAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
 }

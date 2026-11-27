@@ -134,6 +134,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetIsInProcessCache(bool isInProcessCache) -> ()
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
+    GetUnhandledMessagesForTesting() -> (std::optional<uint64_t> count, Vector<String> names)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     [DeferSendingIfSuspended] SetScreenProperties(struct WebCore::ScreenProperties screenProperties)

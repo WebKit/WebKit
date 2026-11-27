@@ -702,6 +702,17 @@ static WebKit::WebProcessPool::AXAuthenticationTestingMode toAXAuthenticationTes
     });
 }
 
+- (void)_getUnhandledMessagesInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSNumber *count, NSArray<NSString *> *names))completionHandler
+{
+    protect(*_processPool)->unhandledMessagesInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)](std::optional<uint64_t> count, Vector<String>&& names) {
+        if (!count) {
+            completionHandler(nil, nil);
+            return;
+        }
+        completionHandler(@(*count), createNSArray(names).get());
+    });
+}
+
 - (void)_clearPermanentCredentialsForProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
     protect(*_processPool)->clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace(protectionSpace));

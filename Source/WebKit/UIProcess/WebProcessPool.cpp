@@ -1861,6 +1861,15 @@ void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, Com
     completionHandler({ });
 }
 
+void WebProcessPool::unhandledMessagesInWebProcessForTesting(ProcessID pid, CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&& completionHandler)
+{
+    for (Ref process : m_processes) {
+        if (process->processID() == pid)
+            return process->unhandledMessagesForTesting(WTF::move(completionHandler));
+    }
+    completionHandler(std::nullopt, { });
+}
+
 void WebProcessPool::countWebPagesInAllProcessesForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
 {
     class ResultAggregator : public RefCounted<ResultAggregator> {

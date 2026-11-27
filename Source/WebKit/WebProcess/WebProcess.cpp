@@ -178,6 +178,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/WTFProcess.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
 
@@ -1221,7 +1222,17 @@ bool WebProcess::filterUnhandledMessage(IPC::Connection&, IPC::Decoder& decoder)
     // Note: due to receiving messages to non-existing IDs, we have to filter the messages.
     // This should be removed once these messages are fixed.
     LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(decoder.messageName()).characters(), decoder.destinationID(), static_cast<int>(getCurrentProcessID()));
+    ++m_unhandledMessageCountForTesting;
+    if (m_unhandledMessagesForTesting.size() < maxUnhandledMessagesForTesting)
+        m_unhandledMessagesForTesting.append({ decoder.messageName(), decoder.destinationID() });
     return true;
+}
+
+void WebProcess::getUnhandledMessagesForTesting(CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&& completionHandler)
+{
+    completionHandler(m_unhandledMessageCountForTesting, WTF::map(m_unhandledMessagesForTesting, [](auto& message) {
+        return makeString(description(message.first), " destination="_s, message.second);
+    }));
 }
 
 void WebProcess::didClose(IPC::Connection& connection)

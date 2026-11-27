@@ -58,6 +58,7 @@
 namespace Inspector {
 
 using namespace WebCore;
+using WebKit::ShouldNotifyWebProcess;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProxyingNetworkAgent);
 
@@ -218,7 +219,7 @@ void ProxyingNetworkAgent::enableInstrumentationForProcess(WebKit::WebProcessPro
         webProcess.send(Messages::WebInspectorBackend::SetResourceCachingDisabled { m_resourceCachingDisabled }, pageID);
 }
 
-void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessProxy& webProcess, WebCore::PageIdentifier pageID)
+void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessProxy& webProcess, WebCore::PageIdentifier pageID, WebKit::ShouldNotifyWebProcess shouldNotifyWebProcess)
 {
     auto processID = webProcess.coreProcessIdentifier();
     auto key = std::make_pair(processID, pageID);
@@ -230,7 +231,8 @@ void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessPr
         return;
 
     m_instrumentedProcessPageCounts.remove(it);
-    webProcess.send(Messages::WebInspectorBackend::DisableNetworkInstrumentation { }, pageID);
+    if (shouldNotifyWebProcess == ShouldNotifyWebProcess::Yes)
+        webProcess.send(Messages::WebInspectorBackend::DisableNetworkInstrumentation { }, pageID);
     webProcess.removeMessageReceiver(Messages::ProxyingNetworkAgent::messageReceiverName(), pageID);
 
     // Drop the pin once this process has no remaining page registrations.

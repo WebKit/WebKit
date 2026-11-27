@@ -335,6 +335,7 @@ public:
     unsigned remotePageCount() const;
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
+    void unhandledMessagesForTesting(CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&&);
 
 #if ENABLE(NOTIFY_BLOCKING)
     void getNotifyStateForTesting(const String&, CompletionHandler<void(std::optional<uint64_t>)>&&);

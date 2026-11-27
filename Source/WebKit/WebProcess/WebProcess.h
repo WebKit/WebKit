@@ -386,6 +386,7 @@ public:
 
     void updateActivePages(const String& overrideDisplayName);
     void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
+    void getUnhandledMessagesForTesting(CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
@@ -959,6 +960,9 @@ private:
     bool m_allowExitOnMemoryPressure { true };
     std::optional<bool> m_isLockdownModeEnabled;
     std::optional<bool> m_isEnhancedSecurityEnabled;
+    static constexpr size_t maxUnhandledMessagesForTesting { 16 };
+    uint64_t m_unhandledMessageCountForTesting { 0 };
+    Vector<std::pair<IPC::MessageName, uint64_t>> m_unhandledMessagesForTesting;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, Ref<SandboxExtension>> m_mediaCaptureSandboxExtensions;

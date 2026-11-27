@@ -69,7 +69,7 @@ public:
 
     bool isEnabled() const { return m_enabled; }
     void enableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
-    void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
+    void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier, WebKit::ShouldNotifyWebProcess = WebKit::ShouldNotifyWebProcess::Yes);
 
     // Authoritative "frame is genuinely gone" signal, reported from the WebFrameProxy destruction
     // path. Unlike the WebContent-process frameDetached IPC (which also fires on a process swap),

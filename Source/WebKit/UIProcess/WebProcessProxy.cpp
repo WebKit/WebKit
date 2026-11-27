@@ -2950,6 +2950,11 @@ void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector
     sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTF::move(completionHandler));
 }
 
+void WebProcessProxy::unhandledMessagesForTesting(CompletionHandler<void(std::optional<uint64_t>, Vector<String>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebProcess::GetUnhandledMessagesForTesting(), WTF::move(completionHandler));
+}
+
 #if ENABLE(NOTIFY_BLOCKING)
 void WebProcessProxy::getNotifyStateForTesting(const String& name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
 {

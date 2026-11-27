@@ -622,6 +622,7 @@
 				WebKit/WKWebView/ProcessSwapBackForwardTests.swift,
 				WebKit/WKWebView/ProcessSwapCOOPProcessReuseTests.swift,
 				WebKit/WKWebView/ProcessSwapStaleNavigationTests.swift,
+				WebKit/WKWebView/ProcessSwapWebInspectorTests.swift,
 				WebKit/WKWebView/SiteIsolationAnimationControlTests.swift,
 				WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift,
 				WebKit/WKWebView/SiteIsolationBackForwardTests.swift,

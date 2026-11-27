@@ -233,7 +233,7 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
         webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { m_bootstrapScript }, pageID);
 }
 
-void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
+void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID, ShouldNotifyWebProcess shouldNotifyWebProcess)
 {
     auto processID = webProcess.coreProcessIdentifier();
     auto key = std::make_pair(processID, pageID);
@@ -245,7 +245,8 @@ void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webPro
         return;
 
     m_instrumentedProcessPageCounts.remove(it);
-    webProcess.send(Messages::WebInspectorBackend::DisablePageInstrumentation { }, pageID);
+    if (shouldNotifyWebProcess == ShouldNotifyWebProcess::Yes)
+        webProcess.send(Messages::WebInspectorBackend::DisablePageInstrumentation { }, pageID);
     webProcess.removeMessageReceiver(Messages::ProxyingPageAgent::messageReceiverName(), pageID);
 
     // Drop the pin once this process has no remaining page registrations.

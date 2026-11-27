@@ -56,6 +56,7 @@ class DebuggerPauseCoordinator;
 class InspectorBrowserAgent;
 class ProvisionalPageProxy;
 enum class ProvisionalLoadIsReplaced : bool;
+enum class ShouldNotifyWebProcess : bool;
 struct WebPageAgentContext;
 
 class WebPageInspectorController {
@@ -100,7 +101,7 @@ public:
 
     void didCreateProvisionalPage(ProvisionalPageProxy&, WebCore::FrameIdentifier mainFrameID, WebProcessProxy& mainFrameProcess);
     void willDestroyProvisionalPage(const ProvisionalPageProxy&, WebCore::FrameIdentifier mainFrameID, WebCore::ProcessIdentifier mainFrameProcessID);
-    void didCommitProvisionalPage(std::optional<WebCore::FrameIdentifier> oldMainFrameID, WebCore::ProcessIdentifier oldProcessID, WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
+    void didCommitProvisionalPage(std::optional<WebCore::FrameIdentifier> oldMainFrameID, WebCore::ProcessIdentifier oldProcessID, WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID, ShouldNotifyWebProcess);
     void didCreateFrame(WebFrameProxy&);
     void willDestroyFrame(const WebFrameProxy&);
     void didCreateProvisionalFrame(ProvisionalFrameProxy&);

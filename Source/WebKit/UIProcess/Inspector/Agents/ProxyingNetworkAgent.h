@@ -83,7 +83,7 @@ public:
 
     bool isEnabled() const { return m_enabled; }
     void enableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
-    void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier);
+    void disableInstrumentationForProcess(WebKit::WebProcessProxy&, WebCore::PageIdentifier, WebKit::ShouldNotifyWebProcess = WebKit::ShouldNotifyWebProcess::Yes);
 
     // NetworkBackendDispatcherHandler
     CommandResult<void> enable() final;
