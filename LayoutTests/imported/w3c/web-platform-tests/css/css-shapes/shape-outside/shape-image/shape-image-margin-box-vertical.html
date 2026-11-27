@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<title>CSS Shapes: image-valued shape-outside with shape-margin is clipped to the correct margin box in vertical writing modes</title>
+<link rel="help" href="https://drafts.csswg.org/css-shapes/#shapes-from-image">
+<link rel="help" href="https://drafts.csswg.org/css-shapes/#shape-margin-property">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<meta name="assert" content="The shape-margin expansion of an image shape is clipped to the float's margin box. The block-start / block-end margins must be resolved against the containing block's writing mode (e.g. margin-left is block-start in vertical-lr).">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.container {
+    font: 20px/1 Ahem;
+    inline-size: 300px;
+    block-size: 200px;
+    margin: 10px;
+}
+.float {
+    float: left;
+    inline-size: 100px;
+    block-size: 20px;
+    /* Only a block-end margin. The shape-margin (40px) spreads into it. */
+    margin-block: 0 60px;
+    margin-inline: 0;
+    shape-outside: linear-gradient(black, black);
+    shape-margin: 40px;
+}
+</style>
+
+<p>Each line is 20px thick in the block direction. The float's content box covers line 1; its 60px block-end margin covers lines 2-4.
+The 40px shape-margin spreads past the content box into the block-end margin, so lines 2 and 3 must also be shortened (up to the float's 100px inline-end margin edge). Line 5 is outside the margin box and must not be shortened.</p>
+
+<div class="container" style="writing-mode: horizontal-tb"><div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span></div>
+<div class="container" style="writing-mode: vertical-rl"><div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span></div>
+<div class="container" style="writing-mode: vertical-lr"><div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span></div>
+<div class="container" style="writing-mode: sideways-rl"><div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span></div>
+<div class="container" style="writing-mode: sideways-lr"><div class="float"></div><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span><br><span>X</span></div>
+
+<script>
+function inlineStartOffset(container, span) {
+    const c = container.getBoundingClientRect();
+    const r = span.getBoundingClientRect();
+    switch (getComputedStyle(container).writingMode) {
+    case "horizontal-tb":
+        return r.left - c.left;
+    case "sideways-lr":
+        return c.bottom - r.bottom;
+    default:
+        return r.top - c.top;
+    }
+}
+
+const fontsReady = document.fonts.ready;
+
+for (const container of document.querySelectorAll(".container")) {
+    const writingMode = container.style.writingMode;
+    promise_test(async () => {
+        await fontsReady;
+        assert_implements_optional(CSS.supports("writing-mode", writingMode), `writing-mode: ${writingMode}`);
+        const spans = container.querySelectorAll("span");
+        const offsets = Array.from(spans, span => inlineStartOffset(container, span));
+        const all = ` (offsets: ${offsets.join(", ")})`;
+        // The shape-margin spread is clipped to the margin box in the inline direction too,
+        // so shortened lines start exactly at the float's 100px inline-end edge.
+        assert_equals(offsets[0], 100, "line 1 (beside the float's content box) is shortened" + all);
+        assert_equals(offsets[1], 100, "line 2 (in the block-end margin, within shape-margin) is shortened" + all);
+        assert_equals(offsets[2], 100, "line 3 (in the block-end margin, within shape-margin) is shortened" + all);
+        assert_equals(offsets[4], 0, "line 5 (outside the margin box) is not shortened" + all);
+    }, `shape-margin is clipped to the margin box in ${writingMode}`);
+}
+</script>

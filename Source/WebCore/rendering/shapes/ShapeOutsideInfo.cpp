@@ -197,7 +197,7 @@ static inline LayoutUnit marginBorderAndPaddingStartWithStyleForWritingMode(cons
 
 static inline LayoutUnit marginBorderAndPaddingBeforeWithStyleForWritingMode(const RenderBox& renderer, WritingMode writingMode)
 {
-    return (writingMode.isHorizontal() ? renderer.marginTop() : renderer.marginRight()) + borderAndPaddingBeforeInWritingMode(renderer, writingMode);
+    return renderer.marginBefore(writingMode) + borderAndPaddingBeforeInWritingMode(renderer, writingMode);
 }
 
 static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
@@ -309,9 +309,9 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
                 auto bounds = FloatRect { shapeRect.rect() };
                 return FloatPoint { bounds.x() + bounds.maxX() - point.x(), point.y() };
             };
+            auto borderBoxBlockSize = isHorizontalWritingMode ? renderer.borderBoxHeight() : renderer.borderBoxWidth();
             auto mirrorVertically = [&](FloatPoint point) {
-                auto bounds = FloatRect { shapeRect.rect() };
-                return FloatPoint { point.x(), bounds.y() + bounds.maxY() - point.y() };
+                return FloatPoint { point.x(), borderBoxBlockSize.toFloat() - point.y() };
             };
 
             auto flipForWritingAndInlineDirection = [&] {
@@ -328,8 +328,14 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
                         shapeRect.setRadii({ radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight() });
                     else { // vertical-rl, sideways-rl
                         shapeRect.setRadii({ radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft() });
+                        shapeRect.move({ 0_lu, borderBoxBlockSize - shapeRect.rect().y() - shapeRect.rect().maxY() });
                         mapContour(mirrorVertically);
                     }
+                } else if (writingMode.isBlockFlipped()) { // horizontal-bt
+                    auto radii = shapeRect.radii();
+                    shapeRect.setRadii({ radii.bottomLeft(), radii.bottomRight(), radii.topLeft(), radii.topRight() });
+                    shapeRect.move({ 0_lu, borderBoxBlockSize - shapeRect.rect().y() - shapeRect.rect().maxY() });
+                    mapContour(mirrorVertically);
                 }
                 if (writingMode.isBidiRTL()) {
                     auto radii = shapeRect.radii();

@@ -1,0 +1,34 @@
+Each line is 20px thick in the block direction. The float's content box covers line 1; its 60px block-end margin covers lines 2-4. The 40px shape-margin spreads past the content box into the block-end margin, so lines 2 and 3 must also be shortened (up to the float's 100px inline-end margin edge). Line 5 is outside the margin box and must not be shortened.
+
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+
+PASS shape-margin is clipped to the margin box in horizontal-tb
+PASS shape-margin is clipped to the margin box in vertical-rl
+PASS shape-margin is clipped to the margin box in vertical-lr
+PASS shape-margin is clipped to the margin box in sideways-rl
+PASS shape-margin is clipped to the margin box in sideways-lr
+

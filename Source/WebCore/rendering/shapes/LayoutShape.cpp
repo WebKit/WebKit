@@ -179,7 +179,9 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             auto boxSize = FloatSize { boxWidth, boxHeight };
 
             auto vertices = polygon->vertices.value.map([&](const auto& vertex) {
-                return physicalPointToLogical(Style::evaluate<FloatPoint>(vertex, boxSize, zoom) + borderBoxOffset, logicalBoxSize.height(), writingMode);
+                auto logicalVertex = physicalPointToLogical(Style::evaluate<FloatPoint>(vertex, boxSize, zoom), logicalBoxSize.height(), writingMode);
+                logicalVertex.moveBy(borderBoxOffset);
+                return logicalVertex;
             });
 
             return createPolygonShape(WTF::move(vertices), borderBoxLogicalWidth);

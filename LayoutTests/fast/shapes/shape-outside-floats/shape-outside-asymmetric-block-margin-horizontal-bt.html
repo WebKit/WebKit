@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<title>shape-outside on a float with unequal block-start and block-end margins in horizontal-bt</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+.container {
+    -webkit-writing-mode: horizontal-bt;
+    font-size: 0;
+    width: 300px;
+    height: 200px;
+    margin: 10px;
+}
+.container span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+.float {
+    float: left;
+    width: 100px;
+    height: 20px;
+    /* Only a block-start (bottom) margin: the border box covers line 4. */
+    margin: 0 0 60px 0;
+}
+.float.image {
+    /* Only a block-end (top) margin. The shape-margin (40px) spreads into it. */
+    margin: 60px 0 0 0;
+    shape-outside: linear-gradient(black, black);
+    shape-margin: 40px;
+}
+</style>
+<div id="tests"></div>
+<script>
+// Shapes covering the border box shorten line 4 only. Shapes covering the margin box (the default
+// reference box for basic shapes) shorten lines 1-4.
+const borderBoxOffsets = [0, 0, 0, 100, 0];
+const marginBoxOffsets = [100, 100, 100, 100, 0];
+const shapes = [
+    { shape: "border-box", expected: borderBoxOffsets },
+    { shape: "inset(0) border-box", expected: borderBoxOffsets },
+    { shape: "polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box", expected: borderBoxOffsets },
+    { shape: "margin-box", expected: marginBoxOffsets },
+    { shape: "inset(0)", expected: marginBoxOffsets },
+    { shape: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", expected: marginBoxOffsets },
+];
+
+const lines = `<span></span><br><span></span><br><span></span><br><span></span><br><span></span>`;
+const placements = [
+    { description: "", markup: float => `${float}${lines}` },
+    { description: ", float before a block sibling", markup: float => `${float}<div>${lines}</div>` },
+];
+
+const tests = document.getElementById("tests");
+
+function addContainer(markup) {
+    const container = document.createElement("div");
+    container.className = "container";
+    container.innerHTML = markup;
+    tests.appendChild(container);
+    return container;
+}
+
+function inlineStartOffsets(container) {
+    const left = container.getBoundingClientRect().left;
+    return Array.from(container.querySelectorAll("span"), span => Math.round(span.getBoundingClientRect().left - left));
+}
+
+for (const { description, markup } of placements) {
+    for (const { shape, expected } of shapes) {
+        const container = addContainer(markup(`<div class="float" style="shape-outside: ${shape}"></div>`));
+        test(() => {
+            assert_array_equals(inlineStartOffsets(container), expected);
+        }, `shape-outside: ${shape} in horizontal-bt${description}`);
+    }
+}
+
+// The float's content box covers line 1 and its block-end margin covers lines 2-4. The shape-margin spreads
+// into the block-end margin, so lines 2 and 3 are shortened too. Line 5 is outside the margin box.
+for (const { description, markup } of placements) {
+    const container = addContainer(markup(`<div class="float image"></div>`));
+    test(() => {
+        const offsets = inlineStartOffsets(container);
+        assert_array_equals([offsets[0], offsets[1], offsets[2], offsets[4]], [100, 100, 100, 0]);
+    }, `image shape-margin is clipped to the margin box in horizontal-bt${description}`);
+}
+</script>

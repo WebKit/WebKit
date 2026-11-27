@@ -1,0 +1,72 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PASS shape-outside: border-box in horizontal-bt
+PASS shape-outside: inset(0) border-box in horizontal-bt
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in horizontal-bt
+PASS shape-outside: margin-box in horizontal-bt
+PASS shape-outside: inset(0) in horizontal-bt
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in horizontal-bt
+PASS shape-outside: border-box in horizontal-bt, float before a block sibling
+PASS shape-outside: inset(0) border-box in horizontal-bt, float before a block sibling
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) border-box in horizontal-bt, float before a block sibling
+PASS shape-outside: margin-box in horizontal-bt, float before a block sibling
+PASS shape-outside: inset(0) in horizontal-bt, float before a block sibling
+PASS shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%) in horizontal-bt, float before a block sibling
+PASS image shape-margin is clipped to the margin box in horizontal-bt
+PASS image shape-margin is clipped to the margin box in horizontal-bt, float before a block sibling
+
