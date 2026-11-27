@@ -1314,5 +1314,3 @@ imported/w3c/web-platform-tests/css/css-masking/clip.html [ Skip ]
 
 webkit.org/b/329529 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/changes-in-paint-event.tentative.html [ ImageOnlyFailure Pass ]
 webkit.org/b/331428 adaptive-dark-mode/fingerprint/widgets-appearance-auto.html [ Pass Timeout ]
-
-webkit.org/b/333085 [ Release ] imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-scroll-into-view.html [ ImageOnlyFailure ]
