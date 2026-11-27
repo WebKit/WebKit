@@ -1221,16 +1221,15 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
             if (JSValue result = object->tryGetIndexQuickly(i, arrayProfile))
                 return result;
 
-            bool skipMarkingOutOfBounds = false;
-
             if (object->indexingType() == ArrayWithContiguous && i < object->butterfly()->publicLength()) {
                 // FIXME: expand this to ArrayStorage, Int32, and maybe Double:
                 // https://bugs.webkit.org/show_bug.cgi?id=182940
                 auto* globalObject = object->realm();
-                skipMarkingOutOfBounds = globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane();
+                if (globalObject->isOriginalArrayStructure(object->structure()) && globalObject->arrayPrototypeChainIsSane())
+                    return jsUndefined();
             }
 
-            if (!skipMarkingOutOfBounds && !CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i))
+            if (!CommonSlowPaths::canAccessArgumentIndexQuickly(*object, i))
                 arrayProfile->setOutOfBounds();
         }
 
