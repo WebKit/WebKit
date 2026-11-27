@@ -1608,37 +1608,20 @@ inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8C
     if (characters.empty())
         return function(nonNullEmptyUTF8Span());
 
-    // Allocate a buffer big enough to hold all the characters
-    // (an individual Latin1Character can only expand to 2 UTF-8 bytes).
-    // Optimization ideas, if we find this function is hot:
-    //  * We could speculatively create a CStringBuffer to contain 'length'
-    //    characters, and resize if necessary (i.e. if the buffer contains
-    //    non-ascii characters). (Alternatively, scan the buffer first for
-    //    ascii characters, so we know this will be sufficient).
-    //  * We could allocate a CStringBuffer with an appropriate size to
-    //    have a good chance of being able to write the string into the
-    //    buffer without reallocing (say, 1.5 x length).
+    auto* firstNonASCII = find8NonASCII(characters);
+    if (!firstNonASCII)
+        return function(byteCast<char8_t>(characters));
 
-    if (productOverflows<size_t>(characters.size(), 2) || !isValidCapacityForVector<char8_t>(characters.size() * 2)) [[unlikely]]
+    size_t prefixLength = firstNonASCII - characters.data();
+    size_t remainingLength = characters.size() - prefixLength;
+    if (productOverflows<size_t>(remainingLength, 2) || !isValidCapacityForVector<char8_t>(prefixLength + remainingLength * 2)) [[unlikely]]
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
-#if CPU(ARM64)
-    if (auto* firstNonASCII = find8NonASCII(characters)) {
-        size_t prefixLength = firstNonASCII - characters.data();
-        size_t remainingLength = characters.size() - prefixLength;
-        Vector<char8_t, 1024> buffer(prefixLength + remainingLength * 2);
-        memcpySpan(buffer.mutableSpan(), characters.first(prefixLength));
-        auto result = Unicode::convert(characters.subspan(prefixLength), buffer.mutableSpan().subspan(prefixLength));
-        ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-        return function(buffer.span().first(prefixLength + result.buffer.size()));
-    }
-    return function(byteCast<char8_t>(characters));
-#else
-    Vector<char8_t, 1024> buffer(characters.size() * 2);
-    auto result = Unicode::convert(characters, buffer.mutableSpan());
-    ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-    return function(result.buffer);
-#endif
+    Vector<char8_t, 1024> buffer(prefixLength + remainingLength * 2);
+    memcpySpan(buffer.mutableSpan(), characters.first(prefixLength));
+    auto result = Unicode::convert(characters.subspan(prefixLength), buffer.mutableSpan().subspan(prefixLength));
+    ASSERT(result.code == Unicode::ConversionResultCode::Success);
+    return function(buffer.span().first(prefixLength + result.buffer.size()));
 }
 
 template<typename Func>
