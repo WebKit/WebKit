@@ -86,7 +86,8 @@ public:
         NodeTypeStereoPanner,
         NodeTypeIIRFilter,
         NodeTypeWorklet,
-        NodeTypeLast = NodeTypeWorklet
+        NodeTypeMediaStreamTrackAudioSource,
+        NodeTypeLast = NodeTypeMediaStreamTrackAudioSource
     };
 
     AudioNode(BaseAudioContext&, NodeType);

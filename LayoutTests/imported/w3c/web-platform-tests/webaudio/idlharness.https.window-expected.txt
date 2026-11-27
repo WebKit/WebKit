@@ -62,7 +62,7 @@ PASS AudioContext interface: operation close()
 PASS AudioContext interface: operation setSinkId((DOMString or AudioSinkOptions))
 PASS AudioContext interface: operation createMediaElementSource(HTMLMediaElement)
 PASS AudioContext interface: operation createMediaStreamSource(MediaStream)
-FAIL AudioContext interface: operation createMediaStreamTrackSource(MediaStreamTrack) assert_own_property: interface prototype object missing non-static operation expected property "createMediaStreamTrackSource" missing
+PASS AudioContext interface: operation createMediaStreamTrackSource(MediaStreamTrack)
 PASS AudioContext interface: operation createMediaStreamDestination()
 PASS AudioContext must be primary interface of context
 PASS Stringification of context
@@ -82,8 +82,8 @@ PASS AudioContext interface: context must inherit property "createMediaElementSo
 PASS AudioContext interface: calling createMediaElementSource(HTMLMediaElement) on context with too few arguments must throw TypeError
 PASS AudioContext interface: context must inherit property "createMediaStreamSource(MediaStream)" with the proper type
 PASS AudioContext interface: calling createMediaStreamSource(MediaStream) on context with too few arguments must throw TypeError
-FAIL AudioContext interface: context must inherit property "createMediaStreamTrackSource(MediaStreamTrack)" with the proper type assert_inherits: property "createMediaStreamTrackSource" not found in prototype chain
-FAIL AudioContext interface: calling createMediaStreamTrackSource(MediaStreamTrack) on context with too few arguments must throw TypeError assert_inherits: property "createMediaStreamTrackSource" not found in prototype chain
+PASS AudioContext interface: context must inherit property "createMediaStreamTrackSource(MediaStreamTrack)" with the proper type
+PASS AudioContext interface: calling createMediaStreamTrackSource(MediaStreamTrack) on context with too few arguments must throw TypeError
 PASS AudioContext interface: context must inherit property "createMediaStreamDestination()" with the proper type
 PASS BaseAudioContext interface: context must inherit property "destination" with the proper type
 PASS BaseAudioContext interface: context must inherit property "sampleRate" with the proper type
@@ -876,12 +876,12 @@ PASS MediaStreamAudioSourceNode interface: existence and properties of interface
 PASS MediaStreamAudioSourceNode interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaStreamAudioSourceNode interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaStreamAudioSourceNode interface: attribute mediaStream
-FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface object assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL MediaStreamTrackAudioSourceNode interface object length assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL MediaStreamTrackAudioSourceNode interface object name assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
-FAIL MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "MediaStreamTrackAudioSourceNode" expected property "MediaStreamTrackAudioSourceNode" missing
+PASS MediaStreamTrackAudioSourceNode interface: existence and properties of interface object
+PASS MediaStreamTrackAudioSourceNode interface object length
+PASS MediaStreamTrackAudioSourceNode interface object name
+PASS MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object
+PASS MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStreamTrackAudioSourceNode interface: existence and properties of interface prototype object's @@unscopables property
 PASS OscillatorNode interface: existence and properties of interface object
 PASS OscillatorNode interface object length
 PASS OscillatorNode interface object name

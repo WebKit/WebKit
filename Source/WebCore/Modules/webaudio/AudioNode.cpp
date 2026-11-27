@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioNode);
 
 String convertEnumerationToString(AudioNode::NodeType enumerationValue)
 {
-    static const std::array<NeverDestroyed<String>, 21> values {
+    static const std::array<NeverDestroyed<String>, 22> values {
         MAKE_STATIC_STRING_IMPL("NodeTypeDestination"),
         MAKE_STATIC_STRING_IMPL("NodeTypeOscillator"),
         MAKE_STATIC_STRING_IMPL("NodeTypeAudioBufferSource"),
@@ -75,6 +75,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
         MAKE_STATIC_STRING_IMPL("NodeTypeStereoPanner"),
         MAKE_STATIC_STRING_IMPL("NodeTypeIIRFilter"),
         MAKE_STATIC_STRING_IMPL("NodeTypeWorklet"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeMediaStreamTrackAudioSource"),
     };
     static_assert(static_cast<size_t>(AudioNode::NodeTypeDestination) == 0, "AudioNode::NodeTypeDestination is not 0 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeOscillator) == 1, "AudioNode::NodeTypeOscillator is not 1 as expected");
@@ -97,6 +98,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     static_assert(static_cast<size_t>(AudioNode::NodeTypeStereoPanner) == 18, "AudioNode::NodeTypeStereoPanner is not 18 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeIIRFilter) == 19, "AudioNode::NodeTypeIIRFilter is not 19 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeWorklet) == 20, "AudioNode::NodeTypeWorklet is not 20 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamTrackAudioSource) == 21, "AudioNode::NodeTypeMediaStreamTrackAudioSource is not 21 as expected");
 
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     

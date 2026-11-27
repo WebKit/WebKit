@@ -822,6 +822,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/MediaStreamAudioDestinationNode.idl
     Modules/webaudio/MediaStreamAudioSourceNode.idl
     Modules/webaudio/MediaStreamAudioSourceOptions.idl
+    Modules/webaudio/MediaStreamTrackAudioSourceNode.idl
+    Modules/webaudio/MediaStreamTrackAudioSourceOptions.idl
     Modules/webaudio/OfflineAudioCompletionEvent.idl
     Modules/webaudio/OfflineAudioCompletionEventInit.idl
     Modules/webaudio/OfflineAudioContext.idl

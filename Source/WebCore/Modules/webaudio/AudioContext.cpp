@@ -62,6 +62,8 @@
 #include "MediaStreamAudioSource.h"
 #include "MediaStreamAudioSourceNode.h"
 #include "MediaStreamAudioSourceOptions.h"
+#include "MediaStreamTrackAudioSourceNode.h"
+#include "MediaStreamTrackAudioSourceOptions.h"
 #include "NavigatorMediaDevices.h"
 #endif
 
@@ -1121,6 +1123,15 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
     ASSERT(isMainThread());
 
     return MediaStreamAudioSourceNode::create(*this, { mediaStream });
+}
+
+ExceptionOr<Ref<MediaStreamTrackAudioSourceNode>> AudioContext::createMediaStreamTrackSource(MediaStreamTrack& track)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+
+    return MediaStreamTrackAudioSourceNode::create(*this, { track });
 }
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> AudioContext::createMediaStreamDestination()

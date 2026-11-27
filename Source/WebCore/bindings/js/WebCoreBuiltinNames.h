@@ -319,6 +319,7 @@ namespace WebCore {
     macro(MediaStreamAudioDestinationNode) \
     macro(MediaStreamAudioSourceNode) \
     macro(MediaStreamTrack) \
+    macro(MediaStreamTrackAudioSourceNode) \
     macro(MediaStreamTrackHandle) \
     macro(MediaStreamTrackProcessor) \
     macro(MerchantValidationEvent) \
