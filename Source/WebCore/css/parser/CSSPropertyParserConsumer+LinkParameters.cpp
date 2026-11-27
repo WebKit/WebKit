@@ -88,13 +88,23 @@ std::optional<CSS::ParamFunction> consumeParamFunctionRaw(CSSParserTokenRange& r
     if (!consumeCommaIncludingWhitespace(arguments))
         return { };
 
+    // The value is a single free-form production argument, so a top-level comma would end it, and nothing
+    // may follow it. It is kept with its {} wrapper, if any, so that it serializes as specified, and is
+    // unwrapped when it is used.
+    // https://drafts.csswg.org/css-values-5/#component-function-commas
+    auto value = arguments;
+    while (!arguments.atEnd() && arguments.peek().type() != CommaToken)
+        arguments.consumeComponentValue();
+    if (!arguments.atEnd() || !CSSSubstitutionParser::isValidDeclarationValueArgument(value, state.context, /* allowEmpty */ true))
+        return { };
+
     // A value containing substitutions cannot be resolved until computed-value time, so
     // fail here and let the declaration be stored unresolved instead. The longhand parser
     // runs before the substitution path, so succeeding would swallow the substitution.
-    if (CSSSubstitutionParser::containsSubstitutionFunctions(arguments, state.context))
+    if (CSSSubstitutionParser::containsSubstitutionFunctions(value, state.context))
         return { };
 
-    return CSS::ParamFunction { CSS::LinkParameter { WTF::move(*spec), CSS::DeclarationValue { CSSVariableData::create(arguments) } } };
+    return CSS::ParamFunction { CSS::LinkParameter { WTF::move(*spec), CSS::DeclarationValue { CSSVariableData::create(value) } } };
 }
 
 RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)

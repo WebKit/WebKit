@@ -1,0 +1,11 @@
+
+PASS e.style['link-parameters'] = "param(--a, {orange})" should set the property value
+PASS e.style['link-parameters'] = "param(--a, { orange })" should set the property value
+PASS e.style['link-parameters'] = "param(--a, {Arial, sans-serif})" should set the property value
+PASS e.style['link-parameters'] = "param(--a <color>, {orange})" should set the property value
+PASS e.style['link-parameters'] = "param(--a, {Arial, sans-serif}), param(--b, blue)" should set the property value
+PASS e.style['link-parameters'] = "param(--a, {orange} blue)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a, blue {orange})" should not set the property value
+PASS e.style['link-parameters'] = "param(--a, {Arial}, sans-serif)" should not set the property value
+PASS e.style['link-parameters'] = "param(--a, Arial, sans-serif)" should not set the property value
+

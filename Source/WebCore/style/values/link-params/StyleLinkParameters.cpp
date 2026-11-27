@@ -31,6 +31,7 @@
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
+#include "CSSSubstitutionParser.h"
 #include "CSSTokenizer.h"
 #include "CSSURLModifiers.h"
 #include "CSSValueKeywords.h"
@@ -98,7 +99,8 @@ static LinkParameter::ResolvedValue resolveTypedValue(const ParamSpec& spec, con
     if (!custom || !custom->type)
         return LinkParameter::Unresolved { };
 
-    auto parsed = CSSPropertyParser::parseTypedCustomPropertyValue(spec.name(), custom->type->syntax, value.value->tokenRange(), state, value.value->context(), value.value->isAttrTainted());
+    auto valueRange = CSSSubstitutionParser::unwrapArgumentBraces(value.value->tokenRange());
+    auto parsed = CSSPropertyParser::parseTypedCustomPropertyValue(spec.name(), custom->type->syntax, valueRange, state, value.value->context(), value.value->isAttrTainted());
     if (!parsed)
         return LinkParameter::Invalid { };
 
