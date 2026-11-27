@@ -27,8 +27,6 @@
 
 #import <wtf/Platform.h>
 
-#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
-
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKBrowserEngineDefinitions.h"
@@ -77,5 +75,3 @@ class RemoteLayerTreeHost;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)

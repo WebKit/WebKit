@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
 import Testing
 import wtf
@@ -785,4 +785,4 @@ struct SwiftCxxInteropTests {
     }
 }
 
-#endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#endif // compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN

@@ -31,8 +31,6 @@
 #import <WebKit/_WKTextExtraction.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 
-#if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
-
 #import "IdentifierTypes.h"
 #import "PDFPluginIdentifier.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -72,8 +70,6 @@
 #import <WebCore/ViewportArguments.h>
 #endif
 
-#endif // !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
-
 #import "ScrollPerfIntervalState.h"
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
@@ -103,8 +99,6 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 #if !defined(WK_WEB_VIEW_PROTOCOLS)
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
-
-#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 #if USE(APPKIT)
 using CocoaEdgeInsets = NSEdgeInsets;
@@ -344,10 +338,6 @@ struct LiveResizeSnapshotState {
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
-
-#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
@@ -783,8 +773,6 @@ struct LiveResizeSnapshotState {
 
 @end
 
-#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
-
 @interface WKWebView ()
 
 #if PLATFORM(MAC)
@@ -822,8 +810,6 @@ struct LiveResizeSnapshotState {
 - (void)_requestContainerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(NSString *)nodeIdentifier completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
 - (void)_requestFrameInfoForNodeIdentifier:(NSString *)nodeIdentifier completionHandler:(void (^)(WKFrameInfo * _Nullable))completionHandler;
 
-#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
-
 - (void)_requestTextExtractionInternal:(nullable _WKTextExtractionConfiguration *)configuration completion:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completion;
 
 - (void)_fetchTextExtractionFilterRulesIfNeededWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler;
@@ -837,15 +823,11 @@ struct LiveResizeSnapshotState {
 - (void)_validateText:(const String&)text inFrame:(std::optional<WebCore::FrameIdentifier>&&)frameIdentifier inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler;
 #endif
 
-#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
-
 - (void)_requestTextExtraction:(nullable _WKTextExtractionConfiguration *)configuration completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKTextExtractionItem * _Nullable))completionHandler;
 - (void)_describeInteraction:(nullable _WKTextExtractionInteraction *)interaction completionHandler:(NS_SWIFT_UI_ACTOR void (^)(NSString * _Nullable_result, NSError * _Nullable))completionHandler;
 @property (nonatomic, readonly, nullable) NSString *_activeContextMenuTargetNodeIdentifier;
 
 @end
-
-#if !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>&);
 
@@ -874,8 +856,6 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 @end
 
 #endif // ENABLE(TWO_PHASE_CLICKS)
-
-#endif // !__has_feature(modules) || WK_SUPPORTS_SWIFT_OBJCXX_INTEROP
 
 #if ENABLE(SYSTEM_TEXT_EXTRACTION)
 

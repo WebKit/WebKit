@@ -1521,9 +1521,6 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
         -DWTF_EXPORT_PRIVATE=${_dllimport_decl}
         -D__WEBGPU__
     )
-    if (APPLE)
-        list(APPEND _flags -DWK_SUPPORTS_SWIFT_OBJCXX_INTEROP=1)
-    endif ()
     # -fexperimental-bounds-safety-attributes belongs to this hash-normalizing
     # set conceptually, but lives in WebKitSwiftFlags.cmake so it also reaches
     # the Swift targets that never call this function.

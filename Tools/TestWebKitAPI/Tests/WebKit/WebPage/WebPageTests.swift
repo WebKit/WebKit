@@ -31,10 +31,8 @@ import Testing
 import WebKit_Private.WKWebViewPrivate
 @_spi(Private) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
-#if ENABLE_CXX_INTEROP
 private import WebKit_Private._WKWebsiteDataStoreConfiguration
 private import WebKit_Private.WKWebsiteDataStorePrivate
-#endif
 
 // MARK: Supporting test types
 
