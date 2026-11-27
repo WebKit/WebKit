@@ -535,6 +535,29 @@ end:
     return sourceElements;
 }
 
+NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, bool scopeNeedsSuperBinding, bool currentScopeUsesEval, InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures)
+{
+    if (expectedSuperBinding == SuperBinding::NotNeeded)
+        return SuperBinding::NotNeeded;
+
+    if (constructorKind == ConstructorKind::None) {
+        if (SourceParseModeSet(SourceParseMode::AsyncGeneratorWrapperMethodMode, SourceParseMode::GeneratorWrapperMethodMode, SourceParseMode::AsyncMethodMode).contains(parseMode))
+            return SuperBinding::Needed;
+    }
+
+    if (constructorKind == ConstructorKind::None || constructorKind == ConstructorKind::Base) {
+        bool isSuperUsedInInnerArrowFunction = innerArrowFunctionFeatures & SuperPropertyInnerArrowFunctionFeature;
+        return (scopeNeedsSuperBinding || isSuperUsedInInnerArrowFunction || currentScopeUsesEval) ? SuperBinding::Needed : SuperBinding::NotNeeded;
+    }
+
+    return SuperBinding::Needed;
+}
+
+NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, Scope* functionScope)
+{
+    return adjustSuperBindingForBaseConstructor(constructorKind, expectedSuperBinding, parseMode, functionScope->needsSuperBinding(), functionScope->usesEval(), functionScope->innerArrowFunctionFeatures());
+}
+
 template <typename LexerType>
 template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGeneratorFunctionSourceElements(TreeBuilder& context, UniquedStringImpl* name, SourceElementsMode mode)
 {
@@ -550,6 +573,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
     createGeneratorParameters(context, info.parameterCount);
     info.startOffset = parametersStart;
 
+    SuperBinding bodySuperBinding = m_superBinding;
     {
         AutoPopScope generatorBodyScope(this, pushScope());
 
@@ -561,9 +585,10 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseGenerato
 
         SyntaxChecker generatorFunctionContext(const_cast<VM&>(m_vm), m_lexer.get());
         failIfFalse(parseSourceElements(generatorFunctionContext, mode), "Cannot parse the body of a generator");
+        bodySuperBinding = adjustSuperBindingForBaseConstructor(ConstructorKind::None, m_superBinding, SourceParseMode::GeneratorBodyMode, generatorBodyScope.scope());
         popScope(generatorBodyScope, TreeBuilder::NeedsFreeVariableInfo);
     }
-    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility(), lexicallyScopedFeatures(), ConstructorKind::None, m_superBinding, info.parameterCount, SourceParseMode::GeneratorBodyMode, false);
+    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility(), lexicallyScopedFeatures(), ConstructorKind::None, bodySuperBinding, info.parameterCount, SourceParseMode::GeneratorBodyMode, false);
 
     // The body is parsed as its own source, so the current token is EOF; the closing brace is the
     // previous token.
@@ -591,6 +616,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncFun
     SetForScope innerParseMode(m_parseMode, bodyParseMode);
 
     bool bodyUsesAwait = false;
+    SuperBinding bodySuperBinding = m_superBinding;
     SavePoint bodySavePoint = createSavePoint(context);
     {
         AutoPopScope asyncFunctionBodyScope(this, pushScope());
@@ -611,6 +637,8 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncFun
                 failIfFalse(parseSourceElements(syntaxChecker, mode), "Cannot parse the body of async function");
         }
         bodyUsesAwait = asyncFunctionBodyScope->usesAwait();
+        if (bodyUsesAwait)
+            bodySuperBinding = adjustSuperBindingForBaseConstructor(ConstructorKind::None, m_superBinding, bodyParseMode, asyncFunctionBodyScope.scope());
 
         // When body doesn't use await, we'll inline it directly in the wrapper.
         // In this case, there's no body function, so we don't need to track closed variables
@@ -648,7 +676,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncFun
     if (implementationVisibility == ImplementationVisibility::Private)
         implementationVisibility = ImplementationVisibility::Public;
 
-    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility, lexicallyScopedFeatures(), ConstructorKind::None, m_superBinding, info.parameterCount, sourceParseMode(), isArrowFunctionBodyExpression);
+    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility, lexicallyScopedFeatures(), ConstructorKind::None, bodySuperBinding, info.parameterCount, sourceParseMode(), isArrowFunctionBodyExpression);
 
     // The body is parsed as its own source, so the current token is EOF; the closing brace is the
     // previous token.
@@ -679,6 +707,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncGen
 
     SourceParseMode parseMode = SourceParseMode::AsyncGeneratorBodyMode;
     SetForScope innerParseMode(m_parseMode, parseMode);
+    SuperBinding bodySuperBinding = m_superBinding;
     {
         AutoPopScope asyncFunctionBodyScope(this, pushScope());
 
@@ -697,9 +726,10 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncGen
             else
                 failIfFalse(parseSourceElements(syntaxChecker, mode), "Cannot parse the body of async function");
         }
+        bodySuperBinding = adjustSuperBindingForBaseConstructor(ConstructorKind::None, m_superBinding, parseMode, asyncFunctionBodyScope.scope());
         popScope(asyncFunctionBodyScope, TreeBuilder::NeedsFreeVariableInfo);
     }
-    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility(), lexicallyScopedFeatures(), ConstructorKind::None, m_superBinding, info.parameterCount, parseMode, isArrowFunctionBodyExpression);
+    info.body = context.createFunctionMetadata(startLocation, tokenLocation(), functionStart, functionNameStart, parametersStart, implementationVisibility(), lexicallyScopedFeatures(), ConstructorKind::None, bodySuperBinding, info.parameterCount, parseMode, isArrowFunctionBodyExpression);
 
     // The body is parsed as its own source, so the current token is EOF; the closing brace is the
     // previous token.
@@ -2326,33 +2356,6 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFormalParameters(TreeB
 
     return true;
 #undef failIfDuplicateIfViolation
-}
-
-NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, bool scopeNeedsSuperBinding, bool currentScopeUsesEval, InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures)
-{
-    if (expectedSuperBinding == SuperBinding::NotNeeded)
-        return SuperBinding::NotNeeded;
-
-    if (constructorKind == ConstructorKind::None) {
-        if (SourceParseModeSet(
-                SourceParseMode::AsyncGeneratorWrapperMethodMode,
-                SourceParseMode::GeneratorWrapperMethodMode,
-                SourceParseMode::AsyncMethodMode
-                ).contains(parseMode))
-            return SuperBinding::Needed;
-    }
-
-    if (constructorKind == ConstructorKind::None || constructorKind == ConstructorKind::Base) {
-        bool isSuperUsedInInnerArrowFunction = innerArrowFunctionFeatures & SuperPropertyInnerArrowFunctionFeature;
-        return (scopeNeedsSuperBinding || isSuperUsedInInnerArrowFunction || currentScopeUsesEval) ? SuperBinding::Needed : SuperBinding::NotNeeded;
-    }
-
-    return SuperBinding::Needed;
-}
-
-NODELETE static ALWAYS_INLINE SuperBinding adjustSuperBindingForBaseConstructor(ConstructorKind constructorKind, SuperBinding expectedSuperBinding, SourceParseMode parseMode, Scope* functionScope)
-{
-    return adjustSuperBindingForBaseConstructor(constructorKind, expectedSuperBinding, parseMode, functionScope->needsSuperBinding(), functionScope->usesEval(), functionScope->innerArrowFunctionFeatures());
 }
 
 template <typename LexerType>

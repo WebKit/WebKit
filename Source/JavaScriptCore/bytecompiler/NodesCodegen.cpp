@@ -5365,7 +5365,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         RefPtr<RegisterID> next = generator.newTemporary();
         generator.emitNode(next.get(), funcExpr);
 
-        if (generator.superBinding() == SuperBinding::Needed) {
+        if (funcExpr->metadata()->superBinding() == SuperBinding::Needed) {
             RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
             emitPutHomeObject(generator, next.get(), homeObject.get());
         }
@@ -5506,7 +5506,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         RefPtr<RegisterID> next = generator.newTemporary();
         generator.emitNode(next.get(), funcExpr);
 
-        if (generator.superBinding() == SuperBinding::Needed || (generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode && generator.isSuperUsedInInnerArrowFunction())) {
+        if (funcExpr->metadata()->superBinding() == SuperBinding::Needed || (generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode && generator.isSuperUsedInInnerArrowFunction())) {
             RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
             emitPutHomeObject(generator, next.get(), homeObject.get());
         }
