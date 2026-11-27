@@ -30,6 +30,11 @@
 #include <WebCore/LayoutShape.h>
 #include <wtf/EnumSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class RenderElement;
+}
 
 namespace WebCore::Layout {
 
@@ -76,10 +81,10 @@ public:
         const LayoutShape* shape() const { return m_shape.get(); }
         std::optional<size_t> placedByLine() const { return m_placedByLine; }
 
-        const Box* layoutBox() const { return m_layoutBox.get(); }
+        const Box* layoutBox() const;
 
     private:
-        CheckedPtr<const Box> m_layoutBox;
+        SingleThreadWeakPtr<const RenderElement> m_renderer;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
         Rect m_marginBoxRect;

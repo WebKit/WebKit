@@ -29,6 +29,7 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutShape.h"
+#include "RenderElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -37,7 +38,7 @@ namespace WebCore::Layout {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlacedFloats);
 
 PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line)
-    : m_layoutBox(layoutBox)
+    : m_renderer(downcast<ElementBox>(layoutBox).rendererForIntegration())
     , m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
     , m_marginBoxRect(BoxGeometry::marginBoxRect(absoluteBoxGeometry))
@@ -48,7 +49,7 @@ PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeome
 }
 
 PlacedFloats::Item::Item(const Box& layoutBox, Position position, const Rect& marginBoxRect, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft)
-    : m_layoutBox(layoutBox)
+    : m_renderer(downcast<ElementBox>(layoutBox).rendererForIntegration())
     , m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
     , m_marginBoxRect(marginBoxRect)
@@ -58,7 +59,7 @@ PlacedFloats::Item::Item(const Box& layoutBox, Position position, const Rect& ma
 }
 
 PlacedFloats::Item::Item(const Box& layoutBox, Position position)
-    : m_layoutBox(layoutBox)
+    : m_renderer(downcast<ElementBox>(layoutBox).rendererForIntegration())
     , m_position(position)
 {
 }
@@ -80,6 +81,11 @@ BoxGeometry PlacedFloats::Item::boxGeometry() const
 }
 
 PlacedFloats::Item::~Item() = default;
+
+const Box* PlacedFloats::Item::layoutBox() const
+{
+    return m_renderer ? &m_renderer->layoutBox() : nullptr;
+}
 
 PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
     : m_blockFormattingContextRoot(blockFormattingContextRoot)
@@ -136,11 +142,12 @@ bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingCon
     ASSERT(formattingContextRoot.establishesFormattingContext() || formattingContextRoot.isBlockContainer());
     // FIXME: No layout box means the render tree integration codepath put it here, which it only does for intruding floats from outside the inline formatting context.
     // This works as long as the incoming formattingContextRoot is the current IFC.
-    if (!m_layoutBox)
+    CheckedPtr layoutBox = this->layoutBox();
+    if (!layoutBox)
         return false;
 
-    ASSERT(!is<InitialContainingBlock>(m_layoutBox));
-    for (CheckedRef containingBlock : containingBlockChain(protect(*m_layoutBox))) {
+    ASSERT(!is<InitialContainingBlock>(*layoutBox));
+    for (CheckedRef containingBlock : containingBlockChain(*layoutBox)) {
         if (containingBlock.ptr() == &formattingContextRoot)
             return true;
     }
