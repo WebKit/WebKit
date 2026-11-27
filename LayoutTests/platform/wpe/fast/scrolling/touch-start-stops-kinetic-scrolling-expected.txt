@@ -1,0 +1,14 @@
+Tests that touching the screen stops the kinetic scrolling that a touch drag starts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The touch drag starts kinetic scrolling:
+PASS window.scrollY > 1000 is true
+
+A touch stops it:
+PASS scrollAfterWait is scrollBeforeWait
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

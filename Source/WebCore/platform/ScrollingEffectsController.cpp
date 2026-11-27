@@ -344,6 +344,10 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
         kineticAnimation->stop();
     }
 
+    // Like fingers touching a trackpad, MayBegin only stops kinetic scrolling. It isn't a scroll, so it must not lower the velocity of the next one.
+    if (event.phase() == PlatformWheelEventPhase::MayBegin)
+        return false;
+
     if (!event.hasPreciseScrollingDeltas()) {
         m_scrollHistory.clear();
         m_previousKineticAnimationInfo.initialVelocity = FloatSize();
@@ -414,6 +418,10 @@ void ScrollingEffectsController::adjustDeltaForSnappingIfNeeded(float& deltaX, f
 void ScrollingEffectsController::updateGestureInProgressState(const PlatformWheelEvent& wheelEvent)
 {
 #if ENABLE(KINETIC_SCROLLING)
+    // A touch that may begin a scroll isn't one yet, and nothing ends it if it turns out to be a tap.
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
+        return;
+
     m_inScrollGesture = wheelEvent.hasPreciseScrollingDeltas() && !wheelEvent.isEndOfNonMomentumScroll() && !wheelEvent.isTransitioningToMomentumScroll();
 #else
     UNUSED_PARAM(wheelEvent);
@@ -425,6 +433,10 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 #if ENABLE(KINETIC_SCROLLING)
     if (processWheelEventForKineticScrolling(wheelEvent))
         return true;
+
+    // MayBegin doesn't scroll. Not being in a scroll gesture, it would otherwise snap to the closest snap point.
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
+        return false;
 #endif
 
     auto scrollOffset = m_client.scrollOffset();

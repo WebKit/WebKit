@@ -418,6 +418,14 @@ Vector<WebKit::WebPlatformTouchPoint> ViewPlatform::touchPointsForEvent(WPEEvent
 
 gboolean ViewPlatform::handleEvent(WPEEvent* event)
 {
+    // A touch stops kinetic scrolling, as fingers touching a trackpad do. Only the first finger, so that another one doesn't interrupt a drag.
+    if (double x, y; wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_DOWN && m_touchEvents.isEmpty() && wpe_event_get_position(event, &x, &y)) {
+        GRefPtr<WPEEvent> simulatedScrollEvent = adoptGRef(wpe_event_scroll_new(
+            m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, wpe_event_get_time(event), static_cast<WPEModifiers>(0), 0, 0, TRUE, FALSE, x, y
+        ));
+        page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(simulatedScrollEvent.get(), WebWheelEvent::Phase::MayBegin));
+    }
+
 #if ENABLE(TOUCH_EVENTS) && ENABLE(DEVELOPER_MODE)
     if (wpeEventIsTouchForTesting(event)) {
         page().handleTouchEvent(nullptr, NativeWebTouchEvent::create(event, platformTouchPoints(wpeEventTouchPointsForTesting(event))));
