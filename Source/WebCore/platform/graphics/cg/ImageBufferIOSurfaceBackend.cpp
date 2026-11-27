@@ -144,6 +144,13 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
+    if (parameters.bufferFormat.useLosslessCompression == UseLosslessCompression::No && backendSize.unclampedArea() <= 512 * 512) {
+        if (auto lock = surface->lock<IOSurface::AccessMode::ReadWrite>()) {
+            zeroSpan(lock->surfaceSpan());
+            return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTF::move(surface), nullptr, creationContext.displayID, creationContext.surfacePool.get(), creationContext.useIOSurfaceWebKitBehavior, false } };
+        }
+    }
+
     RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(creationContext.displayID, std::nullopt, creationContext.useIOSurfaceWebKitBehavior);
     if (!cgContext)
         return nullptr;
@@ -153,13 +160,14 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), creationContext.displayID, creationContext.surfacePool.get(), creationContext.useIOSurfaceWebKitBehavior } };
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const ImageBufferParameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool, bool useIOSurfaceWebKitBehavior)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const ImageBufferParameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool, bool useIOSurfaceWebKitBehavior, bool needsFirstFlush)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTF::move(surface))
     , m_platformContext(WTF::move(platformContext))
     , m_displayID(displayID)
     , m_useIOSurfaceWebKitBehavior(useIOSurfaceWebKitBehavior)
     , m_ioSurfacePool(ioSurfacePool)
+    , m_needsFirstFlush(needsFirstFlush)
 {
     ASSERT(m_surface);
     ASSERT(!m_surface->isVolatile());

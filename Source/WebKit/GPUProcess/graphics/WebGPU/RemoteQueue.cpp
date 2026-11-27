@@ -40,6 +40,7 @@
 #include <WebCore/WebGPUImageCopyExternalImage.h>
 #include <WebCore/WebGPUImageCopyTextureTagged.h>
 #include <wtf/Borrow.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -217,6 +218,59 @@ void RemoteQueue::copyExternalImageToTexture(
 
     if (RefPtr gpu = protect(m_gpu)->backing())
         gpu->copyExternalImageToTexture(protect(m_backing), *convertedSource, *convertedDestination, copySize);
+}
+
+static std::optional<uint32_t> externalImageDataBytesPerTexel(::WebGPU::TextureFormat format)
+{
+    switch (format) {
+    case ::WebGPU::TextureFormat::Rgba8unorm:
+    case ::WebGPU::TextureFormat::Bgra8unorm:
+        return 4;
+    case ::WebGPU::TextureFormat::Rgba16float:
+    case ::WebGPU::TextureFormat::Rgba16unorm:
+        return 8;
+    default:
+        return std::nullopt;
+    }
+}
+
+void RemoteQueue::copyExternalImageDataToTexture(
+    const WebGPU::ImageCopyExternalImageData& source,
+    Vector<uint32_t>&& data,
+    const WebGPU::ImageCopyTextureTagged& destination,
+    const WebGPU::Extent3D& copySize)
+{
+    Borrow borrowedData = data;
+    auto byteSpan = asBytes(borrowedData->span());
+    MESSAGE_CHECK(byteSpan.size() <= WebGPU::maxCrossProcessResourceCopySize);
+    constexpr uint32_t maxExternalImageDataDimension = 16384;
+    MESSAGE_CHECK(source.width && source.height && source.width <= maxExternalImageDataDimension && source.height <= maxExternalImageDataDimension && source.bytesPerRow);
+    auto bytesPerTexel = externalImageDataBytesPerTexel(source.format);
+    MESSAGE_CHECK(bytesPerTexel.has_value());
+    CheckedUint64 minimumBytesPerRow = CheckedUint64 { source.width } * *bytesPerTexel;
+    MESSAGE_CHECK(!minimumBytesPerRow.hasOverflowed() && source.bytesPerRow >= minimumBytesPerRow.value());
+    CheckedUint64 requiredBytes = CheckedUint64 { source.height - 1 } * source.bytesPerRow + minimumBytesPerRow;
+    MESSAGE_CHECK(!requiredBytes.hasOverflowed() && byteSpan.size() >= requiredBytes.value());
+
+    Ref objectHeap = m_objectHeap;
+    auto convertedDestination = deserialize(objectHeap, destination);
+    ASSERT(convertedDestination);
+    if (!convertedDestination)
+        return;
+
+    WebCore::WebGPUExternalImageSource externalSource;
+    externalSource.origin = source.origin;
+    externalSource.flipY = source.flipY;
+    externalSource.premultipliedAlpha = source.premultipliedAlpha;
+    externalSource.pixelData = byteSpan;
+    externalSource.pixelDataBytesPerRow = source.bytesPerRow;
+    externalSource.pixelDataSize = { source.width, source.height };
+    externalSource.pixelDataFormat = source.format;
+    externalSource.pixelDataHasAlpha = source.hasAlpha;
+    externalSource.pixelDataColorSpace = source.isDisplayP3 ? ::WebGPU::PredefinedColorSpace::DisplayP3 : ::WebGPU::PredefinedColorSpace::SRGB;
+
+    if (RefPtr gpu = protect(m_gpu)->backing())
+        gpu->copyExternalImageToTexture(protect(m_backing), externalSource, *convertedDestination, copySize);
 }
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

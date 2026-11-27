@@ -1994,7 +1994,7 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
         return;
     }
 
-    if (!source.source && !source.pixelBuffer) {
+    if (!source.source && !source.pixelBuffer && source.pixelData.empty()) {
         device->generateAValidationError("GPUQueue.copyExternalImageToTexture: source image is not valid"_s);
         return;
     }
@@ -2027,11 +2027,92 @@ void Queue::copyExternalImageToTexture(const WebGPU::ImageCopyExternalImage& sou
     // texture. Bound by the IOSurface path below too, which never reads it, because Metal validates
     // every texture the fragment function declares.
     id<MTLTexture> sourceSecondPlaneTexture = nil;
+    RefPtr<ExternalImageStagingTexture> stagingTextureToRelease;
+    auto releaseStagingOnEarlyReturn = makeScopeExit([&] {
+        if (stagingTextureToRelease)
+            stagingTextureToRelease->inUse.store(false, std::memory_order_release);
+    });
     auto uvRemapMatrix = identityUVRemapMatrix;
     std::array<float, 12> ycbcrMatrix { };
     auto sourcePrimaries = isDisplayP3(source.colorSpace) ? CopyExternalImageSourcePrimaries::DisplayP3 : CopyExternalImageSourcePrimaries::Srgb;
 
-    if (RetainPtr pixelBuffer = source.pixelBuffer) {
+    if (!source.pixelData.empty()) {
+        sourceWidth = source.sourceSize.width;
+        sourceHeight = source.sourceSize.height;
+        const auto& deviceLimits = device->limits();
+        if (!sourceWidth || !sourceHeight || sourceWidth > deviceLimits.maxTextureDimension2D || sourceHeight > deviceLimits.maxTextureDimension2D || !source.sourceFormat || !source.pixelDataBytesPerRow)
+            return;
+
+        MTLPixelFormat sourcePixelFormat = MTLPixelFormatInvalid;
+        uint32_t bytesPerTexel = 0;
+        switch (*source.sourceFormat) {
+        case WebGPU::TextureFormat::Rgba8unorm:
+            sourcePixelFormat = MTLPixelFormatRGBA8Unorm;
+            bytesPerTexel = 4;
+            break;
+        case WebGPU::TextureFormat::Bgra8unorm:
+            sourcePixelFormat = MTLPixelFormatBGRA8Unorm;
+            bytesPerTexel = 4;
+            break;
+        case WebGPU::TextureFormat::Rgba16float:
+            sourcePixelFormat = MTLPixelFormatRGBA16Float;
+            bytesPerTexel = 8;
+            break;
+        case WebGPU::TextureFormat::Rgba16unorm:
+            sourcePixelFormat = MTLPixelFormatRGBA16Unorm;
+            bytesPerTexel = 8;
+            break;
+        default:
+            return;
+        }
+
+        CheckedUint64 minimumBytesPerRow = CheckedUint64 { sourceWidth } * bytesPerTexel;
+        if (minimumBytesPerRow.hasOverflowed() || source.pixelDataBytesPerRow < minimumBytesPerRow.value())
+            return;
+
+        CheckedUint64 requiredBytes = CheckedUint64 { sourceHeight - 1 } * source.pixelDataBytesPerRow + minimumBytesPerRow;
+        if (requiredBytes.hasOverflowed() || source.pixelData.size() < requiredBytes.value())
+            return;
+
+        for (auto& entry : m_externalImageStagingTextures) {
+            if (entry->pixelFormat == sourcePixelFormat && entry->width == sourceWidth && entry->height == sourceHeight && !entry->inUse.load(std::memory_order_acquire)) {
+                entry->inUse.store(true, std::memory_order_relaxed);
+                stagingTextureToRelease = entry.ptr();
+                sourceTexture = entry->texture.get();
+                break;
+            }
+        }
+
+        if (!sourceTexture) {
+            auto *sourceTextureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:sourcePixelFormat width:sourceWidth height:sourceHeight mipmapped:NO];
+            sourceTextureDescriptor.usage = MTLTextureUsageShaderRead;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#if ENABLE(WEBGPU_BY_DEFAULT)
+            sourceTextureDescriptor.storageMode = device->hasUnifiedMemory() ? MTLStorageModeShared : MTLStorageModeManaged;
+#else
+            sourceTextureDescriptor.storageMode = MTLStorageModeManaged;
+#endif
+ALLOW_DEPRECATED_DECLARATIONS_END
+#else
+            sourceTextureDescriptor.storageMode = MTLStorageModeShared;
+#endif
+            sourceTexture = device->newTextureWithDescriptor(sourceTextureDescriptor);
+            if (!sourceTexture)
+                return;
+            constexpr uint64_t maxCachedStagingArea = 512 * 512;
+            constexpr size_t maxCachedStagingCount = 32;
+            if (static_cast<uint64_t>(sourceWidth) * sourceHeight <= maxCachedStagingArea && m_externalImageStagingTextures.size() < maxCachedStagingCount) {
+                Ref newEntry = ExternalImageStagingTexture::create(sourcePixelFormat, sourceWidth, sourceHeight, sourceTexture);
+                stagingTextureToRelease = newEntry.ptr();
+                m_externalImageStagingTextures.append(WTF::move(newEntry));
+            }
+        }
+
+        [sourceTexture replaceRegion:MTLRegionMake2D(0, 0, sourceWidth, sourceHeight) mipmapLevel:0 withBytes:source.pixelData.data() bytesPerRow:source.pixelDataBytesPerRow];
+        sourceSecondPlaneTexture = sourceTexture;
+    } else if (RetainPtr pixelBuffer = source.pixelBuffer) {
+
         // The frame's planes are wrapped in MTLTextures exactly the way importExternalTexture() wraps
         // them, so a video reaches the destination without its pixels ever leaving the GPU.
         auto frame = device->createExternalTextureFromPixelBuffer(pixelBuffer.get(), source.colorSpace, Device::PremultiplyAlpha::No);
@@ -2224,6 +2305,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 
     endEncoding(renderCommandEncoder, commandBuffer);
+    if (stagingTextureToRelease) {
+        Ref entry = stagingTextureToRelease.releaseNonNull();
+        [commandBuffer addCompletedHandler:makeBlockPtr([entry = WTF::move(entry)](id<MTLCommandBuffer>) {
+            entry->inUse.store(false, std::memory_order_release);
+        }).get()];
+    }
     // ensureBlitCommandEncoder() would otherwise mint a fresh staging buffer over this one, because it
     // keys off the blit and staged-copy encoders, both of which are nil now. Commit while it can.
     finalizeBlitCommandEncoder();

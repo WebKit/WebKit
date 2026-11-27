@@ -62,7 +62,7 @@ public:
     void prepareForDisplay() override;
 
 protected:
-    ImageBufferIOSurfaceBackend(const ImageBufferParameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*, bool useIOSurfaceWebKitBehavior = false);
+    ImageBufferIOSurfaceBackend(const ImageBufferParameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*, bool useIOSurfaceWebKitBehavior = false, bool needsFirstFlush = true);
     CGContextRef ensurePlatformContext();
     // Returns true if flush happened.
     bool flushContextDraws();

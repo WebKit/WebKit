@@ -190,6 +190,7 @@ public:
 
     PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
     void setDrawingBufferColorSpace(PredefinedColorSpace);
+    ArrayPixelBuffer* cachedDrawingBufferPixels() const { return m_readDrawingBuffer.pixelData.get(); }
 
     void activeTexture(GCGLenum texture);
     void attachShader(WebGLProgram&, WebGLShader&);
@@ -773,8 +774,9 @@ protected:
     struct ReadSurfaceBuffer {
         RefPtr<NativeImage> image;
         RefPtr<ImageBuffer> buffer;
+        RefPtr<ArrayPixelBuffer> pixelData;
 
-        bool isEmpty() const { return !image && !buffer; }
+        bool isEmpty() const { return !image && !buffer && !pixelData; }
         void clear();
         size_t memoryCost() const;
     };

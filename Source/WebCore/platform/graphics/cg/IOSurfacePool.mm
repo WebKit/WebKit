@@ -123,6 +123,7 @@ void IOSurfacePool::willAddSurface(IOSurface& surface, bool inUse)
     evict(surfaceBytes);
 
     m_bytesCached += surfaceBytes;
+    ++m_surfacesCached;
     if (inUse)
         m_inUseBytesCached += surfaceBytes;
     else
@@ -133,6 +134,8 @@ void IOSurfacePool::didRemoveSurface(IOSurface& surface, bool inUse)
 {
     size_t surfaceBytes = surface.totalBytes();
     m_bytesCached -= surfaceBytes;
+    ASSERT(m_surfacesCached > 0);
+    --m_surfacesCached;
     if (inUse)
         m_inUseBytesCached -= surfaceBytes;
 }
@@ -290,19 +293,27 @@ void IOSurfacePool::evict(size_t additionalSize)
     // FIXME: Perhaps purgeable surfaces should count less against the cap?
     // We don't want to end up with a ton of empty (purged) surfaces, though, as that would defeat the purpose of the pool.
     size_t targetSize = m_maximumBytesCached - additionalSize;
+    size_t maxSurfaces = additionalSize ? maximumSurfacesCached - 1 : maximumSurfacesCached;
 
     // Interleave eviction of old cached surfaces and more recent in-use surfaces.
     // In-use surfaces are more recently used, but less useful in the pool, as they aren't
     // immediately available when requested.
-    while (m_bytesCached > targetSize) {
+    while (m_bytesCached > targetSize || m_surfacesCached > maxSurfaces) {
+        size_t previousSurfacesCached = m_surfacesCached;
         tryEvictOldestCachedSurface();
 
-        if (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+        if (m_inUseBytesCached > maximumInUseBytes || m_inUseSurfaces.size() >= maximumInUseSurfaces || m_bytesCached > targetSize || m_surfacesCached > maxSurfaces)
             tryEvictInUseSurface();
+
+        if (m_surfacesCached == previousSurfacesCached)
+            break;
     }
 
-    while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
+    while (m_inUseBytesCached > maximumInUseBytes || m_inUseSurfaces.size() >= maximumInUseSurfaces || m_bytesCached > targetSize || m_surfacesCached > maxSurfaces) {
+        if (m_inUseSurfaces.isEmpty())
+            break;
         tryEvictInUseSurface();
+    }
 
     DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << this << "] - after evict\n" << poolStatistics());
 }
@@ -365,6 +376,7 @@ void IOSurfacePool::discardAllSurfacesInternal()
 {
     m_bytesCached = 0;
     m_inUseBytesCached = 0;
+    m_surfacesCached = 0;
     m_cachedSurfaces.clear();
     m_inUseSurfaces.clear();
     m_sizesInPruneOrder.clear();

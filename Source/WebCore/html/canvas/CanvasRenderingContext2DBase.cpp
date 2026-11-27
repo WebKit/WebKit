@@ -108,6 +108,7 @@
 #include "TextUtil.h"
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <numbers>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
@@ -129,7 +130,7 @@ static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQ
 static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 
 // putImageData data smaller than this is cached in anticipation for next getImageData.
-static constexpr unsigned putImageDataCacheAreaLimit = 60 * 60;
+static constexpr unsigned putImageDataCacheAreaLimit = 256 * 256;
 
 NODELETE static CanvasLineCap toCanvasLineCap(LineCap lineCap)
 {
@@ -324,7 +325,7 @@ bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer
 {
     // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
     // Currently the canvas does not support alpha == false.
-    return !m_hasCreatedImageBuffer;
+    return !hasCreatedImageBuffer();
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
@@ -374,6 +375,7 @@ void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChange
     m_hasInvertibleTransform = state().transformInverse.has_value();
     m_bufferNativeImage = nullptr;
     m_cachedContents.emplace<CachedContentsTransparent>();
+    m_needsDeferredCachedContentsUpload = false;
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
     if (sizeChanged) {
@@ -3126,6 +3128,8 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw
 
 void CanvasRenderingContext2DBase::evictCachedImageData()
 {
+    if (m_needsDeferredCachedContentsUpload)
+        buffer();
     m_cachedContents.emplace<CachedContentsUnknown>();
 }
 
@@ -3162,10 +3166,11 @@ RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(
     auto cachedBuffer = ArrayPixelBuffer::tryCreate(cachedFormat, size);
     if (!cachedBuffer)
         return nullptr;
+    Ref sourceView = imageData.data().arrayBufferView();
     ConstPixelBufferConversionView source {
         .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = imageData.data().arrayBufferView().span(),
+        .rows = sourceView->span(),
     };
     Ref cachedData = cachedBuffer->data();
     PixelBufferConversionView destination {
@@ -3178,6 +3183,16 @@ RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(
     return cachedBuffer;
 }
 
+RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cachedContentsImageData() const
+{
+    if (!std::holds_alternative<CachedContentsImageData>(m_cachedContents))
+        return nullptr;
+    Ref pixelBuffer = std::get<CachedContentsImageData>(m_cachedContents).imageData;
+    if (pixelBuffer->size() != canvasBase().size())
+        return nullptr;
+    return pixelBuffer.ptr();
+}
+
 RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PixelFormat pixelFormat, PredefinedColorSpace colorSpace) const
 {
     if (std::holds_alternative<CachedContentsTransparent>(m_cachedContents))
@@ -3185,38 +3200,37 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
     if (std::holds_alternative<CachedContentsUnknown>(m_cachedContents))
         return nullptr;
     static_assert(WTF::VariantSizeV<decltype(m_cachedContents)> == 3); // Written this way to avoid dangling references during visit.
-    // Always consume the cached image data.
-    Ref pixelBuffer = WTF::move(std::get<CachedContentsImageData>(m_cachedContents).imageData);
-    m_cachedContents.emplace<CachedContentsUnknown>();
+    Ref pixelBuffer = std::get<CachedContentsImageData>(m_cachedContents).imageData;
 
-    if (sourceRect != IntRect { { }, canvasBase().size() })
+    if (sourceRect != IntRect { { }, canvasBase().size() }) {
+        m_cachedContents.emplace<CachedContentsUnknown>();
         return nullptr;
+    }
 
-    if (canvasBase().size() != pixelBuffer->size())
+    if (canvasBase().size() != pixelBuffer->size() || pixelFormat != pixelBuffer->format().pixelFormat || colorSpace != m_settings.colorSpace) {
+        m_cachedContents.emplace<CachedContentsUnknown>();
         return nullptr;
-
-    if (pixelFormat != pixelBuffer->format().pixelFormat)
-        return nullptr;
-
-    if (colorSpace != m_settings.colorSpace)
-        return nullptr;
+    }
 
     auto size = pixelBuffer->size();
     auto format = pixelBuffer->format();
-    auto data = WTF::move(pixelBuffer.get()).takeData();
+    Ref cachedData = pixelBuffer->data();
+    auto outputData = JSC::Uint8ClampedArray::tryCreateUninitialized(cachedData->byteLength());
+    if (!outputData)
+        return nullptr;
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * PixelBuffer::bytesPerPixel(pixelFormat);
     ConstPixelBufferConversionView source {
         .format = format,
         .bytesPerRow = bytesPerRow,
-        .rows = data->span(),
+        .rows = cachedData->span(),
     };
     PixelBufferConversionView destination {
         .format = { AlphaPremultiplication::Unpremultiplied, pixelFormat, pixelBuffer->format().colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = data->mutableSpan(),
+        .rows = outputData->mutableSpan(),
     };
     convertImagePixels(source, destination, size);
-    return ImageData::create(size, Ref<JSC::ArrayBufferView>(WTF::move(data)), m_settings.colorSpace);
+    return ImageData::create(size, Ref<JSC::ArrayBufferView>(outputData.releaseNonNull()), m_settings.colorSpace);
 }
 
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
@@ -3290,10 +3304,6 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
 {
-    RefPtr buffer = this->buffer();
-    if (!buffer)
-        return;
-
     if (data.data().isDetached())
         return;
 
@@ -3309,6 +3319,21 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
 
     IntPoint destOffset { dx, dy };
     IntRect destRect { dirtyX, dirtyY, dirtyWidth, dirtyHeight };
+    if (!m_hasCreatedImageBuffer && destOffset.isZero() && destRect == IntRect { { }, data.size() } && data.size() == canvasBase().size()) {
+        if (RefPtr htmlCanvas = dynamicDowncast<HTMLCanvasElement>(canvasBase()); !htmlCanvas || !htmlCanvas->isConnected()) {
+            if (protect(canvasBase())->validateArea() && cacheImageDataIfPossible(data, destRect, destOffset)) {
+                m_bufferNativeImage = nullptr;
+                m_needsDeferredCachedContentsUpload = true;
+                updateMemoryCost(data.data().byteLength());
+                return;
+            }
+        }
+    }
+
+    RefPtr buffer = this->buffer();
+    if (!buffer)
+        return;
+
     IntRect sourceRect = computeImageDataRect(*buffer, data.size(), destRect, destOffset);
 
     if (sourceRect.isEmpty())
@@ -4124,8 +4149,10 @@ ImageBuffer* CanvasRenderingContext2DBase::buffer() const
     if (m_hasCreatedImageBuffer)
         return m_buffer;
     RefPtr buffer = allocateImageBuffer();
-    if (!buffer)
+    if (!buffer) {
+        m_needsDeferredCachedContentsUpload = false;
         return nullptr;
+    }
     m_hasCreatedImageBuffer = true;
     auto& context = buffer->context();
     context.setShadowsIgnoreTransforms(true);
@@ -4133,6 +4160,11 @@ ImageBuffer* CanvasRenderingContext2DBase::buffer() const
     context.setStrokeThickness(1);
     // Save the initial state, so that `reset()` can restore it.
     context.save();
+    if (m_needsDeferredCachedContentsUpload) {
+        m_needsDeferredCachedContentsUpload = false;
+        if (RefPtr cached = cachedContentsImageData())
+            buffer->putPixelBuffer(*cached, IntRect { { }, cached->size() }, { });
+    }
     updateMemoryCost(buffer->memoryCost());
     m_buffer = buffer;
 

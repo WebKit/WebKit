@@ -981,6 +981,9 @@ struct ImageCopyExternalImage {
     bool hasAlpha { true };
     bool premultipliedAlpha { true };
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    // Raw pixel bytes when the source already lives in CPU memory (e.g. ImageData or cached 2D canvas ImageData).
+    std::span<const uint8_t> pixelData;
+    uint32_t pixelDataBytesPerRow { 0 };
 };
 #endif
 
