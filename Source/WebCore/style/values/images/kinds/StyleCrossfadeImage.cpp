@@ -55,7 +55,6 @@ namespace WebCore::Style {
 CrossfadeImage::CrossfadeImage(CrossfadeFunction&& function)
     : GeneratedImage { Type::CrossfadeImage }
     , m_function { WTF::move(function) }
-    , m_inputImagesAreReady { false }
 {
     normalizePercentages();
 }
@@ -63,7 +62,6 @@ CrossfadeImage::CrossfadeImage(CrossfadeFunction&& function)
 CrossfadeImage::CrossfadeImage(WebkitCrossfadeFunction&& function)
     : GeneratedImage { Type::CrossfadeImage }
     , m_function { WTF::move(function) }
-    , m_inputImagesAreReady { false }
 {
     normalizePercentages();
 }
@@ -80,10 +78,7 @@ Ref<CrossfadeImage> CrossfadeImage::create(WebkitCrossfadeFunction&& function)
 
 CrossfadeImage::~CrossfadeImage()
 {
-    for (auto& cachedImage : m_cachedImages) {
-        if (cachedImage)
-            protect(cachedImage)->removeClient(*this);
-    }
+    ASSERT(!m_isClientOfInputs);
 }
 
 namespace {
@@ -151,7 +146,12 @@ RefPtr<CrossfadeImage> CrossfadeImage::blend(const CrossfadeImage& from, const B
 {
     ASSERT(equalInputImages(from));
 
-    if (m_cachedImages.isEmpty() || m_cachedImages.containsIf([](auto& cachedImage) { return !cachedImage; }))
+    bool everyInputHasResource = withInputs([](const auto& inputs) {
+        return std::ranges::all_of(inputs, [](const auto& input) {
+            return input.image && input.image->cachedImage();
+        });
+    });
+    if (!everyInputHasResource)
         return nullptr;
 
     return WTF::switchOn(m_function,
@@ -208,31 +208,109 @@ bool CrossfadeImage::isPending() const
 
 void CrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    auto cachedImages = withInputs([&](const auto& inputs) {
-        return decltype(m_cachedImages)::map(inputs, [&](const auto& input) -> CachedResourceHandle<WebCore::CachedImage> {
-            RefPtr image = input.image;
-            if (!image)
-                return nullptr;
-            if (image->isPending())
+    withInputs([&](const auto& inputs) {
+        for (const auto& input : inputs) {
+            if (RefPtr image = input.image; image && image->isPending())
                 image->load(loader, options);
-            return CachedResourceHandle<WebCore::CachedImage> { image->cachedImage() };
-        });
+        }
     });
 
-    auto count = std::max(cachedImages.size(), m_cachedImages.size());
-    for (size_t i = 0; i < count; ++i) {
-        auto oldCachedImage = i < m_cachedImages.size() ? m_cachedImages[i] : nullptr;
-        auto newCachedImage = i < cachedImages.size() ? cachedImages[i] : nullptr;
-        if (newCachedImage == oldCachedImage)
-            continue;
-        if (oldCachedImage)
-            protect(oldCachedImage)->removeClient(*this);
-        if (newCachedImage)
-            protect(newCachedImage)->addClient(*this);
-    }
-    m_cachedImages = WTF::move(cachedImages);
+    updateIsClientOfInputs();
+}
 
-    m_inputImagesAreReady = true;
+void CrossfadeImage::updateIsClientOfInputs()
+{
+    bool shouldBeClientOfInputs = !clients().isEmpty() && !isPending();
+    if (shouldBeClientOfInputs == m_isClientOfInputs)
+        return;
+    m_isClientOfInputs = shouldBeClientOfInputs;
+
+    withInputs([&](const auto& inputs) {
+        for (const auto& input : inputs) {
+            RefPtr image = input.image;
+            if (!image)
+                continue;
+            if (shouldBeClientOfInputs)
+                image->addClient(*this);
+            else
+                image->removeClient(*this);
+        }
+    });
+}
+
+void CrossfadeImage::sendInitialNotifications(ImageClient& client, const Image& shownImage) const
+{
+    withInputs([&](const auto& inputs) {
+        for (const auto& input : inputs) {
+            if (RefPtr image = input.image)
+                image->sendInitialNotifications(client, shownImage);
+        }
+    });
+}
+
+bool CrossfadeImage::isAnimated() const
+{
+    return withInputs([](const auto& inputs) {
+        return std::ranges::any_of(inputs, [](const auto& input) {
+            return input.image && protect(input.image)->isAnimated();
+        });
+    });
+}
+
+bool CrossfadeImage::hasAnimation() const
+{
+    return withInputs([](const auto& inputs) {
+        return std::ranges::any_of(inputs, [](const auto& input) {
+            return input.image && protect(input.image)->hasAnimation();
+        });
+    });
+}
+
+void CrossfadeImage::forEachInput(NOESCAPE const auto& function)
+{
+    withInputs([&](const auto& inputs) {
+        for (const auto& input : inputs) {
+            if (RefPtr image = input.image)
+                function(*image);
+        }
+    });
+}
+
+void CrossfadeImage::startAnimation()
+{
+    forEachInput([](auto& image) {
+        image.startAnimation();
+    });
+}
+
+void CrossfadeImage::stopAnimation()
+{
+    forEachInput([](auto& image) {
+        image.stopAnimation();
+    });
+}
+
+void CrossfadeImage::clearAnimationOverride()
+{
+    forEachInput([](auto& image) {
+        image.clearAnimationOverride();
+    });
+}
+
+void CrossfadeImage::resetAnimation()
+{
+    forEachInput([](auto& image) {
+        image.resetAnimation();
+    });
+}
+
+bool CrossfadeImage::hasHDRContent() const
+{
+    return withInputs([](const auto& inputs) {
+        return std::ranges::any_of(inputs, [](const auto& input) {
+            return input.image && protect(input.image)->hasHDRContent();
+        });
+    });
 }
 
 static void drawCrossfadeInput(GraphicsContext& context, const RenderElement& renderer, const Image& input, const ImageDrawDescriptor& inputDescriptor, CompositeOperator operation, float opacity, bool isForFirstLine)
@@ -453,24 +531,6 @@ NaturalDimensions CrossfadeImage::naturalDimensions(const RenderElement& rendere
 
         return flooredToDevicePixels(weighted / total);
     });
-}
-
-void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)
-{
-    if (!m_inputImagesAreReady)
-        return;
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-    }
-}
-
-void CrossfadeImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
-{
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->scheduleRenderingUpdateForImage(cachedImage);
-    }
 }
 
 } // namespace WebCore::Style

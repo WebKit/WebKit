@@ -234,11 +234,7 @@ HashSet<Ref<Element>> CanvasBase::cssCanvasClients() const
         if (!image)
             continue;
 
-        for (auto entry : image->clients()) {
-            CheckedRef client = entry.key;
-            if (RefPtr element = client->element())
-                cssCanvasClients.add(element.releaseNonNull());
-        }
+        image->clients().collectElementsShowingImage(*image, cssCanvasClients);
     }
     return cssCanvasClients;
 }

@@ -3526,6 +3526,7 @@ style/values/images/kinds/StyleFreeformGradientImage.cpp
 style/values/images/kinds/StyleGeneratedImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleGradientImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleImage.cpp
+style/values/images/kinds/StyleImageClientSet.cpp
 style/values/images/kinds/StyleImageSet.cpp
 style/values/images/kinds/StyleInvalidImage.cpp
 style/values/images/kinds/StyleMeshGradientImage.cpp

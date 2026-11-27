@@ -79,7 +79,8 @@ public:
     void addClientWaitingForAsyncDecoding(CachedImageClient&);
     void removeAllClientsWaitingForAsyncDecoding();
 
-    bool hasRendererClients() const;
+    // Whether any client shows the image at all, visible or not.
+    bool hasClientShowingImage() const;
 
     void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
 

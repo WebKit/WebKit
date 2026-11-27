@@ -43,7 +43,7 @@ public:
 
 private:
     void willBeDestroyed() final;
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override final;
 
     const UniqueRef<RenderImageResource> m_imageResource;
 };

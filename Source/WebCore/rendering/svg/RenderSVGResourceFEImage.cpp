@@ -58,7 +58,7 @@ void RenderSVGResourceFEImage::forEachStyleImage(NOESCAPE const ScopedLambda<voi
         function(*image);
 }
 
-void RenderSVGResourceFEImage::imageChanged(WrappedImagePtr, const IntRect*)
+void RenderSVGResourceFEImage::imageChanged(const Style::Image&, const IntRect*)
 {
     protect(filterPrimitiveElement())->markFilterEffectForRebuild();
 }

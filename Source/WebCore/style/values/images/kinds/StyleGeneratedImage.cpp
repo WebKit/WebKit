@@ -46,33 +46,4 @@ NaturalDimensions GeneratedImage::naturalDimensions(const RenderElement&, const 
     return NaturalDimensions::none();
 }
 
-// MARK: Client support.
-
-void GeneratedImage::addClient(RenderElement& renderer)
-{
-    if (m_clients.computeIsEmpty())
-        ref();
-
-    m_clients.add(renderer);
-
-    this->didAddClient(renderer);
-}
-
-void GeneratedImage::removeClient(RenderElement& renderer)
-{
-    ASSERT(m_clients.contains(renderer));
-    if (!m_clients.remove(renderer))
-        return;
-
-    this->didRemoveClient(renderer);
-
-    if (m_clients.computeIsEmpty())
-        deref();
-}
-
-bool GeneratedImage::hasClient(RenderElement& renderer) const
-{
-    return m_clients.contains(renderer);
-}
-
 } // namespace WebCore::Style

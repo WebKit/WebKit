@@ -91,11 +91,7 @@ bool hasHDRContent(const CoordinatedValueList<T>& list)
 {
     return std::ranges::any_of(list.usedValues(), [](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
-        if (RefPtr cachedImage = image ? image->cachedImage() : nullptr) {
-            if (cachedImage->hasHDRContent())
-                return true;
-        }
-        return false;
+        return image && image->hasHDRContent();
     });
 }
 
@@ -116,11 +112,11 @@ bool hasAnyBackgroundClipText(const CoordinatedValueList<T>& list)
 }
 
 template<FillLayer T>
-RefPtr<Image> findLayerUsedImage(const CoordinatedValueList<T>& list, WrappedImagePtr image, bool& isNonEmpty)
+RefPtr<Image> findLayerUsedImage(const CoordinatedValueList<T>& list, const Image& image, bool& isNonEmpty)
 {
     for (auto& layer : list.usedValues()) {
         RefPtr layerImage = layer.image().tryStyleImage();
-        if (!layerImage || layerImage->data() != image)
+        if (layerImage.get() != &image)
             continue;
 
         // FIXME: This really needs to compute the tile rect with BackgroundPainter::calculateFillTileSize().

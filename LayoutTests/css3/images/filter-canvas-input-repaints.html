@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<div></div>
+<pre id="result"></pre>
+<script>
+// Drawing into a canvas repaints an element whose background shows it through filter().
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// A name of its own each time, because a Style::CanvasImage shared through a cached style
+// sheet keeps the canvas of the first document that drew it.
+const name = "squares" + Math.random().toString(36).slice(2);
+document.querySelector("div").style.backgroundImage = `filter(-webkit-canvas(${name}), opacity(1))`;
+const context = document.getCSSCanvasContext("2d", name, 100, 100);
+context.fillStyle = "red";
+context.fillRect(0, 0, 100, 100);
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!window.internals) {
+        document.getElementById("result").textContent = "This test requires internals.";
+        return;
+    }
+
+    internals.startTrackingRepaints();
+    context.fillStyle = "green";
+    context.fillRect(0, 0, 100, 100);
+
+    // A canvas tells what shows it that it changed when it is next rendered, so look over
+    // the next few frames.
+    let framesLeft = 10;
+    const check = () => {
+        const repaintRects = internals.repaintRectsAsText();
+        if (!repaintRects.includes("rect 8 8 100 100") && --framesLeft) {
+            requestAnimationFrame(check);
+            return;
+        }
+        internals.stopTrackingRepaints();
+        document.getElementById("result").textContent = repaintRects.includes("rect 8 8 100 100") ? "PASS" : "FAIL: " + repaintRects;
+        testRunner.notifyDone();
+    };
+    requestAnimationFrame(check);
+}));
+</script>
+</body>
+</html>

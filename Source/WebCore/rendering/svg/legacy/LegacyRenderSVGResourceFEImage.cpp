@@ -50,7 +50,7 @@ void LegacyRenderSVGResourceFEImage::willBeDestroyed()
     LegacyRenderSVGResourceFilterPrimitive::willBeDestroyed();
 }
 
-void LegacyRenderSVGResourceFEImage::imageChanged(WrappedImagePtr, const IntRect*)
+void LegacyRenderSVGResourceFEImage::imageChanged(const Style::Image&, const IntRect*)
 {
     protect(filterPrimitiveElement())->markFilterEffectForRebuild();
 }

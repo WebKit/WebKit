@@ -115,7 +115,7 @@ private:
 
     void willBeDestroyed() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override final;
     void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) final;
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;

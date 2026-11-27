@@ -54,7 +54,11 @@ MultiImage::MultiImage(Type type)
 {
 }
 
-MultiImage::~MultiImage() = default;
+MultiImage::~MultiImage()
+{
+    if (RefPtr selectedImage = m_selectedImage; selectedImage && !clients().isEmpty())
+        selectedImage->removeClient(*this);
+}
 
 bool MultiImage::equals(const MultiImage& other) const
 {
@@ -75,10 +79,7 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
     if (is<GeneratedImage>(bestFitImage.image)) {
         m_selectedImage = bestFitImage.image;
         protect(m_selectedImage)->load(loader, options);
-        return;
-    }
-
-    if (RefPtr styleCachedImage = dynamicDowncast<CachedImage>(bestFitImage.image)) {
+    } else if (RefPtr styleCachedImage = dynamicDowncast<CachedImage>(bestFitImage.image)) {
         if (styleCachedImage->imageResolution() == bestFitImage.resolution)
             m_selectedImage = WTF::move(styleCachedImage);
         else
@@ -86,8 +87,10 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
 
         if (protect(m_selectedImage)->isPending())
             protect(m_selectedImage)->load(loader, options);
-        return;
     }
+
+    if (RefPtr selectedImage = m_selectedImage; selectedImage && !clients().isEmpty())
+        selectedImage->addClient(*this);
 }
 
 WebCore::CachedImage* MultiImage::cachedImage() const
@@ -95,13 +98,6 @@ WebCore::CachedImage* MultiImage::cachedImage() const
     if (!m_selectedImage)
         return nullptr;
     return m_selectedImage->cachedImage();
-}
-
-WrappedImagePtr MultiImage::data() const
-{
-    if (!m_selectedImage)
-        return nullptr;
-    return m_selectedImage->data();
 }
 
 bool MultiImage::canRender(const RenderElement* renderer) const
@@ -138,25 +134,39 @@ ImageRenditionOptions MultiImage::renditionOptionsForRenderer(const RenderElemen
     return protect(m_selectedImage)->renditionOptionsForRenderer(renderer, WTF::move(rendition));
 }
 
-void MultiImage::addClient(RenderElement& renderer)
+void MultiImage::didAddFirstClient()
 {
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->addClient(renderer);
+    if (RefPtr selectedImage = m_selectedImage)
+        selectedImage->addClient(*this);
 }
 
-void MultiImage::removeClient(RenderElement& renderer)
+void MultiImage::didRemoveLastClient()
 {
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->removeClient(renderer);
+    if (RefPtr selectedImage = m_selectedImage)
+        selectedImage->removeClient(*this);
 }
 
-bool MultiImage::hasClient(RenderElement& renderer) const
+void MultiImage::sendInitialNotifications(ImageClient& client, const Image& shownImage) const
 {
-    if (!m_selectedImage)
-        return false;
-    return protect(m_selectedImage)->hasClient(renderer);
+    if (RefPtr selectedImage = m_selectedImage)
+        selectedImage->sendInitialNotifications(client, shownImage);
+}
+
+void MultiImage::addClientWaitingForAsyncDecoding(ImageClient&)
+{
+    if (RefPtr selectedImage = m_selectedImage)
+        selectedImage->addClientWaitingForAsyncDecoding(*this);
+}
+
+bool MultiImage::isClientWaitingForAsyncDecoding(const ImageClient&) const
+{
+    return m_selectedImage && protect(m_selectedImage)->isClientWaitingForAsyncDecoding(*this);
+}
+
+void MultiImage::removeAllClientsWaitingForAsyncDecoding()
+{
+    if (RefPtr selectedImage = m_selectedImage)
+        selectedImage->removeAllClientsWaitingForAsyncDecoding();
 }
 
 ImageDrawResult MultiImage::draw(GraphicsContext& context, const RenderElement& renderer, const ImageDrawDescriptor& descriptor, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const
@@ -227,6 +237,11 @@ std::optional<IntPoint> MultiImage::hotSpot() const
 bool MultiImage::drawsSVGImage() const
 {
     return m_selectedImage && protect(m_selectedImage)->drawsSVGImage();
+}
+
+bool MultiImage::hasHDRContent() const
+{
+    return m_selectedImage && protect(m_selectedImage)->hasHDRContent();
 }
 
 WTF::String MultiImage::accessibilityDescription() const

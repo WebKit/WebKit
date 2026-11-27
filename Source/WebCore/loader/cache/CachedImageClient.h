@@ -24,6 +24,7 @@
 
 #include <WebCore/CachedResourceClient.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/VisibleInViewportState.h>
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -31,8 +32,6 @@ namespace WebCore {
 class CachedImage;
 class Document;
 class IntRect;
-
-enum class VisibleInViewportState { Unknown, Yes, No };
 
 class CachedImageClient : public CachedResourceClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedImageClient);
@@ -51,13 +50,13 @@ public:
     WEBCORE_EXPORT virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
 
-    virtual void didRemoveCachedImageClient(CachedImage&) { }
     virtual void imageContentChanged(CachedImage&) { }
     virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
 
     virtual bool allowsAnimation() const { return true; }
 
-    virtual bool isRendererClient() const { return false; }
+    // Whether this client shows the image at all, visible or not.
+    virtual bool showsImage() const { return false; }
 
 protected:
     WEBCORE_EXPORT CachedImageClient();

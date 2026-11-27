@@ -581,7 +581,6 @@ style/values/color/StyleDynamicRangeLimitMix.cpp
 style/values/fonts/StyleFontVariantAlternates.cpp
 style/values/grid/StyleGridTemplateList.cpp
 style/values/images/StyleMeshGradient.cpp
-style/values/images/kinds/StyleCrossfadeImage.cpp
 style/values/images/kinds/StyleGeneratedImageCache.h
 style/values/images/kinds/StyleGradientImage.cpp
 style/values/images/kinds/StyleImageSet.cpp

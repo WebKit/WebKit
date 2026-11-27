@@ -60,6 +60,8 @@ public:
     unsigned computeSize() const { return m_impl.computeSize(); }
     unsigned computeSize() { return m_impl.computeSize(); }
 
+    bool hasNullReferences() const { return m_impl.hasNullReferences(); }
+
     // Increments the count if an equal value is already present.
     // The return value includes both an iterator to the value's location,
     // and an isNewEntry bool that indicates whether it is a new or existing entry.

@@ -821,7 +821,7 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(const Style::
     return { LayoutUnit::fromFloatRound(concreteObjectSize.width()), LayoutUnit::fromFloatRound(concreteObjectSize.height()) };
 }
 
-void RenderBoxModelObject::imageChanged(WrappedImagePtr image, const IntRect*)
+void RenderBoxModelObject::imageChanged(const Style::Image& image, const IntRect*)
 {
     if (!parent())
         return;

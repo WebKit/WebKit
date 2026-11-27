@@ -54,7 +54,7 @@ private:
 
     bool canHaveChildren() const final { return false; }
     void paint(PaintInfo&, const LayoutPoint&) final { }
-    void imageChanged(WrappedImagePtr, const IntRect*) final { }
+    void imageChanged(const Style::Image&, const IntRect*) override final { }
 
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
     int caretMinOffset() const final;

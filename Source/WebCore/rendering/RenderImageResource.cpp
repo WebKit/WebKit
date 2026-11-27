@@ -62,8 +62,10 @@ void RenderImageResource::initialize(RenderElement& renderer)
     ASSERT(!m_renderer);
 
     m_renderer = renderer;
-    if (m_styleImage)
-        protect(m_styleImage)->addClient(renderer);
+    if (RefPtr styleImage = m_styleImage) {
+        styleImage->addClient(protect(renderer.styleImageClient()));
+        renderer.didStartShowingImage(*styleImage);
+    }
 }
 
 void RenderImageResource::willBeDestroyed()
@@ -71,8 +73,8 @@ void RenderImageResource::willBeDestroyed()
     RefPtr cachedImage = this->cachedImage();
     RefPtr styleImage = m_styleImage;
     if (styleImage && m_renderer)
-        styleImage->removeClient(*protect(m_renderer));
-    if (styleImage && styleImage->isAnimated() && cachedImage && !cachedImage->hasRendererClients())
+        styleImage->removeClient(protect(protect(m_renderer)->styleImageClient()));
+    if (styleImage && styleImage->isAnimated() && cachedImage && !cachedImage->hasClientShowingImage())
         styleImage->stopAnimation();
 }
 
@@ -82,7 +84,7 @@ void RenderImageResource::clearCachedImage()
         return;
 
     if (m_renderer)
-        protect(m_styleImage)->removeClient(*protect(m_renderer));
+        protect(m_styleImage)->removeClient(protect(protect(m_renderer)->styleImageClient()));
 
     m_styleImage = nullptr;
 }
@@ -95,7 +97,7 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
 
     if (m_styleImage && m_renderer) {
         RefPtr styleImage = m_styleImage;
-        styleImage->removeClient(*protect(m_renderer));
+        styleImage->removeClient(protect(protect(m_renderer)->styleImageClient()));
     }
 
     if (!m_renderer) {
@@ -114,10 +116,11 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
 
         RefPtr styleImage = m_styleImage;
         CheckedPtr renderer = m_renderer;
-        styleImage->addClient(*renderer);
+        styleImage->addClient(protect(renderer->styleImageClient()));
+        renderer->didStartShowingImage(*styleImage);
 
         if (styleImage->errorOccurred())
-            renderer->imageChanged(styleImage->cachedImage());
+            renderer->imageChanged(*styleImage);
     }
 }
 

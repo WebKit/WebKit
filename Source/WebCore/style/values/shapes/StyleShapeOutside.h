@@ -92,7 +92,7 @@ struct ShapeOutside {
 
     const BasicShape* shape() const { RefPtr value = m_value; return value ? value->shape() : nullptr; }
     CSSBoxType effectiveCSSBox() const { RefPtr value = m_value; return value ? value->effectiveCSSBox() : CSSBoxType::BoxMissing; }
-    RefPtr<Style::Image> image() const { RefPtr value = m_value; return value ? value->image() : nullptr; }
+    RefPtr<Style::Image> tryStyleImage() const { RefPtr value = m_value; return value ? value->tryStyleImage() : nullptr; }
 
     bool operator==(const ShapeOutside& other) const
     {
@@ -111,7 +111,7 @@ private:
 
         inline const BasicShape* shape() const;
         inline CSSBoxType effectiveCSSBox() const;
-        inline RefPtr<Style::Image> image() const;
+        inline RefPtr<Style::Image> tryStyleImage() const;
 
         bool operator==(const Value&) const;
 
@@ -144,7 +144,7 @@ inline const BasicShape* ShapeOutside::Value::shape() const
     );
 }
 
-inline RefPtr<Style::Image> ShapeOutside::Value::image() const
+inline RefPtr<Style::Image> ShapeOutside::Value::tryStyleImage() const
 {
     return WTF::switchOn(value,
         [](const ShapeOutside::Shape&) -> RefPtr<Style::Image> { return nullptr; },

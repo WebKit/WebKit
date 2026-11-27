@@ -75,6 +75,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/CSSStyleProperties.h>
 #import <WebCore/CachedImage.h>
+#import <WebCore/CachedImageClient.h>
 #import <WebCore/CachedResourceClient.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>

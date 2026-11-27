@@ -164,15 +164,27 @@ NaturalDimensions CanvasImage::naturalDimensions(const RenderElement& renderer, 
     return NaturalDimensions::zero();
 }
 
-void CanvasImage::didAddClient(RenderElement& renderer)
+void CanvasImage::didAddClient(ImageClient& client)
 {
-    if (RefPtr element = this->element(protect(renderer.document())))
-        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
+    didChangeClients(client);
 }
 
-void CanvasImage::didRemoveClient(RenderElement& renderer)
+void CanvasImage::didRemoveClient(ImageClient& client)
 {
-    if (RefPtr element = this->element(protect(renderer.document())))
+    didChangeClients(client);
+}
+
+void CanvasImage::didChangeClients(ImageClient& client)
+{
+    RefPtr element = m_element;
+    if (!element) {
+        HashSet<Ref<Element>> elements;
+        client.collectElementsShowingImage(*this, elements);
+        if (elements.isEmpty())
+            return;
+        element = this->element(protect(elements.begin()->get().document()));
+    }
+    if (element)
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
 }
 
@@ -182,10 +194,7 @@ void CanvasImage::canvasContentsWillChange(CanvasBase& canvasBase, const FloatRe
     ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
 
     auto imageChangeRect = enclosingIntRect(changingRect);
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
-    }
+    clients().imageChanged(*this, &imageChangeRect);
 }
 
 void CanvasImage::canvasResized(CanvasBase& canvasBase)
@@ -193,10 +202,7 @@ void CanvasImage::canvasResized(CanvasBase& canvasBase)
     ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
     ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
 
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-    }
+    clients().imageChanged(*this);
 }
 
 void CanvasImage::canvasDestroyed(CanvasBase& canvasBase)
@@ -217,7 +223,7 @@ HTMLCanvasElement* CanvasImage::element(Document& document) const
 
 RefPtr<NativeImage> CanvasImage::resolvedImage(const RenderElement& renderer) const
 {
-    ASSERT(clients().contains(const_cast<RenderElement&>(renderer)));
+    ASSERT(!clients().isEmpty());
     RefPtr element = this->element(protect(renderer.document()));
     if (!element)
         return nullptr;

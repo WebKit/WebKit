@@ -137,8 +137,6 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
     m_clientsWaitingForAsyncDecoding.remove(downcast<CachedImageClient>(client));
 
     CachedResource::didRemoveClient(client);
-
-    downcast<CachedImageClient>(client).didRemoveCachedImageClient(*this);
 }
 
 bool CachedImage::isClientWaitingForAsyncDecoding(const CachedImageClient& client) const
@@ -180,11 +178,11 @@ void CachedImage::removeAllClientsWaitingForAsyncDecoding()
     m_clientsWaitingForAsyncDecoding.clear();
 }
 
-bool CachedImage::hasRendererClients() const
+bool CachedImage::hasClientShowingImage() const
 {
     CachedResourceClientWalker<CachedImageClient> walker(*this);
     while (RefPtr client = walker.next()) {
-        if (client->isRendererClient())
+        if (client->showsImage())
             return true;
     }
     return false;

@@ -26,7 +26,6 @@
 
 #include <WebCore/FloatSize.h>
 #include <WebCore/StyleImage.h>
-#include <wtf/WeakHashCountedSet.h>
 
 namespace WebCore {
 
@@ -39,26 +38,15 @@ struct ResourceLoaderOptions;
 namespace Style {
 
 class GeneratedImage : public Image {
-public:
-    const SingleThreadWeakHashCountedSet<RenderElement>& clients() const LIFETIME_BOUND { return m_clients; }
-
 protected:
     explicit GeneratedImage(Image::Type);
     virtual ~GeneratedImage();
 
-    NODELETE WrappedImagePtr data() const final { return this; }
-
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const override;
 
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
-
-    // Allow subclasses to react to clients being added/removed.
-    virtual void didAddClient(RenderElement&) = 0;
-    virtual void didRemoveClient(RenderElement&) = 0;
-
-    SingleThreadWeakHashCountedSet<RenderElement> m_clients;
+private:
+    void didAddFirstClient() override final { ref(); }
+    void didRemoveLastClient() override final { deref(); }
 };
 
 } // namespace Style

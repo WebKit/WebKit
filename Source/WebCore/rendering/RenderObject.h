@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <WebCore/CachedImageClient.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/Position.h>
 #include <WebCore/RenderObjectEnums.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/RepaintRectCalculation.h>
+#include <WebCore/StyleImageClient.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/EnumSet.h>
 #include <wtf/Forward.h>
@@ -99,6 +99,7 @@ struct VisibleRectState;
 
 namespace Style {
 class ComputedStyle;
+class Image;
 class PseudoElementRequest;
 }
 
@@ -110,8 +111,6 @@ enum class RepaintOutlineBounds : bool { No, Yes };
 enum class PointerEvents : uint8_t;
 enum class RequiresFullRepaint : bool { No, Yes };
 enum class StyleColorOptions : uint8_t;
-
-typedef const void* WrappedImagePtr;
 
 // Base class for all rendering tree objects.
 // Only RenderElement and RenderText derive from RenderObject directly. Their second base is their layout box.
@@ -1075,17 +1074,45 @@ public:
     virtual int previousOffsetForBackwardDeletion(int current) const;
     virtual int nextOffset(int current) const;
 
-    // CachedImageClient emulation.
-    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) { }
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
+    // Style::ImageClient emulation.
+    virtual void imageChanged(const Style::Image&, const IntRect* = nullptr) { }
+    virtual void imageFinishedLoading(const Style::Image&) { }
+    virtual void imageFrameAvailable(const Style::Image&) { }
+    virtual void imageContentChanged(const Style::Image&) { }
+    virtual void imageAnimationPaused(const Style::Image&) { }
+    virtual void scheduleRenderingUpdateForImage(const Style::Image&) { }
+    virtual bool isShowingImageVisibly() const { return false; }
+    virtual bool isShowingImageVisiblyInDocument(const Document&) const { return false; }
     virtual bool allowsAnimation() const { return true; }
-    virtual bool canDestroyDecodedData() const { return true; }
-    virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
-    virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
-    virtual void didRemoveCachedImageClient(CachedImage&) { }
-    virtual void imageContentChanged(CachedImage&) { }
-    virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
-    CachedImageClient& cachedImageClient() const;
+
+    // This class is to avoid making RenderObject refcounted.
+    class StyleImageClient final : public Style::ImageClient, public RefCounted<StyleImageClient> {
+        WTF_MAKE_TZONE_ALLOCATED(StyleImageClient);
+    public:
+        NODELETE static Ref<StyleImageClient> create(RenderObject&);
+
+        void ref() const override final { RefCounted::ref(); }
+        void deref() const override final { RefCounted::deref(); }
+
+    private:
+        // Style::ImageClient.
+        void imageChanged(const Style::Image&, const IntRect*) override final;
+        void imageFinishedLoading(const Style::Image&) override final;
+        void imageFrameAvailable(const Style::Image&) override final;
+        void imageContentChanged(const Style::Image&) override final;
+        void imageAnimationPaused(const Style::Image&) override final;
+        void scheduleRenderingUpdateForImage(const Style::Image&) override final;
+        bool isShowingImageVisibly(const Style::Image&) const override final;
+        bool isShowingImageVisiblyInDocument(const Style::Image&, const Document&) const override final;
+        bool allowsImageAnimation(const Style::Image&) const override final;
+        void collectElementsShowingImage(const Style::Image&, HashSet<Ref<Element>>&) const override final;
+
+        explicit StyleImageClient(RenderObject&);
+
+        SingleThreadWeakPtr<RenderObject> m_renderer;
+    };
+
+    StyleImageClient& styleImageClient() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
@@ -1152,36 +1179,6 @@ protected:
     BoxDecorationState boxDecorationState() const { return m_stateBitfields.boxDecorationState(); }
 
 private:
-    // This class is to avoid making RenderObject refcounted.
-    class CachedImageListener final : public CachedImageClient, public RefCounted<CachedImageListener> {
-        WTF_MAKE_TZONE_ALLOCATED(CachedImageListener);
-    public:
-        NODELETE static Ref<CachedImageListener> create(RenderObject&);
-
-        // CachedImageClient.
-        void ref() const final { RefCounted::ref(); }
-        void deref() const final { RefCounted::deref(); }
-
-    private:
-        // CachedResourceClient.
-        void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
-
-        // CachedImageClient.
-        void imageChanged(CachedImage*, const IntRect* = nullptr) final;
-        bool allowsAnimation() const final;
-        bool canDestroyDecodedData() const final;
-        VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*) final;
-        VisibleInViewportState imageVisibleInViewport(const Document&) const final;
-        void didRemoveCachedImageClient(CachedImage&) final;
-        void imageContentChanged(CachedImage&) final;
-        void scheduleRenderingUpdateForImage(CachedImage&) final;
-        bool isRendererClient() const final { return true; }
-
-        explicit CachedImageListener(RenderObject&);
-
-        SingleThreadWeakPtr<RenderObject> m_renderer;
-    };
-
     virtual RepaintRects localRectsForRepaint(RepaintOutlineBounds) const;
 
     void addAbsoluteRectForLayer(LayoutRect& result, RespectTransforms = RespectTransforms::No);
@@ -1323,7 +1320,7 @@ private:
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     const TypeSpecificFlags m_typeSpecificFlags;
 
-    const RefPtr<CachedImageListener> m_cachedImageClient;
+    const RefPtr<StyleImageClient> m_styleImageClient;
 
     // FIXME: This should be RenderElementRareData.
     class RenderObjectRareData {
@@ -1517,12 +1514,11 @@ inline bool RenderObject::usesBoundaryCaching() const
         || (m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::SVGModelObject && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::UsesBoundaryCaching));
 }
 
-inline CachedImageClient& RenderObject::cachedImageClient() const
+inline RenderObject::StyleImageClient& RenderObject::styleImageClient() const
 {
-    if (!m_cachedImageClient) {
-        lazyInitialize(m_cachedImageClient, CachedImageListener::create(*const_cast<RenderObject*>(this)));
-    }
-    return *m_cachedImageClient.get();
+    if (!m_styleImageClient)
+        lazyInitialize(m_styleImageClient, StyleImageClient::create(*const_cast<RenderObject*>(this)));
+    return *m_styleImageClient.get();
 }
 
 std::partial_ordering renderTreeOrder(const RenderObject&, const RenderObject&);

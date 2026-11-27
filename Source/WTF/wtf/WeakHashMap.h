@@ -26,6 +26,7 @@
 #pragma once
 
 #include <algorithm>
+#include <wtf/HashMap.h>
 #include <wtf/HashTable.h>
 #include <wtf/WeakPtr.h>
 
