@@ -28,7 +28,6 @@
 #include <wtf/unicode/UTF8Conversion.h>
 
 #include <unicode/uchar.h>
-#include <wtf/ASCIICType.h>
 #include <wtf/SIMDUTF.h>
 #include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -68,13 +67,6 @@ template<> NODELETE char32_t next<Replacement::None, char16_t>(std::span<const c
     return U_IS_SURROGATE(character) ? sentinelCodePoint : character;
 }
 
-template<> NODELETE char32_t next<Replacement::ReplaceInvalidSequences, char16_t>(std::span<const char16_t> characters, size_t& offset)
-{
-    char32_t character;
-    U16_NEXT_OR_FFFD(characters, offset, characters.size(), character);
-    return character;
-}
-
 template<> NODELETE bool append<char8_t>(std::span<char8_t> characters, size_t& offset, char32_t character)
 {
     UBool sawError = false;
@@ -92,10 +84,11 @@ template<> NODELETE bool append<char16_t>(std::span<char16_t> characters, size_t
 template<Replacement replacement = Replacement::None, typename SourceCharacterType, typename BufferCharacterType> static ConversionResult<BufferCharacterType> convertInternal(std::span<const SourceCharacterType> source, std::span<BufferCharacterType> buffer)
 {
     auto resultCode = ConversionResultCode::Success;
+    size_t sourceOffset = 0;
     size_t bufferOffset = 0;
-    char32_t orAllData = 0;
-    for (size_t sourceOffset = 0; sourceOffset < source.size(); ) {
-        char32_t character = next<replacement>(source, sourceOffset);
+    while (sourceOffset < source.size()) {
+        size_t nextSourceOffset = sourceOffset;
+        char32_t character = next<replacement>(source, nextSourceOffset);
         if (character == sentinelCodePoint) {
             resultCode = ConversionResultCode::SourceInvalid;
             break;
@@ -109,9 +102,9 @@ template<Replacement replacement = Replacement::None, typename SourceCharacterTy
             resultCode = ConversionResultCode::TargetExhausted;
             break;
         }
-        orAllData |= character;
+        sourceOffset = nextSourceOffset;
     }
-    return { resultCode, buffer.first(bufferOffset), isASCII(orAllData) };
+    return { resultCode, buffer.first(bufferOffset), sourceOffset };
 }
 
 ConversionResult<char8_t> convert(std::span<const char16_t> source, std::span<char8_t> buffer)
@@ -123,10 +116,8 @@ ConversionResult<char8_t> convert(std::span<const char16_t> source, std::span<ch
 
     auto result = simdutf::convert_utf16le_to_utf8_with_errors(source, buffer);
 
-    if (result.error == simdutf::error_code::SUCCESS) {
-        bool isAllASCII = result.count == source.size();
-        return { ConversionResultCode::Success, buffer.first(result.count), isAllASCII };
-    }
+    if (result.error == simdutf::error_code::SUCCESS)
+        return { ConversionResultCode::Success, buffer.first(result.count), source.size() };
 
     return convertInternal(source, buffer);
 }
@@ -136,14 +127,24 @@ ConversionResult<char16_t> convert(std::span<const char8_t> source, std::span<ch
     return convertInternal(source, buffer);
 }
 
-ConversionResult<char8_t> convert(std::span<const Latin1Character> source, std::span<char8_t> buffer)
+SUPPRESS_NODELETE ConversionResult<char8_t> convert(std::span<const Latin1Character> source, std::span<char8_t> buffer)
 {
-    return convertInternal(source, buffer);
+    // Each Latin-1 character takes at most two bytes in UTF-8.
+    if (buffer.size() / 2 >= source.size()) {
+        size_t length = simdutf::convert_latin1_to_utf8(byteCast<char>(source), buffer);
+        return { ConversionResultCode::Success, buffer.first(length), source.size() };
+    }
+
+    auto result = simdutf::convert_latin1_to_utf8_safe_with_details(byteCast<char>(source), buffer);
+    auto code = result.input_count == source.size() ? ConversionResultCode::Success : ConversionResultCode::TargetExhausted;
+    return { code, buffer.first(result.output_count), result.input_count };
 }
 
-ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t> source, std::span<char8_t> buffer)
+SUPPRESS_NODELETE ConversionResult<char8_t> convertReplacingUnpairedSurrogates(std::span<const char16_t> source, std::span<char8_t> buffer)
 {
-    return convertInternal<Replacement::ReplaceInvalidSequences>(source, buffer);
+    auto result = simdutf::convert_utf16_to_utf8_with_replacement_safe(source, buffer);
+    auto code = result.input_count == source.size() ? ConversionResultCode::Success : ConversionResultCode::TargetExhausted;
+    return { code, buffer.first(result.output_count), result.input_count };
 }
 
 ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t> source, std::span<char16_t> buffer)

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 namespace WebCore {
 
@@ -44,27 +45,11 @@ RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 
 auto TextEncoder::encodeInto(String&& input, Ref<Uint8Array>&& array) -> EncodeIntoResult
 {
-    auto destinationBytes = array->mutableSpan();
-
-    uint64_t read = 0;
-    uint64_t written = 0;
-
-    for (auto token : StringView(input).codePoints()) {
-        if (written >= destinationBytes.size()) {
-            ASSERT(written == destinationBytes.size());
-            break;
-        }
-        UBool sawError = false;
-        U8_APPEND(destinationBytes, written, destinationBytes.size(), token, sawError);
-        if (sawError)
-            break;
-        if (U_IS_BMP(token))
-            ++read;
-        else
-            read += 2;
-    }
-
-    return { read, written };
+    auto destination = byteCast<char8_t>(array->mutableSpan());
+    auto result = input.is8Bit()
+        ? WTF::Unicode::convert(input.span8(), destination)
+        : WTF::Unicode::convertReplacingUnpairedSurrogates(input.span16(), destination);
+    return { result.sourceLength, result.buffer.size() };
 }
 
 }
