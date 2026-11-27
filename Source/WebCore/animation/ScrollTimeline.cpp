@@ -140,7 +140,8 @@ RefPtr<Element> ScrollTimeline::source() const
     switch (m_scroller) {
     case Scroller::Nearest: {
         if (CheckedPtr subjectRenderer = source->renderer()) {
-            if (CheckedPtr nearestScrollableContainer = subjectRenderer->enclosingScrollableContainer()) {
+            auto nearest = nearestScrollContainer(*subjectRenderer);
+            if (CheckedPtr nearestScrollableContainer = nearest ? nearest->renderer : nullptr) {
                 if (RefPtr nearestSource = nearestScrollableContainer->element()) {
                     Ref document = nearestSource->document();
                     RefPtr documentElement = document->documentElement();
@@ -207,6 +208,70 @@ AnimationTimelinesController* ScrollTimeline::controller() const
     return nullptr;
 }
 
+auto ScrollTimeline::sourceFromNearestScrollContainer() const -> std::optional<NearestScrollContainer>
+{
+    if (m_scroller != Scroller::Nearest)
+        return std::nullopt;
+    auto source = m_source.styleable();
+    if (!source)
+        return std::nullopt;
+    CheckedPtr renderer = source->renderer();
+    if (!renderer)
+        return std::nullopt;
+    return nearestScrollContainer(*renderer);
+}
+
+auto ScrollTimeline::nearestScrollContainer(const RenderElement& renderer) const -> std::optional<NearestScrollContainer>
+{
+    // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-nearest
+    // With single-axis scroll containers, the nearest scroll container is the nearest one that scrolls in the
+    // timeline's axis. A logical axis resolves against the writing mode of the nearest scroll container of either axis.
+    // https://github.com/w3c/csswg-drafts/issues/12289
+    CheckedPtr nearestScrollContainer = renderer.enclosingScrollableContainer();
+    if (!nearestScrollContainer)
+        return std::nullopt;
+
+    bool isVertical = isVerticalAxis(nearestScrollContainer->writingMode());
+    // The document element stands for the viewport, which scrolls in both axes whatever its overflow: clip on the
+    // viewport behaves as hidden, which still scrolls (https://drafts.csswg.org/css-overflow-3/#overflow-propagation).
+    CheckedRef style = nearestScrollContainer->style();
+    if (nearestScrollContainer->isDocumentElementRenderer() || isScrollableOverflow(isVertical ? style->overflowY() : style->overflowX()))
+        return NearestScrollContainer { nearestScrollContainer.get(), isVertical };
+
+    // A single-axis scroll container that doesn't scroll in the axis; keep looking further out, up to the document element.
+    return NearestScrollContainer { nearestScrollContainer->enclosingScrollableContainer(isVertical ? BoxAxis::Vertical : BoxAxis::Horizontal), isVertical };
+}
+
+bool ScrollTimeline::isVerticalAxis(WritingMode writingMode) const
+{
+    switch (m_axis) {
+    case ScrollAxis::Block:
+        // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-block
+        // Specifies to use the measure of progress along the block axis of the scroll container.
+        // https://drafts.csswg.org/css-writing-modes-4/#block-axis
+        // The axis in the block dimension, i.e. the vertical axis in horizontal writing modes and
+        // the horizontal axis in vertical writing modes.
+        return writingMode.isHorizontal();
+    case ScrollAxis::Inline:
+        // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-inline
+        // Specifies to use the measure of progress along the inline axis of the scroll container.
+        // https://drafts.csswg.org/css-writing-modes-4/#inline-axis
+        // The axis in the inline dimension, i.e. the horizontal axis in horizontal writing modes and
+        // the vertical axis in vertical writing modes.
+        return writingMode.isVertical();
+    case ScrollAxis::X:
+        // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-x
+        // Specifies to use the measure of progress along the horizontal axis of the scroll container.
+        return false;
+    case ScrollAxis::Y:
+        // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-y
+        // Specifies to use the measure of progress along the vertical axis of the scroll container.
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
 ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection() const
 {
     auto writingMode = [&] -> WritingMode {
@@ -218,35 +283,12 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
         return { Style::ComputedStyle::initialWritingMode(), Style::ComputedStyle::initialDirection(), Style::ComputedStyle::initialTextOrientation() };
     }();
 
+    // Use the same physical axis that was used to pick the source.
     auto isVertical = [&] {
-        switch (m_axis) {
-        case ScrollAxis::Block:
-            // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-block
-            // Specifies to use the measure of progress along the block axis of the scroll container.
-            // https://drafts.csswg.org/css-writing-modes-4/#block-axis
-            // The axis in the block dimension, i.e. the vertical axis in horizontal writing modes and
-            // the horizontal axis in vertical writing modes.
-            return writingMode.isHorizontal();
-        case ScrollAxis::Inline:
-            // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-inline
-            // Specifies to use the measure of progress along the inline axis of the scroll container.
-            // https://drafts.csswg.org/css-writing-modes-4/#inline-axis
-            // The axis in the inline dimension, i.e. the horizontal axis in horizontal writing modes and
-            // the vertical axis in vertical writing modes.
-            return writingMode.isVertical();
-        case ScrollAxis::X:
-            // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-x
-            // Specifies to use the measure of progress along the horizontal axis of the scroll container.
-            return false;
-        case ScrollAxis::Y:
-            // https://drafts.csswg.org/scroll-animations-1/#valdef-scroll-y
-            // Specifies to use the measure of progress along the vertical axis of the scroll container.
-            return true;
-        }
-        ASSERT_NOT_REACHED();
-        return true;
+        if (auto nearestScrollContainer = sourceFromNearestScrollContainer())
+            return nearestScrollContainer->isVertical;
+        return isVerticalAxis(writingMode);
     }();
-
     auto isReversed = (isVertical && !writingMode.isAnyTopToBottom()) || (!isVertical && !writingMode.isAnyLeftToRight());
 
     return { isVertical, isReversed };

@@ -481,23 +481,37 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
     return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
-RenderBox* RenderObject::enclosingScrollableContainer() const
+static RenderBox* enclosingScrollableContainer(const RenderObject& renderer, std::optional<BoxAxis> axis)
 {
     // Walk up the container chain to find the scrollable container that contains
     // this RenderObject. The important thing here is that `container()` respects
     // the containing block chain for positioned elements. This is important because
     // scrollable overflow does not establish a new containing block for children.
-    for (auto* candidate = container(); candidate; candidate = candidate->container()) {
+    for (auto* candidate = renderer.container(); candidate; candidate = candidate->container()) {
         // Currently the RenderView can look like it has scrollable overflow, but we never
         // want to return this as our container. Instead we should use the root element.
         if (candidate->isRenderView())
             break;
-        if (candidate->hasPotentiallyScrollableOverflow())
-            return downcast<RenderBox>(candidate);
+        if (!candidate->hasPotentiallyScrollableOverflow())
+            continue;
+        if (axis && !isScrollableOverflow(*axis == BoxAxis::Horizontal ? candidate->style().overflowX() : candidate->style().overflowY()))
+            continue;
+        return downcast<RenderBox>(candidate);
     }
 
     // If we reach the root, then the root element is the scrolling container.
-    return document().documentElement() ? document().documentElement()->renderBox() : nullptr;
+    RefPtr documentElement = renderer.document().documentElement();
+    return documentElement ? documentElement->renderBox() : nullptr;
+}
+
+RenderBox* RenderObject::enclosingScrollableContainer() const
+{
+    return WebCore::enclosingScrollableContainer(*this, std::nullopt);
+}
+
+RenderBox* RenderObject::enclosingScrollableContainer(BoxAxis axis) const
+{
+    return WebCore::enclosingScrollableContainer(*this, axis);
 }
 
 static inline bool isLayoutBoundary(const RenderElement& renderer)

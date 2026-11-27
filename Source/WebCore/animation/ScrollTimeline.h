@@ -33,6 +33,7 @@
 #include <WebCore/ScrollTimelineOptions.h>
 #include <WebCore/StyleScrollFunction.h>
 #include <WebCore/Styleable.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -42,7 +43,10 @@ namespace WebCore {
 class AnimationTimelinesController;
 class Document;
 class Element;
+class RenderBox;
+class RenderElement;
 class ScrollableArea;
+class WritingMode;
 struct ResolvableTimelineRange;
 
 namespace Style {
@@ -110,6 +114,16 @@ protected:
 
     static ScrollableArea* scrollableAreaForSourceRenderer(const RenderElement*, Document&);
     ResolvedScrollDirection resolvedScrollDirection() const;
+    struct NearestScrollContainer {
+        CheckedPtr<const RenderBox> renderer;
+        // The timeline's axis resolved to a physical one.
+        bool isVertical { false };
+    };
+    // The nearest scroll container of the given renderer that scrolls in this timeline's axis.
+    std::optional<NearestScrollContainer> nearestScrollContainer(const RenderElement&) const;
+    // For a scroll(nearest) timeline or a view timeline, the source scroll container: the nearest scroll container of
+    // the element the timeline belongs to, or of the subject. Null if the source is given directly.
+    virtual std::optional<NearestScrollContainer> sourceFromNearestScrollContainer() const;
     void sourceMetricsDidChange();
     bool isStyleOriginated() const { return m_isStyleOriginated; }
 
@@ -138,6 +152,7 @@ private:
 #endif
     CurrentTimeData computeCurrentTimeData() const;
     void cacheCurrentTime();
+    bool isVerticalAxis(WritingMode) const;
 
     WeakStyleable m_source;
     ScrollAxis m_axis { ScrollAxis::Block };
