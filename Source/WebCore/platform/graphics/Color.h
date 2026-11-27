@@ -125,12 +125,13 @@ public:
     template<typename Functor> decltype(auto) callOnUnderlyingType(NOESCAPE const Functor&) const;
 
     // This will convert the underlying color into ColorType, potentially lossily if the gamut
-    // or precision of ColorType is smaller than the current underlying type.
-    template<typename ColorType> ColorType toColorTypeLossy() const;
+    // or precision of ColorType is smaller than the current underlying type. Conversions to a
+    // bounded RGB type bring the color into its gamut with `GamutMapping`.
+    template<typename ColorType, typename GamutMapping = ClipGamutMapping> ColorType toColorTypeLossy() const;
 
     // This acts just like toColorTypeLossy(), but will carry forward missing components
     // from the underlying type into any analogous components in ColorType.
-    template<typename ColorType> ColorType toColorTypeLossyCarryingForwardMissing() const;
+    template<typename ColorType, typename GamutMapping = ClipGamutMapping> ColorType toColorTypeLossyCarryingForwardMissing() const;
 
     WEBCORE_EXPORT ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpaceName) const;
     ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const ColorSpace&) const;
@@ -454,17 +455,19 @@ template<typename Functor> decltype(auto) Color::callOnUnderlyingType(NOESCAPE c
     return std::invoke(functor, asInline());
 }
 
-template<typename ColorType> ColorType Color::toColorTypeLossy() const
+template<typename ColorType, typename GamutMapping> ColorType Color::toColorTypeLossy() const
 {
     if (isOutOfLine())
-        return convertColorComponents<ColorType>(colorSpace(), asOutOfLine().unresolvedComponents());
+        return convertColorComponents<ColorType, GamutMapping>(colorSpace(), asOutOfLine().unresolvedComponents());
+    // Inline colors are bounded sRGB so never need gamut mapping.
     return convertColor<ColorType>(asInline());
 }
 
-template<typename ColorType> ColorType Color::toColorTypeLossyCarryingForwardMissing() const
+template<typename ColorType, typename GamutMapping> ColorType Color::toColorTypeLossyCarryingForwardMissing() const
 {
     if (isOutOfLine())
-        return convertColorComponentsCarryingForwardMissing<ColorType>(colorSpace(), asOutOfLine().unresolvedComponents());
+        return convertColorComponentsCarryingForwardMissing<ColorType, GamutMapping>(colorSpace(), asOutOfLine().unresolvedComponents());
+    // Inline colors are bounded sRGB so never need gamut mapping.
     return convertColorCarryingForwardMissing<ColorType>(asInline());
 }
 

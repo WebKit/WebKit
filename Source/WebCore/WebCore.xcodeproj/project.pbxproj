@@ -3214,6 +3214,8 @@
 		7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500363572 /* JSReadableStreamBYOBReader.h */; };
 		7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */; };
 		7C514E0324AF805E0050710F /* ColorConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C514E0024AF80580050710F /* ColorConversion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9A3E1E2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9A3E1D2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9A3E1C2F1B4C0D00A1B2C3 /* ColorGamutMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9A3E1A2F1B4C0D00A1B2C3 /* ColorGamutMapping.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C516AD41F3525200034B6BF /* DOMPromiseProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */; };
 		7C5222961E1DAE03002CB8F7 /* IDLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5222951E1DADF8002CB8F7 /* IDLTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C5222991E1DAE1C002CB8F7 /* ActiveDOMCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15215,6 +15217,9 @@
 		7C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamDefaultReader.h; sourceTree = "<group>"; };
 		7C514E0024AF80580050710F /* ColorConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorConversion.h; sourceTree = "<group>"; };
 		7C514E0224AF80580050710F /* ColorConversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorConversion.cpp; sourceTree = "<group>"; };
+		7C9A3E1B2F1B4C0D00A1B2C3 /* ColorGamutMapping.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorGamutMapping.cpp; sourceTree = "<group>"; };
+		7C9A3E1D2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorChromaticAdaptation.h; sourceTree = "<group>"; };
+		7C9A3E1A2F1B4C0D00A1B2C3 /* ColorGamutMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorGamutMapping.h; sourceTree = "<group>"; };
 		7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPromiseProxy.h; sourceTree = "<group>"; };
 		7C51FCCE25002BFB00BA0F2F /* MathMLElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MathMLElement.idl; sourceTree = "<group>"; };
 		7C5222951E1DADF8002CB8F7 /* IDLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDLTypes.h; sourceTree = "<group>"; };
@@ -36942,9 +36947,12 @@
 				B27535390B053814002CE64F /* Color.h */,
 				7C1B4A6524A997590033727F /* ColorBlending.cpp */,
 				7C1B4A6724A997660033727F /* ColorBlending.h */,
+				7C9A3E1D2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h */,
 				7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */,
 				7C514E0224AF80580050710F /* ColorConversion.cpp */,
 				7C514E0024AF80580050710F /* ColorConversion.h */,
+				7C9A3E1B2F1B4C0D00A1B2C3 /* ColorGamutMapping.cpp */,
+				7C9A3E1A2F1B4C0D00A1B2C3 /* ColorGamutMapping.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				BCDC642427517B040038FB39 /* ColorInterpolation.cpp */,
 				BCDC642527517B040038FB39 /* ColorInterpolation.h */,
@@ -45155,9 +45163,11 @@
 				33B1AB242BE309F00006EFC7 /* ColorBlending.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
+				7C9A3E1E2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h in Headers */,
 				F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */,
 				7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */,
 				7C514E0324AF805E0050710F /* ColorConversion.h in Headers */,
+				7C9A3E1C2F1B4C0D00A1B2C3 /* ColorGamutMapping.h in Headers */,
 				3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */,
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				BC3A00C82754496D0047C0E5 /* ColorInterpolation.h in Headers */,

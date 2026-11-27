@@ -63,7 +63,25 @@ public:
 
     friend bool operator==(const ColorMatrix&, const ColorMatrix&) = default;
 
+    // The matrix that transforms by `b`, then by `a`.
+    friend constexpr ColorMatrix operator*(const ColorMatrix& a, const ColorMatrix& b) requires (ColumnCount == RowCount)
+    {
+        ColorMatrix result;
+        for (size_t row = 0; row < RowCount; ++row) {
+            for (size_t column = 0; column < ColumnCount; ++column) {
+                for (size_t i = 0; i < ColumnCount; ++i)
+                    result.m_matrix[(row * ColumnCount) + column] += a.at(row, i) * b.at(i, column);
+            }
+        }
+        return result;
+    }
+
 private:
+    constexpr ColorMatrix()
+        : m_matrix { }
+    {
+    }
+
     std::array<float, RowCount * ColumnCount> m_matrix;
 };
 

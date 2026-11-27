@@ -28,6 +28,7 @@
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
+#include <WebCore/ColorGamutMapping.h>
 #include <WebCore/ColorSerialization.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/ColorTypes.h>
@@ -798,6 +799,109 @@ TEST(Color, Rec2020Conversions)
     expectComponentsNear(asColorComponents(convertColor<Rec2020<float>>(SRGBA<float> { 0.25f, 0.5f, 0.75f, 1.0f }).resolved()), { 0.420493f, 0.518024f, 0.741381f, 1.0f });
 }
 
+template<typename ColorType> static void expectRayTraceGamutMappingNear(const ColorType& color, ColorComponents<float, 4> expected)
+{
+    auto components = asColorComponents(convertColor<typename ColorType::BoundedCounterpart, RayTraceGamutMapping>(color).resolved());
+    for (size_t i = 0; i < 4; ++i)
+        EXPECT_NEAR(components[i], expected[i], 0.001f);
+}
+
+TEST(Color, RayTraceGamutMapping)
+{
+    // Expected values are from a double precision implementation of https://drafts.csswg.org/css-color-4/#pseudo-raytrace.
+    auto toSRGB = [](OKLCHA<float> color) {
+        return convertColor<ExtendedSRGBA<float>>(color);
+    };
+    auto toDisplayP3 = [](OKLCHA<float> color) {
+        return convertColor<ExtendedDisplayP3<float>>(color);
+    };
+
+    expectRayTraceGamutMappingNear(toSRGB({ 0.7f, 0.4f, 30.0f, 1.0f }), { 1.0f, 0.396242f, 0.318215f, 1.0f });
+    expectRayTraceGamutMappingNear(toDisplayP3({ 0.7f, 0.4f, 30.0f, 1.0f }), { 1.0f, 0.349756f, 0.258413f, 1.0f });
+    expectRayTraceGamutMappingNear(toSRGB({ 0.9f, 0.4f, 150.0f, 0.5f }), { 0.468604f, 1.0f, 0.609570f, 0.5f });
+    expectRayTraceGamutMappingNear(toDisplayP3({ 0.9f, 0.4f, 150.0f, 0.5f }), { 0.571273f, 1.0f, 0.617722f, 0.5f });
+    expectRayTraceGamutMappingNear(toSRGB({ 0.4f, 0.4f, 265.0f, 1.0f }), { 0.039097f, 0.0f, 0.845497f, 1.0f });
+    expectRayTraceGamutMappingNear(toDisplayP3({ 0.4f, 0.4f, 265.0f, 1.0f }), { 0.031887f, 0.0f, 0.811420f, 1.0f });
+    expectRayTraceGamutMappingNear(toSRGB({ 0.97f, 0.3f, 100.0f, 1.0f }), { 1.0f, 0.968566f, 0.769984f, 1.0f });
+    expectRayTraceGamutMappingNear(toDisplayP3({ 0.97f, 0.3f, 100.0f, 1.0f }), { 1.0f, 0.970533f, 0.763001f, 1.0f });
+
+    // Unlike clipping, which gives { 1, 0, 0 }, mapping keeps the lightness and hue of Display P3 red.
+    auto displayP3RedInSRGB = convertColor<ExtendedSRGBA<float>>(DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f });
+    expectRayTraceGamutMappingNear(displayP3RedInSRGB, { 1.0f, 0.203480f, 0.158772f, 1.0f });
+    expectRayTraceGamutMappingNear(convertColor<ExtendedLinearSRGBA<float>>(displayP3RedInSRGB), { 1.0f, 0.034199f, 0.021681f, 1.0f });
+
+    expectRayTraceGamutMappingNear(convertColor<ExtendedDisplayP3<float>>(Rec2020<float> { 0.0f, 1.0f, 0.0f, 1.0f }), { 0.0f, 0.959221f, 0.424729f, 1.0f });
+}
+
+TEST(Color, RayTraceGamutMappingLightness)
+{
+    // A color as light as white or lighter maps to white, and one as dark as black or darker maps to black.
+    expectRayTraceGamutMappingNear(convertColor<ExtendedSRGBA<float>>(OKLCHA<float> { 1.0f, 0.4f, 60.0f, 0.5f }), { 1.0f, 1.0f, 1.0f, 0.5f });
+    expectRayTraceGamutMappingNear(ExtendedLinearSRGBA<float> { 5.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+    expectRayTraceGamutMappingNear(ExtendedSRGBA<float> { -0.1f, -0.2f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 1.0f });
+}
+
+TEST(Color, RayTraceGamutMappingInGamut)
+{
+    auto expectUnchanged = [](auto color) {
+        auto components = asColorComponents(color.resolved());
+        auto mapped = asColorComponents(convertColor<typename decltype(color)::BoundedCounterpart, RayTraceGamutMapping>(color).resolved());
+        for (size_t i = 0; i < 4; ++i)
+            EXPECT_NEAR(mapped[i], components[i], 0.00001f);
+    };
+
+    expectUnchanged(ExtendedSRGBA<float> { 0.25f, 0.5f, 0.75f, 1.0f });
+    expectUnchanged(ExtendedSRGBA<float> { 1.0f, 0.0f, 0.0f, 1.0f });
+    expectUnchanged(ExtendedSRGBA<float> { 1.0f, 1.0f, 1.0f, 1.0f });
+    expectUnchanged(ExtendedSRGBA<float> { 0.0f, 0.0f, 0.0f, 0.5f });
+    expectUnchanged(ExtendedLinearSRGBA<float> { 0.0f, 1.0f, 0.0f, 1.0f });
+    expectUnchanged(convertColor<ExtendedDisplayP3<float>>(SRGBA<float> { 0.0f, 0.0f, 1.0f, 1.0f }));
+    expectUnchanged(convertColor<ExtendedRec2020<float>>(DisplayP3<float> { 0.0f, 1.0f, 0.0f, 1.0f }));
+    expectUnchanged(convertColor<ExtendedProPhotoRGB<float>>(Rec2020<float> { 0.0f, 1.0f, 0.0f, 1.0f }));
+}
+
+TEST(Color, RayTraceGamutMappingD50Destination)
+{
+    // ProPhoto RGB has a D50 white point, so its gamut is adapted to XYZ D65.
+    auto unresolvedOrigin = OKLCHA<float> { 0.5f, 0.8f, 250.0f, 1.0f };
+    auto origin = unresolvedOrigin.resolved();
+    auto color = convertColor<ExtendedProPhotoRGB<float>>(unresolvedOrigin);
+    auto [r, g, b, alpha] = color.resolved();
+    EXPECT_LT(std::min({ r, g, b }), 0.0f);
+
+    auto mapped = convertColor<OKLCHA<float>>(convertColor<ProPhotoRGB<float>, RayTraceGamutMapping>(color)).resolved();
+    EXPECT_NEAR(mapped.lightness, origin.lightness, 0.001f);
+    EXPECT_NEAR(mapped.hue, origin.hue, 0.1f);
+    EXPECT_LT(mapped.chroma, origin.chroma);
+}
+
+TEST(Color, RGBGamut)
+{
+    static_assert(RGBGamut::of<ExtendedSRGBA<float>>().xyzD65ToLinearRGB == ExtendedLinearSRGBA<float>::xyzToLinear);
+    static_assert(RGBGamut::of<ExtendedSRGBA<float>>().linearRGBToXYZD65 == ExtendedLinearSRGBA<float>::linearToXYZ);
+
+    auto expectIdentity = [](const ColorMatrix<3, 3>& matrix) {
+        for (size_t row = 0; row < 3; ++row) {
+            for (size_t column = 0; column < 3; ++column)
+                EXPECT_NEAR(matrix.at(row, column), row == column ? 1.0f : 0.0f, 0.00001f);
+        }
+    };
+
+    constexpr auto proPhotoRGB = RGBGamut::of<ExtendedProPhotoRGB<float>>();
+    expectIdentity(proPhotoRGB.xyzD65ToLinearRGB * proPhotoRGB.linearRGBToXYZD65);
+
+    // The adapted matrices agree with converting the primaries.
+    for (size_t column = 0; column < 3; ++column) {
+        ColorComponents<float, 3> primary;
+        primary[column] = 1;
+        auto [x, y, z, alpha] = convertColor<XYZA<float, WhitePoint::D65>>(ExtendedLinearProPhotoRGB<float> { primary[0], primary[1], primary[2], 1.0f }).resolved();
+        auto expected = proPhotoRGB.linearRGBToXYZD65.transformedColorComponents(primary);
+        EXPECT_NEAR(x, expected[0], 0.00001f);
+        EXPECT_NEAR(y, expected[1], 0.00001f);
+        EXPECT_NEAR(z, expected[2], 0.00001f);
+    }
+}
+
 #if USE(CG)
 TEST(Color, Rec2020ConversionsMatchCoreGraphics)
 {
@@ -889,6 +993,103 @@ TEST(Color, ConvertsWithoutXYZ)
     static_assert(std::same_as<XYZForColorType<LCHA<float>>, XYZA<float, WhitePoint::D50>>);
     static_assert(std::same_as<XYZForColorType<ProPhotoRGB<float>>, XYZA<float, WhitePoint::D50>>);
     static_assert(std::same_as<XYZForColorType<OKLCHA<float>>, XYZA<float, WhitePoint::D65>>);
+}
+
+TEST(Color, ConvertColorComponentsWithRayTraceGamutMapping)
+{
+    WTF::EnumTraits<ColorSpaceName>::values::forEach([&](auto inputColorSpace) {
+        callWithColorType<float>(inputColorSpace, [&]<typename Input> {
+            for (auto& components : sampleComponents<Input>()) {
+                auto input = makeFromComponents<Input>(components);
+                WTF::EnumTraits<ColorSpaceName>::values::forEach([&](auto outputColorSpace) {
+                    callWithColorType<float>(outputColorSpace, [&]<typename Output> {
+                        if constexpr (IsRGBBoundedType<Output>) {
+                            SCOPED_TRACE(testing::Message() << "from " << static_cast<int>(inputColorSpace) << " to " << static_cast<int>(outputColorSpace) << ": " << components[0] << ' ' << components[1] << ' ' << components[2] << ' ' << components[3]);
+
+                            auto direct = asColorComponents(convertColor<Output, RayTraceGamutMapping>(input).unresolved());
+                            auto mapped = asColorComponents(convertColorComponents<Output, RayTraceGamutMapping>(inputColorSpace, components).unresolved());
+                            EXPECT_TRUE(direct == mapped) << direct[0] << ' ' << direct[1] << ' ' << direct[2] << ' ' << direct[3] << " vs " << mapped[0] << ' ' << mapped[1] << ' ' << mapped[2] << ' ' << mapped[3];
+                        }
+                    });
+                });
+
+                auto directBytes = convertColor<SRGBA<uint8_t>, RayTraceGamutMapping>(input);
+                auto mappedBytes = convertColorComponents<SRGBA<uint8_t>, RayTraceGamutMapping>(inputColorSpace, components);
+                EXPECT_EQ(directBytes, mappedBytes);
+            }
+        });
+    });
+}
+
+TEST(Color, ConvertColorComponentsGamutMapping)
+{
+    auto expectNear = [](const SRGBA<float>& color, ColorComponents<float, 4> expected) {
+        auto components = asColorComponents(color.resolved());
+        for (size_t i = 0; i < 4; ++i)
+            EXPECT_NEAR(components[i], expected[i], 0.001f);
+    };
+
+    // Display P3 red converts through XYZ, and clipping it gives { 1, 0, 0 }.
+    ColorComponents<float, 4> displayP3Red { 1.0f, 0.0f, 0.0f, 1.0f };
+    expectNear(convertColorComponents<SRGBA<float>>(ColorSpaceName::DisplayP3, displayP3Red), { 1.0f, 0.0f, 0.0f, 1.0f });
+    expectNear(convertColorComponents<SRGBA<float>, ClipGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red), { 1.0f, 0.0f, 0.0f, 1.0f });
+    expectNear(convertColorComponents<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red), { 1.0f, 0.203480f, 0.158772f, 1.0f });
+
+    // Extended sRGB converts to sRGB without going through XYZ.
+    ColorComponents<float, 4> extendedSRGB { 1.2f, 0.5f, 0.2f, 0.5f };
+    expectNear(convertColorComponents<SRGBA<float>>(ColorSpaceName::ExtendedSRGB, extendedSRGB), { 1.0f, 0.5f, 0.2f, 0.5f });
+    auto mapped = convertColorComponents<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::ExtendedSRGB, extendedSRGB);
+    EXPECT_EQ(mapped, (convertColor<SRGBA<float>, RayTraceGamutMapping>(ExtendedSRGBA<float> { 1.2f, 0.5f, 0.2f, 0.5f })));
+    auto origin = convertColor<OKLCHA<float>>(ExtendedSRGBA<float> { 1.2f, 0.5f, 0.2f, 0.5f }).resolved();
+    auto mappedOKLCH = convertColor<OKLCHA<float>>(mapped).resolved();
+    EXPECT_NEAR(mappedOKLCH.lightness, origin.lightness, 0.001f);
+    EXPECT_NEAR(mappedOKLCH.hue, origin.hue, 0.1f);
+    EXPECT_LT(mappedOKLCH.chroma, origin.chroma);
+
+    // Mapping with ClipGamutMapping is the same as the clipping in conversions to bounded types.
+    for (auto color : { ExtendedSRGBA<float> { 1.2f, 0.5f, 0.2f, 0.5f }, ExtendedSRGBA<float> { -0.1f, 0.5f, 1.1f, 1.0f }, convertColor<ExtendedSRGBA<float>>(DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f }) })
+        expectNear(mapToGamut<SRGBA<float>, ClipGamutMapping>(convertColor<ExtendedLinearSRGBA<float>>(color)), asColorComponents(convertColor<SRGBA<float>>(color).resolved()));
+
+    // Colors in gamut are the same either way.
+    ColorComponents<float, 4> displayP3Gray { 0.5f, 0.5f, 0.5f, 1.0f };
+    expectNear(convertColorComponents<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Gray), asColorComponents(convertColorComponents<SRGBA<float>>(ColorSpaceName::DisplayP3, displayP3Gray).resolved()));
+
+    // Color::toColorTypeLossy() maps colors that are out of line, and inline sRGB colors are always in gamut.
+    Color displayP3RedColor { DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f } };
+    EXPECT_EQ((displayP3RedColor.toColorTypeLossy<SRGBA<float>, RayTraceGamutMapping>()), (convertColorComponents<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)));
+    EXPECT_EQ((displayP3RedColor.toColorTypeLossy<SRGBA<uint8_t>, RayTraceGamutMapping>()), (convertColorComponents<SRGBA<uint8_t>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)));
+    EXPECT_EQ(displayP3RedColor.toColorTypeLossy<SRGBA<uint8_t>>(), (SRGBA<uint8_t> { 255, 0, 0, 255 }));
+
+    Color inlineColor { SRGBA<uint8_t> { 255, 128, 0, 255 } };
+    EXPECT_EQ((inlineColor.toColorTypeLossy<DisplayP3<float>, RayTraceGamutMapping>()), inlineColor.toColorTypeLossy<DisplayP3<float>>());
+}
+
+TEST(Color, ConvertColorCarryingForwardMissingGamutMapping)
+{
+    constexpr auto none = std::numeric_limits<float>::quiet_NaN();
+
+    // Display P3 red maps to { 1, 0.203480, 0.158772 }, and its missing green carries forward to the analogous sRGB green.
+    auto expectMappedWithMissingGreen = [](const SRGBA<float>& color) {
+        auto [r, g, b, alpha] = color.unresolved();
+        EXPECT_NEAR(r, 1.0f, 0.001f);
+        EXPECT_TRUE(std::isnan(g));
+        EXPECT_NEAR(b, 0.158772f, 0.001f);
+        EXPECT_EQ(alpha, 1.0f);
+    };
+
+    DisplayP3<float> displayP3RedMissingGreen { 1.0f, none, 0.0f, 1.0f };
+    expectMappedWithMissingGreen(convertColorCarryingForwardMissing<SRGBA<float>, RayTraceGamutMapping>(displayP3RedMissingGreen));
+    expectMappedWithMissingGreen(convertColorComponentsCarryingForwardMissing<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, { 1.0f, none, 0.0f, 1.0f }));
+    expectMappedWithMissingGreen(Color { displayP3RedMissingGreen }.toColorTypeLossyCarryingForwardMissing<SRGBA<float>, RayTraceGamutMapping>());
+
+    // Without missing components, carrying forward maps just like converting does.
+    ColorComponents<float, 4> displayP3Red { 1.0f, 0.0f, 0.0f, 1.0f };
+    EXPECT_EQ((convertColorComponentsCarryingForwardMissing<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)), (convertColorComponents<SRGBA<float>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)));
+    EXPECT_EQ((convertColorComponentsCarryingForwardMissing<SRGBA<uint8_t>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)), (convertColorComponents<SRGBA<uint8_t>, RayTraceGamutMapping>(ColorSpaceName::DisplayP3, displayP3Red)));
+    EXPECT_EQ((convertColorCarryingForwardMissing<SRGBA<float>, RayTraceGamutMapping>(DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f })), (convertColor<SRGBA<float>, RayTraceGamutMapping>(DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f })));
+
+    // The default still clips.
+    EXPECT_EQ((Color { DisplayP3<float> { 1.0f, 0.0f, 0.0f, 1.0f } }.toColorTypeLossyCarryingForwardMissing<SRGBA<uint8_t>>()), (SRGBA<uint8_t> { 255, 0, 0, 255 }));
 }
 
 } // namespace TestWebKitAPI

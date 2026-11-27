@@ -2419,8 +2419,10 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/CachedSubimage.h
     platform/graphics/Color.h
     platform/graphics/ColorBlending.h
+    platform/graphics/ColorChromaticAdaptation.h
     platform/graphics/ColorComponents.h
     platform/graphics/ColorConversion.h
+    platform/graphics/ColorGamutMapping.h
     platform/graphics/ColorHash.h
     platform/graphics/ColorInterpolation.h
     platform/graphics/ColorInterpolationMethod.h

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/ColorChromaticAdaptation.h>
+#include <WebCore/ColorGamutMapping.h>
 #include <WebCore/ColorSpaceName.h>
 #include <WebCore/ColorTypes.h>
 #include <WebCore/PlatformExportMacros.h>
@@ -38,21 +40,23 @@ namespace WebCore {
 
 class ColorSpace;
 
-// Conversion function for typed colors.
-template<typename Output, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color);
+// Conversion function for typed colors. Conversions to a bounded RGB type bring the color
+// into its gamut with `GamutMapping`, such as ClipGamutMapping or RayTraceGamutMapping.
+template<typename Output, typename GamutMapping = ClipGamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color);
 
 // Conversion function for typed colors that carries forward missing component values
 // from analogous components in the input type.
-template<typename Output, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color);
+template<typename Output, typename GamutMapping = ClipGamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color);
 
 // Conversion function for changing the component type of a premultiplied color, which,
 // unlike the other conversions, is safe as it only rescales the components.
 template<typename ComponentType, typename ColorType> ResolvedPremultiplied<ColorTypeWithReplacementComponent<ColorType, ComponentType>> convertComponentType(const ResolvedPremultiplied<ColorType>&);
 template<typename ComponentType, typename T> ResolvedPremultiplied<ColorComponents<ComponentType, 4>> convertComponentType(const ResolvedPremultiplied<ColorComponents<T, 4>>&);
 
-// Conversion functions for raw color components with associated color spaces.
-template<typename Output> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
-template<typename Output> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
+// Conversion functions for raw color components with associated color spaces. Conversions to a bounded
+// RGB type bring the color into its gamut with `GamutMapping`, such as ClipGamutMapping or RayTraceGamutMapping.
+template<typename Output, typename GamutMapping = ClipGamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
+template<typename Output, typename GamutMapping = ClipGamutMapping> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const ColorSpace& outputColorSpace);
 
@@ -70,9 +74,14 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputC
 
 template<typename Output, typename Input, typename = void> struct ColorConversion;
 
-template<typename Output, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color)
+template<typename Output, typename GamutMapping, typename Input> Output convertColorMappingToGamut(const Input&);
+
+template<typename Output, typename GamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color)
 {
-    return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
+    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>)
+        return convertColorMappingToGamut<Output, GamutMapping>(color);
+    else
+        return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
 }
 
 template<typename ComponentType, typename ColorType> ResolvedPremultiplied<ColorTypeWithReplacementComponent<ColorType, ComponentType>> convertComponentType(const ResolvedPremultiplied<ColorType>& color)
@@ -183,15 +192,15 @@ constexpr void tryToCarryForwardMissingForAnalogousSetComponent(ColorComponents<
 // Performs color space conversion followed by carrying forward missing components
 // from `Input` for analogous components in `Output` as described by CSS Color 4
 // § 12. Color Interpolation, https://drafts.csswg.org/css-color-4/#interpolation.
-template<typename Output, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color)
+template<typename Output, typename GamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color)
 {
     if constexpr (std::is_same_v<Input, Output>)
-        return convertColor<Output>(color);
+        return convertColor<Output, GamutMapping>(color);
     else if constexpr (std::is_same_v<typename Input::ComponentType, uint8_t> || std::is_same_v<typename Output::ComponentType, uint8_t>)
-        return convertColor<Output>(color);
+        return convertColor<Output, GamutMapping>(color);
     else {
         auto input = asColorComponents(color.unresolved());
-        auto output = asColorComponents(convertColor<Output>(color).unresolved());
+        auto output = asColorComponents(convertColor<Output, GamutMapping>(color).unresolved());
 
         if constexpr (hasAnalogousSet<Output, Input>()) {
             if (areAllAnalogousSetComponentsMissing<Output, Input>(input)) {
@@ -246,71 +255,6 @@ constexpr ColorMatrix<3, 3> NonLinearLMSToOKLab {
     0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
     1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
     0.0259040424655478,  0.7827717124575296, -0.8086757549230774,
-};
-
-// MARK: Chromatic Adaptation conversions.
-
-template<WhitePoint From, WhitePoint To> struct ChromaticAdaptation;
-
-// Chromatic Adaptation allows conversion from one white point to another.
-//
-// The values we use are pre-calculated for the two white points we support, D50
-// and D65 using the Bradford method's chromatic adaptation transform (CAT), but
-// can be extended to any pair of white points.
-//
-// The process to compute new ones is:
-//
-//  1. Choose a CAT and lookup its values (these are not derivable).
-//     We currently use the Bradford CAT
-//
-//     let toCone =
-//         [  0.8951000,  0.2664000, -0.1614000 ],
-//         [ -0.7502000,  1.7135000,  0.0367000 ],
-//         [  0.0389000, -0.0685000,  1.0296000 ]
-//
-//  2. In addition, you will need the inverse
-//
-//     let fromCone = toCone ^ -1
-//
-//  3. Choose source and destination XYZ white points
-//
-//     let whitePoint_src = [ ... , ... , ... ]
-//     let whitePoint_dst = [ ... , ... , ... ]
-//
-//  4. Convert the white points into the cone response domain (denoted ρ, γ, β)
-//
-//     let [ ρ_src, γ_src, β_src ] = toCone * whitePoint_src
-//     let [ ρ_dst, γ_dst, β_dst ] = toCone * whitePoint_dst
-//
-//  5. Compute a scale transform
-//
-//     let scale =
-//         [ ρ_dst / ρ_src, 0,             0             ],
-//         [ 0,             γ_dst / γ_src, 0             ],
-//         [ 0,             0,             β_dst / β_src ]
-//
-//  6. Finally, use the scale to compute the adaptation transform
-//     (what is stored ChromaticAdaptation.matrix) as the concatenation
-//     of the toCone, scale and fromCone transforms.
-//
-//     let adaptation = fromCone * scale * toCone
-//
-// Additional details and more CATs / white point values can be found at: http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
-
-template<> struct ChromaticAdaptation<WhitePoint::D65, WhitePoint::D50> {
-    static constexpr ColorMatrix<3, 3> matrix {
-         1.0479297925449969,    0.022946870601609652, -0.05019226628920524,
-         0.02962780877005599,   0.9904344267538799,   -0.017073799063418826,
-        -0.009243040646204504,  0.015055191490298152,  0.7518742814281371
-    };
-};
-
-template<> struct ChromaticAdaptation<WhitePoint::D50, WhitePoint::D65> {
-    static constexpr ColorMatrix<3, 3> matrix {
-         0.955473421488075,    -0.02309845494876471,   0.06325924320057072,
-        -0.0283697093338637,    1.0099953980813041,    0.021041441191917323,
-         0.012314014864481998, -0.020507649298898964,  1.330365926242124
-    };
 };
 
 // MARK: HSLA
@@ -385,15 +329,6 @@ template<typename ColorType1, typename ColorType2> constexpr float computeDeltaE
 
     return std::hypot(deltaL, deltaA, deltaB);
 }
-
-// MARK: Gamut mapping algorithms.
-
-struct ClipGamutMapping {
-    template<typename ColorType> static auto mapToBoundedGamut(const ColorType& color) -> typename ColorType::BoundedCounterpart
-    {
-        return clipToGamut<typename ColorType::BoundedCounterpart>(color);
-    }
-};
 
 // Main conversion.
 
@@ -508,7 +443,7 @@ private:
 
     template<typename ColorType> static constexpr auto toBounded(const ColorType& color) -> typename ColorType::BoundedCounterpart
     {
-        return ClipGamutMapping::mapToBoundedGamut(color);
+        return clipToGamut<typename ColorType::BoundedCounterpart>(color);
     }
 
     static constexpr Output handleRGBFamilyConversion(const Input& color)
@@ -686,14 +621,45 @@ template<typename Input, typename Output> Output convertColorComponentsSplitAtXY
         return convertColorFromXYZ<Output>(convertColorComponentsToXYZ<Input>(input));
 }
 
-template<typename Output> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
+// Not inlined, so that there is one copy per output type.
+template<typename Output, typename GamutMapping> NEVER_INLINE Output mapToGamut(const LastColorTypeBeforeXYZ<Output>& color)
 {
-    return callWithColorType<float>(inputColorSpace, [&]<typename Input> -> Output {
-        if constexpr (ConvertsWithoutXYZ<Input, Output>)
-            return convertColor<Output>(makeFromComponents<Input>(input));
+    static_assert(IsRGBBoundedType<Output>);
+
+    using LinearExtended = LastColorTypeBeforeXYZ<Output>;
+
+    ColorComponents<float, 4> components = asColorComponents(color.resolved());
+    if (!inGamut<typename LinearExtended::BoundedCounterpart>(components)) {
+        static constexpr auto gamut = RGBGamut::of<LinearExtended>();
+        auto [r, g, b] = GamutMapping::map(gamut, { components[0], components[1], components[2] });
+        components = { r, g, b, components[3] };
+    }
+    return convertColor<Output>(makeFromComponents<LinearExtended>(components));
+}
+
+template<typename Output, typename GamutMapping, typename Input> Output convertColorMappingToGamut(const Input& color)
+{
+    if constexpr (std::same_as<typename Output::ComponentType, uint8_t>)
+        return convertColor<Output>(convertColor<ColorTypeWithReplacementComponent<Output, float>, GamutMapping>(color));
+    else
+        return mapToGamut<Output, GamutMapping>(convertColor<LastColorTypeBeforeXYZ<Output>>(color));
+}
+
+template<typename Output, typename GamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
+{
+    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>) {
+        if constexpr (std::same_as<typename Output::ComponentType, uint8_t>)
+            return convertColor<Output>(convertColorComponents<ColorTypeWithReplacementComponent<Output, float>, GamutMapping>(inputColorSpace, input));
         else
-            return convertColorComponentsSplitAtXYZ<Input, Output>(input);
-    });
+            return mapToGamut<Output, GamutMapping>(convertColorComponents<LastColorTypeBeforeXYZ<Output>>(inputColorSpace, input));
+    } else {
+        return callWithColorType<float>(inputColorSpace, [&]<typename Input> -> Output {
+            if constexpr (ConvertsWithoutXYZ<Input, Output>)
+                return convertColor<Output>(makeFromComponents<Input>(input));
+            else
+                return convertColorComponentsSplitAtXYZ<Input, Output>(input);
+        });
+    }
 }
 
 // MARK: Carrying forward missing components.
@@ -718,20 +684,33 @@ template<typename Output> NEVER_INLINE Output withMissingComponentsCarriedForwar
     return makeFromComponents<Output>(outputComponents);
 }
 
-template<typename Output> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
+template<typename Output, typename GamutMapping> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
 {
-    return callWithColorType<float>(inputColorSpace, [&]<typename Input> -> Output {
-        if constexpr (ConvertsWithoutXYZ<Input, Output>)
-            return convertColorCarryingForwardMissing<Output>(makeFromComponents<Input>(input));
-        else {
-            auto output = convertColorComponentsSplitAtXYZ<Input, Output>(input);
-            if constexpr (!std::same_as<typename Output::ComponentType, uint8_t>) {
-                if (unresolvedColor(input).anyComponentIsNone())
-                    return withMissingComponentsCarriedForward<Output>(colorComponentCategories<Input>(), input, output);
+    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>) {
+        auto output = convertColorComponents<Output, GamutMapping>(inputColorSpace, input);
+        if constexpr (!std::same_as<typename Output::ComponentType, uint8_t>) {
+            if (unresolvedColor(input).anyComponentIsNone()) {
+                auto inputCategories = callWithColorType<float>(inputColorSpace, []<typename Input> {
+                    return colorComponentCategories<Input>();
+                });
+                return withMissingComponentsCarriedForward<Output>(inputCategories, input, output);
             }
-            return output;
         }
-    });
+        return output;
+    } else {
+        return callWithColorType<float>(inputColorSpace, [&]<typename Input> -> Output {
+            if constexpr (ConvertsWithoutXYZ<Input, Output>)
+                return convertColorCarryingForwardMissing<Output>(makeFromComponents<Input>(input));
+            else {
+                auto output = convertColorComponentsSplitAtXYZ<Input, Output>(input);
+                if constexpr (!std::same_as<typename Output::ComponentType, uint8_t>) {
+                    if (unresolvedColor(input).anyComponentIsNone())
+                        return withMissingComponentsCarriedForward<Output>(colorComponentCategories<Input>(), input, output);
+                }
+                return output;
+            }
+        });
+    }
 }
 
 } // namespace WebCore
