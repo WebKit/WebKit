@@ -224,6 +224,8 @@ void AbstractHeapRepository::computeRangesAndDecorateInstructions()
 {
     root.compute();
 
+    m_rangeTree.emplace(root);
+
     if (Options::verboseCompilation() || Options::verboseFTLCompilation()) [[unlikely]] {
         WTF::dataFile().atomically([&](auto&) {
             dataLogLn("Abstract Heap Repository:");

@@ -1,9 +1,9 @@
-//@ runDefaultWasm("-m", "--useConcurrentJIT=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeAfterWarmUp=0", "--maxB3WasmGCEpochSnapshotEntries=0")
+//@ runDefaultWasm("-m", "--useConcurrentJIT=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeAfterWarmUp=0", "--maxB3MemoryEpochSnapshotEntries=0")
 
-// A function with enough fields and blocks makes B3 give every struct field one shared version
-// counter instead of one each. The option above forces that on any function at all. Distinct fields
-// still have to answer for themselves: sharing a counter may only cost reuse, so the two reads below
-// must return what was stored into their own field.
+// A function with enough heaps and blocks makes B3 keep only the version counters each block changes
+// rather than every block's full set. The option above forces that on any function at all. Each
+// struct field still has to answer for itself, so the two reads below must return what was stored
+// into their own field.
 
 import { instantiate } from "../gc/wast-wrapper.js"
 import * as assert from "../assert.js"

@@ -326,6 +326,11 @@ public:
     void setUsesWasmGCAccesses(bool flag = true) { m_usesWasmGCAccesses = flag; }
     bool usesWasmGCAccesses() const { return m_usesWasmGCAccesses; }
 
+    // Overrides Options::maxB3MemoryEpochSnapshotEntries() for this procedure alone, since testb3
+    // compiles on several threads at once.
+    void setMaxMemoryEpochSnapshotEntriesForTesting(unsigned entries) { m_maxMemoryEpochSnapshotEntries = entries; }
+    std::optional<unsigned> maxMemoryEpochSnapshotEntriesForTesting() const { return m_maxMemoryEpochSnapshotEntries; }
+
     void setUsesColdCCall(bool flag) { m_usesColdCCall = flag; }
     bool usesColdCCall() const { return m_usesColdCCall; }
     void setUsesShuffle(bool flag) { m_usesShuffle = flag; }
@@ -360,6 +365,7 @@ private:
     RefPtr<JSON::Array> m_ionGraphPasses;
     unsigned m_numEntrypoints { 1 };
     unsigned m_optLevel { defaultOptLevel() };
+    std::optional<unsigned> m_maxMemoryEpochSnapshotEntries;
     bool m_needsUsedRegisters : 1 { true };
     bool m_hasQuirks : 1 { false };
     bool m_needsPCToOriginMap : 1 { false };

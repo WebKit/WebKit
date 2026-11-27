@@ -34,7 +34,7 @@ class Procedure;
 // This does loop-invariant code motion (LICM). It can hoist pure values as well as reads of state that isn't
 // modified inside the loop.
 
-bool hoistLoopInvariantValues(Procedure&);
+JS_EXPORT_PRIVATE bool hoistLoopInvariantValues(Procedure&);
 
 } } // namespace JSC::B3
 
