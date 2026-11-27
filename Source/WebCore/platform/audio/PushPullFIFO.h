@@ -64,7 +64,7 @@ public:
     size_t framesAvailable() const { return m_framesAvailable; }
     size_t length() const { return m_fifoLength; }
     NODELETE unsigned numberOfChannels() const;
-    AudioBus& bus() const { return m_fifoBus.get(); }
+    AudioBus& bus() const LIFETIME_BOUND { return m_fifoBus.get(); }
 
 private:
     // The size of the FIFO.

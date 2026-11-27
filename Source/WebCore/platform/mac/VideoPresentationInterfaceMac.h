@@ -66,7 +66,7 @@ public:
         return adoptRef(*new VideoPresentationInterfaceMac(playbackSessionInterface));
     }
     ~VideoPresentationInterfaceMac();
-    PlaybackSessionInterfaceMac& playbackSessionInterface() const { return m_playbackSessionInterface; }
+    PlaybackSessionInterfaceMac& playbackSessionInterface() const LIFETIME_BOUND { return m_playbackSessionInterface; }
     RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);

@@ -49,27 +49,27 @@ public:
         return adoptRef(*new FontDescriptionKeyRareData(WTF::move(featureSettings), WTF::move(variationSettings), WTF::move(variantAlternates), WTF::move(fontPalette), WTF::move(fontSizeAdjust)));
     }
 
-    const FontFeatureSettings& featureSettings() const
+    const FontFeatureSettings& featureSettings() const LIFETIME_BOUND
     {
         return m_featureSettings;
     }
 
-    const FontVariationSettings& variationSettings() const
+    const FontVariationSettings& variationSettings() const LIFETIME_BOUND
     {
         return m_variationSettings;
     }
 
-    const FontPalette& fontPalette() const
+    const FontPalette& fontPalette() const LIFETIME_BOUND
     {
         return m_fontPalette;
     }
 
-    const FontVariantAlternates& variantAlternates() const
+    const FontVariantAlternates& variantAlternates() const LIFETIME_BOUND
     {
         return m_variantAlternates;
     }
 
-    const FontSizeAdjust& fontSizeAdjust() const
+    const FontSizeAdjust& fontSizeAdjust() const LIFETIME_BOUND
     {
         return m_fontSizeAdjust;
     }

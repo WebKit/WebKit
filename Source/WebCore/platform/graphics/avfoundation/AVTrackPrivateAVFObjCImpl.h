@@ -63,9 +63,9 @@ public:
     static Ref<AVTrackPrivateAVFObjCImpl> create(MediaSelectionOptionAVFObjC& option) { return adoptRef(*new AVTrackPrivateAVFObjCImpl(option)); }
     ~AVTrackPrivateAVFObjCImpl();
 
-    AVPlayerItemTrack* playerItemTrack() const { return m_playerItemTrack.get(); }
-    AVAssetTrack* assetTrack() const { return m_assetTrack.get(); }
-    MediaSelectionOptionAVFObjC* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
+    AVPlayerItemTrack* playerItemTrack() const LIFETIME_BOUND { return m_playerItemTrack.get(); }
+    AVAssetTrack* assetTrack() const LIFETIME_BOUND { return m_assetTrack.get(); }
+    MediaSelectionOptionAVFObjC* mediaSelectionOption() const LIFETIME_BOUND { return m_mediaSelectionOption.get(); }
 
     bool enabled() const;
     void setEnabled(bool);

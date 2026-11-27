@@ -57,7 +57,7 @@ public:
     const PixelBufferFormat& format() const LIFETIME_BOUND { return m_format; }
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
 
-    std::span<uint8_t> bytes() const { return m_bytes; }
+    std::span<uint8_t> bytes() const LIFETIME_BOUND { return m_bytes; }
 
     enum class Type {
         ByteArray,

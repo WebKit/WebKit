@@ -40,7 +40,7 @@ public:
     }
     virtual ~MediaDescription() = default;
 
-    StringView codec() const { return m_codec; }
+    StringView codec() const LIFETIME_BOUND { return m_codec; }
     virtual bool isVideo() const = 0;
     virtual bool isAudio() const = 0;
     virtual bool isText() const = 0;

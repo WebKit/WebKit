@@ -100,7 +100,7 @@ public:
     {
     }
 
-    const Vector<CustomPalette>& customPalettes() const
+    const Vector<CustomPalette>& customPalettes() const LIFETIME_BOUND
     {
         return m_customPalettes;
     }

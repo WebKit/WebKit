@@ -446,7 +446,7 @@ public:
     {
     }
 
-    const NativeImage& nativeImage() const { return m_image.image(); }
+    const NativeImage& nativeImage() const LIFETIME_BOUND { return m_image.image(); }
     void setNativeImage(Ref<const NativeImage>&& image) { m_image.setImage(WTF::move(image)); }
     bool isResolved() const { return m_image.isResolved(); }
     RenderingResourceIdentifier imageIdentifier() const { return m_image.identifier(); }
@@ -579,7 +579,7 @@ public:
     bool isResolved() const;
 
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    Filter& filter() const { return m_filter; }
+    Filter& filter() const LIFETIME_BOUND { return m_filter; }
 
     void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -742,7 +742,7 @@ public:
     {
     }
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer.image(); }
+    ImageBuffer& imageBuffer() const LIFETIME_BOUND { return m_imageBuffer.image(); }
     void setImageBuffer(Ref<ImageBuffer>&& imageBuffer) { m_imageBuffer.setImage(WTF::move(imageBuffer)); }
     bool isResolved() const { return m_imageBuffer.isResolved(); }
     RenderingResourceIdentifier imageIdentifier() const { return m_imageBuffer.identifier(); }
@@ -773,7 +773,7 @@ public:
     {
     }
 
-    const NativeImage& nativeImage() const { return m_image.image(); }
+    const NativeImage& nativeImage() const LIFETIME_BOUND { return m_image.image(); }
     void setNativeImage(Ref<const NativeImage>&& image) { m_image.setImage(WTF::move(image)); }
     bool isResolved() const { return m_image.isResolved(); }
     RenderingResourceIdentifier imageIdentifier() const { return m_image.identifier(); }
@@ -802,7 +802,7 @@ public:
     {
     }
 
-    const SystemImage& systemImage() const { return m_systemImage; }
+    const SystemImage& systemImage() const LIFETIME_BOUND { return m_systemImage; }
     const FloatRect& destinationRect() const LIFETIME_BOUND { return m_destinationRect; }
 
     void apply(GraphicsContext&) const;
@@ -828,7 +828,7 @@ public:
     {
     }
 
-    const NativeImage& nativeImage() const { return m_image.image(); }
+    const NativeImage& nativeImage() const LIFETIME_BOUND { return m_image.image(); }
     void setNativeImage(Ref<const NativeImage>&& image) { m_image.setImage(WTF::move(image)); }
     bool isResolved() const { return m_image.isResolved(); }
     RenderingResourceIdentifier imageIdentifier() const { return m_image.identifier(); }
@@ -868,7 +868,7 @@ public:
     {
     }
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer.image(); }
+    ImageBuffer& imageBuffer() const LIFETIME_BOUND { return m_imageBuffer.image(); }
     void setImageBuffer(Ref<ImageBuffer>&& imageBuffer) { m_imageBuffer.setImage(WTF::move(imageBuffer)); }
     bool isResolved() const { return m_imageBuffer.isResolved(); }
     RenderingResourceIdentifier imageIdentifier() const { return m_imageBuffer.identifier(); }
@@ -1056,7 +1056,7 @@ public:
     {
     }
 
-    const FreeformGradient& gradient() const { return m_gradient; }
+    const FreeformGradient& gradient() const LIFETIME_BOUND { return m_gradient; }
     const FloatRect& destination() const LIFETIME_BOUND { return m_destination; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1079,7 +1079,7 @@ public:
     {
     }
 
-    const MeshGradient& gradient() const { return m_gradient; }
+    const MeshGradient& gradient() const LIFETIME_BOUND { return m_gradient; }
     const FloatRect& destination() const LIFETIME_BOUND { return m_destination; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1274,7 +1274,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradient(FloatRect&&, Ref<const Gradient>&&);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
-    const Gradient& gradient() const { return m_gradient; }
+    const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -1294,7 +1294,7 @@ public:
     WEBCORE_EXPORT FillRectWithGradientAndSpaceTransform(FloatRect&&, Ref<const Gradient>&&, AffineTransform&&, GraphicsContext::RequiresClipToRect);
 
     const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
-    const Gradient& gradient() const { return m_gradient; }
+    const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
     const AffineTransform& gradientSpaceTransform() const LIFETIME_BOUND { return m_gradientSpaceTransform; }
     GraphicsContext::RequiresClipToRect requiresClipToRect() const { return m_requiresClipToRect; }
 
@@ -1512,7 +1512,7 @@ public:
 
     WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
-    ControlPart& part() const { return m_part; }
+    ControlPart& part() const LIFETIME_BOUND { return m_part; }
     FloatRoundedRect borderRect() const { return m_borderRect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     const ControlStyle& style() const LIFETIME_BOUND { return m_style; }

@@ -98,7 +98,7 @@ private:
     bool isClosed() const final;
     FloatPoint currentPoint() const final;
 
-    Vector<PathSegment>& segments() { return m_segments; }
+    Vector<PathSegment>& segments() LIFETIME_BOUND { return m_segments; }
 
     Vector<PathSegment> m_segments;
     const IsTransient m_isTransient { IsTransient::Yes };

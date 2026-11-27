@@ -143,7 +143,7 @@ public:
 
     // Returns the platform context for draws. Any pending GraphicsContextState changes are
     // applied first, since a draw must observe the current state.
-    const RetainPtr<CGContextRef>& contextForDraw() const
+    const RetainPtr<CGContextRef>& contextForDraw() const LIFETIME_BOUND
     {
         ASSERT(m_cgContext);
         m_hasDrawn = true;

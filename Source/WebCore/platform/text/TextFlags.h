@@ -229,13 +229,13 @@ public:
         return !m_values;
     }
 
-    const Values& values() const
+    const Values& values() const LIFETIME_BOUND
     {
         ASSERT(!isNormal());
         return *m_values;
     }
 
-    Values& valuesRef()
+    Values& valuesRef() LIFETIME_BOUND
     {
         if (isNormal())
             setValues();

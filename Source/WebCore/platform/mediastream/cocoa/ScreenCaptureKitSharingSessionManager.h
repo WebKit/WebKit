@@ -64,8 +64,8 @@ public:
     static Ref<ScreenCaptureSessionSource> create(WeakPtr<ScreenCaptureSessionSourceObserver>, RetainPtr<SCStream>, RetainPtr<SCContentFilter>, CleanupFunction&&);
     virtual ~ScreenCaptureSessionSource();
 
-    SCStream* stream() const { return m_stream.get(); }
-    SCContentFilter* contentFilter() const { return m_contentFilter.get(); }
+    SCStream* stream() const LIFETIME_BOUND { return m_stream.get(); }
+    SCContentFilter* contentFilter() const LIFETIME_BOUND { return m_contentFilter.get(); }
     ScreenCaptureSessionSourceObserver* observer() const { return m_observer.get(); }
 
     void updateContentFilter(SCContentFilter*);

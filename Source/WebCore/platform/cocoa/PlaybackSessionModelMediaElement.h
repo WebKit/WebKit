@@ -74,7 +74,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
-    HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
+    HTMLMediaElement* mediaElement() const LIFETIME_BOUND { return m_mediaElement.get(); }
 
     WEBCORE_EXPORT void mediaEngineChanged();
 

@@ -47,7 +47,7 @@ public:
     {
     }
 
-    constexpr const RectType& raw() const { return m_rect; }
+    constexpr const RectType& raw() const LIFETIME_BOUND { return m_rect; }
 
     void intersect(const ViewCoordinateSpaceRect& other) { m_rect.intersect(other.m_rect); }
 

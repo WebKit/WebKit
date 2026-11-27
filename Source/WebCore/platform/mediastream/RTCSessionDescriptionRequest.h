@@ -53,7 +53,7 @@ public:
     virtual void requestSucceeded(RTCSessionDescriptionDescriptor&) = 0;
     virtual void requestFailed(const String& error) = 0;
 
-    ExtraData* extraData() const { return m_extraData.get(); }
+    ExtraData* extraData() const LIFETIME_BOUND { return m_extraData.get(); }
     void setExtraData(RefPtr<ExtraData>&& extraData) { m_extraData = extraData; }
 
 protected:

@@ -57,7 +57,7 @@ public:
     void ref() const final { AudioTrackPrivate::ref(); }
     void deref() const final { AudioTrackPrivate::deref(); }
 
-    MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
+    MediaStreamTrackPrivate& streamTrack() LIFETIME_BOUND { return m_streamTrack.get(); }
 
     void clear();
 

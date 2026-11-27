@@ -391,7 +391,7 @@ private:
     bool shouldBePlaying() const;
 
     // WorkQueue on which the player is running.
-    WorkQueue& runningQueue() const { return m_runningQueue.get(); }
+    WorkQueue& runningQueue() const LIFETIME_BOUND { return m_runningQueue.get(); }
     void ensureOnRunningQueue(Function<void()>&&);
     NODELETE MediaTime durationOnRunningQueue() const;
 

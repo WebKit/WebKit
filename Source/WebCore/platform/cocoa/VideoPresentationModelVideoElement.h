@@ -65,7 +65,7 @@ public:
     }
     WEBCORE_EXPORT ~VideoPresentationModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
-    HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
+    HTMLVideoElement* videoElement() const LIFETIME_BOUND { return m_videoElement.get(); }
     WEBCORE_EXPORT RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
     WEBCORE_EXPORT void willExitFullscreen() final;

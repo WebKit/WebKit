@@ -67,7 +67,7 @@ public:
         return static_cast<bool>(m_object);
     }
 
-    const T& object() const
+    const T& object() const LIFETIME_BOUND
     {
         return m_object;
     }

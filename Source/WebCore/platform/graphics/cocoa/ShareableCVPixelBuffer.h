@@ -125,7 +125,7 @@ public:
     virtual ~ShareableCVPixelBuffer() = default;
 
     virtual bool isPlanar() const { return false; }
-    const ShareableCVPixelBufferConfiguration& configuration() const { return m_configuration; }
+    const ShareableCVPixelBufferConfiguration& configuration() const LIFETIME_BOUND { return m_configuration; }
 
     virtual RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBuffer() const = 0;
 

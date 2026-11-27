@@ -113,7 +113,7 @@ public:
     const FloatPoint& currentPosition() const LIFETIME_BOUND { return m_currentPosition; }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
-    WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
+    WheelEventTestMonitor* wheelEventTestMonitor() const LIFETIME_BOUND { return m_wheelEventTestMonitor.get(); }
 
     FloatPoint scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod) const;
     float scrollOffsetAdjustedForSnapping(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod) const;

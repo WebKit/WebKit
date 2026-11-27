@@ -96,7 +96,7 @@ public:
     NODELETE WEBCORE_EXPORT static Ref<const Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
     WEBCORE_EXPORT ~Gradient();
 
-    const Data& data() const { return m_data; }
+    const Data& data() const LIFETIME_BOUND { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
     const GradientColorStops& stops() const LIFETIME_BOUND { return m_stops; }

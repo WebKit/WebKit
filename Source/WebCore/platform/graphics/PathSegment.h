@@ -60,7 +60,7 @@ public:
 
     bool operator==(const PathSegment&) const = default;
 
-    const Data& data() const & { return m_data; }
+    const Data& data() const & LIFETIME_BOUND { return m_data; }
     Data&& data() && { return WTF::move(m_data); }
     bool closesSubpath() const { return std::holds_alternative<PathCloseSubpath>(m_data) || std::holds_alternative<PathClosedArc>(m_data); }
 

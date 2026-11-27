@@ -123,7 +123,7 @@ namespace WebCore {
 
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)
-        NSEvent* macEvent() const { return m_macEvent.get(); }
+        NSEvent* macEvent() const LIFETIME_BOUND { return m_macEvent.get(); }
 #else
         ::WebEvent *event() const { return m_Event.get(); }
 #endif

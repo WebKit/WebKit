@@ -113,7 +113,7 @@ public:
 
     NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
-    SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
+    SharedBuffer* serverCertificate() const LIFETIME_BOUND { return m_serverCertificate.get(); }
     AVContentKeySession *contentKeySession();
 
     RetainPtr<AVContentKeyRequest> takeUnexpectedKeyRequestForInitializationData(const String& initDataType, SharedBuffer& initData);
@@ -149,7 +149,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
-    const Logger& logger() const { return m_logger; };
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; };
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMInstanceFairPlayStreamingAVFObjC"_s; }
 #endif
@@ -260,7 +260,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
-    const Logger& logger() const { return m_logger; };
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; };
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"_s; }
 #endif

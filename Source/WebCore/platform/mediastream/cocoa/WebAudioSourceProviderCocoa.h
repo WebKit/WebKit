@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT WebAudioSourceProviderCocoa();
     WEBCORE_EXPORT ~WebAudioSourceProviderCocoa();
 
-    CARingBuffer* ringBuffer() const { return m_ringBuffer.get(); }
+    CARingBuffer* ringBuffer() const LIFETIME_BOUND { return m_ringBuffer.get(); }
 
     WEBCORE_EXPORT void setPlaybackRate(double);
     double playbackRate() const { return m_playbackRate; }

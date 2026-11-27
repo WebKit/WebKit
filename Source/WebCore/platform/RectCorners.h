@@ -59,15 +59,15 @@ public:
     {
     }
 
-    T& at(BoxCorner corner) { return m_corners[static_cast<size_t>(corner)]; }
-    T& operator[](BoxCorner corner) { return m_corners[static_cast<size_t>(corner)]; }
+    T& at(BoxCorner corner) LIFETIME_BOUND { return m_corners[static_cast<size_t>(corner)]; }
+    T& operator[](BoxCorner corner) LIFETIME_BOUND { return m_corners[static_cast<size_t>(corner)]; }
     T& topLeft() { return at(BoxCorner::TopLeft); }
     T& topRight() { return at(BoxCorner::TopRight); }
     T& bottomLeft() { return at(BoxCorner::BottomLeft); }
     T& bottomRight() { return at(BoxCorner::BottomRight); }
 
-    const T& at(BoxCorner corner) const { return m_corners[static_cast<size_t>(corner)]; }
-    const T& operator[](BoxCorner corner) const { return m_corners[static_cast<size_t>(corner)]; }
+    const T& at(BoxCorner corner) const LIFETIME_BOUND { return m_corners[static_cast<size_t>(corner)]; }
+    const T& operator[](BoxCorner corner) const LIFETIME_BOUND { return m_corners[static_cast<size_t>(corner)]; }
     const T& topLeft() const { return at(BoxCorner::TopLeft); }
     const T& topRight() const { return at(BoxCorner::TopRight); }
     const T& bottomLeft() const { return at(BoxCorner::BottomLeft); }

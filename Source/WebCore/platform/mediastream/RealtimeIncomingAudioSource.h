@@ -57,7 +57,7 @@ public:
     static Ref<RealtimeIncomingAudioSource> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
     void setAudioModule(RefPtr<LibWebRTCAudioModule>&&);
-    LibWebRTCAudioModule* audioModule() { return m_audioModule.get(); }
+    LibWebRTCAudioModule* audioModule() LIFETIME_BOUND { return m_audioModule.get(); }
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
     ~RealtimeIncomingAudioSource();

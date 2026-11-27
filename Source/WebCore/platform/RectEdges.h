@@ -86,8 +86,8 @@ public:
         };
     }
 
-    T& at(BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
-    T& operator[](BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
+    T& at(BoxSide side) LIFETIME_BOUND { return m_sides[static_cast<size_t>(side)]; }
+    T& operator[](BoxSide side) LIFETIME_BOUND { return m_sides[static_cast<size_t>(side)]; }
     T& top() { return at(BoxSide::Top); }
     T& right() { return at(BoxSide::Right); }
     T& bottom() { return at(BoxSide::Bottom); }

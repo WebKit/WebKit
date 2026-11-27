@@ -174,7 +174,7 @@ public:
     WEBCORE_EXPORT void removeFromParent();
 
     // The parent() of a maskLayer is set to the layer being masked.
-    GraphicsLayer* maskLayer() const { return m_maskLayer.get(); }
+    GraphicsLayer* maskLayer() const LIFETIME_BOUND { return m_maskLayer.get(); }
     WEBCORE_EXPORT virtual void setMaskLayer(RefPtr<GraphicsLayer>&&);
 
     void setIsMaskLayer(bool isMask) { m_isMaskLayer = isMask; }
@@ -188,7 +188,7 @@ public:
     // Whether this layer is being replicated by another layer.
     bool isReplicated() const { return m_replicaLayer; }
     // The layer that replicates this layer (if any).
-    GraphicsLayer* replicaLayer() const { return m_replicaLayer.get(); }
+    GraphicsLayer* replicaLayer() const LIFETIME_BOUND { return m_replicaLayer.get(); }
 
     const FloatPoint& replicatedLayerPosition() const LIFETIME_BOUND { return m_replicatedLayerPosition; }
     void setReplicatedLayerPosition(const FloatPoint& p) { m_replicatedLayerPosition = p; }
@@ -351,7 +351,7 @@ public:
     FloatRoundedRect contentsClippingRect() const { return m_contentsClippingRect; }
     virtual void setContentsClippingRect(const FloatRoundedRect& roundedRect) { m_contentsClippingRect = roundedRect; }
 
-    const Path& contentsClipShapePath() const { return m_contentsClipShapePath; }
+    const Path& contentsClipShapePath() const LIFETIME_BOUND { return m_contentsClipShapePath; }
     virtual void setContentsClipShapePath(const Path& path) { m_contentsClipShapePath = path; }
     
     // If true, contentsClippingRect is used to clip child GraphicsLayers.
@@ -555,7 +555,7 @@ public:
     virtual void markFrontBufferVolatileForTesting() { }
 
 #if ENABLE(THREADED_ANIMATIONS)
-    const AcceleratedEffectStack* acceleratedEffectStack() const { return m_effectStack.get(); }
+    const AcceleratedEffectStack* acceleratedEffectStack() const LIFETIME_BOUND { return m_effectStack.get(); }
     WEBCORE_EXPORT virtual void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&);
 #endif
 

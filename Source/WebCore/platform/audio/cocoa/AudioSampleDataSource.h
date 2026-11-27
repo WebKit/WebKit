@@ -72,8 +72,8 @@ public:
     void setMuted(bool muted) { m_muted = muted; }
     bool muted() const { return m_muted; }
 
-    const CAAudioStreamDescription* inputDescription() const { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
-    const CAAudioStreamDescription* outputDescription() const { return m_outputDescription ? &m_outputDescription.value() : nullptr; }
+    const CAAudioStreamDescription* inputDescription() const LIFETIME_BOUND { return m_inputDescription ? &m_inputDescription.value() : nullptr; }
+    const CAAudioStreamDescription* outputDescription() const LIFETIME_BOUND { return m_outputDescription ? &m_outputDescription.value() : nullptr; }
 
     void recomputeSampleOffset() { m_shouldComputeOutputSampleOffset = true; }
 

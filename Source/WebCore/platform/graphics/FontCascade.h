@@ -270,7 +270,7 @@ public:
     static String normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
-    FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    FontCascadeFonts* fonts() const LIFETIME_BOUND { return m_fonts.get(); }
     bool isLoadingCustomFonts() const;
 
     static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);

@@ -109,7 +109,7 @@ public:
     FormDataForUpload(FormDataForUpload&&) = default;
     ~FormDataForUpload();
 
-    FormData& data() { return m_data.get(); }
+    FormData& data() LIFETIME_BOUND { return m_data.get(); }
 private:
     friend class FormData;
     FormDataForUpload(FormData&, Vector<String>&&);
@@ -158,7 +158,7 @@ public:
 
     WEBCORE_EXPORT bool isPendingStream() const;
     WEBCORE_EXPORT void setPendingStreamState(Ref<PendingStreamState>&&);
-    PendingStreamState* pendingStreamState() const { return m_pendingStreamState.get(); }
+    PendingStreamState* pendingStreamState() const LIFETIME_BOUND { return m_pendingStreamState.get(); }
 
     WEBCORE_EXPORT FormDataForUpload prepareForUpload();
 

@@ -52,7 +52,7 @@ public:
     }
 
     ~NullVideoPresentationInterface() = default;
-    NullPlaybackSessionInterface& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
+    NullPlaybackSessionInterface& playbackSessionInterface() const LIFETIME_BOUND { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     void setVideoPresentationModel(VideoPresentationModel* model) { m_videoPresentationModel = model; }

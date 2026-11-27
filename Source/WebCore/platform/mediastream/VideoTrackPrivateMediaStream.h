@@ -45,7 +45,7 @@ public:
 
     void setTrackIndex(int index) { m_index = index; }
 
-    MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
+    MediaStreamTrackPrivate& streamTrack() LIFETIME_BOUND { return m_streamTrack.get(); }
 
 private:
     VideoTrackPrivateMediaStream(MediaStreamTrackPrivate& track)

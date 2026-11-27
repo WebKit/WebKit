@@ -54,28 +54,28 @@ public:
     WEBCORE_EXPORT ~ThreadGlobalData();
     void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
-    const CachedResourceRequestInitiatorTypes& cachedResourceRequestInitiatorTypes()
+    const CachedResourceRequestInitiatorTypes& cachedResourceRequestInitiatorTypes() LIFETIME_BOUND
     {
         ASSERT(!m_destroyed);
         if (!m_cachedResourceRequestInitiatorTypes) [[unlikely]]
             initializeCachedResourceRequestInitiatorTypes();
         return *m_cachedResourceRequestInitiatorTypes;
     }
-    EventNames& eventNames()
+    EventNames& eventNames() LIFETIME_BOUND
     {
         ASSERT(!m_destroyed);
         if (!m_eventNames) [[unlikely]]
             initializeEventNames();
         return *m_eventNames;
     }
-    QualifiedNameCache& qualifiedNameCache()
+    QualifiedNameCache& qualifiedNameCache() LIFETIME_BOUND
     {
         ASSERT(!m_destroyed);
         if (!m_qualifiedNameCache) [[unlikely]]
             initializeQualifiedNameCache();
         return *m_qualifiedNameCache;
     }
-    const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData()
+    const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData() LIFETIME_BOUND
     {
         ASSERT(!m_destroyed);
         if (!m_mimeTypeRegistryThreadGlobalData) [[unlikely]]
@@ -95,7 +95,7 @@ public:
     bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
     void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
 
-    FontCache& fontCache()
+    FontCache& fontCache() LIFETIME_BOUND
     {
         ASSERT(!m_destroyed);
         if (!m_fontCache) [[unlikely]]
@@ -103,8 +103,8 @@ public:
         return *m_fontCache;
     }
 
-    FontCache* fontCacheIfExists() { return m_fontCache.get(); }
-    FontCache* fontCacheIfNotDestroyed() { return m_destroyed ? nullptr : &fontCache(); }
+    FontCache* fontCacheIfExists() LIFETIME_BOUND { return m_fontCache.get(); }
+    FontCache* fontCacheIfNotDestroyed() LIFETIME_BOUND { return m_destroyed ? nullptr : &fontCache(); }
 
 private:
     bool m_destroyed { false };

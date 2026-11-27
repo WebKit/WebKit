@@ -125,7 +125,7 @@ private:
     void setTimeFromSample(CMSampleBufferRef);
     void setTimeFromSampleIfDiscontinuous(CMSampleBufferRef);
 
-    WorkQueue& queue() const { return m_serialDispatchQueue; }
+    WorkQueue& queue() const LIFETIME_BOUND { return m_serialDispatchQueue; }
     const Ref<WorkQueue> m_serialDispatchQueue;
 
     const RetainPtr<CMBufferQueueRef> m_outputBufferQueue; // initialized on the caller's thread once, never modified after that.

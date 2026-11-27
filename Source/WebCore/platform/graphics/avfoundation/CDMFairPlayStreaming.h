@@ -65,7 +65,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
-    const Logger& logger() const { return m_logger; };
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; };
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMPrivateFairPlayStreaming"_s; }
 #endif

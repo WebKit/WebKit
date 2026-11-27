@@ -39,7 +39,7 @@ public:
     virtual ~GraphicsLayerAnimationValue() = default;
 
     double keyTime() const { return m_keyTime; }
-    const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    const TimingFunction* timingFunction() const LIFETIME_BOUND { return m_timingFunction.get(); }
     virtual std::unique_ptr<GraphicsLayerAnimationValue> clone() const = 0;
 
     virtual bool isGraphicsLayerFilterAnimationValue() const { return false; }

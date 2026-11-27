@@ -59,7 +59,7 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     NODELETE bool setKernelUnitLengthY(float);
 
-    LightSource& lightSource() const { return m_lightSource; }
+    LightSource& lightSource() const LIFETIME_BOUND { return m_lightSource; }
 
 protected:
     FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, ColorSpace);

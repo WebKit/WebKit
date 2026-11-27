@@ -270,7 +270,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const Logger&, uint64_t);
-    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const LIFETIME_BOUND { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "RealtimeMediaSource"_s; }

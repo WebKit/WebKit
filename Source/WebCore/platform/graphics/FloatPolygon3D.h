@@ -45,7 +45,7 @@ public:
     FloatPolygon3D() = default;
     FloatPolygon3D(const FloatRect&, const TransformationMatrix&);
 
-    const FloatPoint3D& vertexAt(unsigned index) const { return m_vertices[index]; }
+    const FloatPoint3D& vertexAt(unsigned index) const LIFETIME_BOUND { return m_vertices[index]; }
     unsigned numberOfVertices() const { return m_vertices.size(); }
 
     const FloatPoint3D& normal() const LIFETIME_BOUND { return m_normal; }

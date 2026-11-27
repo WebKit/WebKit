@@ -62,7 +62,7 @@ public:
     float firstGlyphOverflowX() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.firstGlyphLeftOverflowX; }
     float lastGlyphOverflowX() const { ASSERT(m_glyphBounds.shouldCompute); return m_glyphBounds.lastGlyphRightOverflowX; }
 
-    const TextRun& run() const { return m_run; }
+    const TextRun& run() const LIFETIME_BOUND { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 

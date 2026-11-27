@@ -48,7 +48,7 @@ public:
     
     Category textTrackCategory() const override { return OutOfBand; }
     
-    AVMediaSelectionOption* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
+    AVMediaSelectionOption* mediaSelectionOption() const LIFETIME_BOUND { return m_mediaSelectionOption.get(); }
     
 protected:
     OutOfBandTextTrackPrivateAVF(AVMediaSelectionOption* selection, TrackID trackID, ModeChangedCallback&& callback)

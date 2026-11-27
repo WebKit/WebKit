@@ -61,7 +61,7 @@ protected:
     {
     }
 
-    const std::optional<PlatformVideoColorSpace>& colorSpaceOverride() const { return m_colorSpaceOverride; }
+    const std::optional<PlatformVideoColorSpace>& colorSpaceOverride() const LIFETIME_BOUND { return m_colorSpaceOverride; }
 
 private:
     virtual void colorSpaceOverrideChanged() { };

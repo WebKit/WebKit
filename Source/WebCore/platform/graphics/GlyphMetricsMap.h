@@ -74,7 +74,7 @@ private:
         }
 
         T metricsForGlyph(Glyph glyph) const { return m_metrics[glyph % size]; }
-        const T& existingMetricsForGlyph(Glyph glyph) const { return m_metrics[glyph % size]; }
+        const T& existingMetricsForGlyph(Glyph glyph) const LIFETIME_BOUND { return m_metrics[glyph % size]; }
         void setMetricsForGlyph(Glyph glyph, const T& metrics)
         {
             setMetricsForIndex(glyph % size, metrics);

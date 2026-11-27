@@ -49,7 +49,7 @@ public:
         : m_trust(WTF::move(trust))
     {
     }
-    const RetainPtr<SecTrustRef>& trust() const { return m_trust; }
+    const RetainPtr<SecTrustRef>& trust() const LIFETIME_BOUND { return m_trust; }
     CertificateInfo isolatedCopy() const { return *this; }
 
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;

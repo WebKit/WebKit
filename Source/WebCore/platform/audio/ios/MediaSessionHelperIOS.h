@@ -100,7 +100,7 @@ public:
     bool activeVideoRouteSupportsAirPlayVideo() const { return m_activeVideoRouteSupportsAirPlayVideo; }
     bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; }
 
-    MediaPlaybackTarget* playbackTarget() const { return m_playbackTarget.get(); }
+    MediaPlaybackTarget* playbackTarget() const LIFETIME_BOUND { return m_playbackTarget.get(); }
 
     using HasAvailableTargets = MediaSessionHelperClient::HasAvailableTargets;
     using PlayingToAutomotiveHeadUnit = MediaSessionHelperClient::PlayingToAutomotiveHeadUnit;

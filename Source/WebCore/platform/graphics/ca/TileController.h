@@ -157,7 +157,7 @@ public:
 
     Ref<PlatformCALayer> createTileLayer(const IntRect&, TileGrid&);
 
-    const TileGrid& tileGrid() const { return *m_tileGrid; }
+    const TileGrid& tileGrid() const LIFETIME_BOUND { return *m_tileGrid; }
 
     WEBCORE_EXPORT Vector<RefPtr<PlatformCALayer>> containerLayers();
     
@@ -168,7 +168,7 @@ public:
 #endif
 
 private:
-    TileGrid& tileGrid() { return *m_tileGrid; }
+    TileGrid& tileGrid() LIFETIME_BOUND { return *m_tileGrid; }
 
     void scheduleTileRevalidation(Seconds interval);
 

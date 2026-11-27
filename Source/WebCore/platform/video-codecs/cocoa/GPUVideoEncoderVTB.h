@@ -57,7 +57,7 @@ protected:
     virtual void configureAdditionalProperties() { }
     void setProperty(CFStringRef, CFTypeRef);
 
-    WorkQueue& queue() { return m_creationInfo.queue; }
+    WorkQueue& queue() LIFETIME_BOUND { return m_creationInfo.queue; }
 
     static RetainPtr<CFDictionaryRef> encoderSpecification();
     static std::optional<Vector<uint8_t>> toVector(CMSampleBufferRef);

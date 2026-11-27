@@ -71,7 +71,7 @@ public:
     ShareableBitmapConfiguration& operator=(ShareableBitmapConfiguration&&) = default;
 
     IntSize size() const { return m_size; }
-    const ColorSpace& colorSpace() const { return m_colorSpace; }
+    const ColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }
     PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
     PixelFormat pixelFormat() const { return m_pixelFormat; }
     Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
@@ -188,7 +188,7 @@ public:
     NODELETE WEBCORE_EXPORT std::span<uint8_t> mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
-    const ColorSpace& colorSpace() const { return m_configuration.colorSpace(); }
+    const ColorSpace& colorSpace() const LIFETIME_BOUND { return m_configuration.colorSpace(); }
     PixelFormat pixelFormat() const { return m_configuration.pixelFormat(); }
 
     // Create a graphics context that can be used to paint into the backing store.

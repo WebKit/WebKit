@@ -46,10 +46,10 @@ class FloatPolygon {
 public:
     FloatPolygon(Vector<FloatPoint>&& vertices);
 
-    const FloatPoint& vertexAt(unsigned index) const { return m_vertices[index]; }
+    const FloatPoint& vertexAt(unsigned index) const LIFETIME_BOUND { return m_vertices[index]; }
     unsigned numberOfVertices() const { return m_vertices.size(); }
 
-    const FloatPolygonEdge& edgeAt(unsigned index) const { return m_edges[index]; }
+    const FloatPolygonEdge& edgeAt(unsigned index) const LIFETIME_BOUND { return m_edges[index]; }
     unsigned numberOfEdges() const { return m_edges.size(); }
 
     FloatRect boundingBox() const { return m_boundingBox; }

@@ -385,8 +385,8 @@ public:
     FontOrientation orientation() const { return m_metadata.orientation; }
     FontWidthVariant widthVariant() const { return m_metadata.widthVariant; }
     TextRenderingMode textRenderingMode() const { return m_metadata.textRenderingMode; }
-    const FontMetricsOverrides& metricsOverrides() const { return m_metadata.metricsOverrides; }
-    const FontMetadata& metadata() const { return m_metadata; }
+    const FontMetricsOverrides& metricsOverrides() const LIFETIME_BOUND { return m_metadata.metricsOverrides; }
+    const FontMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 
     String familyName() const;
@@ -442,7 +442,7 @@ public:
     };
 
     NODELETE WEBCORE_EXPORT const CreationData* creationData() const;
-    const FontCustomPlatformData* customPlatformData() const
+    const FontCustomPlatformData* customPlatformData() const LIFETIME_BOUND
     {
         return m_customPlatformData.get();
     }

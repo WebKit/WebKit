@@ -42,7 +42,7 @@ public:
     WEBCORE_EXPORT static Ref<SharedPDFDocument> create(Ref<SharedBuffer>&&);
     WEBCORE_EXPORT virtual ~SharedPDFDocument();
 
-    SharedBuffer& data() const { return m_data; }
+    SharedBuffer& data() const LIFETIME_BOUND { return m_data; }
     RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
     virtual void drawPage(GraphicsContext&, unsigned pageIndex, const FloatRect& pageRect);

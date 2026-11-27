@@ -77,7 +77,7 @@ public:
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
     void setSource(Ref<MediaStreamTrackPrivate>&&);
-    MediaStreamTrackPrivate& source() const { return m_audioSource.get(); }
+    MediaStreamTrackPrivate& source() const LIFETIME_BOUND { return m_audioSource.get(); }
 
 protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);

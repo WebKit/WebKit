@@ -76,7 +76,7 @@ public:
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
-    PlatformCALayer* platformCALayerIgnoringStructuralLayer() const { return m_layer.get(); }
+    PlatformCALayer* platformCALayerIgnoringStructuralLayer() const LIFETIME_BOUND { return m_layer.get(); }
 
     WEBCORE_EXPORT bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
     WEBCORE_EXPORT void addChild(Ref<GraphicsLayer>&&) override;
@@ -346,7 +346,7 @@ private:
     // Overridden for images whose pixels are not in this process, which have no platform image.
     virtual void setLayerContentsToNativeImage(PlatformCALayer&, NativeImage&);
 
-    PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
+    PlatformCALayer* primaryLayer() const LIFETIME_BOUND { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     NODELETE PlatformCALayer* hostLayerForSublayers() const;
     NODELETE PlatformCALayer* layerForSuperlayer() const;
     NODELETE PlatformCALayer* animatedLayer(AnimatedProperty) const;
@@ -399,7 +399,7 @@ private:
     bool requiresTiledLayer(float pageScaleFactor) const;
     void changeLayerTypeTo(PlatformCALayer::LayerType);
     void setupContentsLayer(PlatformCALayer*, CompositingCoordinatesOrientation = defaultContentsOrientation);
-    PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
+    PlatformCALayer* contentsLayer() const LIFETIME_BOUND { return m_contentsLayer.get(); }
 
     void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&, const Path& shapePath);
 

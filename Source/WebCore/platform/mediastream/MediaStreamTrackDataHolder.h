@@ -67,8 +67,8 @@ public:
 
     WEBCORE_EXPORT std::unique_ptr<MediaStreamTrackDataHolder> copy() const;
 
-    MediaStreamTrackData& data() { return m_data; }
-    Ref<RealtimeMediaSource>& source() { return m_source; }
+    MediaStreamTrackData& data() LIFETIME_BOUND { return m_data; }
+    Ref<RealtimeMediaSource>& source() LIFETIME_BOUND { return m_source; }
 
 private:
     MediaStreamTrackData m_data;

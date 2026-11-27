@@ -94,7 +94,7 @@ public:
     bool isRenderingAudio() const { return m_isRenderingAudio; }
     bool hasClients() const { return !m_clients.computeIsEmpty(); }
 
-    const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
+    const String& persistentIDForTesting() const LIFETIME_BOUND { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
     void handleNewCurrentMicrophoneDevice(const CaptureDevice&);
 
@@ -122,7 +122,7 @@ protected:
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
 
-    const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
+    const String& persistentID() const LIFETIME_BOUND { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
     void setIsRenderingAudio(bool);
 

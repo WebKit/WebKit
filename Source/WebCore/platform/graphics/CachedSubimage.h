@@ -42,7 +42,7 @@ public:
 
     CachedSubimage(Ref<ImageBuffer>&&, const FloatSize& scaleFactor, const FloatRect& destinationRect, const FloatRect& sourceRect);
 
-    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
+    ImageBuffer& imageBuffer() const LIFETIME_BOUND { return m_imageBuffer; }
     FloatSize scaleFactor() const { return m_scaleFactor; }
     FloatRect destinationRect() const { return m_destinationRect; }
     FloatRect sourceRect() const { return m_sourceRect; }

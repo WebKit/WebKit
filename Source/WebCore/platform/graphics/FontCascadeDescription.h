@@ -69,8 +69,8 @@ public:
 
     unsigned familyCount() const { return m_families->size(); }
     const FontFamily& firstFamily() const { return familyAt(0); }
-    const FontFamily& familyAt(unsigned i) const { return m_families.get()[i]; }
-    RefCountedFixedVector<FontFamily>& families() const { return m_families.get(); }
+    const FontFamily& familyAt(unsigned i) const LIFETIME_BOUND { return m_families.get()[i]; }
+    RefCountedFixedVector<FontFamily>& families() const LIFETIME_BOUND { return m_families.get(); }
 
     NODELETE static bool familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);

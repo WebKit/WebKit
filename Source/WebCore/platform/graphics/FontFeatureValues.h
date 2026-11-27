@@ -71,62 +71,62 @@ public:
             && equalIgnoringOrder(m_annotation, other.annotation());
     }
     
-    const Tags& styleset() const
+    const Tags& styleset() const LIFETIME_BOUND
     {
         return m_styleset;
     }
 
-    Tags& styleset()
+    Tags& styleset() LIFETIME_BOUND
     {
         return m_styleset;
     }
 
-    const Tags& stylistic() const
+    const Tags& stylistic() const LIFETIME_BOUND
     {
         return m_stylistic;
     }
 
-    Tags& stylistic()
+    Tags& stylistic() LIFETIME_BOUND
     {
         return m_stylistic;
     }
 
-    const Tags& characterVariant() const
+    const Tags& characterVariant() const LIFETIME_BOUND
     {
         return m_characterVariant;
     }
 
-    Tags& characterVariant()
+    Tags& characterVariant() LIFETIME_BOUND
     {
         return m_characterVariant;
     }
 
-    const Tags& swash() const
+    const Tags& swash() const LIFETIME_BOUND
     {
         return m_swash;
     }
 
-    Tags& swash()
+    Tags& swash() LIFETIME_BOUND
     {
         return m_swash;
     }
 
-    const Tags& ornaments() const
+    const Tags& ornaments() const LIFETIME_BOUND
     {
         return m_ornaments;
     }
 
-    Tags& ornaments()
+    Tags& ornaments() LIFETIME_BOUND
     {
         return m_ornaments;
     }
 
-    const Tags& annotation() const
+    const Tags& annotation() const LIFETIME_BOUND
     {
         return m_annotation;
     }
 
-    Tags& annotation()
+    Tags& annotation() LIFETIME_BOUND
     {
         return m_annotation;
     }

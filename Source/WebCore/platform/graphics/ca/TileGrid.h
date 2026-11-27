@@ -64,7 +64,7 @@ public:
     TileGridIdentifier identifier() const { return m_identifier; }
 
 #if USE(CA)
-    PlatformCALayer& containerLayer() { return m_containerLayer; }
+    PlatformCALayer& containerLayer() LIFETIME_BOUND { return m_containerLayer; }
 #endif
 
     void setIsZoomedOutTileGrid(bool);

@@ -96,7 +96,7 @@ public:
     NODELETE WEBCORE_EXPORT FontCustomPlatformSerializedData serializedData() const;
     WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 
-    const String& sourceURL() const { return m_sourceURL; }
+    const String& sourceURL() const LIFETIME_BOUND { return m_sourceURL; }
     void setSourceURL(String sourceURL)
     {
         ASSERT(m_sourceURL.isEmpty());

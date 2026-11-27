@@ -61,7 +61,7 @@ public:
     SourceBufferParserAVFObjC(const ContentType&, const MediaSourceConfiguration&);
     virtual ~SourceBufferParserAVFObjC();
 
-    AVStreamDataParser* streamDataParser() const { return m_parser.get(); }
+    AVStreamDataParser* streamDataParser() const LIFETIME_BOUND { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
     std::expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;
@@ -83,7 +83,7 @@ public:
 
 private:
 #if !RELEASE_LOG_DISABLED
-    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger* loggerPtr() const LIFETIME_BOUND { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserAVFObjC"_s; }

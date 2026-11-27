@@ -73,7 +73,7 @@ public:
 
     const String& message() const LIFETIME_BOUND { return m_message; }
     double fontSize() const { return m_fontSize; }
-    const IntRect& anchorRect() const { return m_anchorRect; }
+    const IntRect& anchorRect() const LIFETIME_BOUND { return m_anchorRect; }
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController = nullptr);

@@ -56,7 +56,7 @@ public:
     const String& lang() const LIFETIME_BOUND { return m_lang; }
     void setLang(const String& lang) { m_lang = lang; }
     
-    PlatformSpeechSynthesisVoice* voice() const { return m_voice.get(); }
+    PlatformSpeechSynthesisVoice* voice() const LIFETIME_BOUND { return m_voice.get(); }
     void setVoice(PlatformSpeechSynthesisVoice* voice) { m_voice = voice; }
 
     // Range = [0, 1] where 1 is the default.

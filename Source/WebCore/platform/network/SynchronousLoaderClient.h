@@ -59,7 +59,7 @@ public:
     const ResourceResponse& response() const LIFETIME_BOUND { return m_response; }
     Vector<uint8_t>& mutableData() LIFETIME_BOUND { return m_data; }
     const ResourceError& error() const LIFETIME_BOUND { return m_error; }
-    SynchronousLoaderMessageQueue& messageQueue() { return m_messageQueue.get(); }
+    SynchronousLoaderMessageQueue& messageQueue() LIFETIME_BOUND { return m_messageQueue.get(); }
 
     WEBCORE_EXPORT static ResourceError platformBadResponseError();
 

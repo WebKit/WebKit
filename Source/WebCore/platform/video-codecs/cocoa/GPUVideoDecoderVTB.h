@@ -52,7 +52,7 @@ private:
     void updateFormat(const VideoInfo&);
     bool ensureDecoder();
 
-    WorkQueue& queue() const { return m_workQueue; }
+    WorkQueue& queue() const LIFETIME_BOUND { return m_workQueue; }
 
     const Ref<WorkQueue> m_workQueue;
     const BlockPtr<void(CVPixelBufferRef, int64_t, int64_t, bool)> m_callback;

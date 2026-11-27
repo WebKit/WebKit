@@ -102,7 +102,7 @@ public:
     WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName, const String& localizedRouteName) override;
 
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
-    PlaybackSessionInterfaceCocoa& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
+    PlaybackSessionInterfaceCocoa& playbackSessionInterface() const LIFETIME_BOUND { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
     virtual void setSpatialImmersive(bool) { }
     WEBCORE_EXPORT virtual void setupFullscreen(const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);

@@ -100,7 +100,7 @@ private:
     void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);
 #endif
 
-    WorkQueue& workQueue() { return m_processingQueue.get(); }
+    WorkQueue& workQueue() LIFETIME_BOUND { return m_processingQueue.get(); }
 
 private:
     const RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;

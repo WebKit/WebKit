@@ -61,7 +61,7 @@ public:
     void start() { observeSource(); }
     void stop();
     void setSource(Ref<MediaStreamTrackPrivate>&&);
-    MediaStreamTrackPrivate& source() const { return m_videoSource.get(); }
+    MediaStreamTrackPrivate& source() const LIFETIME_BOUND { return m_videoSource.get(); }
 
     void AddRef() const final { ref(); }
     webrtc::RefCountReleaseStatus Release() const final

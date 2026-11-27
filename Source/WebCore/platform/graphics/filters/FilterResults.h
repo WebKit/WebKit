@@ -42,7 +42,7 @@ class FilterResults {
 public:
     WEBCORE_EXPORT FilterResults(std::unique_ptr<ImageBufferAllocator>&& = nullptr);
 
-    ImageBufferAllocator& allocator() const { return *m_allocator; }
+    ImageBufferAllocator& allocator() const LIFETIME_BOUND { return *m_allocator; }
 
     FilterImage* effectResult(FilterEffect&) const;
     void setEffectResult(FilterEffect&, std::span<const Ref<FilterImage>> inputs, Ref<FilterImage>&& result);

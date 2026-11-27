@@ -73,7 +73,7 @@ public:
 
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     void setFormat(AVCaptureDeviceFormat* format) { m_format = format; }
-    AVCaptureDeviceFormat* format() const { return m_format.get(); }
+    AVCaptureDeviceFormat* format() const LIFETIME_BOUND { return m_format.get(); }
 #endif
 
     double maxFrameRate() const;

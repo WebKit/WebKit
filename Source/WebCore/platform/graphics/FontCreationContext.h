@@ -41,7 +41,7 @@ public:
         return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust, metricsOverrides));
     }
 
-    const FontFeatureSettings& fontFaceFeatures() const
+    const FontFeatureSettings& fontFaceFeatures() const LIFETIME_BOUND
     {
         return m_fontFaceFeatures;
     }
@@ -51,12 +51,12 @@ public:
         return m_sizeAdjust;
     }
 
-    const FontMetricsOverrides& metricsOverrides() const
+    const FontMetricsOverrides& metricsOverrides() const LIFETIME_BOUND
     {
         return m_metricsOverrides;
     }
 
-    const FontPaletteValues& fontPaletteValues() const
+    const FontPaletteValues& fontPaletteValues() const LIFETIME_BOUND
     {
         return m_fontPaletteValues;
     }
@@ -118,7 +118,7 @@ public:
         return m_rareData ? m_rareData->metricsOverrides() : FontMetricsOverrides { };
     }
 
-    const FontSelectionSpecifiedCapabilities& fontFaceCapabilities() const
+    const FontSelectionSpecifiedCapabilities& fontFaceCapabilities() const LIFETIME_BOUND
     {
         return m_fontFaceCapabilities;
     }

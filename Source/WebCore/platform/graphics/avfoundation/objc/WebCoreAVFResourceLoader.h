@@ -86,7 +86,7 @@ private:
     void loadTimedOut();
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger.get(); }
     ASCIILiteral logClassName() const { return "WebCoreAVFResourceLoader"_s; }
     NODELETE WTFLogChannel& logChannel() const;
 #endif

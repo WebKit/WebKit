@@ -59,8 +59,8 @@ public:
     TextSpacingTrim textSpacingTrim() const { return m_textSpacingTrim; }
     TextAutospace textAutospace() const { return m_textAutospace; }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
-    const AtomString& usedLocale() const { return m_usedLocale; } // This is what you should be using for things like text shaping and font fallback
-    const AtomString& computedLocale() const { return m_computedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
+    const AtomString& usedLocale() const LIFETIME_BOUND { return m_usedLocale; } // This is what you should be using for things like text shaping and font fallback
+    const AtomString& computedLocale() const LIFETIME_BOUND { return m_computedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
 
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }

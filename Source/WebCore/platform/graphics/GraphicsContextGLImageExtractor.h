@@ -58,7 +58,7 @@ public:
     ~GraphicsContextGLImageExtractor();
 
     bool extractSucceeded() { return m_extractSucceeded; }
-    std::span<const uint8_t> imagePixelData() { return m_imagePixelData; }
+    std::span<const uint8_t> imagePixelData() LIFETIME_BOUND { return m_imagePixelData; }
     unsigned imageWidth() { return m_imageWidth; }
     unsigned imageHeight() { return m_imageHeight; }
     DataFormat imageSourceFormat() { return m_imageSourceFormat; }

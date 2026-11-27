@@ -78,7 +78,7 @@ public:
     }
 
     void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTF::move(info); }
-    const TrackInfo* info() const { return m_info.get(); }
+    const TrackInfo* info() const LIFETIME_BOUND { return m_info.get(); }
     // Leading items whose output is entirely trimmed don't start the block's output.
     MediaTime presentationTime() const
     {

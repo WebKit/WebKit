@@ -301,7 +301,7 @@ class CDMInstanceProxy;
 class CDMInstanceSessionProxy : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionProxy, WeakPtrFactoryInitialization::Eager> {
 protected:
     CDMInstanceSessionProxy(CDMInstanceProxy&);
-    const WeakPtr<CDMInstanceProxy>& cdmInstanceProxy() const { return m_instance; }
+    const WeakPtr<CDMInstanceProxy>& cdmInstanceProxy() const LIFETIME_BOUND { return m_instance; }
 
 private:
     WeakPtr<CDMInstanceProxy> m_instance;

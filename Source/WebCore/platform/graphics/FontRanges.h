@@ -62,7 +62,7 @@ public:
         char32_t from() const { return m_from; }
         char32_t to() const { return m_to; }
         WEBCORE_EXPORT const Font* font(ExternalResourceDownloadPolicy) const;
-        const FontAccessor& fontAccessor() const { return m_fontAccessor; }
+        const FontAccessor& fontAccessor() const LIFETIME_BOUND { return m_fontAccessor; }
 
     private:
         char32_t m_from;
@@ -82,7 +82,7 @@ public:
 
     void appendRange(Range&& range) { m_ranges.append(WTF::move(range)); }
     unsigned size() const { return m_ranges.size(); }
-    const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
+    const Range& rangeAt(unsigned i) const LIFETIME_BOUND { return m_ranges[i]; }
 
     void shrinkToFit() { m_ranges.shrinkToFit(); }
 

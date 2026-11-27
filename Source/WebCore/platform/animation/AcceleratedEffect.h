@@ -63,7 +63,7 @@ public:
 
         void clearProperty(AcceleratedEffectProperty);
         const OptionSet<AcceleratedEffectProperty>& animatedProperties() const LIFETIME_BOUND { return m_animatedProperties; }
-        const RefPtr<TimingFunction>& timingFunction() const { return m_timingFunction; }
+        const RefPtr<TimingFunction>& timingFunction() const LIFETIME_BOUND { return m_timingFunction; }
         const AcceleratedEffectValues& values() const LIFETIME_BOUND { return m_values; }
 
     private:
@@ -90,12 +90,12 @@ public:
 
     // Encoding and decoding support
     const AnimationEffectTiming& timing() const LIFETIME_BOUND { return m_timing; }
-    const RefPtr<AcceleratedTimeline>& timeline() const { return m_timeline; }
+    const RefPtr<AcceleratedTimeline>& timeline() const LIFETIME_BOUND { return m_timeline; }
     const TimelineIdentifier& timelineIdentifier() const LIFETIME_BOUND { return m_timelineIdentifier; }
     const Vector<Keyframe>& keyframes() const LIFETIME_BOUND { return m_keyframes; }
     WebAnimationType animationType() const { return m_animationType; }
     CompositeOperation compositeOperation() const final { return m_compositeOperation; }
-    const RefPtr<TimingFunction>& defaultKeyframeTimingFunction() const { return m_defaultKeyframeTimingFunction; }
+    const RefPtr<TimingFunction>& defaultKeyframeTimingFunction() const LIFETIME_BOUND { return m_defaultKeyframeTimingFunction; }
     const OptionSet<AcceleratedEffectProperty>& animatedProperties() const LIFETIME_BOUND { return m_animatedProperties; }
     bool paused() const { return m_paused; }
     double playbackRate() const { return m_playbackRate; }

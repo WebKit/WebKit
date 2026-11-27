@@ -69,7 +69,7 @@ public:
 
     void initialize(MediaStreamTrackPrivate&);
     std::function<void(Function<void()>&&)> getPostTask() { return m_postTask; }
-    NODELETE RealtimeMediaSource& source() { return m_source.get(); }
+    NODELETE RealtimeMediaSource& source() LIFETIME_BOUND { return m_source.get(); }
     void start();
     void stop();
     void requestToEnd();
@@ -182,7 +182,7 @@ public:
 
     void updateLabelIfRemoteTrack();
 
-    MediaStreamTrackPrivateSourceObserver& sourceObserver() { return m_sourceObserver; }
+    MediaStreamTrackPrivateSourceObserver& sourceObserver() LIFETIME_BOUND { return m_sourceObserver; }
     size_t settingsCapabilitiesUpdateCount() const { return m_data.settingsCapabilitiesUpdateCount; }
 
 private:

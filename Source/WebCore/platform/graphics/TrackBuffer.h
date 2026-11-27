@@ -121,7 +121,7 @@ public:
 
     const SampleMap& samples() const LIFETIME_BOUND { return m_samples; }
     SampleMap& samples() LIFETIME_BOUND { return m_samples; }
-    const RefPtr<MediaDescription>& description() const { return m_description; }
+    const RefPtr<MediaDescription>& description() const LIFETIME_BOUND { return m_description; }
     const PlatformTimeRanges& buffered() const LIFETIME_BOUND { return m_buffered; }
     PlatformTimeRanges& buffered() LIFETIME_BOUND { return m_buffered; }
 

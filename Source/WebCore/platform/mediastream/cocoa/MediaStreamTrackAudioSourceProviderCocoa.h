@@ -82,7 +82,7 @@ private:
     void setClient(WeakPtr<AudioSourceProviderClient>&&) final;
     void prepare(const AudioStreamBasicDescription&);
 #if !RELEASE_LOG_DISABLED
-    WTF::LoggerHelper& loggerHelper() { return m_source.get(); }
+    WTF::LoggerHelper& loggerHelper() LIFETIME_BOUND { return m_source.get(); }
 #endif
 
     // MediaStreamTrackPrivateObserver

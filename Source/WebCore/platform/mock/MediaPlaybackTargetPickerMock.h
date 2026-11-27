@@ -51,7 +51,7 @@ public:
     void setState(const String&, MediaPlaybackTargetMockState);
     void dismissPopup();
 
-    const FloatRect& lastPickerRect() const { return m_lastPickerRect; }
+    const FloatRect& lastPickerRect() const LIFETIME_BOUND { return m_lastPickerRect; }
 
 private:
     void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
