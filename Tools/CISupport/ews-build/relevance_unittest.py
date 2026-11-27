@@ -72,6 +72,14 @@ class TestRelevance(unittest.TestCase):
         self.assertFalse(rule.is_relevant(b'+++ Source/WebCore/README.md'))
         self.assertFalse(rule.is_relevant(b'+++ Tools/Scripts/foo.py'))
 
+    def test_including_adds_paths(self):
+        rule = Relevance(include=[re.compile(rb'^Source/')], exclude=[re.compile(rb'\.md$')])
+        extended = rule.including([re.compile(rb'^Tools/')])
+        self.assertTrue(extended.is_relevant(b'+++ Tools/Scripts/foo.py'))
+        self.assertTrue(extended.is_relevant(b'+++ Source/WebCore/dom/Node.cpp'))
+        self.assertFalse(extended.is_relevant(b'+++ Tools/Scripts/README.md'))
+        self.assertFalse(rule.is_relevant(b'+++ Tools/Scripts/foo.py'))
+
 
 class TestBuildRelevance(RelevanceTestCase):
     rule = relevance.BUILD
@@ -104,6 +112,9 @@ class TestBuildRelevance(RelevanceTestCase):
     def test_removed_or_renamed_files_need_a_build(self):
         self.assertRelevant('--- docs/old.md')
         self.assertRelevant('+++ docs/other.md', '--- docs/moved.md')
+
+    def test_sdk_changes_need_a_build(self):
+        self.assertRelevant('+++ .wkdev-sdk-version')
 
 
 class TestJSCRelevance(RelevanceTestCase):
