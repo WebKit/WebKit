@@ -130,6 +130,13 @@ set(WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS
     "-enable-experimental-feature SuppressedAssociatedTypesWithDefaults"
 )
 
+# Enable the experimental SuppressedAssociatedTypes feature only before Swift 6.4, as CommonBase.xcconfig does for
+# the 26.x SDKs. Later Swift versions deprecate it in favor of SE-503, which
+# SuppressedAssociatedTypesWithDefaults enables.
+if (CMAKE_Swift_COMPILER_VERSION VERSION_LESS 6.4)
+    list(APPEND WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS "-enable-experimental-feature SuppressedAssociatedTypes")
+endif ()
+
 set(WEBKIT_SWIFT_MEMORY_SAFETY_FLAGS
     "-enable-experimental-feature ImportNonPublicCxxMembers"
     "-enable-experimental-feature LifetimeDependence"
