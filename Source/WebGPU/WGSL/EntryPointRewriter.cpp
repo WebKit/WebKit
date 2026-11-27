@@ -77,6 +77,8 @@ private:
     String m_structTypeName;
     String m_structParameterName;
     unsigned m_builtinID { 0 };
+    bool m_usesWorkgroupIndex { false };
+    bool m_usesGlobalInvocationIndex { false };
 };
 
 EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage)
@@ -315,6 +317,19 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
     }
 
     if (builtin.has_value()) {
+        if (*builtin == Builtin::WorkgroupIndex) {
+            m_usesWorkgroupIndex = true;
+            String builtinName = "__wgslWorkgroupIndex"_s;
+            materialize(path, data, IsBuiltin::Yes, &builtinName);
+            return;
+        }
+        if (*builtin == Builtin::GlobalInvocationIndex) {
+            m_usesWorkgroupIndex = true;
+            m_usesGlobalInvocationIndex = true;
+            String builtinName = "__wgslGlobalInvocationIndex"_s;
+            materialize(path, data, IsBuiltin::Yes, &builtinName);
+            return;
+        }
         if (!path.isEmpty()) {
             // builtin was hoisted from a struct into a parameter, we need to reconstruct the struct
             // ${path}.${data.name} = __builtin${builtinID}
@@ -346,6 +361,96 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 
 void EntryPointRewriter::appendBuiltins()
 {
+    if (m_usesWorkgroupIndex || m_usesGlobalInvocationIndex) {
+        auto ensureBuiltin = [&](Builtin targetBuiltin, ASCIILiteral defaultName, const Type* paramType) -> String {
+            for (auto& existing : borrow(m_builtins)) {
+                if (existing.builtin == targetBuiltin)
+                    return existing.name.id();
+            }
+            auto& typeExpr = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(defaultName));
+            typeExpr.m_inferredType = paramType;
+            auto& builtinAttr = m_shaderModule.astBuilder().construct<AST::BuiltinAttribute>(SourceSpan::empty(), targetBuiltin);
+            m_builtins.append({
+                {
+                    AST::Identifier::make(defaultName),
+                    typeExpr,
+                    AST::Attribute::List { builtinAttr }
+                },
+                targetBuiltin
+            });
+            return defaultName;
+        };
+
+        auto* u32Type = m_shaderModule.types().u32Type();
+        auto* vec3uType = m_shaderModule.types().vectorType(3, u32Type);
+        String wgIdName = ensureBuiltin(Builtin::WorkgroupId, "__wgslWorkgroupId"_s, vec3uType);
+        String numWgName = ensureBuiltin(Builtin::NumWorkgroups, "__wgslNumWorkgroups"_s, vec3uType);
+
+        auto makeVecComponent = [&](const String& vecName, ASCIILiteral comp) -> AST::Expression& {
+            auto& base = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(vecName));
+            base.m_inferredType = vec3uType;
+            auto& access = m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(SourceSpan::empty(), base, AST::Identifier::make(comp));
+            access.m_inferredType = u32Type;
+            return access;
+        };
+        auto makeBinary = [&](AST::Expression& lhs, AST::Expression& rhs, AST::BinaryOperation op) -> AST::Expression& {
+            auto& bin = m_shaderModule.astBuilder().construct<AST::BinaryExpression>(SourceSpan::empty(), lhs, rhs, op);
+            bin.m_inferredType = u32Type;
+            return bin;
+        };
+
+        // ((wgId.z * numWg.y + wgId.y) * numWg.x) + wgId.x
+        auto& zMulY = makeBinary(makeVecComponent(wgIdName, "z"_s), makeVecComponent(numWgName, "y"_s), AST::BinaryOperation::Multiply);
+        auto& plusY = makeBinary(zMulY, makeVecComponent(wgIdName, "y"_s), AST::BinaryOperation::Add);
+        auto& mulX = makeBinary(plusY, makeVecComponent(numWgName, "x"_s), AST::BinaryOperation::Multiply);
+        auto& wgIndexExpr = makeBinary(mulX, makeVecComponent(wgIdName, "x"_s), AST::BinaryOperation::Add);
+
+        auto& u32TypeExpr1 = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+        u32TypeExpr1.m_inferredType = u32Type;
+        auto& wgIndexVar = m_shaderModule.astBuilder().construct<AST::Variable>(
+            SourceSpan::empty(),
+            AST::VariableFlavor::Var,
+            AST::Identifier::make("__wgslWorkgroupIndex"_s),
+            nullptr,
+            &u32TypeExpr1,
+            &wgIndexExpr,
+            AST::Attribute::List { }
+        );
+        auto& wgIndexStmt = m_shaderModule.astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), wgIndexVar);
+
+        AST::Statement::List linearIndexStmts;
+        linearIndexStmts.append(wgIndexStmt);
+
+        if (m_usesGlobalInvocationIndex) {
+            String gidName = ensureBuiltin(Builtin::GlobalInvocationId, "__wgslGlobalInvocationId"_s, vec3uType);
+            String tptgName = ensureBuiltin(Builtin::GlobalInvocationIndex, "__wgslThreadsPerThreadgroup"_s, vec3uType);
+
+            // ((gid.z * (numWg.y * tptg.y) + gid.y) * (numWg.x * tptg.x)) + gid.x
+            auto& gridSizeX = makeBinary(makeVecComponent(numWgName, "x"_s), makeVecComponent(tptgName, "x"_s), AST::BinaryOperation::Multiply);
+            auto& gridSizeY = makeBinary(makeVecComponent(numWgName, "y"_s), makeVecComponent(tptgName, "y"_s), AST::BinaryOperation::Multiply);
+            auto& gidZMulGridY = makeBinary(makeVecComponent(gidName, "z"_s), gridSizeY, AST::BinaryOperation::Multiply);
+            auto& plusGidY = makeBinary(gidZMulGridY, makeVecComponent(gidName, "y"_s), AST::BinaryOperation::Add);
+            auto& mulGridX = makeBinary(plusGidY, gridSizeX, AST::BinaryOperation::Multiply);
+            auto& globalIndexExpr = makeBinary(mulGridX, makeVecComponent(gidName, "x"_s), AST::BinaryOperation::Add);
+
+            auto& u32TypeExpr2 = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
+            u32TypeExpr2.m_inferredType = u32Type;
+            auto& globalIndexVar = m_shaderModule.astBuilder().construct<AST::Variable>(
+                SourceSpan::empty(),
+                AST::VariableFlavor::Var,
+                AST::Identifier::make("__wgslGlobalInvocationIndex"_s),
+                nullptr,
+                &u32TypeExpr2,
+                &globalIndexExpr,
+                AST::Attribute::List { }
+            );
+            auto& globalIndexStmt = m_shaderModule.astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), globalIndexVar);
+            linearIndexStmts.append(globalIndexStmt);
+        }
+
+        m_materializations.insertVector(0, linearIndexStmts);
+    }
+
     for (auto& data : borrow(m_builtins)) {
         auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),

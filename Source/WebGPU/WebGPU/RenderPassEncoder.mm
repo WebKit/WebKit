@@ -647,6 +647,12 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
         return false;
 
     Ref pipelineLayout = pipeline->pipelineLayout();
+    auto requiredImmediateSlots = pipeline->requiredImmediateSlots();
+    if ((m_setImmediateSlots & requiredImmediateSlots) != requiredImmediateSlots) {
+        makeInvalid(@"Missing required immediate data slots prior to draw");
+        return false;
+    }
+
     if (NSString* error = pipelineLayout->errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
         return false;
@@ -737,6 +743,15 @@ bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t 
     if (m_priorFragmentDynamicOffsets != m_fragmentDynamicOffsets) {
         setFragmentBytes(commandEncoder, asByteSpan(borrow(m_fragmentDynamicOffsets)->span()), m_device->maxBuffersForFragmentStage());
         m_priorFragmentDynamicOffsets = m_fragmentDynamicOffsets;
+    }
+
+    if (pipeline->usesVertexImmediates() && m_vertexImmediatesDirty) {
+        setVertexBytes(commandEncoder, std::span<const uint8_t> { m_immediateData }, m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1);
+        m_vertexImmediatesDirty = false;
+    }
+    if (pipeline->usesFragmentImmediates() && m_fragmentImmediatesDirty) {
+        setFragmentBytes(commandEncoder, std::span<const uint8_t> { m_immediateData }, m_device->maxBuffersForFragmentStage() + 1);
+        m_fragmentImmediatesDirty = false;
     }
 
     incrementDrawCount();
@@ -1294,6 +1309,10 @@ bool RenderPassEncoder::splitRenderPass()
     m_existingFragmentBuffers.fill(ExistingBufferKey { });
     m_bindGroupDynamicOffsetsChanged.fill(true);
     m_maxDynamicOffsetAtIndex.fill(0);
+    if (m_setImmediateSlots) {
+        m_vertexImmediatesDirty = true;
+        m_fragmentImmediatesDirty = true;
+    }
 
     return true;
 }
@@ -1802,6 +1821,10 @@ void RenderPassEncoder::executeBundles(std::span<const Ref<WebGPU::RenderBundle>
     m_existingVertexBuffers.fill(ExistingBufferKey { });
     m_existingFragmentBuffers.fill(ExistingBufferKey { });
     m_maxDynamicOffsetAtIndex.fill(0);
+    m_immediateData.fill(0);
+    m_setImmediateSlots = 0;
+    m_vertexImmediatesDirty = false;
+    m_fragmentImmediatesDirty = false;
 }
 
 NSString* RenderPassEncoder::errorValidatingColorDepthStencilTargets(const RenderPipeline& pipeline) const
@@ -1919,6 +1942,25 @@ void RenderPassEncoder::drawIndexedIndirect(WebGPU::Buffer& indirectBuffer, uint
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup* group, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
     setBindGroup(groupIndex, downcast<BindGroup>(group), dynamicOffsets);
+}
+
+void RenderPassEncoder::setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data)
+{
+    RETURN_IF_FINISHED();
+
+    auto endOffset = checkedSum<uint64_t>(rangeOffset, data.size());
+    if ((rangeOffset % 4) || (data.size() % 4) || endOffset.hasOverflowed() || endOffset.value() > m_device->limits().maxImmediateSize) {
+        makeInvalid(@"setImmediates: invalid rangeOffset or contentSize");
+        return;
+    }
+
+    if (data.size()) {
+        memcpySpan(std::span { m_immediateData }.subspan(rangeOffset, data.size()), data);
+        for (size_t slot = rangeOffset / 4, endSlot = endOffset.value() / 4; slot < endSlot; ++slot)
+            m_setImmediateSlots |= (1ull << slot);
+        m_vertexImmediatesDirty = true;
+        m_fragmentImmediatesDirty = true;
+    }
 }
 
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* groupPtr, std::optional<std::span<const uint32_t>> apiDynamicOffsets)

@@ -117,6 +117,7 @@ AccessMode defaultAccessModeForAddressSpace(AddressSpace addressSpace)
     case AddressSpace::Uniform:
     case AddressSpace::Storage:
     case AddressSpace::Handle:
+    case AddressSpace::Immediate:
         return AccessMode::Read;
     }
 }

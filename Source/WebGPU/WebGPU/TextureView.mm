@@ -189,7 +189,7 @@ bool TextureView::isDestroyed() const
 
 bool TextureView::isValid() const
 {
-    return m_texture || isDestroyed();
+    return static_cast<bool>(m_texture);
 }
 
 void TextureView::destroy()

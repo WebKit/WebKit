@@ -31,6 +31,7 @@
 #import "TextureView.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/MonotonicTime.h>
+#import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
@@ -277,6 +278,9 @@ void PresentationContextIOSurface::copyTextureToTexture(id<MTLTexture> destinati
 
 void PresentationContextIOSurface::configure(const WebGPU::CanvasConfiguration& configuration)
 {
+    auto clearExistingRenderBuffers = makeScopeExit([&] {
+        m_existingRenderBuffers.clear();
+    });
     Ref device = metal(configuration.device.get());
     m_renderBuffers.clear();
     m_inFlightFrames.clear();
@@ -479,11 +483,13 @@ void PresentationContextIOSurface::unconfigure()
 {
     m_ioSurfaces = nil;
     m_renderBuffers.clear();
+    m_existingRenderBuffers.clear();
     m_inFlightFrames.clear();
     m_maximumInFlightFrames = 0;
     m_lastDrainedFrameGPUCost = 0_s;
     m_lastFramePresentStall = 0_s;
     m_device = nullptr;
+    m_invalidTexture = nullptr;
 }
 
 void PresentationContextIOSurface::waitForInFlightFrameSlot()

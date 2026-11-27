@@ -29,7 +29,9 @@
 #include "AST.h"
 #include "ConstantFunctions.h"
 #include "WGSL.h"
+#include <mutex>
 #include <wtf/Borrow.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WGSL {
@@ -99,31 +101,51 @@ bool ShaderModule::containsOverride(const String& key) const
     return false;
 }
 
-void ShaderModule::initializeOverloads()
+static const HashMap<String, OverloadedDeclaration>& sharedOverloadedOperations()
 {
-    // This file contains the overloads generated from `TypeDeclarations.rb`
-    #include "TypeOverloads.h" // NOLINT
+    static LazyNeverDestroyed<HashMap<String, OverloadedDeclaration>> s_overloadedOperations;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        HashMap<String, OverloadedDeclaration> m_overloadedOperations;
+        // This file contains the overloads generated from `TypeDeclarations.rb`
+        #include "TypeOverloads.h" // NOLINT
+        auto& builtinTypes = TypeStore::sharedBuiltinTypes();
+        for (auto& entry : m_overloadedOperations) {
+            (void)entry.key.hash();
+            entry.value.overloads = entry.value.buildOverloads(builtinTypes);
+        }
+        s_overloadedOperations.construct(WTF::move(m_overloadedOperations));
+    });
+    return s_overloadedOperations.get();
 }
 
 const OverloadedDeclaration* ShaderModule::lookupOverload(const String& name) const
 {
-    auto it = m_overloadedOperations.find(name);
-    if (it == m_overloadedOperations.end())
+    const auto& operations = sharedOverloadedOperations();
+    auto it = operations.find(name);
+    if (it == operations.end())
         return nullptr;
     return &it->value;
 }
 
-const Vector<OverloadCandidate>& ShaderModule::overloadCandidates(const OverloadedDeclaration& declaration)
+const Vector<OverloadCandidate>& ShaderModule::overloadCandidates(const OverloadedDeclaration& declaration) const
 {
-    if (declaration.overloads.isEmpty())
-        declaration.overloads = declaration.buildOverloads(m_types);
     return declaration.overloads;
 }
 
-void ShaderModule::releaseOverloadCandidates()
+size_t ShaderModule::memoryFootprint() const
 {
-    for (auto& declaration : m_overloadedOperations.values())
-        declaration.overloads.clear();
+    size_t total = sizeof(ShaderModule);
+    total += m_astBuilder.memoryFootprint();
+    total += m_types.memoryFootprint();
+    total += m_declarations.capacity() * sizeof(void*);
+    total += m_directives.capacity() * sizeof(void*);
+    total += m_overrideValidations.capacity() * sizeof(OverrideValidator);
+    total += m_overrides.capacity() * sizeof(AST::Variable*);
+    total += m_pipelineOverrideIds.capacity() * sizeof(uint32_t);
+    if (m_callGraph)
+        total += m_callGraph->entrypoints().capacity() * sizeof(CallGraph::EntryPoint);
+    return total;
 }
 
 } // namespace WGSL

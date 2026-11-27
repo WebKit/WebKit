@@ -35,6 +35,7 @@
 #import "RenderBundle.h"
 #import "Sampler.h"
 #import "TextureView.h"
+#import <dlfcn.h>
 #import <ranges>
 #import <wtf/Borrow.h>
 #import <wtf/EnumeratedArray.h>
@@ -650,9 +651,46 @@ static id<MTLTexture> gbTextureFromRGB(id<MTLTexture> texture, bool alphaFirst, 
     return [texture newTextureViewWithPixelFormat:texture.pixelFormat textureType:texture.textureType levels:NSMakeRange(0, texture.mipmapLevelCount) slices:NSMakeRange(0, texture.arrayLength) swizzle:swizzle];
 }
 
-Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WebGPU::PredefinedColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
+Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef rawPixelBuffer, WebGPU::PredefinedColorSpace colorSpace, PremultiplyAlpha premultiplyAlpha) const
 {
 #if HAVE(COREVIDEO_METAL_SUPPORT)
+    RetainPtr<CVPixelBufferRef> conformedPixelBuffer = rawPixelBuffer;
+    if (rawPixelBuffer && CVPixelBufferGetPixelFormatType(rawPixelBuffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange && !adoptCF(CVBufferCopyAttachment(rawPixelBuffer, kCVImageBufferCleanApertureKey, nullptr))) {
+        RetainPtr yCbCrMatrix = adoptCF(CVBufferCopyAttachment(rawPixelBuffer, kCVImageBufferYCbCrMatrixKey, nullptr));
+        if (!yCbCrMatrix || !CFEqual(yCbCrMatrix.get(), kCVImageBufferYCbCrMatrix_SMPTE_240M_1995)) {
+            using VTPixelTransferSessionCreateFunc = OSStatus (*)(CFAllocatorRef, CFTypeRef*);
+            using VTSessionSetPropertyFunc = OSStatus (*)(CFTypeRef, CFStringRef, CFTypeRef);
+            using VTPixelTransferSessionTransferImageFunc = OSStatus (*)(CFTypeRef, CVPixelBufferRef, CVPixelBufferRef);
+            static VTPixelTransferSessionCreateFunc vtCreate = reinterpret_cast<VTPixelTransferSessionCreateFunc>(dlsym(RTLD_DEFAULT, "VTPixelTransferSessionCreate"));
+            static VTSessionSetPropertyFunc vtSetProp = reinterpret_cast<VTSessionSetPropertyFunc>(dlsym(RTLD_DEFAULT, "VTSessionSetProperty"));
+            static VTPixelTransferSessionTransferImageFunc vtTransfer = reinterpret_cast<VTPixelTransferSessionTransferImageFunc>(dlsym(RTLD_DEFAULT, "VTPixelTransferSessionTransferImage"));
+            if (vtCreate && vtSetProp && vtTransfer) {
+                CFTypeRef rawSession = nullptr;
+                if (vtCreate(kCFAllocatorDefault, &rawSession) == noErr && rawSession) {
+                    RetainPtr session = adoptCF(rawSession);
+                    vtSetProp(session.get(), CFSTR("ScalingMode"), CFSTR("Trim"));
+                    vtSetProp(session.get(), CFSTR("EnableHighSpeedTransfer"), kCFBooleanTrue);
+                    vtSetProp(session.get(), CFSTR("RealTime"), kCFBooleanTrue);
+                    NSDictionary *targetOptions = CVPixelBufferGetIOSurface(rawPixelBuffer) ? @{ (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ } } : nil;
+                    CVPixelBufferRef rawTarget = nullptr;
+                    if (CVPixelBufferCreate(kCFAllocatorDefault, CVPixelBufferGetWidth(rawPixelBuffer), CVPixelBufferGetHeight(rawPixelBuffer), kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef)targetOptions, &rawTarget) == kCVReturnSuccess && rawTarget) {
+                        RetainPtr targetBuffer = adoptCF(rawTarget);
+                        if (vtTransfer(session.get(), rawPixelBuffer, targetBuffer.get()) == noErr) {
+                            CVBufferSetAttachment(targetBuffer.get(), kCVImageBufferAlphaChannelIsOpaque, kCFBooleanTrue, kCVAttachmentMode_ShouldPropagate);
+                            if (RetainPtr primaries = adoptCF(CVBufferCopyAttachment(rawPixelBuffer, kCVImageBufferColorPrimariesKey, nullptr)))
+                                CVBufferSetAttachment(targetBuffer.get(), kCVImageBufferColorPrimariesKey, primaries.get(), kCVAttachmentMode_ShouldPropagate);
+                            if (RetainPtr transfer = adoptCF(CVBufferCopyAttachment(rawPixelBuffer, kCVImageBufferTransferFunctionKey, nullptr)))
+                                CVBufferSetAttachment(targetBuffer.get(), kCVImageBufferTransferFunctionKey, transfer.get(), kCVAttachmentMode_ShouldPropagate);
+                            conformedPixelBuffer = WTF::move(targetBuffer);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return [&](CVPixelBufferRef pixelBuffer) -> Device::ExternalTextureData {
+
     // colorMatrixBetweenPrimaries() is row-major, and Metal indexes a float3x3 by column.
     simd::float3x4 primariesConversionMatrix = simd::float3x4(0.f);
     if (auto matrix = primariesConversionMatrixForPixelBuffer(pixelBuffer, colorSpace)) {
@@ -797,8 +835,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     }
 
     return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix, primariesConversionMatrix };
+    }(conformedPixelBuffer.get());
 #else
-    UNUSED_PARAM(pixelBuffer);
+    UNUSED_PARAM(rawPixelBuffer);
     UNUSED_PARAM(colorSpace);
     UNUSED_PARAM(premultiplyAlpha);
     return { };
@@ -843,9 +882,10 @@ static const ExpectedType* hasBinding(const BindGroupLayout::EntriesContainer& b
     return std::get_if<ExpectedType>(&it->value.bindingLayout);
 }
 
-static bool is32bppFloatFormat(id<MTLTexture> t)
+static bool is32bppFloatFormat(WebGPU::TextureFormat format)
 {
-    return t.pixelFormat == MTLPixelFormatR32Float || t.pixelFormat == MTLPixelFormatRG32Float || t.pixelFormat == MTLPixelFormatRGBA32Float;
+    auto pixelFormat = Texture::pixelFormat(format);
+    return pixelFormat == MTLPixelFormatR32Float || pixelFormat == MTLPixelFormatRG32Float || pixelFormat == MTLPixelFormatRGBA32Float;
 }
 
 NODELETE static bool valid32bppFloatSampleType(WebGPU::TextureSampleType sampleType)
@@ -1092,27 +1132,9 @@ static const NSString* sampleType(const auto& apiTextureView, const Device& devi
     return result;
 }
 
-static bool validateTextureViewDimension(const auto* textureEntry, const auto& apiTextureView)
+NODELETE static bool validateTextureViewDimension(const auto* textureEntry, const auto& apiTextureView)
 {
-    if (!textureEntry)
-        return true;
-
-    WebGPU::TextureViewDimension viewDimension = textureEntry->viewDimension;
-    auto textureType = apiTextureView->texture().textureType;
-    switch (viewDimension) {
-    case WebGPU::TextureViewDimension::_1d:
-        return textureType == MTLTextureType1D;
-    case WebGPU::TextureViewDimension::_2d:
-        return textureType == MTLTextureType2D || textureType == MTLTextureType2DMultisample;
-    case WebGPU::TextureViewDimension::_2dArray:
-        return textureType == MTLTextureType2DArray || textureType == MTLTextureType2DMultisampleArray;
-    case WebGPU::TextureViewDimension::Cube:
-        return textureType == MTLTextureTypeCube;
-    case WebGPU::TextureViewDimension::CubeArray:
-        return textureType == MTLTextureTypeCubeArray;
-    case WebGPU::TextureViewDimension::_3d:
-        return textureType == MTLTextureType3D;
-    }
+    return !textureEntry || textureEntry->viewDimension == apiTextureView->viewDimension();
 }
 
 NODELETE static bool validateStorageTextureViewFormat(const BindGroupLayout::StorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
@@ -1197,72 +1219,71 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
     object.getQueue()->clearTextureViewIfNeeded(apiTextureView);
 
     id<MTLTexture> texture = (textureEntry && !externalTextureEntry) ? apiTextureView->sampledTexture() : apiTextureView->texture();
-    if (!apiTextureView->isDestroyed()) {
-        if (!apiTextureView->isValid()) {
-            VALIDATION_ERROR(@"Underlying texture is not valid");
-            return BindGroup::createInvalid(object);
-        }
-        if (&apiTextureView->device() != &object) {
-            VALIDATION_ERROR(@"Underlying texture was created from a different device");
-            return BindGroup::createInvalid(object);
-        }
-        auto textureUsage = apiTextureView->usage();
-        if ((textureEntry && !textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) || (storageTextureEntry && !textureUsage.contains(WebGPU::TextureUsage::StorageBinding))) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", static_cast<unsigned long long>(textureUsage.toRaw())]);
-            return BindGroup::createInvalid(object);
-        }
-        if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView->sampleCount())) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry multisampled(%d) state does not match underlying texture sample count(%d)", textureEntry->multisampled, apiTextureView->sampleCount()]);
-            return BindGroup::createInvalid(object);
-        }
-        if (!bindGroupLayout->isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, object)) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry sampleType(%@) does not match TextureView sampleType(%@) for texture format(%s)", sampleType(textureEntry), sampleType(apiTextureView, object), Texture::formatToString(apiTextureView->format()).characters()]);
-            return BindGroup::createInvalid(object);
-        }
-        if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
-            VALIDATION_ERROR(@"Bind group entry viewDimension does not match TextureView viewDimension");
-            return BindGroup::createInvalid(object);
-        }
-        if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
-            VALIDATION_ERROR(@"Bind group storage texture entry format does not match TextureView format");
-            return BindGroup::createInvalid(object);
-        }
-        if (storageTextureEntry && apiTextureView->hasSwizzle()) {
-            VALIDATION_ERROR(@"Storage textures must be bound through a view whose swizzle is \"rgba\"");
-            return BindGroup::createInvalid(object);
-        }
-        if (storageTextureEntry && apiTextureView->texture().mipmapLevelCount != 1) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Storage textures must have a single mip level(%lu)", static_cast<unsigned long>(apiTextureView->texture().mipmapLevelCount)]);
-            return BindGroup::createInvalid(object);
-        }
+    if (!apiTextureView->isValid()) {
+        VALIDATION_ERROR(@"Underlying texture is not valid");
+        return BindGroup::createInvalid(object);
+    }
+    if (&apiTextureView->device() != &object) {
+        VALIDATION_ERROR(@"Underlying texture was created from a different device");
+        return BindGroup::createInvalid(object);
+    }
+    auto textureUsage = apiTextureView->usage();
+    if ((textureEntry && !textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) || (storageTextureEntry && !textureUsage.contains(WebGPU::TextureUsage::StorageBinding))) {
+        VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", static_cast<unsigned long long>(textureUsage.toRaw())]);
+        return BindGroup::createInvalid(object);
+    }
+    if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView->sampleCount())) {
+        VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry multisampled(%d) state does not match underlying texture sample count(%d)", textureEntry->multisampled, apiTextureView->sampleCount()]);
+        return BindGroup::createInvalid(object);
+    }
+    if (!bindGroupLayout->isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, object)) {
+        VALIDATION_ERROR([NSString stringWithFormat:@"Bind group entry sampleType(%@) does not match TextureView sampleType(%@) for texture format(%s)", sampleType(textureEntry), sampleType(apiTextureView, object), Texture::formatToString(apiTextureView->format()).characters()]);
+        return BindGroup::createInvalid(object);
+    }
+    if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
+        VALIDATION_ERROR(@"Bind group entry viewDimension does not match TextureView viewDimension");
+        return BindGroup::createInvalid(object);
+    }
+    if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
+        VALIDATION_ERROR(@"Bind group storage texture entry format does not match TextureView format");
+        return BindGroup::createInvalid(object);
+    }
+    if (storageTextureEntry && apiTextureView->hasSwizzle()) {
+        VALIDATION_ERROR(@"Storage textures must be bound through a view whose swizzle is \"rgba\"");
+        return BindGroup::createInvalid(object);
+    }
+    if (storageTextureEntry && apiTextureView->mipLevelCount() != 1) {
+        VALIDATION_ERROR([NSString stringWithFormat:@"Storage textures must have a single mip level(%u)", apiTextureView->mipLevelCount()]);
+        return BindGroup::createInvalid(object);
+    }
 
-        if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WebGPU::TextureSampleType::Float && !object.hasFeature(WebGPU::FeatureName::Float32Filterable)))) {
-            VALIDATION_ERROR(@"Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled");
+    if (textureEntry && is32bppFloatFormat(apiTextureView->format()) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WebGPU::TextureSampleType::Float && !object.hasFeature(WebGPU::FeatureName::Float32Filterable)))) {
+        VALIDATION_ERROR(@"Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled");
+        return BindGroup::createInvalid(object);
+    }
+    if (externalTextureEntry) {
+        if (!textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) {
+            VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot which does not have usage containing texture binding.");
             return BindGroup::createInvalid(object);
         }
-        if (externalTextureEntry) {
-            if (!textureUsage.contains(WebGPU::TextureUsage::TextureBinding)) {
-                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot which does not have usage containing texture binding.");
-                return BindGroup::createInvalid(object);
-            }
-            if (!apiTextureView->is2DTexture()) {
-                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view is not a 2D texture.");
-                return BindGroup::createInvalid(object);
-            }
-            if (apiTextureView->mipLevelCount() != 1) {
-                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view has more than 1 mip level");
-                return BindGroup::createInvalid(object);
-            }
-            if (!allowedExternalTextureFormat(apiTextureView->format())) {
-                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which is not an allowed external texture format");
-                return BindGroup::createInvalid(object);
-            }
-            if (apiTextureView->sampleCount() != 1) {
-                VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which has a sample count greater than 1");
-                return BindGroup::createInvalid(object);
-            }
+        if (apiTextureView->viewDimension() != WebGPU::TextureViewDimension::_2d) {
+            VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view is not a 2D texture.");
+            return BindGroup::createInvalid(object);
         }
-    } else if (stage != ShaderStage::Undefined) {
+        if (apiTextureView->mipLevelCount() != 1) {
+            VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture slot when the texture view has more than 1 mip level");
+            return BindGroup::createInvalid(object);
+        }
+        if (!allowedExternalTextureFormat(apiTextureView->format())) {
+            VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which is not an allowed external texture format");
+            return BindGroup::createInvalid(object);
+        }
+        if (apiTextureView->sampleCount() != 1) {
+            VALIDATION_ERROR(@"Can not create bind group with a texture view set to an external texture which has a sample count greater than 1");
+            return BindGroup::createInvalid(object);
+        }
+    }
+    if (apiTextureView->isDestroyed() && stage != ShaderStage::Undefined) {
         argumentEncoder[stage] = nil;
         argumentBuffer[stage] = { };
     }
@@ -1657,10 +1678,6 @@ RefPtr<WebGPU::BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescrip
             }
         }
     }
-
-    argumentBuffer[ShaderStage::Vertex].label = bindGroupLayout->vertexArgumentEncoder().label;
-    argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout->fragmentArgumentEncoder().label;
-    argumentBuffer[ShaderStage::Compute].label = bindGroupLayout->computeArgumentEncoder().label;
 
     std::ranges::sort(dynamicBuffers, { }, &BindGroup::BufferAndType::bindingIndex);
 

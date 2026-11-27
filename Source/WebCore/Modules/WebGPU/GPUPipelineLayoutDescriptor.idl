@@ -25,8 +25,12 @@
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpupipelinelayoutdescriptor
 
+// https://bugs.webkit.org/show_bug.cgi?id=232548 These shouldn't need to be here.
+typedef [EnforceRange] unsigned long GPUSize32;
+
 [
     EnabledBySetting=WebGPUEnabled,
 ] dictionary GPUPipelineLayoutDescriptor : GPUObjectDescriptorBase {
     required sequence<GPUBindGroupLayout?> bindGroupLayouts;
+    GPUSize32 immediateSize = 0;
 };

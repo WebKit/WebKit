@@ -71,7 +71,8 @@ public:
             limits.maxStorageBuffersInFragmentStage,
             limits.maxStorageTexturesInFragmentStage,
             limits.maxStorageBuffersInVertexStage,
-            limits.maxStorageTexturesInVertexStage);
+            limits.maxStorageTexturesInVertexStage,
+            limits.maxImmediateSize);
     }
 
     static Ref<WebGPUSupportedLimits> create(
@@ -109,7 +110,8 @@ public:
         uint32_t maxStorageBuffersInFragmentStage,
         uint32_t maxStorageTexturesInFragmentStage,
         uint32_t maxStorageBuffersInVertexStage,
-        uint32_t maxStorageTexturesInVertexStage)
+        uint32_t maxStorageTexturesInVertexStage,
+        uint32_t maxImmediateSize)
     {
         return adoptRef(*new WebGPUSupportedLimits(
             maxTextureDimension1D,
@@ -146,7 +148,8 @@ public:
             maxStorageBuffersInFragmentStage,
             maxStorageTexturesInFragmentStage,
             maxStorageBuffersInVertexStage,
-            maxStorageTexturesInVertexStage));
+            maxStorageTexturesInVertexStage,
+            maxImmediateSize));
     }
 
     static Ref<WebGPUSupportedLimits> clone(const WebGPUSupportedLimits& limits)
@@ -186,7 +189,8 @@ public:
             limits.maxStorageBuffersInFragmentStage(),
             limits.maxStorageTexturesInFragmentStage(),
             limits.maxStorageBuffersInVertexStage(),
-            limits.maxStorageTexturesInVertexStage()));
+            limits.maxStorageTexturesInVertexStage(),
+            limits.maxImmediateSize()));
     }
 
     uint32_t maxTextureDimension1D() const { return m_maxTextureDimension1D; }
@@ -224,6 +228,7 @@ public:
     uint32_t maxStorageTexturesInFragmentStage() const { return m_maxStorageTexturesInFragmentStage; }
     uint32_t maxStorageBuffersInVertexStage() const { return m_maxStorageBuffersInVertexStage; }
     uint32_t maxStorageTexturesInVertexStage() const { return m_maxStorageTexturesInVertexStage; }
+    uint32_t maxImmediateSize() const { return m_maxImmediateSize; }
 
 private:
     WebGPUSupportedLimits(
@@ -261,7 +266,8 @@ private:
         uint32_t maxStorageBuffersInFragmentStage,
         uint32_t maxStorageTexturesInFragmentStage,
         uint32_t maxStorageBuffersInVertexStage,
-        uint32_t maxStorageTexturesInVertexStage)
+        uint32_t maxStorageTexturesInVertexStage,
+        uint32_t maxImmediateSize)
             : m_maxTextureDimension1D(maxTextureDimension1D)
             , m_maxTextureDimension2D(maxTextureDimension2D)
             , m_maxTextureDimension3D(maxTextureDimension3D)
@@ -297,6 +303,7 @@ private:
             , m_maxStorageTexturesInFragmentStage(maxStorageTexturesInFragmentStage)
             , m_maxStorageBuffersInVertexStage(maxStorageBuffersInVertexStage)
             , m_maxStorageTexturesInVertexStage(maxStorageTexturesInVertexStage)
+            , m_maxImmediateSize(maxImmediateSize)
     {
     }
 
@@ -340,6 +347,7 @@ private:
     uint32_t m_maxStorageTexturesInFragmentStage { 0 };
     uint32_t m_maxStorageBuffersInVertexStage { 0 };
     uint32_t m_maxStorageTexturesInVertexStage { 0 };
+    uint32_t m_maxImmediateSize { 0 };
 };
 
 } // namespace WebCore

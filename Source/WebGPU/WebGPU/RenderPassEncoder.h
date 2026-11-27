@@ -112,6 +112,7 @@ public:
     void drawIndirect(WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void drawIndexedIndirect(WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
+    void setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data) final;
     void end() final { endPass(); }
     void setLabel(String&&) final;
 
@@ -268,6 +269,10 @@ private:
     bool m_passEnded { false };
     bool m_encoderStateWasNotOpen { false };
     bool m_ignoreBufferCache { false };
+    std::array<uint8_t, maxSupportedImmediateSize> m_immediateData { };
+    uint64_t m_setImmediateSlots { 0 };
+    bool m_vertexImmediatesDirty { false };
+    bool m_fragmentImmediatesDirty { false };
     Vector<bool> m_bindGroupDynamicOffsetsChanged;
 
     // Scratch records whose lostOrOOBRead flag the pass checks once, from a single completion handler,

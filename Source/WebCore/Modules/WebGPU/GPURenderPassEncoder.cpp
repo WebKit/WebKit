@@ -36,6 +36,7 @@
 #include "GPURenderPipeline.h"
 #include "InspectorInstrumentation.h"
 #include <wtf/Borrow.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -194,6 +195,29 @@ ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPU
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
     protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
+    return { };
+}
+
+ExceptionOr<void> GPURenderPassEncoder::setImmediates(GPUSize32 rangeOffset, BufferSource&& data, GPUSize64 optionalDataOffset, std::optional<GPUSize64> optionalSize)
+{
+    auto elementSize = data.switchOn(
+        [&](const Ref<JSC::ArrayBufferView>& bufferView) {
+            return static_cast<GPUSize64>(JSC::elementSize(bufferView->getType()));
+        },
+        [&](const Ref<JSC::ArrayBuffer>&) {
+            return static_cast<GPUSize64>(1);
+        }
+    );
+    CheckedUint64 dataOffset = CheckedUint64 { elementSize } * optionalDataOffset;
+    size_t dataSize = data.byteLength();
+    if (dataOffset.hasOverflowed() || dataOffset.value() > dataSize)
+        return Exception { ExceptionCode::OperationError };
+    CheckedUint64 contentSize = optionalSize.has_value() ? (CheckedUint64 { elementSize } * optionalSize.value()) : CheckedUint64 { dataSize - dataOffset.value() };
+    CheckedUint64 endOffset = dataOffset + contentSize;
+    if (contentSize.hasOverflowed() || endOffset.hasOverflowed() || endOffset.value() > dataSize || (contentSize.value() % 4))
+        return Exception { ExceptionCode::OperationError };
+
+    protect(backing())->setImmediates(rangeOffset, data.span().subspan(dataOffset.value(), contentSize.value()));
     return { };
 }
 

@@ -30,6 +30,7 @@
 #include "ASTVisitor.h"
 #include "Constraints.h"
 #include "WGSLShaderModule.h"
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
@@ -55,6 +56,7 @@ public:
     void visit(AST::Continuing&) override;
     void visit(AST::SwitchStatement&) override;
     void visit(AST::IfStatement&) override;
+    void visit(AST::CallExpression&) override;
 
 private:
     bool parseBuiltin(AST::Function*, std::optional<Builtin>&, AST::Attribute&);
@@ -68,6 +70,8 @@ private:
     void validateBlendSrc(AST::Structure&);
 
     void validateAlignment(const SourceSpan&, AddressSpace, const Type*);
+    bool validateConstBufferViewCheck(std::optional<unsigned> fixedBufferSize, const ShaderModule::BufferViewCheck&);
+    AST::Expression& unwrapBufferPointer(AST::Expression&);
 
     template<typename T>
     void update(const SourceSpan&, std::optional<T>&, const T&);
@@ -77,6 +81,10 @@ private:
     void error(const SourceSpan&, Arguments&&...);
 
     AST::Function* m_currentFunction { nullptr };
+    HashMap<String, AST::Variable*> m_globalVarsByName;
+    HashMap<String, AST::Function*> m_functionsByName;
+    HashMap<String, unsigned> m_currentParameterIndices;
+    HashMap<String, AST::Expression*> m_localPointerInitializers;
     ShaderModule& m_shaderModule;
     bool m_hasSizeOrAlignmentAttributes { false };
 };
@@ -88,6 +96,13 @@ AttributeValidator::AttributeValidator(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> AttributeValidator::validate()
 {
+    for (auto& declaration : m_shaderModule.declarations()) {
+        if (auto* var = dynamicDowncast<AST::Variable>(declaration))
+            m_globalVarsByName.add(var->name().id(), var);
+        else if (auto* fn = dynamicDowncast<AST::Function>(declaration))
+            m_functionsByName.add(fn->name().id(), fn);
+    }
+
     AST::Visitor::visit(m_shaderModule);
 
     if (!hasError()) [[likely]]
@@ -197,7 +212,13 @@ void AttributeValidator::visit(AST::Function& function)
     }
 
     m_currentFunction = &function;
+    m_currentParameterIndices.clear();
+    m_localPointerInitializers.clear();
+    for (unsigned i = 0; i < function.parameters().size(); ++i)
+        m_currentParameterIndices.add(function.parameters()[i].name().id(), i);
     AST::Visitor::visit(function);
+    m_currentParameterIndices.clear();
+    m_localPointerInitializers.clear();
     m_currentFunction = nullptr;
 }
 
@@ -246,6 +267,7 @@ void AttributeValidator::visit(AST::Variable& variable)
         case AddressSpace::Uniform:
             return true;
         case AddressSpace::Function:
+        case AddressSpace::Immediate:
         case AddressSpace::Private:
         case AddressSpace::Workgroup:
             return false;
@@ -343,27 +365,29 @@ void AttributeValidator::visit(AST::Variable& variable)
         return;
     }
 
-    if (isResource)
+    if (isResource || variable.addressSpace() == AddressSpace::Immediate)
         validateAlignment(variable.span(), *variable.addressSpace(), variable.storeType());
+    if (hasError()) [[unlikely]]
+        return;
+
+    if (auto* initializer = variable.maybeInitializer()) {
+        AST::Visitor::visit(*initializer);
+        if (hasError()) [[unlikely]]
+            return;
+        if (m_currentFunction && variable.flavor() == AST::VariableFlavor::Let && variable.storeType() && std::holds_alternative<Types::Pointer>(*variable.storeType()))
+            m_localPointerInitializers.set(variable.name().id(), initializer);
+    }
 }
 
 void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace addressSpace, const Type* type)
 {
     const auto& requiredAlignment = [&](const Type* type) {
-        auto alignment = type->alignment();
-        if (addressSpace == AddressSpace::Uniform && (std::holds_alternative<Types::Array>(*type) || std::holds_alternative<Types::Struct>(*type)))
-            alignment = WTF::roundUpToMultipleOf(16, alignment);
-        return alignment;
+        return type->alignment();
     };
 
     if (auto* arrayType = std::get_if<Types::Array>(type)) {
         if (arrayType->stride() % requiredAlignment(arrayType->element)) [[unlikely]] {
             error(span, "array must have a stride multiple of "_s, String::number(requiredAlignment(arrayType->element)), " bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
-            return;
-        }
-
-        if (addressSpace == AddressSpace::Uniform && (arrayType->stride() % 16)) [[unlikely]] {
-            error(span, "arrays in the uniform address space must have a stride multiple of 16 bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
             return;
         }
 
@@ -386,16 +410,6 @@ void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace 
             if (member.offset() % requiredAlignment(type)) [[unlikely]] {
                 error(member.span(), "offset of struct member "_s, structure.name(), "::"_s, member.name(), " must be a multiple of "_s, String::number(requiredAlignment(type)), " bytes, but its offset is "_s, String::number(member.offset()), " bytes"_s);
                 return;
-            }
-
-            if (addressSpace == AddressSpace::Uniform && std::holds_alternative<Types::Struct>(*type) && (i + 1) < memberCount) {
-                auto& nextMember = structure.members()[i + 1];
-                auto spaceBetweenMembers = nextMember.offset() - member.offset();
-                auto minimumNumberOfBytes = WTF::roundUpToMultipleOf(16, type->size());
-                if (spaceBetweenMembers < minimumNumberOfBytes) [[unlikely]] {
-                    error(member.span(), "uniform address space requires that the number of bytes between "_s, structure.name(), "::"_s, member.name(), " and "_s, structure.name(), "::"_s, nextMember.name(), " must be at least "_s, String::number(minimumNumberOfBytes), " bytes, but it is "_s, String::number(spaceBetweenMembers), " bytes"_s);
-                    return;
-                }
             }
         }
 
@@ -652,7 +666,219 @@ void AttributeValidator::visit(AST::CompoundStatement& statement)
         return;
     }
 
+    auto savedPointers = m_localPointerInitializers;
     AST::Visitor::visit(statement);
+    m_localPointerInitializers = WTF::move(savedPointers);
+}
+
+AST::Expression& AttributeValidator::unwrapBufferPointer(AST::Expression& expr)
+{
+    AST::Expression* current = &expr;
+    while (true) {
+        if (auto* identity = dynamicDowncast<AST::IdentityExpression>(*current)) {
+            current = &identity->expression();
+            continue;
+        }
+        if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(*current)) {
+            if (auto it = m_localPointerInitializers.find(ident->identifier().id()); it != m_localPointerInitializers.end()) {
+                current = it->value;
+                continue;
+            }
+        }
+        break;
+    }
+    return *current;
+}
+
+bool AttributeValidator::validateConstBufferViewCheck(std::optional<unsigned> fixedBufferSize, const ShaderModule::BufferViewCheck& check)
+{
+    if (fixedBufferSize && *fixedBufferSize < check.minBytes) [[unlikely]] {
+        error(check.span, "buffer size ("_s, *fixedBufferSize, ") is smaller than minimum view size ("_s, check.minBytes, ')');
+        return false;
+    }
+
+    std::optional<uint64_t> constOffset;
+    if (check.offsetExpr && check.offsetExpr->constantValue().has_value()) {
+        int64_t rawOffset = check.offsetExpr->constantValue()->integerValue();
+        if (rawOffset < 0 || rawOffset > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
+            error(check.span, "buffer view offset ("_s, rawOffset, ") is out of range"_s);
+            return false;
+        }
+        uint64_t uOffset = static_cast<uint64_t>(rawOffset);
+        if (uOffset % check.requiredAlign) [[unlikely]] {
+            error(check.span, "buffer view offset ("_s, uOffset, ") must be a multiple of "_s, check.requiredAlign);
+            return false;
+        }
+        if (uOffset + check.minBytes > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
+            error(check.span, "buffer view offset + type size overflows u32"_s);
+            return false;
+        }
+        if (fixedBufferSize && uOffset + check.minBytes > *fixedBufferSize) [[unlikely]] {
+            error(check.span, "buffer view offset + type size exceeds buffer size"_s);
+            return false;
+        }
+        constOffset = uOffset;
+    }
+
+    if (check.isArrayView && check.sizeExpr && check.sizeExpr->constantValue().has_value()) {
+        int64_t rawSize = check.sizeExpr->constantValue()->integerValue();
+        if (rawSize < static_cast<int64_t>(check.minBytes) || rawSize > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
+            error(check.span, "bufferArrayView size ("_s, rawSize, ") is smaller than minimum view size ("_s, check.minBytes, ')');
+            return false;
+        }
+        uint64_t uSize = static_cast<uint64_t>(rawSize);
+        if ((uSize - check.arrayOffset) % check.arrayStride) [[unlikely]] {
+            error(check.span, "bufferArrayView trailing array byte size must be a multiple of stride ("_s, check.arrayStride, ')');
+            return false;
+        }
+        if (fixedBufferSize && uSize > *fixedBufferSize) [[unlikely]] {
+            error(check.span, "bufferArrayView size exceeds buffer size"_s);
+            return false;
+        }
+        if (constOffset) {
+            if (*constOffset + uSize > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
+                error(check.span, "bufferArrayView offset + size overflows u32"_s);
+                return false;
+            }
+            if (fixedBufferSize && *constOffset + uSize > *fixedBufferSize) [[unlikely]] {
+                error(check.span, "bufferArrayView offset + size exceeds buffer size"_s);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void AttributeValidator::visit(AST::CallExpression& call)
+{
+    AST::Visitor::visit(call);
+    if (hasError() || !m_currentFunction) [[unlikely]]
+        return;
+
+    if (auto* elaborated = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target())) {
+        if (elaborated->base() == "bufferView"_s || elaborated->base() == "bufferArrayView"_s) {
+            bool isArrayView = elaborated->base() == "bufferArrayView"_s;
+            const Type* viewType = elaborated->arguments()[0].inferredType();
+            const auto& returnPtr = std::get<Types::Pointer>(*call.inferredType());
+
+            validateAlignment(call.span(), returnPtr.addressSpace, viewType);
+            if (hasError()) [[unlikely]]
+                return;
+
+            unsigned arrayOffset = 0;
+            unsigned arrayStride = 0;
+            if (isArrayView) {
+                if (auto* arr = std::get_if<Types::Array>(viewType))
+                    arrayStride = arr->stride();
+                else {
+                    auto& st = std::get<Types::Struct>(*viewType);
+                    auto& last = st.structure.members().last();
+                    arrayOffset = last.offset();
+                    arrayStride = std::get<Types::Array>(*last.type().inferredType()).stride();
+                }
+            }
+
+            ShaderModule::BufferViewCheck check {
+                .minBytes = viewType->minBufferViewSize(),
+                .requiredAlign = viewType->alignment(),
+                .arrayOffset = arrayOffset,
+                .arrayStride = arrayStride,
+                .isArrayView = isArrayView,
+                .offsetExpr = &call.arguments()[1],
+                .sizeExpr = isArrayView ? &call.arguments()[2] : nullptr,
+                .span = call.span(),
+            };
+
+            if (!validateConstBufferViewCheck(std::nullopt, check))
+                return;
+
+            auto extractBufferType = [](AST::Expression& expr) -> const Types::Buffer* {
+                if (auto* unary = dynamicDowncast<AST::UnaryExpression>(expr); unary && unary->operation() == AST::UnaryOperation::AddressOf) {
+                    if (auto* ref = std::get_if<Types::Reference>(unary->expression().inferredType())) {
+                        if (auto* buf = std::get_if<Types::Buffer>(ref->element))
+                            return buf;
+                    }
+                }
+                if (auto* ptr = std::get_if<Types::Pointer>(expr.inferredType()))
+                    return std::get_if<Types::Buffer>(ptr->element);
+                return nullptr;
+            };
+
+            AST::Expression& bufPtr = unwrapBufferPointer(call.arguments()[0]);
+            const auto* bufTypePtr = extractBufferType(bufPtr);
+            RELEASE_ASSERT(bufTypePtr);
+            const auto& bufType = *bufTypePtr;
+
+            if (bufType.isCreationFixed()) {
+                unsigned fixedSize = std::get<unsigned>(bufType.size);
+                if (!validateConstBufferViewCheck(fixedSize, check))
+                    return;
+                m_shaderModule.addResolvedBufferViewCheck(m_currentFunction, { fixedSize, nullptr, check });
+            } else if (bufType.isOverrideSized())
+                m_shaderModule.addResolvedBufferViewCheck(m_currentFunction, { std::nullopt, std::get<AST::Expression*>(bufType.size), check });
+            else {
+                m_shaderModule.addResolvedBufferViewCheck(m_currentFunction, { std::nullopt, nullptr, check });
+                if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(bufPtr)) {
+                    if (auto paramIt = m_currentParameterIndices.find(ident->identifier().id()); paramIt != m_currentParameterIndices.end())
+                        m_shaderModule.addParamBufferViewCheck(m_currentFunction, { paramIt->value, check });
+                } else if (auto* unary = dynamicDowncast<AST::UnaryExpression>(bufPtr); unary && unary->operation() == AST::UnaryOperation::AddressOf) {
+                    if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(unary->expression())) {
+                        if (auto globalIt = m_globalVarsByName.find(ident->identifier().id()); globalIt != m_globalVarsByName.end())
+                            m_shaderModule.addUnsizedBufferMinSize(m_currentFunction, globalIt->value, check.minBytes);
+                    }
+                }
+            }
+            return;
+        }
+    }
+
+    if (auto* identTarget = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
+        if (auto fnIt = m_functionsByName.find(identTarget->identifier().id()); fnIt != m_functionsByName.end()) {
+            AST::Function* callee = fnIt->value;
+            if (const auto* paramChecks = m_shaderModule.paramBufferViewChecks(callee)) {
+                auto extractBufferType = [](AST::Expression& expr) -> const Types::Buffer* {
+                    if (auto* unary = dynamicDowncast<AST::UnaryExpression>(expr); unary && unary->operation() == AST::UnaryOperation::AddressOf) {
+                        if (auto* ref = std::get_if<Types::Reference>(unary->expression().inferredType())) {
+                            if (auto* buf = std::get_if<Types::Buffer>(ref->element))
+                                return buf;
+                        }
+                    }
+                    if (auto* ptr = std::get_if<Types::Pointer>(expr.inferredType()))
+                        return std::get_if<Types::Buffer>(ptr->element);
+                    return nullptr;
+                };
+                auto checks = *paramChecks;
+                for (const auto& paramCheck : borrow(checks)) {
+                    if (paramCheck.parameterIndex >= call.arguments().size())
+                        continue;
+                    AST::Expression& arg = unwrapBufferPointer(call.arguments()[paramCheck.parameterIndex]);
+                    const auto* argBufType = extractBufferType(arg);
+                    if (!argBufType)
+                        continue;
+
+                    if (argBufType->isCreationFixed()) {
+                        unsigned fixedSize = std::get<unsigned>(argBufType->size);
+                        if (!validateConstBufferViewCheck(fixedSize, paramCheck.check))
+                            return;
+                        m_shaderModule.addResolvedBufferViewCheck(m_currentFunction, { fixedSize, nullptr, paramCheck.check });
+                    } else if (argBufType->isOverrideSized())
+                        m_shaderModule.addResolvedBufferViewCheck(m_currentFunction, { std::nullopt, std::get<AST::Expression*>(argBufType->size), paramCheck.check });
+                    else {
+                        if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(arg)) {
+                            if (auto callerParamIt = m_currentParameterIndices.find(ident->identifier().id()); callerParamIt != m_currentParameterIndices.end())
+                                m_shaderModule.addParamBufferViewCheck(m_currentFunction, { callerParamIt->value, paramCheck.check });
+                        } else if (auto* unary = dynamicDowncast<AST::UnaryExpression>(arg); unary && unary->operation() == AST::UnaryOperation::AddressOf) {
+                            if (auto* ident = dynamicDowncast<AST::IdentifierExpression>(unary->expression())) {
+                                if (auto globalIt = m_globalVarsByName.find(ident->identifier().id()); globalIt != m_globalVarsByName.end())
+                                    m_shaderModule.addUnsizedBufferMinSize(m_currentFunction, globalIt->value, paramCheck.check.minBytes);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void AttributeValidator::visit(AST::ForStatement& statement)

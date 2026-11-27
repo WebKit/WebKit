@@ -133,6 +133,7 @@ public:
     NODELETE uint32_t mipLevelCount() const final { return m_mipLevelCount; }
     NODELETE uint32_t sampleCount() const final { return m_sampleCount; }
     NODELETE WebGPU::TextureDimension dimension() const final;
+    NODELETE WebGPU::TextureViewDimension viewDimension() const;
     // Invalid textures may have no format. format() then reports an arbitrary one, which only the
     // validation that rejects the texture sees.
     NODELETE WebGPU::TextureFormat format() const;

@@ -45,6 +45,7 @@ public:
         Vector = 1,
         Matrix,
         Array,
+        Buffer,
         Texture,
         TextureStorage,
         Reference,
@@ -60,13 +61,23 @@ public:
     template<typename Key>
     void insert(const Key&, const Type*);
 
+    size_t size() const { return m_insertedKeys.size(); }
+    void shrink(size_t targetSize)
+    {
+        while (m_insertedKeys.size() > targetSize)
+            m_storage.remove(m_insertedKeys.takeLast());
+    }
+    size_t memoryFootprint() const { return m_storage.capacity() * (sizeof(EncodedKey) + sizeof(const Type*)) + m_insertedKeys.capacity() * sizeof(EncodedKey); }
+
 private:
     HashMap<EncodedKey, const Type*> m_storage;
+    WTF::Vector<EncodedKey> m_insertedKeys;
 };
 
 class TypeStore {
 public:
     TypeStore();
+    static TypeStore& sharedBuiltinTypes();
 
     const Type* voidType() const { return m_void; }
     const Type* boolType() const { return m_bool; }
@@ -93,6 +104,7 @@ public:
 
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, Types::Array::Size);
+    const Type* bufferType(Types::Buffer::Size = std::monostate { });
     const Type* vectorType(uint8_t, const Type*);
     const Type* matrixType(uint8_t columns, uint8_t rows, const Type*);
     const Type* textureType(Types::Texture::Kind, const Type*);
@@ -101,17 +113,32 @@ public:
     const Type* referenceType(AddressSpace, const Type*, AccessMode, bool isVectorComponent = false);
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
     NODELETE const Type* atomicType(const Type*);
-    const Type* typeConstructorType(ASCIILiteral, std::function<Result<const Type*>(AST::ElaboratedTypeExpression&)>&&);
+    const Type* typeConstructorType(ASCIILiteral, std::function<Result<const Type*>(TypeChecker&, AST::ElaboratedTypeExpression&)>&&);
     const Type* frexpResultType(const Type*, const Type*);
     const Type* modfResultType(const Type*, const Type*);
     const Type* atomicCompareExchangeResultType(const Type*);
+    std::pair<size_t, size_t> currentState() const { return { m_types.size(), m_cache.size() }; }
+    void restoreState(size_t typesSize, size_t cacheSize)
+    {
+        m_cache.shrink(cacheSize);
+        m_types.shrink(typesSize);
+    }
+    size_t memoryFootprint() const;
 
 private:
+    friend class WTF::LazyNeverDestroyed<TypeStore>;
+    enum ConstructSharedBuiltinsTag { ConstructSharedBuiltins };
+    explicit TypeStore(ConstructSharedBuiltinsTag);
+
     template<typename TypeKind, typename... Arguments>
     const Type* allocateType(Arguments&&...);
 
-    Vector<std::unique_ptr<const Type>> m_types;
+    WTF::Vector<std::unique_ptr<const Type>> m_types;
     TypeCache m_cache;
+    bool m_isSharedStore { false };
+#if ASSERT_ENABLED
+    bool m_readOnly { false };
+#endif
 
     const Type* m_abstractInt;
     const Type* m_abstractFloat;

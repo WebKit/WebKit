@@ -35,6 +35,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCppAPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
@@ -149,6 +150,11 @@ void RemoteRenderBundleEncoder::setBindGroup(uint32_t index, std::optional<WebGP
         return;
 
     protect(m_backing)->setBindGroup(index, convertedBindGroup.get(), dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
+}
+
+void RemoteRenderBundleEncoder::setImmediates(uint32_t rangeOffset, Vector<uint32_t>&& data)
+{
+    protect(m_backing)->setImmediates(rangeOffset, asByteSpan(borrow(data)->span()));
 }
 
 void RemoteRenderBundleEncoder::pushDebugGroup(String&& groupLabel)

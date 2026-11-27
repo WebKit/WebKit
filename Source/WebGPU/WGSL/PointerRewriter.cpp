@@ -90,6 +90,39 @@ void PointerRewriter::visit(AST::CompoundStatement& statement)
     rewrite(statement.statements());
 }
 
+static bool involvesBuffer(AST::Expression& expr)
+{
+    if (const Type* t = expr.inferredType()) {
+        if (std::holds_alternative<Types::Buffer>(*t))
+            return true;
+        if (auto* ref = std::get_if<Types::Reference>(t); ref && std::holds_alternative<Types::Buffer>(*ref->element))
+            return true;
+        if (auto* ptr = std::get_if<Types::Pointer>(t); ptr && std::holds_alternative<Types::Buffer>(*ptr->element))
+            return true;
+    }
+    if (auto* identity = dynamicDowncast<AST::IdentityExpression>(expr))
+        return involvesBuffer(identity->expression());
+    if (auto* unary = dynamicDowncast<AST::UnaryExpression>(expr))
+        return involvesBuffer(unary->expression());
+    if (auto* deref = dynamicDowncast<AST::PointerDereferenceExpression>(expr))
+        return involvesBuffer(deref->target());
+    if (auto* field = dynamicDowncast<AST::FieldAccessExpression>(expr))
+        return involvesBuffer(field->base());
+    if (auto* index = dynamicDowncast<AST::IndexAccessExpression>(expr))
+        return involvesBuffer(index->base()) || involvesBuffer(index->index());
+    if (auto* call = dynamicDowncast<AST::CallExpression>(expr)) {
+        if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call->target())) {
+            if (target->base() == "bufferView"_s || target->base() == "bufferArrayView"_s)
+                return true;
+        }
+        for (auto& arg : call->arguments()) {
+            if (involvesBuffer(arg))
+                return true;
+        }
+    }
+    return false;
+}
+
 void PointerRewriter::visit(AST::VariableStatement& statement)
 {
     Base::visit(statement);
@@ -101,23 +134,29 @@ void PointerRewriter::visit(AST::VariableStatement& statement)
         return;
     }
 
-    auto* pointerType = std::get_if<Types::Pointer>(initializer->inferredType());
-    if (!pointerType) {
+    auto* initType = initializer->inferredType();
+    bool isPointer = std::holds_alternative<Types::Pointer>(*initType);
+    bool isHandle = initType->isTexture() || initType->isSampler();
+    if (!isPointer && !isHandle) {
         introduceVariable(variable.name(), nullptr);
         return;
     }
 
     introduceVariable(variable.name(), initializer);
+    if (isHandle || involvesBuffer(*initializer)) {
+        auto& phony = m_shaderModule.astBuilder().construct<AST::PhonyAssignmentStatement>(statement.span(), *initializer);
+        m_shaderModule.replace(statement, phony);
+        return;
+    }
     m_indicesToDelete.append(m_currentStatementIndex);
 }
 
 void PointerRewriter::visit(AST::PhonyAssignmentStatement& statement)
 {
+    Base::visit(statement);
     auto* pointerType = std::get_if<Types::Pointer>(statement.rhs().inferredType());
-    if (!pointerType) {
-        AST::Visitor::visit(statement);
+    if (!pointerType || involvesBuffer(statement.rhs()))
         return;
-    }
     m_indicesToDelete.append(m_currentStatementIndex);
 }
 

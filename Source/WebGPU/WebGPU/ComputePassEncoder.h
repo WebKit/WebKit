@@ -90,6 +90,7 @@ public:
     void dispatchIndirect(const WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset) final;
     void end() final { endPass(); }
     void setBindGroup(uint32_t groupIndex, const WebGPU::BindGroup*, std::optional<std::span<const uint32_t>> dynamicOffsets) final;
+    void setImmediates(uint32_t rangeOffset, std::span<const uint8_t> data) final;
     void setLabel(String&&) final;
 
     Device& device() const { return m_device; }
@@ -122,6 +123,9 @@ private:
     RefPtr<const ComputePipeline> m_pipeline;
     const Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>> m_bindGroupDynamicOffsets;
+    std::array<uint8_t, maxSupportedImmediateSize> m_immediateData { };
+    uint64_t m_setImmediateSlots { 0 };
+    bool m_immediatesDirty { false };
     HashMap<uint32_t, Vector<const BindableResources*>> m_bindGroupResources;
     HashMap<uint32_t, Ref<const BindGroup>> m_bindGroups;
     std::array<uint32_t, 32> m_maxDynamicOffsetAtIndex;

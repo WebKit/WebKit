@@ -109,6 +109,7 @@ public:
     NODELETE uint32_t arrayLayerCount() const;
     NODELETE uint32_t baseArrayLayer() const;
     NODELETE WebGPU::TextureViewDimension dimension() const;
+    NODELETE WebGPU::TextureViewDimension viewDimension() const { return dimension(); }
     const std::optional<WebGPU::TextureViewDimension>& optionalDimension() const { return m_dimension; }
     NODELETE bool isDestroyed() const;
     void destroy();

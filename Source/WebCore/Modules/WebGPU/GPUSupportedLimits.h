@@ -71,6 +71,7 @@ public:
     NODELETE uint32_t maxStorageTexturesInFragmentStage() const;
     NODELETE uint32_t maxStorageBuffersInVertexStage() const;
     NODELETE uint32_t maxStorageTexturesInVertexStage() const;
+    NODELETE uint32_t maxImmediateSize() const;
 
     WebGPUSupportedLimits& backing() LIFETIME_BOUND { return m_backing; }
     const WebGPUSupportedLimits& backing() const LIFETIME_BOUND { return m_backing; }
