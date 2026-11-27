@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
+<!DOCTYPE html>
+<title>template for: mutation events after the patch target moved cross-document do not re-enter the parser</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+test((t) => {
+  const outerIframe = document.createElement("iframe");
+  document.body.appendChild(outerIframe);
+  t.add_cleanup(() => outerIframe.remove());
+
+  const doc = outerIframe.contentDocument;
+  doc.open();
+  doc.write(`<div id="target"><?start name="p">old<?end></div>`);
+  doc.write(`<template for="p">A`);
+
+  // The target now lives in this document, while `doc` is still parsing.
+  const target = doc.getElementById("target");
+  document.body.append(target);
+  t.add_cleanup(() => target.remove());
+
+  let sawRemoval = false;
+  document.addEventListener("DOMNodeRemoved", t.step_func((event) => {
+    if (event.target.nodeType !== Node.PROCESSING_INSTRUCTION_NODE)
+      return;
+    sawRemoval = true;
+    assert_throws_dom("InvalidStateError", outerIframe.contentWindow.DOMException, () => {
+      doc.write("<p>Hi");
+    });
+  }), { once: true });
+
+  doc.write(`</template>`);
+  doc.close();
+
+  assert_true(sawRemoval, "DOMNodeRemoved should have fired for the marker");
+  assert_equals(target.textContent, "A");
+}, "document.write() from DOMNodeRemoved for a marker in a moved target throws InvalidStateError");
+
+test((t) => {
+  const outerIframe = document.createElement("iframe");
+  document.body.appendChild(outerIframe);
+  t.add_cleanup(() => outerIframe.remove());
+
+  const doc = outerIframe.contentDocument;
+  doc.open();
+  doc.write(`<div id="target"><?start name="outer">old<?end></div>`);
+  doc.write(`<template for="outer">before<?start name="inner">mid<?end>after`);
+
+  // A nested patch finds its scope through the outer template's insertion
+  // target, so it follows the target into this document.
+  const target = doc.getElementById("target");
+  document.body.append(target);
+  t.add_cleanup(() => target.remove());
+
+  let sawRemoval = false;
+  document.addEventListener("DOMNodeRemoved", t.step_func((event) => {
+    if (event.target.nodeType !== Node.TEXT_NODE || event.target.data !== "mid")
+      return;
+    sawRemoval = true;
+    assert_throws_dom("InvalidStateError", outerIframe.contentWindow.DOMException, () => {
+      doc.write("<p>Hi");
+    });
+  }), { once: true });
+
+  doc.write(`<template for="inner">New</template></template>`);
+  doc.close();
+
+  assert_true(sawRemoval, "DOMNodeRemoved should have fired for the replaced content");
+  assert_equals(target.textContent, "beforeNewafter");
+}, "document.write() from DOMNodeRemoved for replaced content in a moved target throws InvalidStateError");
+</script>
+</body>

@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>HTML partial updates - mutating a marker's name before the patch</title>
+<link rel="help" href="https://github.com/WICG/declarative-partial-updates" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="target"><?marker name="old-name"?></div>
+<script>
+  window.marker = Array.from(document.querySelector("#target").childNodes).find((node) => node.nodeType === Node.PROCESSING_INSTRUCTION_NODE);
+  marker.data = 'name="new-name"';
+</script>
+<template for="old-name">old name content</template>
+<template for="new-name">new name content</template>
+<script>
+  test(() => {
+    assert_equals(document.querySelector("#target").textContent, "new name content", "the marker is found under its mutated name, not the original one");
+  }, "Mutating a marker's data re-targets patches to the new name");
+</script>
+<div id="target2"><?marker name="was-named"?></div>
+<script>
+  window.marker2 = Array.from(document.querySelector("#target2").childNodes).find((node) => node.nodeType === Node.PROCESSING_INSTRUCTION_NODE);
+  marker2.data = "no pseudo attributes here";
+</script>
+<template for="was-named">should not appear</template>
+<script>
+  test(() => {
+    assert_equals(document.querySelector("#target2").textContent, "", "a marker whose name was removed is not a patch target");
+  }, "Clearing a marker's name makes it unreachable");
+</script>

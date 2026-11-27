@@ -1727,6 +1727,12 @@ public:
     Document* templateDocumentHost() { return m_templateDocumentHost.get(); }
     bool isTemplateDocument() const { return !!m_templateDocumentHost; }
 
+    // Index of <?marker?> and <?start?> processing instructions by name, so
+    // <template for> target resolution does not walk the patch scope's subtree.
+    void addPatchMarker(const AtomString& name, ProcessingInstruction&);
+    void removePatchMarker(const AtomString& name, ProcessingInstruction&);
+    RefPtr<ProcessingInstruction> firstPatchMarkerInScope(const AtomString& name, const ContainerNode& scope) const;
+
     Ref<DocumentFragment> documentFragmentForInnerOuterHTML();
 
     void didAssociateFormControl(Element&);
@@ -2694,6 +2700,8 @@ private:
 
     const RefPtr<Document> m_templateDocument;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
+
+    HashMap<AtomString, Vector<WeakPtr<ProcessingInstruction, WeakPtrImplWithEventTargetData>>> m_patchMarkersByName;
 
     RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
 

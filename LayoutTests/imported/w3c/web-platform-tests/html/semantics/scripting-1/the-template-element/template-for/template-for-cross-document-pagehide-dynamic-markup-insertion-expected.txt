@@ -1,0 +1,6 @@
+
+PASS document.open() in pagehide throws InvalidStateError when the patch target moved to another document
+PASS document.write() in pagehide throws InvalidStateError when the patch target moved to another document
+PASS document.writeln() in pagehide throws InvalidStateError when the patch target moved to another document
+PASS document.close() in pagehide throws InvalidStateError when the patch target moved to another document
+

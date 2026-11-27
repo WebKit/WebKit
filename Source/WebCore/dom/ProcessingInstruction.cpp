@@ -53,8 +53,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessingInstruction);
 
+OptionSet<Node::TypeFlag> ProcessingInstruction::typeFlagsForTarget(const AtomString& target)
+{
+    // Patch markers need didMoveToNewDocument() so the patch marker index
+    // follows them across document adoption.
+    if (target == "marker"_s || target == "start"_s)
+        return { TypeFlag::HasDidMoveToNewDocument };
+    return { };
+}
+
 inline ProcessingInstruction::ProcessingInstruction(Document& document, AtomString target, String data)
-    : CharacterData(document, WTF::move(data), NodeType::ProcessingInstruction)
+    : CharacterData(document, WTF::move(data), NodeType::ProcessingInstruction, typeFlagsForTarget(target))
     , m_target(target.releaseString())
 {
 }
@@ -322,6 +331,39 @@ void ProcessingInstruction::setDataAndUpdate(const String& newData, unsigned off
     if (!std::exchange(m_updatingDataFromAttributes, false))
         m_attributesDirty = true;
     CharacterData::setDataAndUpdate(newData, offsetOfReplacedData, oldLength, newLength, shouldUpdateLiveRanges);
+
+    // The name pseudo attribute may have changed.
+    unregisterPatchMarker(protect(document()));
+    registerPatchMarkerIfNeeded();
+}
+
+void ProcessingInstruction::registerPatchMarkerIfNeeded()
+{
+    if (!m_registeredPatchMarkerName.isNull())
+        return;
+    // No settings check: markers parse into pageless documents (template
+    // contents, fragments) whose default Settings would hide them.
+    if (!isPatchMarker() || !parentNode())
+        return;
+    AtomString name { getAttribute("name"_s) };
+    if (name.isEmpty())
+        return;
+    protect(document())->addPatchMarker(name, *this);
+    m_registeredPatchMarkerName = WTF::move(name);
+}
+
+void ProcessingInstruction::unregisterPatchMarker(Document& document)
+{
+    if (m_registeredPatchMarkerName.isNull())
+        return;
+    document.removePatchMarker(m_registeredPatchMarkerName, *this);
+    m_registeredPatchMarkerName = nullAtom();
+}
+
+void ProcessingInstruction::didMoveToNewDocument(Document& oldDocument, Document&)
+{
+    unregisterPatchMarker(oldDocument);
+    registerPatchMarkerIfNeeded();
 }
 
 bool ProcessingInstruction::hasPseudoAttributes()
@@ -586,6 +628,7 @@ void ProcessingInstruction::addSubresourceAttributeURLs(OrderedHashSet<URL>& url
 Node::NeedsPostConnectionSteps ProcessingInstruction::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     CharacterData::insertionSteps(insertionType, parentOfInsertedTree);
+    registerPatchMarkerIfNeeded();
     if (!insertionType.connectedToDocument)
         return NeedsPostConnectionSteps::No;
     protect(document().styleScope())->addStyleSheetCandidateNode(*this, m_createdByParser);
@@ -600,6 +643,10 @@ void ProcessingInstruction::postConnectionSteps()
 void ProcessingInstruction::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     CharacterData::removingSteps(removalType, oldParentOfRemovedTree);
+    // Markers in a detached subtree stay indexed; they are discoverable
+    // whenever a patch scope lies within that subtree.
+    if (!parentNode())
+        unregisterPatchMarker(protect(document()));
     if (!removalType.disconnectedFromDocument)
         return;
     

@@ -1,0 +1,6 @@
+Hello world
+
+
+PASS Patched text merges with the Text node before the marker
+PASS Patched text written in separate chunks merges into one Text node
+

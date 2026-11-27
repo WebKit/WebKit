@@ -35,6 +35,7 @@
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -153,9 +154,11 @@ static inline void insert(HTMLConstructionSiteTask& task)
     resolveFosterSite(task);
 
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) [[unlikely]] {
-        task.parent = templateElement->fragmentForInsertion();
-        task.nextChild = nullptr;
-    } else if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
+        task.parent = templateElement->insertionTarget();
+        task.nextChild = templateElement->insertionNextChild();
+    }
+
+    if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
         if (!document->canAcceptChild(*task.child, task.nextChild, AcceptChildOperation::InsertOrAdd))
             return;
     }
@@ -630,6 +633,34 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             }
         }
     }
+
+    if (document().settings().htmlTemplateForEnabled()) {
+        auto element = downcast<HTMLTemplateElement>(createHTMLElement(token));
+        // `for` applies whenever no declarative shadow root was attached, including
+        // when shadowrootmode is present but the attach failed or declarative shadow
+        // roots are disallowed (https://github.com/whatwg/html/issues/13075).
+        if (element->hasAttributeWithoutSynchronization(forAttr)) {
+            // A template start tag is never foster-parented, so the adjusted insertion
+            // location's parent is the current node.
+            Ref<ContainerNode> scope = currentNode();
+            if (RefPtr parentTemplate = dynamicDowncast<HTMLTemplateElement>(scope))
+                scope = parentTemplate->insertionTarget();
+            if (scope.ptr() == scope->document().body()) {
+                if (RefPtr parent = scope->parentNode())
+                    scope = parent.releaseNonNull();
+            }
+
+            if (element->prepareContentPatching(scope, protect(document()))) {
+                element->beginParsingChildren();
+                m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+                return;
+            }
+        }
+        attachLater(protect(currentNode()), element.copyRef());
+        m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+        return;
+    }
+
     insertHTMLElement(WTF::move(token));
 }
 
@@ -742,22 +773,22 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         resolveFosterSite(task);
     }
 
+    // insert() redirects a template parent to its insertion point, so merging and
+    // document decisions must look at that insertion point, not at the template.
+    RefPtr<ContainerNode> insertionParent = task.parent;
+    RefPtr<Node> insertionNextChild = task.nextChild;
+    if (RefPtr templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent); templateParent) [[unlikely]] {
+        insertionParent = templateParent->insertionTarget();
+        insertionNextChild = templateParent->insertionNextChild();
+    }
+
     unsigned currentPosition = 0;
-    unsigned lengthLimit = shouldUseLengthLimit(*task.parent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
+    unsigned lengthLimit = shouldUseLengthLimit(*insertionParent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
 
     // FIXME: Splitting text nodes into smaller chunks contradicts HTML5 spec, but is currently necessary
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
-    RefPtr<Node> previousChild;
-    if (task.nextChild)
-        previousChild = task.nextChild->previousSibling();
-    else {
-        if (RefPtr templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent.get()); templateParent) [[unlikely]] {
-            RefPtr parentNode = templateParent->contentIfAvailable();
-            previousChild = parentNode ? parentNode->lastChild() : nullptr;
-        } else
-            previousChild = task.parent->lastChild();
-    }
+    RefPtr<Node> previousChild = insertionNextChild ? insertionNextChild->previousSibling() : insertionParent->lastChild();
     if (RefPtr previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
         // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
         unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
@@ -783,7 +814,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
 
         unsigned substringLength = breakIndex - currentPosition;
         auto substring = characters.substring(currentPosition, substringLength);
-        auto textNode = Text::create(protect(task.parent->document()), WTF::move(substring));
+        auto textNode = Text::create(protect(insertionParent->document()), WTF::move(substring));
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
@@ -847,32 +878,34 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
     return element;
 }
 
+// For a template patching a `for` target, nodes belong to the target's tree, not to a
+// template content fragment, so these helpers follow insertionTarget().
 inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion().treeScope();
+        return templateElement->insertionTarget().treeScope();
     return currentNode().treeScope();
 }
 
 inline ContainerNode& HTMLConstructionSite::containerForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion();
+        return templateElement->insertionTarget();
     return currentNode();
 }
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion().document();
+        return templateElement->insertionTarget().document();
     return currentNode().document();
 }
 
 static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope)
 {
     if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode)) {
-        Ref templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
-        if (templateFragmentTreeScope->rootNode().usesNullCustomElementRegistry())
+        Ref templateTreeScope = templateElement->insertionTarget().treeScope();
+        if (templateTreeScope->rootNode().usesNullCustomElementRegistry())
             return nullptr;
     }
     return CustomElementRegistry::registryForNodeOrTreeScope(currentNode, treeScope);

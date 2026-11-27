@@ -1,0 +1,6 @@
+
+PASS for applies where declarative shadow roots are disallowed (innerHTML)
+PASS for applies where declarative shadow roots are disallowed (DOMParser)
+PASS for applies when the host already has a shadow root
+PASS for applies when the host cannot have a shadow root
+

@@ -10422,6 +10422,51 @@ Document& Document::ensureTemplateDocument()
     return *m_templateDocument;
 }
 
+void Document::addPatchMarker(const AtomString& name, ProcessingInstruction& marker)
+{
+    m_patchMarkersByName.add(name, Vector<WeakPtr<ProcessingInstruction, WeakPtrImplWithEventTargetData>> { }).iterator->value.append(marker);
+}
+
+void Document::removePatchMarker(const AtomString& name, ProcessingInstruction& marker)
+{
+    auto it = m_patchMarkersByName.find(name);
+    if (it == m_patchMarkersByName.end())
+        return;
+    it->value.removeAllMatching([&marker](auto& weakMarker) {
+        auto* markerPointer = weakMarker.get();
+        return !markerPointer || markerPointer == &marker;
+    });
+    if (it->value.isEmpty())
+        m_patchMarkersByName.remove(it);
+}
+
+RefPtr<ProcessingInstruction> Document::firstPatchMarkerInScope(const AtomString& name, const ContainerNode& scope) const
+{
+    auto it = m_patchMarkersByName.find(name);
+    if (it == m_patchMarkersByName.end())
+        return nullptr;
+    // Duplicate names are rare, so resolving tree order across the matches is
+    // cheaper than keeping the index ordered.
+    auto isInScope = [&scope](const ProcessingInstruction& marker) {
+        // Not isDescendantOf(): its tree scope shortcut misses nodes inside
+        // fragments that are tree scopes, like the one innerHTML parses into.
+        for (auto* ancestor = marker.parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+            if (ancestor == &scope)
+                return true;
+        }
+        return false;
+    };
+    RefPtr<ProcessingInstruction> first;
+    for (auto& weakMarker : it->value) {
+        RefPtr marker = weakMarker;
+        if (!marker || !isInScope(*marker))
+            continue;
+        if (!first || is_lt(treeOrder(*marker, *first)))
+            first = WTF::move(marker);
+    }
+    return first;
+}
+
 Ref<DocumentFragment> Document::documentFragmentForInnerOuterHTML()
 {
     if (!m_documentFragmentForInnerOuterHTML) [[unlikely]]

@@ -1,0 +1,5 @@
+new name content
+
+PASS Mutating a marker's data re-targets patches to the new name
+PASS Clearing a marker's name makes it unreachable
+
