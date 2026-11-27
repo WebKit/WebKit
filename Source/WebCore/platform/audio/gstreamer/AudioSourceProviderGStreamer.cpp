@@ -259,8 +259,13 @@ void AudioSourceProviderGStreamer::provideInput(AudioBus& bus, size_t framesToPr
     }
 
     Locker locker { AdoptLock, m_adapterLock };
-    for (const auto& [channelId, adapter] : m_adapters)
+    for (const auto& [channelId, adapter] : m_adapters) {
+        if (static_cast<unsigned>(channelId) > bus.numberOfChannels()) {
+            gst_adapter_flush(adapter.get(), std::min<size_t>(gst_adapter_available(adapter.get()), framesToProcess * sizeof(float)));
+            continue;
+        }
         copyGStreamerBuffersToAudioChannel(adapter.get(), bus, channelId - 1, framesToProcess);
+    }
 }
 
 void AudioSourceProviderGStreamer::provideLiveCaptureInput(AudioBus& bus, size_t framesToProcess)
