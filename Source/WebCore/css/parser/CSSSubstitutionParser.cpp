@@ -74,6 +74,7 @@ std::optional<Vector<unsigned, 2>> CSSSubstitutionParser::consumeEnvVariableIndi
 }
 
 static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidInheritReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidEnvReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
@@ -150,8 +151,7 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
                 continue;
             }
             if (token.functionId() == CSSValueID::Inherit && parserContext.cssInheritFunctionEnabled) {
-                // <inherit-args> is the same argument grammar as var()'s.
-                if (!isValidVariableReference(block, parserContext))
+                if (!isValidInheritReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
@@ -237,7 +237,7 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
 // mixed with other values, and a bare {} is not a valid value.
 // https://drafts.csswg.org/css-values-5/#component-function-commas
 // `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?
-// (random-item() items and the attr() fallback, which may be empty).
+// (random-item() items and the attr() and inherit() fallbacks, which may be empty).
 static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
 {
     if (argumentRange.atEnd())
@@ -247,32 +247,65 @@ static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, c
     return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
 }
 
-// https://drafts.csswg.org/css-variables-2/#funcdef-var
+// var()'s and env()'s fallbacks are non-strict free-form productions: unless they start with a {} block,
+// they may contain {} blocks mixed with other values. A fallback that starts with a {} block is just that
+// block, which may be empty.
+// https://drafts.csswg.org/css-values-5/#component-function-commas
+static bool isValidNonStrictFallback(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    auto result = classifyBlock(range, parserContext);
+    if (!result)
+        return false;
+
+    range.consumeWhitespace();
+    return range.peek().type() != LeftBraceToken || !result->hasTopLevelBraceBlockMixedWithOtherValues;
+}
+
 // <var-args> = var( <declaration-value> , <declaration-value>? )
-// The name argument is a <declaration-value>. It is substituted and then parsed as a
-// <custom-property-name> at substitution time, so parse-time validity only requires a
-// <declaration-value> here.
-bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+// https://drafts.csswg.org/css-values-5/#argument-grammars
+// Consumes the name argument, leaving `range` at the comma before the fallback, if any. The name argument
+// is a <declaration-value>. It is substituted and then parsed as a <custom-property-name> at substitution
+// time, so parse-time validity only requires a <declaration-value> here.
+static bool consumeVarNameArgument(CSSParserTokenRange& range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
 
-    // Split at the first literal comma into the name argument and optional fallback.
     auto nameArgStart = range;
     while (!range.atEnd() && range.peek().type() != CommaToken)
         range.consumeComponentValue();
 
-    if (!isValidDeclarationValueArgument(nameArgStart.rangeUntil(range), parserContext, /* allowEmpty */ false))
+    return isValidDeclarationValueArgument(nameArgStart.rangeUntil(range), parserContext, /* allowEmpty */ false);
+}
+
+// https://drafts.csswg.org/css-variables-2/#funcdef-var
+bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    if (!consumeVarNameArgument(range, parserContext))
         return false;
 
-    // The split stopped at a literal comma or at the end, so this covers both a missing and an empty fallback.
+    // The name argument stopped at a literal comma or at the end, so this covers both a missing and an empty fallback.
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range) || range.atEnd())
         return true;
 
-    return !!classifyBlock(range, parserContext);
+    return isValidNonStrictFallback(range, parserContext);
+}
+
+// https://drafts.csswg.org/css-values-5/#funcdef-inherit
+// <inherit-args> is the same argument grammar as var()'s, but the fallback is a strict free-form production.
+bool isValidInheritReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    if (!consumeVarNameArgument(range, parserContext))
+        return false;
+
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return true;
+
+    return isValidDeclarationValueArgument(range, parserContext, /* allowEmpty */ true);
 }
 
 // https://drafts.csswg.org/css-env-1/#env-function
 // env() = env( <custom-ident> <integer [0,∞]>*, <declaration-value>? )
+// Like var()'s, the fallback is anything between the first comma and the end of the function.
 bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
@@ -291,7 +324,7 @@ bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& pars
     if (range.atEnd())
         return true;
 
-    return !!classifyBlock(range, parserContext);
+    return isValidNonStrictFallback(range, parserContext);
 }
 
 // An argument may not begin with <dashed-ident> <colon>, which is reserved for named arguments.
