@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <array>
+#include <sstream>
 
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
@@ -105,6 +106,323 @@ TEST_P(ReadPixelsTest, LargeTexture)
     for (size_t i = 0; i < 16384 * 4; ++i)
     {
         EXPECT_EQ(0.5f, data[i]);
+    }
+}
+
+// The framebuffer glReadPixels reads from.
+enum class ReadTarget
+{
+    DefaultFramebuffer,
+    Texture,
+    Renderbuffer,
+};
+
+// The read rectangle, relative to the framebuffer.
+enum class ReadRegion
+{
+    Whole,
+    Inside,
+    ClippedBottom,
+    ClippedTop,
+    ClippedBottomAndTop,
+    ClippedLeft,
+    ClippedRight,
+    ClippedAllEdges,
+    OneRowAfterClipping,
+    Outside,
+};
+
+// Platform, read target, read region, GL_PACK_ALIGNMENT, whether GL_PACK_ROW_LENGTH,
+// GL_PACK_SKIP_PIXELS and GL_PACK_SKIP_ROWS are set, GL_PACK_REVERSE_ROW_ORDER_ANGLE, and whether
+// the read goes into a GL_PIXEL_PACK_BUFFER instead of client memory.
+using ReadPixelsReverseRowOrderTestParams =
+    std::tuple<angle::PlatformParameters, ReadTarget, ReadRegion, GLint, bool, bool, bool>;
+
+const char *ReadTargetName(ReadTarget target)
+{
+    switch (target)
+    {
+        case ReadTarget::DefaultFramebuffer:
+            return "DefaultFramebuffer";
+        case ReadTarget::Texture:
+            return "Texture";
+        case ReadTarget::Renderbuffer:
+            return "Renderbuffer";
+    }
+    return "";
+}
+
+const char *ReadRegionName(ReadRegion region)
+{
+    switch (region)
+    {
+        case ReadRegion::Whole:
+            return "Whole";
+        case ReadRegion::Inside:
+            return "Inside";
+        case ReadRegion::ClippedBottom:
+            return "ClippedBottom";
+        case ReadRegion::ClippedTop:
+            return "ClippedTop";
+        case ReadRegion::ClippedBottomAndTop:
+            return "ClippedBottomAndTop";
+        case ReadRegion::ClippedLeft:
+            return "ClippedLeft";
+        case ReadRegion::ClippedRight:
+            return "ClippedRight";
+        case ReadRegion::ClippedAllEdges:
+            return "ClippedAllEdges";
+        case ReadRegion::OneRowAfterClipping:
+            return "OneRowAfterClipping";
+        case ReadRegion::Outside:
+            return "Outside";
+    }
+    return "";
+}
+
+std::string ReadPixelsReverseRowOrderTestPrint(
+    const ::testing::TestParamInfo<ReadPixelsReverseRowOrderTestParams> &paramsInfo)
+{
+    const ReadPixelsReverseRowOrderTestParams &params = paramsInfo.param;
+    std::ostringstream out;
+    out << std::get<0>(params) << "__" << ReadTargetName(std::get<1>(params)) << "_"
+        << ReadRegionName(std::get<2>(params)) << "_Alignment" << std::get<3>(params);
+    if (std::get<4>(params))
+    {
+        out << "_PackSubimage";
+    }
+    out << (std::get<5>(params) ? "_Reversed" : "_Normal");
+    if (std::get<6>(params))
+    {
+        out << "_PackBuffer";
+    }
+    return out.str();
+}
+
+// Tests glReadPixels into client memory with GL_ANGLE_pack_reverse_row_order.
+class ReadPixelsReverseRowOrderTest : public ANGLETest<ReadPixelsReverseRowOrderTestParams>
+{
+  protected:
+    // Odd sizes catch row padding and width/height mix-ups.
+    static constexpr GLsizei kWindowWidth       = 23;
+    static constexpr GLsizei kWindowHeight      = 17;
+    static constexpr GLsizei kFramebufferWidth  = 13;
+    static constexpr GLsizei kFramebufferHeight = 11;
+    static constexpr GLubyte kUntouched         = 0xAB;
+
+    struct ReadRect
+    {
+        GLint x;
+        GLint y;
+        GLsizei width;
+        GLsizei height;
+    };
+
+    ReadPixelsReverseRowOrderTest()
+    {
+        setWindowWidth(kWindowWidth);
+        setWindowHeight(kWindowHeight);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    static ReadRect GetReadRect(ReadRegion region, GLsizei width, GLsizei height)
+    {
+        switch (region)
+        {
+            case ReadRegion::Whole:
+                return {0, 0, width, height};
+            case ReadRegion::Inside:
+                return {3, 2, width - 7, height - 5};
+            case ReadRegion::ClippedBottom:
+                return {2, -5, width - 4, height};
+            case ReadRegion::ClippedTop:
+                return {2, 5, width - 4, height};
+            case ReadRegion::ClippedBottomAndTop:
+                return {2, -4, width - 4, height + 9};
+            case ReadRegion::ClippedLeft:
+                return {-4, 1, width, height - 2};
+            case ReadRegion::ClippedRight:
+                return {5, 1, width, height - 2};
+            case ReadRegion::ClippedAllEdges:
+                return {-3, -4, width + 6, height + 9};
+            case ReadRegion::OneRowAfterClipping:
+                return {1, height - 1, 5, 3};
+            case ReadRegion::Outside:
+                return {width + 1, height + 1, 4, 4};
+        }
+        return {};
+    }
+};
+
+// Test that glReadPixels places the rows in the order GL_PACK_REVERSE_ROW_ORDER_ANGLE selects, at
+// the offsets the pack state selects, and writes nothing outside them.
+TEST_P(ReadPixelsReverseRowOrderTest, ReadPixels)
+{
+    const ReadTarget target = std::get<1>(GetParam());
+    const ReadRegion region = std::get<2>(GetParam());
+    const GLint alignment   = std::get<3>(GetParam());
+    const bool packSubimage = std::get<4>(GetParam());
+    const bool reverse      = std::get<5>(GetParam());
+    const bool packBuffer   = std::get<6>(GetParam());
+
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"));
+    ANGLE_SKIP_TEST_IF(packSubimage && getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_NV_pack_subimage"));
+    ANGLE_SKIP_TEST_IF(target == ReadTarget::Renderbuffer && getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_OES_rgb8_rgba8"));
+    ANGLE_SKIP_TEST_IF(packBuffer && getClientMajorVersion() < 3 &&
+                       !(IsGLExtensionEnabled("GL_NV_pixel_buffer_object") &&
+                         IsGLExtensionEnabled("GL_EXT_map_buffer_range") &&
+                         IsGLExtensionEnabled("GL_OES_mapbuffer")));
+
+    GLsizei fbWidth  = kWindowWidth;
+    GLsizei fbHeight = kWindowHeight;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    GLFramebuffer framebuffer;
+    if (target != ReadTarget::DefaultFramebuffer)
+    {
+        fbWidth  = kFramebufferWidth;
+        fbHeight = kFramebufferHeight;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        if (target == ReadTarget::Texture)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fbWidth, fbHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         nullptr);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        }
+        else
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, fbWidth, fbHeight);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                      renderbuffer);
+        }
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    }
+
+    // Each pixel gets a unique color: red is the column and green is the row.
+    constexpr char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(floor(gl_FragCoord.xy) / 255.0, 1.0, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glViewport(0, 0, fbWidth, fbHeight);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const ReadRect rect    = GetReadRect(region, fbWidth, fbHeight);
+    const GLint rowLength  = packSubimage ? rect.width + 3 : 0;
+    const GLint skipPixels = packSubimage ? 2 : 0;
+    const GLint skipRows   = packSubimage ? 3 : 0;
+
+    constexpr size_t kPixelBytes = 4;
+    const size_t rowPitch =
+        (static_cast<size_t>(rowLength ? rowLength : rect.width) * kPixelBytes + alignment - 1) /
+        alignment * alignment;
+    const size_t dataStart    = skipRows * rowPitch + skipPixels * kPixelBytes;
+    const size_t requiredSize = dataStart + rowPitch * (rect.height - 1) + rect.width * kPixelBytes;
+    // The second half catches writes past the end of the destination.
+    std::vector<GLubyte> buffer(requiredSize * 2, kUntouched);
+    GLBuffer pixelPackBuffer;
+    if (packBuffer)
+    {
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, pixelPackBuffer);
+        // GL_STATIC_READ would be the fitting usage, but ES2 does not have it.
+        glBufferData(GL_PIXEL_PACK_BUFFER, static_cast<GLsizeiptr>(buffer.size()), buffer.data(),
+                     GL_STATIC_DRAW);
+    }
+
+    glPixelStorei(GL_PACK_ALIGNMENT, alignment);
+    if (packSubimage)
+    {
+        glPixelStorei(GL_PACK_ROW_LENGTH, rowLength);
+        glPixelStorei(GL_PACK_SKIP_PIXELS, skipPixels);
+        glPixelStorei(GL_PACK_SKIP_ROWS, skipRows);
+    }
+    glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, reverse);
+    glReadPixels(rect.x, rect.y, rect.width, rect.height, GL_RGBA, GL_UNSIGNED_BYTE,
+                 packBuffer ? nullptr : buffer.data());
+    ASSERT_GL_NO_ERROR();
+
+    if (packBuffer)
+    {
+        const GLsizeiptr size = static_cast<GLsizeiptr>(buffer.size());
+        const bool es3        = getClientMajorVersion() >= 3;
+        Span<const GLubyte> mapped =
+            es3 ? MapBufferRange<const GLubyte>(GL_PIXEL_PACK_BUFFER, 0, size, GL_MAP_READ_BIT)
+                : MapBufferRangeEXT<const GLubyte>(GL_PIXEL_PACK_BUFFER, 0, size, GL_MAP_READ_BIT);
+        ASSERT_EQ(buffer.size(), mapped.size());
+        Span(buffer).copy_from(mapped);
+        if (es3)
+        {
+            glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+        }
+        else
+        {
+            glUnmapBufferOES(GL_PIXEL_PACK_BUFFER);
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Every byte of the destination stays untouched except the pixels of the read rectangle: the
+    // skipped bytes, the bytes between rows and the bytes past the end. Pixels outside the
+    // framebuffer are undefined.
+    constexpr int kUndefined = -1;
+    std::vector<int> expected(buffer.size(), kUntouched);
+    for (GLsizei row = 0; row < rect.height; ++row)
+    {
+        const GLint y = reverse ? rect.y + rect.height - 1 - row : rect.y + row;
+        for (GLsizei column = 0; column < rect.width; ++column)
+        {
+            const GLint x     = rect.x + column;
+            const bool inside = x >= 0 && x < fbWidth && y >= 0 && y < fbHeight;
+            const std::array<int, kPixelBytes> color = {x, y, 255, 255};
+            for (size_t channel = 0; channel < kPixelBytes; ++channel)
+            {
+                expected[dataStart + row * rowPitch + column * kPixelBytes + channel] =
+                    inside ? color[channel] : kUndefined;
+            }
+        }
+    }
+
+    auto describeByte = [&](size_t i) {
+        std::ostringstream description;
+        description << "byte " << i;
+        if (i < dataStart)
+        {
+            description << " (skipped)";
+        }
+        else if (i >= requiredSize)
+        {
+            description << " (past the end)";
+        }
+        else
+        {
+            const size_t row         = (i - dataStart) / rowPitch;
+            const size_t offsetInRow = (i - dataStart) % rowPitch;
+            if (offsetInRow < rect.width * kPixelBytes)
+            {
+                description << " (row " << row << ", column " << offsetInRow / kPixelBytes << ")";
+            }
+            else
+            {
+                description << " (between rows " << row << " and " << row + 1 << ")";
+            }
+        }
+        return description.str();
+    };
+    for (size_t i = 0; i < buffer.size(); ++i)
+    {
+        if (expected[i] != kUndefined)
+        {
+            ASSERT_EQ(expected[i], static_cast<int>(buffer[i])) << describeByte(i);
+        }
     }
 }
 
@@ -2230,6 +2548,28 @@ void main()
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ReadPixelsTest,
     ES3_METAL().enable(Feature::CopyTextureToBufferForReadOptimization));
+ANGLE_INSTANTIATE_TEST_COMBINE_6(
+    ReadPixelsReverseRowOrderTest,
+    ReadPixelsReverseRowOrderTestPrint,
+    testing::Values(ReadTarget::DefaultFramebuffer, ReadTarget::Texture, ReadTarget::Renderbuffer),
+    testing::Values(ReadRegion::Whole,
+                    ReadRegion::Inside,
+                    ReadRegion::ClippedBottom,
+                    ReadRegion::ClippedTop,
+                    ReadRegion::ClippedBottomAndTop,
+                    ReadRegion::ClippedLeft,
+                    ReadRegion::ClippedRight,
+                    ReadRegion::ClippedAllEdges,
+                    ReadRegion::OneRowAfterClipping,
+                    ReadRegion::Outside),
+    testing::Values(1, 2, 4, 8),
+    testing::Bool(),
+    testing::Bool(),
+    testing::Bool(),
+    ANGLE_ALL_TEST_PLATFORMS_ES2,
+    ANGLE_ALL_TEST_PLATFORMS_ES3,
+    ES3_METAL().enable(Feature::CopyTextureToBufferForReadOptimization));
+
 ANGLE_INSTANTIATE_TEST_ES2(ReadPixelsPBONVTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBOTest);

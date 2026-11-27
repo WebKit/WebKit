@@ -367,8 +367,12 @@ angle::Result FramebufferMtl::readPixels(const gl::Context *context,
     ANGLE_CHECK_GL_MATH(contextMtl, sizedFormatInfo.computeRowSkipBytes(
                                         type, area.width, pack, &outputPitch, &outputSkipBytes));
 
-    outputSkipBytes += (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes +
-                       (clippedArea.y - area.y) * outputPitch;
+    // With reversed row order, the first packed row is the top row of |area|, so the rows clipped
+    // off the top of |area| are skipped.
+    const GLuint skipRows =
+        pack.reverseRowOrder ? area.y1() - clippedArea.y1() : clippedArea.y - area.y;
+    outputSkipBytes +=
+        (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes + skipRows * outputPitch;
 
     const angle::Format &angleFormat = GetFormatFromFormatType(format, type);
 
