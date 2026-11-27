@@ -1,4 +1,3 @@
-//@ skip if $addressBits <= 32
 //@ requireOptions("--useWasmJSStringBuiltins=true")
 
 import * as assert from '../assert.js';
