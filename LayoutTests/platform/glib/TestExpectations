@@ -846,9 +846,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html
 # Passing since at least 325332@main.
 imported/w3c/web-platform-tests/html/canvas/element/manual/draw-element-image/opacity-animation.tentative.html [ Pass ]
 
-# Passing since 325370@main.
-imported/w3c/web-platform-tests/css/css-grid/grid-lanes/baseline/column-grid-lanes-container-baseline-003b.html [ Pass ]
-
 # Passing since 325530@main.
 imported/w3c/web-platform-tests/svg/struct/reftests/conditional-processing-never-rendered-resources.svg [ Pass ]
 
