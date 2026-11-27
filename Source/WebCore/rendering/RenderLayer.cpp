@@ -1978,6 +1978,19 @@ RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSel
     return nullptr;
 }
 
+RenderLayer* RenderLayer::enclosingScrollContainerLayer(IncludeSelfOrNot includeSelf, BoxAxis axis) const
+{
+    const RenderLayer* layer = (includeSelf == IncludeSelf) ? this : parent();
+    while (layer) {
+        auto& renderer = layer->renderer();
+        if (renderer.hasPotentiallyScrollableOverflow() && isScrollableOverflow(axis == BoxAxis::Horizontal ? renderer.style().overflowX() : renderer.style().overflowY()))
+            return const_cast<RenderLayer*>(layer);
+
+        layer = layer->parent();
+    }
+    return nullptr;
+}
+
 // FIXME: This is terrible. Bring back a cached bit for this someday. This crawl is going to slow down all
 // painting of content inside paginated layers.
 bool RenderLayer::hasCompositedLayerInEnclosingPaginationChain() const

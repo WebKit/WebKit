@@ -287,9 +287,7 @@ void ViewTimeline::cacheCurrentTime()
 
         StickinessAdjustmentData stickyData;
         if (CheckedPtr stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer().get())) {
-            FloatRect constrainingRect = stickyContainer->constrainingRectForStickyPosition();
-            StickyPositionViewportConstraints constraints;
-            stickyContainer->computeStickyPositionConstraints(constraints, constrainingRect);
+            auto constraints = stickyContainer->computeStickyPositionConstraints();
             stickyData = StickinessAdjustmentData::computeStickinessAdjustmentData(constraints, scrollDirection, scrollContainerSize, subjectSize, subjectOffset);
         }
 

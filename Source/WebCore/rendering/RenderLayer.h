@@ -678,6 +678,8 @@ public:
     RenderLayer* clippingRootForPainting() const;
 
     NODELETE RenderLayer* enclosingOverflowClipLayer(IncludeSelfOrNot) const;
+    // Like enclosingOverflowClipLayer(), but skips single-axis scroll containers that don't scroll in the given axis.
+    NODELETE RenderLayer* enclosingScrollContainerLayer(IncludeSelfOrNot, BoxAxis) const;
 
     // Enclosing compositing layer; if includeSelf is true, may return this.
     NODELETE RenderLayer* enclosingCompositingLayer(IncludeSelfOrNot = IncludeSelf) const;

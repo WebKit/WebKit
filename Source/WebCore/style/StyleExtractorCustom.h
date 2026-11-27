@@ -337,7 +337,7 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
 
             LayoutUnit containingBlockSize;
             if (box->isStickilyPositioned()) {
-                CheckedRef enclosingClippingBox = box->enclosingClippingBoxForStickyPosition().first;
+                CheckedRef enclosingClippingBox = box->enclosingClippingBoxForStickyPosition(isVerticalProperty ? BoxAxis::Vertical : BoxAxis::Horizontal).first;
                 if (isVerticalProperty == enclosingClippingBox->isHorizontalWritingMode())
                     containingBlockSize = enclosingClippingBox->contentBoxLogicalHeight();
                 else

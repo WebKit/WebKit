@@ -166,6 +166,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-single-axis-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-single-axis-dynamic-axis-change-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-single-axis-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-single-axis-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-single-axis-used-values.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-expected.html

@@ -579,16 +579,37 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     return referencePoint;
 }
 
-std::pair<const RenderBox&, const RenderLayer*> RenderBoxModelObject::enclosingClippingBoxForStickyPosition() const
+// A sticky box sticks to its nearest scroll container in each axis, which differ when one of them is a
+// single-axis scroll container.
+// https://drafts.csswg.org/css-position-3/#sticky-pos
+std::pair<const RenderBox&, const RenderLayer*> RenderBoxModelObject::enclosingClippingBoxForStickyPosition(BoxAxis axis) const
 {
     ASSERT(isStickilyPositioned());
-    auto* clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    auto* clipLayer = hasLayer() ? layer()->enclosingScrollContainerLayer(ExcludeSelf, axis) : nullptr;
     const RenderBox& box = clipLayer ? downcast<RenderBox>(clipLayer->renderer()) : view();
     return { box, clipLayer };
 }
 
-void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewportConstraints& constraints, const FloatRect& constrainingRect) const
+StickyPositionViewportConstraints RenderBoxModelObject::computeStickyPositionConstraints() const
 {
+    StickyPositionViewportConstraints constraints;
+    auto horizontalScrollContainer = enclosingClippingBoxForStickyPosition(BoxAxis::Horizontal);
+    CheckedPtr horizontalScrollContainerLayer = horizontalScrollContainer.second;
+    computeStickyPositionConstraints(constraints, horizontalScrollContainer.first, horizontalScrollContainerLayer.get());
+
+    auto verticalScrollContainer = enclosingClippingBoxForStickyPosition(BoxAxis::Vertical);
+    CheckedPtr verticalScrollContainerLayer = verticalScrollContainer.second;
+    if (verticalScrollContainerLayer != horizontalScrollContainerLayer) {
+        StickyPositionViewportConstraints verticalConstraints;
+        computeStickyPositionConstraints(verticalConstraints, verticalScrollContainer.first, verticalScrollContainerLayer.get());
+        constraints.setVerticalConstraints(verticalConstraints);
+    }
+    return constraints;
+}
+
+void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewportConstraints& constraints, const RenderBox& scrollContainer, const RenderLayer* scrollContainerLayer) const
+{
+    auto constrainingRect = constrainingRectForStickyPosition(scrollContainer, scrollContainerLayer);
     constraints.setConstrainingRectAtLastLayout(constrainingRect);
 
     // Do not use anonymous containing blocks to determine sticky constraints. We want the size
@@ -601,9 +622,8 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         containingBlock = containingBlock->containingBlock();
     ASSERT(containingBlock);
 
-    auto enclosingClipping = enclosingClippingBoxForStickyPosition();
-    CheckedRef enclosingClippingBox = enclosingClipping.first;
-    CheckedPtr enclosingClippingLayer = enclosingClipping.second;
+    CheckedRef enclosingClippingBox = scrollContainer;
+    CheckedPtr enclosingClippingLayer = scrollContainerLayer;
 
     LayoutRect containerContentRect;
     if (!enclosingClippingLayer || (containingBlock != enclosingClippingBox.ptr())) {
@@ -719,12 +739,9 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     }
 }
 
-FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
+FloatRect RenderBoxModelObject::constrainingRectForStickyPosition(const RenderBox& enclosingClippingBox, const RenderLayer* enclosingClippingLayer) const
 {
-    CheckedPtr enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
-
     if (enclosingClippingLayer) {
-        RenderBox& enclosingClippingBox = downcast<RenderBox>(enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox.overflowClipRect({ });
         clipRect.contract(LayoutSize(enclosingClippingBox.paddingLeft() + enclosingClippingBox.paddingRight(),
             enclosingClippingBox.paddingTop() + enclosingClippingBox.paddingBottom()));
@@ -749,12 +766,10 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 
 LayoutSize RenderBoxModelObject::stickyPositionOffset() const
 {
-    FloatRect constrainingRect = constrainingRectForStickyPosition();
-    StickyPositionViewportConstraints constraints;
-    computeStickyPositionConstraints(constraints, constrainingRect);
-    
+    auto constraints = computeStickyPositionConstraints();
+
     // The sticky offset is physical, so we can just return the delta computed in absolute coords (though it may be wrong with transforms).
-    return LayoutSize(constraints.computeStickyOffset(constrainingRect));
+    return LayoutSize(constraints.computeStickyOffset(constraints.constrainingRectAtLastLayout()));
 }
 
 LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const

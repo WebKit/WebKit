@@ -2704,9 +2704,8 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
         // because it could be moved around without re-computing overlap.
         auto scrollInflated = m_renderView->frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
         auto& box = downcast<RenderBoxModelObject>(renderer);
-        StickyPositionViewportConstraints constraints;
-        auto constrainingRect = box.constrainingRectForStickyPosition();
-        box.computeStickyPositionConstraints(constraints, constrainingRect);
+        auto constraints = box.computeStickyPositionConstraints();
+        auto constrainingRect = constraints.constrainingRectAtLastLayout();
         auto stickyBounds = LayoutRect(constraints.computeStickyExtent());
         // extent.bounds includes the current sticky offset, but the sticky extent is relative to the box without that offset,
         // so remove the offset when positioning the sticky extent.
@@ -5780,8 +5779,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
         return { };
     }
 
-    StickyPositionViewportConstraints constraints;
-    renderer.computeStickyPositionConstraints(constraints, renderer.constrainingRectForStickyPosition());
+    auto constraints = renderer.computeStickyPositionConstraints();
 
     constraints.setViewportRectAtLastLayout(m_renderView->frameView().rectForFixedPositionLayout());
     constraints.setLayerPositionAtLastLayout(scrollingNodeLayer->position());
