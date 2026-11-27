@@ -216,7 +216,7 @@ void SHA1::addUTF8Bytes(StringView string)
         else
             addBytes(asBytes(String::make8Bit(string.span16()).span8()));
     } else
-        addBytes(std::as_bytes(makeUTF8CString(string).span()));
+        addBytes(utf8Bytes(string));
 }
 
 #if USE(CF)

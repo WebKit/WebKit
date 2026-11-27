@@ -241,7 +241,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
         cocoaPath = [cocoaPath substringFromIndex:1];
 
     if ([cocoaPath isEqualToString:generatedBackgroundPageFilename] || [cocoaPath isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return API::Data::create(makeUTF8CString(generatedBackgroundContent()).span());
+        return API::Data::create(utf8Bytes(generatedBackgroundContent()));
 
     auto resourceKey = resourceKeyForPath(originalPath);
 
@@ -249,7 +249,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
         return *maybeData;
 
     if (auto maybeString = m_stringResources.getOptional(resourceKey)) {
-        auto data = API::Data::create(makeUTF8CString(*maybeString).span());
+        auto data = API::Data::create(utf8Bytes(*maybeString));
         m_dataResources.set(resourceKey, data);
         return data;
     }

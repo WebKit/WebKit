@@ -203,13 +203,13 @@ std::optional<String> SessionHost::launchBrowser()
     arguments.append(browserPath);
     // AppKit opens arguments that aren't options as documents. Each option has to be followed
     // by its value as a separate argument, or AppKit pairs the next option with it.
-    arguments.append(makeUTF8CString(String("--automation-fd"_s)));
+    arguments.append(makeUTF8CString("--automation-fd"_s));
     arguments.append(makeUTF8CString(String::number(browserConnectionFileDescriptor)));
     // AppKit window-state restoration can show a modal "reopen windows?" alert after an
     // abnormal exit, which automation can't dismiss. Turn it off for this launch only.
     for (auto argument : { "-NSQuitAlwaysKeepsWindows"_s, "NO"_s, "-ApplePersistenceIgnoreState"_s, "YES"_s })
-        arguments.append(makeUTF8CString(String(argument)));
-    arguments.append(makeUTF8CString(String("--downloads-directory"_s)));
+        arguments.append(makeUTF8CString(argument));
+    arguments.append(makeUTF8CString("--downloads-directory"_s));
     arguments.append(makeUTF8CString(m_defaultDownloadsDirectory));
     if (m_capabilities.browserArguments) {
         for (auto& argument : *m_capabilities.browserArguments)

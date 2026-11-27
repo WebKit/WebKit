@@ -369,8 +369,8 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         EXPECT_TRUE(contains(request4.span(), "POST / HTTP/1.1\r\n"_span));
                                         EXPECT_TRUE(contains(request4.span(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":3,"_span));
 
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(makeUTF8CString(token).span())));
-                                        EXPECT_FALSE(contains(request4.span(), byteCast<uint8_t>(makeUTF8CString(unlinkableToken).span())));
+                                        EXPECT_FALSE(contains(request4.span(), utf8Bytes(token).span()));
+                                        EXPECT_FALSE(contains(request4.span(), utf8Bytes(unlinkableToken).span()));
 
                                         auto request4String = String::fromLatin1(request4.span());
 

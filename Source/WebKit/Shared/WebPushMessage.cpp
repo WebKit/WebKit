@@ -51,7 +51,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         iconURL = notificationPayload->options->icon;
         direction = notificationPayload->options->dir;
         silent = notificationPayload->options->silent;
-        dataJSON = makeUTF8CString(notificationPayload->options->dataJSONString).span();
+        dataJSON = utf8Bytes(notificationPayload->options->dataJSONString);
     }
 
     return {

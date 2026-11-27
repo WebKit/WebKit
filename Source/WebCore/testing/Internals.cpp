@@ -6737,7 +6737,7 @@ String Internals::createTemporaryFile(const String& name, const String& contents
     if (!file)
         return nullString();
 
-    file.write(byteCast<uint8_t>(makeUTF8CString(contents).span()));
+    file.write(utf8Bytes(contents));
     return path;
 }
 

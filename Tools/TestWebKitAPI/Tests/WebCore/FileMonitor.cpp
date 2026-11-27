@@ -72,7 +72,7 @@ public:
         auto handle = WTF::move(result.second);
         ASSERT_TRUE(!!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(makeUTF8CString(FileMonitorTestData).span()));
+        auto rc = handle.write(utf8Bytes(FileMonitorTestData));
         ASSERT_TRUE(!!rc);
     }
     
@@ -340,7 +340,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
         auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Truncate);
         ASSERT_FALSE(!handle);
 
-        auto rc = handle.write(byteCast<uint8_t>(makeUTF8CString(FileMonitorTestData).span()));
+        auto rc = handle.write(utf8Bytes(FileMonitorTestData));
         ASSERT_TRUE(!!rc);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);

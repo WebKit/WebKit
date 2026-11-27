@@ -144,7 +144,7 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<Pasteboa
             else if (type == "text/uri-list"_s)
                 selectionData.setURIList(std::get<String>(stringOrBuffer));
             else if (type == "image/svg+xml"_s)
-                selectionData.addBuffer(type, SharedBuffer::create(makeUTF8CString(std::get<String>(stringOrBuffer)).span()));
+                selectionData.addBuffer(type, SharedBuffer::create(utf8Bytes(std::get<String>(stringOrBuffer))));
         }
     });
 

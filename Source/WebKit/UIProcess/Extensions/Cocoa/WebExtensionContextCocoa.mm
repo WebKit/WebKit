@@ -3792,7 +3792,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             }
 
             NSError *serializationError;
-            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(makeUTF8CString(rules->toJSONString()).span())).autorelease();
+            NSData *dynamicRulesAsData = ::WebKit::wrapper(API::Data::create(utf8Bytes(rules->toJSONString()))).autorelease();
             if (serializationError)
                 RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
             else
@@ -3816,7 +3816,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         }
 
         NSError *serializationError;
-        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(makeUTF8CString(rules->toJSONString()).span())).autorelease();
+        NSData *sessionRulesAsData = ::WebKit::wrapper(API::Data::create(utf8Bytes(rules->toJSONString()))).autorelease();
         if (serializationError)
             RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
         else

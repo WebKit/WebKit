@@ -78,7 +78,7 @@ Ref<FormData> Report::createReportFormDataForViolation(const String& type, const
     auto reportList = JSON::Array::create();
     reportList->pushObject(reportObject);
 
-    return FormData::create(makeUTF8CString(reportList->toJSONString()).span());
+    return FormData::create(utf8Bytes(reportList->toJSONString()));
 }
 
 } // namespace WebCore

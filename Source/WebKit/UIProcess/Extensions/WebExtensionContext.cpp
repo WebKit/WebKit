@@ -227,7 +227,7 @@ RefPtr<API::Data> WebExtensionContext::localizedResourceData(const RefPtr<API::D
     if (localizedString == stylesheetContents)
         return resourceData;
 
-    return API::Data::create(makeUTF8CString(localizedString).span());
+    return API::Data::create(utf8Bytes(localizedString));
 }
 
 String WebExtensionContext::localizedResourceString(const String& resourceContents, const String& mimeType)

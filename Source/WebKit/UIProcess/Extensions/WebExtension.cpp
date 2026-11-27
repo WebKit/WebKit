@@ -377,7 +377,7 @@ RefPtr<API::Data> WebExtension::serializeManifest()
     if (!manifestJSON)
         return nullptr;
 
-    return API::Data::create(makeUTF8CString(manifestJSON->toJSONString()).span());
+    return API::Data::create(utf8Bytes(manifestJSON->toJSONString()));
 }
 
 RefPtr<API::Data> WebExtension::serializeLocalization()
@@ -385,7 +385,7 @@ RefPtr<API::Data> WebExtension::serializeLocalization()
     if (!m_localization || !m_localization->localizationJSON())
         return nullptr;
 
-    return API::Data::create(makeUTF8CString(m_localization->localizationJSON()->toJSONString()).span());
+    return API::Data::create(utf8Bytes(m_localization->localizationJSON()->toJSONString()));
 }
 
 RefPtr<WebExtensionLocalization> WebExtension::localization()

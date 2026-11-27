@@ -1204,7 +1204,7 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
 template<typename CharacterType>
 void URLParser::parse(std::span<const CharacterType> input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)
 {
-    URL_PARSER_LOG("Parsing URL <%s> base <%s>", makeUTF8CString(String(input)), makeUTF8CString(base.string()));
+    URL_PARSER_LOG("Parsing URL <%s> base <%s>", makeUTF8CString(input), makeUTF8CString(base.string()));
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
 

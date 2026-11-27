@@ -997,7 +997,7 @@ void Cache::dumpContentsToFile()
         totals.bodySize += info.bodySize;
 
         json.append(",\n"_s);
-        fileHandle.write(byteCast<uint8_t>(makeUTF8CString(json.toString()).span()));
+        fileHandle.write(utf8Bytes(json.toString()));
     });
 }
 

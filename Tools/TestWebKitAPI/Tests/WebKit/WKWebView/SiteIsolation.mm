@@ -3480,7 +3480,7 @@ static void runSubframeSwapDuringSameSiteMainFrameNavigation(SubframeCommit subf
                 auto prefix = "<html><body>"_s;
                 auto body = makeString(prefix, responseBody(path));
                 connection.send(makeString("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "_s, body.length(), "\r\n\r\n"_s, prefix));
-                heldResponses.append({ path, connection, Vector<uint8_t> { byteCast<uint8_t>(makeUTF8CString(responseBody(path)).span()) } });
+                heldResponses.append({ path, connection, utf8Bytes(responseBody(path)) });
                 return;
             }
             connection.send(HTTPResponse(responseBody(path)).serialize(), [&, connection] {

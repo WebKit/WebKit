@@ -502,7 +502,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
         if (!daemon.m_pushService)
             return replySender(false);
 
-        RetainPtr data = toNSData(byteCast<uint8_t>(makeUTF8CString(message).span()));
+        RetainPtr data = toNSData(utf8Bytes(message));
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
         if (!obj || ![obj isKindOfClass:[NSDictionary class]])
@@ -996,7 +996,7 @@ void WebPushDaemon::setPublicTokenForTesting(PushClientConnection& connection, c
             return;
         }
 
-        daemon.m_pushService->setPublicTokenForTesting(Vector<uint8_t> { makeUTF8CString(publicToken).span() });
+        daemon.m_pushService->setPublicTokenForTesting(utf8Bytes(publicToken));
         replySender();
     });
 }

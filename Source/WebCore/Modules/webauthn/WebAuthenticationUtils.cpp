@@ -174,7 +174,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     if (!topOrigin.isNull())
         object->setString("topOrigin"_s, topOrigin);
 
-    return ArrayBuffer::create(byteCast<uint8_t>(makeUTF8CString(object->toJSONString()).span()));
+    return ArrayBuffer::create(utf8Bytes(object->toJSONString()));
 }
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)

@@ -80,7 +80,7 @@ void RemoteInspector::sendWebInspectorEvent(const String& event)
     if (!m_clientConnection)
         return;
 
-    send(m_clientConnection.value(), byteCast<uint8_t>(makeUTF8CString(event).span()));
+    send(m_clientConnection.value(), utf8Bytes(event));
 }
 
 void RemoteInspector::start()

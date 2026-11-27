@@ -76,7 +76,7 @@ Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
     reportObject->setString("url"_s, ""_s);
     reportObject->setObject("body"_s, WTF::move(reportBody));
 
-    return FormData::create(makeUTF8CString(reportObject->toJSONString()).span());
+    return FormData::create(utf8Bytes(reportObject->toJSONString()));
 }
 
 } // namespace WebCore

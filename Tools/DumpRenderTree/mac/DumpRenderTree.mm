@@ -1423,7 +1423,7 @@ static RetainPtr<NSString> dumpFramesAsText(WebFrame *frame)
 
     NSString *innerText = [frame _plainTextForTesting];
 
-    // We use WTF::String::tryGetUTF8 to convert innerText to a UTF8 buffer since
+    // We use tryMakeUTF8CString() to convert innerText to a UTF8 buffer since
     // it can handle dangling surrogates and the NSString
     // conversion methods cannot. After the conversion to a buffer, we turn that buffer into
     // a CFString via fromUTF8WithLatin1Fallback().createCFString() which can be appended to

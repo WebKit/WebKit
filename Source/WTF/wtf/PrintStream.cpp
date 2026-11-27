@@ -118,7 +118,7 @@ static void printCStringSpan(PrintStream& out, std::span<const CharacterType> ch
 
     if constexpr (std::same_as<CharacterType, Latin1Character>) {
         if (!charactersAreAllASCII(characters)) [[unlikely]] {
-            printExpectedCStringHelper(out, "Latin1CString", tryMakeUTF8CString(String { characters }));
+            printExpectedCStringHelper(out, "Latin1CString", tryMakeUTF8CString(characters));
             return;
         }
     }
