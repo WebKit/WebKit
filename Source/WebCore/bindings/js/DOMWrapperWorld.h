@@ -110,10 +110,15 @@ private:
     struct ArrayBufferViewWrapper;
     class ArrayBufferViewWrapperOwner;
 
+    // Delete out of line so code that sees only the forward declaration, such as Swift's C++ importer, can destroy the map.
+    struct ArrayBufferViewWrapperDeleter {
+        void operator()(ArrayBufferViewWrapper*) const;
+    };
+
     JSC::VM& m_vm;
     HashSet<WindowProxy*> m_jsWindowProxies;
     DOMObjectWrapperMap m_wrappers;
-    HashMap<void*, std::unique_ptr<ArrayBufferViewWrapper>> m_arrayBufferViewWrappers;
+    HashMap<void*, std::unique_ptr<ArrayBufferViewWrapper, ArrayBufferViewWrapperDeleter>> m_arrayBufferViewWrappers;
 
     WeakHashSet<JSEventListener> m_eventListeners;
 

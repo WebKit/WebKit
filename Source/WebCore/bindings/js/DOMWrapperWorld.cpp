@@ -62,6 +62,11 @@ DOMWrapperWorld::~DOMWrapperWorld()
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(DOMWrapperWorld::ArrayBufferViewWrapper);
 
+void DOMWrapperWorld::ArrayBufferViewWrapperDeleter::operator()(ArrayBufferViewWrapper* wrapper) const
+{
+    delete wrapper;
+}
+
 class DOMWrapperWorld::ArrayBufferViewWrapperOwner final : public JSC::WeakHandleOwner {
 public:
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason) final
@@ -92,7 +97,7 @@ void DOMWrapperWorld::cacheArrayBufferViewWrapper(JSC::ArrayBufferView& view, JS
     static NeverDestroyed<ArrayBufferViewWrapperOwner> owner;
 
     auto& entry = *m_arrayBufferViewWrappers.ensure(&view, [&] {
-        return makeUnique<ArrayBufferViewWrapper>(*this, view);
+        return std::unique_ptr<ArrayBufferViewWrapper, ArrayBufferViewWrapperDeleter>(new ArrayBufferViewWrapper(*this, view));
     }).iterator->value;
     if (entry.wrapper)
         return;
