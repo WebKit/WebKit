@@ -32,11 +32,57 @@
 
 namespace WebCore {
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+static const EVP_CIPHER* aesAlgorithm(size_t keySize)
+{
+    if (keySize * 8 == 128)
+        return EVP_aes_128_wrap();
+
+    if (keySize * 8 == 192)
+        return EVP_aes_192_wrap();
+
+    if (keySize * 8 == 256)
+        return EVP_aes_256_wrap();
+
+    return nullptr;
+}
+
+enum class Operation : bool { Unwrap, Wrap };
+
+static std::optional<Vector<uint8_t>> crypt(Operation operation, const Vector<uint8_t>& key, const Vector<uint8_t>& input, size_t outputSize)
+{
+    const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
+    if (!algorithm)
+        return std::nullopt;
+
+    EvpCipherCtxPtr ctx(EVP_CIPHER_CTX_new());
+    if (!ctx)
+        return std::nullopt;
+
+    if (EVP_CipherInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), nullptr, operation == Operation::Wrap) != 1)
+        return std::nullopt;
+
+    Vector<uint8_t> output(outputSize);
+    int outputLen;
+    if (EVP_CipherUpdate(ctx.get(), output.mutableSpan().data(), &outputLen, input.span().data(), input.size()) != 1)
+        return std::nullopt;
+
+    if (static_cast<size_t>(outputLen) != outputSize)
+        return std::nullopt;
+
+    return output;
+}
+#endif
+
 static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     if (data.size() % 8)
         return std::nullopt;
 
+    // AES_wrap_key() is deprecated only in OpenSSL 3. Other libraries keep using it.
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    return crypt(Operation::Wrap, key, data, data.size() + 8);
+#else
     AESKey aesKey;
     if (!aesKey.setKey(key, AES_ENCRYPT))
         return std::nullopt;
@@ -46,6 +92,7 @@ static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, c
         return std::nullopt;
 
     return cipherText;
+#endif
 }
 
 static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
@@ -53,6 +100,10 @@ static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key,
     if (data.size() % 8 || !data.size())
         return std::nullopt;
 
+    // AES_unwrap_key() is deprecated only in OpenSSL 3. Other libraries keep using it.
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    return crypt(Operation::Unwrap, key, data, data.size() - 8);
+#else
     AESKey aesKey;
     if (!aesKey.setKey(key, AES_DECRYPT))
         return std::nullopt;
@@ -62,6 +113,7 @@ static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key,
         return std::nullopt;
 
     return plainText;
+#endif
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
