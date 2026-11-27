@@ -129,6 +129,7 @@ void UIApplicationInitialize(void);
 void UIApplicationInstantiateSingleton(Class principalClass);
 
 extern NSString * const UIWindowDidRotateNotification;
+extern NSString * const UIWindowWillRotateNotification;
 extern NSNotificationName const _UIWindowSceneEnhancedWindowingModeChanged;
 
 WTF_EXTERN_C_END

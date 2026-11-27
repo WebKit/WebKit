@@ -443,6 +443,15 @@ window.test_driver_internal.send_keys = async function(element, keys)
  */
 window.test_driver_internal.click = async function (element, coords)
 {
+    // A rotation the test started can still be pending or running and moves the button, so keep the point at the same place inside the button after it ends.
+    if (testRunner?.isIOSFamily && testRunner?.isWebKit2) {
+        const before = element.getClientRects()[0];
+        await new Promise((resolve) => testRunner.runUIScript(`uiController.waitForOrientationToSettle(function() { uiController.uiScriptComplete(); });`, resolve));
+        const after = element.getClientRects()[0];
+        if (before && after)
+            coords = { x: coords.x - before.left + after.left, y: coords.y - before.top + after.top };
+    }
+
     // Use the eventSender from the element's window so that events are
     // dispatched to the correct view (e.g. a popup opened via window.open).
     const targetWindow = element.ownerDocument.defaultView || window;

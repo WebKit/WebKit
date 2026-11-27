@@ -37,6 +37,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
@@ -57,6 +58,7 @@ OBJC_CLASS NSColor;
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS UIPasteboardConsistencyEnforcer;
+OBJC_CLASS WindowRotationObserver;
 OBJC_CLASS GCMouse;
 OBJC_CLASS WKMouseDeviceObserver;
 OBJC_CLASS WKWebViewConfiguration;
@@ -490,6 +492,8 @@ public:
 #if PLATFORM(IOS) || PLATFORM(VISION)
     void lockScreenOrientation(WKScreenOrientationType);
     void unlockScreenOrientation();
+    void waitForOrientationToSettle();
+    void noteOrientationRequest();
 #endif
 
     WKRetainPtr<WKStringRef> getBackgroundFetchIdentifier();
@@ -912,6 +916,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     WKRetainPtr<WKDataRef> m_openPanelFileURLsMediaIcon;
     bool m_didLockOrientation { false };
+    RetainPtr<WindowRotationObserver> m_windowRotationObserver;
+    MonotonicTime m_lastOrientationRequestTime;
 #endif
 
 #if PLATFORM(MAC)

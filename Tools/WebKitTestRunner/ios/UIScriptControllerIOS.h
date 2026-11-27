@@ -54,6 +54,7 @@ public:
 private:
     void waitForOutstandingCallbacks() override;
     void doAfterNextStablePresentationUpdate(JSValueRef) override;
+    void waitForOrientationToSettle(JSValueRef) override;
     void ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef) override;
     void doAfterVisibleContentRectUpdate(JSValueRef) override;
     void doAfterNextVisibleContentRectAndStablePresentationUpdate(JSValueRef) override;
