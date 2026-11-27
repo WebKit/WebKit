@@ -94,6 +94,7 @@ public:
 
     void cannotHandle();
     void contextClosed();
+    void cancelNavigationPreload();
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
@@ -159,6 +160,7 @@ private:
     bool m_shouldSoftUpdate { false };
     bool m_isLoadingFromPreloader { false };
     std::optional<WebCore::DOMCacheEngine::Record> m_cacheRecord;
+    RefPtr<ServiceWorkerFetchTask> m_protectedThisUntilPreloadIsTaken;
 };
 
 }

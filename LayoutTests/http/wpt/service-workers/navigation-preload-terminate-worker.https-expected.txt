@@ -1,0 +1,3 @@
+
+PASS A new navigation works after the service worker was terminated while waiting for a navigation preload
+

@@ -1,0 +1,3 @@
+
+PASS preloadResponse can be read in waitUntil() after respondWith() (delay=body)
+

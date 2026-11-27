@@ -690,6 +690,11 @@ void WebSWContextManagerConnection::removeNavigationFetch(WebCore::SWServerConne
     });
 }
 
+void WebSWContextManagerConnection::cancelNavigationPreload(WebCore::FetchIdentifier fetchIdentifier)
+{
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::CancelNavigationPreload { fetchIdentifier }, 0);
+}
+
 void WebSWContextManagerConnection::startPendingStreamUploadForwarding(WebCore::PendingStreamState& state)
 {
     auto fetchIdentifier = state.serviceWorkerFetchIdentifier();

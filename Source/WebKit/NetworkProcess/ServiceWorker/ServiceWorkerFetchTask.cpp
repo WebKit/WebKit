@@ -73,7 +73,9 @@ RefPtr<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromNavigationPreloader(W
         return nullptr;
     }
 
-    return adoptRef(*new ServiceWorkerFetchTask(swServerConnection, loader, std::exchange(task->m_preloader, { })));
+    Ref preloadTask = adoptRef(*new ServiceWorkerFetchTask(swServerConnection, loader, std::exchange(task->m_preloader, { })));
+    task->m_protectedThisUntilPreloadIsTaken = nullptr;
+    return preloadTask;
 }
 
 Ref<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromCache(NetworkResourceLoader& loader, NetworkStorageManager& manager, WebCore::ResourceRequest&& request, String&& cacheName)
@@ -205,6 +207,7 @@ void ServiceWorkerFetchTask::contextClosed()
 {
     SWFETCH_RELEASE_LOG("contextClosed: (m_isDone=%d, m_wasHandled=%d)", m_isDone, m_wasHandled);
     m_serviceWorkerConnection = nullptr;
+    RefPtr protectedThis = std::exchange(m_protectedThisUntilPreloadIsTaken, nullptr);
     if (m_isDone)
         return;
 
@@ -399,6 +402,12 @@ void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetr
 
     sendToClient(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
 
+    // The fetch event may still read preloadResponse in waitUntil(), so keep the preload until the event completes or the service worker loads it.
+    if (m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled() && m_preloader->error().isNull() && !m_isLoadingFromPreloader && m_serviceWorkerConnection) {
+        m_protectedThisUntilPreloadIsTaken = this;
+        return;
+    }
+
     cancelPreloadIfNecessary();
 }
 
@@ -454,6 +463,17 @@ void ServiceWorkerFetchTask::usePreload()
     protect(m_loader)->serviceWorkerDidNotHandle(this);
 }
 
+void ServiceWorkerFetchTask::cancelNavigationPreload()
+{
+    // The fetch event completed, so the service worker will not take the preload anymore.
+    // Cancelling it also covers a didFinish() that arrives after this, for instance when the worker terminated.
+    SWFETCH_RELEASE_LOG("cancelNavigationPreload: (isKeptAlive=%d, isLoadingFromPreloader=%d)", !!m_protectedThisUntilPreloadIsTaken, m_isLoadingFromPreloader);
+    if (m_isLoadingFromPreloader)
+        return;
+    RefPtr protectedThis = std::exchange(m_protectedThisUntilPreloadIsTaken, nullptr);
+    cancelPreloadIfNecessary();
+}
+
 void ServiceWorkerFetchTask::cannotHandle()
 {
     SWFETCH_RELEASE_LOG("cannotHandle:");
@@ -502,6 +522,9 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
 
 void ServiceWorkerFetchTask::cancelPendingStreamUpload()
 {
+    // A task kept alive for its navigation preload has no loader anymore.
+    if (!m_loader)
+        return;
     sendToClient(Messages::WebResourceLoader::CancelPendingStreamUpload { });
 }
 
@@ -592,6 +615,9 @@ void ServiceWorkerFetchTask::preloadResponseIsReady()
     if (!m_isLoadingFromPreloader) {
         if (m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled() && m_serviceWorkerConnection)
             sendNavigationPreloadUpdate();
+        // The service worker does not load a failed preload.
+        if (m_preloader && !m_preloader->error().isNull())
+            m_protectedThisUntilPreloadIsTaken = nullptr;
         return;
     }
     processPreloadResponse();
