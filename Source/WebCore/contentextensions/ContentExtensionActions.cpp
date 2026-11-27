@@ -54,7 +54,7 @@ static void appendUTF8(Vector<uint8_t>& vector, StringView string, size_t length
     auto offset = vector.size();
     vector.grow(offset + length);
     auto buffer = byteCast<char8_t>(vector.mutableSpan().subspan(offset));
-    auto result = string.is8Bit() ? WTF::Unicode::convert(string.span8(), buffer) : WTF::Unicode::convertReplacingInvalidSequences(string.span16(), buffer);
+    auto result = string.is8Bit() ? WTF::Unicode::convert(string.span8(), buffer) : WTF::Unicode::convertReplacingUnpairedSurrogates(string.span16(), buffer);
     RELEASE_ASSERT(result.code == WTF::Unicode::ConversionResultCode::Success && result.buffer.size() == length);
 }
 

@@ -38,19 +38,20 @@ enum class ConversionResultCode : uint8_t {
     TargetExhausted // insufficient room in target for conversion
 };
 
+// These convert as many complete code points as fit in the buffer. Those that don't replace
+// invalid sequences stop at the first one. sourceLength is how much of the source they converted.
 template<typename CharacterType> struct ConversionResult {
     ConversionResultCode code { };
     std::span<CharacterType> buffer { };
-    bool isAllASCII { };
+    size_t sourceLength { };
 };
 
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convert(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const char16_t>, std::span<char8_t>);
 NODELETE WTF_EXPORT_PRIVATE ConversionResult<char8_t> convert(std::span<const Latin1Character>, std::span<char8_t>);
 
-// Invalid sequences are converted to the replacement character.
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
-NODELETE WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
+NODELETE WTF_EXPORT_PRIVATE ConversionResult<char8_t> convertReplacingUnpairedSurrogates(std::span<const char16_t>, std::span<char8_t>);
 
 // Unpaired surrogates count as replacement characters.
 WTF_EXPORT_PRIVATE size_t lengthUTF8(std::span<const Latin1Character>);

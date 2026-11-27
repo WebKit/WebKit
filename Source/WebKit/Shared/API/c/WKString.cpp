@@ -91,7 +91,7 @@ size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bu
         result = WTF::Unicode::convert(string.span8(), target.first(bufferSize - 1));
     else {
         if constexpr (strict == NonStrict)
-            result = WTF::Unicode::convertReplacingInvalidSequences(string.span16(), target.first(bufferSize - 1));
+            result = WTF::Unicode::convertReplacingUnpairedSurrogates(string.span16(), target.first(bufferSize - 1));
         else {
             result = WTF::Unicode::convert(string.span16(), target.first(bufferSize - 1));
             if (result.code == WTF::Unicode::ConversionResultCode::SourceInvalid)
