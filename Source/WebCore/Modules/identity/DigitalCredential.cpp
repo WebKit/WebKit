@@ -109,6 +109,34 @@ static std::optional<DigitalCredentialPresentationProtocol> convertProtocolStrin
     return std::nullopt;
 }
 
+// FIXME: rdar://193277432
+static bool hasJWTResponseMode(StringView json)
+{
+    RefPtr value = JSON::Value::parseJSON(json);
+    if (!value)
+        return false;
+
+    RefPtr object = value->asObject();
+    return object && object->getString("response_mode"_s) == "dc_api.jwt"_s;
+}
+
+static bool hasJWTResponseModeInBase64URL(StringView encodedJSON)
+{
+    const auto decoded = base64URLDecode(encodedJSON);
+    return decoded && hasJWTResponseMode(String::fromUTF8(decoded->span()));
+}
+
+static bool hasJWTResponseModeInCompactJWS(const String& compactJWS)
+{
+    const auto parts = compactJWS.splitAllowingEmptyEntries('.');
+    return parts.size() == 3 && hasJWTResponseModeInBase64URL(parts[1]);
+}
+
+static Exception invalidResponseModeException()
+{
+    return Exception { ExceptionCode::TypeError, "The request must have a \"response_mode\" of \"dc_api.jwt\"."_s };
+}
+
 static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCredentialRequest(const Document& document, const DigitalCredentialGetRequest& request)
 {
     auto protocol = convertProtocolString(document, request.protocol);
@@ -126,8 +154,12 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
-    if (isOpenID4VPPresentationProtocol(*protocol) && jsonString.length() > maxOpenID4VPRequestDataLength)
-        return Exception { ExceptionCode::TypeError, "The request is too large."_s };
+    if (isOpenID4VPPresentationProtocol(*protocol)) {
+        if (jsonString.isNull())
+            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        if (jsonString.length() > maxOpenID4VPRequestDataLength)
+            return Exception { ExceptionCode::TypeError, "The request is too large."_s };
+    }
 
     using enum DigitalCredentialPresentationProtocol;
     switch (*protocol) {
@@ -138,20 +170,36 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
     case Openid4vpV1Signed: {
-        auto result = convertDictionary<OpenID4VPSignedRequest>(*globalObject, request.data.get());
+        auto checkedData = JSC::JSONParse(globalObject, jsonString);
+        if (scope.exception()) [[unlikely]]
+            return Exception { ExceptionCode::ExistingExceptionError };
+        if (!checkedData) [[unlikely]]
+            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        auto result = convertDictionary<OpenID4VPSignedRequest>(*globalObject, checkedData);
         if (result.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };
-        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
+        auto signedRequest = result.releaseReturnValue();
+        if (!hasJWTResponseModeInCompactJWS(signedRequest.request))
+            return invalidResponseModeException();
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(WTF::move(signedRequest));
     }
     case Openid4vpV1Multisigned: {
-        auto result = convertDictionary<OpenID4VPMultisignedRequest>(*globalObject, request.data.get());
+        auto checkedData = JSC::JSONParse(globalObject, jsonString);
+        if (scope.exception()) [[unlikely]]
+            return Exception { ExceptionCode::ExistingExceptionError };
+        if (!checkedData) [[unlikely]]
+            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        auto result = convertDictionary<OpenID4VPMultisignedRequest>(*globalObject, checkedData);
         if (result.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };
-        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
+        auto multisignedRequest = result.releaseReturnValue();
+        if (!hasJWTResponseModeInBase64URL(multisignedRequest.payload))
+            return invalidResponseModeException();
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(WTF::move(multisignedRequest));
     }
     case Openid4vpV1Unsigned:
-        if (jsonString.isNull())
-            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        if (!hasJWTResponseMode(jsonString))
+            return invalidResponseModeException();
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(OpenID4VPUnsignedRequest { jsonString });
     }
     RELEASE_ASSERT_NOT_REACHED();
