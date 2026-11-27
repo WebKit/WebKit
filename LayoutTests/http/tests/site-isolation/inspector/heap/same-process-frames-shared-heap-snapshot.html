@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/heap-test-utilities.js"></script>
+<script src="resources/heap-markers.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Heap.SameProcessFramesSharedSnapshot");
+
+    const mainFrameMarkerClassName = HeapTest.markerClassName("MainFrameMarker");
+    const iframeMarkerClassName = HeapTest.markerClassName("IFrameMarker");
+    const iframeLateMarkerClassName = HeapTest.markerClassName("IFrameLateMarker");
+    const mainFrameLateMarkerClassName = HeapTest.markerClassName("MainFrameLateMarker");
+
+    let mainFrameTarget = null;
+    let iframeTarget = null;
+
+    // Snapshots that come from one build were taken at the same moment. Frame targets measure time from one epoch,
+    // so their timestamps are then equal.
+    function expectSameBuild(snapshot, otherSnapshot, message) {
+        InspectorTest.expectEqual(snapshot.timestamp, otherSnapshot.timestamp, message);
+    }
+
+    function expectDifferentBuilds(snapshot, otherSnapshot, message) {
+        InspectorTest.expectNotEqual(snapshot.timestamp, otherSnapshot.timestamp, message);
+    }
+
+    // Keeps the inspected process busy, so that the commands sent after this one in the same task all reach it before the
+    // first of them runs, and so fall in one sharing window. Otherwise the cases that expect separate builds could pass
+    // without reaching the check they test.
+    function occupyInspectedProcess() {
+        return HeapTest.evaluate(mainFrameTarget, `(() => { let end = performance.now() + 200; while (performance.now() < end) { } })()`);
+    }
+
+    // Resolves with the next snapshot that Console.heapSnapshot reports on each of the given targets, without adding
+    // them to the active recording.
+    function awaitConsoleHeapSnapshots(targets) {
+        let snapshots = new Map;
+        return new Promise((resolve) => {
+            let originalHeapSnapshotAdded = WI.timelineManager.heapSnapshotAdded;
+            WI.timelineManager.heapSnapshotAdded = function(timestamp, snapshot) {
+                if (!targets.includes(snapshot.target) || snapshots.has(snapshot.target))
+                    return;
+
+                snapshot.timestamp = timestamp;
+                snapshots.set(snapshot.target, snapshot);
+                if (snapshots.size < targets.length)
+                    return;
+
+                WI.timelineManager.heapSnapshotAdded = originalHeapSnapshotAdded;
+                resolve(targets.map((target) => snapshots.get(target)));
+            };
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.Setup",
+        description: "Find the same-origin iframe's target and create the markers.",
+        async test() {
+            // FIXME: <https://webkit.org/b/332030> Use an InspectorTest helper that waits for the main frame target,
+            // instead of matching this test's URL. InspectorTest.mainFrameTarget falls back to the page target while the
+            // frontend does not yet know the main frame target's frame.
+            mainFrameTarget = await waitForFrameTargetForURLContaining("/same-process-frames-shared-heap-snapshot.html");
+            InspectorTest.assert(mainFrameTarget, "Should find the main frame's target.");
+            iframeTarget = await waitForFrameTargetForURLContaining("heap-frame.html");
+            InspectorTest.assert(iframeTarget, "Should find the same-origin iframe's target.");
+            await waitForExpressionInTarget(iframeTarget, "typeof createMarker === 'function'");
+            InspectorTest.expectEqual(HeapTest.processIdentifier(iframeTarget), HeapTest.processIdentifier(mainFrameTarget), "The same-origin iframe should be in the main frame's process.");
+
+            await HeapTest.evaluate(mainFrameTarget, `createMarker("${mainFrameMarkerClassName}")`);
+            await HeapTest.evaluate(iframeTarget, `createMarker("${iframeMarkerClassName}")`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.RequestedTogether",
+        description: "Snapshots that frame targets of one process request together should come from one build, and each should include only its own frame's objects.",
+        async test() {
+            let [, mainFrameSnapshot, iframeSnapshot] = await Promise.all([
+                occupyInspectedProcess(),
+                HeapTest.takeSnapshot(mainFrameTarget),
+                HeapTest.takeSnapshot(iframeTarget),
+            ]);
+            expectSameBuild(mainFrameSnapshot, iframeSnapshot, "The snapshots should come from one build.");
+
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, mainFrameMarkerClassName), 1, "The main frame's snapshot should include the main frame's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, iframeMarkerClassName), 0, "The main frame's snapshot should not include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, iframeMarkerClassName), 1, "The iframe's snapshot should include the iframe's marker.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, mainFrameMarkerClassName), 0, "The iframe's snapshot should not include the main frame's marker.");
+        },
+    });
+
+    // Either target may be the one that builds the shared snapshot, so disable each of them in turn.
+    for (let [disabledTargetName, checkedTargetName, markerClassName] of [["mainFrameTarget", "iframeTarget", iframeMarkerClassName], ["iframeTarget", "mainFrameTarget", mainFrameMarkerClassName]]) {
+        suite.addTestCase({
+            name: `SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SnapshotUsers.${disabledTargetName}Disabled`,
+            description: "A frame target whose snapshot came from a shared build should keep using the snapshots of its process after the other frame target stops.",
+            async test() {
+                let targets = {mainFrameTarget, iframeTarget};
+                let disabledTarget = targets[disabledTargetName];
+                let checkedTarget = targets[checkedTargetName];
+
+                // Stop both targets from using the snapshots, so that only the shared build below makes them users.
+                for (let target of [mainFrameTarget, iframeTarget]) {
+                    await target.HeapAgent.disable();
+                    await target.HeapAgent.enable();
+                }
+
+                let [, mainFrameSnapshot, iframeSnapshot] = await Promise.all([
+                    occupyInspectedProcess(),
+                    HeapTest.takeSnapshot(mainFrameTarget),
+                    HeapTest.takeSnapshot(iframeTarget),
+                ]);
+                expectSameBuild(mainFrameSnapshot, iframeSnapshot, "The snapshots should come from one build.");
+                let checkedSnapshot = checkedTarget === mainFrameTarget ? mainFrameSnapshot : iframeSnapshot;
+                let [marker] = await HeapTest.instances(checkedSnapshot, markerClassName);
+
+                await disabledTarget.HeapAgent.disable();
+                await disabledTarget.HeapAgent.enable();
+
+                let {preview} = await checkedTarget.HeapAgent.getPreview(marker.id);
+                InspectorTest.expectEqual(preview?.description, markerClassName, "The other target should still preview its marker.");
+
+                let nextSnapshot = await HeapTest.takeSnapshot(checkedTarget);
+                let [nextMarker] = await HeapTest.instances(nextSnapshot, markerClassName);
+                InspectorTest.expectEqual(nextMarker?.id, marker.id, "The marker should keep its identifier in the other target's next snapshot.");
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.JavaScriptInBetween",
+        description: "A snapshot requested after a command that ran JavaScript should not come from a build made before it.",
+        async test() {
+            let [, mainFrameSnapshot, , iframeSnapshot] = await Promise.all([
+                occupyInspectedProcess(),
+                HeapTest.takeSnapshot(mainFrameTarget),
+                HeapTest.evaluate(iframeTarget, `createMarker("${iframeLateMarkerClassName}")`),
+                HeapTest.takeSnapshot(iframeTarget),
+            ]);
+            expectDifferentBuilds(mainFrameSnapshot, iframeSnapshot, "The snapshots should come from different builds.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, iframeLateMarkerClassName), 1, "The iframe's snapshot should include the marker created after the main frame's snapshot was requested.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.GarbageCollectionInBetween",
+        description: "A snapshot requested after a garbage collection should not come from a build made before it.",
+        async test() {
+            // Heap.gc runs without entering the VM, so only the check for garbage collections can tell that the heap changed.
+            let [, mainFrameSnapshot, , iframeSnapshot] = await Promise.all([
+                occupyInspectedProcess(),
+                HeapTest.takeSnapshot(mainFrameTarget),
+                iframeTarget.HeapAgent.gc(),
+                HeapTest.takeSnapshot(iframeTarget),
+            ]);
+            expectDifferentBuilds(mainFrameSnapshot, iframeSnapshot, "The snapshots should come from different builds.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SnapshotsClearedInBetween",
+        description: "A snapshot requested after the process's snapshots were cleared should not come from a build made before the clear.",
+        async test() {
+            // Stop both targets from using the snapshots, so that disabling the main frame's Heap domain clears them.
+            for (let target of [mainFrameTarget, iframeTarget]) {
+                await target.HeapAgent.disable();
+                await target.HeapAgent.enable();
+            }
+
+            let [, mainFrameSnapshot, , iframeSnapshot] = await Promise.all([
+                occupyInspectedProcess(),
+                HeapTest.takeSnapshot(mainFrameTarget),
+                mainFrameTarget.HeapAgent.disable(),
+                HeapTest.takeSnapshot(iframeTarget),
+            ]);
+            await mainFrameTarget.HeapAgent.enable();
+
+            expectDifferentBuilds(mainFrameSnapshot, iframeSnapshot, "The snapshots should come from different builds.");
+            InspectorTest.expectEqual(HeapTest.objectCount(iframeSnapshot, iframeMarkerClassName), 1, "The iframe's snapshot should include the iframe's marker.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.SameTargetTwice",
+        description: "Two snapshots that one frame target requests together should come from different builds.",
+        async test() {
+            let [, firstSnapshot, secondSnapshot] = await Promise.all([
+                occupyInspectedProcess(),
+                HeapTest.takeSnapshot(iframeTarget),
+                HeapTest.takeSnapshot(iframeTarget),
+            ]);
+            expectDifferentBuilds(firstSnapshot, secondSnapshot, "The snapshots should come from different builds.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Heap.SameProcessFramesSharedSnapshot.ConsoleSnapshots",
+        description: "A console.takeHeapSnapshot() call should not use a build made for an earlier call in the same script.",
+        async test() {
+            let snapshotsPromise = awaitConsoleHeapSnapshots([iframeTarget, mainFrameTarget]);
+            await HeapTest.evaluate(iframeTarget, `console.takeHeapSnapshot(); parent.createMarker("${mainFrameLateMarkerClassName}"); parent.console.takeHeapSnapshot()`);
+            let [iframeSnapshot, mainFrameSnapshot] = await snapshotsPromise;
+
+            expectDifferentBuilds(iframeSnapshot, mainFrameSnapshot, "The snapshots should come from different builds.");
+            InspectorTest.expectEqual(HeapTest.objectCount(mainFrameSnapshot, mainFrameLateMarkerClassName), 1, "The main frame's snapshot should include the marker created after the iframe's snapshot.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that under Site Isolation, frame targets in one process that request heap snapshots together share one snapshot build, unless the heap may have changed in between.</p>
+<iframe src="resources/heap-frame.html"></iframe>
+</body>

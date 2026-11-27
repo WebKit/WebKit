@@ -294,6 +294,10 @@ public:
     VMIdentifier identifier() const { return m_identifier; }
     bool isEntered() const { return !!entryScope; }
 
+    // Changes whenever the VM is entered while not already entered. If the VM was not entered at two moments and this
+    // count is the same at both, no JavaScript ran between them.
+    uint64_t outermostEntryCount() const { return m_outermostEntryCount; }
+
     inline CallFrame* topJSCallFrame() const;
 
     // Global object in which execution began.
@@ -1312,6 +1316,8 @@ private:
 
     Vector<Function<void()>> m_didPopListeners;
 
+    uint64_t m_outermostEntryCount { 0 };
+
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;
 #endif
@@ -1326,6 +1332,7 @@ private:
     friend class LLIntOffsetsExtractor;
     friend class SuspendExceptionScope;
     friend class VMTraps;
+    friend class VMEntryScope;
 };
 
 static_assert(OBJECT_OFFSETOF(VM, topEntryFrame) == OBJECT_OFFSETOF(VM, topCallFrame) + sizeof(void*), "We load/store these using a pair instruction");

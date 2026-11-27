@@ -32,11 +32,13 @@
 #include "HeapSnapshot.h"
 #include "JSCInlines.h"
 #include "JSCast.h"
+#include "MarkedSpace.h"
 #include "PreventCollectionScope.h"
 #include "VM.h"
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
@@ -77,6 +79,33 @@ void HeapSnapshotBuilder::buildSnapshot()
         m_snapshot->finalize();
     }
     m_profiler.appendSnapshot(WTF::move(m_snapshot));
+
+    VM& vm = m_profiler.vm();
+    m_builtSnapshot = m_profiler.mostRecentSnapshot();
+    m_markingVersionAtBuild = vm.heap.objectSpace().markingVersion();
+    m_edenVersionAtBuild = vm.heap.objectSpace().edenVersion();
+    m_outermostEntryCountAtBuild = vm.outermostEntryCount();
+    m_wasVMEnteredAtBuild = vm.isEntered();
+}
+
+bool HeapSnapshotBuilder::isSnapshotOfCurrentHeap() const
+{
+    if (m_hasConsumedEdges)
+        return false;
+
+    if (!m_builtSnapshot || m_profiler.mostRecentSnapshot() != m_builtSnapshot)
+        return false;
+
+    // Every garbage collection advances one of these versions.
+    VM& vm = m_profiler.vm();
+    if (vm.heap.objectSpace().markingVersion() != m_markingVersionAtBuild || vm.heap.objectSpace().edenVersion() != m_edenVersionAtBuild)
+        return false;
+
+    // While the VM is entered, JavaScript can run without a new outermost entry.
+    if (m_wasVMEnteredAtBuild || vm.isEntered())
+        return false;
+
+    return vm.outermostEntryCount() == m_outermostEntryCountAtBuild;
 }
 
 void HeapSnapshotBuilder::analyzeNode(JSCell* cell)
@@ -326,19 +355,23 @@ String HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
     return emptyString();
 }
 
-String HeapSnapshotBuilder::json()
+String HeapSnapshotBuilder::json(KeepEdges keepEdges)
 {
     StringPrintStream string;
-    dumpToStream(string);
+    dumpToStream(string, keepEdges);
     if (m_hasOverflowed)
         return { };
     return string.tryToString().value_or(String());
 }
 
-void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
+void HeapSnapshotBuilder::dumpToStream(PrintStream& out, KeepEdges keepEdges)
 {
+    ASSERT(!m_hasConsumedEdges);
+
     VM& vm = m_profiler.vm();
     DeferGCForAWhile deferGC(vm);
+
+    m_hasOverflowed = false;
 
     // Build a node to identifier map of allowed nodes to use when serializing edges.
     HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
@@ -518,7 +551,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
     // Process edges.
     // Replace pointers with identifiers.
     // Remove any edges that we won't need.
-    m_edges.removeAllMatching([&] (HeapSnapshotEdge& edge) {
+    auto replaceCellsWithIdentifiers = [&](HeapSnapshotEdge& edge) {
         // If the from cell is null, this means a <root> edge.
         if (!edge.from.cell)
             edge.from.identifier = 0;
@@ -529,7 +562,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
                     if (Options::verboseHeapSnapshotLogging())
                         WTFLogAlways("Failed to find node for from-edge cell %p", edge.from.cell);
                 }
-                return true;
+                return false;
             }
             edge.from.identifier = fromLookup->value;
         }
@@ -543,27 +576,50 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
                     if (Options::verboseHeapSnapshotLogging())
                         WTFLogAlways("Failed to find node for to-edge cell %p", edge.to.cell);
                 }
-                return true;
+                return false;
             }
             edge.to.identifier = toLookup->value;
         }
 
-        return false;
-    });
+        return true;
+    };
+
+    Vector<HeapSnapshotEdge> keptEdges;
+    if (keepEdges == KeepEdges::Yes) {
+        bool needsEdgeNames = !m_hasEdgeNamesForLaterSerializations;
+        m_hasEdgeNamesForLaterSerializations = true;
+        for (auto& edge : m_edges) {
+            if (needsEdgeNames && (edge.type == EdgeType::Property || edge.type == EdgeType::Variable))
+                m_edgeNamesForLaterSerializations.add(edge.u.name);
+
+            HeapSnapshotEdge allowedEdge = edge;
+            if (replaceCellsWithIdentifiers(allowedEdge))
+                keptEdges.append(allowedEdge);
+        }
+    } else {
+        m_edges.removeAllMatching([&](HeapSnapshotEdge& edge) {
+            return !replaceCellsWithIdentifiers(edge);
+        });
+        m_hasConsumedEdges = true;
+    }
 
     allowedNodeIdentifiers.clear();
-    m_edges.shrinkToFit();
+    if (keepEdges == KeepEdges::No)
+        m_edges.shrinkToFit();
+
+    auto& edges = keepEdges == KeepEdges::Yes ? keptEdges : m_edges;
 
     // Sort edges based on from identifier.
-    std::ranges::sort(m_edges, [&](const auto& a, const auto& b) {
+    std::ranges::sort(edges, [&](const auto& a, const auto& b) {
         return a.from.identifier < b.from.identifier;
     });
 
     // edges
     out.print(",\"edges\":["_s);
-    for (auto& edge : m_edges)
+    for (auto& edge : edges)
         appendEdgeJSON(edge);
     out.print(']');
+    keptEdges.clear();
 
     // edge types
     out.print(",\"edgeTypes\":[\""_s, edgeTypeToString(EdgeType::Internal), "\",\""_s, edgeTypeToString(EdgeType::Property), "\",\""_s, edgeTypeToString(EdgeType::Index), "\",\""_s, edgeTypeToString(EdgeType::Variable), "\"]"_s);

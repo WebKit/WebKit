@@ -30,10 +30,12 @@
 #include <JavaScriptCore/JSExportMacros.h>
 #include <functional>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/OverflowPolicy.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -42,6 +44,8 @@ namespace JSC {
 class ConservativeRoots;
 class HeapSnapshot;
 class JSCell;
+
+typedef uint32_t HeapVersion;
 
 struct HeapSnapshotNode {
     HeapSnapshotNode(JSCell* cell, unsigned identifier)
@@ -115,6 +119,11 @@ public:
     // Performs a garbage collection that builds a snapshot of all live cells.
     void buildSnapshot();
 
+    // Whether json() would still give what a new build would give. False after any garbage collection, change to the
+    // profiler's snapshots or JavaScript execution, while the VM is entered or if it was at the build, and once json()
+    // has consumed the edges. Changes that native code makes without running JavaScript are not detected.
+    bool isSnapshotOfCurrentHeap() const;
+
     // A root or marked cell.
     void analyzeNode(JSCell*) final;
 
@@ -128,8 +137,12 @@ public:
     void setWrappedObjectForCell(JSCell*, void*) final;
     void setLabelForCell(JSCell*, const String&) final;
 
-    String json();
-    void dumpToStream(PrintStream&);
+    // KeepEdges::Yes keeps the edges so that the build can be serialized again, for example with another client. The
+    // first such serialization must directly follow buildSnapshot(). Otherwise the serialization consumes the edges, to
+    // avoid holding a filtered copy.
+    enum class KeepEdges : bool { No, Yes };
+    String json(KeepEdges = KeepEdges::No);
+    void dumpToStream(PrintStream&, KeepEdges = KeepEdges::No);
 
     bool hasOverflowed() const { return m_hasOverflowed; }
 
@@ -172,6 +185,19 @@ private:
     HashMap<JSCell*, String> m_cellLabels;
     HashSet<JSCell*> m_appendedCells WTF_GUARDED_BY_LOCK(m_buildingNodeMutex);
     SnapshotType m_snapshotType;
+
+    // The state of the heap when buildSnapshot() finished, for isSnapshotOfCurrentHeap().
+    HeapSnapshot* m_builtSnapshot { nullptr };
+    HeapVersion m_markingVersionAtBuild { 0 };
+    HeapVersion m_edenVersionAtBuild { 0 };
+    uint64_t m_outermostEntryCountAtBuild { 0 };
+    bool m_wasVMEnteredAtBuild { false };
+    bool m_hasConsumedEdges { false };
+
+    // Edge names are kept alive by reference counts, not by the garbage collector, so serializations after the first
+    // need their own references.
+    HashSet<RefPtr<UniquedStringImpl>> m_edgeNamesForLaterSerializations;
+    bool m_hasEdgeNamesForLaterSerializations { false };
 };
 
 } // namespace JSC
