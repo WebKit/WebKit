@@ -1,0 +1,25 @@
+Test that WI.MediaTimelineRecord round-trips its type and timestamps through toJSON and fromJSON, and that export does not change the live record.
+
+
+== Running test suite: Timeline.MediaRecordExportRoundtrip
+-- Running test case: Timeline.MediaRecordExportRoundtrip.CSSAnimation
+PASS: Exported Media record should carry its type.
+PASS: The record should import as a WI.MediaTimelineRecord.
+PASS: Imported record should import the same startTime.
+PASS: Imported record should import the same endTime.
+PASS: Imported record should import the same activeStartTime.
+
+-- Running test case: Timeline.MediaRecordExportRoundtrip.MediaElement
+PASS: The live record should have an end time after the "suspend" event.
+PASS: Exported Media record should carry its type.
+PASS: The record should import as a WI.MediaTimelineRecord.
+PASS: Imported record should import the same startTime.
+PASS: Imported record should import the same endTime, which only replaying each DOM event computes.
+
+-- Running test case: Timeline.MediaRecordExportRoundtrip.ExportShouldNotChangeLiveRecord
+PASS: Live record should have the originator before export.
+PASS: Live record should keep the originator after export.
+PASS: Exported timestamp should not carry the originator.
+PASS: Exported timestamp should keep the originator display name.
+PASS: Exported timestamp should keep the originator CSS path.
+
