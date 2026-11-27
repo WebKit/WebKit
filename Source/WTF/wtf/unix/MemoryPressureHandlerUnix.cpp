@@ -66,7 +66,12 @@ static const unsigned s_holdOffMultiplier = 20;
 
 void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical)
 {
-    if (!m_installed)
+    if (m_holdOffTimer.isActive() && isCritical && !m_holdOffDueToCritical) {
+        // We've been holding off due to a non-critical event but now we're
+        // processing a critical event. Exit the hold off period.
+        m_holdOffTimer.stop();
+        install();
+    } else if (!m_installed)
         return;
 
     if (ReliefLogger::loggingEnabled())
@@ -159,6 +164,7 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
     if (bytesFreed > 0 && static_cast<size_t>(bytesFreed) >= s_minimumBytesFreedToUseMinimumHoldOffTime)
         holdOffTime = (MonotonicTime::now() - startTime) * s_holdOffMultiplier;
     holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
+    m_holdOffDueToCritical = critical == Critical::Yes;
 }
 
 void MemoryPressureHandler::platformReleaseMemory(Critical)
