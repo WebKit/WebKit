@@ -23,7 +23,7 @@
 
 // FIXME: (rdar://164119356) Move this file into WTF.
 
-#if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#if compiler(>=6.4)
 
 /// Represents an `unexpected` value of an `std::expected<T, E>`.
 struct CxxUnexpected<Failure: Sendable>: Error {
@@ -272,4 +272,4 @@ extension CxxInitializableExpected {
     }
 }
 
-#endif // compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+#endif // compiler(>=6.4)

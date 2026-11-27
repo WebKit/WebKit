@@ -162,7 +162,7 @@ final class WebBackForwardList {
             )
 
         // We should have always started out with an m_page and we should never close the page twice
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         let pageAvailable = Bool(fromCxx: page)
         #else
         let pageAvailable = page.__convertToBool()
@@ -338,7 +338,7 @@ final class WebBackForwardList {
     private func currentEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return nil
         }
@@ -363,7 +363,7 @@ final class WebBackForwardList {
     private func backEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return nil
         }
@@ -395,7 +395,7 @@ final class WebBackForwardList {
     private func forwardEntry() -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return nil
         }
@@ -428,7 +428,7 @@ final class WebBackForwardList {
     private func entryAtDeltaFromCurrentIndex(delta: Int, allowSkipping: Bool) -> WebKit.WebBackForwardListItem? {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return nil
         }
@@ -472,7 +472,7 @@ final class WebBackForwardList {
     }
 
     func itemAtIndexWithoutSkipping(index: Int) -> (item: WebKit.WebBackForwardListItem?, index: Int) {
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return (nil, index)
         }
@@ -492,7 +492,7 @@ final class WebBackForwardList {
     private func rawBackListEntryCount() -> Int {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return 0
         }
@@ -512,7 +512,7 @@ final class WebBackForwardList {
     private func rawForwardListEntryCount() -> Int {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return 0
         }
@@ -570,7 +570,7 @@ final class WebBackForwardList {
     private func backListWithLimitInternal(limit: UInt, makeAPIArray: Bool) -> (count: Int, array: API.RefAPIArray?) {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
         }
@@ -620,7 +620,7 @@ final class WebBackForwardList {
     private func forwardListWithLimitInternal(limit: UInt, makeAPIArray: Bool) -> (count: Int, array: API.RefAPIArray?) {
         assertValidIndex()
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         guard Bool(fromCxx: page) else {
             return WebBackForwardList.makeListPairResult(items: [], makeAPIArray: makeAPIArray)
         }
@@ -1122,7 +1122,7 @@ final class WebBackForwardList {
     ) throws(InvalidMessage) {
         let process = WebKit.WebProcessProxy.fromConnection(connection)
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         let hasItemID = Bool(fromCxx: navigatedFrameState.ptr().itemID)
         let hasFrameItemID = Bool(fromCxx: navigatedFrameState.ptr().frameItemID)
         #else
@@ -1259,7 +1259,7 @@ final class WebBackForwardList {
             try messageCheckItemURLs(frameState: frameState, process: process)
         }
 
-        #if compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
+        #if compiler(>=6.4)
         let hasItemID = Bool(fromCxx: frameState.ptr().itemID)
         let hasFrameItemID = Bool(fromCxx: frameState.ptr().frameItemID)
         #else
