@@ -106,6 +106,25 @@ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev
 CC=gcc CXX=g++ Tools/Scripts/cross-toolchain-helper --cross-target=rpi4-64bits-mesa --cross-dev-shell
 ```
 
+### Swift
+
+All Raspberry Pi targets except rpi3-32bits-userland build WPE with Swift. Their
+toolchain comes from [meta-swift](https://github.com/nikolaszimmermann/meta-swift),
+which builds the Swift compiler, runtime and Foundation from source on the swiftlang
+fork of LLVM. That LLVM is a private toolchain: the C++ of WPE is compiled by the clang
+that swiftc embeds, and every other recipe keeps the compiler of the image, including
+the clang of meta-clang.
+
+The SDK ships that clang as well, and exports it as `SWIFT_CLANGCC`, `SWIFT_CLANGCXX`
+and `SWIFT_CLANGCPP`, next to `SWIFT_TARGET` and `SWIFTFLAGS` for the Swift compiler.
+`build-webkit --cross-target` and the `cross-dev-shell` always use that clang as `CC`,
+`CXX` and `CPP`, whatever `CC` and `CXX` say, as Swift and C++ must agree on the
+compiler. `build-webkit --cross-target` also passes `SWIFT_TARGET` and `SWIFTFLAGS` on
+to CMake, so the Swift features of WebKit are detected as in a native build.
+
+The first toolchain build compiles LLVM and the Swift compiler from source, which takes
+several hours. An external Yocto cache (see below) keeps the result for later builds.
+
 ### Using the bitbake-dev-shell
 
 If you want to debug or tune something on the bitbake build system used

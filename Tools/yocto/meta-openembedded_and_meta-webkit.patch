@@ -898,3 +898,22 @@ index 3ae5604..4a1e2cc 100644
  
  # largefile and 64bit time_t support adds these macros via compiler flags globally
  # remove them for pseudo since pseudo intercepts some of the functions which will be
+diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend
+@@ -0,0 +1,3 @@
++# WPE WebKit is built with the SDK, outside of the image, so the image has to
++# ship the Swift runtime libraries that it links when meta-swift is enabled.
++RDEPENDS:packagegroup-wpewebkit-depends-core:append:swiftllvm = " swift-stdlib swift-dispatch libdispatch"
+diff --git a/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend b/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend
+@@ -0,0 +1,4 @@
++# Build WPE WebKit with Swift when meta-swift is enabled.
++inherit_defer ${@'swift-cmake' if d.getVar('SWIFT_UNIFIED_LLVM') == '1' else ''}
++PACKAGECONFIG[swift] = "-DENABLE_BACK_FORWARD_LIST_SWIFT=ON,-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF,swift-foundation"
++PACKAGECONFIG:append:swiftllvm = " swift"
