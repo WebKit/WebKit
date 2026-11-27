@@ -63,6 +63,15 @@ RefPtr<ImageBuffer> RenderViewTransitionCapture::image()
     return m_oldImage;
 }
 
+void RenderViewTransitionCapture::willBeDestroyed()
+{
+    // RenderTreeBuilder::destroy() may keep a detached renderer in the detached renderer list
+    // until opportunistic tasks, memory pressure or a full list delete it. Nothing paints this
+    // renderer any more, so release the snapshot now instead of keeping it alive that long.
+    m_oldImage = nullptr;
+    RenderReplaced::willBeDestroyed();
+}
+
 void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
 {
     m_oldImage = oldImage;
