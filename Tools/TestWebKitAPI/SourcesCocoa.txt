@@ -197,7 +197,6 @@ Tests/WebKit/WKWebView/IconLoadingDelegate.mm @nonARC
 Tests/WebKit/WKWebView/ImageAnalysisTests.mm @nonARC
 Tests/WebKit/WKWebView/InAppBrowserPrivacy.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBDatabaseProcessKill.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBFileName.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBInPageCache.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBMultiProcess.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBPersistence.mm @nonARC
