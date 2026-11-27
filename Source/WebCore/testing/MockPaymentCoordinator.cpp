@@ -166,6 +166,16 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 
     ASSERT(m_showCount == m_hideCount);
     ++m_showCount;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    m_showingDelegatedWebCheckout = false;
+    m_delegateValidationCompleted = false;
+    if (request.usesDelegateValidation()) {
+        dispatchIfShowing([page = WTF::move(page)] {
+            protect(page->paymentCoordinator())->validateDelegate();
+        });
+        return true;
+    }
+#endif
     dispatchIfShowing([page = WTF::move(page)]() {
         protect(page->paymentCoordinator())->validateMerchant(URL { "https://webkit.org/"_str });
     });
@@ -365,6 +375,63 @@ void MockPaymentCoordinator::cancelPayment()
         ASSERT(protectedThis->m_showCount == protectedThis->m_hideCount);
     });
 }
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+
+bool MockPaymentCoordinator::showDelegatedWebCheckoutUI(const URL& originatingURL, const Vector<URL>&)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return false;
+
+    m_delegatedWebCheckoutOriginatingURL = originatingURL.string();
+    m_delegateValidationCompleted = false;
+    m_completedDelegateSession = { };
+    m_showingDelegatedWebCheckout = true;
+
+    ASSERT(m_showCount == m_hideCount);
+    ++m_showCount;
+    dispatchIfShowing([page = WTF::move(page)] {
+        protect(page->paymentCoordinator())->validateDelegate();
+    });
+    return true;
+}
+
+void MockPaymentCoordinator::completeDelegateValidation(const std::optional<String>& delegateSession)
+{
+    m_delegateValidationCompleted = true;
+    m_completedDelegateSession = delegateSession.value_or(String { });
+    if (!delegateSession) {
+        cancelPayment();
+        return;
+    }
+
+    if (m_showingDelegatedWebCheckout)
+        return;
+
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    dispatchIfShowing([page = WTF::move(page), shippingAddress = m_shippingAddress] mutable {
+        protect(page->paymentCoordinator())->didSelectShippingContact(MockPaymentContact { toLocalizedApplePayPaymentContact(shippingAddress) });
+    });
+}
+
+void MockPaymentCoordinator::completeDelegatedWebCheckoutPayment()
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    dispatchIfShowing([protectedThis = Ref { *this }, page = WTF::move(page)] {
+        protect(page->paymentCoordinator())->didCompleteDelegatedWebCheckoutPayment();
+        ++protectedThis->m_hideCount;
+        ASSERT(protectedThis->m_showCount == protectedThis->m_hideCount);
+    });
+}
+
+#endif // ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
 
 void MockPaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
 {

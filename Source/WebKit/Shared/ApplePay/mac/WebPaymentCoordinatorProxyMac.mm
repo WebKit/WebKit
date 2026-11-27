@@ -33,6 +33,7 @@
 #import "PaymentAuthorizationViewController.h"
 #import "WebPageProxy.h"
 #import <WebCore/ApplePayDisbursementRequest.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
 
@@ -111,31 +112,95 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
             ASSERT(viewController);
 
             paymentCoordinatorProxy->m_authorizationPresenter = PaymentAuthorizationViewController::create(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
-
-            ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
-            paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
-#if HAVE(LIQUID_GLASS)
-            [paymentCoordinatorProxy->m_sheetWindow setStyleMask:NSWindowStyleMaskAlertWindow | NSWindowStyleMaskTitled];
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+            // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+            if ([paymentRequest respondsToSelector:@selector(usesDelegateSession)])
+                protect(paymentCoordinatorProxy->m_authorizationPresenter)->setUsesDelegateValidation([paymentRequest usesDelegateSession]);
 #endif
-            paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow queue:nil usingBlock:[weakThis = WeakPtr { paymentCoordinatorProxy }](NSNotification *) {
-                if (RefPtr protectedThis = weakThis.get())
-                    protectedThis->didReachFinalState();
-            }];
 
-            [presentingWindow beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
+            paymentCoordinatorProxy->beginPaymentSheet(viewController, presentingWindow.get());
 
             completionHandler(true);
         }).get()];
     });
 }
 
+void WebPaymentCoordinatorProxy::beginPaymentSheet(NSViewController *viewController, NSWindow *presentingWindow)
+{
+    ASSERT(!m_sheetWindow);
+    m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
+#if HAVE(LIQUID_GLASS)
+    [m_sheetWindow setStyleMask:NSWindowStyleMaskAlertWindow | NSWindowStyleMaskTitled];
+#endif
+    m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = WeakPtr { *this }](NSNotification *) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->didReachFinalState();
+    }];
+
+    [presentingWindow beginSheet:m_sheetWindow.get() completionHandler:nullptr];
+}
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+void WebPaymentCoordinatorProxy::platformShowDelegatedWebCheckoutUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if HAVE(PASSKIT_MODULARIZATION) && HAVE(PASSKIT_MAC_HELPER_TEMP)
+    if (!PAL::isPassKitMacHelperTempFrameworkAvailable())
+#elif HAVE(PASSKIT_MODULARIZATION)
+    if (!PAL::isPassKitMacHelperFrameworkAvailable())
+#else
+    if (!PAL::isPassKitCoreFrameworkAvailable())
+#endif
+        return completionHandler(false);
+
+    // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+    if (![PAL::getPKPaymentAuthorizationViewControllerClassSingleton() respondsToSelector:@selector(delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:)])
+        return completionHandler(false);
+
+    RetainPtr<PKPaymentAuthorizationViewController> viewController = [PAL::getPKPaymentAuthorizationViewControllerClassSingleton() delegatedWebCheckoutViewControllerWithOriginatingURL:originatingURL.createNSURL().get() thumbnailURLs:createNSArray(linkIconURLs).get()];
+    if (!viewController)
+        return completionHandler(false);
+
+    // FIXME: <rdar://193748128> (Remove delegated web checkout staging code from WebKit)
+    if (![viewController respondsToSelector:@selector(prepareForDelegatedWebCheckoutPresentationWithCompletion:)])
+        return completionHandler(false);
+
+    ASSERT(!m_authorizationPresenter);
+    m_authorizationPresenter = PaymentAuthorizationViewController::create(*this, nil, viewController.get());
+    protect(m_authorizationPresenter)->setUsesDelegateValidation(true);
+
+    auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
+    [viewController prepareForDelegatedWebCheckoutPresentationWithCompletion:makeBlockPtr([viewController, showPaymentUIRequestSeed, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](BOOL ready) mutable {
+        RefPtr paymentCoordinatorProxy = weakThis;
+        if (!paymentCoordinatorProxy || !ready)
+            return completionHandler(false);
+
+        if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed)
+            return completionHandler(false);
+
+        RetainPtr presentingWindow = protect(paymentCoordinatorProxy->m_client)->paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
+        if (!presentingWindow)
+            return completionHandler(false);
+
+        paymentCoordinatorProxy->beginPaymentSheet(viewController.get(), presentingWindow.get());
+        completionHandler(true);
+    }).get()];
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()
 {
     if (m_state == State::Activating) {
         ++m_showPaymentUIRequestSeed;
 
-        ASSERT(!m_authorizationPresenter);
         ASSERT(!m_sheetWindow);
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+        if (RefPtr authorizationPresenter = std::exchange(m_authorizationPresenter, nullptr))
+            authorizationPresenter->dismiss();
+#else
+        ASSERT(!m_authorizationPresenter);
+#endif
         return;
     }
 

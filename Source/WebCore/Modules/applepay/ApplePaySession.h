@@ -51,6 +51,7 @@ class PaymentContact;
 class PaymentCoordinator;
 class PaymentMethod;
 struct ApplePayCouponCodeUpdate;
+struct ApplePayDelegateSessionUpdate;
 struct ApplePayLineItem;
 struct ApplePayPaymentRequest;
 struct ApplePayShippingMethod;
@@ -87,6 +88,10 @@ public:
     ExceptionOr<void> begin(Document&);
     ExceptionOr<void> abort();
     ExceptionOr<void> completeMerchantValidation(JSC::JSGlobalObject&, JSC::JSValue merchantSession);
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    static ExceptionOr<Ref<ApplePaySession>> delegatedWebCheckout(Document&);
+    ExceptionOr<void> completeDelegateValidation(ApplePayDelegateSessionUpdate&&);
+#endif
     ExceptionOr<void> completeShippingMethodSelection(ApplePayShippingMethodUpdate&&);
     ExceptionOr<void> completeShippingContactSelection(ApplePayShippingContactUpdate&&);
     ExceptionOr<void> completePaymentMethodSelection(ApplePayPaymentMethodUpdate&&);
@@ -104,7 +109,16 @@ public:
     const ApplePaySessionPaymentRequest& paymentRequest() const LIFETIME_BOUND { return m_paymentRequest; }
 
 private:
-    ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&);
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    enum class IsDelegatedWebCheckout : bool { No, Yes };
+    enum class DelegateValidationState : uint8_t { Idle, ValidatingDelegate, ValidationComplete };
+#endif
+
+    ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+        , IsDelegatedWebCheckout = IsDelegatedWebCheckout::No
+#endif
+        );
 
     // ActiveDOMObject.
     void stop() override;
@@ -128,6 +142,10 @@ private:
     void didChangeCouponCode(String&& couponCode) override;
 #endif
     void didCancelPaymentSession(PaymentSessionError&&) override;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    void validateDelegate() override;
+    void didCompleteDelegatedWebCheckoutPayment() override;
+#endif
 
     NODELETE PaymentCoordinator& paymentCoordinator() const;
 
@@ -135,6 +153,9 @@ private:
     NODELETE bool canAbort() const;
     NODELETE bool canCancel() const;
     NODELETE bool canCompleteMerchantValidation() const;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    NODELETE bool canCompleteDelegateValidation() const;
+#endif
     NODELETE bool canCompleteShippingMethodSelection() const;
     NODELETE bool canCompleteShippingContactSelection() const;
     NODELETE bool canCompletePaymentMethodSelection() const;
@@ -172,6 +193,10 @@ private:
 
     const ApplePaySessionPaymentRequest m_paymentRequest;
     unsigned m_version;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    DelegateValidationState m_delegateValidationState { DelegateValidationState::Idle };
+    IsDelegatedWebCheckout m_isDelegatedWebCheckout;
+#endif
 };
 
 } // namespace WebCore

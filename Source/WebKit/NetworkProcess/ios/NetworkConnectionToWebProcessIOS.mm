@@ -114,6 +114,13 @@ Ref<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordin
     return PaymentAuthorizationController::create(coordinator, request);
 }
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+RefPtr<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorDelegatedWebCheckoutPresenter(WebPaymentCoordinatorProxy& coordinator, const URL& originatingURL, const Vector<URL>& linkIconURLs)
+{
+    return PaymentAuthorizationController::createForDelegatedWebCheckout(coordinator, originatingURL, linkIconURLs);
+}
+#endif
+
 void NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&)
 {
 }

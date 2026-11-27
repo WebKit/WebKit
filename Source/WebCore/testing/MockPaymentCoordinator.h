@@ -68,6 +68,12 @@ public:
 #endif
     void acceptPayment();
     void cancelPayment();
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    void completeDelegatedWebCheckoutPayment();
+    bool delegateValidationCompleted() const { return m_delegateValidationCompleted; }
+    const String& completedDelegateSession() const LIFETIME_BOUND { return m_completedDelegateSession; }
+    const String& delegatedWebCheckoutOriginatingURL() const LIFETIME_BOUND { return m_delegatedWebCheckoutOriginatingURL; }
+#endif
 
     void addSetupFeature(ApplePaySetupFeatureState, ApplePaySetupFeatureType, bool supportsInstallments);
     const ApplePaySetupConfiguration& setupConfiguration() const LIFETIME_BOUND { return m_setupConfiguration; }
@@ -145,6 +151,10 @@ private:
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool showDelegatedWebCheckoutUI(const URL&, const Vector<URL>&) final;
+    void completeDelegateValidation(const std::optional<String>&) final;
+#endif
 
     bool isMockPaymentCoordinator() const final { return true; }
 
@@ -211,6 +221,13 @@ private:
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
     std::optional<bool> m_isDelegatedRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    String m_delegatedWebCheckoutOriginatingURL;
+    String m_completedDelegateSession;
+    bool m_delegateValidationCompleted { false };
+    bool m_showingDelegatedWebCheckout { false };
 #endif
 };
 

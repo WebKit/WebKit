@@ -1,0 +1,91 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ApplePayDelegatedWebCheckoutEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test onvalidatedelegate and onvalidatemerchant for a delegated request.");
+
+window.jsTestIsAsync = true;
+
+function request(isDelegatedRequest)
+{
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+        isDelegatedRequest: isDelegatedRequest,
+    };
+}
+
+function run(isDelegatedRequest, handlers)
+{
+    return new Promise(resolve => {
+        activateThen(() => {
+            session = new ApplePaySession(3, request(isDelegatedRequest));
+            if (handlers.validatedelegate)
+                session.onvalidatedelegate = (event) => handlers.validatedelegate(event, resolve);
+            if (handlers.validatemerchant)
+                session.onvalidatemerchant = (event) => handlers.validatemerchant(event, resolve);
+            session.oncancel = () => resolve();
+            session.begin();
+        });
+    });
+}
+
+async function runTests()
+{
+    debug("A delegated request with onvalidatedelegate.");
+    await run(true, {
+        validatedelegate: (event) => {
+            validateEvent = event;
+            shouldBeUndefined("validateEvent.validationURL");
+            shouldNotThrow("session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' })");
+            shouldBeTrue("internals.mockPaymentCoordinator.delegateValidationCompleted");
+            internals.mockPaymentCoordinator.cancelPayment();
+        },
+        validatemerchant: () => testFailed("validatemerchant when the page has onvalidatedelegate"),
+    });
+
+    debug("");
+    debug("A delegated request with only onvalidatemerchant.");
+    await run(true, {
+        validatemerchant: () => {
+            testPassed("validatemerchant event received");
+            shouldThrowErrorName("session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' })", "InvalidAccessError");
+            internals.mockPaymentCoordinator.cancelPayment();
+        },
+    });
+
+    debug("");
+    debug("A delegated request with neither handler.");
+    await activateThen(() => {
+        session = new ApplePaySession(3, request(true));
+        shouldThrowErrorName("session.begin()", "InvalidAccessError");
+    });
+
+    debug("");
+    debug("A request that isn't delegated, with both handlers.");
+    await run(false, {
+        validatedelegate: () => testFailed("validatedelegate for a request that isn't delegated"),
+        validatemerchant: () => {
+            testPassed("validatemerchant event received");
+            internals.mockPaymentCoordinator.cancelPayment();
+        },
+    });
+
+    finishJSTest();
+}
+
+runTests();
+
+</script>
+</body>
+</html>

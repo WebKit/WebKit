@@ -113,6 +113,29 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+#pragma mark Delegated web checkout
+
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (selector == @selector(paymentAuthorizationViewController:didRequestDelegateSessionUpdate:))
+        return [self _claimsDelegateSessionRequests];
+    return [super respondsToSelector:selector];
+}
+
+- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestDelegateSessionUpdate:(void (^)(PKPaymentRequestDelegateSessionUpdate *update))handler
+{
+    [self _didRequestDelegateSession:handler];
+}
+
+- (void)paymentAuthorizationViewControllerDidCompleteDelegatedWebCheckoutPayment:(PKPaymentAuthorizationViewController *)controller
+{
+    [self _didCompleteDelegatedWebCheckoutPayment];
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
 @end
 
 namespace WebKit {

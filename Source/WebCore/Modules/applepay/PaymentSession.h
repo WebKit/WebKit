@@ -57,6 +57,10 @@ public:
     virtual void didChangeCouponCode(String&& couponCode) = 0;
 #endif
     virtual void didCancelPaymentSession(PaymentSessionError&&) = 0;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    virtual void validateDelegate() { }
+    virtual void didCompleteDelegatedWebCheckoutPayment() { }
+#endif
 };
 
 } // namespace WebCore

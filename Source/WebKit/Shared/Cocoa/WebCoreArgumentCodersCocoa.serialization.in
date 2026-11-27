@@ -314,6 +314,9 @@ class WebCore::PaymentSessionError {
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
     std::optional<bool> isDelegatedRequest();
 #endif
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool usesDelegateValidation();
+#endif
 };
 
 headers: <pal/cocoa/PassKitSoftLink.h>

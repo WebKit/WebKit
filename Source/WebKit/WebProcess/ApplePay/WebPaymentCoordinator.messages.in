@@ -40,6 +40,10 @@ messages -> WebPaymentCoordinator {
     DidChangeCouponCode(String couponCode)
 #endif
     DidCancelPaymentSession(WebCore::PaymentSessionError sessionError)
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    ValidateDelegate()
+    DidCompleteDelegatedWebCheckoutPayment()
+#endif
 }
 
 #endif

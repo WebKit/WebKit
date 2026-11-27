@@ -84,6 +84,10 @@ public:
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&);
     void abortPaymentSession();
     void cancelPaymentSession();
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool beginDelegatedWebCheckoutSession(Document&, PaymentSession&);
+    void completeDelegateValidation(const std::optional<String>& delegateSession);
+#endif
 
     WEBCORE_EXPORT void validateMerchant(URL&& validationURL);
     WEBCORE_EXPORT void didAuthorizePayment(const Payment&);
@@ -94,6 +98,10 @@ public:
     WEBCORE_EXPORT void didChangeCouponCode(String&& couponCode);
 #endif
     WEBCORE_EXPORT void didCancelPaymentSession(PaymentSessionError&&);
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    WEBCORE_EXPORT void validateDelegate();
+    WEBCORE_EXPORT void didCompleteDelegatedWebCheckoutPayment();
+#endif
 
     std::optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 

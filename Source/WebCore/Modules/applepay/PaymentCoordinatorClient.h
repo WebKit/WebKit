@@ -66,6 +66,10 @@ public:
     virtual void completePaymentSession(ApplePayPaymentAuthorizationResult&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    virtual bool showDelegatedWebCheckoutUI(const URL&, const Vector<URL>&) { return false; }
+    virtual void completeDelegateValidation(const std::optional<String>&) { }
+#endif
 
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }

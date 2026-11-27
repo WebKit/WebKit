@@ -1,0 +1,23 @@
+Test onvalidatedelegate and onvalidatemerchant for a delegated request.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A delegated request with onvalidatedelegate.
+PASS validateEvent.validationURL is undefined.
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' }) did not throw exception.
+PASS internals.mockPaymentCoordinator.delegateValidationCompleted is true
+
+A delegated request with only onvalidatemerchant.
+PASS validatemerchant event received
+PASS session.completeDelegateValidation({ status: ApplePaySession.STATUS_SUCCESS, sessionData: 'session' }) threw exception InvalidAccessError: The object does not support the operation or argument..
+
+A delegated request with neither handler.
+PASS session.begin() threw exception InvalidAccessError: A delegated request needs an onvalidatedelegate or onvalidatemerchant handler..
+
+A request that isn't delegated, with both handlers.
+PASS validatemerchant event received
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

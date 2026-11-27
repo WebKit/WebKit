@@ -73,6 +73,10 @@ public:
         virtual void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) = 0;
 #endif
         virtual void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) = 0;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+        virtual void presenterWillValidateDelegate(PaymentAuthorizationPresenter&) = 0;
+        virtual void presenterDidCompleteDelegatedWebCheckoutPayment(PaymentAuthorizationPresenter&) = 0;
+#endif
         virtual CocoaWindow *presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const = 0;
     };
 
@@ -87,6 +91,10 @@ public:
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
 #if HAVE(PASSKIT_COUPON_CODE)
     void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&);
+#endif
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    void completeDelegateValidation(const std::optional<String>& delegateSession);
+    void setUsesDelegateValidation(bool);
 #endif
 
     virtual void dismiss() = 0;

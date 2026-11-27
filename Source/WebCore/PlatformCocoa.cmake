@@ -1511,6 +1511,7 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayDateComponents.idl
     Modules/applepay/ApplePayDateComponentsRange.idl
     Modules/applepay/ApplePayDeferredPaymentRequest.idl
+    Modules/applepay/ApplePayDelegateSessionUpdate.idl
     Modules/applepay/ApplePayDetailsUpdateBase.idl
     Modules/applepay/ApplePayDisbursementRequest.idl
     Modules/applepay/ApplePayError.idl

@@ -189,6 +189,11 @@ public:
     void setIsDelegatedRequest(const std::optional<bool> isDelegatedRequest) { m_isDelegatedRequest = isDelegatedRequest; }
 #endif
 
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool usesDelegateValidation() const { return m_usesDelegateValidation; }
+    void setUsesDelegateValidation(bool usesDelegateValidation) { m_usesDelegateValidation = usesDelegateValidation; }
+#endif
+
     ApplePaySessionPaymentRequest(String&& countryCode
         , String&& currencyCode
         , ContactFields&& requiredBillingContactFields
@@ -237,6 +242,9 @@ public:
 #endif
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
         , std::optional<bool> isDelegatedRequest
+#endif
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+        , bool usesDelegateValidation
 #endif
         )
             : m_countryCode(WTF::move(countryCode))
@@ -287,6 +295,9 @@ public:
 #endif
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
             , m_isDelegatedRequest(isDelegatedRequest)
+#endif
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+            , m_usesDelegateValidation(usesDelegateValidation)
 #endif
             { }
 
@@ -359,6 +370,10 @@ private:
 
 #if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
     std::optional<bool> m_isDelegatedRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_DELEGATED_WEB_CHECKOUT)
+    bool m_usesDelegateValidation { false };
 #endif
 };
 

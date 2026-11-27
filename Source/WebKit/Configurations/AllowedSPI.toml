@@ -300,6 +300,32 @@ selectors = [
 requires = ["HAVE_PASSKIT_PAYMENT_SERVICES_MERCHANT_URL_IS_DELEGATED"]
 
 [[not-web-essential]]
+request = "rdar://193747999"
+selectors = [
+    { name = "delegatedWebCheckoutControllerWithOriginatingURL:thumbnailURLs:", class = "PKPaymentAuthorizationController" },
+    { name = "setUsesDelegateSession:", class = "PKPaymentRequest" },
+    { name = "usesDelegateSession", class = "PKPaymentRequest" },
+]
+requires = ["HAVE_PASSKIT_DELEGATED_WEB_CHECKOUT"]
+
+[[not-web-essential]]
+request = "rdar://193747999"
+selectors = [
+    { name = "delegatedWebCheckoutViewControllerWithOriginatingURL:thumbnailURLs:", class = "PKPaymentAuthorizationViewController" },
+    { name = "prepareForDelegatedWebCheckoutPresentationWithCompletion:", class = "PKPaymentAuthorizationViewController" },
+]
+requires = ["HAVE_PASSKIT_DELEGATED_WEB_CHECKOUT", "PLATFORM_MAC"]
+
+[[staging]]
+request = "rdar://192397786"
+cleanup = "rdar://193748128"
+selectors = [
+    { name = "initWithSessionData:", class = "PKPaymentDelegateSession" },
+    { name = "initWithStatus:delegateSession:", class = "PKPaymentRequestDelegateSessionUpdate" },
+]
+requires = ["HAVE_PASSKIT_DELEGATED_WEB_CHECKOUT"]
+
+[[not-web-essential]]
 request = "rdar://165006869"
 selectors = [
     { name = "_setDecelerationTrackingBehavior:", class = "UIScrollView" },

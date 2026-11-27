@@ -48,6 +48,10 @@
     RetainPtr<NSError> _sessionError;
     WebKit::DidAuthorizePaymentCompletion _didAuthorizePaymentCompletion;
     WebKit::DidRequestMerchantSessionCompletion _didRequestMerchantSessionCompletion;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+    WebKit::DidRequestDelegateSessionCompletion _didRequestDelegateSessionCompletion;
+    BOOL _usesDelegateValidation;
+#endif
     WebKit::DidSelectPaymentMethodCompletion _didSelectPaymentMethodCompletion;
     WebKit::DidSelectShippingContactCompletion _didSelectShippingContactCompletion;
     WebKit::DidSelectShippingMethodCompletion _didSelectShippingMethodCompletion;
@@ -60,6 +64,22 @@
 {
     std::exchange(_didRequestMerchantSessionCompletion, nil)(session, error);
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+- (void)completeDelegateValidation:(PKPaymentDelegateSession *)session
+{
+    auto status = session ? PKPaymentAuthorizationStatusSuccess : PKPaymentAuthorizationStatusFailure;
+    RetainPtr update = adoptNS([PAL::allocPKPaymentRequestDelegateSessionUpdateInstance() initWithStatus:status delegateSession:session]);
+    std::exchange(_didRequestDelegateSessionCompletion, nil)(update.get());
+}
+
+- (void)setUsesDelegateValidation:(BOOL)usesDelegateValidation
+{
+    _usesDelegateValidation = usesDelegateValidation;
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate
 {
@@ -253,6 +273,47 @@
         });
     }];
 }
+
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+
+- (BOOL)_claimsDelegateSessionRequests
+{
+    return _usesDelegateValidation;
+}
+
+- (void)_didRequestDelegateSession:(WebKit::DidRequestDelegateSessionCompletion::BlockType)completion
+{
+    ASSERT(!_didRequestDelegateSessionCompletion);
+    _didRequestDelegateSessionCompletion = completion;
+
+    RunLoop::mainSingleton().dispatch([self, protectedSelf = retainPtr(self)] {
+        ASSERT(_didRequestDelegateSessionCompletion);
+
+        RefPtr presenter = _presenter;
+        RefPtr client = presenter ? presenter->client() : nullptr;
+        if (!client) {
+            [self completeDelegateValidation:nil];
+            return;
+        }
+
+        client->presenterWillValidateDelegate(*presenter);
+    });
+}
+
+- (void)_didCompleteDelegatedWebCheckoutPayment
+{
+    RefPtr presenter = _presenter;
+    if (!presenter)
+        return;
+
+    RefPtr client = presenter->client();
+    if (!client)
+        return;
+
+    client->presenterDidCompleteDelegatedWebCheckoutPayment(*presenter);
+}
+
+#endif // HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
 
 - (void)_didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(WebKit::DidSelectPaymentMethodCompletion::BlockType)completion
 {

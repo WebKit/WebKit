@@ -47,6 +47,9 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentRequestShipping
 #if HAVE(PASSKIT_COUPON_CODE)
 using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUpdate *)>;
 #endif
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+using DidRequestDelegateSessionCompletion = BlockPtr<void(PKPaymentRequestDelegateSessionUpdate *)>;
+#endif
 
 }
 
@@ -68,6 +71,10 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 #if HAVE(PASSKIT_COUPON_CODE)
 - (void)completeCouponCodeChange:(PKPaymentRequestCouponCodeUpdate *)couponCodeUpdate;
 #endif
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+- (void)completeDelegateValidation:(PKPaymentDelegateSession *)session;
+- (void)setUsesDelegateValidation:(BOOL)usesDelegateValidation;
+#endif
 - (void)invalidate;
 
 @end
@@ -88,6 +95,11 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 #endif
 - (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion;
 - (void)_willFinishWithError:(NSError *)error;
+#if HAVE(PASSKIT_DELEGATED_WEB_CHECKOUT)
+- (BOOL)_claimsDelegateSessionRequests;
+- (void)_didRequestDelegateSession:(WebKit::DidRequestDelegateSessionCompletion::BlockType)completion;
+- (void)_didCompleteDelegatedWebCheckoutPayment;
+#endif
 
 @end
 
