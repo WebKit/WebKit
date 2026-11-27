@@ -10,20 +10,17 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/001.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/002.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/003.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/004.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/005.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/006.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/007.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/008.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/009.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/010.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/011.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/012-1.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/012.xhtml
@@ -31,14 +28,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/013.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/014-1.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/014.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/015.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/016.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/017.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/018.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/015.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/016.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/017.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/018.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/021.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/022.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/023.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/023.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/024.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/025.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/026.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/images/027.xhtml

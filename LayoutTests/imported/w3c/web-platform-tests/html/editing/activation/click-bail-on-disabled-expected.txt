@@ -1,0 +1,8 @@
+hello
+hi
+
+PASS clicking a disabled button should not cause a click event
+PASS clicking a disabled text input should not cause a click event
+PASS clicking a disabled checkbox should not cause a click event or cause the checkbox to become checked
+PASS clicking a button that was disabled then re-enabled should cause a click event
+

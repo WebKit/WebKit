@@ -1,0 +1,7 @@
+
+Drag little square above and drop it on scrollbar below. You should see word PASS when you drop it on scrollbar.
+
+F A I L
+
+FAIL Dragging the image to the vertical scrollbar within a scrollable block element should copy it there assert_equals: expected "P A S S" but got "F A I L"
+

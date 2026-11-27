@@ -1,0 +1,11 @@
+These are the draggable elements with different effectAllowed settings:
+
+uninitializedundefinednoneallcopymovelinkcopyMovecopyLinklinkMovedummy
+
+Drop targets with different dropEffects:
+
+nonecopymovelinkdummy
+
+
+FAIL Test all effectAlloweds against all dropEffects on drop event promise_test: Unhandled rejection with value: object "Error: Drop event should not have fired"
+

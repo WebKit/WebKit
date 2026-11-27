@@ -1,0 +1,9 @@
+Press your mouse button down on the orange block and drag downwards. It should drag the draggable element.
+
+Press your mouse button down on the text and drag rightward. It should drag the draggable element.
+
+Dummy text
+
+PASS Draggable button should be draggable from border
+PASS Draggable button should be draggable from button text
+

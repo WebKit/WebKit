@@ -1,0 +1,4 @@
+
+
+FAIL verify that the pointer events stream is correctly suppressed when a drag starts assert_true: pointercancel should have been called after dragstart: expected true got false
+

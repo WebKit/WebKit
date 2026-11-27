@@ -10,18 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/001.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/003-1.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/003.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/004.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/005.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/006.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/007.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/008.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/009.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/010-1.xhtml

@@ -1004,6 +1004,12 @@ imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-
 imported/w3c/web-platform-tests/html/browsers/sandboxing/window-open-blank-from-different-initiator.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-resize.html [ Skip ]
+
+# These drag and drop tests time out or crash.
+imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/disabled_input_text_inside_draggable_element.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/draggable_disabled_input_text.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/reload [ Skip ]
+
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html [ Skip ]
 # Below test can be progressed if we add `TabsToLinks` as 'true'.

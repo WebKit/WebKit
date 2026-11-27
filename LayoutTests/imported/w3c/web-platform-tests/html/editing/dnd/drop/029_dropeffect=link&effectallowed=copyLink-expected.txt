@@ -1,0 +1,11 @@
+These are the draggable elements with different effectAllowed settings:
+
+uninitializedundefinednoneallcopymovelinkcopyMovecopyLinklinkMovedummy
+
+Drop targets with different dropEffects:
+
+nonecopymovelinkdummy
+
+
+FAIL copyLink / link assert_equals: chosenDropEffect: link, chosenEffectAllowed: copyLink; failed effectAllowed check: expected "copyLink" but got "all"
+

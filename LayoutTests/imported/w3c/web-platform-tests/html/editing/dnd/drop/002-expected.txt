@@ -1,0 +1,16 @@
+Drag the text from these input fields. Each has a different effectAllowed.
+
+
+
+Drop targets for each effect:
+
+copy move link
+
+
+FAIL Text input selection drag and drop: allowed effects
+    'copy','move','link' assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+FAIL Text input selection drag and drop: allowed effects
+    'copy','move','link' 1 assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+FAIL Text input selection drag and drop: allowed effects
+    'copy','move','link' 2 assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+

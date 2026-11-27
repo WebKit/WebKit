@@ -1,0 +1,6 @@
+
+
+PASS text selection drag should still work when mousedown a display change
+PASS text click after selecting some characters should collapse selection to start
+PASS text click after selecting some characters should collapse selection to middle of the value
+

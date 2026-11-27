@@ -1,0 +1,7 @@
+
+Drag little square above and drop it on vertical scrollbar. Word PASS should appear near scrollbar once you drop it.
+
+P A S S
+
+PASS Dragging the image to the vertical scrollbar should copy it there
+

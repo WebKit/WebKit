@@ -1,0 +1,7 @@
+Press your mouse button down on the orange block and drag downwards. It may optionally focus the dummy text. Use your mouse to select part of the dummy text, moving the mouse vertically and horizontally. It should select the text.
+
+
+
+FAIL Textarea inside draggable element should not be draggable from border assert_false: dragstart should not fire expected false got true
+FAIL Textarea inside draggable element should not be draggable while attempting to select text assert_false: dragstart should not fire expected false got true
+

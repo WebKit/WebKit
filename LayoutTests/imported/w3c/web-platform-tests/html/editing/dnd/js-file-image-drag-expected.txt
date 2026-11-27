@@ -1,0 +1,4 @@
+Source Target
+
+FAIL JS File with PNG bytes carries content to drop target assert_equals: File should be in .files expected 1 but got 0
+

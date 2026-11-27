@@ -1,0 +1,7 @@
+Press your mouse button down on the orange block and drag downwards. It should not drag the text or the orange block. Use your mouse to select the dummy text. It should not drag the text or the orange block.
+
+Dummy text
+
+FAIL Draggable contenteditable element should not be draggable from border assert_false: dragstart should not fire expected false got true
+FAIL Draggable contenteditable element should not be draggable while selecting text assert_false: dragstart should not fire expected false got true
+

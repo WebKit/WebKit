@@ -1,0 +1,8 @@
+
+Drag green box above to the gray canvas below. Canvas should turn green when you drop green box on it.
+
+
+
+
+PASS Dragging the iframe to the bottom iframe should turn it green
+

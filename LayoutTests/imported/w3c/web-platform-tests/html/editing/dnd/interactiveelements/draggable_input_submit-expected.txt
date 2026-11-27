@@ -1,0 +1,9 @@
+Press your mouse button down on the orange block and drag downwards. It should drag the input submit.
+
+Press your mouse button down on the text and drag rightward. It should drag the input submit.
+
+
+
+PASS Draggable input submit button should be draggable from border
+PASS Draggable input submit button should be draggable from button text
+

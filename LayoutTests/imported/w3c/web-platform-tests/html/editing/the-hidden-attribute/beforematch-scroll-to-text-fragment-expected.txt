@@ -1,5 +1,6 @@
 
 PASS Verifies that the beforematch event is fired on the matching element of a ScrollToTextFragment navigation.
 PASS Verifies that beforematch is only fired on elements targeted by a text fragment when there is both a text fragment and an element fragment.
+PASS Verifies that beforematch is fired on an element targeted by an element fragment when a text fragment fails to match.
 PASS Verifies that the beforematch event bubbles with scroll to text fragment.
 
