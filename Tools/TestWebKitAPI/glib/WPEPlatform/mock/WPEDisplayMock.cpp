@@ -94,9 +94,28 @@ static WPEToplevel* wpeDisplayMockCreateToplevel(WPEDisplay* display, guint maxV
     return WPE_TOPLEVEL(g_object_new(WPE_TYPE_TOPLEVEL_MOCK, "display", display, "max-views", maxViews, nullptr));
 }
 
-static WPEInputMethodContext* wpeDisplayMockCreateInputMethodContext(WPEDisplay* display, WPEView*)
+// Input method context that only keeps the state WebKit sets on it, attached to its view for tests to check.
+#define WPE_TYPE_INPUT_METHOD_CONTEXT_MOCK (wpe_input_method_context_mock_get_type())
+G_DECLARE_FINAL_TYPE(WPEInputMethodContextMock, wpe_input_method_context_mock, WPE, INPUT_METHOD_CONTEXT_MOCK, WPEInputMethodContext)
+
+struct _WPEInputMethodContextMock {
+    WPEInputMethodContext parent;
+};
+G_DEFINE_FINAL_TYPE(WPEInputMethodContextMock, wpe_input_method_context_mock, WPE_TYPE_INPUT_METHOD_CONTEXT)
+
+static void wpe_input_method_context_mock_class_init(WPEInputMethodContextMockClass*)
 {
-    return nullptr;
+}
+
+static void wpe_input_method_context_mock_init(WPEInputMethodContextMock*)
+{
+}
+
+static WPEInputMethodContext* wpeDisplayMockCreateInputMethodContext(WPEDisplay* display, WPEView* view)
+{
+    auto* context = WPE_INPUT_METHOD_CONTEXT(g_object_new(WPE_TYPE_INPUT_METHOD_CONTEXT_MOCK, "view", view, nullptr));
+    g_object_set_data_full(G_OBJECT(view), "wpe-mock-input-method-context", g_object_ref(context), g_object_unref);
+    return context;
 }
 
 static gpointer wpeDisplayMockGetEGLDisplay(WPEDisplay* display, GError** error)

@@ -67,6 +67,8 @@ static GtkInputHints toGtkInputHints(WebKitInputHints hints)
     unsigned gtkHints = 0;
     if (hints & WEBKIT_INPUT_HINT_SPELLCHECK)
         gtkHints |= GTK_INPUT_HINT_SPELLCHECK;
+    else
+        gtkHints |= GTK_INPUT_HINT_NO_SPELLCHECK;
     if (hints & WEBKIT_INPUT_HINT_LOWERCASE)
         gtkHints |= GTK_INPUT_HINT_LOWERCASE;
     if (hints & WEBKIT_INPUT_HINT_UPPERCASE_CHARS)
@@ -131,6 +133,9 @@ static void webkitInputMethodContextImplGtkConstructed(GObject* object)
     g_signal_connect_object(priv->context.get(), "preedit-end", G_CALLBACK(contextPreeditEndCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "commit", G_CALLBACK(contextCommitCallback), object, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->context.get(), "retrieve-surrounding", G_CALLBACK(contextRetrieveSurrounding), object, G_CONNECT_SWAPPED);
+
+    // Push the current hints so that the platform context starts with spell checking off.
+    inputHintsChangedCallback(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(object));
 }
 
 static void webkitInputMethodContextImplGtkSetEnablePreedit(WebKitInputMethodContext* context, gboolean enabled)

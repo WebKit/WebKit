@@ -2434,6 +2434,30 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
 }
 
+#if ENABLE(WPE_PLATFORM)
+static void testWebKitInputMethodContextPlatformHints(InputMethodTest* test, gconstpointer)
+{
+    if (!test->m_display) {
+        g_test_skip("The WPE legacy API has no platform input method context");
+        return;
+    }
+
+    // A web view created without a display uses the mock one, which keeps its platform input method context.
+    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr)));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
+    auto* context = webkit_web_view_get_input_method_context(webView.get());
+    auto* platformContext = WPE_INPUT_METHOD_CONTEXT(g_object_get_data(G_OBJECT(webkit_web_view_get_wpe_view(webView.get())), "wpe-mock-input-method-context"));
+    g_assert_nonnull(platformContext);
+
+    // Hints without SPELLCHECK, including the initial ones, mean that spell checking is disabled.
+    g_assert_cmpuint(wpe_input_method_context_get_input_hints(platformContext), ==, WPE_INPUT_HINT_NO_SPELLCHECK);
+    webkit_input_method_context_set_input_hints(context, WEBKIT_INPUT_HINT_SPELLCHECK);
+    g_assert_cmpuint(wpe_input_method_context_get_input_hints(platformContext), ==, WPE_INPUT_HINT_SPELLCHECK);
+    webkit_input_method_context_set_input_hints(context, WEBKIT_INPUT_HINT_LOWERCASE);
+    g_assert_cmpuint(wpe_input_method_context_get_input_hints(platformContext), ==, WPE_INPUT_HINT_NO_SPELLCHECK | WPE_INPUT_HINT_LOWERCASE);
+}
+#endif
+
 static void testWebKitInputMethodContextInputMode(InputMethodTest* test, gconstpointer)
 {
     // Focus by click, because element.focus() always adds INHIBIT_OSK and would hide inputmode="none".
@@ -2647,6 +2671,9 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "click-after-script-focus", testWebKitInputMethodContextClickAfterScriptFocus);
     InputMethodTest::add("WebKitInputMethodContext", "focus-interaction", testWebKitInputMethodContextFocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "content-type", testWebKitInputMethodContextContentType);
+#if ENABLE(WPE_PLATFORM)
+    InputMethodTest::add("WebKitInputMethodContext", "platform-hints", testWebKitInputMethodContextPlatformHints);
+#endif
     InputMethodTest::add("WebKitInputMethodContext", "read-only", testWebKitInputMethodContextReadOnly);
     InputMethodTest::add("WebKitInputMethodContext", "read-only-change", testWebKitInputMethodContextReadOnlyChange);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
