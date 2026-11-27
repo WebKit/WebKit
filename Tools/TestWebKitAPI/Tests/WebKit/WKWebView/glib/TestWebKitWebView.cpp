@@ -315,6 +315,27 @@ static void testWebViewCloseQuickly(WebViewTest* test, gconstpointer)
     webView = nullptr;
 }
 
+#if PLATFORM(GTK)
+static void testWebViewReleasesMainResourceOnDispose(WebViewTest* test, gconstpointer)
+{
+    test->showInWindow();
+    test->loadURI(gServer->getURIForPath("/application-manifest"));
+    test->waitUntilLoadFinished();
+
+    auto* webView = test->webView();
+    g_assert_nonnull(webkit_web_view_get_main_resource(webView));
+
+    // Retain the view so dispose, not finalize, performs the teardown.
+    GRefPtr<WebKitWebView> retainedView = webView;
+#if USE(GTK4)
+    g_object_run_dispose(G_OBJECT(webView));
+#else
+    gtk_widget_destroy(GTK_WIDGET(webView));
+#endif
+    g_assert_null(webkit_web_view_get_main_resource(retainedView.get()));
+}
+#endif
+
 #if PLATFORM(WPE)
 #if USE(LIBWPE)
 static void testWebViewWebBackend(Test* test, gconstpointer)
@@ -2822,6 +2843,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
     WebViewTest::add("WebKitWebView", "web-context-lifetime", testWebViewWebContextLifetime);
     WebViewTest::add("WebKitWebView", "close-quickly", testWebViewCloseQuickly);
+#if PLATFORM(GTK)
+    WebViewTest::add("WebKitWebView", "releases-main-resource-on-dispose", testWebViewReleasesMainResourceOnDispose);
+#endif
 #if PLATFORM(WPE)
 #if USE(LIBWPE)
     Test::add("WebKitWebView", "backend", testWebViewWebBackend);
