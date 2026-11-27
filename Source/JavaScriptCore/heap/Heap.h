@@ -55,7 +55,6 @@
 #include <wtf/Lock.h>
 #include <wtf/Markable.h>
 #include <wtf/NotFound.h>
-#include <wtf/ParallelHelperPool.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/Threading.h>

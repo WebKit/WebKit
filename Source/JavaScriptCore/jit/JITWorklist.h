@@ -29,7 +29,9 @@
 
 #include "HelperThreadPool.h"
 #include "JITPlan.h"
-#include "JITWorklistThread.h"
+#include "JITSafepoint.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Lock.h>
@@ -43,11 +45,34 @@ namespace JSC {
 class CodeBlock;
 class VM;
 
+// The state of one in-flight compile. The set of slots is fixed, so the GC can enumerate them.
+class JITWorkerSlot final : public CanMakeThreadSafeCheckedPtr<JITWorkerSlot> {
+    WTF_MAKE_NONCOPYABLE(JITWorkerSlot);
+    WTF_MAKE_TZONE_ALLOCATED(JITWorkerSlot);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JITWorkerSlot);
+
+    friend class JITWorklist;
+    friend class Safepoint;
+
+public:
+    JITWorkerSlot() = default;
+
+    const Safepoint* safepoint() const { return m_safepoint; }
+
+private:
+    // The GC suspends compiles by locking every slot's m_rightToRun, and a compile
+    // releases it only inside a Safepoint.
+    Lock m_rightToRun;
+    RefPtr<JITPlan> m_plan { nullptr };
+    unsigned m_planLoad { 0 };
+    Safepoint* m_safepoint { nullptr };
+    // A pool thread owns this slot until its WorkScope ends, which is after m_plan has been handed off.
+    bool m_isInUse { false };
+};
+
 class JITWorklist final : public HelperThreadClient {
     WTF_MAKE_NONCOPYABLE(JITWorklist);
     WTF_MAKE_TZONE_ALLOCATED(JITWorklist);
-
-    friend class JITWorklistThread;
 
 public:
     ~JITWorklist();
@@ -97,7 +122,6 @@ private:
     JITWorklist();
 
     void wakeThreads(const AbstractLocker&, unsigned enqueuedTier);
-    unsigned maximumNumberOfConcurrentCompilations(unsigned tier) const;
     unsigned numberOfRunnablePlans(const AbstractLocker&) const;
     unsigned threadsForCurrentLoad() const;
     unsigned planLoad(JITPlan&);
@@ -128,14 +152,11 @@ private:
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_maximumNumberOfConcurrentCompilationsPerTier;
     std::array<unsigned, static_cast<size_t>(JITPlan::Tier::Count)> m_loadWeightsPerTier;
 
-    const bool m_usesSharedHelperThreadPool;
     bool m_isSuspended { false };
 
     // The GC walks this list without taking any locks. That's ok because this list is immutable after setup.
     FixedVector<JITWorkerSlot> m_slots;
-    Vector<Ref<JITWorklistThread>> m_threads;
 
-    // Used to inform the thread about what work there is left to do.
     std::array<Deque<RefPtr<JITPlan>>, static_cast<size_t>(JITPlan::Tier::Count)> m_queues;
 
     // Used to answer questions about the current state of a code block. This
@@ -149,9 +170,8 @@ private:
     Vector<Ref<JITPlan>, 16> m_readyPlans;
 
     Lock m_suspensionLock;
-    Box<Lock> m_lock;
+    mutable Lock m_lock;
 
-    const Ref<AutomaticThreadCondition> m_planEnqueued;
     Condition m_planCompiledOrCancelled;
 };
 

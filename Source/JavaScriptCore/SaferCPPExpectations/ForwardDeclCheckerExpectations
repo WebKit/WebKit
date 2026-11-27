@@ -18,7 +18,6 @@ heap/HeapProfiler.h
 inspector/InspectorBackendDispatchers.h
 jit/JIT.h
 jit/JITCode.h
-jit/JITWorklistThread.h
 parser/Parser.h
 parser/ParserArena.h
 runtime/ArrayConstructor.cpp

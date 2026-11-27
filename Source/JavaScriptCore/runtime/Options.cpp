@@ -445,14 +445,6 @@ unsigned Options::computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int
     return cpusToUse;
 }
 
-int32_t Options::computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta)
-{
-    if (kernTCSMAwareNumberOfProcessorCores() <= 2)
-        return twoCorePriorityDelta;
-
-    return multiCorePriorityDelta;
-}
-
 unsigned Options::computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
 {
     return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);
@@ -627,10 +619,9 @@ static void overrideDefaults()
     }
 
     Options::minNumberOfWorklistThreads() = 1;
-    Options::maxNumberOfWorklistThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
-    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(4, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfBaselineCompilerThreads() = std::min<unsigned>(maxJITCompilerThreads, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(maxJITCompilerThreads, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(maxJITCompilerThreads, kernTCSMAwareNumberOfProcessorCores());
     Options::worklistLoadFactor() = 20;
     Options::worklistBaselineLoadWeight() = 2;
     Options::worklistDFGLoadWeight() = 5;

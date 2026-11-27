@@ -30,12 +30,12 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "HelperThreadPool.h"
-#include <wtf/AutomaticThread.h>
+#include <wtf/Condition.h>
 #include <wtf/FixedVector.h>
+#include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
 #include <wtf/PriorityQueue.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -60,16 +60,12 @@ public:
     enum class Priority {
         Preparation,
         Compilation,
-        Synchronous,
-        Shutdown
+        Synchronous
     };
 
     void dump(PrintStream&) const;
 
 private:
-    class Thread;
-    friend class Thread;
-
     typedef uint64_t Ticket;
     Ticket nextTicket() { return m_lastGrantedTicket++; }
 
@@ -87,9 +83,8 @@ private:
         Condition synchronize;
     };
 
-    AutomaticThread::PollResult poll(const AbstractLocker&, WorkerSlot&);
+    bool dequeuePlan(const AbstractLocker&, WorkerSlot&);
     void runOnSlot(WorkerSlot&);
-    void notifyPlanEnqueued(const AbstractLocker&, bool multiThreaded);
 
     TaskResult runOneTask() final;
     void publishDemand(const AbstractLocker&);
@@ -105,15 +100,12 @@ private:
         }
     };
 
-    const bool m_usesSharedHelperThreadPool;
     FixedVector<WorkerSlot> m_slots;
-    Box<Lock> m_lock;
-    const Ref<AutomaticThreadCondition> m_planEnqueued;
+    Lock m_lock;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same
     // Priority in the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };
     PriorityQueue<QueueElement, QueueElementIsLowerPriority, 10> m_queue;
-    Vector<Ref<Thread>> m_threads;
 };
 
 NODELETE Worklist* existingWorklistOrNull();

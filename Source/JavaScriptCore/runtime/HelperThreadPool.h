@@ -95,7 +95,6 @@ public:
         explicit BlockingScope(HelperThreadClient&);
         ~BlockingScope();
     private:
-        HelperThreadPool* m_pool { nullptr };
         HelperThreadClient& m_client;
     };
 

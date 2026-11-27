@@ -36,7 +36,6 @@
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ParallelHelperPool.h>
 #include <wtf/SharedTask.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
@@ -287,9 +286,7 @@ private:
     Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
     // GC marking threads claim these at the start of marking, and return them at the end.
     Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
-    using HelperClient = Variant<ParallelHelperClient, std::unique_ptr<ParallelMarkingClient>>;
-    static HelperClient createHelperClient(Collector&);
-    HelperClient m_helperClient;
+    std::unique_ptr<ParallelMarkingClient> m_helperClient;
 
     std::unique_ptr<MarkingConstraintSet> m_constraintSet;
 

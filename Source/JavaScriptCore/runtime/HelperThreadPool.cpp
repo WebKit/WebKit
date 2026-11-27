@@ -37,7 +37,6 @@ namespace JSC {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HelperThreadPool);
 
 static constexpr unsigned minJITThreads = 4;
-static constexpr unsigned maxJITThreads = 6;
 static constexpr unsigned maxJITThreadsWithSeveralVMs = 4;
 static constexpr unsigned minCapacity = 4;
 static constexpr unsigned gcWeight = 4;
@@ -178,7 +177,7 @@ HelperThreadPool::HelperThreadPool()
     unsigned gcMax = Options::numberOfGCMarkers() ? Options::numberOfGCMarkers() - 1 : 0;
     unsigned wasmMax = Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
     configure(HelperThreadClass::GC, gcMax, 1, gcWeight);
-    configure(HelperThreadClass::JIT, std::min(maxJITThreads, cores), minJITThreads, jitWeight);
+    configure(HelperThreadClass::JIT, std::min(maxJITCompilerThreads, cores), minJITThreads, jitWeight);
     configure(HelperThreadClass::Wasm, wasmMax, 1, wasmWeight);
 
     m_capacity = Options::helperThreadPoolTargetCapacity();
@@ -396,16 +395,12 @@ void HelperThreadPool::didUnblock(HelperThreadClient& client)
 HelperThreadPool::BlockingScope::BlockingScope(HelperThreadClient& client)
     : m_client(client)
 {
-    if (!Options::useSharedHelperThreadPool())
-        return;
-    m_pool = &singleton();
-    m_pool->willBlock(m_client);
+    singleton().willBlock(m_client);
 }
 
 HelperThreadPool::BlockingScope::~BlockingScope()
 {
-    if (m_pool)
-        m_pool->didUnblock(m_client);
+    singleton().didUnblock(m_client);
 }
 
 auto HelperThreadPool::statistics() const -> Statistics

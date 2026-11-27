@@ -540,7 +540,6 @@ heap/GigacageAlignedMemoryAllocator.cpp
 heap/Heap.cpp
 heap/HeapCell.cpp
 heap/HeapCellType.cpp
-heap/HeapHelperPool.cpp
 heap/HeapProfiler.cpp
 heap/HeapSnapshot.cpp
 heap/HeapSnapshotBuilder.cpp
@@ -680,7 +679,6 @@ jit/JITSubGenerator.cpp
 jit/JITThunks.cpp
 jit/JITToDFGDeferredCompilationCallback.cpp
 jit/JITWorklist.cpp
-jit/JITWorklistThread.cpp
 jit/PCToCodeOriginMap.cpp
 jit/PolymorphicCallStubRoutine.cpp
 jit/Reg.cpp

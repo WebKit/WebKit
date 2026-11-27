@@ -38,6 +38,7 @@ using WTF::PrintStream;
 namespace JSC {
 
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
+static constexpr unsigned maxJITCompilerThreads = 6;
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
 bool canUseWasm();
@@ -290,8 +291,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, useConcurrentJIT, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread"_s) \
     v(Unsigned, minNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
-    v(Unsigned, maxNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
-    v(Unsigned, numberOfBaselineCompilerThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
+    v(Unsigned, numberOfBaselineCompilerThreads, computeNumberOfWorkerThreads(maxJITCompilerThreads, 2), Normal, nullptr) \
     v(Unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(3, 2) - 1, Normal, nullptr) \
     v(Unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS, 2) - 1, Normal, nullptr) \
     v(Unsigned, numberOfWasmCompilerThreads, computeNumberOfWorkerThreads(INT32_MAX, 2) - 1, Normal, nullptr) \
@@ -299,12 +299,6 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, worklistBaselineLoadWeight, 1, Normal, nullptr) \
     v(Unsigned, worklistDFGLoadWeight, 1, Normal, nullptr) \
     v(Unsigned, worklistFTLLoadWeight, 1, Normal, nullptr) \
-    v(Int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
-    v(Int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
-    v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
-    \
-    /* FIXME: https://bugs.webkit.org/show_bug.cgi?id=331018 remove all the unused options once the pool is on by default */ \
-    v(Bool, useSharedHelperThreadPool, true, Normal, "runs GC marking helpers, JIT compiles and Wasm compiles on one shared pool of threads"_s) \
     v(Unsigned, helperThreadPoolTargetCapacity, defaultThreadPoolCapacity(), Normal, "target number of shared pool threads that can run at once (excluding minimums)"_s) \
     \
     v(Bool, useProfiler, false, Normal, nullptr) \

@@ -1,4 +1,4 @@
-//@ requireOptions("--useSharedHelperThreadPool=true", "--helperThreadPoolTargetCapacity=1", "--collectContinuously=true")
+//@ requireOptions("--helperThreadPoolTargetCapacity=1", "--collectContinuously=true")
 
 import * as assert from "../assert.js";
 import { watToWasm } from "../wabt-wrapper.js";

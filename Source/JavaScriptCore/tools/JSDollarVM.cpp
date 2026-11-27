@@ -4159,8 +4159,6 @@ JSC_DEFINE_HOST_FUNCTION(functionHelperThreadPoolStatistics, (JSGlobalObject* gl
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
-    if (!Options::useSharedHelperThreadPool())
-        return JSValue::encode(jsUndefined());
 
     auto statistics = HelperThreadPool::singleton().statistics();
     auto put = [&](JSObject* object, ASCIILiteral name, double value) {

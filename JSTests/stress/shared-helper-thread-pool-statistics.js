@@ -1,6 +1,6 @@
 //@ requireOptions("--useDollarVM=true")
-//@ runDefault("--useSharedHelperThreadPool=true")
-//@ runDefault("--useSharedHelperThreadPool=true", "--helperThreadPoolTargetCapacity=1", "--collectContinuously=true")
+//@ runDefault
+//@ runDefault("--helperThreadPoolTargetCapacity=1", "--collectContinuously=true")
 
 function makeFunction(i) {
     return new Function("a", "b", `let s = 0; for (let j = 0; j < a; ++j) s += (j * ${i}) ^ b; return s;`);

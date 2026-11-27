@@ -29,9 +29,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "CPU.h"
 #include "WasmPlan.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
 
@@ -46,56 +46,9 @@ void Worklist::dump(PrintStream& out) const
     out.print("Queue Size = ", m_queue.size());
 }
 
-// The Thread class is designed to prevent threads from blocking when there is still work
-// in the queue. Wasm's Plans have some phases, Validiation, Preparation, and Completion,
-// that can only be done by one thread, and another phase, Compilation, that can be done
-// many threads. In order to stop a thread from wasting time we remove any plan that is
-// is currently in a single threaded state from the work queue so other plans can run.
-class Worklist::Thread final : public AutomaticThread {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(Thread);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Thread);
-public:
-    using Base = AutomaticThread;
-    static Ref<Thread> create(const AbstractLocker& locker, Worklist& work, WorkerSlot& slot)
-    {
-        return adoptRef(*new Thread(locker, work, slot));
-    }
-
-private:
-    Thread(const AbstractLocker& locker, Worklist& work, WorkerSlot& workerSlot)
-        : Base(locker, work.m_lock, work.m_planEnqueued.copyRef(), ThreadType::Compiler, compilerThreadQOS())
-        , worklist(work)
-        , slot(workerSlot)
-    {
-    }
-
-    PollResult poll(const AbstractLocker& locker) final
-    {
-        return worklist.poll(locker, slot);
-    }
-
-    WorkResult work() final
-    {
-        worklist.runOnSlot(slot);
-        return WorkResult::Continue;
-    }
-
-    ASCIILiteral name() const final
-    {
-        return "Wasm Worklist Helper Thread"_s;
-    }
-
-    Worklist& worklist;
-    WorkerSlot& slot;
-};
-
-auto Worklist::poll(const AbstractLocker&, WorkerSlot& slot) -> AutomaticThread::PollResult
+bool Worklist::dequeuePlan(const AbstractLocker&, WorkerSlot& slot)
 {
     while (!m_queue.isEmpty()) {
-        Priority priority = m_queue.peek().priority;
-        if (priority == Worklist::Priority::Shutdown)
-            return AutomaticThread::PollResult::Stop;
-
         slot.element = m_queue.peek();
         bool multiThreaded = slot.element.plan->multiThreaded();
         // Only one thread should validate/prepare.
@@ -103,14 +56,14 @@ auto Worklist::poll(const AbstractLocker&, WorkerSlot& slot) -> AutomaticThread:
             m_queue.dequeue();
 
         if (slot.element.plan->hasWork())
-            return AutomaticThread::PollResult::Work;
+            return true;
 
         // There must be another thread linking this plan so we can dequeue and see if there is other work.
         if (multiThreaded)
             m_queue.dequeue();
         slot.element = QueueElement();
     }
-    return AutomaticThread::PollResult::Wait;
+    return false;
 }
 
 void Worklist::runOnSlot(WorkerSlot& slot)
@@ -126,12 +79,10 @@ void Worklist::runOnSlot(WorkerSlot& slot)
         // might use after free the plan we are looking at
         slot.element = QueueElement();
         slot.synchronize.notifyAll();
-        if (m_usesSharedHelperThreadPool) {
-            // Multithreaded plans stay in m_queue while running; dequeue completed ones before demand can drop to 0.
-            while (!m_queue.isEmpty() && m_queue.peek().plan && !m_queue.peek().plan->hasWork())
-                m_queue.dequeue();
-            publishDemand(locker);
-        }
+        // Multithreaded plans stay in m_queue while running; dequeue completed ones before demand can drop to 0.
+        while (!m_queue.isEmpty() && m_queue.peek().plan && !m_queue.peek().plan->hasWork())
+            m_queue.dequeue();
+        publishDemand(locker);
     };
 
     Plan* plan = slot.element.plan.get();
@@ -142,25 +93,14 @@ void Worklist::runOnSlot(WorkerSlot& slot)
 
     ASSERT(!plan->hasWork() || plan->multiThreaded());
     if (plan->hasWork() && !wasMultiThreaded && plan->multiThreaded()) {
-        Locker locker { *m_lock };
+        Locker locker { m_lock };
         slot.element.setToNextPriority();
         m_queue.enqueue(WTF::move(slot.element));
-        notifyPlanEnqueued(locker, true);
         complete(locker);
         return;
     }
 
-    complete(Locker { *m_lock });
-}
-
-void Worklist::notifyPlanEnqueued(const AbstractLocker& locker, bool multiThreaded)
-{
-    if (m_usesSharedHelperThreadPool)
-        publishDemand(locker);
-    else if (multiThreaded)
-        m_planEnqueued->notifyAll(locker);
-    else
-        m_planEnqueued->notifyOne(locker);
+    complete(Locker { m_lock });
 }
 
 void Worklist::publishDemand(const AbstractLocker&)
@@ -184,14 +124,14 @@ auto Worklist::runOneTask() -> TaskResult
 {
     WorkerSlot* slot = nullptr;
     {
-        Locker locker { *m_lock };
+        Locker locker { m_lock };
         for (auto& candidate : m_slots) {
             if (!candidate.element.plan) {
                 slot = &candidate;
                 break;
             }
         }
-        if (!slot || poll(locker, *slot) != AutomaticThread::PollResult::Work) {
+        if (!slot || !dequeuePlan(locker, *slot)) {
             publishDemand(locker);
             return TaskResult::NoWork;
         }
@@ -216,7 +156,7 @@ void Worklist::QueueElement::setToNextPriority()
 
 void Worklist::enqueue(Ref<Plan> plan)
 {
-    Locker locker { *m_lock };
+    Locker locker { m_lock };
 
     if (ASSERT_ENABLED) {
         for (const auto& element : m_queue)
@@ -225,14 +165,14 @@ void Worklist::enqueue(Ref<Plan> plan)
 
     dataLogLnIf(WasmWorklistInternal::verbose, "Enqueuing plan");
     bool multiThreaded = plan->multiThreaded();
-    m_queue.enqueue({ multiThreaded ? Priority::Compilation : Priority::Preparation, nextTicket(),  WTF::move(plan) });
-    notifyPlanEnqueued(locker, multiThreaded);
+    m_queue.enqueue({ multiThreaded ? Priority::Compilation : Priority::Preparation, nextTicket(), WTF::move(plan) });
+    publishDemand(locker);
 }
 
 void Worklist::completePlanSynchronously(Plan& plan)
 {
     {
-        Locker locker { *m_lock };
+        Locker locker { m_lock };
         m_queue.increaseKey([&] (QueueElement& element) {
             if (element.plan == &plan) {
                 element.priority = Priority::Synchronous;
@@ -252,7 +192,7 @@ void Worklist::completePlanSynchronously(Plan& plan)
 
 void Worklist::stopAllPlansForContext(VM& vm)
 {
-    Locker locker { *m_lock };
+    Locker locker { m_lock };
     Vector<QueueElement> elements;
     while (!m_queue.isEmpty()) {
         QueueElement element = m_queue.dequeue();
@@ -268,52 +208,22 @@ void Worklist::stopAllPlansForContext(VM& vm)
         RefPtr plan = slot.element.plan;
         if (plan && plan->tryRemoveContextAndCancelIfLast(vm)) {
             while (slot.element.plan == plan)
-                slot.synchronize.wait(*m_lock);
+                slot.synchronize.wait(m_lock);
         }
     }
 
-    if (m_usesSharedHelperThreadPool)
-        publishDemand(locker);
-}
-
-static unsigned numberOfWorkerSlots()
-{
-    if (Options::useSharedHelperThreadPool())
-        return HelperThreadPool::singleton().maxConcurrency(HelperThreadClass::Wasm);
-    return Options::useConcurrentJIT() ? Options::numberOfWasmCompilerThreads() : 1;
+    publishDemand(locker);
 }
 
 Worklist::Worklist()
-    : m_usesSharedHelperThreadPool(Options::useSharedHelperThreadPool())
-    , m_slots(numberOfWorkerSlots())
-    , m_lock(Box<Lock>::create())
-    , m_planEnqueued(AutomaticThreadCondition::create())
+    : m_slots(HelperThreadPool::singleton().maxConcurrency(HelperThreadClass::Wasm))
 {
-    if (m_usesSharedHelperThreadPool) {
-        HelperThreadPool::singleton().registerClient(*this, HelperThreadClass::Wasm, m_slots.size());
-        return;
-    }
-
-    Locker locker { *m_lock };
-    m_threads = Vector<Ref<Thread>>(m_slots.size(), [&](size_t i) {
-        return Worklist::Thread::create(locker, *this, m_slots[i]);
-    });
+    HelperThreadPool::singleton().registerClient(*this, HelperThreadClass::Wasm, m_slots.size());
 }
 
 Worklist::~Worklist()
 {
-    if (m_usesSharedHelperThreadPool) {
-        HelperThreadPool::singleton().unregisterClient(*this);
-        return;
-    }
-
-    {
-        Locker locker { *m_lock };
-        m_queue.enqueue({ Priority::Shutdown, nextTicket(), nullptr });
-        m_planEnqueued->notifyAll(locker);
-    }
-    for (unsigned i = 0; i < m_threads.size(); ++i)
-        Ref { m_threads[i] }->join();
+    HelperThreadPool::singleton().unregisterClient(*this);
 }
 
 static Worklist* globalWorklist;

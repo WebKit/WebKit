@@ -37,7 +37,7 @@ void JITWorklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, NOESCAPE cons
     if (!vm.numberOfActiveJITPlans())
         return;
 
-    Locker locker { *m_lock };
+    Locker locker { m_lock };
     for (auto& entry : m_plans) {
         if (entry.value->vm() != &vm)
             continue;
