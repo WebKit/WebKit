@@ -10024,6 +10024,34 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
             notAtomStructure.link(this);
         }
 
+        // A definitely-atom element equals an atom search string exactly when their StringImpl pointers
+        // match, so its characters are never read. The first string without that bit goes to the generic loop.
+        Jump skipGenericFromAtomLoop;
+        {
+            Jump searchIsNotAtom = branchTest32(Zero, Address(rightStringGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom()));
+
+            Jump atomNotFound = branch32(Equal, indexGPR, lengthGPR);
+            JumpList atomFound;
+            JumpList atomNext;
+            Label atomLoop = label();
+            load64(BaseIndex(storageGPR, indexGPR, TimesEight), leftStringGPR);
+            atomNext.append(branchIfEmpty(leftStringGPR));
+            atomNext.append(branchIfNotCell(leftStringGPR));
+            atomNext.append(branchIfNotString(leftStringGPR));
+            Jump notDefinitelyAtomString = branchTest8(Zero, Address(leftStringGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(TypeInfoPerCellBit));
+            loadPtr(Address(leftStringGPR, JSString::offsetOfValue()), leftCharGPR);
+            atomFound.append(branchPtr(Equal, leftCharGPR, rightStringGPR));
+            atomNext.link(this);
+            add32(TrustedImm32(1), indexGPR);
+            branch32(NotEqual, indexGPR, lengthGPR).linkTo(atomLoop, this);
+
+            emitResult(atomNotFound, atomFound);
+            skipGenericFromAtomLoop = jump();
+
+            notDefinitelyAtomString.link(this);
+            searchIsNotAtom.link(this);
+        }
+
         slowCase.append(branchTest32(Zero, Address(rightStringGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit())));
 
         auto emitLoop = [&](auto emitCompare) {
@@ -10110,6 +10138,7 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
 
         if (skipGeneric.isSet())
             skipGeneric.link(this);
+        skipGenericFromAtomLoop.link(this);
 
         if (isArrayIncludes) {
             addSlowPathGenerator(slowPathCall(

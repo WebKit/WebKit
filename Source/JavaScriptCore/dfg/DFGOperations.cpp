@@ -5313,27 +5313,44 @@ JSC_DEFINE_JIT_OPERATION(operationToLengthUntyped, EncodedJSValue, (JSGlobalObje
     OPERATION_RETURN(scope, JSValue::encode(jsNumber(value.toLength(globalObject))));
 }
 
-static ALWAYS_INLINE UCPUStrictInt32 arrayIncludesString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
+static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     int32_t length = butterfly->publicLength();
     auto data = butterfly->contiguous().data();
+    StringImpl* searchImpl = searchElement->tryGetValueImpl();
+    bool searchIsAtom = searchImpl && searchImpl->isAtom();
     for (; index < length; ++index) {
         JSValue value = data[index].get();
         if (!value || !value.isString())
             continue;
         auto* string = asString(value);
         if (string == searchElement)
-            return toUCPUStrictInt32(1);
+            return toUCPUStrictInt32(index);
+        if (searchIsAtom && string->isDefinitelyAtom()) {
+            if (string->getValueImpl() == searchImpl)
+                return toUCPUStrictInt32(index);
+            continue;
+        }
         if (string->equalInline(globalObject, searchElement)) {
             scope.assertNoExceptionExceptTermination();
-            return toUCPUStrictInt32(1);
+            return toUCPUStrictInt32(index);
         }
         RETURN_IF_EXCEPTION(scope, { });
     }
-    return toUCPUStrictInt32(0);
+    return toUCPUStrictInt32(-1);
+}
+
+static ALWAYS_INLINE UCPUStrictInt32 arrayIncludesString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    UCPUStrictInt32 result = arrayIndexOfString(globalObject, butterfly, searchElement, index);
+    RETURN_IF_EXCEPTION(scope, { });
+    return toUCPUStrictInt32(result != toUCPUStrictInt32(-1));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArrayIncludesString, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index))
@@ -5486,29 +5503,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesNonStringIdentityValueCo
     if (searchElementValue.isUndefined() && containsHole(data + index, length - index))
         return toUCPUStrictInt32(1);
     return toUCPUStrictInt32(0);
-}
-
-static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    int32_t length = butterfly->publicLength();
-    auto data = butterfly->contiguous().data();
-    for (; index < length; ++index) {
-        JSValue value = data[index].get();
-        if (!value || !value.isString())
-            continue;
-        auto* string = asString(value);
-        if (string == searchElement)
-            return toUCPUStrictInt32(index);
-        if (string->equalInline(globalObject, searchElement)) {
-            scope.assertNoExceptionExceptTermination();
-            return toUCPUStrictInt32(index);
-        }
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    return toUCPUStrictInt32(-1);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfString, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index))

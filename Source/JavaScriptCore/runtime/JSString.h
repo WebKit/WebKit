@@ -285,9 +285,9 @@ public:
 
     // Set only when this string is known to hold an AtomStringImpl. A clear bit proves nothing, since
     // AtomStringImpl::add can atomize a StringImpl that several JSStrings already share, so never
-    // conclude from it that a string is not an atom. A reader that sees the bit set must not go on to
-    // load the StringImpl: it has no ordering against the impl store, which is the whole reason value
-    // profiling consults the bit.
+    // conclude from it that a string is not an atom. A concurrent reader (a compiler thread) that sees
+    // the bit set must not go on to load the StringImpl: it has no ordering against the impl store,
+    // which is the whole reason value profiling consults the bit. The mutator may load it.
     ALWAYS_INLINE bool isDefinitelyAtom() const { return perCellBit(); }
 
     void markAsAtom() const
