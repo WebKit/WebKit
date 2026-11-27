@@ -36,9 +36,11 @@
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
+#include <mutex>
 #include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
@@ -90,7 +92,7 @@ struct Binding {
     Kind kind;
     const struct Type* type;
     Evaluation evaluation;
-    std::optional<ConstantValue> constantValue;
+    OptionalConstantValue constantValue;
     // Set for a declaration in a loop body that follows a continue statement targeting that loop.
     // A shadowing declaration is a separate binding, so it is left unmarked and stays usable.
     bool declaredAfterContinue { false };
@@ -215,12 +217,14 @@ public:
     [[nodiscard]] Result<void> visit(AST::Continuing&);
 
 private:
-    [[nodiscard]] Result<void> declareBuiltins();
+    static const ContextMap& sharedBuiltinBindings();
 
     [[nodiscard]] Result<const Type*> vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
     [[nodiscard]] Result<void> visitAttributes(AST::Attribute::List&);
     [[nodiscard]] Result<void> visitStatements(AST::Statement::List&);
     [[nodiscard]] Result<void> bitcast(AST::CallExpression&, const Vector<const Type*>&);
+    [[nodiscard]] Result<void> bufferLength(AST::CallExpression&, const Vector<const Type*>&);
+    [[nodiscard]] Result<void> bufferView(AST::CallExpression&, const Vector<const Type*>&, bool isArrayView);
 
     [[nodiscard]] Result<const Type*> check(AST::Expression&, Constraint, Evaluation);
     [[nodiscard]] Result<const Type*> infer(AST::Expression&, Evaluation, DiscardResult = DiscardResult::No);
@@ -228,19 +232,15 @@ private:
     [[nodiscard]] Result<const Type*> lookupType(const AST::Identifier&);
     [[nodiscard]] Result<void> validateF16Usage(const SourceSpan&, const Type*);
     [[nodiscard]] Result<void> introduceType(const AST::Identifier&, const Type*);
-    [[nodiscard]] Result<void> introduceValue(const AST::Identifier&, const Type*, Evaluation = Evaluation::Runtime, std::optional<ConstantValue> = std::nullopt);
+    [[nodiscard]] Result<void> introduceValue(const AST::Identifier&, const Type*, Evaluation = Evaluation::Runtime, OptionalConstantValue = std::nullopt);
     [[nodiscard]] Result<void> introduceFunction(const AST::Identifier&, const Type*);
-    [[nodiscard]] Result<void> convertValue(const SourceSpan&, const Type*, std::optional<ConstantValue>&);
+    [[nodiscard]] Result<void> convertValue(const SourceSpan&, const Type*, OptionalConstantValue&);
 
     NODELETE void evaluated(Evaluation);
     NODELETE void inferred(const Type*);
     [[nodiscard]] bool unify(const Type*, const Type*);
 
     [[nodiscard]] Result<void> binaryExpression(const SourceSpan&, AST::Expression*, AST::BinaryOperation, AST::Expression&, AST::Expression&);
-
-    template<typename TargetConstructor, typename Validator, typename... Arguments>
-    [[nodiscard]] Result<void> allocateSimpleConstructor(ASCIILiteral, TargetConstructor, const Validator&, Arguments&&...);
-    [[nodiscard]] Result<void> allocateTextureStorageConstructor(ASCIILiteral, Types::TextureStorage::Kind);
 
     NODELETE bool isModuleScope() const;
 
@@ -251,10 +251,10 @@ private:
     template<typename CallArguments>
     [[nodiscard]] Result<const Type*> chooseOverload(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
     template<typename CallArguments>
-    [[nodiscard]] Result<const Type*> chooseOverloadForInferredArguments(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
+    [[nodiscard]] Result<const Type*> chooseOverloadForInferredArguments(ASCIILiteral, const SourceSpan&, AST::Expression*, const String&, const OverloadedDeclaration*, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     template<typename Node>
-    [[nodiscard]] Result<void> setConstantValue(Node&, const Type*, const ConstantValue&);
+    [[nodiscard]] Result<void> setConstantValue(Node&, const Type*, ConstantValue);
 
     [[nodiscard]] Result<Behaviors> analyze(AST::Statement&);
     [[nodiscard]] Result<Behaviors> analyze(AST::CompoundStatement&);
@@ -291,221 +291,309 @@ private:
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
-    : m_shaderModule(shaderModule)
+    : ContextProvider(&sharedBuiltinBindings())
+    , m_shaderModule(shaderModule)
     , m_types(shaderModule.types())
 {
 }
 
-Result<void> TypeChecker::declareBuiltins()
+const TypeChecker::ContextMap& TypeChecker::sharedBuiltinBindings()
 {
-    CHECK(introduceType(AST::Identifier::make("bool"_s), m_types.boolType()));
-    CHECK(introduceType(AST::Identifier::make("i32"_s), m_types.i32Type()));
-    CHECK(introduceType(AST::Identifier::make("u32"_s), m_types.u32Type()));
-    CHECK(introduceType(AST::Identifier::make("f32"_s), m_types.f32Type()));
-    CHECK(introduceType(AST::Identifier::make("f16"_s), m_types.f16Type()));
-    CHECK(introduceType(AST::Identifier::make("sampler"_s), m_types.samplerType()));
-    CHECK(introduceType(AST::Identifier::make("sampler_comparison"_s), m_types.samplerComparisonType()));
-    CHECK(introduceType(AST::Identifier::make("texture_external"_s), m_types.textureExternalType()));
+    static LazyNeverDestroyed<Vector<std::unique_ptr<const Type>>> s_constructorTypes;
+    static LazyNeverDestroyed<ContextMap> s_bindings;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        Vector<std::unique_ptr<const Type>> constructorTypes;
+        ContextMap bindings;
+        auto& types = TypeStore::sharedBuiltinTypes();
 
-    CHECK(introduceType(AST::Identifier::make("texture_depth_2d"_s), m_types.textureDepth2dType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_2d_array"_s), m_types.textureDepth2dArrayType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_cube"_s), m_types.textureDepthCubeType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_cube_array"_s), m_types.textureDepthCubeArrayType()));
-    CHECK(introduceType(AST::Identifier::make("texture_depth_multisampled_2d"_s), m_types.textureDepthMultisampled2dType()));
+        const auto& makeTypeConstructor = [&](ASCIILiteral name, std::function<Result<const Type*>(TypeChecker&, AST::ElaboratedTypeExpression&)>&& fn) -> const Type* {
+            constructorTypes.append(std::unique_ptr<const Type>(new Type(Types::TypeConstructor { name, WTF::move(fn) })));
+            return constructorTypes.last().get();
+        };
 
-    CHECK(introduceType(AST::Identifier::make("ptr"_s), m_types.typeConstructorType(
-        "ptr"_s,
-        [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
-            auto argumentCount = type.arguments().size();
-            if (argumentCount < 2) [[unlikely]]
-                TYPE_ERROR(type.span(), "'ptr' requires at least 2 template arguments"_s);
+        const auto& introduceType = [&](const AST::Identifier& name, const Type* type) -> Result<void> {
+            bindings.add(name.id(), Binding { Binding::Type, type, Evaluation::Runtime, std::nullopt });
+            return { };
+        };
 
-            if (argumentCount > 3) [[unlikely]]
-                TYPE_ERROR(type.span(), "'ptr' requires at most 3 template arguments"_s);
+        const auto& introduceValue = [&](const AST::Identifier& name, const Type* type) -> Result<void> {
+            bindings.add(name.id(), Binding { Binding::Value, type, Evaluation::Runtime, std::nullopt });
+            return { };
+        };
 
-            UNWRAP(addressSpace, addressSpace(type.arguments()[0]));
-            UNWRAP(elementType, resolve(type.arguments()[1]));
+        const auto& allocateSimpleConstructor = [&]<typename TargetConstructor, typename... Arguments>(ASCIILiteral name, TargetConstructor constructor, std::optional<String>(*validate)(const Type*), Arguments... arguments) -> Result<void> {
+            return introduceType(AST::Identifier::make(name), makeTypeConstructor(
+                name,
+                [constructor, validate, arguments...](TypeChecker& checker, AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+                    if (type.arguments().size() != 1) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', type.base(), "' requires 1 template argument"_s);
 
-            if (!elementType->isStorable()) [[unlikely]]
-                TYPE_ERROR(type.span(), '\'', *elementType, "' cannot be used as the store type of a pointer"_s);
+                    UNWRAP(elementType, checker.resolve(type.arguments().first()));
 
-            // https://www.w3.org/TR/WGSL/#ref-ptr-types
-            // A pointer's address space has to permit its store type. Textures and samplers only ever
-            // live in the handle address space, and that address space cannot be spelled, so no
-            // pointer that can be written down may point at one.
-            if (elementType->isTexture() || elementType->isSampler()) [[unlikely]]
-                TYPE_ERROR(type.span(), '\'', *elementType, "' cannot be used as the store type of a pointer in the <"_s, toString(addressSpace), "> address space"_s);
+                    if (auto error = validate(elementType)) [[unlikely]]
+                        TYPE_ERROR(type.span(), *error);
 
-            if (std::holds_alternative<Types::Atomic>(*elementType) && addressSpace != AddressSpace::Storage && addressSpace != AddressSpace::Workgroup) [[unlikely]]
-                TYPE_ERROR(type.span(), '\'', *elementType, "' atomic variables must have <storage> or <workgroup> address space"_s);
-
-            if (elementType->containsRuntimeArray() && addressSpace != AddressSpace::Storage) [[unlikely]]
-                TYPE_ERROR(type.span(), "runtime-sized arrays can only be used in the <storage> address space"_s);
-
-            // https://www.w3.org/TR/WGSL/#array-types
-            // An override element count survives only where the array itself could live, and a
-            // 'var<workgroup>' store type is the one such place, so its pointers are the only
-            // pointers that may point at one.
-            if (elementType->containsOverrideArray() && addressSpace != AddressSpace::Workgroup) [[unlikely]]
-                TYPE_ERROR(type.span(), "array with an 'override' element count can only be pointed to in the <workgroup> address space"_s);
-
-            AccessMode accessMode;
-            if (argumentCount > 2) {
-                if (addressSpace != AddressSpace::Storage) [[unlikely]]
-                    TYPE_ERROR(type.arguments()[2].span(), "only pointers in <storage> address space may specify an access mode"_s);
-
-                UNWRAP_ASSIGN(accessMode, this->accessMode(type.arguments()[2]));
-
-                if (accessMode == AccessMode::Write) [[unlikely]]
-                    TYPE_ERROR(type.arguments()[2].span(), "access mode 'write' is not valid for the <storage> address space"_s);
-            } else {
-                switch (addressSpace) {
-                case AddressSpace::Function:
-                case AddressSpace::Private:
-                case AddressSpace::Workgroup:
-                    accessMode = AccessMode::ReadWrite;
-                    break;
-                case AddressSpace::Uniform:
-                case AddressSpace::Storage:
-                case AddressSpace::Handle:
-                    accessMode = AccessMode::Read;
-                    break;
+                    return { (checker.m_types.*constructor)(arguments..., elementType) };
                 }
-            }
+            ));
+        };
 
-            return { m_types.pointerType(addressSpace, elementType, accessMode) };
-        }
-    )));
+        const auto& allocateTextureStorageConstructor = [&](ASCIILiteral name, Types::TextureStorage::Kind kind) -> Result<void> {
+            return introduceType(AST::Identifier::make(name), makeTypeConstructor(
+                name,
+                [kind](TypeChecker& checker, AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+                    if (type.arguments().size() != 2) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', type.base(), "' requires 2 template argument"_s);
 
-    CHECK(introduceType(AST::Identifier::make("atomic"_s), m_types.typeConstructorType(
-        "atomic"_s,
-        [this](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
-            if (type.arguments().size() != 1) [[unlikely]]
-                TYPE_ERROR(type.span(), "'atomic' requires 1 template argument"_s);
+                    UNWRAP(format, checker.texelFormat(type.arguments()[0]));
+                    UNWRAP(access, checker.accessMode(type.arguments()[1]));
 
-            UNWRAP(elementType, resolve(type.arguments()[0]));
+                    return { checker.m_types.textureStorageType(kind, format, access) };
+                }
+            ));
+        };
 
-            if (elementType != m_types.i32Type() && elementType != m_types.u32Type()) [[unlikely]]
-                TYPE_ERROR(type.arguments()[0].span(), "atomic only supports i32 or u32 types"_s);
+        auto populateResult = [&] -> Result<void> {
+            CHECK(introduceType(AST::Identifier::make("bool"_s), types.boolType()));
+            CHECK(introduceType(AST::Identifier::make("i32"_s), types.i32Type()));
+            CHECK(introduceType(AST::Identifier::make("u32"_s), types.u32Type()));
+            CHECK(introduceType(AST::Identifier::make("f32"_s), types.f32Type()));
+            CHECK(introduceType(AST::Identifier::make("f16"_s), types.f16Type()));
+            CHECK(introduceType(AST::Identifier::make("sampler"_s), types.samplerType()));
+            CHECK(introduceType(AST::Identifier::make("sampler_comparison"_s), types.samplerComparisonType()));
+            CHECK(introduceType(AST::Identifier::make("texture_external"_s), types.textureExternalType()));
 
-            return { m_types.atomicType(elementType) };
-        }
-    )));
+            CHECK(introduceType(AST::Identifier::make("texture_depth_2d"_s), types.textureDepth2dType()));
+            CHECK(introduceType(AST::Identifier::make("texture_depth_2d_array"_s), types.textureDepth2dArrayType()));
+            CHECK(introduceType(AST::Identifier::make("texture_depth_cube"_s), types.textureDepthCubeType()));
+            CHECK(introduceType(AST::Identifier::make("texture_depth_cube_array"_s), types.textureDepthCubeArrayType()));
+            CHECK(introduceType(AST::Identifier::make("texture_depth_multisampled_2d"_s), types.textureDepthMultisampled2dType()));
 
-    const auto& validateVector = [&](const Type* element) -> std::optional<String> {
-        if (!satisfies(element, Constraints::Scalar))
-            return { "vector element type must be a scalar type"_s };
-        return std::nullopt;
-    };
+            CHECK(introduceType(AST::Identifier::make("ptr"_s), makeTypeConstructor(
+                "ptr"_s,
+                [](TypeChecker& checker, AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+                    auto argumentCount = type.arguments().size();
+                    if (argumentCount < 2) [[unlikely]]
+                        TYPE_ERROR(type.span(), "'ptr' requires at least 2 template arguments"_s);
 
-    CHECK(allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, validateVector, 2));
-    CHECK(allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, validateVector, 3));
-    CHECK(allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, validateVector, 4));
+                    if (argumentCount > 3) [[unlikely]]
+                        TYPE_ERROR(type.span(), "'ptr' requires at most 3 template arguments"_s);
 
-    const auto& validateMatrix = [&](const Type* element) -> std::optional<String> {
-        if (!satisfies(element, Constraints::Float))
-            return { "matrix element type must be a floating point type"_s };
-        return std::nullopt;
-    };
-    CHECK(allocateSimpleConstructor("mat2x2"_s, &TypeStore::matrixType, validateMatrix, 2, 2));
-    CHECK(allocateSimpleConstructor("mat2x3"_s, &TypeStore::matrixType, validateMatrix, 2, 3));
-    CHECK(allocateSimpleConstructor("mat2x4"_s, &TypeStore::matrixType, validateMatrix, 2, 4));
-    CHECK(allocateSimpleConstructor("mat3x2"_s, &TypeStore::matrixType, validateMatrix, 3, 2));
-    CHECK(allocateSimpleConstructor("mat3x3"_s, &TypeStore::matrixType, validateMatrix, 3, 3));
-    CHECK(allocateSimpleConstructor("mat3x4"_s, &TypeStore::matrixType, validateMatrix, 3, 4));
-    CHECK(allocateSimpleConstructor("mat4x2"_s, &TypeStore::matrixType, validateMatrix, 4, 2));
-    CHECK(allocateSimpleConstructor("mat4x3"_s, &TypeStore::matrixType, validateMatrix, 4, 3));
-    CHECK(allocateSimpleConstructor("mat4x4"_s, &TypeStore::matrixType, validateMatrix, 4, 4));
+                    UNWRAP(addressSpace, checker.addressSpace(type.arguments()[0]));
+                    UNWRAP(elementType, checker.resolve(type.arguments()[1]));
 
-    const auto& validateTexture = [&](const Type* element) -> std::optional<String> {
-        if (!satisfies(element, Constraints::Concrete32BitNumber))
-            return { "texture sampled type must be one 'i32', 'u32' or 'f32'"_s };
-        return std::nullopt;
-    };
-    CHECK(allocateSimpleConstructor("texture_1d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture1d));
-    CHECK(allocateSimpleConstructor("texture_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2d));
-    CHECK(allocateSimpleConstructor("texture_2d_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2dArray));
-    CHECK(allocateSimpleConstructor("texture_3d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture3d));
-    CHECK(allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCube));
-    CHECK(allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCubeArray));
-    CHECK(allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureMultisampled2d));
+                    if (!elementType->isStorable()) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', *elementType, "' cannot be used as the store type of a pointer"_s);
 
-    CHECK(allocateTextureStorageConstructor("texture_storage_1d"_s, Types::TextureStorage::Kind::TextureStorage1d));
-    CHECK(allocateTextureStorageConstructor("texture_storage_2d"_s, Types::TextureStorage::Kind::TextureStorage2d));
-    CHECK(allocateTextureStorageConstructor("texture_storage_2d_array"_s, Types::TextureStorage::Kind::TextureStorage2dArray));
-    CHECK(allocateTextureStorageConstructor("texture_storage_3d"_s, Types::TextureStorage::Kind::TextureStorage3d));
+                    // https://www.w3.org/TR/WGSL/#ref-ptr-types
+                    if (elementType->isTexture() || elementType->isSampler()) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', *elementType, "' cannot be used as the store type of a pointer in the <"_s, toString(addressSpace), "> address space"_s);
 
-    CHECK(introduceValue(AST::Identifier::make("read"_s), m_types.accessModeType()));
-    CHECK(introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType()));
-    CHECK(introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType()));
+                    if (elementType->containsAtomic() && addressSpace != AddressSpace::Storage && addressSpace != AddressSpace::Workgroup) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', *elementType, "' atomic variables must have <storage> or <workgroup> address space"_s);
 
-    CHECK(introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba32uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba8unorm"_s), m_types.texelFormatType()));
+                    if (elementType->containsRuntimeArray() && addressSpace != AddressSpace::Storage && addressSpace != AddressSpace::Workgroup && addressSpace != AddressSpace::Uniform) [[unlikely]]
+                        TYPE_ERROR(type.span(), "runtime-sized arrays can only be used in the <storage>, <workgroup>, or <uniform> address space"_s);
 
-    CHECK(introduceValue(AST::Identifier::make("r16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16float"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg8unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgb10a2uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgb10a2unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16sint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16uint"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg11b10ufloat"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("r16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rg16unorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16snorm"_s), m_types.texelFormatType()));
-    CHECK(introduceValue(AST::Identifier::make("rgba16unorm"_s), m_types.texelFormatType()));
+                    if (std::holds_alternative<Types::Buffer>(*elementType) && addressSpace != AddressSpace::Storage && addressSpace != AddressSpace::Workgroup && addressSpace != AddressSpace::Uniform) [[unlikely]]
+                        TYPE_ERROR(type.span(), '\'', *elementType, "' buffer types can only be used in the <storage>, <workgroup>, or <uniform> address space"_s);
 
-    CHECK(introduceValue(AST::Identifier::make("function"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("private"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("workgroup"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("uniform"_s), m_types.addressSpaceType()));
-    CHECK(introduceValue(AST::Identifier::make("storage"_s), m_types.addressSpaceType()));
+                    // https://www.w3.org/TR/WGSL/#array-types
+                    if ((elementType->containsOverrideArray() || elementType->containsOverrideBuffer()) && addressSpace != AddressSpace::Workgroup) [[unlikely]]
+                        TYPE_ERROR(type.span(), "override-sized types can only be pointed to in the <workgroup> address space"_s);
 
-    // This file contains the declarations generated from `TypeDeclarations.rb`, which refer to the
-    // type store as `types`.
-    auto& types = m_types;
+                    AccessMode accessMode;
+                    if (argumentCount > 2) {
+                        if (addressSpace != AddressSpace::Storage) [[unlikely]]
+                            TYPE_ERROR(type.arguments()[2].span(), "only pointers in <storage> address space may specify an access mode"_s);
+
+                        UNWRAP_ASSIGN(accessMode, checker.accessMode(type.arguments()[2]));
+
+                        if (accessMode == AccessMode::Write) [[unlikely]]
+                            TYPE_ERROR(type.arguments()[2].span(), "access mode 'write' is not valid for the <storage> address space"_s);
+                    } else {
+                        switch (addressSpace) {
+                        case AddressSpace::Function:
+                        case AddressSpace::Private:
+                        case AddressSpace::Workgroup:
+                            accessMode = AccessMode::ReadWrite;
+                            break;
+                        case AddressSpace::Uniform:
+                        case AddressSpace::Storage:
+                        case AddressSpace::Handle:
+                            accessMode = AccessMode::Read;
+                            break;
+                        }
+                    }
+
+                    return { checker.m_types.pointerType(addressSpace, elementType, accessMode) };
+                }
+            )));
+
+            CHECK(introduceType(AST::Identifier::make("atomic"_s), makeTypeConstructor(
+                "atomic"_s,
+                [](TypeChecker& checker, AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+                    if (type.arguments().size() != 1) [[unlikely]]
+                        TYPE_ERROR(type.span(), "'atomic' requires 1 template argument"_s);
+
+                    UNWRAP(elementType, checker.resolve(type.arguments()[0]));
+
+                    if (elementType != checker.m_types.i32Type() && elementType != checker.m_types.u32Type()) [[unlikely]]
+                        TYPE_ERROR(type.arguments()[0].span(), "atomic only supports i32 or u32 types"_s);
+
+                    return { checker.m_types.atomicType(elementType) };
+                }
+            )));
+
+            CHECK(introduceType(AST::Identifier::make("buffer"_s), makeTypeConstructor(
+                "buffer"_s,
+                [](TypeChecker& checker, AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
+                    if (type.arguments().size() != 1) [[unlikely]]
+                        TYPE_ERROR(type.span(), "'buffer' requires at most 1 template argument"_s);
+
+                    checker.m_shaderModule.setUsesBufferView();
+                    auto& sizeArg = type.arguments()[0];
+                    UNWRAP(sizeType, checker.infer(sizeArg, std::min(checker.m_maxEvaluation, Evaluation::Override)));
+                    if (!checker.unify(checker.m_types.i32Type(), sizeType) && !checker.unify(checker.m_types.u32Type(), sizeType)) [[unlikely]]
+                        TYPE_ERROR(sizeArg.span(), "buffer size must be an i32 or u32 value, found '"_s, *sizeType, '\'');
+
+                    unsigned minBufferSize = checker.m_shaderModule.enabledExtensions().contains(Extension::F16) ? 2u : 4u;
+                    if (sizeArg.evaluation() == Evaluation::Constant) {
+                        RELEASE_ASSERT(sizeArg.constantValue().has_value());
+                        auto intSize = sizeArg.constantValue()->integerValue();
+                        if (intSize < static_cast<int64_t>(minBufferSize) || intSize > std::numeric_limits<uint32_t>::max()) [[unlikely]]
+                            TYPE_ERROR(sizeArg.span(), "buffer size ("_s, intSize, ") must be at least "_s, minBufferSize, " and fit in u32"_s);
+                        if (sizeType == checker.m_types.abstractIntType()) {
+                            CHECK(checker.convertValue(sizeArg.span(), checker.m_types.u32Type(), sizeArg.m_constantValue));
+                            sizeArg.m_inferredType = checker.m_types.u32Type();
+                        }
+                        return { checker.m_types.bufferType(static_cast<unsigned>(intSize)) };
+                    }
+
+                    AST::Expression* sizeExpression = &sizeArg;
+                    if (auto* identifier = dynamicDowncast<AST::IdentifierExpression>(sizeExpression)) {
+                        auto result = checker.m_arrayCountOverrides.add(identifier->identifier().id(), identifier);
+                        sizeExpression = result.iterator->value;
+                    }
+                    return { checker.m_types.bufferType(sizeExpression) };
+                }
+            )));
+
+            constexpr auto validateVector = +[](const Type* element) -> std::optional<String> {
+                if (!satisfies(element, Constraints::Scalar))
+                    return { "vector element type must be a scalar type"_s };
+                return std::nullopt;
+            };
+
+            CHECK(allocateSimpleConstructor("vec2"_s, &TypeStore::vectorType, validateVector, 2));
+            CHECK(allocateSimpleConstructor("vec3"_s, &TypeStore::vectorType, validateVector, 3));
+            CHECK(allocateSimpleConstructor("vec4"_s, &TypeStore::vectorType, validateVector, 4));
+
+            constexpr auto validateMatrix = +[](const Type* element) -> std::optional<String> {
+                if (!satisfies(element, Constraints::Float))
+                    return { "matrix element type must be a floating point type"_s };
+                return std::nullopt;
+            };
+            CHECK(allocateSimpleConstructor("mat2x2"_s, &TypeStore::matrixType, validateMatrix, 2, 2));
+            CHECK(allocateSimpleConstructor("mat2x3"_s, &TypeStore::matrixType, validateMatrix, 2, 3));
+            CHECK(allocateSimpleConstructor("mat2x4"_s, &TypeStore::matrixType, validateMatrix, 2, 4));
+            CHECK(allocateSimpleConstructor("mat3x2"_s, &TypeStore::matrixType, validateMatrix, 3, 2));
+            CHECK(allocateSimpleConstructor("mat3x3"_s, &TypeStore::matrixType, validateMatrix, 3, 3));
+            CHECK(allocateSimpleConstructor("mat3x4"_s, &TypeStore::matrixType, validateMatrix, 3, 4));
+            CHECK(allocateSimpleConstructor("mat4x2"_s, &TypeStore::matrixType, validateMatrix, 4, 2));
+            CHECK(allocateSimpleConstructor("mat4x3"_s, &TypeStore::matrixType, validateMatrix, 4, 3));
+            CHECK(allocateSimpleConstructor("mat4x4"_s, &TypeStore::matrixType, validateMatrix, 4, 4));
+
+            constexpr auto validateTexture = +[](const Type* element) -> std::optional<String> {
+                if (!satisfies(element, Constraints::Concrete32BitNumber))
+                    return { "texture sampled type must be one 'i32', 'u32' or 'f32'"_s };
+                return std::nullopt;
+            };
+            CHECK(allocateSimpleConstructor("texture_1d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture1d));
+            CHECK(allocateSimpleConstructor("texture_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2d));
+            CHECK(allocateSimpleConstructor("texture_2d_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture2dArray));
+            CHECK(allocateSimpleConstructor("texture_3d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::Texture3d));
+            CHECK(allocateSimpleConstructor("texture_cube"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCube));
+            CHECK(allocateSimpleConstructor("texture_cube_array"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureCubeArray));
+            CHECK(allocateSimpleConstructor("texture_multisampled_2d"_s, &TypeStore::textureType, validateTexture, Types::Texture::Kind::TextureMultisampled2d));
+
+            CHECK(allocateTextureStorageConstructor("texture_storage_1d"_s, Types::TextureStorage::Kind::TextureStorage1d));
+            CHECK(allocateTextureStorageConstructor("texture_storage_2d"_s, Types::TextureStorage::Kind::TextureStorage2d));
+            CHECK(allocateTextureStorageConstructor("texture_storage_2d_array"_s, Types::TextureStorage::Kind::TextureStorage2dArray));
+            CHECK(allocateTextureStorageConstructor("texture_storage_3d"_s, Types::TextureStorage::Kind::TextureStorage3d));
+
+            CHECK(introduceValue(AST::Identifier::make("read"_s), types.accessModeType()));
+            CHECK(introduceValue(AST::Identifier::make("write"_s), types.accessModeType()));
+            CHECK(introduceValue(AST::Identifier::make("read_write"_s), types.accessModeType()));
+
+            CHECK(introduceValue(AST::Identifier::make("bgra8unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r32float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r32sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r32uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg32float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg32sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg32uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba16float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba16sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba16uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba32float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba32sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba32uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba8sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba8snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba8uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba8unorm"_s), types.texelFormatType()));
+
+            CHECK(introduceValue(AST::Identifier::make("r16float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r16sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r16uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r8sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r8snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r8uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r8unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg16float"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg8sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg8snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg8uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg8unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgb10a2uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgb10a2unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg16sint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg16uint"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg11b10ufloat"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r16unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("r16snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg16snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rg16unorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba16snorm"_s), types.texelFormatType()));
+            CHECK(introduceValue(AST::Identifier::make("rgba16unorm"_s), types.texelFormatType()));
+
+            CHECK(introduceValue(AST::Identifier::make("function"_s), types.addressSpaceType()));
+            CHECK(introduceValue(AST::Identifier::make("private"_s), types.addressSpaceType()));
+            CHECK(introduceValue(AST::Identifier::make("workgroup"_s), types.addressSpaceType()));
+            CHECK(introduceValue(AST::Identifier::make("uniform"_s), types.addressSpaceType()));
+            CHECK(introduceValue(AST::Identifier::make("storage"_s), types.addressSpaceType()));
+
+            // This file contains the declarations generated from `TypeDeclarations.rb`, which refer to the
+            // type store as `types`.
 #include "TypeDeclarations.h" // NOLINT
 
-    return { };
+            return { };
+        }();
+        RELEASE_ASSERT(populateResult);
+
+        for (auto& entry : bindings)
+            (void)entry.key.hash();
+        s_constructorTypes.construct(WTF::move(constructorTypes));
+        s_bindings.construct(WTF::move(bindings));
+    });
+    return s_bindings.get();
 }
 
 std::optional<FailedCheck> TypeChecker::check()
 {
-
-    auto result = [&] [[nodiscard]] -> Result<void> {
-        CHECK(declareBuiltins());
-
-        ContextScope moduleScope(this);
-
-        CHECK(visit(m_shaderModule));
-        return { };
-    }();
+    auto result = visit(m_shaderModule);
 
     if (!!result) [[likely]]
         return std::nullopt;
@@ -583,7 +671,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
     CHECK(visitAttributes(variable.attributes()));
 
     const Type* result = nullptr;
-    std::optional<ConstantValue>* value = nullptr;
+    OptionalConstantValue* value = nullptr;
 
     Evaluation evaluation { Evaluation::Runtime };
     if (variable.flavor() == AST::VariableFlavor::Const)
@@ -612,7 +700,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
             if (initializerType == m_types.voidType()) [[unlikely]]
                 TYPE_ERROR(variable.span(), "cannot initialize variable with expression of type 'void'"_s);
 
-            if (variable.flavor() == AST::VariableFlavor::Const)
+            if (variable.flavor() == AST::VariableFlavor::Const || (variable.flavor() == AST::VariableFlavor::Let && (initializerType->isTexture() || initializerType->isSampler())))
                 result = initializerType;
             else {
                 result = concretize(initializerType, m_types);
@@ -630,7 +718,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
     case AST::VariableFlavor::Let:
         if (isModuleScope()) [[unlikely]]
             TYPE_ERROR(variable.span(), "module-scope 'let' is invalid, use 'const'"_s);
-        if (!result->isConstructible() && !std::holds_alternative<Types::Pointer>(*result)) [[unlikely]]
+        if (!result->isConstructible() && !std::holds_alternative<Types::Pointer>(*result) && !result->isTexture() && !result->isSampler()) [[unlikely]]
             TYPE_ERROR(variable.span(), '\'', *result, "' cannot be used as the type of a 'let'"_s);
         RELEASE_ASSERT(variable.maybeInitializer());
         break;
@@ -680,7 +768,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
         case AddressSpace::Uniform:
             if (!result->isHostShareable()) [[unlikely]]
                 TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <uniform> because it's not host-shareable"_s);
-            if (!result->isConstructible()) [[unlikely]]
+            if (!result->isConstructible() && !(std::holds_alternative<Types::Buffer>(*result) && std::get<Types::Buffer>(*result).isCreationFixed())) [[unlikely]]
                 TYPE_ERROR(variable.span(), "type '"_s, *result, "' cannot be used in address space <uniform> because it's not constructible"_s);
             break;
         case AddressSpace::Workgroup:
@@ -717,8 +805,8 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
             TYPE_ERROR(variable.span(), "function-scope 'var' declaration must use 'function' address space"_s);
         if ((addressSpace == AddressSpace::Storage || addressSpace == AddressSpace::Uniform || addressSpace == AddressSpace::Handle || addressSpace == AddressSpace::Workgroup) && variable.maybeInitializer()) [[unlikely]]
             TYPE_ERROR(variable.span(), "variables in the address space '"_s, toString(addressSpace), "' cannot have an initializer"_s);
-        if (addressSpace != AddressSpace::Workgroup && result->containsOverrideArray()) [[unlikely]]
-            TYPE_ERROR(variable.span(), "array with an 'override' element count can only be used as the store type of a 'var<workgroup>'"_s);
+        if (addressSpace != AddressSpace::Workgroup && (result->containsOverrideArray() || result->containsOverrideBuffer())) [[unlikely]]
+            TYPE_ERROR(variable.span(), "override-sized type can only be used as the store type of a 'var<workgroup>'"_s);
     }
 
     if (value)
@@ -742,7 +830,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
         variable.m_referenceType = &referenceType;
     }
 
-    CHECK(introduceValue(variable.name(), result, evaluation, value ? std::optional<ConstantValue>(*value) : std::nullopt));
+    CHECK(introduceValue(variable.name(), result, evaluation, value ? *value : OptionalConstantValue()));
     return { };
 }
 
@@ -993,6 +1081,69 @@ Result<void> TypeChecker::visit(AST::Statement& statement)
     }
 }
 
+static bool hasDuplicateSwizzleComponents(const AST::Expression& expression)
+{
+    auto swizzleIndex = [](char c) -> unsigned {
+        switch (c) {
+        case 'x':
+        case 'r':
+            return 0;
+        case 'y':
+        case 'g':
+            return 1;
+        case 'z':
+        case 'b':
+            return 2;
+        case 'w':
+        case 'a':
+            return 3;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    };
+
+    auto resolveChain = [&](auto& self, const AST::Expression& expr, Vector<unsigned, 4>& components) -> bool {
+        if (auto* identity = dynamicDowncast<AST::IdentityExpression>(expr))
+            return self(self, identity->expression(), components);
+        auto* fieldAccess = dynamicDowncast<AST::FieldAccessExpression>(expr);
+        if (!fieldAccess)
+            return false;
+        auto* baseType = fieldAccess->base().inferredType();
+        if (!baseType)
+            return false;
+        if (auto* ref = std::get_if<Types::Reference>(baseType))
+            baseType = ref->element;
+        else if (auto* ptr = std::get_if<Types::Pointer>(baseType))
+            baseType = ptr->element;
+        if (!std::holds_alternative<Types::Vector>(*baseType))
+            return false;
+
+        Vector<unsigned, 4> current;
+        for (unsigned i = 0; i < fieldAccess->fieldName().id().length(); ++i)
+            current.append(swizzleIndex(fieldAccess->fieldName().id()[i]));
+
+        Vector<unsigned, 4> parent;
+        if (self(self, fieldAccess->base(), parent)) {
+            for (auto idx : current)
+                components.append(borrow(parent)[idx]);
+        } else
+            components = WTF::move(current);
+        return true;
+    };
+
+    Vector<unsigned, 4> components;
+    if (!resolveChain(resolveChain, expression, components) || components.size() <= 1)
+        return false;
+
+    unsigned seenMask = 0;
+    for (auto c : components) {
+        if (seenMask & (1u << c))
+            return true;
+        seenMask |= (1u << c);
+    }
+    return false;
+}
+
 Result<void> TypeChecker::visit(AST::AssignmentStatement& statement)
 {
     UNWRAP(lhs, infer(statement.lhs(), Evaluation::Runtime));
@@ -1004,6 +1155,9 @@ Result<void> TypeChecker::visit(AST::AssignmentStatement& statement)
 
     if (reference->accessMode == AccessMode::Read) [[unlikely]]
         TYPE_ERROR(statement.span(), "cannot store into a read-only type '"_s, *lhs, '\'');
+
+    if (hasDuplicateSwizzleComponents(statement.lhs())) [[unlikely]]
+        TYPE_ERROR(statement.span(), "cannot assign to swizzle with duplicate components"_s);
 
     if (!unify(reference->element, rhs)) [[unlikely]]
         TYPE_ERROR(statement.span(), "cannot assign value of type '"_s, *rhs, "' to '"_s, *reference->element, '\'');
@@ -1028,6 +1182,9 @@ Result<void> TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
     auto* referenceType = std::get_if<Types::Reference>(left);
     if (!referenceType) [[unlikely]]
         TYPE_ERROR(statement.span(), "cannot assign to a value of type '"_s, *left, '\'');
+
+    if (hasDuplicateSwizzleComponents(statement.leftExpression())) [[unlikely]]
+        TYPE_ERROR(statement.span(), "cannot assign to swizzle with duplicate components"_s);
 
     CHECK(binaryExpression(statement.span(), nullptr, statement.operation(), statement.leftExpression(), statement.rightExpression()));
 
@@ -1321,7 +1478,7 @@ Result<void> TypeChecker::visit(AST::FieldAccessExpression& access)
             if (isVector)
                 *isVector = true;
             if (result && canBeReference)
-                *canBeReference = !std::holds_alternative<Types::Vector>(*result);
+                *canBeReference = true;
             return { result };
         }
 
@@ -1359,8 +1516,8 @@ Result<void> TypeChecker::visit(AST::FieldAccessExpression& access)
 Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
 {
     const auto& constantAccess = [&]<typename T>(std::optional<unsigned> typeSize) -> Result<void> {
-        auto constantBase = access.base().constantValue();
-        auto constantIndex = access.index().constantValue();
+        const auto& constantBase = access.base().constantValue();
+        const auto& constantIndex = access.index().constantValue();
 
         if (!constantIndex)
             return { };
@@ -1472,7 +1629,8 @@ Result<void> TypeChecker::binaryExpression(const SourceSpan& span, AST::Expressi
         // The left operand has already been inferred above. Inferring it again in chooseOverload
         // would make checking a chain of N short-circuiting operators take O(2^N) time.
         CHECK(infer(rightExpression, m_maxEvaluation));
-        CHECK(chooseOverloadForInferredArguments("operator"_s, span, expression, toASCIILiteral(operation), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
+        auto operationName = toASCIILiteral(operation);
+        CHECK(chooseOverloadForInferredArguments("operator"_s, span, expression, operationName, m_shaderModule.lookupOverload(operationName), ReferenceWrapperVector<AST::Expression, 2> { leftExpression, rightExpression }, { }));
         return { };
     }
 
@@ -1492,8 +1650,8 @@ Result<void> TypeChecker::binaryExpression(const SourceSpan& span, AST::Expressi
                 m_shaderModule.setUsesDivision();
             else
                 m_shaderModule.setUsesModulo();
-            auto leftValue = leftExpression.constantValue();
-            auto rightValue = rightExpression.constantValue();
+            const auto& leftValue = leftExpression.constantValue();
+            const auto& rightValue = rightExpression.constantValue();
             if (!leftValue && rightValue && containsZero(*rightValue, rightExpression.inferredType())) [[unlikely]]
                 TYPE_ERROR(span, "invalid "_s, operationName, " by zero"_s);
         }
@@ -1520,8 +1678,10 @@ Result<void> TypeChecker::visit(AST::IdentifierExpression& identifier)
 
     evaluated(binding->evaluation);
     inferred(binding->type);
-    if (binding->constantValue.has_value())
-        CHECK(setConstantValue(identifier, binding->type, *binding->constantValue));
+    if (binding->constantValue.has_value()) {
+        identifier.setConstantValue(binding->constantValue);
+        CHECK(convertValue(identifier.span(), binding->type, identifier.m_constantValue));
+    }
 
     return { };
 }
@@ -1652,14 +1812,30 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             if (m_discardResult == DiscardResult::No && isPrimitive(functionType.result, Types::Primitive::Void)) [[unlikely]]
                 TYPE_ERROR(call.span(), "function '"_s, targetName, "' does not return a value"_s);
 
+            auto canPassBufferPointerArgument = [](const Type* parameterType, const Type* argumentType) {
+                auto* toPointer = std::get_if<Types::Pointer>(parameterType);
+                auto* fromPointer = std::get_if<Types::Pointer>(argumentType);
+                if (!toPointer || !fromPointer || fromPointer->addressSpace != toPointer->addressSpace || fromPointer->accessMode != toPointer->accessMode)
+                    return false;
+                auto* toBuffer = std::get_if<Types::Buffer>(toPointer->element);
+                auto* fromBuffer = std::get_if<Types::Buffer>(fromPointer->element);
+                if (!toBuffer || !fromBuffer)
+                    return false;
+                if (toBuffer->isUnsized())
+                    return true;
+                if (fromBuffer->isCreationFixed() && toBuffer->isCreationFixed())
+                    return std::get<unsigned>(fromBuffer->size) >= std::get<unsigned>(toBuffer->size);
+                return false;
+            };
+
             for (unsigned i = 0; i < numberOfArguments; ++i) {
                 auto& argument = call.arguments()[i];
                 auto* parameterType = borrow(functionType.parameters)[i];
                 UNWRAP(argumentType, infer(argument, m_maxEvaluation));
-                if (!unify(parameterType, argumentType)) [[unlikely]]
+                if (!unify(parameterType, argumentType) && !canPassBufferPointerArgument(parameterType, argumentType)) [[unlikely]]
                     TYPE_ERROR(argument.span(), "type in function call does not match parameter type: expected '"_s, *parameterType, "', found '"_s, *argumentType, '\'');
 
-                argument.m_inferredType = parameterType;
+                argument.m_inferredType = std::holds_alternative<Types::Pointer>(*argumentType) ? argumentType : parameterType;
                 auto& value = argument.m_constantValue;
                 if (value.has_value())
                     CHECK(convertValue(argument.span(), argument.inferredType(), value));
@@ -1758,6 +1934,18 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
         // FIXME: <rdar://150366527> similarly to above: this shouldn't be a string check
         if (targetName == "bitcast"_s) {
             CHECK(bitcast(call, typeArguments));
+            return { };
+        }
+        if (targetName == "bufferLength"_s) {
+            CHECK(bufferLength(call, typeArguments));
+            return { };
+        }
+        if (targetName == "bufferView"_s) {
+            CHECK(bufferView(call, typeArguments, false));
+            return { };
+        }
+        if (targetName == "bufferArrayView"_s) {
+            CHECK(bufferView(call, typeArguments, true));
             return { };
         }
 
@@ -1954,6 +2142,90 @@ Result<void> TypeChecker::bitcast(AST::CallExpression& call, const Vector<const 
     TYPE_ERROR(call.span(), "cannot bitcast from '"_s, *concreteType, "' to '"_s, *destinationType, '\'');
 }
 
+Result<void> TypeChecker::bufferLength(AST::CallExpression& call, const Vector<const Type*>& typeArguments)
+{
+    if (!typeArguments.isEmpty()) [[unlikely]]
+        TYPE_ERROR(call.span(), "bufferLength does not take template arguments"_s);
+    if (call.arguments().size() != 1) [[unlikely]]
+        TYPE_ERROR(call.span(), "bufferLength expects a single argument, found "_s, call.arguments().size());
+    if (m_discardResult == DiscardResult::Yes) [[unlikely]]
+        TYPE_ERROR(call.span(), "cannot discard the result of bufferLength"_s);
+    if (m_maxEvaluation < Evaluation::Runtime) [[unlikely]]
+        TYPE_ERROR(call.span(), "cannot call bufferLength from "_s, evaluationToString(m_maxEvaluation), " context"_s);
+
+    UNWRAP(argType, infer(call.arguments()[0], Evaluation::Runtime));
+    auto* pointer = std::get_if<Types::Pointer>(argType);
+    if (!pointer || !std::holds_alternative<Types::Buffer>(*pointer->element)) [[unlikely]]
+        TYPE_ERROR(call.arguments()[0].span(), "bufferLength argument must be a pointer to a buffer, found '"_s, *argType, '\'');
+
+    m_shaderModule.setUsesBufferView();
+    call.m_resolvedTarget = "bufferLength"_s;
+    inferred(m_types.u32Type());
+    evaluated(Evaluation::Runtime);
+    return { };
+}
+
+Result<void> TypeChecker::bufferView(AST::CallExpression& call, const Vector<const Type*>& typeArguments, bool isArrayView)
+{
+    ASCIILiteral funcName = isArrayView ? "bufferArrayView"_s : "bufferView"_s;
+    unsigned expectedArgs = isArrayView ? 3u : 2u;
+    if (typeArguments.size() != 1) [[unlikely]]
+        TYPE_ERROR(call.span(), funcName, " expects 1 template argument, found "_s, typeArguments.size());
+    if (call.arguments().size() != expectedArgs) [[unlikely]]
+        TYPE_ERROR(call.span(), funcName, " expects "_s, expectedArgs, " arguments, found "_s, call.arguments().size());
+    if (m_discardResult == DiscardResult::Yes) [[unlikely]]
+        TYPE_ERROR(call.span(), "cannot discard the result of "_s, funcName);
+    if (m_maxEvaluation < Evaluation::Runtime) [[unlikely]]
+        TYPE_ERROR(call.span(), "cannot call "_s, funcName, " from "_s, evaluationToString(m_maxEvaluation), " context"_s);
+
+    const Type* viewType = typeArguments[0];
+    if (!viewType->isHostShareable() || std::holds_alternative<Types::Buffer>(*viewType) || viewType->containsOverrideArray() || viewType->containsOverrideBuffer()) [[unlikely]]
+        TYPE_ERROR(call.span(), '\'', *viewType, "' cannot be used as the view type of "_s, funcName);
+    if (isArrayView && !viewType->containsRuntimeArray()) [[unlikely]]
+        TYPE_ERROR(call.span(), '\'', *viewType, "' must contain a runtime-sized array for bufferArrayView"_s);
+
+    UNWRAP(bufArgType, infer(call.arguments()[0], Evaluation::Runtime));
+    auto* bufPointer = std::get_if<Types::Pointer>(bufArgType);
+    if (!bufPointer || !std::holds_alternative<Types::Buffer>(*bufPointer->element)) [[unlikely]]
+        TYPE_ERROR(call.arguments()[0].span(), funcName, " first argument must be a pointer to a buffer, found '"_s, *bufArgType, '\'');
+
+    if (viewType->containsAtomic()) {
+        bool validAtomicSpace = bufPointer->addressSpace == AddressSpace::Workgroup
+            || (bufPointer->addressSpace == AddressSpace::Storage && bufPointer->accessMode == AccessMode::ReadWrite);
+        if (!validAtomicSpace) [[unlikely]]
+            TYPE_ERROR(call.span(), "atomic view type '"_s, *viewType, "' requires workgroup or read_write storage buffer"_s);
+    }
+
+    auto checkIntegerArg = [&](AST::Expression& expr, ASCIILiteral argName) -> Result<void> {
+        UNWRAP(argType, infer(expr, Evaluation::Runtime));
+        if (auto* ref = std::get_if<Types::Reference>(argType)) {
+            argType = ref->element;
+            expr.m_inferredType = argType;
+        }
+        if (argType != m_types.i32Type() && argType != m_types.u32Type() && argType != m_types.abstractIntType()) [[unlikely]]
+            TYPE_ERROR(expr.span(), funcName, ' ', argName, " argument must be an i32 or u32, found '"_s, *argType, '\'');
+        if (argType == m_types.abstractIntType()) {
+            RELEASE_ASSERT(expr.constantValue().has_value());
+            if (expr.constantValue()->integerValue() < 0) [[unlikely]]
+                TYPE_ERROR(expr.span(), funcName, ' ', argName, " cannot be negative"_s);
+            CHECK(convertValue(expr.span(), m_types.u32Type(), expr.m_constantValue));
+            expr.m_inferredType = m_types.u32Type();
+        }
+        return { };
+    };
+
+    CHECK(checkIntegerArg(call.arguments()[1], "offset"_s));
+    if (isArrayView)
+        CHECK(checkIntegerArg(call.arguments()[2], "size"_s));
+
+    const Type* returnPtrType = m_types.pointerType(bufPointer->addressSpace, viewType, bufPointer->accessMode);
+    call.m_resolvedTarget = funcName;
+    call.target().m_inferredType = returnPtrType;
+    inferred(returnPtrType);
+    evaluated(Evaluation::Runtime);
+    return { };
+}
+
 Result<void> TypeChecker::visit(AST::UnaryExpression& unary)
 {
     if (unary.operation() == AST::UnaryOperation::AddressOf) {
@@ -1976,7 +2248,7 @@ Result<void> TypeChecker::visit(AST::UnaryExpression& unary)
     if (unary.operation() == AST::UnaryOperation::Dereference) {
         UNWRAP(type, infer(unary.expression(), Evaluation::Runtime));
         auto* pointer = std::get_if<Types::Pointer>(type);
-        if (!pointer) [[unlikely]]
+        if (!pointer || std::holds_alternative<Types::Buffer>(*pointer->element)) [[unlikely]]
             TYPE_ERROR(unary.span(), "cannot dereference expression of type '"_s, *type, '\'');
 
         evaluated(Evaluation::Runtime);
@@ -2115,7 +2387,7 @@ Result<void> TypeChecker::visit(AST::ElaboratedTypeExpression& type)
     if (!constructor) [[unlikely]]
         TYPE_ERROR(type.span(), "type '"_s, *base, "' does not take template arguments"_s);
 
-    UNWRAP(constructedType, constructor->construct(type));
+    UNWRAP(constructedType, constructor->construct(*this, type));
 
     inferred(constructedType);
     evaluated(Evaluation::Constant);
@@ -2251,27 +2523,28 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
 template<typename CallArguments>
 Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
-    if (!m_shaderModule.lookupOverload(target))
+    auto* overload = m_shaderModule.lookupOverload(target);
+    if (!overload)
         return { nullptr };
 
     for (unsigned i = 0; i < callArguments.size(); ++i)
         CHECK(infer(callArguments[i], m_maxEvaluation));
 
-    return chooseOverloadForInferredArguments(kind, span, expression, target, std::forward<CallArguments>(callArguments), typeArguments);
+    return chooseOverloadForInferredArguments(kind, span, expression, target, overload, std::forward<CallArguments>(callArguments), typeArguments);
 }
 
 template<typename CallArguments>
-Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
+Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, const OverloadedDeclaration* overload, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
-    auto* overload = m_shaderModule.lookupOverload(target);
     if (!overload)
         return { nullptr };
 
-    Vector<const Type*> valueArguments(ReserveCapacityTag { }, callArguments.size());
+    Vector<const Type*, 8> valueArguments;
+    valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i)
         valueArguments.append(callArguments[i].inferredType());
 
-    auto selectedOverload = resolveOverloads(m_types, m_shaderModule.overloadCandidates(*overload), valueArguments, typeArguments);
+    auto selectedOverload = resolveOverloads(m_types, m_shaderModule.overloadCandidates(*overload), borrow(valueArguments)->span(), borrow(typeArguments)->span());
     if (selectedOverload.has_value()) {
         ASSERT(selectedOverload->parameters.size() == callArguments.size());
         if (m_discardResult == DiscardResult::Yes && overload->mustUse) [[unlikely]]
@@ -2297,8 +2570,6 @@ Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral
         }
 
         unsigned argumentCount = callArguments.size();
-        FixedVector<ConstantValue> arguments(argumentCount);
-        FixedVector<std::optional<ConstantValue>> validationArguments(argumentCount);
         bool isConstant = true;
         Evaluation evaluation = Evaluation::Constant;
         for (unsigned i = 0; i < argumentCount; ++i) {
@@ -2307,11 +2578,8 @@ Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral
             evaluation = std::max(evaluation, argument.evaluation());
             if (!value.has_value())
                 isConstant = false;
-            else {
+            else
                 CHECK(convertValue(argument.span(), argument.inferredType(), value));
-                arguments[i] = *value;
-                validationArguments[i] = { *value };
-            }
         }
 
         auto constantFunction = overload->constantFunction;
@@ -2325,6 +2593,9 @@ Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral
         evaluated(evaluation);
 
         if (isConstant && constantFunction) {
+            FixedVector<ConstantValue> arguments(argumentCount);
+            for (unsigned i = 0; i < argumentCount; ++i)
+                arguments[i] = *callArguments[i].m_constantValue;
             auto result = constantFunction(selectedOverload->result, WTF::move(arguments));
             if (!result) [[unlikely]] {
                 if (!m_suppressConstantErrors)
@@ -2332,7 +2603,12 @@ Result<const Type*> TypeChecker::chooseOverloadForInferredArguments(ASCIILiteral
             } else if (expression)
                 CHECK(setConstantValue(*expression, selectedOverload->result, WTF::move(*result)));
         } else if (auto* validate = overload->validationFunction) {
-            if (auto error = validate(WTF::move(validationArguments), selectedOverload->parameters))
+            FixedVector<std::optional<ConstantValue>> validationArguments(argumentCount);
+            for (unsigned i = 0; i < argumentCount; ++i) {
+                if (const auto& value = callArguments[i].m_constantValue; value.has_value())
+                    validationArguments[i] = *value;
+            }
+            if (auto error = validate(WTF::move(validationArguments), borrow(selectedOverload->parameters)->span()))
                 TYPE_ERROR(span, *error);
         }
 
@@ -2621,8 +2897,13 @@ Result<const Type*> TypeChecker::resolve(AST::Expression& type)
     ASSERT(m_inferredType);
     ASSERT(m_currentEvaluation);
 
-    if (std::holds_alternative<Types::TypeConstructor>(*m_inferredType)) [[unlikely]]
-        TYPE_ERROR(type.span(), "type '"_s, *m_inferredType, "' requires template arguments"_s);
+    if (auto* constructor = std::get_if<Types::TypeConstructor>(m_inferredType)) {
+        if (is<AST::IdentifierExpression>(type) && constructor->name == "buffer"_s) {
+            m_shaderModule.setUsesBufferView();
+            m_inferredType = m_types.bufferType();
+        } else [[unlikely]]
+            TYPE_ERROR(type.span(), "type '"_s, *m_inferredType, "' requires template arguments"_s);
+    }
 
     if (shouldDumpInferredTypes) [[unlikely]] {
         dataLog("> Type inference [type]: ");
@@ -2672,9 +2953,9 @@ Result<void> TypeChecker::introduceType(const AST::Identifier& name, const Type*
     return { };
 }
 
-Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type, std::optional<ConstantValue>& value)
+Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type, OptionalConstantValue& value)
 {
-    if (!value)
+    if (!value || value.isConvertedTo(type))
         return { };
 
     if (shouldDumpConstantValues) [[unlikely]] {
@@ -2683,7 +2964,7 @@ Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type,
         dataLogLn("converting value ", valueString.toString(), " to '", *type, "'");
     }
 
-    if (!convertValueImpl(span, type, *value)) [[unlikely]] {
+    if (!convertValueImpl(span, type, value.mutableValue())) [[unlikely]] {
         if (m_suppressConstantErrors) {
             value = std::nullopt;
             return { };
@@ -2693,16 +2974,17 @@ Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type,
         TYPE_ERROR(span, "value "_s, valueString.toString(), " cannot be represented as '"_s, *type, '\'');
     }
 
+    value.setConvertedType(type);
     return { };
 }
 
 
-Result<void> TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, Evaluation evaluation, std::optional<ConstantValue> value)
+Result<void> TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, Evaluation evaluation, OptionalConstantValue value)
 {
     ASSERT(type);
     if (shouldDumpConstantValues && value.has_value()) [[unlikely]]
         dataLogLn("> Assigning value: ", name, " => ", value);
-    if (!introduceVariable(name, { Binding::Value, type, evaluation, value, m_declaringAfterContinue })) [[unlikely]]
+    if (!introduceVariable(name, { Binding::Value, type, evaluation, WTF::move(value), m_declaringAfterContinue })) [[unlikely]]
         TYPE_ERROR(name.span(), "redeclaration of '"_s, name, '\'');
     return { };
 }
@@ -2718,45 +3000,8 @@ Result<void> TypeChecker::introduceFunction(const AST::Identifier& name, const T
 std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
 {
     auto result = TypeChecker(shaderModule).check();
-    // Every module builds its own copy of the candidates of the builtins it calls, and nothing
-    // resolves an overload after this. Free them now rather than when the page lets go of the module.
     shaderModule.releaseOverloadCandidates();
     return result;
-}
-
-template<typename TargetConstructor, typename Validator, typename... Arguments>
-Result<void> TypeChecker::allocateSimpleConstructor(ASCIILiteral name, TargetConstructor constructor, const Validator& validate, Arguments&&... arguments)
-{
-    return introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
-        name,
-        [this, constructor, &validate, arguments...](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
-            if (type.arguments().size() != 1) [[unlikely]]
-                TYPE_ERROR(type.span(), '\'', type.base(), "' requires 1 template argument"_s);
-
-            UNWRAP(elementType, resolve(type.arguments().first()));
-
-            if (auto error = validate(elementType)) [[unlikely]]
-                TYPE_ERROR(type.span(), *error);
-
-            return { (m_types.*constructor)(arguments..., elementType) };
-        }
-    ));
-}
-
-Result<void> TypeChecker::allocateTextureStorageConstructor(ASCIILiteral name, Types::TextureStorage::Kind kind)
-{
-    return introduceType(AST::Identifier::make(name), m_types.typeConstructorType(
-        name,
-        [this, kind](AST::ElaboratedTypeExpression& type) -> Result<const Type*> {
-            if (type.arguments().size() != 2) [[unlikely]]
-                TYPE_ERROR(type.span(), '\'', type.base(), "' requires 2 template argument"_s);
-
-            UNWRAP(format, texelFormat(type.arguments()[0]));
-            UNWRAP(access, accessMode(type.arguments()[1]));
-
-            return { m_types.textureStorageType(kind, format, access) };
-        }
-    ));
 }
 
 Result<TexelFormat> TypeChecker::texelFormat(AST::Expression& expression)
@@ -2802,7 +3047,7 @@ Result<AddressSpace> TypeChecker::addressSpace(AST::Expression& expression)
 }
 
 template<typename Node>
-Result<void> TypeChecker::setConstantValue(Node& expression, const Type* type, const ConstantValue& value)
+Result<void> TypeChecker::setConstantValue(Node& expression, const Type* type, ConstantValue value)
 {
     using namespace Types;
 
@@ -2812,7 +3057,7 @@ Result<void> TypeChecker::setConstantValue(Node& expression, const Type* type, c
         dataLogLn(" = ", value);
     }
 
-    expression.setConstantValue(value);
+    expression.setConstantValue(WTF::move(value));
     CHECK(convertValue(expression.span(), type, expression.m_constantValue));
     return { };
 }

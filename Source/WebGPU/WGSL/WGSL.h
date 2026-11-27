@@ -76,6 +76,7 @@ struct Configuration {
     uint32_t maxBuffersForComputeStage = 8;
     uint32_t maximumCombinedWorkgroupVariablesSize = 16384;
     const HashSet<String> supportedFeatures = { };
+    std::optional<OptionSet<Extension>> supportedExtensions = std::nullopt;
 };
 
 Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration&);

@@ -28,6 +28,10 @@
 
 #import "APIConversions.h"
 #import "ASTExpression.h"
+#import "ASTFunction.h"
+#import "ASTParameter.h"
+#import "ASTStructure.h"
+#import "ASTStructureMember.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
 #import "Instance.h"
@@ -35,7 +39,9 @@
 #import "Pipeline.h"
 #import "PipelineLayout.h"
 #import "ShaderModule.h"
+#import "Types.h"
 #import "WGSL.h"
+#import "WGSLShaderModule.h"
 #import <wtf/Scope.h>
 
 namespace WebGPU::Metal {
@@ -132,6 +138,36 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
     if (!size.width || size.width > deviceLimits.maxComputeWorkgroupSizeX || !size.height || size.height > deviceLimits.maxComputeWorkgroupSizeY || !size.depth || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
         return callback(returnInvalidComputePipeline(*this, isAsync));
 
+
+    uint64_t maxLinearIndexingWorkgroups = std::numeric_limits<uint64_t>::max();
+    for (auto& entryPoint : ast->callGraph().entrypoints()) {
+        if (entryPoint.originalName != entryPointName)
+            continue;
+        bool usesWorkgroupIndex = false;
+        bool usesGlobalInvocationIndex = false;
+        auto checkBuiltin = [&](std::optional<WGSL::Builtin> builtin) {
+            if (builtin == WGSL::Builtin::WorkgroupIndex)
+                usesWorkgroupIndex = true;
+            else if (builtin == WGSL::Builtin::GlobalInvocationIndex)
+                usesGlobalInvocationIndex = true;
+        };
+        for (auto& parameter : entryPoint.function.parameters()) {
+            checkBuiltin(parameter.builtin());
+            if (auto* structType = std::get_if<WGSL::Types::Struct>(parameter.typeName().inferredType())) {
+                for (auto& member : structType->structure.members())
+                    checkBuiltin(member.builtin());
+            }
+        }
+        if (usesWorkgroupIndex)
+            maxLinearIndexingWorkgroups = std::min<uint64_t>(maxLinearIndexingWorkgroups, std::numeric_limits<uint32_t>::max());
+        if (usesGlobalInvocationIndex) {
+            uint64_t invocationsPerWorkgroup = static_cast<uint64_t>(size.width) * size.height * size.depth;
+            if (invocationsPerWorkgroup)
+                maxLinearIndexingWorkgroups = std::min<uint64_t>(maxLinearIndexingWorkgroups, std::numeric_limits<uint32_t>::max() / invocationsPerWorkgroup);
+        }
+        break;
+    }
+
     if (m_pipelineId == Device::maxPipelines) {
         loseTheDevice(WebGPU::DeviceLostReason::Unknown);
         return callback(returnInvalidComputePipeline(*this, isAsync, @"too many compute pipelines"));
@@ -155,7 +191,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
     auto compileRequest = libraryCompileRequest(*preparedLibrary);
 
     // Nothing below this point reads `descriptor`, so it may run after the MSL compile finishes.
-    CompletionHandler<void(id<MTLLibrary>, NSError *)> finishCreation = [protectedThis = protect(*this), isAsync, suppressErrors = m_supressAllErrors, libraryCompilation, label = WTF::move(label), pipelineLayout = WTF::move(finalPipelineLayout), libraryInfo = WTF::move(*preparedLibrary), minimumBufferSizes = WTF::move(minimumBufferSizes), size, pipelineId, callback = WTF::move(callback)](id<MTLLibrary> library, NSError *libraryError) mutable {
+    CompletionHandler<void(id<MTLLibrary>, NSError *)> finishCreation = [protectedThis = protect(*this), isAsync, suppressErrors = m_supressAllErrors, libraryCompilation, label = WTF::move(label), pipelineLayout = WTF::move(finalPipelineLayout), libraryInfo = WTF::move(*preparedLibrary), minimumBufferSizes = WTF::move(minimumBufferSizes), size, pipelineId, maxLinearIndexingWorkgroups, callback = WTF::move(callback)](id<MTLLibrary> library, NSError *libraryError) mutable {
         auto errorReporting = scopedErrorReporting(protectedThis, suppressErrors);
 
         if (!library)
@@ -168,7 +204,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
         // The pipeline state is the second half of the compile, and it is what a dispatch actually needs,
         // so the pipeline isn't handed back until Metal is done with it.
         auto computePipelineDescriptor = createComputePipelineDescriptor(function, pipelineLayout, label.get(), protectedThis->shaderValidationState());
-        protectedThis->createComputePipelineState(computePipelineDescriptor, WTF::move(libraryInfo.msl), libraryCompilation, [protectedThis, isAsync, suppressErrors, pipelineLayout = WTF::move(pipelineLayout), minimumBufferSizes = WTF::move(minimumBufferSizes), size, pipelineId, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState) mutable {
+        protectedThis->createComputePipelineState(computePipelineDescriptor, WTF::move(libraryInfo.msl), libraryCompilation, [protectedThis, isAsync, suppressErrors, pipelineLayout = WTF::move(pipelineLayout), minimumBufferSizes = WTF::move(minimumBufferSizes), size, pipelineId, maxLinearIndexingWorkgroups, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState) mutable {
             auto errorReporting = scopedErrorReporting(protectedThis, suppressErrors);
 
             if (!computePipelineState) {
@@ -176,7 +212,7 @@ void Device::createComputePipeline(const WebGPU::ComputePipelineDescriptor& desc
                 return callback(returnInvalidComputePipeline(protectedThis, isAsync, @"GPUCompuePipeline could not compile"));
             }
 
-            callback(std::make_pair(ComputePipeline::create(computePipelineState, WTF::move(pipelineLayout), size, WTF::move(minimumBufferSizes), pipelineId, protectedThis), nil));
+            callback(std::make_pair(ComputePipeline::create(computePipelineState, WTF::move(pipelineLayout), size, WTF::move(minimumBufferSizes), pipelineId, maxLinearIndexingWorkgroups, protectedThis), nil));
         });
     };
 
@@ -216,13 +252,14 @@ void Device::createComputePipelineWithPipelineLayoutFromPipelineAsync(const WebG
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePipeline);
 
-ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, Device& device)
+ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, BufferBindingSizesForPipeline&& minimumBufferSizes, uint64_t uniqueId, uint64_t maxLinearIndexingWorkgroups, Device& device)
     : m_computePipelineState(computePipelineState)
     , m_device(device)
     , m_threadsPerThreadgroup(threadsPerThreadgroup)
     , m_pipelineLayout(WTF::move(pipelineLayout))
     , m_minimumBufferSizes(WTF::move(minimumBufferSizes))
     , m_uniqueId(uniqueId)
+    , m_maxLinearIndexingWorkgroups(maxLinearIndexingWorkgroups)
 {
 }
 

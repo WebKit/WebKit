@@ -111,14 +111,15 @@ Variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std:
     // uses and would carry any side effect in that initializer along with it.
     RUN_PASS(rewriteEvaluationOrder, shaderModule);
     RUN_PASS(rewritePointers, shaderModule);
-    CHECK_PASS(aliasAnalysis, shaderModule);
     CHECK_PASS(uniformityAnalysis, shaderModule);
 
     // Validate that all enabled extensions are supported by the device
     for (auto extension : shaderModule->enabledExtensions()) {
-        auto featureName = wgslExtensionToWebGPUFeatureName(extension);
-        if (!shaderModule->hasFeature(featureName))
+        bool isSupported = configuration.supportedExtensions ? configuration.supportedExtensions->contains(extension) : shaderModule->hasFeature(wgslExtensionToWebGPUFeatureName(extension));
+        if (!isSupported) {
+            auto featureName = wgslExtensionToWebGPUFeatureName(extension);
             return Variant<SuccessfulCheck, FailedCheck>(WTF::InPlaceType<FailedCheck>, Vector<Error> { Error { makeString("Extension '"_s, toString(extension), "' requires feature '"_s, featureName, "' which is not enabled on this device"_s), SourceSpan::empty() } }, Vector<Warning> { });
+        }
     }
 
     return Variant<SuccessfulCheck, FailedCheck>(WTF::InPlaceType<SuccessfulCheck>, WTF::move(warnings), WTF::move(shaderModule));
