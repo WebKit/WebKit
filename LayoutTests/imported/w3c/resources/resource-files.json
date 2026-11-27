@@ -11179,6 +11179,7 @@
         "web-platform-tests/css/css-variables/reference/vars-background-shorthand-001-ref.html",
         "web-platform-tests/css/css-variables/reference/vars-font-shorthand-001-ref.html",
         "web-platform-tests/css/css-variables/support/color-green-ref.html",
+        "web-platform-tests/css/css-variables/variable-animation-visited-link-ref.html",
         "web-platform-tests/css/css-variables/variable-declaration-15-ref.html",
         "web-platform-tests/css/css-variables/variable-declaration-16-ref.html",
         "web-platform-tests/css/css-variables/variable-declaration-17-ref.html",

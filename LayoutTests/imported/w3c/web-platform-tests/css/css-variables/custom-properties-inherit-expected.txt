@@ -1,0 +1,15 @@
+One
+
+Two
+
+Three
+
+Four
+
+Five
+
+Six
+
+
+PASS Inheritance of custom properties
+

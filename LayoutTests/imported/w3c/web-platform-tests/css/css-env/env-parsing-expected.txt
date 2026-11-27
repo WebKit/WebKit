@@ -2,9 +2,16 @@
 PASS e.style['width'] = "env(safe-area-inset-top)" should set the property value
 PASS e.style['width'] = "env(safe-area-inset-top,)" should set the property value
 PASS e.style['width'] = "env(safe-area-inset-top, )" should set the property value
-PASS e.style['width'] = "env(safe-area-inset-top ())" should not set the property value
-PASS e.style['width'] = "env(safe-area-inset-top () )" should not set the property value
-PASS e.style['width'] = "env(safe-area-inset-top() )" should not set the property value
-PASS e.style['width'] = "env(safe-area-inset-top (),)" should not set the property value
-PASS e.style['width'] = "env(safe-area-inset-top(),)" should not set the property value
+FAIL e.style['width'] = "env(safe-area-inset-top ())" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['width'] = "env(safe-area-inset-top () )" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['width'] = "env(safe-area-inset-top() )" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['width'] = "env(safe-area-inset-top (),)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['width'] = "env(safe-area-inset-top(),)" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['width'] = "env(--x {--y})" should not set the property value
+PASS e.style['width'] = "env({--x} --y)" should not set the property value
+PASS e.style['width'] = "env(--x {--y}, 10px)" should not set the property value
+PASS e.style['width'] = "env()" should not set the property value
+PASS e.style['width'] = "env({})" should not set the property value
+PASS e.style['width'] = "env({}, 10px)" should not set the property value
+PASS e.style['width'] = "env(, 10px)" should not set the property value
 

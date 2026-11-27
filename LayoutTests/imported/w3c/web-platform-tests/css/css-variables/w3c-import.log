@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/META.yml
@@ -22,18 +20,26 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-case-sensitive-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/css-vars-custom-property-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/custom-properties-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/empty-custom-property-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/long-variable-reference-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/missing-closing-nested-fallback-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/missing-closing-nested-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/registered-property-light-dark-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/registered-property-light-dark.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-layer-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-rule-in-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/revert-rule-to-var.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/test_variable_legal_values.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/transition-with-attribute-taint.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/url-syntax-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/url-token-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-fallback-braces.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-ident-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/var-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-from-to.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-guaranteed-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-over-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-into-keyframe-transform.html
@@ -42,8 +48,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-substitute-within-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-to-only.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-visited-link-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-visited-link-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-animation-visited-link.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-document.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-created-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-css-wide-keywords-after-substitution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-css-wide-keywords.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-cssText.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-cycles.html
@@ -285,6 +295,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-40-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-40.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-cssom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-name-substitution-attr-taint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-name-substitution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-perspective-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-shorthands-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-shorthands.html
@@ -295,6 +308,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-without-whitespace-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference-without-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-reference.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-resolution-during-prioritary-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-background-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-variables/variable-substitution-filters.html

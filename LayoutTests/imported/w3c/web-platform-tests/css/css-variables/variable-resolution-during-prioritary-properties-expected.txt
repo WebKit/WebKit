@@ -1,0 +1,12 @@
+hello
+hello
+hello
+hello
+hello
+
+PASS #a: font-family resolves through a chained custom property with a registered font-relative custom present
+PASS #b: font-family resolves through a chained custom property with a registered font-relative custom present
+PASS #c: font-family resolves through a chained custom property with a registered font-relative custom present
+PASS #d: font-family resolves through a chained custom property with a registered font-relative custom present
+PASS #w: font-weight resolves through a chained custom property with a registered font-relative custom present
+

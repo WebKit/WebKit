@@ -1,0 +1,13 @@
+
+PASS --no-space substitutes the fallback without the preceding whitespace
+PASS --one-space substitutes the fallback without the preceding whitespace
+PASS --lots-of-space substitutes the fallback without the preceding whitespace
+PASS --comment substitutes the fallback without the preceding whitespace
+PASS --nested substitutes the fallback without the preceding whitespace
+PASS --indirect substitutes the fallback without the preceding whitespace
+PASS --indexed substitutes the fallback without the preceding whitespace
+PASS A bare comma substitutes an empty fallback
+PASS env() and var() treat a fallback with trailing whitespace alike
+PASS env() and var() treat a fallback with a trailing comment alike
+PASS env() and var() treat a fallback followed by more content alike
+
