@@ -32,6 +32,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
+#include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -55,6 +56,18 @@ static bool shouldTrimEndAtClampPoint(const RenderBlock& blockContainer, bool pa
     // https://drafts.csswg.org/css-inline-3/#valdef-text-box-trim-trim-end
     // The block-end padding and border of this block are between the line and the block end of its ancestors, but not of this block.
     return hasTextBoxTrimEnd(blockContainer) || (parentShouldTrimEnd && !blockContainer.borderAndPaddingAfter());
+}
+
+// "max-lines applies to block containers" (https://drafts.csswg.org/css-overflow-4/#max-lines), and a flex container is none.
+// A button is, though, unless its display is flex or grid: it is expected to "behave as 'inline-block'" or "'flow-root'"
+// (https://html.spec.whatwg.org/multipage/rendering.html#button-layout). RenderButton is a flex box that lays out the content
+// of a button that way. <button> only gets a RenderButton when its display is not flex or grid, but <input type=button> (and
+// submit and reset) always does, so the display has to be checked.
+static bool canBeLineClampContainer(const RenderBlock& blockContainer)
+{
+    if (is<RenderBlockFlow>(blockContainer))
+        return true;
+    return is<RenderButton>(blockContainer) && !blockContainer.style().display().isFlexibleOrGridFormattingContextBox();
 }
 
 bool LineClampUpdater::shouldDiscardOverflow(const RenderBlock& blockContainer)
@@ -89,6 +102,8 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     // "If the box is a multicol container, the behavior is the same as continue: auto."
     // https://drafts.csswg.org/css-overflow-4/#continue
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(blockContainer); blockFlow && blockFlow->multiColumnFlow())
+        maximumLinesForBlockContainer = { };
+    if (!canBeLineClampContainer(blockContainer))
         maximumLinesForBlockContainer = { };
     if (blockContainer.isFieldset() || (layoutState->legacyLineClamp() && blockContainer.isNonReplacedAtomicInlineLevelBox()) || blockContainer.isFloatingOrOutOfFlowPositioned()) {
         // Legacy line clamp does not cross into the interior of an atomic inline-level box.
@@ -174,7 +189,7 @@ bool LineClampUpdater::isAutoLineClampRoot() const
 {
     // line-clamp: auto (or just a block-ellipsis value) leaves max-lines at auto on a line-clamp container.
     auto& style = m_blockContainer->style();
-    if (!style.maxLines().isAuto() || !shouldDiscardOverflow(m_blockContainer))
+    if (!style.maxLines().isAuto() || !shouldDiscardOverflow(m_blockContainer) || !canBeLineClampContainer(m_blockContainer))
         return false;
     // "If the box is a multicol container, the behavior is the same as continue: auto."
     auto* blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer);
