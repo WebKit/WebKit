@@ -439,6 +439,10 @@ private:
     };
 
     void applyLineDash() const;
+    // For CanvasFilterContextSwitcher, which sets a target switcher for one draw and then sets back the previous
+    // one. The draw does not save() or restore(), so the target switcher is set without realizeSaves(), in the
+    // state that unrealized saves share with the level below.
+    void setTargetSwitcherForDraw(RefPtr<CanvasLayerContextSwitcher>&&);
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
     bool NODELETE shouldDrawShadows() const;

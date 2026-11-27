@@ -53,12 +53,12 @@ CanvasFilterContextSwitcher::CanvasFilterContextSwitcher(CanvasRenderingContext2
 {
     // Only use the new target switcher if it's non-null. Otherwise keep using the old one.
     if (auto targetSwitcher = CanvasLayerContextSwitcher::create(context, bounds, WTF::move(filter)))
-        m_context->modifiableState().targetSwitcher = targetSwitcher;
+        protect(m_context)->setTargetSwitcherForDraw(WTF::move(targetSwitcher));
 }
 
 CanvasFilterContextSwitcher::~CanvasFilterContextSwitcher()
 {
-    m_context->modifiableState().targetSwitcher = WTF::move(m_contextOldTargetSwitcher);
+    protect(m_context)->setTargetSwitcherForDraw(WTF::move(m_contextOldTargetSwitcher));
 }
 
 FloatRect CanvasFilterContextSwitcher::expandedBounds() const
