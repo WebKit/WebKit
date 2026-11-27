@@ -34,8 +34,7 @@
     [ImplementedAs=slotAssignmentMode] readonly attribute SlotAssignmentMode slotAssignment;
     [ImplementedAs=isClonable] readonly attribute boolean clonable;
     readonly attribute boolean serializable;
-    // FIXME: `host` should not be nullable.
-    readonly attribute Element? host;
+    [ImplementedAs=hostForBindings] readonly attribute Element host;
     readonly attribute CustomElementRegistry? customElementRegistry;
     [EnabledBySetting=ShadowRootReferenceTargetEnabled] attribute [AtomString] DOMString referenceTarget;
     attribute EventHandler onslotchange;
