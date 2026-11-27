@@ -169,8 +169,8 @@ inline std::string CStringBase::toStdString() const
     return std::string { span.data(), span.size() };
 }
 
-// CStringBase is null terminated
-inline const char* safePrintfType(const CStringBase& cstring) { return cstring.spanIncludingNullTerminator().data(); }
+// CStringBase is null terminated. Passing null for %s is undefined behavior, so print "(null)" like glibc does.
+inline const char* safePrintfType(const CStringBase& cstring) { return cstring.isNull() ? "(null)" : cstring.spanIncludingNullTerminator().data(); }
 
 // A C string that remembers the encoding of its bytes. Binds to const CStringBase&, which erases the encoding.
 // The character type carries the encoding, following WTF convention: char8_t is UTF-8, Latin1Character is
