@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009e.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009f-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009f.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-in-block-in-inline-in-relpos-inline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-in-block-in-inline-in-relpos-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/adjacent-to-relpos-inline-in-inline-that-had-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/adjacent-to-relpos-inline-that-had-block.html

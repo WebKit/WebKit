@@ -1,0 +1,4 @@
+
+PASS Block-in-inline alone should not contribute to inline containing block width
+FAIL Block-in-inline at the end should not contribute to inline containing block width assert_equals: expected 100 but got 0
+
