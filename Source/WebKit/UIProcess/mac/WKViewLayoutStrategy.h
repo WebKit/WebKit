@@ -25,44 +25,34 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC)
 
 #import "WKLayoutMode.h"
-#import <wtf/WeakObjCPtr.h>
-#import <wtf/WeakPtr.h>
+#import <AppKit/AppKit.h>
 
-namespace WebKit {
-class WebPageProxy;
-class WebViewImpl;
-}
+@class WKWebView;
 
-@class NSView;
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-@interface WKViewLayoutStrategy : NSObject {
-@package
-    WeakPtr<WebKit::WebPageProxy> _page;
-    WeakPtr<WebKit::WebViewImpl> _webViewImpl;
-    WeakObjCPtr<NSView> _view;
+NS_SWIFT_UI_ACTOR
+@interface WKViewLayoutStrategy : NSObject
 
-    WKLayoutMode _layoutMode;
-}
+- (instancetype)init NS_UNAVAILABLE;
 
-+ (instancetype)layoutStrategyWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page view:(NSView *)view viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)webViewImpl mode:(WKLayoutMode)mode;
+- (instancetype)initWithWebView:(WKWebView *)webView mode:(WKLayoutMode)mode;
 
 - (void)invalidate;
 
-- (void)enableFrameSizeUpdates;
-- (void)disableFrameSizeUpdates;
-- (BOOL)frameSizeUpdatesDisabled;
-
 - (void)didChangeViewScale;
-- (void)willStartLiveResize;
-- (void)didEndLiveResize;
 - (void)didChangeFrameSize;
-- (void)willChangeLayoutStrategy;
+- (void)willChangeLayoutStrategy NS_SWIFT_NAME(willChangeLayoutStrategy());
 
 @property (nonatomic, readonly) WKLayoutMode layoutMode;
 
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // PLATFORM(MAC)

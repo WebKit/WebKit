@@ -2193,12 +2193,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_disableFrameSizeUpdates
 {
-    _impl->disableFrameSizeUpdates();
+    // Frame size updates are no longer deferred. This remains for clients that still call it.
 }
 
 - (void)_enableFrameSizeUpdates
 {
-    _impl->enableFrameSizeUpdates();
+    // Frame size updates are no longer deferred. This remains for clients that still call it.
 }
 
 - (void)_beginDeferringViewInWindowChanges

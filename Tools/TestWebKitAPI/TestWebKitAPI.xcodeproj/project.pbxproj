@@ -616,6 +616,7 @@
 				WebKit/WKWebView/DigitalCredentialsNetworkProcess.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
+				WebKit/WKWebView/LayoutModeTests.swift,
 				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,
 				WebKit/WKWebView/ProcessSwapBackForwardTests.swift,
@@ -1581,6 +1582,7 @@
 				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/ContentAutoSizing.swift,
+				WebKit/WKWebView/LayoutModeTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;

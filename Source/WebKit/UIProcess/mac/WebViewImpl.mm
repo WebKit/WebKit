@@ -1343,7 +1343,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     , m_page(processPool.createWebPage(m_pageClient, WTF::move(configuration)))
     , m_needsViewFrameInWindowCoordinates(false)
     , m_intrinsicContentSize(CGSizeMake(NSViewNoIntrinsicMetric, NSViewNoIntrinsicMetric))
-    , m_layoutStrategy([WKViewLayoutStrategy layoutStrategyWithPage:m_page.get() view:view viewImpl:*this mode:kWKLayoutModeViewSize])
+    , m_layoutStrategy(adoptNS([[WKViewLayoutStrategy alloc] initWithWebView:view mode:kWKLayoutModeViewSize]))
     , m_undoTarget(adoptNS([[WKEditorUndoTarget alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
     , m_accessibilitySettingsObserver(adoptNS([[WKAccessibilitySettingsObserver alloc] initWithImpl:*this]))
@@ -1788,15 +1788,11 @@ bool WebViewImpl::isFocused() const
 void WebViewImpl::viewWillStartLiveResize()
 {
     m_page->viewWillStartLiveResize();
-
-    [m_layoutStrategy willStartLiveResize];
 }
 
 void WebViewImpl::viewDidEndLiveResize()
 {
     m_page->viewWillEndLiveResize();
-
-    [m_layoutStrategy didEndLiveResize];
 }
 
 static WKPDFHUDViewAccessibilityDisplayModeState platformAccessibilityDisplayModeState(PDFAccessibilityDisplayModeState state)
@@ -1956,21 +1952,6 @@ void WebViewImpl::setFrameSize(CGSize)
 #if HAVE(WINDOW_CAPTURE)
     m_page->updateTabCaptureWindowSize();
 #endif
-}
-
-void WebViewImpl::disableFrameSizeUpdates()
-{
-    [m_layoutStrategy disableFrameSizeUpdates];
-}
-
-void WebViewImpl::enableFrameSizeUpdates()
-{
-    [m_layoutStrategy enableFrameSizeUpdates];
-}
-
-bool WebViewImpl::frameSizeUpdatesDisabled() const
-{
-    return [m_layoutStrategy frameSizeUpdatesDisabled];
 }
 
 void WebViewImpl::setFrameAndScrollBy(CGRect frame, CGSize scrollDelta)
@@ -2260,8 +2241,12 @@ void WebViewImpl::setLayoutMode(WKLayoutMode layoutMode)
     if (layoutMode == [m_layoutStrategy layoutMode])
         return;
 
+    RetainPtr view = m_view.get();
+    if (!view)
+        return;
+
     [m_layoutStrategy willChangeLayoutStrategy];
-    m_layoutStrategy = [WKViewLayoutStrategy layoutStrategyWithPage:m_page.get() view:m_view.get().get() viewImpl:*this mode:layoutMode];
+    m_layoutStrategy = adoptNS([[WKViewLayoutStrategy alloc] initWithWebView:view.get() mode:layoutMode]);
 }
 
 bool WebViewImpl::supportsArbitraryLayoutModes() const

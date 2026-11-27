@@ -267,9 +267,6 @@ public:
 
     void renewGState();
     void setFrameSize(CGSize);
-    void disableFrameSizeUpdates();
-    void enableFrameSizeUpdates();
-    bool frameSizeUpdatesDisabled() const;
     void setFrameAndScrollBy(CGRect, CGSize);
     void updateWindowAndViewFrames();
 

@@ -107,6 +107,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKViewLayoutStrategy {
+        requires objc
+        header "../../UIProcess/mac/WKViewLayoutStrategy.h"
+        export *
+    }
+
     module WKPDFHUDView {
         requires objc
         header "../../UIProcess/PDF/WKPDFHUDView.h"
