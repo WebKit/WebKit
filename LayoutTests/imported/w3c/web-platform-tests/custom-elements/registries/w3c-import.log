@@ -61,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-criteria.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-define-upgrade-order.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-effective-global-registry.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-foreign-elements.window.js
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize-upgrades.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-initialize.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/registries/scoped-registry-registry-define-get-etc.html
