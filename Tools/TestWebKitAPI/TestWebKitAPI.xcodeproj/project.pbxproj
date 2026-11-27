@@ -754,6 +754,7 @@
 				"cocoa/WebPage+Extras.swift",
 				"cocoa/WebPage+JavaScriptExpression.swift",
 				"cocoa/WebPageConfiguration+Extras.swift",
+				cocoa/WebsiteDataStoreTestUtilities.swift,
 				cocoa/WebTransportServer.mm,
 				"cocoa/WKWebView+Extras.swift",
 				Counters.cpp,
