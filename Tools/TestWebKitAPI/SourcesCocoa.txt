@@ -203,7 +203,6 @@ Tests/WebKit/WKWebView/IndexedDBMultiProcess.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBPersistence.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBStructuredCloneBackwardCompatibility.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBSuspendImminently.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBTempFileSize.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBUserDelete.mm @nonARC
 Tests/WebKit/WKWebView/InitializeWebViewWhenChangingUserDefaults.mm @nonARC
 Tests/WebKit/WKWebView/InjectedBundleNodeHandleIsSelectElement.mm @nonARC
@@ -333,7 +332,6 @@ Tests/WebKit/WKWebView/SpatialPortal.mm @nonARC
 Tests/WebKit/WKWebView/SpeechRecognition.mm @nonARC
 Tests/WebKit/WKWebView/StopSuspendResumeAllMedia.mm @nonARC
 Tests/WebKit/WKWebView/StorageQuota.mm @nonARC
-Tests/WebKit/WKWebView/StoreBlobThenDelete.mm @nonARC
 Tests/WebKit/WKWebView/JSBuffer.mm @nonARC
 Tests/WebKit/WKWebView/SwitchInputTests.mm @nonARC
 Tests/WebKit/WKWebView/SystemColors.mm @nonARC

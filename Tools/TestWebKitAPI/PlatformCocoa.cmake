@@ -825,6 +825,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
     Tests/WebKit/WKWebView/ImageServicesMenuTests.swift
+    Tests/WebKit/WKWebView/IndexedDBTempFileSize.swift
     Tests/WebKit/WKWebView/LayoutModeTests.swift
     Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
@@ -862,6 +863,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationUIDelegateTests.swift
     Tests/WebKit/WKWebView/SiteIsolationUserAgentTests.swift
     Tests/WebKit/WKWebView/SiteIsolationWebExtensionTests.swift
+    Tests/WebKit/WKWebView/StoreBlobThenDelete.swift
     Tests/WebKit/WKWebView/TextExtractionTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift
     Tests/WebKit/WKWebView/TextManipulation.swift
