@@ -151,6 +151,42 @@ ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char
     return convertInternal<Replacement::ReplaceInvalidSequences>(source, buffer);
 }
 
+size_t lengthUTF8(std::span<const Latin1Character> source)
+{
+    return simdutf::utf8_length_from_latin1(byteCast<uint8_t>(source));
+}
+
+size_t lengthUTF8(std::span<const char16_t> source)
+{
+    return simdutf::utf8_length_from_utf16le_with_replacement(source).count;
+}
+
+size_t lengthUTF8AssumingWellFormed(std::span<const char16_t> source)
+{
+    return simdutf::utf8_length_from_utf16le(source);
+}
+
+// simdutf only reads the source and writes to the buffer, but the static analyzer cannot follow its dispatch.
+SUPPRESS_NODELETE void convertIntoBuffer(std::span<const Latin1Character> source, std::span<char8_t> buffer)
+{
+    ASSERT(buffer.size() == lengthUTF8(source));
+    auto written = simdutf::convert_latin1_to_utf8(byteCast<char>(source), buffer);
+    ASSERT_UNUSED(written, written == buffer.size());
+}
+
+SUPPRESS_NODELETE bool convertWellFormedIntoBuffer(std::span<const char16_t> source, std::span<char8_t> buffer)
+{
+    ASSERT(buffer.size() >= lengthUTF8AssumingWellFormed(source));
+    return simdutf::convert_utf16le_to_utf8_with_errors(source, buffer).error == simdutf::error_code::SUCCESS;
+}
+
+SUPPRESS_NODELETE void convertReplacingUnpairedSurrogatesIntoBuffer(std::span<const char16_t> source, std::span<char8_t> buffer)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(buffer.size() == lengthUTF8(source));
+    auto written = simdutf::convert_utf16le_to_utf8_with_replacement(source, buffer);
+    ASSERT_UNUSED(written, written == buffer.size());
+}
+
 std::span<const char8_t> checkUTF8WithoutUTF16Length(std::span<const char8_t> source)
 {
     auto result = simdutf::validate_utf8_with_errors(source);

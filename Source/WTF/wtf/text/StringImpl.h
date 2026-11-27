@@ -344,16 +344,6 @@ public:
 
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 
-    static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const Latin1Character> characters);
-    static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const char16_t> characters);
-
-    static WTF_EXPORT_PRIVATE size_t utf8LengthFromUTF16(std::span<const char16_t> characters);
-    static WTF_EXPORT_PRIVATE size_t utf8LengthFromUTF16ReplacingUnpairedSurrogates(std::span<const char16_t> characters);
-    static WTF_EXPORT_PRIVATE size_t tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination);
-    static WTF_EXPORT_PRIVATE void convertUTF16ToUTF8ReplacingUnpairedSurrogates(std::span<const char16_t> source, std::span<char8_t> destination);
-    template<typename CharacterType, size_t inlineCapacity>
-    static std::expected<void, UTF8ConversionError> convertToUTF8(std::span<const char16_t>, Vector<CharacterType, inlineCapacity>&, ConversionMode);
-
 private:
     // The high bits of 'hash' are always empty, but we prefer to store our flags
     // in the low bits because it makes them slightly more efficient to access.
@@ -677,16 +667,6 @@ template<size_t inlineCapacity> NODELETE bool equalIgnoringNullity(const Vector<
 
 template<typename CharacterType1, typename CharacterType2>
 NODELETE SUPPRESS_NODELETE std::strong_ordering codePointCompare(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2);
-
-WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const Latin1Character>);
-WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryMakeUTF8CString(std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
-WTF_EXPORT_PRIVATE UTF8CString makeUTF8CString(std::span<const Latin1Character>);
-WTF_EXPORT_PRIVATE UTF8CString makeUTF8CString(std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
-
-template<typename Func>
-std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, std::span<const Latin1Character>);
-template<typename Func>
-std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, std::span<const char16_t>, ConversionMode = ConversionMode::Lenient);
 
 NODELETE bool isUnicodeWhitespace(char16_t);
 
@@ -1483,87 +1463,6 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(std::span<const
         data[i] = character == target ? replacement : character;
     }
     return newImpl;
-}
-
-static inline std::span<const char8_t> nonNullEmptyUTF8Span()
-{
-    static constexpr char8_t empty = 0;
-    return { &empty, 0 };
-}
-
-template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func& function, std::span<const Latin1Character> characters)
-{
-    if (characters.empty())
-        return function(nonNullEmptyUTF8Span());
-
-    // Allocate a buffer big enough to hold all the characters
-    // (an individual Latin1Character can only expand to 2 UTF-8 bytes).
-    // Optimization ideas, if we find this function is hot:
-    //  * We could speculatively create a CStringBuffer to contain 'length'
-    //    characters, and resize if necessary (i.e. if the buffer contains
-    //    non-ascii characters). (Alternatively, scan the buffer first for
-    //    ascii characters, so we know this will be sufficient).
-    //  * We could allocate a CStringBuffer with an appropriate size to
-    //    have a good chance of being able to write the string into the
-    //    buffer without reallocing (say, 1.5 x length).
-
-    if (productOverflows<size_t>(characters.size(), 2) || !isValidCapacityForVector<char8_t>(characters.size() * 2)) [[unlikely]]
-        return makeUnexpected(UTF8ConversionError::OutOfMemory);
-
-#if CPU(ARM64)
-    if (auto* firstNonASCII = find8NonASCII(characters)) {
-        size_t prefixLength = firstNonASCII - characters.data();
-        size_t remainingLength = characters.size() - prefixLength;
-        Vector<char8_t, 1024> buffer(prefixLength + remainingLength * 2);
-        memcpySpan(buffer.mutableSpan(), characters.first(prefixLength));
-        auto result = Unicode::convert(characters.subspan(prefixLength), buffer.mutableSpan().subspan(prefixLength));
-        ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-        return function(buffer.span().first(prefixLength + result.buffer.size()));
-    }
-    return function(byteCast<char8_t>(characters));
-#else
-    Vector<char8_t, 1024> buffer(characters.size() * 2);
-    auto result = Unicode::convert(characters, buffer.mutableSpan());
-    ASSERT(result.code == Unicode::ConversionResultCode::Success); // 2x is sufficient for any conversion from Latin1
-    return function(result.buffer);
-#endif
-}
-
-template<typename CharacterType, size_t inlineCapacity>
-inline std::expected<void, UTF8ConversionError> StringImpl::convertToUTF8(std::span<const char16_t> characters, Vector<CharacterType, inlineCapacity>& buffer, ConversionMode mode)
-{
-    // Exact unless there are unpaired surrogates, which make the conversion fail.
-    size_t utf8Length = utf8LengthFromUTF16(characters);
-    if (!isValidCapacityForVector<CharacterType>(utf8Length)) [[unlikely]]
-        return makeUnexpected(UTF8ConversionError::OutOfMemory);
-
-    buffer.resizeToFit(utf8Length);
-    if (tryConvertUTF16ToUTF8(characters, byteCast<char8_t>(buffer.mutableSpan())) != notFound)
-        return { };
-
-    if (mode == ConversionMode::Strict)
-        return makeUnexpected(UTF8ConversionError::Invalid);
-
-    utf8Length = utf8LengthFromUTF16ReplacingUnpairedSurrogates(characters);
-    if (!isValidCapacityForVector<CharacterType>(utf8Length)) [[unlikely]]
-        return makeUnexpected(UTF8ConversionError::OutOfMemory);
-
-    buffer.resizeToFit(utf8Length);
-    convertUTF16ToUTF8ReplacingUnpairedSurrogates(characters, byteCast<char8_t>(buffer.mutableSpan()));
-    return { };
-}
-
-template<typename Func>
-inline std::expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func& function, std::span<const char16_t> characters, ConversionMode mode)
-{
-    if (characters.empty())
-        return function(nonNullEmptyUTF8Span());
-
-    Vector<char8_t, 1024> bufferVector;
-    if (auto result = StringImpl::convertToUTF8(characters, bufferVector, mode); !result)
-        return makeUnexpected(result.error());
-    return function(bufferVector.span());
 }
 
 } // namespace WTF

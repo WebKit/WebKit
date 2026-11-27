@@ -387,9 +387,7 @@ Vector<String> String::splitAllowingEmptyEntries(StringView separator) const
 
 ASCIICString String::ascii() const
 {
-    if (is8Bit())
-        return StringImpl::asciiForCharacters(span8());
-    return StringImpl::asciiForCharacters(span16());
+    return StringView { *this }.ascii();
 }
 
 Latin1CString String::latin1() const
