@@ -155,6 +155,8 @@ angle::Result ContextWgpu::flush(webgpu::RenderPassClosureReason closureReason)
         mCurrentCommandEncoder            = nullptr;
 
         wgpu->queueSubmit(getQueue().get(), 1, &commandBuffer.get());
+
+        ANGLE_TRY(checkDeviceLost());
     }
 
     return angle::Result::Continue;
@@ -264,11 +266,10 @@ angle::Result ContextWgpu::finish(const gl::Context *context)
     WGPUFutureWaitInfo onWorkSubmittedFuture = WGPU_FUTURE_WAIT_INFO_INIT;
     onWorkSubmittedFuture.future = wgpu->queueOnSubmittedWorkDone(getQueue().get(), callback);
 
-    WGPUWaitStatus status =
-        wgpu->instanceWaitAny(getInstance().get(), 1, &onWorkSubmittedFuture, -1);
-    ASSERT(!webgpu::IsWgpuError(status));
+    ANGLE_WGPU_TRY(this, wgpu->instanceWaitAny(getInstance().get(), 1, &onWorkSubmittedFuture, -1));
 
-    return angle::Result::Continue;
+    // The device may be lost while the GPU runs the work.
+    return checkDeviceLost();
 }
 
 angle::Result ContextWgpu::drawArrays(const gl::Context *context,
@@ -599,7 +600,9 @@ angle::Result ContextWgpu::multiDrawElementsInstancedBaseVertexBaseInstance(
 
 gl::GraphicsResetStatus ContextWgpu::getResetStatus()
 {
-    return gl::GraphicsResetStatus::NoError;
+    // WebGPU does not say which context caused the loss of the device.
+    return mDisplay->isDeviceLostDetected() ? gl::GraphicsResetStatus::UnknownContextReset
+                                            : gl::GraphicsResetStatus::NoError;
 }
 
 angle::Result ContextWgpu::insertEventMarker(GLsizei length, const char *marker)
@@ -1192,6 +1195,34 @@ void ContextWgpu::handleError(GLenum errorCode,
     std::stringstream errorStream;
     errorStream << "Internal Wgpu back-end error: " << message << ".";
     mErrors->handleError(errorCode, errorStream.str().c_str(), file, function, line);
+}
+
+void ContextWgpu::handleWgpuError()
+{
+    if (mDisplay->checkDeviceLost())
+    {
+        handleDeviceLost();
+        return;
+    }
+    handleError(GL_INVALID_OPERATION, "Internal WebGPU error", "", "", 0);
+}
+
+angle::Result ContextWgpu::checkDeviceLost()
+{
+    if (!mDisplay->checkDeviceLost())
+    {
+        return angle::Result::Continue;
+    }
+    handleDeviceLost();
+    return angle::Result::Stop;
+}
+
+void ContextWgpu::handleDeviceLost()
+{
+    // The context that sees the loss is lost at once. The other contexts of the display are lost
+    // when they ask for the reset status, or see the loss themselves.
+    mErrors->markContextLost(gl::GraphicsResetStatus::UnknownContextReset);
+    handleError(GL_CONTEXT_LOST, "The WebGPU device is lost", "", "", 0);
 }
 
 angle::Result ContextWgpu::startRenderPass(const webgpu::PackedRenderPassDescriptor &desc)

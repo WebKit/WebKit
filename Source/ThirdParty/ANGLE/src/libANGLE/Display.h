@@ -571,6 +571,9 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
 
     egl::Error waitUntilWorkScheduled();
 
+    // EGL_ANGLE_lose_device
+    egl::Error loseDevice();
+
     void lockVulkanQueue();
     void unlockVulkanQueue();
 

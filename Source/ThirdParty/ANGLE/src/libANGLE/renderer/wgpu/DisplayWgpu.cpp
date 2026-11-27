@@ -90,6 +90,9 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
     mQueue = webgpu::QueueHandle::Acquire(&mProcTable, mProcTable.deviceGetQueue(mDevice.get()));
 
+    mLostFuture = mProcTable.deviceGetLostFuture(mDevice.get());
+    mDeviceLost = false;
+
     mFormatTable.initialize();
 
     mLimitsWgpu = WGPU_LIMITS_INIT;
@@ -128,10 +131,12 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
 void DisplayWgpu::terminate()
 {
-    mAdapter  = nullptr;
-    mInstance = nullptr;
-    mDevice   = nullptr;
-    mQueue    = nullptr;
+    mAdapter    = nullptr;
+    mInstance   = nullptr;
+    mDevice     = nullptr;
+    mQueue      = nullptr;
+    mLostFuture = {};
+    mDeviceLost = false;
 }
 
 egl::Error ThreadSafeDisplayWgpu::makeCurrent(egl::Surface *drawSurface,
@@ -191,14 +196,46 @@ egl::ConfigSet DisplayWgpu::generateConfigs()
     return configSet;
 }
 
-bool ThreadSafeDisplayWgpu::testDeviceLost()
+bool DisplayWgpu::testDeviceLost()
 {
-    return false;
+    return checkDeviceLost();
 }
 
-egl::Error ThreadSafeDisplayWgpu::restoreLostDevice(const egl::ThreadSafeDisplay *display)
+egl::Error DisplayWgpu::restoreLostDevice(const egl::ThreadSafeDisplay *display)
 {
+    return egl::Error(EGL_BAD_DISPLAY);
+}
+
+egl::Error DisplayWgpu::loseDevice()
+{
+    mProcTable.deviceDestroy(mDevice.get());
     return egl::NoError();
+}
+
+bool DisplayWgpu::checkDeviceLost()
+{
+    if (isDeviceLostDetected())
+    {
+        return true;
+    }
+    if (!mInstance)
+    {
+        return false;
+    }
+
+    WGPUFutureWaitInfo waitInfo = WGPU_FUTURE_WAIT_INFO_INIT;
+    waitInfo.future             = mLostFuture;
+    mProcTable.instanceWaitAny(mInstance.get(), 1, &waitInfo, 0);
+    if (!waitInfo.completed)
+    {
+        return false;
+    }
+
+    if (!mDeviceLost.exchange(true, std::memory_order_acq_rel))
+    {
+        WARN() << "The WebGPU device is lost.";
+    }
+    return true;
 }
 
 egl::Error DisplayWgpu::validateClientBuffer(const egl::Config *configuration,

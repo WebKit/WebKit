@@ -99,6 +99,9 @@ EXPORTS
     eglQueryDisplayAttribANGLE
     eglQueryStringiANGLE
 
+    ; EGL_ANGLE_lose_device
+    eglLoseDeviceANGLE
+
     ; EGL_ANGLE_metal_shared_event_sync
     eglCopyMetalSharedEventANGLE
 

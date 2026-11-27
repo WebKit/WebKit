@@ -497,6 +497,14 @@ void AtomicCommandBufferError::store(MTLCommandBufferError value)
 }
 
 // CommandQueue implementation
+void CommandQueue::loseDevice()
+{
+    // See onCommandBufferCompleted(). A hang fails the command buffer with
+    // MTLCommandBufferErrorTimeout, which loses the device.
+    mCmdBufferError.store(MTLCommandBufferErrorTimeout);
+    mIsDeviceLost = true;
+}
+
 void CommandQueue::reset()
 {
     finishAllCommands();
@@ -508,6 +516,11 @@ void CommandQueue::set(id<MTLCommandQueue> metalQueue)
     finishAllCommands();
 
     ParentClass::set(metalQueue);
+
+    // The errors of the previous queue do not carry over. A display whose device is lost works
+    // again once it is initialized again.
+    mCmdBufferError.pop();
+    mIsDeviceLost = false;
 }
 
 void CommandQueue::finishAllCommands()

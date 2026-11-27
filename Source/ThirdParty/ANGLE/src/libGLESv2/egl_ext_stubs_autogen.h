@@ -291,5 +291,6 @@ void *CopyMetalSharedEventANGLE(Thread *thread,
                                 egl::Sync *syncPacked);
 void WaitUntilWorkScheduledANGLE(Thread *thread, egl::Display *dpyPacked);
 void SetValidationEnabledANGLE(Thread *thread, EGLBoolean validationState);
+EGLBoolean LoseDeviceANGLE(Thread *thread, egl::Display *dpyPacked);
 }  // namespace egl
 #endif  // LIBGLESV2_EGL_EXT_STUBS_AUTOGEN_H_

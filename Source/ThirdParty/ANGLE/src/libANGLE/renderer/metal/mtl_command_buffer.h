@@ -124,6 +124,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     MTLCommandBufferError popCmdBufferError() { return mCmdBufferError.pop(); }
 
     bool isDeviceLost() const { return mIsDeviceLost; }
+    // Leaves the queue as a command buffer that fails because the GPU hangs leaves it.
+    void loseDevice();
 
   private:
     using ParentClass = WrappedObject<id<MTLCommandQueue>>;

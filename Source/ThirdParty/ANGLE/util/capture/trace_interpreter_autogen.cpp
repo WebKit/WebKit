@@ -417,6 +417,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
                                                                                        strings);
         return CallCapture(EntryPoint::EGLLockVulkanQueueANGLE, std::move(params));
     }
+    if (strcmp(nameToken, "eglLoseDeviceANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNEGLLOSEDEVICEANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::EGLLoseDeviceANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "eglMakeCurrent") == 0)
     {
         ParamBuffer params =

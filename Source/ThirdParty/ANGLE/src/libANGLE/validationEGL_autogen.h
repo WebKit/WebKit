@@ -258,6 +258,9 @@ bool ValidateQueryDisplayAttribANGLE(const ValidationContext *val,
                                      EGLint attribute,
                                      const EGLAttrib *value);
 
+// EGL_ANGLE_lose_device
+bool ValidateLoseDeviceANGLE(const ValidationContext *val, const egl::Display *dpyPacked);
+
 // EGL_ANGLE_metal_shared_event_sync
 bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
                                        const egl::ThreadSafeDisplay *dpyPacked,

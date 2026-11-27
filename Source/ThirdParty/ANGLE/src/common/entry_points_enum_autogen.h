@@ -198,6 +198,7 @@ enum class EntryPoint
     EGLLabelObjectKHR,
     EGLLockSurfaceKHR,
     EGLLockVulkanQueueANGLE,
+    EGLLoseDeviceANGLE,
     EGLMakeCurrent,
     EGLPostSubBufferNV,
     EGLPrepareSwapBuffersANGLE,

@@ -184,6 +184,14 @@ bool DisplayMtl::testDeviceLost()
 #endif
 }
 
+egl::Error DisplayMtl::loseDevice()
+{
+    // Metal cannot lose a device on request. Leave the queue as a command buffer that fails on a
+    // lost device leaves it, so that the backend sees the loss as it sees a real one.
+    mCmdQueue.loseDevice();
+    return egl::NoError();
+}
+
 egl::Error DisplayMtl::restoreLostDevice(const egl::ThreadSafeDisplay *display)
 {
 #if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
@@ -485,6 +493,9 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->displaySemaphoreShareGroup = true;
     outExtensions->mtlTextureClientBuffer     = true;
     outExtensions->waitUntilWorkScheduled     = true;
+#if ANGLE_METAL_LOSE_CONTEXT_ON_ERROR == ANGLE_ENABLED
+    outExtensions->loseDeviceANGLE = true;
+#endif
 
     if (mFeatures.hasEvents.enabled)
     {

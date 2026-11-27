@@ -1507,7 +1507,10 @@ angle::Result ContextMtl::onUnMakeCurrent(const gl::Context *context)
     {
         GetImplAs<QueryMtl>(query)->onContextUnMakeCurrent(context);
     }
-    return checkCommandBufferError();
+    angle::Result result = checkCommandBufferError();
+    // A lost context is still released, so that it can be destroyed. It reports the loss through
+    // GL_CONTEXT_LOST and its reset status.
+    return mContextLost ? angle::Result::Continue : result;
 }
 
 // Native capabilities, unmodified by gl::Context.
@@ -3075,9 +3078,12 @@ angle::Result ContextMtl::checkCommandBufferError()
             ANGLE_CHECK_GL_ALLOC(this, false);
             return angle::Result::Stop;
         default:
+            // The command buffer failed, so the device is lost. The context is lost at once, as on
+            // a reset, and reports GL_CONTEXT_LOST rather than an internal error. The other
+            // contexts of the display see the loss through the command queue.
             mContextLost = true;
-            ANGLE_CHECK(this, false, "Metal command buffer execution failed.",
-                        GL_INVALID_OPERATION);
+            mErrors->markContextLost(gl::GraphicsResetStatus::UnknownContextReset);
+            ANGLE_CHECK(this, false, "Metal command buffer execution failed.", GL_CONTEXT_LOST);
             return angle::Result::Stop;
     }
 }

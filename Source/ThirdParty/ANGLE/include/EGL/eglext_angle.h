@@ -478,6 +478,14 @@ EGLAPI void EGLAPIENTRY eglSetValidationEnabledANGLE(EGLBoolean validationState)
 #define EGL_ANGLE_VERSION_STRING_ANGLE 0x34FA
 #endif /* EGL_ANGLE_query_renderer_strings */
 
+#ifndef EGL_ANGLE_lose_device
+#define EGL_ANGLE_lose_device 1
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLLOSEDEVICEANGLEPROC) (EGLDisplay dpy);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI EGLBoolean EGLAPIENTRY eglLoseDeviceANGLE(EGLDisplay dpy);
+#endif
+#endif /* EGL_ANGLE_lose_device */
+
 // clang-format on
 
 #endif  // INCLUDE_EGL_EGLEXT_ANGLE_

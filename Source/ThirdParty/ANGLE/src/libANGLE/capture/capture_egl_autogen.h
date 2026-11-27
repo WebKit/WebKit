@@ -351,6 +351,10 @@ angle::CallCapture CaptureQueryDisplayAttribANGLE(egl::Thread *thread,
                                                   EGLint attribute,
                                                   EGLAttrib *value,
                                                   EGLBoolean returnValue);
+angle::CallCapture CaptureLoseDeviceANGLE(egl::Thread *thread,
+                                          bool isCallValid,
+                                          egl::Display *dpyPacked,
+                                          EGLBoolean returnValue);
 angle::CallCapture CaptureCopyMetalSharedEventANGLE(egl::Thread *thread,
                                                     bool isCallValid,
                                                     egl::Display *dpyPacked,

@@ -271,6 +271,13 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     // Explicit context entry points are supported.
     glExtensions->explicitContextANGLE = true;
 
+    // The loss of the WebGPU device is reported as GL_UNKNOWN_CONTEXT_RESET.
+    glExtensions->robustnessEXT = true;
+    glExtensions->robustnessKHR = true;
+    // WebGPU loses the render pass of a draw that reads past the end of a vertex buffer, so the
+    // front end validates the draws of robust contexts instead.
+    glExtensions->robustBufferAccessBehaviorKHR = false;
+
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
     glCaps->max3DTextureSize      = rx::LimitToInt(limitsWgpu.maxTextureDimension3D);
@@ -427,6 +434,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     eglCaps->textureNPOT = true;
 
     // EGL extensions
+    // A context that is created robust or with a reset notification strategy has GL_EXT_robustness.
     eglExtensions->createContextRobustness            = true;
     eglExtensions->postSubBuffer                      = true;
     eglExtensions->createContext                      = true;
@@ -447,6 +455,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     eglExtensions->programCacheControlANGLE           = true;
     eglExtensions->robustResourceInitializationANGLE  = true;
     eglExtensions->webgpuTextureClientBuffer          = true;
+    eglExtensions->loseDeviceANGLE                    = true;
 }
 
 bool IsStripPrimitiveTopology(WGPUPrimitiveTopology topology)
@@ -538,7 +547,12 @@ angle::Result ErrorScope::PopScope(ContextWgpu *context,
 
         WGPUFutureWaitInfo future = WGPU_FUTURE_WAIT_INFO_INIT;
         future.future             = mProcTable->devicePopErrorScope(mDevice.get(), callbackInfo);
-        mProcTable->instanceWaitAny(mInstance.get(), 1, &future, -1);
+        WGPUWaitStatus status     = mProcTable->instanceWaitAny(mInstance.get(), 1, &future, -1);
+        if (IsWgpuError(status) && context)
+        {
+            context->handleWgpuError();
+            return angle::Result::Stop;
+        }
 
         return popScopeContext.hadError ? angle::Result::Stop : angle::Result::Continue;
     }

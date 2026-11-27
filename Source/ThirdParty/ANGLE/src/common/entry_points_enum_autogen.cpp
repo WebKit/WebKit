@@ -384,6 +384,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglLockSurfaceKHR";
         case EntryPoint::EGLLockVulkanQueueANGLE:
             return "eglLockVulkanQueueANGLE";
+        case EntryPoint::EGLLoseDeviceANGLE:
+            return "eglLoseDeviceANGLE";
         case EntryPoint::EGLMakeCurrent:
             return "eglMakeCurrent";
         case EntryPoint::EGLPostSubBufferNV:

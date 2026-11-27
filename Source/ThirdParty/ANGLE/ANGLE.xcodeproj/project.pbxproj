@@ -1196,6 +1196,7 @@
 		7BD3D2402FCDB8A300C386DC /* EGLContextSharingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6272DE5A13800327F7F /* EGLContextSharingTest.cpp */; };
 		7BD3D2412FCDB8A300C386DC /* EGLCreateContextAttribsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6282DE5A13800327F7F /* EGLCreateContextAttribsTest.cpp */; };
 		7BD3D2422FCDB8A300C386DC /* EGLDebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6292DE5A13800327F7F /* EGLDebugTest.cpp */; };
+		4C5E7A052FE1000100D1E7A1 /* EGLDeviceLossTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C5E7A042FE1000100D1E7A1 /* EGLDeviceLossTest.cpp */; };
 		4C5E7A022FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C5E7A012FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp */; };
 		7BD3D2432FCDB8A300C386DC /* EGLDisplaySelectionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62B2DE5A13800327F7F /* EGLDisplaySelectionTest.cpp */; };
 		7BD3D2442FCDB8A300C386DC /* EGLDisplayTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62C2DE5A13800327F7F /* EGLDisplayTest.cpp */; };
@@ -1686,6 +1687,7 @@
 		7BFAF6472DE5A13800327F7F /* EGLRobustnessTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63B2DE5A13800327F7F /* EGLRobustnessTest.cpp */; };
 		7BFAF6482DE5A13800327F7F /* EGLSyncTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6402DE5A13800327F7F /* EGLSyncTest.cpp */; };
 		7BFAF6492DE5A13800327F7F /* EGLDebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6292DE5A13800327F7F /* EGLDebugTest.cpp */; };
+		4C5E7A062FE1000100D1E7A1 /* EGLDeviceLossTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C5E7A042FE1000100D1E7A1 /* EGLDeviceLossTest.cpp */; };
 		4C5E7A032FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C5E7A012FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp */; };
 		7BFAF64A2DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6422DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp */; };
 		7BFAF64B2DE5A13800327F7F /* EGLLockSurface3Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62F2DE5A13800327F7F /* EGLLockSurface3Test.cpp */; };
@@ -4219,6 +4221,7 @@
 		7BFAF6402DE5A13800327F7F /* EGLSyncTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EGLSyncTest.cpp; sourceTree = "<group>"; };
 		7BFAF6412DE5A13800327F7F /* EGLSyncTestMetalSharedEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EGLSyncTestMetalSharedEvent.mm; sourceTree = "<group>"; };
 		7BFAF6422DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EGLWaitUntilWorkScheduledTest.cpp; sourceTree = "<group>"; };
+		4C5E7A042FE1000100D1E7A1 /* EGLDeviceLossTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EGLDeviceLossTest.cpp; sourceTree = "<group>"; };
 		7BFAF6652DE5A7A200327F7F /* system_info_util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system_info_util.h; sourceTree = "<group>"; };
 		7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = system_info_util.cpp; sourceTree = "<group>"; };
 		7BFAF6682DE5A8F100327F7F /* gl_raii.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gl_raii.h; sourceTree = "<group>"; };
@@ -6886,6 +6889,7 @@
 				7BFAF6272DE5A13800327F7F /* EGLContextSharingTest.cpp */,
 				7BFAF6282DE5A13800327F7F /* EGLCreateContextAttribsTest.cpp */,
 				7BFAF6292DE5A13800327F7F /* EGLDebugTest.cpp */,
+				4C5E7A042FE1000100D1E7A1 /* EGLDeviceLossTest.cpp */,
 				4C5E7A012FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp */,
 				7BFAF62B2DE5A13800327F7F /* EGLDisplaySelectionTest.cpp */,
 				7BFAF62C2DE5A13800327F7F /* EGLDisplayTest.cpp */,
@@ -10661,6 +10665,7 @@
 				7BD3D2402FCDB8A300C386DC /* EGLContextSharingTest.cpp in Sources */,
 				7BD3D2412FCDB8A300C386DC /* EGLCreateContextAttribsTest.cpp in Sources */,
 				7BD3D2422FCDB8A300C386DC /* EGLDebugTest.cpp in Sources */,
+				4C5E7A052FE1000100D1E7A1 /* EGLDeviceLossTest.cpp in Sources */,
 				4C5E7A022FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp in Sources */,
 				7BD3D2432FCDB8A300C386DC /* EGLDisplaySelectionTest.cpp in Sources */,
 				7BD3D2442FCDB8A300C386DC /* EGLDisplayTest.cpp in Sources */,
@@ -10870,6 +10875,7 @@
 				7BFAF6542DE5A13800327F7F /* EGLContextSharingTest.cpp in Sources */,
 				7BFAF64E2DE5A13800327F7F /* EGLCreateContextAttribsTest.cpp in Sources */,
 				7BFAF6492DE5A13800327F7F /* EGLDebugTest.cpp in Sources */,
+				4C5E7A062FE1000100D1E7A1 /* EGLDeviceLossTest.cpp in Sources */,
 				4C5E7A032FE1000100D1E7A1 /* EGLDeviceWebGPUTest.cpp in Sources */,
 				7BFAF65B2DE5A13800327F7F /* EGLDisplaySelectionTest.cpp in Sources */,
 				7BFAF65F2DE5A13800327F7F /* EGLDisplayTest.cpp in Sources */,

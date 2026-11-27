@@ -109,6 +109,7 @@ const ProcEntry g_procTable[] = {
     {"eglLabelObjectKHR", P(EGL_LabelObjectKHR)},
     {"eglLockSurfaceKHR", P(EGL_LockSurfaceKHR)},
     {"eglLockVulkanQueueANGLE", P(EGL_LockVulkanQueueANGLE)},
+    {"eglLoseDeviceANGLE", P(EGL_LoseDeviceANGLE)},
     {"eglMakeCurrent", P(EGL_MakeCurrent)},
     {"eglPostSubBufferNV", P(EGL_PostSubBufferNV)},
     {"eglPrepareSwapBuffersANGLE", P(EGL_PrepareSwapBuffersANGLE)},

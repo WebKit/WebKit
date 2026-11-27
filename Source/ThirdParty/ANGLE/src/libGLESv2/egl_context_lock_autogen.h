@@ -114,6 +114,9 @@ ScopedContextMutexLock GetContextLock_ReleaseExternalContextANGLE(Thread *thread
 ScopedContextMutexLock GetContextLock_QueryStringiANGLE(Thread *thread);
 ScopedContextMutexLock GetContextLock_QueryDisplayAttribANGLE(Thread *thread, EGLint attribute);
 
+// EGL_ANGLE_lose_device
+ScopedContextMutexLock GetContextLock_LoseDeviceANGLE(Thread *thread);
+
 // EGL_ANGLE_metal_shared_event_sync
 ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thread *thread);
 

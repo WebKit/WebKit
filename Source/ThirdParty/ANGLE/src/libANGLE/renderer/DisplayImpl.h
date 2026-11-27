@@ -137,6 +137,11 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
 
     virtual egl::Error waitUntilWorkScheduled();
 
+    // EGL_ANGLE_lose_device. Loses the device of the display as a GPU failure would, so that the
+    // backend detects and reports the loss as it does a real one. Only called when the backend
+    // advertises the extension.
+    virtual egl::Error loseDevice();
+
     virtual void lockVulkanQueue() { UNREACHABLE(); }
     virtual void unlockVulkanQueue() { UNREACHABLE(); }
 

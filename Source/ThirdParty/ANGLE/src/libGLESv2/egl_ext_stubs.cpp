@@ -751,6 +751,14 @@ void WaitUntilWorkScheduledANGLE(Thread *thread, Display *display)
     thread->setSuccess();
 }
 
+EGLBoolean LoseDeviceANGLE(Thread *thread, Display *display)
+{
+    ANGLE_EGL_TRY_RETURN(thread, display->loseDevice(), "eglLoseDeviceANGLE", display, EGL_FALSE);
+
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
 EGLBoolean QueryDisplayAttribANGLE(Thread *thread,
                                    Display *display,
                                    EGLint attribute,

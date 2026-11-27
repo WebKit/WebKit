@@ -1,0 +1,117 @@
+Name
+
+   ANGLE_lose_device
+
+Name Strings
+
+   EGL_ANGLE_lose_device
+
+Contributors
+
+   Kimmo Kinnunen, Apple
+
+Contact
+
+   Kimmo Kinnunen, Apple (kkinnunen 'at' apple.com)
+
+Status
+
+   Draft.
+
+Version
+
+   Version 1, 2026-11-25
+
+Number
+
+   EGL Extension XXX
+
+Extension Type
+
+   EGL display extension
+
+Dependencies
+
+   This extension is written against the EGL 1.5 Specification.
+
+   EGL_EXT_create_context_robustness affects the definition of this
+   extension.
+
+Overview
+
+   An implementation can lose the device that a display runs on, for example
+   when the GPU hangs or resets. The contexts of the display then report a
+   graphics reset through GL_EXT_robustness or GL_KHR_robustness, and EGL
+   reports EGL_CONTEXT_LOST.
+
+   Such a loss cannot be caused on request, so applications and tests cannot
+   check how they handle it. This extension adds a function that loses the
+   device of a display as a GPU failure would. The implementation detects and
+   reports the loss as it does a real one.
+
+   The extension is meant for testing.
+
+New Types
+
+   None
+
+New Procedures and Functions
+
+   EGLBoolean eglLoseDeviceANGLE(EGLDisplay dpy);
+
+New Tokens
+
+   None
+
+Additions to the EGL 1.5 Specification
+
+   Add a new section 3.13 "Losing the Device" after section 3.12 "Power
+   Management":
+
+   "The device that a display runs on can be lost, for example when the GPU
+   resets. The call
+
+       EGLBoolean eglLoseDeviceANGLE(EGLDisplay dpy);
+
+   loses the device of the display <dpy> as a GPU failure would.
+
+   The implementation detects the loss and reports it as it reports a loss
+   that it did not cause, at the same points: possibly not before the next
+   operation that uses the device. The contexts of <dpy> and EGL see the loss
+   in the same way. The command does not wait for the contexts of <dpy> that
+   are current to other threads.
+
+   A device that is lost is not restored. To use the device again, the display
+   has to be terminated and initialized again.
+
+   On success, EGL_TRUE is returned.
+
+   On failure, EGL_FALSE is returned and an error is generated:
+    * If <dpy> is not a valid display, an EGL_BAD_DISPLAY error is generated.
+    * If <dpy> is not initialized, an EGL_NOT_INITIALIZED error is generated.
+    * If the implementation has already reported the loss of the device of
+      <dpy> through EGL, an EGL_CONTEXT_LOST error is generated.
+    * If <dpy> does not support EGL_ANGLE_lose_device, an EGL_BAD_ACCESS
+      error is generated."
+
+Issues
+
+   1. Should the command mark the contexts of the display lost?
+
+      RESOLVED: No. The point of the command is to test how the
+      implementation detects and reports a loss. A function that only marks
+      contexts lost exists already: glLoseContextCHROMIUM in
+      GL_CHROMIUM_lose_context.
+
+   2. Can the device be lost from outside the implementation?
+
+      RESOLVED: It depends on the API that the device belongs to. A WebGPU
+      device can be destroyed by the embedder that created it, and the
+      implementation sees the loss in the same way. A Metal device cannot be
+      lost on request, so the implementation leaves its command queue as a
+      command buffer that fails because the GPU hangs leaves it.
+
+Revision History
+
+    Version 1, 2026-11-25 (Kimmo Kinnunen)
+      - Initial draft

@@ -12,6 +12,8 @@
 
 #include <webgpu/webgpu.h>
 
+#include <atomic>
+
 #include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/renderer/ShareGroupImpl.h"
 #include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
@@ -33,9 +35,6 @@ class ThreadSafeDisplayWgpu : public ThreadSafeDisplayImpl
   public:
     ThreadSafeDisplayWgpu()           = default;
     ~ThreadSafeDisplayWgpu() override = default;
-
-    bool testDeviceLost() override final;
-    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override final;
 
     egl::Error makeCurrent(egl::Surface *drawSurface,
                            egl::Surface *readSurface,
@@ -139,6 +138,16 @@ class DisplayWgpu : public DisplayImpl, public ThreadSafeDisplayWgpu
 
     ThreadSafeDisplayImpl *getThreadSafeDisplayImpl() override { return this; }
 
+    bool testDeviceLost() override;
+    egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
+
+    egl::Error loseDevice() override;
+
+    // Polls the lost future of the device without blocking. Returns whether the device is lost.
+    bool checkDeviceLost();
+    // Whether checkDeviceLost() has found the device lost. Only reads a flag.
+    bool isDeviceLostDetected() const { return mDeviceLost.load(std::memory_order_acquire); }
+
   private:
     egl::Error validateExternalWebGPUTexture(EGLClientBuffer buffer,
                                              const egl::AttributeMap &attribs) const;
@@ -156,6 +165,11 @@ class DisplayWgpu : public DisplayImpl, public ThreadSafeDisplayWgpu
     webgpu::InstanceHandle mInstance;
     webgpu::DeviceHandle mDevice;
     webgpu::QueueHandle mQueue;
+
+    // Completes when the device is lost, for a device that ANGLE created as well as for one that
+    // the embedder gave it.
+    WGPUFuture mLostFuture = {};
+    std::atomic<bool> mDeviceLost{false};
 
     WGPULimits mLimitsWgpu;
 

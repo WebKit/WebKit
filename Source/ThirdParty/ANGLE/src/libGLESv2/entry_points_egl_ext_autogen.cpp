@@ -714,6 +714,39 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
     return returnValue;
 }
 
+// EGL_ANGLE_lose_device
+EGLBoolean EGLAPIENTRY EGL_LoseDeviceANGLE(EGLDisplay dpy)
+{
+
+    Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    EGLBoolean returnValue;
+    {
+        egl::Display *dpyPacked                    = PackParam<egl::Display *>(dpy);
+        egl::ScopedDisplayLockAndRef dpyPackedLock = GetDisplayAndLockIfValid(dpyPacked);
+        const egl::Display *validDisplay           = dpyPackedLock.get();
+
+        EGL_EVENT(LoseDeviceANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(LoseDeviceANGLE, thread);
+            if (IsEGLValidationEnabled())
+            {
+                ANGLE_EGL_VALIDATE(thread, LoseDeviceANGLE, validDisplay, EGLBoolean, validDisplay);
+            }
+            else
+            {
+            }
+
+            returnValue = LoseDeviceANGLE(thread, dpyPacked);
+        }
+
+        ANGLE_CAPTURE_EGL(LoseDeviceANGLE, true, thread, dpyPacked, returnValue);
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    return returnValue;
+}
+
 // EGL_ANGLE_metal_shared_event_sync
 void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
 {

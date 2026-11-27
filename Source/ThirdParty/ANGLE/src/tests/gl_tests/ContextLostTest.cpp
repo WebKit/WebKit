@@ -227,7 +227,9 @@ ANGLE_INSTANTIATE_TEST(ContextLostTest,
                        WithRobustness(ES2_VULKAN()),
                        WithRobustness(ES3_VULKAN()),
                        WithRobustness(ES2_METAL()),
-                       WithRobustness(ES3_METAL()));
+                       WithRobustness(ES3_METAL()),
+                       WithRobustness(ES2_WEBGPU()),
+                       WithRobustness(ES3_WEBGPU()));
 
 ANGLE_INSTANTIATE_TEST(ContextLostSkipValidationTest,
                        WithRobustness(ES2_NULL()),
@@ -236,7 +238,9 @@ ANGLE_INSTANTIATE_TEST(ContextLostSkipValidationTest,
                        WithRobustness(ES2_VULKAN()),
                        WithRobustness(ES3_VULKAN()),
                        WithRobustness(ES2_METAL()),
-                       WithRobustness(ES3_METAL()));
+                       WithRobustness(ES3_METAL()),
+                       WithRobustness(ES2_WEBGPU()),
+                       WithRobustness(ES3_WEBGPU()));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextLostTestES32);
 ANGLE_INSTANTIATE_TEST(ContextLostTestES32, WithRobustness(ES32_VULKAN()));

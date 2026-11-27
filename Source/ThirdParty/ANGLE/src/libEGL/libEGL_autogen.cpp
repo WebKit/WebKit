@@ -521,6 +521,13 @@ EGLBoolean EGLAPIENTRY eglQueryDisplayAttribANGLE(EGLDisplay dpy,
     return EGL_QueryDisplayAttribANGLE(dpy, attribute, value);
 }
 
+// EGL_ANGLE_lose_device
+EGLBoolean EGLAPIENTRY eglLoseDeviceANGLE(EGLDisplay dpy)
+{
+    EnsureEGLLoaded();
+    return EGL_LoseDeviceANGLE(dpy);
+}
+
 // EGL_ANGLE_metal_shared_event_sync
 void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
 {

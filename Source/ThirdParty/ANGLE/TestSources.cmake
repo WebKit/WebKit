@@ -102,6 +102,7 @@ set(angle_end2end_tests_sources
     "src/tests/egl_tests/EGLContextSharingTest.cpp"
     "src/tests/egl_tests/EGLCreateContextAttribsTest.cpp"
     "src/tests/egl_tests/EGLDebugTest.cpp"
+    "src/tests/egl_tests/EGLDeviceLossTest.cpp"
     "src/tests/egl_tests/EGLDeviceWebGPUTest.cpp"
     "src/tests/egl_tests/EGLDisplaySelectionTest.cpp"
     "src/tests/egl_tests/EGLDisplayTest.cpp"

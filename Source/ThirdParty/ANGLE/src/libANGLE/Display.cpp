@@ -3018,6 +3018,14 @@ Error Display::waitUntilWorkScheduled()
     return NoError();
 }
 
+Error Display::loseDevice()
+{
+    ASSERT(isInitialized());
+    // The backend loses its device as a GPU failure would. The contexts and EGL see the loss as
+    // they see a real one, so nothing is marked lost here.
+    return mImplementation->loseDevice();
+}
+
 void Display::lockVulkanQueue()
 {
     return mImplementation->lockVulkanQueue();

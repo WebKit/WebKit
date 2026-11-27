@@ -385,6 +385,14 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_QueryDisplayAttribANGLE(Threa
     return {};
 }
 
+// EGL_ANGLE_lose_device
+ANGLE_INLINE ScopedContextMutexLock GetContextLock_LoseDeviceANGLE(Thread *thread)
+{
+    // A device loss does not wait for the contexts that use the device; the contexts see it as
+    // they see a real one.
+    return {};
+}
+
 // EGL_ANGLE_metal_shared_event_sync
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thread *thread)
 {

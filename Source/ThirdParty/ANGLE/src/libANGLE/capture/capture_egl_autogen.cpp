@@ -1150,6 +1150,22 @@ CallCapture CaptureQueryDisplayAttribANGLE(egl::Thread *thread,
     return CallCapture(angle::EntryPoint::EGLQueryDisplayAttribANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureLoseDeviceANGLE(egl::Thread *thread,
+                                   bool isCallValid,
+                                   egl::Display *dpyPacked,
+                                   EGLBoolean returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
+
+    ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
+    InitParamValue(ParamType::TEGLBoolean, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::EGLLoseDeviceANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureCopyMetalSharedEventANGLE(egl::Thread *thread,
                                              bool isCallValid,
                                              egl::Display *dpyPacked,

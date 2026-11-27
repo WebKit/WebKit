@@ -735,6 +735,9 @@ struct DisplayExtensions
 
     // EGL_NV_context_priority_realtime
     bool contextPriorityRealtimeNV = false;
+
+    // EGL_ANGLE_lose_device
+    bool loseDeviceANGLE = false;
 };
 
 struct DeviceExtensions

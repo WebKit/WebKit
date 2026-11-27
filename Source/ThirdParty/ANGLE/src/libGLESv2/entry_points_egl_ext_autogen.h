@@ -83,6 +83,9 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
                                                                 EGLint attribute,
                                                                 EGLAttrib *value);
 
+// EGL_ANGLE_lose_device
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_LoseDeviceANGLE(EGLDisplay dpy);
+
 // EGL_ANGLE_metal_shared_event_sync
 ANGLE_EXPORT void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync);
 

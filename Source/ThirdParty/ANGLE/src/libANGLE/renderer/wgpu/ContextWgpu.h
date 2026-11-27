@@ -292,6 +292,13 @@ class ContextWgpu : public ContextImpl
                      const char *file,
                      const char *function,
                      unsigned int line);
+    // Records the failure of a WebGPU operation: GL_CONTEXT_LOST when the device is lost, and
+    // GL_INVALID_OPERATION otherwise.
+    void handleWgpuError();
+    // Polls the loss of the device. Stops with GL_CONTEXT_LOST when the device is lost.
+    angle::Result checkDeviceLost();
+    // Loses this context, and records GL_CONTEXT_LOST.
+    void handleDeviceLost();
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 

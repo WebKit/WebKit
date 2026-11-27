@@ -19,6 +19,7 @@
 #include "common/log_utils.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/ProgramExecutable.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 #include "libANGLE/renderer/wgpu/ProgramExecutableWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 #include "libANGLE/renderer/wgpu/wgpu_wgsl_util.h"
@@ -114,6 +115,11 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
     angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override
     {
         infoLog << mLog.str();
+        // The shader module fails to compile when the device is lost.
+        if (IsError(mResult) && context)
+        {
+            webgpu::GetDisplay(context)->checkDeviceLost();
+        }
         return mResult;
     }
 

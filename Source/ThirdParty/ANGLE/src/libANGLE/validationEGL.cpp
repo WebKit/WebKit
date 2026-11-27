@@ -7083,6 +7083,19 @@ bool ValidateWaitUntilWorkScheduledANGLE(const ValidationContext *val, const Dis
     return true;
 }
 
+bool ValidateLoseDeviceANGLE(const ValidationContext *val, const Display *display)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+
+    if (!display->getExtensions().loseDeviceANGLE)
+    {
+        val->setError(EGL_BAD_ACCESS, "EGL_ANGLE_lose_device is not available.");
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateGetCurrentDisplay(const ValidationContext *val)
 {
     return true;

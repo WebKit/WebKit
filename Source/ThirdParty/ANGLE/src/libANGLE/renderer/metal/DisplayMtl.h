@@ -69,6 +69,8 @@ class DisplayMtl : public DisplayImpl, public ThreadSafeDisplayMtl
     bool testDeviceLost() override;
     egl::Error restoreLostDevice(const egl::ThreadSafeDisplay *display) override;
 
+    egl::Error loseDevice() override;
+
     std::string getRendererDescription() override;
     std::string getVendorString() override;
     std::string getVersionString(bool includeFullVersion) override;

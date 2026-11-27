@@ -16,16 +16,15 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/angletypes.h"
 
-#define ANGLE_WGPU_TRY(context, command)                                                     \
-    do                                                                                       \
-    {                                                                                        \
-        auto ANGLE_LOCAL_VAR = command;                                                      \
-        if (ANGLE_UNLIKELY(::rx::webgpu::IsWgpuError(ANGLE_LOCAL_VAR)))                      \
-        {                                                                                    \
-            (context)->handleError(GL_INVALID_OPERATION, "Internal WebGPU error.", __FILE__, \
-                                   ANGLE_FUNCTION, __LINE__);                                \
-            return angle::Result::Stop;                                                      \
-        }                                                                                    \
+#define ANGLE_WGPU_TRY(context, command)                                \
+    do                                                                  \
+    {                                                                   \
+        auto ANGLE_LOCAL_VAR = command;                                 \
+        if (ANGLE_UNLIKELY(::rx::webgpu::IsWgpuError(ANGLE_LOCAL_VAR))) \
+        {                                                               \
+            (context)->handleWgpuError();                               \
+            return angle::Result::Stop;                                 \
+        }                                                               \
     } while (0)
 
 #define ANGLE_WGPU_BEGIN_DEBUG_ERROR_SCOPE(context)                            \
