@@ -94,20 +94,6 @@ static bool containsURLTokens(std::span<const CSSParserToken> tokens)
     return false;
 }
 
-// A comma-containing value can be passed as a single free-form-production argument by wrapping it in
-// curly braces. The braces are syntactic and the argument is the block's contents.
-// https://drafts.csswg.org/css-values-5/#component-function-commas
-NODELETE static CSSParserTokenRange unwrapArgumentBraces(CSSParserTokenRange argument)
-{
-    auto range = argument;
-    range.consumeWhitespace();
-    if (range.peek().type() != LeftBraceToken)
-        return argument;
-    auto contents = range.consumeBlock();
-    range.consumeWhitespace();
-    return range.atEnd() ? contents : argument;
-}
-
 void SubstitutionResolver::propagateAttrTaint(IsAttrTainted isAttrTainted, std::span<const CSSParserToken> tokens)
 {
     if (isAttrTainted != IsAttrTainted::Yes)
@@ -157,7 +143,7 @@ auto SubstitutionResolver::substituteVarArgumentGrammar(CSSParserTokenRange rang
     auto nameArgStart = range;
     while (!range.atEnd() && range.peek().type() != CommaToken)
         range.consumeComponentValue();
-    auto nameArgRange = unwrapArgumentBraces(nameArgStart.rangeUntil(range));
+    auto nameArgRange = CSSSubstitutionParser::unwrapArgumentBraces(nameArgStart.rangeUntil(range));
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range)) {
@@ -525,7 +511,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
             auto argumentRange = CSSPropertyParserHelpers::consumeArgument(range, i);
             if (!argumentRange)
                 break;
-            auto substituted = substituteTokenRange(unwrapArgumentBraces(*argumentRange), m_substitutionValue->context());
+            auto substituted = substituteTokenRange(CSSSubstitutionParser::unwrapArgumentBraces(*argumentRange), m_substitutionValue->context());
             // A failed substitution leaves the argument guaranteed-invalid (empty) so it defaults via
             // first-valid(), rather than aborting. https://drafts.csswg.org/css-mixins/#replace-a-dashed-function
             result.append(substituted.value_or(Vector<CSSParserToken> { }));
@@ -681,7 +667,7 @@ auto SubstitutionResolver::substituteAttrArgumentGrammar(CSSParserTokenRange ran
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
-        fallbackRange = unwrapArgumentBraces(range);
+        fallbackRange = CSSSubstitutionParser::unwrapArgumentBraces(range);
 
     auto substitutedFirstArg = substituteTokenRange(firstArgRange, context);
     if (!substitutedFirstArg)
@@ -959,7 +945,7 @@ bool SubstitutionResolver::substituteInternalAutoBaseFunction(CSSParserTokenRang
 
     auto selectedRange = isBaseAppearance() ? *secondArgRange : *firstArgRange;
 
-    auto selectedTokens = substituteTokenRange(unwrapArgumentBraces(selectedRange), context);
+    auto selectedTokens = substituteTokenRange(CSSSubstitutionParser::unwrapArgumentBraces(selectedRange), context);
     if (!selectedTokens)
         return false;
 
@@ -1015,7 +1001,7 @@ bool SubstitutionResolver::substituteIdentFunction(CSSParserTokenRange range, Ve
     // The argument is substituted first, then parsed as <ident-arg>+. The parts are concatenated with
     // no separator, so ident("--" attr(id)) makes a <dashed-ident> out of an attribute value.
 
-    auto substitutedArgument = substituteTokenRange(unwrapArgumentBraces(range), context);
+    auto substitutedArgument = substituteTokenRange(CSSSubstitutionParser::unwrapArgumentBraces(range), context);
     if (!substitutedArgument)
         return false;
 
@@ -1086,7 +1072,7 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
     if (index >= items.size())
         index = items.size() - 1;
 
-    auto selectedTokens = substituteTokenRange(unwrapArgumentBraces(items[index]), context);
+    auto selectedTokens = substituteTokenRange(CSSSubstitutionParser::unwrapArgumentBraces(items[index]), context);
     if (!selectedTokens)
         return false;
 

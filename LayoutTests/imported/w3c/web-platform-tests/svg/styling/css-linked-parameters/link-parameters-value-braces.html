@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>link-parameters: a {}-wrapped param() value passes the block's contents</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#component-function-commas">
+<link rel="help" href="https://drafts.csswg.org/css-link-params/#funcdef-param">
+<link rel="match" href="link-parameters-value-braces-ref.html">
+<meta name="assert" content="The value of param(--bg, {green}) is green, without the {} block wrapper, whether it comes from the link-parameters property or from a URL fragment.">
+<style>
+  body { margin: 0; }
+  img { display: block; width: 100px; height: 100px; }
+  #property { link-parameters: param(--bg, {green}); }
+</style>
+<img id="property" src="resources/solid.svg">
+<img id="fragment" src="resources/solid.svg#:~:param(--bg,{green})">

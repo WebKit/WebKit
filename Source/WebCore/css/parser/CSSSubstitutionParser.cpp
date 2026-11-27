@@ -237,14 +237,28 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
 // mixed with other values, and a bare {} is not a valid value.
 // https://drafts.csswg.org/css-values-5/#component-function-commas
 // `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?
-// (random-item() items and the attr() fallback, which may be empty).
-static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
+// (random-item() items, the attr() fallback and the param() value, which may be empty).
+bool CSSSubstitutionParser::isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
 {
     if (argumentRange.atEnd())
         return allowEmpty;
 
     auto result = classifyBlock(argumentRange, parserContext);
     return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
+}
+
+// A comma-containing value can be passed as a single free-form-production argument by wrapping it in
+// curly braces. The braces are syntactic and the argument is the block's contents.
+// https://drafts.csswg.org/css-values-5/#component-function-commas
+CSSParserTokenRange CSSSubstitutionParser::unwrapArgumentBraces(CSSParserTokenRange argument)
+{
+    auto range = argument;
+    range.consumeWhitespace();
+    if (range.peek().type() != LeftBraceToken)
+        return argument;
+    auto contents = range.consumeBlock();
+    range.consumeWhitespace();
+    return range.atEnd() ? contents : argument;
 }
 
 // https://drafts.csswg.org/css-variables-2/#funcdef-var
@@ -261,7 +275,7 @@ bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext&
     while (!range.atEnd() && range.peek().type() != CommaToken)
         range.consumeComponentValue();
 
-    if (!isValidDeclarationValueArgument(nameArgStart.rangeUntil(range), parserContext, /* allowEmpty */ false))
+    if (!CSSSubstitutionParser::isValidDeclarationValueArgument(nameArgStart.rangeUntil(range), parserContext, /* allowEmpty */ false))
         return false;
 
     // The split stopped at a literal comma or at the end, so this covers both a missing and an empty fallback.
@@ -315,7 +329,7 @@ bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& pa
     while (auto argumentRange = CSSPropertyParserHelpers::consumeArgument(range, index)) {
         if (startsWithReservedNamedArgument(*argumentRange))
             return false;
-        if (!isValidDeclarationValueArgument(*argumentRange, parserContext, /* allowEmpty */ false))
+        if (!CSSSubstitutionParser::isValidDeclarationValueArgument(*argumentRange, parserContext, /* allowEmpty */ false))
             return false;
         ++index;
     }
@@ -347,7 +361,7 @@ bool isValidAttrReference(CSSParserTokenRange range, const CSSParserContext& par
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
         return range.atEnd();
 
-    return isValidDeclarationValueArgument(range, parserContext, /* allowEmpty */ true);
+    return CSSSubstitutionParser::isValidDeclarationValueArgument(range, parserContext, /* allowEmpty */ true);
 }
 
 // https://drafts.csswg.org/css-values-5/#funcdef-random-item
@@ -385,7 +399,7 @@ bool isValidRandomItemReference(CSSParserTokenRange range, const CSSParserContex
             range.consumeComponentValue();
         auto itemRange = itemStart.rangeUntil(range);
 
-        if (!isValidDeclarationValueArgument(itemRange, parserContext, /* allowEmpty */ true))
+        if (!CSSSubstitutionParser::isValidDeclarationValueArgument(itemRange, parserContext, /* allowEmpty */ true))
             return false;
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
 
@@ -438,7 +452,7 @@ bool isValidIdentReference(CSSParserTokenRange range, const CSSParserContext& pa
     if (!range.atEnd())
         return false;
 
-    return isValidDeclarationValueArgument(argumentStart.rangeUntil(range), parserContext, /* allowEmpty */ false);
+    return CSSSubstitutionParser::isValidDeclarationValueArgument(argumentStart.rangeUntil(range), parserContext, /* allowEmpty */ false);
 }
 
 struct VariableType {

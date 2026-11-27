@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Linked Parameters: {}-wrapped param() value</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#component-function-commas">
+<link rel="help" href="https://drafts.csswg.org/css-link-params/#funcdef-param">
+<meta name="assert" content="param()'s value is a <declaration-value>?, a free-form production: a lone {} block stands for its contents, and a value that does not start with { may not contain top-level commas or {} blocks.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+<script>
+  test_valid_value("link-parameters", "param(--a, {orange})", ["param(--a, orange)", "param(--a, {orange})"]);
+  test_valid_value("link-parameters", "param(--a, { orange })", ["param(--a, orange)", "param(--a, { orange })"]);
+  test_valid_value("link-parameters", "param(--a, {Arial, sans-serif})");
+  test_valid_value("link-parameters", "param(--a <color>, {orange})", ["param(--a <color>, orange)", "param(--a <color>, {orange})"]);
+  test_valid_value("link-parameters", "param(--a, {Arial, sans-serif}), param(--b, blue)");
+
+  test_invalid_value("link-parameters", "param(--a, {orange} blue)");
+  test_invalid_value("link-parameters", "param(--a, blue {orange})");
+  test_invalid_value("link-parameters", "param(--a, {Arial}, sans-serif)");
+  test_invalid_value("link-parameters", "param(--a, Arial, sans-serif)");
+</script>

@@ -54,6 +54,11 @@ public:
     NODELETE static bool isValidCustomPropertyName(const CSSParserToken&);
     // Consumes the <integer [0,∞]>* indices of an env() reference. Returns std::nullopt if one is invalid.
     static std::optional<Vector<unsigned, 2>> consumeEnvVariableIndices(CSSParserTokenRange&);
+
+    // Validate and unwrap a {}-wrapped free-form production argument.
+    // https://drafts.csswg.org/css-values-5/#component-function-commas
+    static bool isValidDeclarationValueArgument(CSSParserTokenRange, const CSSParserContext&, bool allowEmpty);
+    NODELETE static CSSParserTokenRange unwrapArgumentBraces(CSSParserTokenRange);
 };
 
 } // namespace WebCore

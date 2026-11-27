@@ -29,6 +29,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
+#include "CSSSubstitutionParser.h"
 #include "CSSVariableData.h"
 #include "DocumentPage.h"
 #include "ElementInlines.h"
@@ -143,7 +144,17 @@ void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
         };
 
         WTF::switchOn(parameter->resolved,
-            [&](LinkParameter::Unresolved) { set(parameter->value.value.copyRef()); },
+            [&](LinkParameter::Unresolved) {
+                // A {}-wrapped value stands for the block's contents.
+                // https://drafts.csswg.org/css-values-5/#component-function-commas
+                auto& value = parameter->value.value.get();
+                auto valueRange = value.tokenRange();
+                auto unwrappedRange = CSSSubstitutionParser::unwrapArgumentBraces(valueRange);
+                if (unwrappedRange.size() == valueRange.size())
+                    set(parameter->value.value.copyRef());
+                else
+                    set(CSSVariableData::create(unwrappedRange, value.isAttrTainted(), value.context()));
+            },
             [](LinkParameter::Invalid) { },
             [&](const Ref<CSSVariableData>& resolved) { set(resolved.copyRef()); }
         );
