@@ -212,9 +212,18 @@ PASS Parsing origin: <../../test.txt> against <http://www.example.com/test>
 PASS Parsing origin: <中/test.txt> against <http://www.example.com/test>
 PASS Parsing origin: <http://www.example2.com> against <http://www.example.com/test>
 PASS Parsing origin: <//www.example2.com> against <http://www.example.com/test>
+PASS Parsing origin: <HTTP://example.com/> against <about:blank>
+PASS Parsing origin: <javascript:> against <about:blank>
+PASS Parsing origin: <JavaScript:Foo> against <about:blank>
+PASS Parsing origin: <javascript:alert(	 1
+\r)> against <about:blank>
+PASS Parsing origin: <javascript:alert("  β ")> against <about:blank>
+PASS Parsing origin: <http:////////user:@google.com:99?foo> against <about:blank>
 PASS Parsing origin: <http://ExAmPlE.CoM> against <http://other.com/>
 PASS Parsing origin: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Parsing origin: <\0 http://example.com/ \r > against <about:blank>
+PASS Parsing origin: <javascript:alert(1)> against <http://example.org/foo/bar>
+PASS Parsing origin: <http://example.com/> against <about:blank>
 PASS Parsing origin: <non-special:opaque  > against <about:blank>
 PASS Parsing origin: <non-special:opaque  ?hi> against <about:blank>
 PASS Parsing origin: <non-special:opaque  #hi> against <about:blank>
@@ -422,5 +431,12 @@ PASS Parsing origin: <non-special:\\opaque\path> against <about:blank>
 PASS Parsing origin: <non-special:\/opaque> against <about:blank>
 PASS Parsing origin: <non-special:/\path> against <about:blank>
 PASS Parsing origin: <non-special://host/a\b> against <about:blank>
+PASS Parsing origin: <p> against <git://host?q#r>
+PASS Parsing origin: <?q2> against <git://host?q#r>
+PASS Parsing origin: <#h> against <git://host?q#r>
+PASS Parsing origin: <?q2> against <git:/.//a?q#r>
+PASS Parsing origin: <#h> against <git:/.//a?q#r>
 PASS Parsing origin: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> against <about:blank>
+PASS Parsing origin: <b/c> against <http://example.com/U+d801/b>
+PASS Parsing origin: <http://www.google.com/asdf#U+d800> against <about:blank>
 

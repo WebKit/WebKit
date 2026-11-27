@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/url-origin.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-searchparams.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-a-area.window.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-setters-lone-surrogates.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-stripping.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-statics-canparse.any.js

@@ -4,6 +4,11 @@ PASS Parsing: <javascript:/example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <javascript:example.com/> against <http://example.org/foo/bar>
 PASS Parsing: <javascript:/example.com/> against <about:blank>
 PASS Parsing: <javascript:example.com/> against <about:blank>
+PASS Parsing: <javascript:> against <about:blank>
+PASS Parsing: <JavaScript:Foo> against <about:blank>
+PASS Parsing: <javascript:alert(	 1
+\r)> against <about:blank>
+PASS Parsing: <javascript:alert("  β ")> against <about:blank>
 PASS Parsing: <javascript:/../> against <about:blank>
 PASS Parsing: <> against <about:blank>
 PASS Parsing: <javascript://example.com:8080/pathname?search#hash> against <about:blank>

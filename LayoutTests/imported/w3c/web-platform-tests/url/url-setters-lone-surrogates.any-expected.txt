@@ -1,0 +1,7 @@
+
+PASS Setting pathname to a value with lone surrogates
+PASS Setting search to a value with lone surrogates
+PASS Setting hash to a value with lone surrogates
+PASS Setting host to a value with lone surrogates
+PASS Setting hostname to a value with lone surrogates
+

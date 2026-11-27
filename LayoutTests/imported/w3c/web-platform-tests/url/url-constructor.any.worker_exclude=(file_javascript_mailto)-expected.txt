@@ -231,6 +231,8 @@ PASS Parsing: <../../test.txt> against <http://www.example.com/test>
 PASS Parsing: <中/test.txt> against <http://www.example.com/test>
 PASS Parsing: <http://www.example2.com> against <http://www.example.com/test>
 PASS Parsing: <//www.example2.com> against <http://www.example.com/test>
+PASS Parsing: <HTTP://example.com/> without base
+PASS Parsing: <http:////////user:@google.com:99?foo> without base
 PASS Parsing: <http://ExAmPlE.CoM> against <http://other.com/>
 PASS Parsing: <http://example example.com> against <http://other.com/>
 PASS Parsing: <http://Goo%20 goo%7C|.com> against <http://other.com/>
@@ -239,6 +241,9 @@ PASS Parsing: <http://[:]> against <http://other.com/>
 PASS Parsing: <http://GOO 　goo.com> against <http://other.com/>
 PASS Parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Parsing: <\0 http://example.com/ \r > without base
+PASS Parsing: <http://example.com/> without base
+PASS Parsing: <javascript:alert(1)> against <http://example.org/foo/bar>
+PASS Parsing: <http://example.com/> without base
 PASS Parsing: <non-special:opaque  > without base
 PASS Parsing: <non-special:opaque  ?hi> without base
 PASS Parsing: <non-special:opaque  #hi> without base
@@ -264,6 +269,8 @@ PASS Parsing: <http://％４１.com> against <http://other.com/>
 PASS Parsing: <http://%ef%bc%85%ef%bc%94%ef%bc%91.com> against <http://other.com/>
 PASS Parsing: <http://％００.com> against <http://other.com/>
 PASS Parsing: <http://%ef%bc%85%ef%bc%90%ef%bc%90.com> against <http://other.com/>
+PASS Parsing: <http://example.com／foo/> without base
+PASS Parsing: <http://www.lookout.net：80/> without base
 PASS Parsing: <http://你好你好> against <http://other.com/>
 PASS Parsing: <https://faß.ExAmPlE/> without base
 PASS Parsing: <sc://faß.ExAmPlE/> without base
@@ -290,6 +297,9 @@ PASS Parsing: <http://[::1.]> against <http://other.com/>
 PASS Parsing: <http://[::.1]> against <http://other.com/>
 PASS Parsing: <http://[::%31]> against <http://other.com/>
 PASS Parsing: <http://%5B::1]> against <http://other.com/>
+PASS Parsing: <http://[2001::1> without base
+PASS Parsing: <http://[[::]]> without base
+PASS Parsing: <http://[61:27]:98> without base
 PASS Parsing: <http://foo:💩@example.com/bar> against <http://other.com/>
 PASS Parsing: <http://😀x@host/> without base
 PASS Parsing: <http://a:😀x@host/> without base
@@ -751,5 +761,12 @@ PASS Parsing: <data:text/plain,test#\0
 \r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé> without base
 PASS Parsing: <about:blank#\0	
 \r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé> without base
+PASS Parsing: <p> against <git://host?q#r>
+PASS Parsing: <?q2> against <git://host?q#r>
+PASS Parsing: <#h> against <git://host?q#r>
+PASS Parsing: <?q2> against <git:/.//a?q#r>
+PASS Parsing: <#h> against <git:/.//a?q#r>
 PASS Parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
+PASS Parsing: <b/c> against <http://example.com/U+d801/b>
+PASS Parsing: <http://www.google.com/asdf#U+d800> without base
 

@@ -13,4 +13,5 @@ PASS Serialize 💩
 PASS URLSearchParams.toString
 PASS URLSearchParams connected to URL
 PASS URLSearchParams must not do newline normalization
+PASS Serialize U+0000 to U+00FF
 

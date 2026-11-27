@@ -212,9 +212,18 @@ PASS Origin parsing: <../../test.txt> against <http://www.example.com/test>
 PASS Origin parsing: <中/test.txt> against <http://www.example.com/test>
 PASS Origin parsing: <http://www.example2.com> against <http://www.example.com/test>
 PASS Origin parsing: <//www.example2.com> against <http://www.example.com/test>
+PASS Origin parsing: <HTTP://example.com/> without base
+PASS Origin parsing: <javascript:> without base
+PASS Origin parsing: <JavaScript:Foo> without base
+PASS Origin parsing: <javascript:alert(	 1
+\r)> without base
+PASS Origin parsing: <javascript:alert("  β ")> without base
+PASS Origin parsing: <http:////////user:@google.com:99?foo> without base
 PASS Origin parsing: <http://ExAmPlE.CoM> against <http://other.com/>
 PASS Origin parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>
 PASS Origin parsing: <\0 http://example.com/ \r > without base
+PASS Origin parsing: <javascript:alert(1)> against <http://example.org/foo/bar>
+PASS Origin parsing: <http://example.com/> without base
 PASS Origin parsing: <non-special:opaque  > without base
 PASS Origin parsing: <non-special:opaque  ?hi> without base
 PASS Origin parsing: <non-special:opaque  #hi> without base
@@ -423,5 +432,12 @@ PASS Origin parsing: <non-special:\\opaque\path> without base
 PASS Origin parsing: <non-special:\/opaque> without base
 PASS Origin parsing: <non-special:/\path> without base
 PASS Origin parsing: <non-special://host/a\b> without base
+PASS Origin parsing: <p> against <git://host?q#r>
+PASS Origin parsing: <?q2> against <git://host?q#r>
+PASS Origin parsing: <#h> against <git://host?q#r>
+PASS Origin parsing: <?q2> against <git:/.//a?q#r>
+PASS Origin parsing: <#h> against <git:/.//a?q#r>
 PASS Origin parsing: <http://example.com/U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿?U+d800𐟾U+dfff﷐﷏﷯ﷰ￾￿> without base
+PASS Origin parsing: <b/c> against <http://example.com/U+d801/b>
+PASS Origin parsing: <http://www.google.com/asdf#U+d800> without base
 
