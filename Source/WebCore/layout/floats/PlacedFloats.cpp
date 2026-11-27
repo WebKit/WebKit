@@ -47,6 +47,16 @@ PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeome
 {
 }
 
+PlacedFloats::Item::Item(const Box& layoutBox, Position position, const Rect& marginBoxRect, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft)
+    : m_layoutBox(layoutBox)
+    , m_position(position)
+    , m_absoluteBoxGeometry(absoluteBoxGeometry)
+    , m_marginBoxRect(marginBoxRect)
+    , m_localTopLeft(localTopLeft)
+    , m_shape(layoutBox.shape())
+{
+}
+
 PlacedFloats::Item::Item(const Box& layoutBox, Position position)
     : m_layoutBox(layoutBox)
     , m_position(position)

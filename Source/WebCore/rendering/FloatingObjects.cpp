@@ -279,7 +279,8 @@ static Layout::PlacedFloats::Item placedFloatItem(const RenderBlockFlow& block, 
     boxGeometry.setVerticalMargin({ marginBefore, marginBoxLogicalHeight - marginBefore - borderBoxLogicalHeight });
 
     auto position = (floatBox->usedStyle().floating() == UsedFloat::Left) == isLeftToRight ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
-    return { floatBox->layoutBox(), position, boxGeometry, borderBoxTopLeft, { } };
+    auto marginBoxRect = Layout::Rect { block.logicalTopForFloat(floatingObject), marginBoxInlineStart, marginBoxLogicalWidth, marginBoxLogicalHeight };
+    return { floatBox->layoutBox(), position, marginBoxRect, boxGeometry, borderBoxTopLeft };
 }
 
 FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
