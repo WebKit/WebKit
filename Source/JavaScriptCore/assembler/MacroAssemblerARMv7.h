@@ -391,7 +391,8 @@ public:
     void mul64(RegisterID op1Hi, RegisterID op1Lo, RegisterID op2Hi, RegisterID op2Lo, RegisterID destHi, RegisterID destLo)
     {
         // Check if dest registers will clobber the high parts we need later
-        if (destLo != op1Hi && destLo != op2Hi && destHi != op1Hi && destHi != op2Hi) {
+        if (destLo != op1Hi && destLo != op2Hi && destLo != op1Lo && destLo != op2Lo
+            && destHi != op1Hi && destHi != op2Hi && destHi != op1Lo && destHi != op2Lo) {
             // No overlap - direct computation
             m_assembler.umull(destLo, destHi, op1Lo, op2Lo);
             m_assembler.mla(destHi, op1Hi, op2Lo, destHi);
