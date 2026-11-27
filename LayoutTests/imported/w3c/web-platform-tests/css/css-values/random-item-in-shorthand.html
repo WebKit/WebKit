@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<title>CSS Values: random-item() in a shorthand uses the shorthand's name in its random cache name</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#random-caching">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#funcdef-random-item">
+<meta name="assert" content="Shorthands are recorded as part of the random cache name, rather than the longhand the value gets expanded to.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="holder"></div>
+<script>
+// random-item() is an arbitrary substitution function, so a shorthand using it is resolved at
+// computed-value time. The shorthand's name, not the longhands', goes into the random cache name,
+// so every longhand gets the same item.
+
+const COLORS = ['rgb(1, 0, 0)', 'rgb(2, 0, 0)', 'rgb(3, 0, 0)', 'rgb(4, 0, 0)',
+                'rgb(5, 0, 0)', 'rgb(6, 0, 0)', 'rgb(7, 0, 0)', 'rgb(8, 0, 0)'];
+const LENGTHS = ['1px', '2px', '3px', '4px', '5px', '6px', '7px', '8px'];
+
+// Enough elements that independent random values agreeing on every element by chance (about
+// 1 in 8^12 for the element-scoped keys below) can be discounted.
+const ELEMENT_COUNT = 12;
+
+// The values compared are random, so assert_equals() would put different values in its failure
+// message on every run. Failing test expectations need the message to be stable.
+function assert_random_values_equal(actual, expected, description) {
+  assert_true(actual == expected, description);
+}
+
+function computedStylesFor(declarations, properties) {
+  const holder = document.getElementById('holder');
+  try {
+    const results = [];
+    for (let i = 0; i < ELEMENT_COUNT; ++i) {
+      const element = document.createElement('div');
+      element.style.cssText = declarations;
+      holder.appendChild(element);
+      const style = getComputedStyle(element);
+      const values = {};
+      for (const property of properties)
+        values[property] = style.getPropertyValue(property);
+      results.push(values);
+    }
+    return results;
+  } finally {
+    holder.replaceChildren();
+  }
+}
+
+const BORDER_COLORS = ['border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color'];
+const PADDINGS = ['padding-top', 'padding-right', 'padding-bottom', 'padding-left'];
+
+for (const key of ['auto', 'property-scoped', 'property-index-scoped', 'element-scoped property-scoped', 'element-scoped property-index-scoped']) {
+  test(() => {
+    for (const values of computedStylesFor(`border-color: random-item(${key}, ${COLORS.join(', ')})`, BORDER_COLORS)) {
+      assert_in_array(values['border-top-color'], COLORS);
+      for (const property of BORDER_COLORS)
+        assert_random_values_equal(values[property], values['border-top-color'], `${property} matches border-top-color`);
+    }
+  }, `random-item(${key}, ...) in a shorthand gives every longhand the same item`);
+}
+
+test(() => {
+  const results = computedStylesFor(`padding: random-item(auto, ${LENGTHS.join(', ')}) random-item(auto, ${LENGTHS.join(', ')})`, PADDINGS);
+  for (const values of results) {
+    assert_in_array(values['padding-top'], LENGTHS);
+    assert_in_array(values['padding-left'], LENGTHS);
+    assert_random_values_equal(values['padding-bottom'], values['padding-top'], 'padding-bottom matches padding-top');
+    assert_random_values_equal(values['padding-right'], values['padding-left'], 'padding-right matches padding-left');
+  }
+  // The two random-item() functions are the 1st and 2nd in the shorthand's value, which gives
+  // them distinct random cache names.
+  assert_true(results.some(values => values['padding-top'] != values['padding-left']),
+    'padding-top and padding-left should not always be equal');
+}, 'random-item() functions in a shorthand are indexed before the shorthand is expanded');
+
+test(() => {
+  const results = computedStylesFor(`padding: random-item(auto, ${LENGTHS.join(', ')}) random-item(auto, ${LENGTHS.join(', ')}); padding-bottom: random-item(auto, ${LENGTHS.join(', ')})`, PADDINGS);
+  for (const values of results)
+    assert_random_values_equal(values['padding-right'], values['padding-left'], 'padding-right matches padding-left');
+  // padding-bottom's random cache name has "padding-bottom" in it, and padding-top's has
+  // "padding", so they are independent.
+  assert_true(results.some(values => values['padding-bottom'] != values['padding-top']),
+    'padding-bottom and padding-top should not always be equal');
+}, 'random-item() in a longhand is not shared with random-item() in its shorthand');
+
+test(() => {
+  const results = computedStylesFor(`border-color: random-item(element-scoped property-scoped, ${COLORS.join(', ')}); border-bottom-color: random-item(element-scoped property-scoped, ${COLORS.join(', ')})`, BORDER_COLORS);
+  for (const values of results) {
+    assert_random_values_equal(values['border-right-color'], values['border-top-color'], 'border-right-color matches border-top-color');
+    assert_random_values_equal(values['border-left-color'], values['border-top-color'], 'border-left-color matches border-top-color');
+  }
+  assert_true(results.some(values => values['border-bottom-color'] != values['border-top-color']),
+    'border-bottom-color and border-top-color should not always be equal');
+}, 'random-item(property-scoped) in a longhand is not shared with random-item(property-scoped) in its shorthand');
+</script>

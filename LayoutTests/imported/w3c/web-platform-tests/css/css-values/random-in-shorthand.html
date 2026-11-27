@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<title>CSS Values: random() in a shorthand uses the shorthand's name in its random cache name</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#random-caching">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#random">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#ident">
+<meta name="assert" content="Shorthands are recorded as part of the random cache name, rather than the longhand the value gets expanded to.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="holder"></div>
+<script>
+// Enough elements that independent random values agreeing on every element by chance can be
+// discounted.
+const ELEMENT_COUNT = 12;
+
+// The values compared are random, so assert_equals() would put different values in its failure
+// message on every run. Failing test expectations need the message to be stable.
+function assert_random_values_equal(actual, expected, description) {
+  assert_true(actual == expected, description);
+}
+
+function computedStylesFor(declarations, properties) {
+  const holder = document.getElementById('holder');
+  try {
+    const results = [];
+    for (let i = 0; i < ELEMENT_COUNT; ++i) {
+      const element = document.createElement('div');
+      element.style.cssText = declarations;
+      holder.appendChild(element);
+      const style = getComputedStyle(element);
+      const values = {};
+      for (const property of properties)
+        values[property] = style.getPropertyValue(property);
+      results.push(values);
+    }
+    return results;
+  } finally {
+    holder.replaceChildren();
+  }
+}
+
+const PADDINGS = ['padding-top', 'padding-right', 'padding-bottom', 'padding-left'];
+const GRID_LINES = ['grid-row-start', 'grid-column-start', 'grid-row-end', 'grid-column-end'];
+
+// The examples from https://drafts.csswg.org/css-values-5/#example-2ac13183, with padding instead of
+// margin.
+test(() => {
+  const results = computedStylesFor('padding: random(0px, 10000px) random(0px, 10000px)', PADDINGS);
+  for (const values of results) {
+    assert_random_values_equal(values['padding-bottom'], values['padding-top'], 'padding-bottom matches padding-top');
+    assert_random_values_equal(values['padding-right'], values['padding-left'], 'padding-right matches padding-left');
+  }
+  // The random cache names are "ua-padding-1" and "ua-padding-2".
+  assert_true(results.some(values => values['padding-top'] != values['padding-left']),
+    'padding-top and padding-left should not always be equal');
+}, 'random() functions in a shorthand are indexed before the shorthand is expanded');
+
+test(() => {
+  const results = computedStylesFor('padding: random(0px, 10000px) random(0px, 10000px); padding-bottom: random(0px, 10000px)', PADDINGS);
+  for (const values of results)
+    assert_random_values_equal(values['padding-right'], values['padding-left'], 'padding-right matches padding-left');
+  // padding-bottom's random cache name is "ua-padding-bottom-1", and padding-top's is
+  // "ua-padding-1", so they are independent.
+  assert_true(results.some(values => values['padding-bottom'] != values['padding-top']),
+    'padding-bottom and padding-top should not always be equal');
+}, 'random() in a longhand is not shared with random() in its shorthand');
+
+test(() => {
+  const results = computedStylesFor('padding: random(element-scoped property-scoped, 0px, 10000px); padding-bottom: random(element-scoped property-scoped, 0px, 10000px)', PADDINGS);
+  for (const values of results) {
+    assert_random_values_equal(values['padding-right'], values['padding-top'], 'padding-right matches padding-top');
+    assert_random_values_equal(values['padding-left'], values['padding-top'], 'padding-left matches padding-top');
+  }
+  assert_true(results.some(values => values['padding-bottom'] != values['padding-top']),
+    'padding-bottom and padding-top should not always be equal');
+}, 'random(property-scoped) in a longhand is not shared with random(property-scoped) in its shorthand');
+
+// var() makes the shorthand get parsed at computed-value time instead.
+test(() => {
+  const results = computedStylesFor('--zero: 0px; padding: calc(random(0px, 10000px) + var(--zero)) calc(random(0px, 10000px) + var(--zero))', PADDINGS);
+  for (const values of results) {
+    assert_random_values_equal(values['padding-bottom'], values['padding-top'], 'padding-bottom matches padding-top');
+    assert_random_values_equal(values['padding-right'], values['padding-left'], 'padding-right matches padding-left');
+  }
+  assert_true(results.some(values => values['padding-top'] != values['padding-left']),
+    'padding-top and padding-left should not always be equal');
+}, 'random() functions in a shorthand with var() are indexed before the shorthand is expanded');
+
+// ident() is an arbitrary substitution function, and evaluates the random() in its argument while
+// the shorthand is substituted.
+for (const key of ['auto', 'property-scoped', 'element-scoped property-index-scoped']) {
+  test(() => {
+    for (const values of computedStylesFor(`grid-area: ident("a" random(${key}, 1, 1000000))`, GRID_LINES)) {
+      assert_regexp_match(values['grid-row-start'], /^a[0-9]+$/);
+      for (const property of GRID_LINES)
+        assert_random_values_equal(values[property], values['grid-row-start'], `${property} matches grid-row-start`);
+    }
+  }, `random(${key}, ...) in ident() in a shorthand gives every longhand the same value`);
+}
+</script>

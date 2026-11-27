@@ -1,0 +1,10 @@
+
+PASS random-item(auto, ...) in a shorthand gives every longhand the same item
+PASS random-item(property-scoped, ...) in a shorthand gives every longhand the same item
+PASS random-item(property-index-scoped, ...) in a shorthand gives every longhand the same item
+PASS random-item(element-scoped property-scoped, ...) in a shorthand gives every longhand the same item
+PASS random-item(element-scoped property-index-scoped, ...) in a shorthand gives every longhand the same item
+PASS random-item() functions in a shorthand are indexed before the shorthand is expanded
+PASS random-item() in a longhand is not shared with random-item() in its shorthand
+PASS random-item(property-scoped) in a longhand is not shared with random-item(property-scoped) in its shorthand
+

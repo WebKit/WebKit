@@ -80,6 +80,7 @@ private:
     bool substituteRandomItemFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteIdentFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     std::optional<double> randomItemBaseValue(Vector<CSSParserToken> randomKey);
+    CSSPropertyID randomKeyProperty() const;
 
     struct VarArgumentGrammarSubstitution {
         // An unset name failed to parse as a <custom-property-name> after substitution.
@@ -119,6 +120,9 @@ private:
     Builder& m_styleBuilder;
     const CSSRegisteredCustomProperty* m_registration { nullptr };
     RefPtr<const CSSSubstitutionValue> m_substitutionValue;
+    // Set while substituting a shorthand's value. The value is substituted once for each longhand, but
+    // random-item() in it is keyed to the shorthand.
+    std::optional<CSSPropertyID> m_shorthandProperty;
     // The scope to look up a <dashed-function> name in, while resolving the parameter defaults of a
     // custom function: names there refer to the scope the function was defined in, not the calling
     // element's.

@@ -1112,7 +1112,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     // This index is counted in its own space, separate from random()'s parse-time
     // cssRandomFunctionCount, which is why the key records which function it came from.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = { m_styleBuilder.state().cssPropertyID(), protect(m_styleBuilder.state())->customPropertyName(), CSSCalc::RandomFunction::RandomItem },
+        .property = { randomKeyProperty(), protect(m_styleBuilder.state())->customPropertyName(), CSSCalc::RandomFunction::RandomItem },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
@@ -1122,6 +1122,13 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
         return { };
 
     return CSSCalc::resolveRandomBaseValue(*sharing, protect(m_styleBuilder.state()));
+}
+
+CSSPropertyID SubstitutionResolver::randomKeyProperty() const
+{
+    // https://drafts.csswg.org/css-values-5/#random-caching
+    // "Note that shorthand declarations will apply the shorthand property's name."
+    return m_shorthandProperty.value_or(m_styleBuilder.state().cssPropertyID());
 }
 
 auto SubstitutionResolver::substituteIfArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<Vector<IfBranch>>
@@ -1434,6 +1441,7 @@ RefPtr<CSSValue> SubstitutionResolver::substituteAndParseShorthand(const CSSShor
 
     auto& substitutionValue = substitution.shorthandValue();
 
+    SetForScope scopedShorthandProperty(m_shorthandProperty, substitution.shorthandPropertyId());
     auto data = substituteUsingCache(substitutionValue);
     if (!data)
         return nullptr;
