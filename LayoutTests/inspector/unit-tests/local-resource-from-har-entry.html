@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("LocalResource.fromHAREntry");
+
+    const archiveStartWalltime = Date.parse("2026-01-01T00:00:00.000Z") / 1000;
+
+    function entryWithTimings(timings)
+    {
+        let request = {method: "GET", url: "https://example.com/fake.js", httpVersion: "HTTP/1.1", cookies: [], headers: [], queryString: [], headersSize: -1, bodySize: -1};
+        let response = {status: 200, statusText: "OK", httpVersion: "HTTP/1.1", cookies: [], headers: [], content: {size: 1234, mimeType: "text/javascript", text: ""}, redirectURL: "", headersSize: -1, bodySize: -1};
+        return {startedDateTime: "2026-01-01T00:00:01.000Z", time: 6, request, response, cache: {}, timings};
+    }
+
+    suite.addTestCase({
+        name: "LocalResource.fromHAREntry.OptionalTimingsOmitted",
+        description: "Omitted optional timings should be treated like -1 placeholders.",
+        test() {
+            let withPlaceholders = WI.LocalResource.fromHAREntry(entryWithTimings({blocked: -1, dns: -1, connect: -1, ssl: -1, send: 1, wait: 2, receive: 3}), archiveStartWalltime);
+            let withOmittedOptionals = WI.LocalResource.fromHAREntry(entryWithTimings({send: 1, wait: 2, receive: 3}), archiveStartWalltime);
+            InspectorTest.expectFalse(isNaN(withOmittedOptionals.timingData.responseEnd), "Omitting optional HAR timings should still produce valid timing data.");
+            InspectorTest.expectEqualWithAccuracy(withOmittedOptionals.timingData.responseEnd, withPlaceholders.timingData.responseEnd, 0.000001, "Omitting optional HAR timings should give the same responseEnd as -1 placeholders.");
+            InspectorTest.expectEqualWithAccuracy(withOmittedOptionals.timingData.requestStart, withPlaceholders.timingData.requestStart, 0.000001, "Omitting optional HAR timings should give the same requestStart as -1 placeholders.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResource.fromHAREntry.PartialOptionalTimings",
+        description: "Only the optional timings that are present should be used.",
+        test() {
+            // dns omitted, connect and ssl present.
+            let dnsOmitted = WI.LocalResource.fromHAREntry(entryWithTimings({connect: 1, ssl: 1, send: 1, wait: 2, receive: 3}), archiveStartWalltime);
+            InspectorTest.expectThat(isNaN(dnsOmitted.timingData.domainLookupStart), "Omitting dns should leave domainLookupStart unset.");
+            InspectorTest.expectEqualWithAccuracy(dnsOmitted.timingData.connectStart, 1, 0.000001, "A present connect timing should be used.");
+            InspectorTest.expectEqualWithAccuracy(dnsOmitted.timingData.secureConnectionStart, 1, 0.000001, "A present ssl timing should be used.");
+
+            // ssl without connect is not applicable.
+            let sslWithoutConnect = WI.LocalResource.fromHAREntry(entryWithTimings({ssl: 2, send: 1, wait: 2, receive: 3}), archiveStartWalltime);
+            InspectorTest.expectThat(isNaN(sslWithoutConnect.timingData.connectStart), "Omitting connect should leave connectStart unset.");
+            InspectorTest.expectThat(isNaN(sslWithoutConnect.timingData.secureConnectionStart), "ssl without connect should leave secureConnectionStart unset.");
+            InspectorTest.expectFalse(isNaN(sslWithoutConnect.timingData.responseEnd), "ssl without connect should still produce valid timing data.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResource.fromHAREntry.InvalidRequiredTimings",
+        description: "Negative or missing send, wait and receive should not run time backwards.",
+        test() {
+            let negativeRequired = WI.LocalResource.fromHAREntry(entryWithTimings({blocked: 1, dns: 1, connect: 1, ssl: 1, send: -1, wait: -1, receive: -1}), archiveStartWalltime);
+            InspectorTest.expectFalse(isNaN(negativeRequired.timingData.responseEnd), "Negative send, wait and receive should still produce valid timing data.");
+            InspectorTest.expectThat(negativeRequired.timingData.responseEnd >= negativeRequired.timingData.startTime, "Negative send, wait and receive should not run time backwards.");
+
+            let missingWait = WI.LocalResource.fromHAREntry(entryWithTimings({send: 1, receive: 3}), archiveStartWalltime);
+            InspectorTest.expectFalse(isNaN(missingWait.timingData.responseEnd), "A missing wait should still produce valid timing data.");
+            InspectorTest.expectEqualWithAccuracy(missingWait.timingData.responseEnd, 1.004, 0.000001, "A missing wait should count as zero.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResource.fromHAREntry.NoTimings",
+        description: "An entry without a timings object should import without timing data.",
+        test() {
+            let withoutTimings = WI.LocalResource.fromHAREntry(entryWithTimings(undefined), archiveStartWalltime);
+            InspectorTest.expectThat(isNaN(withoutTimings.timingData.responseEnd), "A HAR entry without a timings object should import without timing data.");
+            InspectorTest.expectEqual(withoutTimings.url, "https://example.com/fake.js", "A HAR entry without a timings object should still import its URL.");
+
+            let withNullTimings = WI.LocalResource.fromHAREntry(entryWithTimings(null), archiveStartWalltime);
+            InspectorTest.expectThat(isNaN(withNullTimings.timingData.responseEnd), "A HAR entry with null timings should import without timing data.");
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing WI.LocalResource.fromHAREntry.</p>
+</body>
+</html>

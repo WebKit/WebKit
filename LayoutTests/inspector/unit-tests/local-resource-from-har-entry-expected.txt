@@ -1,0 +1,28 @@
+Testing WI.LocalResource.fromHAREntry.
+
+
+== Running test suite: LocalResource.fromHAREntry
+-- Running test case: LocalResource.fromHAREntry.OptionalTimingsOmitted
+PASS: Omitting optional HAR timings should still produce valid timing data.
+PASS: Omitting optional HAR timings should give the same responseEnd as -1 placeholders.
+PASS: Omitting optional HAR timings should give the same requestStart as -1 placeholders.
+
+-- Running test case: LocalResource.fromHAREntry.PartialOptionalTimings
+PASS: Omitting dns should leave domainLookupStart unset.
+PASS: A present connect timing should be used.
+PASS: A present ssl timing should be used.
+PASS: Omitting connect should leave connectStart unset.
+PASS: ssl without connect should leave secureConnectionStart unset.
+PASS: ssl without connect should still produce valid timing data.
+
+-- Running test case: LocalResource.fromHAREntry.InvalidRequiredTimings
+PASS: Negative send, wait and receive should still produce valid timing data.
+PASS: Negative send, wait and receive should not run time backwards.
+PASS: A missing wait should still produce valid timing data.
+PASS: A missing wait should count as zero.
+
+-- Running test case: LocalResource.fromHAREntry.NoTimings
+PASS: A HAR entry without a timings object should import without timing data.
+PASS: A HAR entry without a timings object should still import its URL.
+PASS: A HAR entry with null timings should import without timing data.
+
