@@ -81,7 +81,7 @@ public:
 #endif
 
 #if USE(APPKIT)
-    NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
+    NSEvent* nativeEvent() const LIFETIME_BOUND { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)

@@ -50,7 +50,7 @@ public:
         return dynamicDowncast<T>(m_elements[i].get());
     }
 
-    Object* at(size_t i) const { return m_elements[i].get(); }
+    Object* at(size_t i) const LIFETIME_BOUND { return m_elements[i].get(); }
     size_t size() const { return m_elements.size(); }
 
     const Vector<RefPtr<Object>>& elements() const LIFETIME_BOUND { return m_elements; }

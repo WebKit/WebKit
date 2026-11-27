@@ -126,7 +126,7 @@ public:
     void prepareToDisplay();
     void createContextAndPaintContents();
 
-    RemoteImageBufferSetProxy* bufferSet() { return m_bufferSet.get(); }
+    RemoteImageBufferSetProxy* bufferSet() LIFETIME_BOUND { return m_bufferSet.get(); }
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing);
     void submitDrawingCommands();

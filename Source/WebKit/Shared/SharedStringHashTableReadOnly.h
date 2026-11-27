@@ -41,7 +41,7 @@ public:
 
     NODELETE bool contains(WebCore::SharedStringHash) const;
 
-    WebCore::SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
+    WebCore::SharedMemory* sharedMemory() const LIFETIME_BOUND { return m_sharedMemory.get(); }
     void setSharedMemory(RefPtr<WebCore::SharedMemory>&&);
 
 protected:

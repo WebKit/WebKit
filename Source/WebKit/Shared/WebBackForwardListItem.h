@@ -59,9 +59,9 @@ public:
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
 
-    BrowsingContextGroup* browsingContextGroup() const { return m_browsingContextGroup.get(); }
+    BrowsingContextGroup* browsingContextGroup() const LIFETIME_BOUND { return m_browsingContextGroup.get(); }
 
-    NODELETE const FrameState& mainFrameState() const;
+    NODELETE const FrameState& mainFrameState() const LIFETIME_BOUND;
     Ref<FrameState> copyMainFrameState() const;
     Ref<FrameState> copyMainFrameStateWithChildren() const;
 
@@ -77,20 +77,20 @@ public:
     bool hasSameMainFrameHistoryEntry(const WebBackForwardListItem&) const;
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    ViewSnapshot* snapshot() const { return m_snapshot.get(); }
+    ViewSnapshot* snapshot() const LIFETIME_BOUND { return m_snapshot.get(); }
     void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_snapshot = WTF::move(snapshot); }
 #endif
 
     void wasRemovedFromBackForwardList();
 
-    WebBackForwardCacheEntry* backForwardCacheEntry() const { return m_backForwardCacheEntry.get(); }
+    WebBackForwardCacheEntry* backForwardCacheEntry() const LIFETIME_BOUND { return m_backForwardCacheEntry.get(); }
     NODELETE WebBackForwardCacheEntry* backForwardCacheEntryForProcess(WebCore::ProcessIdentifier) const;
 
     NODELETE SuspendedPageProxy* suspendedPage() const;
 
     std::optional<WebCore::FrameIdentifier> navigatedFrameID() const { return m_navigatedFrameID; }
 
-    NODELETE WebBackForwardListFrameItem& navigatedFrameItem() const;
+    NODELETE WebBackForwardListFrameItem& navigatedFrameItem() const LIFETIME_BOUND;
 
     // rdar://168057355
     WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }

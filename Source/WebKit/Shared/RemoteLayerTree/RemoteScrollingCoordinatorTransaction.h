@@ -46,8 +46,8 @@ public:
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
 
-    std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
-    const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const { return m_scrollingStateTree; }
+    std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() LIFETIME_BOUND { return m_scrollingStateTree; }
+    const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const LIFETIME_BOUND { return m_scrollingStateTree; }
 
     std::optional<WebCore::FrameIdentifier> rootFrameIdentifier() const { return m_rootFrameID; }
     void setFrameIdentifier(WebCore::FrameIdentifier identifier) { m_rootFrameID = identifier; }

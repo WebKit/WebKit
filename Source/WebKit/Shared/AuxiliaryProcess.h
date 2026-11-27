@@ -107,7 +107,7 @@ public:
 
     static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
 
-    IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
+    IPC::Connection* parentProcessConnection() const LIFETIME_BOUND { return m_connection.get(); }
 
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
 

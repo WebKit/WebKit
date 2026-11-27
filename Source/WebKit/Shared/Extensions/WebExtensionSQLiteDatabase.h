@@ -88,7 +88,7 @@ public:
 
     sqlite3* sqlite3Handle() const LIFETIME_BOUND { return m_db; };
     NODELETE void assertQueue();
-    WorkQueue& queue() const { return m_queue; };
+    WorkQueue& queue() const LIFETIME_BOUND { return m_queue; };
 
 private:
     WebExtensionSQLiteDatabase(const URL&, Ref<WorkQueue>&&);

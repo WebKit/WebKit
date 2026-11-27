@@ -73,7 +73,7 @@ protected:
     DatabaseResult setDatabaseSchemaVersion(SchemaVersion newVersion);
     virtual SchemaVersion migrateToCurrentSchemaVersionIfNeeded();
 
-    WorkQueue& queue() { return m_queue; };
+    WorkQueue& queue() LIFETIME_BOUND { return m_queue; };
     RefPtr<WebExtensionSQLiteDatabase> database() { return m_database; };
     String uniqueIdentifier() { return m_uniqueIdentifier; };
     const UTF8CString& lastErrorMessage() LIFETIME_BOUND { return m_database->m_lastErrorMessage; };

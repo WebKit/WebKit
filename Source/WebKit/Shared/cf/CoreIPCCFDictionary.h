@@ -54,7 +54,7 @@ public:
     CoreIPCCFDictionary(std::unique_ptr<KeyValueVector>&&);
     ~CoreIPCCFDictionary();
     RetainPtr<CFDictionaryRef> createCFDictionary() const;
-    const std::unique_ptr<KeyValueVector>& vector() const { return m_vector; }
+    const std::unique_ptr<KeyValueVector>& vector() const LIFETIME_BOUND { return m_vector; }
 private:
     std::unique_ptr<KeyValueVector> m_vector;
 };

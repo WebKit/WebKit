@@ -43,7 +43,7 @@ public:
     };
     static RefPtr<API::Object> transform(API::Object*, const Transformer&);
 
-    API::Object* object() const { return m_object.get(); }
+    API::Object* object() const LIFETIME_BOUND { return m_object.get(); }
     RefPtr<API::Object> objectForSerialization() const { return m_object; }
 
 private:

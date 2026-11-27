@@ -52,7 +52,7 @@ public:
     {
     }
 
-    WTF::StringView stringView() const { return m_string; }
+    WTF::StringView stringView() const LIFETIME_BOUND { return m_string; }
     WTF::String string() const { return m_string.isolatedCopy(); }
 
 private:

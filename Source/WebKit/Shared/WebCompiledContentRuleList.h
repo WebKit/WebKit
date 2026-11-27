@@ -48,7 +48,7 @@ private:
     std::span<const uint8_t> frameURLFiltersBytecode() const final;
     std::span<const uint8_t> serializedActions() const final;
     
-    NODELETE std::span<const uint8_t> spanWithOffsetAndLength(size_t, size_t) const;
+    NODELETE std::span<const uint8_t> spanWithOffsetAndLength(size_t, size_t) const LIFETIME_BOUND;
 
     WebCompiledContentRuleListData m_data;
 };

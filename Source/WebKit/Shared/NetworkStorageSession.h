@@ -119,7 +119,7 @@ public:
         : WebCore::CookieStorageSession(sessionID) { }
     ~NetworkStorageSession();
 
-    CookieStorageObserver& cookieStorageObserver() const;
+    CookieStorageObserver& cookieStorageObserver() const LIFETIME_BOUND;
 #elif USE(SOUP)
     explicit NetworkStorageSession(PAL::SessionID, IsInMemoryCookieStore = IsInMemoryCookieStore::No);
     ~NetworkStorageSession();

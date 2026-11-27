@@ -77,7 +77,7 @@ public:
     CoreIPCCFType(UniqueRef<CFObjectValue>&&);
     ~CoreIPCCFType();
 
-    const UniqueRef<CFObjectValue>& object() const { return m_object; }
+    const UniqueRef<CFObjectValue>& object() const LIFETIME_BOUND { return m_object; }
     RetainPtr<id> toID() const;
     RetainPtr<CFTypeRef> toCFType() const;
 

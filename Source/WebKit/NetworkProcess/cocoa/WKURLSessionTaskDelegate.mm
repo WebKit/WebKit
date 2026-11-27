@@ -68,7 +68,7 @@
 {
     if (!_session)
         return nil;
-    return protect(WebKit::NetworkProcess::singleton())->parentProcessConnection();
+    return WebKit::NetworkProcess::singleton().parentProcessConnection();
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler

@@ -160,7 +160,7 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
     return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
 }
 
-const FrameState& WebBackForwardListItem::mainFrameState() const
+const FrameState& WebBackForwardListItem::mainFrameState() const LIFETIME_BOUND
 {
     return m_mainFrameItem->frameState();
 }
@@ -200,7 +200,7 @@ void WebBackForwardListItem::setWasRestoredFromSession()
     m_mainFrameItem->setWasRestoredFromSession();
 }
 
-WebBackForwardListFrameItem& WebBackForwardListItem::navigatedFrameItem() const
+WebBackForwardListFrameItem& WebBackForwardListItem::navigatedFrameItem() const LIFETIME_BOUND
 {
     if (m_navigatedFrameID) {
         if (auto* childItem = m_mainFrameItem->childItemForFrameID(*m_navigatedFrameID))

@@ -136,7 +136,7 @@ public:
 
     RetainPtr<id> toID() const;
 
-    const UniqueRef<ObjectValue>& value() const { return m_value; }
+    const UniqueRef<ObjectValue>& value() const LIFETIME_BOUND { return m_value; }
 private:
     UniqueRef<ObjectValue> m_value;
 };

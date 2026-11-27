@@ -105,8 +105,8 @@ public:
         return adoptRef(*new IPCTesterNode(WTF::move(name), WTF::move(children)));
     }
 
-    const String& name() const { return m_name; }
-    const Vector<Ref<IPCTesterNode>>& children() const { return m_children; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
+    const Vector<Ref<IPCTesterNode>>& children() const LIFETIME_BOUND { return m_children; }
 
 private:
     IPCTesterNode(String&& name, Vector<Ref<IPCTesterNode>>&& children)

@@ -45,7 +45,7 @@ public:
 
     NODELETE static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
 
-    FrameState& frameState() const { return m_frameState; }
+    FrameState& frameState() const LIFETIME_BOUND { return m_frameState; }
     void updateFrameStatePayload(Ref<FrameState>&&);
 
     Ref<FrameState> copyFrameState();
@@ -67,7 +67,7 @@ public:
     NODELETE WebBackForwardListFrameItem* childItemForFrameItemID(WebCore::BackForwardFrameItemIdentifier);
     NODELETE WebBackForwardListFrameItem* childItemForFrameName(const String& frameName);
     NODELETE WebBackForwardListFrameItem* childItemAtIndex(uint64_t);
-    const Vector<Ref<WebBackForwardListFrameItem>>& children() const { return m_children; }
+    const Vector<Ref<WebBackForwardListFrameItem>>& children() const LIFETIME_BOUND { return m_children; }
     NODELETE bool containsItemSequenceNumber(int64_t) const;
 
     NODELETE WebBackForwardListItem* backForwardListItem() const;

@@ -152,7 +152,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
+CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const LIFETIME_BOUND
 {
     if (!m_cookieStorageObserver)
         m_cookieStorageObserver = makeUnique<CookieStorageObserver>(nsCookieStorage().get());

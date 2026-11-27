@@ -57,7 +57,7 @@ public:
     RetainPtr<id> toID() const;
     static bool isPlistType(id);
 
-    const UniqueRef<PlistValue>& value() const { return m_value; }
+    const UniqueRef<PlistValue>& value() const LIFETIME_BOUND { return m_value; }
 private:
     UniqueRef<PlistValue> m_value;
 };

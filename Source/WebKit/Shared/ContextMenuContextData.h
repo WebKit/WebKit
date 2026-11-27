@@ -114,7 +114,7 @@ public:
 
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, RefPtr<WebCore::ShareableBitmap>&& controlledImage, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
 
-    WebCore::ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
+    WebCore::ShareableBitmap* controlledImage() const LIFETIME_BOUND { return m_controlledImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
 
     const WebCore::AttributedString& controlledSelection() const LIFETIME_BOUND { return m_controlledSelection; }
@@ -131,9 +131,9 @@ public:
 #endif // ENABLE(SERVICE_CONTROLS)
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    WebCore::ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    WebCore::ShareableBitmap* potentialQRCodeNodeSnapshotImage() const LIFETIME_BOUND { return m_potentialQRCodeNodeSnapshotImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const;
-    WebCore::ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    WebCore::ShareableBitmap* potentialQRCodeViewportSnapshotImage() const LIFETIME_BOUND { return m_potentialQRCodeViewportSnapshotImage.get(); }
     std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
 
     const String& qrCodePayloadString() const LIFETIME_BOUND { return m_qrCodePayloadString; }

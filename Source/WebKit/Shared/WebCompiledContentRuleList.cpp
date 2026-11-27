@@ -64,7 +64,7 @@ std::span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
     return spanWithOffsetAndLength(m_data.actionsOffset, m_data.actionsSize);
 }
 
-std::span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
+std::span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const LIFETIME_BOUND
 {
     RELEASE_ASSERT(offset + length <= m_data.data->size());
     return m_data.data->span().subspan(offset, length);
