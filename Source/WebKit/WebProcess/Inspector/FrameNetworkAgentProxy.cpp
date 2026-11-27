@@ -495,16 +495,14 @@ static String webSocketPayloadData(const WebSocketFrame& frame)
 
 void FrameNetworkAgentProxy::didCreateWebSocket(WebSocketChannelIdentifier identifier, const URL& requestURL)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     // The socket belongs to the document committed in this proxy's frame, so report that document's loader.
     String loaderId;
     if (RefPtr webFrame = WebProcess::singleton().webFrame(m_frameID)) {
         if (RefPtr localFrame = webFrame->coreLocalFrame()) {
             RefPtr documentLoader = localFrame->loader().documentLoader();
-            loaderId = loaderIdForLoader(*page, documentLoader.get());
+            loaderId = loaderIdForLoader(page, documentLoader.get());
         }
     }
 
@@ -523,9 +521,7 @@ void FrameNetworkAgentProxy::willSendWebSocketHandshakeRequest(WebSocketChannelI
 
 void FrameNetworkAgentProxy::didSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     auto walltime = WallTime::now().secondsSinceEpoch().value();
     protect(WebProcess::singleton().parentProcessConnection())->send(
@@ -535,9 +531,7 @@ void FrameNetworkAgentProxy::didSendWebSocketHandshakeRequest(WebSocketChannelId
 
 void FrameNetworkAgentProxy::didReceiveWebSocketHandshakeResponse(WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::WebSocketHandshakeResponseReceived(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), response.httpStatusCode(), response.httpStatusText(), response.httpHeaderFields()),
@@ -546,9 +540,7 @@ void FrameNetworkAgentProxy::didReceiveWebSocketHandshakeResponse(WebSocketChann
 
 void FrameNetworkAgentProxy::didCloseWebSocket(WebSocketChannelIdentifier identifier)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::WebSocketClosed(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds()),
@@ -557,9 +549,7 @@ void FrameNetworkAgentProxy::didCloseWebSocket(WebSocketChannelIdentifier identi
 
 void FrameNetworkAgentProxy::didReceiveWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::WebSocketFrameReceived(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), frame.opCode, frame.masked, webSocketPayloadData(frame), frame.payload.size()),
@@ -568,9 +558,7 @@ void FrameNetworkAgentProxy::didReceiveWebSocketFrame(WebSocketChannelIdentifier
 
 void FrameNetworkAgentProxy::didSendWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::WebSocketFrameSent(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), frame.opCode, frame.masked, webSocketPayloadData(frame), frame.payload.size()),
@@ -579,9 +567,7 @@ void FrameNetworkAgentProxy::didSendWebSocketFrame(WebSocketChannelIdentifier id
 
 void FrameNetworkAgentProxy::didReceiveWebSocketFrameError(WebSocketChannelIdentifier identifier, const String& errorMessage)
 {
-    RefPtr page = m_page.get();
-    if (!page)
-        return;
+    Ref page = m_page;
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::WebSocketFrameError(Process::identifier(), identifier.toUInt64(), currentMonotonicSeconds(), errorMessage),
