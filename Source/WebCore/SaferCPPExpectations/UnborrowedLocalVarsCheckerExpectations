@@ -256,7 +256,6 @@ inspector/agents/WebHeapAgent.cpp
 inspector/agents/frame/FrameCSSAgent.cpp
 inspector/agents/frame/FrameDOMAgent.cpp
 layout/floats/FloatingContext.cpp
-layout/floats/PlacedFloats.cpp
 layout/formattingContexts/flex/FlexFormattingContext.cpp
 layout/formattingContexts/grid/AutoRepeatResolver.cpp
 layout/formattingContexts/grid/ExtraSpaceDistributor.cpp
