@@ -78,7 +78,7 @@ public:
         ResolveEvalExpr, ResolveExpr, IntegerExpr, DoubleExpr, StringExpr, BigIntExpr,
         ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
         FunctionExpr, ClassExpr, SuperExpr, ImportExpr, BracketExpr, DotExpr, CallExpr,
-        NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr, OptionalChain, PrivateDotExpr,
+        NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr, OptionalChain, PrivateOptionalChain, PrivateDotExpr,
         ConditionalExpr, AssignmentExpr, TypeofExpr,
         DeleteExpr, ArrayLiteralExpr, BindingDestructuring, RestParameter,
         ArrayDestructuring, ObjectDestructuring, SourceElementsResult,
@@ -191,7 +191,7 @@ public:
     ExpressionType createRegExp(const JSTokenLocation&, UniquedStringImpl* pattern, UniquedStringImpl* flags, int, bool skipSyntaxCheck) { return !skipSyntaxCheck && Yarr::hasError(Yarr::checkSyntax(StringView { pattern }, StringView { flags })) ? 0 : RegExpExpr; }
     ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int, int) { return NewExpr; }
     ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int) { return NewExpr; }
-    ExpressionType createOptionalChain(const JSTokenLocation&, ExpressionType, ExpressionType, bool) { return OptionalChain; }
+    ExpressionType createOptionalChain(const JSTokenLocation&, ExpressionType, ExpressionType expr, bool) { return expr == PrivateDotExpr ? PrivateOptionalChain : OptionalChain; }
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
     ExpressionType createAssignResolve(const JSTokenLocation&, UniquedStringImpl*, ExpressionType, int, int, int, AssignmentContext) { return AssignmentExpr; }
     ExpressionType createEmptyVarExpression(const JSTokenLocation&, UniquedStringImpl*) { return AssignmentExpr; }
@@ -414,7 +414,7 @@ public:
 
     bool isPrivateLocation(ExpressionType type)
     {
-        return type == PrivateDotExpr;
+        return type == PrivateDotExpr || type == PrivateOptionalChain;
     }
 
     bool isAssignmentLocation(ExpressionType type)
