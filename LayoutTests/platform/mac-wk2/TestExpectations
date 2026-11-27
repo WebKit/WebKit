@@ -1416,9 +1416,8 @@ http/tests/webgpu/webgpu-in-service-worker-separate-process.html [ Pass ]
 http/tests/webgpu/webgpu/web_platform/canvas/readbackFromWebGPUCanvas.html [ Pass DumpJSConsoleLogInStdErr ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.html [ Pass DumpJSConsoleLogInStdErr Timeout ]
 
-# 6 failures: cameraCapture color edges, where 4:2:0 chroma reconstruction is wider than canvas 2D's; Debug's edge texels differ by 2/255.
-[ Debug arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Failure Slow ]
-[ Release arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Failure Slow ]
+[ Debug arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Slow ]
+[ Release arm64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Pass Slow ]
 # Fails on Intel, which was not investigated.
 [ x86_64 ] http/tests/webgpu/webgpu/web_platform/external_texture/video.html [ Skip ]
 

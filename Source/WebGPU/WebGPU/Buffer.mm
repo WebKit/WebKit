@@ -377,6 +377,10 @@ std::span<uint8_t> Buffer::getBufferContents()
 
 void Buffer::copyFrom(std::span<const uint8_t> data, size_t offset)
 {
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
+    m_mappedRanges.add({ offset, offset + data.size() });
+    m_mappedRanges.compact();
+#endif
 #if ENABLE(WEBGPU_SWIFT)
     bufferCopyFrom(this, data, offset);
 #else
@@ -424,6 +428,10 @@ void Buffer::mapAsync(OptionSet<WebGPU::MapMode> mode, uint64_t apiOffset, std::
     auto offsetAndSize = mappedRangeOffsetAndSize(initialSize(), apiOffset, size);
 
     Ref device = m_device;
+    if (device->isLost() || device->isDestroyed()) {
+        callback(false);
+        return;
+    }
 
     if (NSString* error = offsetAndSize ? errorValidatingMapAsync(mode, offsetAndSize->first, offsetAndSize->second) : @"GPUBuffer.mapAsync: offset and rangeSize overflowed") {
         device->generateAValidationError(error);
