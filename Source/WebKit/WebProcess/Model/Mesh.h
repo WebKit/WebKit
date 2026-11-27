@@ -117,6 +117,7 @@ public:
     virtual bool updatePortalContentTexture(const WebModel::TypedResourceId&, IOSurfaceRef, bool, uint64_t) { return false; }
     virtual void removePortalContentTexture(uint64_t) { }
     virtual void clearPortalContentTextures() { }
+    virtual void setPortalContentOrder(Vector<WebModel::TypedResourceId>&&) { }
 #endif
 #endif
     virtual void play(bool) = 0;

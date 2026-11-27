@@ -54,6 +54,17 @@ final class Renderer {
 
     private var portalContentConversionPipelineState: (any MTLComputePipelineState)?
 
+    private lazy var portalQuadDepthStencilState: any MTLDepthStencilState = {
+        let descriptor = MTLDepthStencilDescriptor()
+        descriptor.label = "Portal Quad Depth Stencil"
+        descriptor.depthCompareFunction = .greaterEqual
+        descriptor.isDepthWriteEnabled = false
+        guard let depthStencilState = device.makeDepthStencilState(descriptor: descriptor) else {
+            fatalError("Failed to make the portal quad depth stencil state")
+        }
+        return depthStencilState
+    }()
+
     private static let portalContentConversionShaderSource = """
         #include <metal_stdlib>
         using namespace metal;
@@ -314,7 +325,9 @@ final class Renderer {
     func render(
         meshInstances: LowLevelMeshInstanceArray,
         texture: any MTLTexture,
-        commandBuffer: any MTLCommandBuffer
+        commandBuffer: any MTLCommandBuffer,
+        portalQuads: Set<Int> = [],
+        coplanarGroups: [[Int]] = []
     ) throws {
         guard let renderer else {
             commandBuffer.commit()
@@ -351,10 +364,21 @@ final class Renderer {
             indices: &span,
             configuration: .init(cameraPosition: renderer.cameras[0].position)
         )
+        Self.applyPaintOrder(of: coplanarGroups, to: &indices)
         let tilePipelineState: (any MTLRenderPipelineState)? =
             tonemapEnabled ? nil : try colorAdjustTilePipelineState(for: texture.pixelFormat, rasterSampleCount: rasterSampleCount)
+        let portalQuadDepthStencil = portalQuads.isEmpty ? nil : portalQuadDepthStencilState
         renderer.render(using: commandBuffer) { state in
+            var drawsPortalQuads = false
             for index in indices {
+                if let portalQuadDepthStencil, portalQuads.contains(index) != drawsPortalQuads {
+                    drawsPortalQuads.toggle()
+                    if drawsPortalQuads {
+                        state.encoder.setDepthStencilState(portalQuadDepthStencil)
+                    } else {
+                        state.reset()
+                    }
+                }
                 state.render(meshInstancesArrayIndex: 0, meshInstanceIndex: index)
             }
             if let tilePipelineState {
@@ -392,6 +416,33 @@ final class Renderer {
         fovY = fovYRadians
     }
 
+    private static func applyPaintOrder(of coplanarGroups: [[Int]], to indices: inout [Int]) {
+        guard !coplanarGroups.isEmpty else {
+            return
+        }
+
+        var groupForIndex: [Int: Int] = [:]
+        for (group, members) in coplanarGroups.enumerated() {
+            for member in members {
+                groupForIndex[member] = group
+            }
+        }
+
+        var positions = Array(repeating: [Int](), count: coplanarGroups.count)
+        for (position, index) in indices.enumerated() {
+            if let group = groupForIndex[index] {
+                positions[group].append(position)
+            }
+        }
+
+        for (group, members) in coplanarGroups.enumerated() where positions[group].count > 1 {
+            let present = Set(positions[group].map { indices[$0] })
+            let ordered = members.filter { present.contains($0) }
+            for (position, member) in zip(positions[group], ordered) {
+                indices[position] = member
+            }
+        }
+    }
 }
 
 #endif

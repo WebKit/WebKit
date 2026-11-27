@@ -78,6 +78,7 @@ public:
     bool updatePortalContentTexture(const WebModel::TypedResourceId&, IOSurfaceRef, bool isOpaque, uint64_t bufferIdentifier);
     void removePortalContentTexture(uint64_t bufferIdentifier);
     void clearPortalContentTextures();
+    void setPortalContentOrder(Vector<WebModel::TypedResourceId>&&);
 #endif
     NODELETE void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&);
     NODELETE void setTransform(const simd_float4x4&);

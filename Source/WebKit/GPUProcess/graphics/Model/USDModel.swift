@@ -480,6 +480,124 @@ private func makePortalChildQuadMaterial(
     )
 }
 
+private let portalQuadCoplanarNormalTolerance: Float = 1e-5
+private let portalQuadCoplanarDistanceTolerance: Float = 2e-6
+
+private struct PortalQuadInstance {
+    let index: Int
+    let instance: LowLevelMeshInstance
+    let contentTextureIdentifier: WKBridgeTypedResourceId
+}
+
+private func portalQuadInstances(
+    meshInstances: LowLevelMeshInstanceArray,
+    meshToMeshInstances: [WKBridgeTypedResourceId: [WKBridgeReceiver.MeshInstanceEntry]],
+    meshResourceToMaterials: [WKBridgeTypedResourceId: [WKBridgeTypedResourceId]],
+    materialsAndParams: [WKBridgeTypedResourceId: WKBridgeReceiver.Material]
+) -> [PortalQuadInstance] {
+    var indexByInstance: [ObjectIdentifier: Int] = [:]
+    for (index, instance) in meshInstances.enumerated() {
+        if let instance {
+            indexByInstance[ObjectIdentifier(instance)] = index
+        }
+    }
+
+    var portalQuads: [PortalQuadInstance] = []
+    for (identifier, entries) in meshToMeshInstances {
+        guard
+            let materialIdentifier = meshResourceToMaterials[identifier]?.first,
+            let textureIdentifier = materialsAndParams[materialIdentifier]?.contentTextureIdentifier
+        else {
+            continue
+        }
+
+        for entry in entries {
+            if let index = indexByInstance[ObjectIdentifier(entry.instance)] {
+                portalQuads.append(PortalQuadInstance(index: index, instance: entry.instance, contentTextureIdentifier: textureIdentifier))
+            }
+        }
+    }
+    return portalQuads
+}
+
+private func orderCoplanarPortalQuads(
+    _ portalQuads: [PortalQuadInstance],
+    portalContentRanks: [WKBridgeTypedResourceId: Int]
+) -> [[Int]] {
+    guard portalContentRanks.count > 1 else {
+        return []
+    }
+
+    struct PortalQuad {
+        let index: Int
+        let rank: Int
+        let normal: SIMD3<Float>
+        let distance: Float
+    }
+
+    var quads: [PortalQuad] = []
+    for portalQuad in portalQuads {
+        guard let rank = portalContentRanks[portalQuad.contentTextureIdentifier] else {
+            continue
+        }
+
+        let transform = portalQuad.instance.transform
+        let normal = simd_cross(simd_make_float3(transform.columns.0), simd_make_float3(transform.columns.1))
+        let length = simd_length(normal)
+        guard length.isFinite, length > 0 else {
+            continue
+        }
+        let unitNormal = normal / length
+        quads.append(
+            PortalQuad(
+                index: portalQuad.index,
+                rank: rank,
+                normal: unitNormal,
+                distance: simd_dot(unitNormal, simd_make_float3(transform.columns.3))
+            )
+        )
+    }
+
+    guard quads.count > 1 else {
+        return []
+    }
+
+    var parents = Array(quads.indices)
+    func root(_ quad: Int) -> Int {
+        var quad = quad
+        while parents[quad] != quad {
+            parents[quad] = parents[parents[quad]]
+            quad = parents[quad]
+        }
+        return quad
+    }
+
+    for first in quads.indices {
+        for second in (first + 1)..<quads.count {
+            let alignment = simd_dot(quads[first].normal, quads[second].normal)
+            guard abs(alignment) > 1 - portalQuadCoplanarNormalTolerance else {
+                continue
+            }
+            let secondDistance = alignment > 0 ? quads[second].distance : -quads[second].distance
+            guard abs(quads[first].distance - secondDistance) < portalQuadCoplanarDistanceTolerance else {
+                continue
+            }
+            parents[root(second)] = root(first)
+        }
+    }
+
+    var groups: [Int: [Int]] = [:]
+    for quad in quads.indices {
+        groups[root(quad), default: []].append(quad)
+    }
+
+    var orderedGroups: [[Int]] = []
+    for members in groups.values where members.count > 1 {
+        orderedGroups.append(members.sorted { quads[$0].rank < quads[$1].rank }.map { quads[$0].index })
+    }
+    return orderedGroups
+}
+
 extension Logger {
     fileprivate static let modelGPU = Logger(subsystem: "com.apple.WebKit", category: "model")
 }
@@ -752,6 +870,9 @@ extension WKBridgeReceiver {
     fileprivate var materialsAndParams: [WKBridgeTypedResourceId: Material] = [:]
 
     @nonobjc
+    fileprivate var portalContentRanks: [WKBridgeTypedResourceId: Int] = [:]
+
+    @nonobjc
     fileprivate var textureHashesAndResources: [WKBridgeTypedResourceId: (String, LowLevelTextureResource)] = [:]
 
     @nonobjc
@@ -933,8 +1054,21 @@ extension WKBridgeReceiver {
             }
         }
 
+        let portalQuads = portalQuadInstances(
+            meshInstances: meshInstancePool.meshInstances,
+            meshToMeshInstances: meshToMeshInstances,
+            meshResourceToMaterials: meshResourceToMaterials,
+            materialsAndParams: materialsAndParams
+        )
+
         do {
-            try appRenderer.render(meshInstances: meshInstancePool.meshInstances, texture: texture, commandBuffer: commandBuffer)
+            try appRenderer.render(
+                meshInstances: meshInstancePool.meshInstances,
+                texture: texture,
+                commandBuffer: commandBuffer,
+                portalQuads: Set(portalQuads.map(\.index)),
+                coplanarGroups: orderCoplanarPortalQuads(portalQuads, portalContentRanks: portalContentRanks)
+            )
         } catch {
             logError("failed to render \(error)")
         }
@@ -1037,6 +1171,15 @@ extension WKBridgeReceiver {
         } catch {
             logError("updateMaterial failed \(error)")
         }
+    }
+
+    @objc(setPortalContentOrder:)
+    func setPortalContentOrder(_ identifiers: [WKBridgeTypedResourceId]) {
+        var ranks: [WKBridgeTypedResourceId: Int] = [:]
+        for (rank, identifier) in identifiers.enumerated() where ranks[identifier] == nil {
+            ranks[identifier] = rank
+        }
+        portalContentRanks = ranks
     }
 
     @objc(updatePortalContentTexture:texture:forceOpaque:)
@@ -3194,6 +3337,10 @@ extension WKBridgeReceiver {
     @objc(updatePortalContentTexture:texture:forceOpaque:)
     func updatePortalContentTexture(_ identifier: WKBridgeTypedResourceId, texture: any MTLTexture, forceOpaque: Bool) -> Bool {
         false
+    }
+
+    @objc(setPortalContentOrder:)
+    func setPortalContentOrder(_ identifiers: [WKBridgeTypedResourceId]) {
     }
 
     @objc(updateMaterial:)

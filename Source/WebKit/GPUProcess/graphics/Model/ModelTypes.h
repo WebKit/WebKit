@@ -506,6 +506,7 @@ NS_SWIFT_SENDABLE
 - (void)removeNode:(uint64_t)node;
 - (void)updateTexture:(NSArray<WKBridgeUpdateTexture *> *)descriptor;
 - (BOOL)updatePortalContentTexture:(WKBridgeTypedResourceId *)identifier texture:(id<MTLTexture>)texture forceOpaque:(BOOL)forceOpaque;
+- (void)setPortalContentOrder:(NSArray<WKBridgeTypedResourceId *> *)identifiers;
 - (void)updateMaterial:(NSArray<WKBridgeUpdateMaterial *> *)descriptor;
 - (BOOL)processRemovals:(NSArray<WKBridgeTypedResourceId *> *)meshRemovals materialRemovals:(NSArray<WKBridgeTypedResourceId *> *)materialRemovals  textureRemovals:(NSArray<WKBridgeTypedResourceId *> *)textureRemovals;
 - (void)setTransform:(simd_float4x4)transform;

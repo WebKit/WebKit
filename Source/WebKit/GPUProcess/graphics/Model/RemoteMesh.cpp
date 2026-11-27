@@ -359,6 +359,9 @@ void RemoteMesh::setPortalContentSources(Vector<WebModel::PortalContentSource>&&
     m_portalContentSources = WTF::move(sources);
     m_portalContentTextureStates = Vector<PortalContentTextureState>(m_portalContentSources.size());
     m_backing->clearPortalContentTextures();
+    m_backing->setPortalContentOrder(m_portalContentSources.map([](auto& source) {
+        return source.textureIdentifier;
+    }));
     completionHandler(true);
 }
 
