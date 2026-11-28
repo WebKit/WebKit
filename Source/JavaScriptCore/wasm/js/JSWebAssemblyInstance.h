@@ -154,7 +154,6 @@ public:
 
     MemoryMode memory0Mode() const { return memory(0)->memory().mode(); }
 
-    // FIXME: should we add a field for cached memory size? bounds checking size here is mappedCapacity
     struct WasmMemoryBaseAndSize {
         void* base;
         size_t size;
@@ -229,7 +228,7 @@ public:
         for (unsigned i = 0; i < m_wasmMemories.size(); ++i) {
             if (!m_wasmMemories[i])
                 continue;
-            cachedMemoryBaseSizePairs()[i] = { m_wasmMemories[i]->basePointer(), m_wasmMemories[i]->mappedCapacity() };
+            updateCachedMemoryBaseSizePair(i);
             if (!i)
                 m_cachedMemory0Size = m_wasmMemories[i]->size();
         }
