@@ -90,6 +90,7 @@ namespace WebCore {
     macro(BufferedChangeEvent) \
     macro(Cache) \
     macro(CacheStorage) \
+    macro(CameraMovedEvent) \
     macro(CaretPosition) \
     macro(ChannelMergerNode) \
     macro(ChannelSplitterNode) \

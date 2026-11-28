@@ -163,6 +163,9 @@ public:
     double yaw() const;
     double pitch() const;
     double fieldOfView() const;
+    void setYaw(double);
+    void setPitch(double);
+    void setFieldOfView(double);
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
 
     bool isSpatialVideoRendererActive() const { return m_spatialVideoRendererActive; }

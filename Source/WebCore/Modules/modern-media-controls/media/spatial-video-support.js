@@ -143,6 +143,24 @@ class SpatialVideoSupport extends MediaControllerSupport
         this._cameraFieldOfView = clampFieldOfView(media.defaultFieldOfView);
         this._yaw = media.defaultYaw * Math.PI / 180;
         this._pitch = clampPitch(media.defaultPitch * Math.PI / 180);
+        this._reportedCamera = { yaw: media.defaultYaw, pitch: media.defaultPitch, fieldOfView: media.defaultFieldOfView };
+    }
+
+    // The element holds whatever was last reported to it, so a live value that differs from that is
+    // one a page assigned, and the renderer adopts it.
+    _adoptScriptedCameraView()
+    {
+        const media = this.mediaController.media;
+        const reported = this._reportedCamera;
+        if (!media || !reported || typeof media.yaw !== "number")
+            return;
+
+        if (media.yaw !== reported.yaw)
+            this._yaw = media.yaw * Math.PI / 180;
+        if (media.pitch !== reported.pitch)
+            this._pitch = clampPitch(media.pitch * Math.PI / 180);
+        if (media.fieldOfView !== reported.fieldOfView)
+            this._cameraFieldOfView = clampFieldOfView(media.fieldOfView);
     }
 
     _enable()
@@ -525,6 +543,9 @@ class SpatialVideoSupport extends MediaControllerSupport
     {
         if (!this._active)
             return;
+
+        this._adoptScriptedCameraView();
+
         const gl = this._gl;
 
         if (!this._useVideoFrameCallback && !this._uploadFrame())
@@ -568,7 +589,9 @@ class SpatialVideoSupport extends MediaControllerSupport
         const host = this.mediaController.host;
         if (!host || typeof host.spatialCameraDidMove !== "function")
             return;
-        host.spatialCameraDidMove(this._yaw * 180 / Math.PI, this._pitch * 180 / Math.PI, this._cameraFieldOfView);
+        const camera = { yaw: this._yaw * 180 / Math.PI, pitch: this._pitch * 180 / Math.PI, fieldOfView: this._cameraFieldOfView };
+        this._reportedCamera = camera;
+        host.spatialCameraDidMove(camera.yaw, camera.pitch, camera.fieldOfView);
     }
 
     _reportRendererActive(active)

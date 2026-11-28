@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "CSSPropertyNames.h"
+#include "CameraMovedEvent.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -269,7 +270,30 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
     m_cameraPitch = pitch;
     m_cameraFieldOfView = fieldOfView;
 
-    scheduleEvent(eventNames().webkitcameramovedEvent);
+    scheduleEvent(CameraMovedEvent::create(eventNames().cameramovedEvent, yaw, pitch, fieldOfView));
+}
+
+// The renderer adopts a scripted value on its next frame and reports back what it used, so these
+// store without clamping and the bounds stay in one place.
+void HTMLVideoElement::setYaw(double yaw)
+{
+    if (m_cameraYaw == yaw)
+        return;
+    m_cameraYaw = yaw;
+}
+
+void HTMLVideoElement::setPitch(double pitch)
+{
+    if (m_cameraPitch == pitch)
+        return;
+    m_cameraPitch = pitch;
+}
+
+void HTMLVideoElement::setFieldOfView(double fieldOfView)
+{
+    if (m_cameraFieldOfView == fieldOfView)
+        return;
+    m_cameraFieldOfView = fieldOfView;
 }
 
 bool HTMLVideoElement::hasSpatialVideoProjection() const

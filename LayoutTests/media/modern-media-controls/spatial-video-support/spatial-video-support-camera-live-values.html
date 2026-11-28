@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ SpatialVideoRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video id="video" src="../../content/test.mp4" style="width: 320px; height: 240px;" yaw="90" pitch="-15" fieldofview="60"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing the live camera attributes. <code>yaw</code>, <code>pitch</code> and <code>fieldOfView</code> are the camera as it is now: writable, not reflected to the markup, and reported by a <code>cameramoved</code> event that carries them.");
+
+const video = document.getElementById("video");
+
+debug("Before the camera has moved, the live values report the declared view:");
+shouldBe("video.yaw", "90");
+shouldBe("video.pitch", "-15");
+shouldBe("video.fieldOfView", "60");
+
+debug("");
+debug("They are writable, and writing one does not rewrite the markup or the declared value:");
+video.yaw = 10;
+shouldBe("video.yaw", "10");
+shouldBe("video.defaultYaw", "90");
+shouldBeEqualToString("video.getAttribute('yaw')", "90");
+
+debug("");
+debug("Writing the declared value does reflect, and leaves the live value alone:");
+video.defaultYaw = 45;
+shouldBeEqualToString("video.getAttribute('yaw')", "45");
+shouldBe("video.yaw", "10");
+
+debug("");
+debug("A value that is not a finite number is a <code>TypeError</code>, as for any WebIDL double:");
+shouldThrow("video.yaw = NaN", "'TypeError: The provided value is non-finite'");
+shouldThrow("video.fieldOfView = Infinity", "'TypeError: The provided value is non-finite'");
+
+debug("");
+debug("The event carries the camera:");
+window.movedEvent = new CameraMovedEvent("cameramoved", { yaw: 1, pitch: 2, fieldOfView: 3 });
+shouldBe("movedEvent.yaw", "1");
+shouldBe("movedEvent.pitch", "2");
+shouldBe("movedEvent.fieldOfView", "3");
+shouldBeFalse("movedEvent.bubbles");
+shouldBeFalse("movedEvent.cancelable");
+
+debug("");
+debug("...and defaults to zero for anything the page leaves out:");
+window.bareEvent = new CameraMovedEvent("cameramoved");
+shouldBe("bareEvent.yaw", "0");
+shouldBe("bareEvent.pitch", "0");
+shouldBe("bareEvent.fieldOfView", "0");
+
+debug("");
+debug("<code>oncameramoved</code> is an event handler attribute:");
+window.handled = null;
+video.oncameramoved = e => { window.handled = e.yaw; };
+video.dispatchEvent(new CameraMovedEvent("cameramoved", { yaw: 7 }));
+shouldBe("handled", "7");
+
+debug("");
+debug("The renderer adopts a live value a page assigned, clamping what it needs to:");
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const container = shadowRoot.appendChild(document.createElement("div"));
+window.support = new SpatialVideoSupport({
+    media: video,
+    host: { spatialVideoRenderingEnabled: true },
+    shadowRoot,
+    container,
+});
+
+// Stands in for the last frame the renderer drew and reported.
+support._reportedCamera = { yaw: 0, pitch: 0, fieldOfView: 80 };
+support._yaw = 0;
+support._pitch = 0;
+support._cameraFieldOfView = 80;
+
+video.yaw = 180;
+video.pitch = 400;
+video.fieldOfView = 5;
+support._adoptScriptedCameraView();
+
+shouldBeCloseTo("support._yaw", Math.PI, 0.0001);
+shouldBeCloseTo("support._pitch", Math.PI / 2 - 0.01, 0.0001);
+shouldBe("support._cameraFieldOfView", "30");
+
+debug("");
+debug("A live value it reported itself is not re-adopted:");
+support._reportedCamera = { yaw: 90, pitch: 0, fieldOfView: 80 };
+support._yaw = 1.25;
+video.yaw = 90;
+support._adoptScriptedCameraView();
+shouldBe("support._yaw", "1.25");
+
+video.remove();
+shadowRoot.host.remove();
+
+</script>
+</body>
