@@ -108,6 +108,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 
     get timestamp() { return this._timestamp; }
     get categories() { return this._categories; }
+    get protocolCategories() { return this._exportCategories; }
     get totalSize() { return this._totalSize; }
 
     get unadjustedStartTime() { return this._timestamp; }

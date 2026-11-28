@@ -733,7 +733,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this.isCapturing())
             return;
 
-        this._addRecord(new WI.CPUTimelineRecord(event));
+        this._addProcessRecord(target, new WI.CPUTimelineRecord(event));
     }
 
     cpuProfilerTrackingCompleted(target, timestamp)
@@ -894,7 +894,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this.isCapturing())
             return;
 
-        this._addRecord(new WI.MemoryTimelineRecord(event.timestamp, event.categories));
+        this._addProcessRecord(target, new WI.MemoryTimelineRecord(event.timestamp, event.categories));
     }
 
     memoryTrackingCompleted(target, timestamp)
@@ -1498,6 +1498,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         // Only worry about dead time after the load event.
         if (WI.networkManager.mainFrame && isNaN(WI.networkManager.mainFrame.loadEventTimestamp))
             this._resetAutoRecordingDeadTimeTimeout();
+    }
+
+    _addProcessRecord(target, record)
+    {
+        let timeline = this._activeRecording.timelineForRecordType(record.type);
+        for (let aggregateRecord of timeline.addProcessRecord(target, record, WI.targets))
+            this._addRecord(aggregateRecord);
     }
 
     _attemptAutoCapturingForFrame(frame)
