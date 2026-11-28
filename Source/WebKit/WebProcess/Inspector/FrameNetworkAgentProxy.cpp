@@ -391,7 +391,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::didFailLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceError& error)
+void FrameNetworkAgentProxy::didFailLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceError& error, LoadWillContinueInAnotherProcess)
 {
     protect(m_page)->networkInterceptionSink().removeInspectorPause(resourceID);
 

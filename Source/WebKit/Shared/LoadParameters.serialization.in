@@ -29,6 +29,7 @@ enum class WebCore::ReplaceIfNotCompletelyLoaded : bool;
     std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
+    WebCore::ResourceResponse redirectResponseForInspector;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;
     RefPtr<WebCore::SharedBuffer> data;
 

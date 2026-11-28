@@ -1,0 +1,13 @@
+Test that the redirects of a navigation are reported for one request when they make it continue in other processes.
+
+
+== Running test suite: Target.PSON.RedirectChain
+-- Running test case: CrossSiteRedirectChain
+PASS: Should create a provisional page target for the redirect target.
+PASS: Should report the initial request and one request for each redirect.
+PASS: Should report the requests in the order of the redirects.
+PASS: Should keep the request identifier in all processes.
+PASS: Should not have a redirect response for the initial request.
+PASS: Should have a redirect response with status 302 for each redirect.
+PASS: Should not report that the request failed when it continues in another process.
+

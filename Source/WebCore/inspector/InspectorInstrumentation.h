@@ -221,7 +221,7 @@ public:
     static void didReceiveThreadableLoaderResponse(Document&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
     static void didReceiveData(LocalFrame*, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
     static void didFinishLoading(LocalFrame*, DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
-    static void didFailLoading(LocalFrame*, DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
+    static void didFailLoading(LocalFrame*, DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
 
     static void willSendRequest(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, ResourceRequest&);
     static void didReceiveResourceResponse(ServiceWorkerGlobalScope&, ResourceLoaderIdentifier, const ResourceResponse&);
@@ -469,7 +469,7 @@ private:
     static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
     static void didReceiveDataImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const SharedBuffer*, int encodedDataLength);
     static void didFinishLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
-    static void didFailLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&);
+    static void didFailLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&, LoadWillContinueInAnotherProcess);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents&);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents&);
     static void scriptImportedImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const String& sourceString);
@@ -1196,15 +1196,15 @@ inline void InspectorInstrumentation::didFinishLoading(ServiceWorkerGlobalScope&
     didFinishLoadingImpl(protect(instrumentingAgents(globalScope)), identifier, nullptr, networkLoadMetrics, nullptr);
 }
 
-inline void InspectorInstrumentation::didFailLoading(LocalFrame* frame, DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
+inline void InspectorInstrumentation::didFailLoading(LocalFrame* frame, DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (RefPtr agents = instrumentingAgents(frame))
-        didFailLoadingImpl(*agents, identifier, loader, error);
+        didFailLoadingImpl(*agents, identifier, loader, error, loadWillContinueInAnotherProcess);
 }
 
 inline void InspectorInstrumentation::didFailLoading(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
-    didFailLoadingImpl(protect(instrumentingAgents(globalScope)), identifier, nullptr, error);
+    didFailLoadingImpl(protect(instrumentingAgents(globalScope)), identifier, nullptr, error, LoadWillContinueInAnotherProcess::No);
 }
 
 inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(LocalFrame& frame, ResourceLoaderIdentifier identifier, DocumentLoader& loader, const ResourceResponse& response)

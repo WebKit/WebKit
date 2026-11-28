@@ -40,6 +40,7 @@
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
 #include <wtf/MonotonicTime.h>
@@ -61,6 +62,7 @@ struct LoadParameters {
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
 
     WebCore::ResourceRequest request;
+    WebCore::ResourceResponse redirectResponseForInspector;
     SandboxExtension::Handle sandboxExtensionHandle;
 
     RefPtr<WebCore::SharedBuffer> data;

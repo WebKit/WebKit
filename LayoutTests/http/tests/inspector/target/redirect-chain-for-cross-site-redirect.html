@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Target.PSON.RedirectChain");
+
+    suite.addTestCase({
+        name: "CrossSiteRedirectChain",
+        description: "Check that the redirects of a navigation are reported for one request when they move it to other processes.",
+        async test() {
+            const initialURL = "http://127.0.0.1:8000/inspector/target/redirect-chain-for-cross-site-redirect.html";
+            const otherSiteURL = "http://localhost:8000/inspector/target/redirect-chain-for-cross-site-redirect.html";
+
+            async function navigate(url, expectedURL = url) {
+                let pageLoadedPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+                WI.mainTarget.RuntimeAgent.evaluate(`location.href = ${JSON.stringify(url)}`);
+                await pageLoadedPromise;
+                while (WI.networkManager.mainFrame?.mainResource.url !== expectedURL)
+                    await WI.networkManager.awaitEvent(WI.NetworkManager.Event.MainFrameDidChange);
+            }
+
+            // Visit the other site first. A process that has committed a load does not follow a cross-site
+            // redirect itself, so the second redirect moves the navigation to another process again.
+            await navigate(otherSiteURL);
+            await navigate(initialURL);
+
+            const finalURL = initialURL;
+            const middleURL = "http://localhost:8000/resources/redirect.py?url=" + encodeURIComponent(finalURL);
+            const redirectURL = "http://127.0.0.1:8000/resources/redirect.py?url=" + encodeURIComponent(middleURL);
+
+            let provisionalTargetCreated = false;
+            let targetAddedListener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                if (event.data.target.type === WI.TargetType.Page && event.data.target.isProvisional)
+                    provisionalTargetCreated = true;
+            });
+
+            // The frontend holds the messages of a provisional target until the target commits, and it makes its
+            // resources again from the resource tree then. Thus read the protocol messages directly.
+            let requests = [];
+            let failedRequestIds = [];
+            let originalDispatch = InspectorBackend.dispatch;
+            InspectorBackend.dispatch = function(message) {
+                let event = typeof message === "string" ? JSON.parse(message) : message;
+                if (event.method === "Target.dispatchMessageFromTarget")
+                    event = JSON.parse(event.params.message);
+                if (event.method === "Network.requestWillBeSent" && event.params.type === "Document")
+                    requests.push(event.params);
+                if (event.method === "Network.loadingFailed")
+                    failedRequestIds.push(event.params.requestId);
+                originalDispatch.call(this, message);
+            };
+            try {
+                await navigate(redirectURL, finalURL);
+            } finally {
+                InspectorBackend.dispatch = originalDispatch;
+            }
+
+            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, targetAddedListener);
+
+            InspectorTest.expectThat(provisionalTargetCreated, "Should create a provisional page target for the redirect target.");
+            InspectorTest.expectEqual(requests.length, 3, "Should report the initial request and one request for each redirect.");
+            InspectorTest.expectEqual(requests.map((request) => new URL(request.request.url).hostname).join(","), "127.0.0.1,localhost,127.0.0.1", "Should report the requests in the order of the redirects.");
+            InspectorTest.expectThat(requests.every((request) => request.requestId === requests[0].requestId), "Should keep the request identifier in all processes.");
+            InspectorTest.expectThat(!requests[0].redirectResponse, "Should not have a redirect response for the initial request.");
+            InspectorTest.expectEqual(requests.slice(1).map((request) => request.redirectResponse?.status).join(","), "302,302", "Should have a redirect response with status 302 for each redirect.");
+            InspectorTest.expectEqual(failedRequestIds.filter((requestId) => requests.some((request) => request.requestId === requestId)).length, 0, "Should not report that the request failed when it continues in another process.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the redirects of a navigation are reported for one request when they make it continue in other processes.</p>
+</body>
+</html>

@@ -2834,6 +2834,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     SendStopResponsivenessTimer stopper;
 
     m_pendingNavigationID = loadParameters.navigationID;
+    m_pendingRedirectResponseForInspector = WTF::move(loadParameters.redirectResponseForInspector);
     m_internals->pendingWebsitePolicies = WTF::move(loadParameters.websitePolicies);
     m_pendingUnpartitionedStorageSite = WTF::move(loadParameters.unpartitionedStorageSite);
     m_pendingAgentClusterAssignment = loadParameters.agentClusterAssignment;
@@ -2892,6 +2893,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         userGestureIndicator.emplace(IsProcessingUserGesture::Yes);
 
     localFrame->loader().load(WTF::move(frameLoadRequest), WTF::move(loadParameters.requester));
+    m_pendingRedirectResponseForInspector = { };
     m_pendingUnpartitionedStorageSite = std::nullopt;
 
     ASSERT(!m_pendingNavigationID);
@@ -9379,6 +9381,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceReq
         if (m_pendingNavigationID) {
             documentLoader->setNavigationID(*m_pendingNavigationID);
             m_pendingNavigationID = std::nullopt;
+            documentLoader->setRedirectResponseFromPreviousProcessForInspector(std::exchange(m_pendingRedirectResponseForInspector, { }));
         }
 
         if (m_internals->pendingWebsitePolicies) {

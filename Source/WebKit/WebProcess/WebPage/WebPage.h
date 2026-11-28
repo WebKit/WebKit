@@ -3453,6 +3453,7 @@ private:
     bool m_isAppNapEnabled { true };
 
     Markable<WebCore::NavigationIdentifier> m_pendingNavigationID;
+    WebCore::ResourceResponse m_pendingRedirectResponseForInspector;
     std::optional<WebCore::RegistrableDomain> m_pendingUnpartitionedStorageSite;
     std::optional<WebCore::AgentClusterAssignment> m_pendingAgentClusterAssignment;
 

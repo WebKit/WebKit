@@ -181,7 +181,7 @@ protected:
     ResourceLoader(LocalFrame&, ResourceLoaderOptions);
 
     void didFinishLoadingOnePart(const NetworkLoadMetrics&);
-    void cleanupForError(const ResourceError&);
+    void cleanupForError(const ResourceError&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
 
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 

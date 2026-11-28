@@ -1012,15 +1012,15 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrum
         networkProxy->didFinishLoading(identifier, loader, networkLoadMetrics, resourceLoader);
 }
 
-void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error)
+void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (!instrumentingAgents.developerExtrasEnabled()) [[likely]]
         return;
 
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
-        networkAgent->didFailLoading(identifier, loader, error);
+        networkAgent->didFailLoading(identifier, loader, error, loadWillContinueInAnotherProcess);
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
-        networkProxy->didFailLoading(identifier, loader, error);
+        networkProxy->didFailLoading(identifier, loader, error, loadWillContinueInAnotherProcess);
     if (CheckedPtr consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }

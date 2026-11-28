@@ -117,7 +117,7 @@ public:
     void didReceiveResponse(ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*) override;
     void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer*, int expectedDataLength, int encodedDataLength) override;
     void didFinishLoading(ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*) override;
-    void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&) override;
+    void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&, LoadWillContinueInAnotherProcess) override;
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&, const URL&) override;
     void didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier, DocumentThreadableLoader&) override;
     NODELETE void willLoadXHRSynchronously();
@@ -159,6 +159,7 @@ protected:
     virtual bool shouldForceBufferingNetworkResourceData() const = 0;
 
 private:
+    String requestIdentifier(ResourceLoaderIdentifier) const;
     void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, Inspector::ResourceType, ResourceLoader*);
 
     bool shouldIntercept(URL, Inspector::Protocol::Network::NetworkStage);
@@ -181,6 +182,7 @@ private:
     const UniqueRef<NetworkResourcesData> m_resourcesData;
 
     MemoryCompactRobinHoodHashMap<String, String> m_extraRequestHeaders;
+    HashMap<ResourceLoaderIdentifier, String> m_documentRequestIdentifiers;
     HashSet<ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;
 
     Vector<Inspector::Intercept> m_intercepts;

@@ -226,6 +226,14 @@ double InspectorNetworkAgent::timestamp()
     return protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
 }
 
+String InspectorNetworkAgent::requestIdentifier(ResourceLoaderIdentifier identifier) const
+{
+    auto iterator = m_documentRequestIdentifiers.find(identifier);
+    if (iterator != m_documentRequestIdentifiers.end())
+        return iterator->value;
+    return IdentifiersFactory::requestId(identifier.toUInt64());
+}
+
 void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, Inspector::ResourceType type, ResourceLoader* resourceLoader)
 {
     // A redirect hop's request is rebuilt by the network layer without the hidden bit.
@@ -237,9 +245,13 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     double sendTimestamp = timestamp();
     WallTime walltime = WallTime::now();
 
-    auto requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     auto frameId = frameIdentifier(loader);
     auto loaderId = loaderIdentifier(loader);
+    // A navigation can continue in another process, where its ResourceLoader has a different identifier.
+    // The loader identifier stays the same, so use it to keep one request identifier for the whole load.
+    if (type == ResourceType::Document)
+        m_documentRequestIdentifiers.set(identifier, loaderId);
+    auto requestId = requestIdentifier(identifier);
     String targetId = request.initiatorIdentifier();
 
 
@@ -257,7 +269,8 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     std::optional<Inspector::Protocol::Page::ResourceType> typePayload;
     if (type != ResourceType::Other)
         typePayload = protocolResourceType;
-    m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request, resourceLoader), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTF::move(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTF::move(typePayload), targetId);
+    auto& effectiveRedirectResponse = loader && type == ResourceType::Document && redirectResponse.isNull() ? loader->redirectResponseFromPreviousProcessForInspector() : redirectResponse;
+    m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request, resourceLoader), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTF::move(initiatorObject), buildObjectForResourceResponse(effectiveRedirectResponse, nullptr), WTF::move(typePayload), targetId);
 }
 
 static ResourceType resourceTypeForCachedResource(const CachedResource* resource)
@@ -319,7 +332,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    String requestId = requestIdentifier(identifier);
 
     std::optional<ResourceResponse> realResponse;
     if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
@@ -389,7 +402,7 @@ void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, 
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    String requestId = requestIdentifier(identifier);
 
     if (data) {
         NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->maybeAddResourceData(requestId, *data);
@@ -415,7 +428,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
     else
         elapsedFinishTime = timestamp();
 
-    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    String requestId = requestIdentifier(identifier);
     if (loader && loader->frameLoader() && m_resourcesData->resourceType(requestId) == ResourceType::Document)
         m_resourcesData->addResourceSharedBuffer(requestId, protect(loader->frameLoader()->documentLoader())->mainResourceData(), protect(loader->frame()->document())->encoding());
 
@@ -435,15 +448,21 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
     auto metrics = ResourceUtilities::buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics);
 
     m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, sourceMappingURL, WTF::move(metrics));
+    m_documentRequestIdentifiers.remove(identifier);
 }
 
-void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error)
+void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    String requestId = requestIdentifier(identifier);
+    m_documentRequestIdentifiers.remove(identifier);
     m_resourcesData->loadingFailed(requestId);
+
+    // The load did not fail. The other process reports the rest of it with the same request identifier.
+    if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::Yes)
+        return;
 
     if (loader && m_resourcesData->resourceType(requestId) == ResourceType::Document) {
         RefPtr frame = loader->frame();
@@ -650,6 +669,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
     Ref { m_instrumentingAgents.get() }->setEnabledNetworkAgent(nullptr);
     m_resourcesData->clear();
     m_extraRequestHeaders.clear();
+    m_documentRequestIdentifiers.clear();
 
     continuePendingRequests();
     continuePendingResponses();
@@ -981,6 +1001,13 @@ bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
     if (loader.options().serviceWorkerRegistrationIdentifier)
         return false;
 
+    // Interception is decided once per ResourceLoader, when the load is scheduled. A same-process redirect
+    // reuses its ResourceLoader and is never intercepted. A redirect that continues in another process gets
+    // a new ResourceLoader there, so it has to be skipped explicitly to behave the same.
+    if (loader.cachedResource() && loader.cachedResource()->type() == CachedResource::Type::MainResource
+        && loader.documentLoader() && !loader.documentLoader()->redirectResponseFromPreviousProcessForInspector().isNull())
+        return false;
+
     return shouldIntercept(loader.url(), Inspector::Protocol::Network::NetworkStage::Request);
 }
 
@@ -997,7 +1024,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
 
-    String requestId = IdentifiersFactory::requestId(loader.identifier()->toUInt64());
+    String requestId = requestIdentifier(*loader.identifier());
     if (m_pendingInterceptRequests.contains(requestId)) {
         handler(loader.request());
         return;
@@ -1011,7 +1038,7 @@ void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, 
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
 
-    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
+    String requestId = requestIdentifier(identifier);
     if (m_pendingInterceptResponses.contains(requestId)) {
         ASSERT_NOT_REACHED();
         handler(response, nullptr);

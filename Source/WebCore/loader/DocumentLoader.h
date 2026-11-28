@@ -537,6 +537,8 @@ public:
     std::optional<NavigationIdentifier> navigationID() const { return m_navigationID.asOptional(); }
     NODELETE WEBCORE_EXPORT void setNavigationID(NavigationIdentifier);
     std::optional<NavigationIdentifier> takeNavigationID() { return std::exchange(m_navigationID, { }).asOptional(); }
+    const ResourceResponse& redirectResponseFromPreviousProcessForInspector() const { return m_redirectResponseFromPreviousProcessForInspector; }
+    void setRedirectResponseFromPreviousProcessForInspector(ResourceResponse&& response) { m_redirectResponseFromPreviousProcessForInspector = WTF::move(response); }
 
     IsInitialAboutBlank isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
@@ -700,6 +702,7 @@ private:
     NavigationAction m_triggeringAction;
 
     Markable<NavigationIdentifier> m_navigationID;
+    ResourceResponse m_redirectResponseFromPreviousProcessForInspector;
 
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the
