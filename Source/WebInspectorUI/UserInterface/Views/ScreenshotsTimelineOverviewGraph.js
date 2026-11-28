@@ -62,12 +62,16 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
         if (this.hidden)
             return;
 
-        this.element.removeChildren();
-
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
 
-        for (let record of this._visibleRecords()) {
-            let recordElement = this.element.appendChild(this._imageElementForRecord.getOrInsertComputed(record, () => {
+        // Reuse the elements of records that stay visible, instead of removing and re-adding every
+        // image on each layout, since capturing lays out on every time update.
+        let records = this._visibleRecords();
+        let childElements = this.element.children;
+
+        for (let i = 0; i < records.length; ++i) {
+            let record = records[i];
+            let recordElement = this._imageElementForRecord.getOrInsertComputed(record, () => {
                 let imageElement = document.createElement("img");
 
                 imageElement.hidden = true;
@@ -84,11 +88,17 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
                 });
 
                 return imageElement;
-            }));
+            });
+
+            if (childElements[i] !== recordElement)
+                this.element.insertBefore(recordElement, childElements[i] || null);
 
             recordElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
             recordElement.height = this.height;
         }
+
+        while (childElements.length > records.length)
+            childElements[records.length].remove();
 
         if (this._lastSelectedRecordInLayout)
             this._imageElementForRecord.get(this._lastSelectedRecordInLayout)?.classList.remove("selected");
@@ -115,19 +125,24 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
 
     _visibleRecords()
     {
-        let visibleEndTime = Math.min(this.endTime, this.currentTime);
+        // `currentTime` is 0 or NaN for an imported recording, or for a capture that starts while
+        // the inspector is hidden. See `WI.CPUTimelineView`.
+        let visibleEndTime = Math.min(this.endTime, this.currentTime) || this.endTime;
 
         let records = this._screenshotsTimeline.records;
         let visibleRecords = [];
 
         for (let i = 0; i < records.length; ++i) {
             let record = records[i];
-            if (!(record.startTime >= this.startTime || record.startTime <= visibleEndTime))
+            if (record.startTime < this.startTime)
                 continue;
-                
+
+            if (record.startTime > visibleEndTime)
+                break;
+
             if (!visibleRecords.length && i)
                 visibleRecords.push(records[i - 1]);
-                
+
             visibleRecords.push(record);
         }
 
