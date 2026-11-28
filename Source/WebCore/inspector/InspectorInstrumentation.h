@@ -541,7 +541,7 @@ private:
     static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const String&);
 
 #if ENABLE(RESOURCE_USAGE)
-    static void didHandleMemoryPressureImpl(InstrumentingAgents&, Critical);
+    static void didHandleMemoryPressureImpl(InstrumentingAgents&, Page&, Critical);
 #endif
 
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents&, CanvasBase&);
@@ -1464,7 +1464,7 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
 inline void InspectorInstrumentation::didHandleMemoryPressure(Page& page, Critical critical)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    didHandleMemoryPressureImpl(protect(instrumentingAgents(page)), critical);
+    didHandleMemoryPressureImpl(protect(instrumentingAgents(page)), page, critical);
 }
 #endif
 

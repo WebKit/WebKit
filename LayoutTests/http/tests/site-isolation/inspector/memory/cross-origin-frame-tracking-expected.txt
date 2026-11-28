@@ -1,0 +1,43 @@
+Test that under Site Isolation, Memory tracking works on the frame target of a cross-origin iframe, and still works on the page target.
+
+
+
+== Running test suite: SiteIsolation.Memory.CrossOriginFrameTracking
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameTracking.Setup
+PASS: Should find the cross-origin iframe target.
+PASS: The cross-origin iframe target should be in another process than the page target.
+PASS: The page target should have the Memory domain.
+PASS: Every frame target should have the Memory domain.
+
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameTracking.CrossOriginFrameTarget
+PASS: The target sent trackingStart, trackingUpdate and trackingComplete.
+PASS: trackingStart should have a timestamp.
+PASS: trackingComplete should not be earlier than trackingStart.
+PASS: The update should have a timestamp.
+Categories: images, javascript, jit, layers, other, page
+PASS: Every category should have a size that is not negative.
+PASS: The total size should be more than zero.
+PASS: The target should send one trackingStart.
+PASS: The target should send one trackingComplete.
+PASS: Only the cross-origin iframe target should send Memory events.
+
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameTracking.SecondStartTrackingDoesNothing
+PASS: The second startTracking should not fail.
+PASS: The cross-origin iframe target sent a trackingUpdate.
+PASS: The second stopTracking should not fail.
+PASS: The cross-origin iframe target should send one trackingStart.
+PASS: The cross-origin iframe target should send one trackingComplete.
+PASS: Only the cross-origin iframe target should send Memory events.
+
+-- Running test case: SiteIsolation.Memory.CrossOriginFrameTracking.PageTarget
+PASS: The target sent trackingStart, trackingUpdate and trackingComplete.
+PASS: trackingStart should have a timestamp.
+PASS: trackingComplete should not be earlier than trackingStart.
+PASS: The update should have a timestamp.
+Categories: images, javascript, jit, layers, other, page
+PASS: Every category should have a size that is not negative.
+PASS: The total size should be more than zero.
+PASS: The target should send one trackingStart.
+PASS: The target should send one trackingComplete.
+PASS: Only the page target should send Memory events.
+

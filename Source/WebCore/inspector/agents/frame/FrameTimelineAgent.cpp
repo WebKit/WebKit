@@ -84,7 +84,7 @@ void FrameTimelineAgent::internalStop()
 
 bool FrameTimelineAgent::shouldToggleInstrument(Inspector::Protocol::Timeline::Instrument instrument) const
 {
-    // CPU stays off: its data covers the whole process, so the frontend picks which target in a process tracks it.
+    // CPU and Memory stay off: their data covers the whole process, so the frontend picks which target tracks it.
     // The other instruments belong to domains that frame targets do not have yet, so their getters would reach
     // the page's agents.
     return instrument == Inspector::Protocol::Timeline::Instrument::Timeline

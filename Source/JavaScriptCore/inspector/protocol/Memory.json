@@ -1,9 +1,9 @@
 {
     "domain": "Memory",
-    "description": "Memory domain exposes page memory tracking.",
+    "description": "Memory domain exposes page memory tracking. On a frame target, the values cover the whole process that hosts the frame, and every target in one process reports the same numbers.",
     "condition": "defined(ENABLE_RESOURCE_USAGE) && ENABLE_RESOURCE_USAGE",
     "debuggableTypes": ["web-page"],
-    "targetTypes": ["page"],
+    "targetTypes": ["frame", "page"],
     "types": [
         {
             "id": "Event",
