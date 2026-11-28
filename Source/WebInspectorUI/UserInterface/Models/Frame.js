@@ -472,7 +472,7 @@ WI.Frame = class Frame extends WI.Object
             return;
 
         if (resource.parentFrame)
-            resource.parentFrame.remove(resource);
+            resource.parentFrame.removeResource(resource);
 
         this._associateWithResource(resource);
 
