@@ -1475,6 +1475,8 @@ inline bool JSObject::trySetIndexQuickly(VM& vm, unsigned i, JSValue v, ArrayPro
         if (i >= butterfly->vectorLength())
             return false;
         if (!v.isInt32()) {
+            if (arrayProfile && i >= butterfly->publicLength())
+                arrayProfile->setMayStoreHole();
             convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
             return true;
         }
@@ -1496,11 +1498,15 @@ inline bool JSObject::trySetIndexQuickly(VM& vm, unsigned i, JSValue v, ArrayPro
         if (i >= butterfly->vectorLength())
             return false;
         if (!v.isNumber()) {
+            if (arrayProfile && i >= butterfly->publicLength())
+                arrayProfile->setMayStoreHole();
             convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
             return true;
         }
         double value = v.asNumber();
         if (value != value) {
+            if (arrayProfile && i >= butterfly->publicLength())
+                arrayProfile->setMayStoreHole();
             convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
             return true;
         }
