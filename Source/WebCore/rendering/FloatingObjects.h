@@ -167,9 +167,11 @@ public:
     std::unique_ptr<Layout::PlacedFloats> makePlacedFloats() const;
     // Built on placedFloats() and dropped with it, so that FloatingContext::constraints() continues from its last position during the child layout.
     const Layout::FloatingContext& floatingContext() LIFETIME_BOUND;
-    // The list refers to the layout boxes of the floats, and a float's renderer can be destroyed without being removed from the set
-    // (when the whole render tree is), so the list is only kept while the block lays out its children.
+    // A float leaving the tree is taken out of the list, except when the whole render tree is destroyed (see PlacedFloats::Item),
+    // or in skipped content, which drops the whole list instead (see RenderBlockFlow::markAllDescendantsWithFloatsForLayout()).
     void clearPlacedFloats();
+    // The FloatingContext takes the block's width, which may change with the next layout.
+    void clearFloatingContext();
 
     LayoutUnit logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
     LayoutUnit logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);

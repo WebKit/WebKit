@@ -1077,12 +1077,10 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
         layoutState->setMarginTrimBlockStart(marginTrimBlockStartFromContainingBlock);
     });
     // The block keeps one PlacedFloats list for its children's float positions and offsets.
-    if (m_floatingObjects)
+    if (m_floatingObjects) {
+        m_floatingObjects->clearFloatingContext();
         m_floatingObjects->placedFloats();
-    auto clearPlacedFloats = WTF::makeScopeExit([&] {
-        if (m_floatingObjects)
-            m_floatingObjects->clearPlacedFloats();
-    });
+    }
 
 
     // Fieldsets need to find their legend and position it inside the border of the object.
@@ -3420,9 +3418,13 @@ void RenderBlockFlow::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRe
     setChildNeedsLayout(markParents);
 
     if (floatToRemove) {
-        if (isSkippedContentRootOrSkippedContent(*this))
+        if (isSkippedContentRootOrSkippedContent(*this)) {
             clearNeedsLayout(HadSkippedLayout::Yes);
-        else
+            // The float set of skipped content may refer to destroyed floats, so it is not searched for this one, and the placed
+            // float list goes as a whole, as when it is built from the set, it leaves out destroyed floats (see FloatingObjects::makePlacedFloats()).
+            if (m_floatingObjects)
+                m_floatingObjects->clearPlacedFloats();
+        } else
             removeFloatingBox(*floatToRemove);
     } else if (childrenInline())
         return;

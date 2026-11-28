@@ -390,6 +390,11 @@ const Layout::FloatingContext& FloatingObjects::floatingContext()
     return *m_floatingContext;
 }
 
+void FloatingObjects::clearFloatingContext()
+{
+    m_floatingContext = nullptr;
+}
+
 void FloatingObjects::clearPlacedFloats()
 {
     m_floatingContext = nullptr;
