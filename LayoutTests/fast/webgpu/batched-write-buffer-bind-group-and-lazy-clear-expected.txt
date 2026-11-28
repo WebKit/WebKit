@@ -1,0 +1,24 @@
+Tests shared zero-buffer lazy texture clears on dirty memory, loadOp:'load' render pass clears, idle-queue validated and indirect indexed draw scratch allocation, writeBuffer ordering across open blit encoders, and interleaved queue.writeBuffer + device.createBindGroup batches on both idle and busy queues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lazyClearSmallZeroed is true
+PASS lazyClearLargeZeroed is true
+PASS renderPassDirectLoadClearedToZero is true
+PASS renderPassLoadClearedToZero is true
+PASS renderPassResolveDiscardClearedToZero is true
+PASS renderPass3DUnclearedSliceClearedToZero is true
+PASS renderPass3DSliceClearedCorrectly is true
+PASS idleQueueClampedDrawsPixels is "255,0,0,255,0,255,0,255,0,0,255,255,0,0,0,0"
+PASS orderedWriteBufferWords is "0x33333333,0x44444444"
+PASS orderedIndexDrawPixels is "0,0,0,0,0,0,0,0,0,0,255,255"
+PASS subrangeLength is 4
+PASS subrangeValues is "3255,4255,5255,6255"
+PASS stagedSubrangeLength is 4
+PASS stagedSubrangeValues is "13255,14255,15255,16255"
+PASS validationError is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

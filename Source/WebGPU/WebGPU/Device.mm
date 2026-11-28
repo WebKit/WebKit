@@ -411,12 +411,14 @@ id<MTLTexture> Device::getXRViewSubImageDepthTexture() const
 void Device::makeInvalid()
 {
     m_device = nil;
+    m_zeroBuffer = nil;
     protect(m_defaultQueue)->makeInvalid();
 }
 
 void Device::loseTheDevice(WebGPU::DeviceLostReason reason)
 {
     m_device = nil;
+    m_zeroBuffer = nil;
 
     m_adapter->makeInvalid();
 

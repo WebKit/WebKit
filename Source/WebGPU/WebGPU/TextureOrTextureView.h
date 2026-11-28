@@ -85,6 +85,11 @@ public:
     TEXTURE_OR_VIEW_HELPER_REF(apiParentTexture)
     TEXTURE_OR_VIEW_HELPER_REF(device)
 
+    Texture* parentTextureObject() const
+    {
+        return m_view ? &protect(m_view)->apiParentTexture() : m_texture.get();
+    }
+
     void setCommandEncoder(CommandEncoder& encoder)
     {
         m_view ? protect(m_view)->setCommandEncoder(encoder) : protect(m_texture)->setCommandEncoder(encoder);

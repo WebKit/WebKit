@@ -394,8 +394,12 @@ void CommandEncoder::resolveQuerySet(const WebGPU::QuerySet& querySet, uint32_t 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePassDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    if (isWebGPUSwiftEnabled())
-        return commandEncoderBeginComputePass(this, descriptor);
+    if (isWebGPUSwiftEnabled()) {
+        auto encoder = commandEncoderBeginComputePass(this, descriptor);
+        if (encoder->isValid() && descriptor.timestampWrites)
+            recordTimestampWrites(*descriptor.timestampWrites);
+        return encoder;
+    }
 #endif
 
     if (!prepareTheEncoderState()) {
@@ -424,6 +428,7 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WebGPU::ComputePa
         Ref timestampWrites = metal(apiTimestampWrites->querySet);
         counterSampleBuffer = timestampWrites->counterSampleBufferWithOffset();
         timestampWrites->setCommandEncoder(*this);
+        recordTimestampWrites(*apiTimestampWrites);
     }
 
     if (m_device->enableEncoderTimestamps() || counterSampleBuffer.buffer) {
@@ -670,8 +675,12 @@ static bool isMultisampleTexture(id<MTLTexture> texture)
 RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    if (isWebGPUSwiftEnabled())
-        return commandEncoderBeginRenderPass(this, descriptor);
+    if (isWebGPUSwiftEnabled()) {
+        RefPtr encoder = commandEncoderBeginRenderPass(this, descriptor);
+        if (encoder && encoder->isValid() && descriptor.timestampWrites)
+            recordTimestampWrites(*descriptor.timestampWrites);
+        return encoder;
+    }
 #endif
 
     auto maxDrawCount = descriptor.maxDrawCount.value_or(std::numeric_limits<uint64_t>::max());
@@ -731,6 +740,7 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
     using SliceSet = HashSet<uint64_t>;
     HashMap<void*, SliceSet> depthSlices;
     NSUInteger compositorTextureSlice = 0;
+    uint8_t promotedLazyClearMask = 0;
     for (size_t i = 0; i < descriptor.colorAttachments.size(); ++i) {
         auto optionalAttachment = resolvedColorAttachment(descriptor, i);
         if (!optionalAttachment)
@@ -842,11 +852,35 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
         }
 
         if (textureToClear) {
-            TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
-            [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
-            texture.setProvisionallyCleared(*this);
+            if (texture.is3DTexture()) {
+                if (RefPtr parentTexture = texture.parentTextureObject()) {
+                    CommandEncoder::clearTextureIfNeeded(*parentTexture, baseMipLevel, 0, m_device, ensureBlitCommandEncoder(), this);
+                    finalizeBlitCommandEncoder();
+                }
+            } else if (mtlAttachment.storeAction == MTLStoreActionStore && !attachment.resolveTarget && !mtlDescriptor.rasterizationRateMap) {
+                // Promoting to MTLLoadActionClear also keeps canDeferRenderCommandEncoder false so a draw-less pass still clears.
+                mtlAttachment.loadAction = MTLLoadActionClear;
+                mtlAttachment.clearColor = MTLClearColorMake(0, 0, 0, 0);
+                promotedLazyClearMask |= static_cast<uint8_t>(1u << i);
+            } else {
+                TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+                [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+            }
+            if (!texture.is3DTexture())
+                texture.setProvisionallyCleared(*this);
             if (auto resolveTarget = attachment.resolveTarget)
                 resolveTarget->setProvisionallyCleared(*this);
+        }
+    }
+
+    if (mtlDescriptor.rasterizationRateMap && promotedLazyClearMask) {
+        for (size_t i = 0; i < descriptor.colorAttachments.size(); ++i) {
+            if (!(promotedLazyClearMask & (1u << i)))
+                continue;
+            const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
+            mtlAttachment.loadAction = MTLLoadActionLoad;
+            TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:mtlAttachment.texture];
+            [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
         }
     }
 
@@ -976,6 +1010,9 @@ RefPtr<WebGPU::RenderPassEncoder> CommandEncoder::beginRenderPass(const WebGPU::
 
     if (!m_device->isValid())
         return RenderPassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
+
+    if (descriptor.timestampWrites)
+        recordTimestampWrites(*descriptor.timestampWrites);
 
     return createRenderPassEncoder(descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, visibilityResultBuffer, maxDrawCount, mtlDescriptor);
 }
@@ -1544,7 +1581,7 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
     NSUInteger bufferLength = checkedBufferLength.value();
     if (!bufferLength)
         return;
-    id<MTLBuffer> temporaryBuffer = device.safeCreateBuffer(bufferLength);
+    id<MTLBuffer> temporaryBuffer = device.zeroBuffer(bufferLength);
 
     if (!temporaryBuffer)
         return;
@@ -2454,7 +2491,8 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
 #if ENABLE(WEBGPU_SWIFT)
     // FIXME: rdar://138047285 const_cast is needed as a workaround.
     if (isWebGPUSwiftEnabled()) {
-        commandEncoderResolveQuerySet(this, const_cast<QuerySet*>(&querySet), firstQuery, queryCount, &destination, destinationOffset);
+        if (commandEncoderResolveQuerySet(this, const_cast<QuerySet*>(&querySet), firstQuery, queryCount, &destination, destinationOffset) && querySet.type() == WebGPU::QueryType::Timestamp)
+            clearUnusedTimestampSlots(querySet, firstQuery, queryCount, destination, destinationOffset);
         return;
     }
 #endif
@@ -2493,6 +2531,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
         ensureBlitCommandEncoder();
         auto counterSampleBuffer = querySet.counterSampleBufferWithOffset();
         [m_blitCommandEncoder resolveCounters:counterSampleBuffer.buffer inRange:NSMakeRange(firstQuery + counterSampleBuffer.offset, queryCount) destinationBuffer:destination.buffer() destinationOffset:destinationOffset];
+        clearUnusedTimestampSlots(querySet, firstQuery, queryCount, destination, destinationOffset);
         break;
     }
     default:
@@ -2561,6 +2600,7 @@ void CommandEncoder::clearTracking()
     m_trackedTextureViews.clear();
     m_trackedExternalTextures.clear();
     m_trackedQuerySets.clear();
+    m_writtenTimestampSlots.clear();
 }
 
 bool CommandEncoder::trackEncoderForBuffer(const Buffer& buffer, TrackedResourceContainer& encoderContainer)
@@ -2570,15 +2610,19 @@ bool CommandEncoder::trackEncoderForBuffer(const Buffer& buffer, TrackedResource
         m_trackedBuffers.append(buffer);
     return addResult.isNewEntry;
 }
-void CommandEncoder::trackEncoderForTexture(const Texture& texture, TrackedResourceContainer& encoderContainer)
+bool CommandEncoder::trackEncoderForTexture(const Texture& texture, TrackedResourceContainer& encoderContainer)
 {
-    if (encoderContainer.add(uniqueId()).isNewEntry)
+    auto addResult = encoderContainer.add(uniqueId());
+    if (addResult.isNewEntry)
         m_trackedTextures.append(texture);
+    return addResult.isNewEntry;
 }
-void CommandEncoder::trackEncoderForTextureView(const TextureView& textureView, TrackedResourceContainer& encoderContainer)
+bool CommandEncoder::trackEncoderForTextureView(const TextureView& textureView, TrackedResourceContainer& encoderContainer)
 {
-    if (encoderContainer.add(uniqueId()).isNewEntry)
+    auto addResult = encoderContainer.add(uniqueId());
+    if (addResult.isNewEntry)
         m_trackedTextureViews.append(textureView);
+    return addResult.isNewEntry;
 }
 void CommandEncoder::trackEncoderForExternalTexture(const ExternalTexture& externalTexture, TrackedResourceContainer& encoderContainer)
 {
@@ -2633,7 +2677,55 @@ void CommandEncoder::skippedBundleIndirectDrawValidation(uint64_t bufferIdentifi
 
 void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 {
-    m_bindGroups.append(group);
+    m_bindGroups.add(group);
+}
+
+void CommandEncoder::recordTimestampWrites(const WebGPU::PassTimestampWrites& timestampWrites)
+{
+    Ref querySet = metal(timestampWrites.querySet);
+    auto& slots = m_writtenTimestampSlots.add(querySet.ptr(), BitVector { }).iterator->value;
+    std::optional<uint32_t> beginningIndex = timestampWrites.beginningOfPassWriteIndex;
+    std::optional<uint32_t> endIndex = timestampWrites.endOfPassWriteIndex;
+    if (beginningIndex && *beginningIndex < querySet->count())
+        slots.set(*beginningIndex);
+    if (endIndex && *endIndex < querySet->count())
+        slots.set(*endIndex);
+    addOnCommitHandler([querySet, beginningIndex, endIndex](CommandBuffer&, CommandEncoder&) {
+        if (beginningIndex)
+            querySet->markSlotWritten(*beginningIndex);
+        if (endIndex)
+            querySet->markSlotWritten(*endIndex);
+        return true;
+    });
+}
+
+void CommandEncoder::clearUnusedTimestampSlots(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, Buffer& destination, uint64_t destinationOffset)
+{
+    if (!isValid() || !m_blitCommandEncoder || !encoderIsCurrent(m_blitCommandEncoder) || querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
+        return;
+    if (!validateResolveQuerySet(querySet, firstQuery, queryCount, destination, destinationOffset) || !isValidToUseWith(querySet, *this) || !isValidToUseWith(destination, *this))
+        return;
+    id<MTLBuffer> destinationBuffer = destination.buffer();
+    auto endQueryChecked = checkedSum<uint32_t>(firstQuery, queryCount);
+    auto endByteChecked = checkedSum<uint64_t>(destinationOffset, checkedProduct<uint64_t>(queryCount, sizeof(uint64_t)));
+    if (!destinationBuffer || endQueryChecked.hasOverflowed() || endQueryChecked.value() > querySet.count() || endByteChecked.hasOverflowed() || endByteChecked.value() > destinationBuffer.length)
+        return;
+    auto it = m_writtenTimestampSlots.find(&querySet);
+    BitVector encoderSlots = it != m_writtenTimestampSlots.end() ? it->value : BitVector { };
+    uint32_t endQuery = endQueryChecked.value();
+    uint32_t query = firstQuery;
+    while (query < endQuery) {
+        if (querySet.isSlotWritten(query) || encoderSlots.get(query)) {
+            ++query;
+            continue;
+        }
+        uint32_t runStart = query;
+        while (query < endQuery && !querySet.isSlotWritten(query) && !encoderSlots.get(query))
+            ++query;
+        NSUInteger byteOffset = static_cast<NSUInteger>(destinationOffset + static_cast<uint64_t>(runStart - firstQuery) * sizeof(uint64_t));
+        NSUInteger byteLength = static_cast<NSUInteger>(query - runStart) * sizeof(uint64_t);
+        [m_blitCommandEncoder fillBuffer:destinationBuffer range:NSMakeRange(byteOffset, byteLength) value:0];
+    }
 }
 
 } // namespace WebGPU::Metal

@@ -67,7 +67,7 @@ func commandEncoderResolveQuerySet(
     queryCount: UInt32,
     destination: WebGPU.Metal.Buffer,
     destinationOffset: UInt64
-) {
+) -> Bool {
     commandEncoder.resolveQuerySet(
         querySet,
         firstQuery: firstQuery,
@@ -344,7 +344,7 @@ extension WebGPU.Metal.CommandEncoder {
             return
         }
 
-        guard let temporaryBuffer = device.safeCreateBuffer(bufferLength) else {
+        guard let temporaryBuffer = device.zeroBuffer(bufferLength) else {
             return
         }
 
@@ -1107,6 +1107,7 @@ extension WebGPU.Metal.CommandEncoder {
         // FIXME: it shouldn't be necessary to pass colorAttachmentCount here
         var compositorTextureSlice: UInt32 = 0
         if descriptor.colorAttachmentCount() != 0 {
+            var promotedLazyClearMask: UInt8 = 0
             for i in 0..<descriptor.colorAttachmentCount() {
                 // An empty slot has no attachment.
                 guard let attachment = Optional(fromCxx: WebGPU.Metal.resolvedColorAttachment(descriptor, i)) else {
@@ -1298,28 +1299,53 @@ extension WebGPU.Metal.CommandEncoder {
                     compositorTextureSlice = compositorTexture.parentRelativeSlice()
                 }
 
-                #if compiler(>=6.4)
-                if let textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
-                    texture.setProvisionallyCleared(self)
+                func configureLazyAttachmentClear(_ clearTexture: any MTLTexture) {
+                    if texture.is3DTexture() {
+                        if let parentTexture = texture.parentTextureObject() {
+                            clearTextureIfNeeded(parentTexture, UInt(baseMipLevel), 0, m_device.ptr(), ensureBlitCommandEncoder())
+                            finalizeBlitCommandEncoder()
+                        }
+                    } else if mtlAttachment.storeAction == .store
+                        && optionalResolveTarget == nil
+                        && mtlDescriptor.rasterizationRateMap == nil
+                    {
+                        // Promoting to .clear also keeps canDeferRenderCommandEncoder false so a draw-less pass still clears.
+                        mtlAttachment.loadAction = .clear
+                        mtlAttachment.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+                        promotedLazyClearMask |= 1 << UInt8(i)
+                    } else {
+                        attachmentsToClear[i as NSNumber] = TextureAndClearColor(texture: clearTexture)
+                    }
+                    if !texture.is3DTexture() {
+                        texture.setProvisionallyCleared(self)
+                    }
                     // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
                     if var resolveTarget = optionalResolveTarget {
                         resolveTarget.setProvisionallyCleared(self)
                     }
+                }
+
+                #if compiler(>=6.4)
+                if let textureToClear {
+                    configureLazyAttachmentClear(textureToClear)
                 }
                 #else
                 // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 if var textureToClear {
-                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
-                    attachmentsToClear[i as NSNumber] = textureWithResolve
-                    texture.setProvisionallyCleared(self)
-                    // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                    if var resolveTarget = optionalResolveTarget {
-                        resolveTarget.setProvisionallyCleared(self)
-                    }
+                    configureLazyAttachmentClear(textureToClear)
                 }
                 #endif
+            }
+
+            if mtlDescriptor.rasterizationRateMap != nil && promotedLazyClearMask != 0 {
+                for i in 0..<descriptor.colorAttachmentCount() where (promotedLazyClearMask & (1 << UInt8(i))) != 0 {
+                    // swift-format-ignore: NeverForceUnwrap
+                    let mtlAttachment = mtlDescriptor.colorAttachments[i]!
+                    mtlAttachment.loadAction = .load
+                    if let clearTexture = mtlAttachment.texture {
+                        attachmentsToClear[i as NSNumber] = TextureAndClearColor(texture: clearTexture)
+                    }
+                }
             }
         }
 
@@ -2279,10 +2305,10 @@ extension WebGPU.Metal.CommandEncoder {
         queryCount: UInt32,
         destination: WebGPU.Metal.Buffer,
         destinationOffset: UInt64
-    ) {
+    ) -> Bool {
         guard self.prepareTheEncoderState() else {
             self.generateInvalidEncoderStateError()
-            return
+            return false
         }
 
         let isValid = validateResolveQuerySet(
@@ -2299,7 +2325,7 @@ extension WebGPU.Metal.CommandEncoder {
             CxxBridging.isValidToUseWithBufferCommandEncoder(destination, self)
         else {
             makeInvalid("GPUCommandEncoder.resolveQuerySet validation failed")
-            return
+            return false
         }
 
         querySet.setCommandEncoder(self)
@@ -2308,19 +2334,19 @@ extension WebGPU.Metal.CommandEncoder {
         destination.indirectBufferInvalidated(self)
 
         if querySet.isDestroyed() || destination.isDestroyed() || queryCount == 0 {
-            return
+            return false
         }
 
         if Optional(fromCxx: querySet.type()) == WebGPU.QueryType.Occlusion {
             guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
-                return
+                return false
             }
             guard
                 let sourceOffset = Int(exactly: 8 * firstQuery),
                 let destinationOffsetChecked = Int(exactly: destinationOffset),
                 let size = Int(exactly: 8 * queryCount)
             else {
-                return
+                return false
             }
             blitCommandEncoder.copy(
                 from: querySet.visibilityBuffer(),
@@ -2329,6 +2355,7 @@ extension WebGPU.Metal.CommandEncoder {
                 destinationOffset: destinationOffsetChecked,
                 size: size
             )
+            return true
         }
 
         if Optional(fromCxx: querySet.type()) == WebGPU.QueryType.Timestamp {
@@ -2339,11 +2366,11 @@ extension WebGPU.Metal.CommandEncoder {
             m_commandBuffer?.encodeSignalEvent(workaround, value: 1)
             m_commandBuffer?.encodeWaitForEvent(workaround, value: 1)
             guard ensureBlitCommandEncoder() != nil else {
-                return
+                return false
             }
             let counterSampleBuffer = querySet.counterSampleBufferWithOffset()
             guard let buffer = counterSampleBuffer.buffer else {
-                return
+                return false
             }
 
             m_blitCommandEncoder?
@@ -2353,7 +2380,10 @@ extension WebGPU.Metal.CommandEncoder {
                     destinationBuffer: destination.buffer(),
                     destinationOffset: Int(destinationOffset)
                 )
+            return true
         }
+
+        return false
     }
 
     func validateResolveQuerySet(

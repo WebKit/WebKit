@@ -293,8 +293,10 @@ void Queue::makeInvalid()
     m_onSubmittedWorkDoneCallbacks.clear();
 
     for (auto& provisionalClear : std::exchange(m_provisionalTextureClears, { })) {
-        if (RefPtr texture = provisionalClear.texture.get())
-            texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+        if (!provisionalClear.dropped) {
+            if (RefPtr texture = provisionalClear.texture)
+                texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+        }
     }
 
     while (m_createdNotCommittedBuffers.count)
@@ -2276,6 +2278,7 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
     if (!devicePtr)
         return;
 
+    bool encodedAnyClear = false;
     for (uint32_t slice = 0; slice < arrayLayerCount; ++slice) {
         for (uint32_t mipLevel = 0; mipLevel < mipLevelCount; ++mipLevel) {
             auto checkedParentMipLevel = checkedSum<uint32_t>(baseMipLevel, mipLevel);
@@ -2288,9 +2291,11 @@ void Queue::clearTextureIfNeeded(Texture& parentTexture, uint32_t mipLevelCount,
                 continue;
 
             CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, ensureBlitCommandEncoder());
+            encodedAnyClear = true;
         }
     }
-    finalizeBlitCommandEncoder();
+    if (encodedAnyClear)
+        finalizeBlitCommandEncoder();
 }
 
 void Queue::addProvisionalTextureClear(Texture& texture, uint32_t mipLevel, uint32_t slice, uint64_t commandEncoderId)
@@ -2300,6 +2305,9 @@ void Queue::addProvisionalTextureClear(Texture& texture, uint32_t mipLevel, uint
 
 void Queue::removeProvisionalTextureClears(const Texture& texture, uint32_t mipLevel, uint32_t slice)
 {
+    if (m_provisionalTextureClears.isEmpty())
+        return;
+
     m_provisionalTextureClears.removeAllMatching([&](const auto& provisionalClear) {
         return provisionalClear.texture.get() == &texture && provisionalClear.mipLevel == mipLevel && provisionalClear.slice == slice;
     });
@@ -2307,12 +2315,18 @@ void Queue::removeProvisionalTextureClears(const Texture& texture, uint32_t mipL
 
 void Queue::discardProvisionalTextureClears(uint64_t commandEncoderId)
 {
-    m_provisionalTextureClears.removeAllMatching([&](const auto& provisionalClear) {
-        if (provisionalClear.commandEncoderId != commandEncoderId)
+    m_provisionalTextureClears.removeAllMatching([&](auto& provisionalClear) {
+        if (provisionalClear.dropped || provisionalClear.commandEncoderId != commandEncoderId)
             return false;
-        if (RefPtr texture = provisionalClear.texture.get())
-            texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
-        return true;
+        RefPtr texture = provisionalClear.texture;
+        if (!texture || texture->isDestroyed())
+            return true;
+        texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+        if (!texture->hasPendingUsersOtherThan(commandEncoderId))
+            return true;
+        provisionalClear.dropped = true;
+        provisionalClear.commandEncoderId = 0;
+        return false;
     });
 }
 
@@ -2327,13 +2341,15 @@ void Queue::resolveProvisionalTextureClears(std::optional<uint64_t> committingCo
         RefPtr texture = provisionalClear.texture.get();
         if (!texture)
             continue;
-        if (committingCommandEncoderId && provisionalClear.commandEncoderId == *committingCommandEncoderId) {
+        if (!provisionalClear.dropped && committingCommandEncoderId && provisionalClear.commandEncoderId == *committingCommandEncoderId) {
             texture->promoteProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
             continue;
         }
 
-        texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
-        m_provisionalTextureClears.append(provisionalClear);
+        if (!provisionalClear.dropped) {
+            texture->dropProvisionalClear(provisionalClear.mipLevel, provisionalClear.slice);
+            provisionalClear.dropped = true;
+        }
     }
 
     RefPtr devicePtr = m_device.get();

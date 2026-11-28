@@ -3413,8 +3413,9 @@ void Texture::resetGPUFrameCost() const
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    commandEncoder.trackEncoderForTexture(*this, m_commandEncoders);
-    commandEncoder.addTexture(*this);
+    // Re-add when sharedEvent() is present so XR textures refresh CommandEncoder's signal value.
+    if (commandEncoder.trackEncoderForTexture(*this, m_commandEncoders) || sharedEvent())
+        commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
@@ -4233,11 +4234,20 @@ void Texture::dropProvisionalClear(uint32_t mipLevel, uint32_t slice)
 
 void Texture::discardProvisionalClear(uint32_t mipLevel, uint32_t slice)
 {
-    if (!m_provisionalClears.contains(provisionalClearKey(mipLevel, slice)))
+    if (durablyCleared(mipLevel, slice))
         return;
 
     m_provisionalClears.removeAll(provisionalClearKey(mipLevel, slice));
     m_device->getQueue()->removeProvisionalTextureClears(*this, mipLevel, slice);
+}
+
+bool Texture::hasPendingUsersOtherThan(uint64_t commandEncoderId) const
+{
+    for (uint64_t id : m_commandEncoders) {
+        if (id != commandEncoderId)
+            return true;
+    }
+    return !m_bindGroups.computeIsEmpty() || !m_renderBundles.computeIsEmpty();
 }
 
 id<MTLSharedEvent> Texture::sharedEvent() const

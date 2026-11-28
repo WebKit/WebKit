@@ -150,6 +150,7 @@ public:
     void promoteProvisionalClear(uint32_t mipLevel, uint32_t slice);
     void dropProvisionalClear(uint32_t mipLevel, uint32_t slice);
     void discardProvisionalClear(uint32_t mipLevel, uint32_t slice);
+    bool hasPendingUsersOtherThan(uint64_t commandEncoderId) const;
     bool isDestroyed() const { return m_destroyed; }
 
     static bool hasStorageBindingCapability(WebGPU::TextureFormat, const Device&, std::optional<WebGPU::StorageTextureAccess> = std::nullopt);

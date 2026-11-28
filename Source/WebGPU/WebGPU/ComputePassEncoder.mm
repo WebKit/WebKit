@@ -192,11 +192,6 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
     }
     [computeCommandEncoder() setComputePipelineState:pipeline->computePipelineState()];
 
-    EntryMapContainer usagesForResource;
-    TextureEntryMapContainer textureUsagesForResource;
-    if (indirectBuffer)
-        addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource);
-
     Ref pipelineLayout = pipeline->pipelineLayout();
     auto pipelineLayoutCount = pipelineLayout->numberOfBindGroupLayouts();
     auto pipelineIdentifier = pipeline->uniqueId();
@@ -224,34 +219,41 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         [computeCommandEncoder() setBuffer:group->computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
     }
 
-    for (auto& kvp : m_bindGroupResources) {
-        auto bindGroupIndex = kvp.key;
-        if (bindGroupIndex >= pipelineLayoutCount)
-            continue;
+    if (!m_bindGroupResources.isEmpty() || indirectBuffer) {
+        EntryMapContainer usagesForResource;
+        TextureEntryMapContainer textureUsagesForResource;
+        if (indirectBuffer)
+            addResourceToActiveResources(indirectBuffer, BindGroupEntryUsage::Input, usagesForResource);
 
-        Ref bindGroupLayout = pipelineLayout->bindGroupLayout(bindGroupIndex);
-        for (auto* bindGroupResources : borrow(kvp.value)) {
-            for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
-                auto& usageData = bindGroupResources->resourceUsages[i];
-                constexpr ShaderStage shaderStages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
-                std::optional<BindGroupLayout::StageMapValue> bindingAccess;
-                for (auto shaderStage : shaderStages) {
-                    bindingAccess = bindGroupLayout->bindingAccessForBindingIndex(usageData.binding, shaderStage);
-                    if (bindingAccess)
-                        break;
-                }
-                if (!bindingAccess)
-                    continue;
+        for (auto& kvp : m_bindGroupResources) {
+            auto bindGroupIndex = kvp.key;
+            if (bindGroupIndex >= pipelineLayoutCount)
+                continue;
 
-                if (!addResourceToActiveResources(usageData.resource, usageData.usage, BindGroupId { bindGroupIndex }, usagesForResource, textureUsagesForResource, protect(m_parentEncoder))) {
-                    makeInvalid(@"GPUComputePassEncoder.executePreDispatchCommands - could not track resource");
-                    return;
+            Ref bindGroupLayout = pipelineLayout->bindGroupLayout(bindGroupIndex);
+            for (auto* bindGroupResources : borrow(kvp.value)) {
+                for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
+                    auto& usageData = bindGroupResources->resourceUsages[i];
+                    constexpr ShaderStage shaderStages[] = { ShaderStage::Compute, ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Undefined };
+                    std::optional<BindGroupLayout::StageMapValue> bindingAccess;
+                    for (auto shaderStage : shaderStages) {
+                        bindingAccess = bindGroupLayout->bindingAccessForBindingIndex(usageData.binding, shaderStage);
+                        if (bindingAccess)
+                            break;
+                    }
+                    if (!bindingAccess)
+                        continue;
+
+                    if (!addResourceToActiveResources(usageData.resource, usageData.usage, BindGroupId { bindGroupIndex }, usagesForResource, textureUsagesForResource, protect(m_parentEncoder))) {
+                        makeInvalid(@"GPUComputePassEncoder.executePreDispatchCommands - could not track resource");
+                        return;
+                    }
                 }
             }
         }
-    }
 
-    m_bindGroupResources.clear();
+        m_bindGroupResources.clear();
+    }
 
     if (!m_computeDynamicOffsets.size())
         return;

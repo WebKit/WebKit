@@ -167,6 +167,7 @@ private:
         uint32_t mipLevel { 0 };
         uint32_t slice { 0 };
         uint64_t commandEncoderId { 0 };
+        bool dropped { false };
     };
 
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
@@ -191,8 +192,11 @@ private:
     Lock m_committedNotCompletedBuffersLock;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> * _Nullable m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
+    // Monotonic bump-allocated scratch buffer shared by queue-staged copies and uncommitted
+    // RenderPassEncoder draw-clamp passes; m_temporaryBufferOffset must never rewind on an
+    // existing m_temporaryBuffer because unsubmitted encoders and completion handlers hold slices.
     id<MTLBuffer> _Nullable m_temporaryBuffer;
-    uint64_t m_temporaryBufferOffset;
+    uint64_t m_temporaryBufferOffset { 0 };
     Vector<ProvisionalTextureClear> m_provisionalTextureClears;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refQueue, derefQueue) SWIFT_PRIVATE_FILEID("WebGPU/Queue.swift");
 
