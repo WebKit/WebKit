@@ -8926,8 +8926,6 @@ fast/forms/ios/insert-autofill-suggestion.html [ Failure ] # webkit.org/b/318249
 fast/forms/ios/suppress-software-keyboard-while-focusing-input.html [ Failure ] # webkit.org/b/318249
 webkit.org/b/326103 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 editing/selection/ios/update-selection-after-iframe-scroll.html [ Timeout ] # webkit.org/b/318250
-fast/events/ios/autocorrect-with-apostrophe.html [ Timeout ] # webkit.org/b/318251
-fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html [ Pass Failure Timeout ] # webkit.org/b/318251
 fast/forms/ios/hide-keyboard-on-node-removal.html [ Timeout ] # webkit.org/b/318252
 fast/forms/ios/zoom-to-reveal-focused-element-after-delay.html [ Timeout ] # webkit.org/b/318252
 editing/caret/ios/place-caret-after-autocorrected-word.html [ Pass Failure Timeout ] # webkit.org/b/318253, rdar://177981437
