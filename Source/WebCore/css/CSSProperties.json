@@ -1781,6 +1781,11 @@
                 "mathematical",
                 "text-top",
                 {
+                    "value": "-webkit-baseline-middle",
+                    "status": "non-standard",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
                     "value": "after-edge",
                     "status": "deprecated"
                 },
@@ -1804,8 +1809,7 @@
                 }
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_svgData", "nonInheritedFlags"],
-                "computed-style-storage-container": "struct",
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "AlignmentBaseline",
                 "parser-grammar": "<<values>>"
@@ -2479,17 +2483,34 @@
             "values": [
                 "baseline",
                 "sub",
-                "super"
+                "super",
+                {
+                    "value": "top",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
+                    "value": "center",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                },
+                {
+                    "value": "bottom",
+                    "settings-flag": "cssVerticalAlignShorthandEnabled"
+                }
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_svgData", "miscData"],
+                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::SVGBaselineShift",
-                "parser-grammar": "baseline | sub | super | <length-percentage>"
+                "computed-style-type": "Style::BaselineShift",
+                "style-extractor-custom": true,
+                "parser-exported": true,
+                "parser-grammar": "baseline | sub | super | top@(settings-flag=cssVerticalAlignShorthandEnabled) | center@(settings-flag=cssVerticalAlignShorthandEnabled) | bottom@(settings-flag=cssVerticalAlignShorthandEnabled) | <length-percentage>",
+                "parser-grammar-comment": "With cssVerticalAlignShorthandEnabled, 'baseline' is the legacy SVG keyword that CSS Inline 3 allows, computing to 0."
             },
             "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#BaselineShiftProperty"
+                "category": "css-inline",
+                "url": "https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift",
+                "obsolete-category": "svg",
+                "obsolete-url": "https://www.w3.org/TR/SVG11/text.html#BaselineShiftProperty"
             }
         },
         "baseline-source": {
@@ -9602,6 +9623,26 @@
                 "url": "https://drafts.csswg.org/css-inline/#propdef-vertical-align",
                 "obsolete-category": "css-22",
                 "obsolete-url": "https://www.w3.org/TR/CSS22/visudet.html#propdef-vertical-align"
+            }
+        },
+        "-internal-vertical-align": {
+            "codegen-properties": {
+                "longhands": [
+                    "baseline-source",
+                    "alignment-baseline",
+                    "baseline-shift"
+                ],
+                "accepts-quirky-length": true,
+                "parser-function": "consumeVerticalAlignShorthand",
+                "parser-grammar-unused": "[ first | last ] || <'alignment-baseline'> || <'baseline-shift'>",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars. Also excludes the legacy SVG values of the longhands.",
+                "internal-only": true,
+                "style-extractor-custom": true,
+                "comment": "The CSS Inline 3 'vertical-align' shorthand. 'vertical-align' resolves to it when CSSVerticalAlignShorthandEnabled is enabled (see resolveVerticalAlignShorthand()), and it is serialized under that name."
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://drafts.csswg.org/css-inline-3/#transverse-alignment"
             }
         },
         "visibility": {

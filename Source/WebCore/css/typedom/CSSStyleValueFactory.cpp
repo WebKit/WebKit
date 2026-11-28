@@ -66,6 +66,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
+#include "Document.h"
 #include "ExceptionOr.h"
 #include "StyleComputedStyle.h"
 #include "ScriptWrappableInlines.h"
@@ -128,9 +129,9 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(Do
          return parseStyleValueForCustomProperty(document, property, cssText, parseMultiple);
 
     auto propertyID = cssPropertyID(property.convertToASCIILowercase());
-    if (propertyID == CSSPropertyID::Invalid)
+    if (!isExposed(propertyID, &document.settings()))
         return Exception { ExceptionCode::TypeError, "Property String is not a valid CSS property."_s };
-    return parseStyleValueForKnownProperty(document, propertyID, cssText, parseMultiple);
+    return parseStyleValueForKnownProperty(document, resolveVerticalAlignShorthand(propertyID, document.cssParserContext()), cssText, parseMultiple);
 }
 
 ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueForCustomProperty(Document&, const AtomString& customPropertyName, const String& cssText, bool /*parseMultiple*/)

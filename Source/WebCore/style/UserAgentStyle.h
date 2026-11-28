@@ -48,6 +48,7 @@ public:
         const RefPtr<StyleSheetContents> svgStyleSheet;
         const RefPtr<StyleSheetContents> mathMLStyleSheet;
         const RefPtr<StyleSheetContents> mathMLCoreExtrasStyleSheet;
+        const RefPtr<StyleSheetContents> mathMLVerticalAlignShorthandStyleSheet;
         const RefPtr<StyleSheetContents> mathMLCoreMathvariantStyleSheet;
         const RefPtr<StyleSheetContents> mathMLFontSizeMathStyleSheet;
         const RefPtr<StyleSheetContents> mathMLLegacyFontSizeMathStyleSheet;
@@ -58,6 +59,7 @@ public:
         const RefPtr<StyleSheetContents> popoverStyleSheet;
         const RefPtr<StyleSheetContents> counterStylesStyleSheet;
         const RefPtr<StyleSheetContents> viewTransitionsStyleSheet;
+        const RefPtr<StyleSheetContents> verticalAlignShorthandStyleSheet;
 #if ENABLE(FULLSCREEN_API)
         const RefPtr<StyleSheetContents> fullscreenStyleSheet;
 #endif

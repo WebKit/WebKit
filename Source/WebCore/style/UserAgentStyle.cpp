@@ -224,6 +224,10 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             lazyInitialize(sheets.mathMLCoreMathvariantStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlCoreMathvariantUserAgentStyleSheet)));
             addToDefaultStyle(*sheets.mathMLCoreMathvariantStyleSheet);
         }
+        if (!sheets.mathMLVerticalAlignShorthandStyleSheet && element.document().settings().cssVerticalAlignShorthandEnabled()) {
+            lazyInitialize(sheets.mathMLVerticalAlignShorthandStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlVerticalAlignShorthandUserAgentStyleSheet)));
+            addToDefaultStyle(*sheets.mathMLVerticalAlignShorthandStyleSheet);
+        }
         if (element.document().settings().cssMathDepthEnabled()) {
             if (!sheets.mathMLFontSizeMathStyleSheet) {
                 lazyInitialize(sheets.mathMLFontSizeMathStyleSheet, parseUASheet(StringImpl::createWithoutCopying(mathmlFontSizeMathUserAgentStyleSheet)));
@@ -237,6 +241,11 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         }
     }
 #endif // ENABLE(MATHML)
+
+    if (!sheets.verticalAlignShorthandStyleSheet && element.document().settings().cssVerticalAlignShorthandEnabled()) {
+        lazyInitialize(sheets.verticalAlignShorthandStyleSheet, parseUASheet(StringImpl::createWithoutCopying(verticalAlignShorthandUserAgentStyleSheet)));
+        addToDefaultStyle(*sheets.verticalAlignShorthandStyleSheet);
+    }
 
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr documentFullscreen = element.document().fullscreenIfExists(); !sheets.fullscreenStyleSheet && documentFullscreen) {

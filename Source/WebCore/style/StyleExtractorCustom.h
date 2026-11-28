@@ -95,6 +95,7 @@ public:
     static Ref<CSSValue> extractContent(ExtractorState&);
     static Ref<CSSValue> extractLetterSpacing(ExtractorState&);
     static Ref<CSSValue> extractWordSpacing(ExtractorState&);
+    static Ref<CSSValue> extractBaselineShift(ExtractorState&);
     static Ref<CSSValue> extractLineHeight(ExtractorState&);
     static Ref<CSSValue> extractFontFamily(ExtractorState&);
     static Ref<CSSValue> extractFontSize(ExtractorState&);
@@ -188,6 +189,7 @@ public:
     static RefPtr<CSSValue> extractTransitionShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractViewTimelineShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWhiteSpaceShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractInternalVerticalAlignShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitBorderImageShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitBorderRadiusShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractWebkitColumnBreakAfterShorthand(ExtractorState&);
@@ -206,6 +208,7 @@ public:
     static void extractContentSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractLetterSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWordSpacingSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBaselineShiftSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractLineHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontFamilySerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFontSizeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -297,6 +300,7 @@ public:
     static void extractTransitionShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractViewTimelineShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWhiteSpaceShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractInternalVerticalAlignShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitBorderImageShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitBorderRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitColumnBreakAfterShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -729,6 +733,19 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::WordSpacing> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
         return functor(state.style->computedWordSpacing());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyID::BaselineShift> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
+    {
+        // When 'vertical-align' is a shorthand, the legacy SVG `baseline` keyword computes to `0`, as CSS Inline 3
+        // allows. It is still the initial value, so it can be stored regardless of the setting.
+        // https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift
+        auto& baselineShift = state.style->baselineShift();
+        if (baselineShift.isBaseline() && state.element->document().settings().cssVerticalAlignShorthandEnabled())
+            return functor(BaselineShift { CSS::ValueLiteral<CSS::LengthUnit::Px> { 0 } });
+        return functor(baselineShift);
     }
 };
 
@@ -1303,6 +1320,64 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::WhiteSpace> {
             return functor(SpaceSeparatedTuple { whiteSpaceCollapse, whiteSpaceTrim });
 
         return functor(SpaceSeparatedTuple { whiteSpaceCollapse, textWrapMode, whiteSpaceTrim });
+    }
+};
+
+// The CSS Inline 3 'vertical-align' shorthand, which 'vertical-align' resolves to when CSSVerticalAlignShorthandEnabled is enabled.
+template<> struct PropertyExtractorAdaptor<CSSPropertyID::InternalVerticalAlign> {
+    // The legacy SVG values of 'alignment-baseline' are not allowed in the shorthand, so it can't represent them.
+    static bool canRepresent(const ExtractorState& state)
+    {
+        switch (state.style->alignmentBaseline()) {
+        case AlignmentBaseline::BeforeEdge:
+        case AlignmentBaseline::TextBeforeEdge:
+        case AlignmentBaseline::AfterEdge:
+        case AlignmentBaseline::TextAfterEdge:
+        case AlignmentBaseline::Hanging:
+            return false;
+        default:
+            return true;
+        }
+    }
+
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
+    {
+        // https://drafts.csswg.org/css-inline-3/#transverse-alignment
+        ASSERT(canRepresent(state));
+
+        auto baselineSource = state.style->baselineSource();
+        auto alignmentBaseline = state.style->alignmentBaseline();
+        auto& baselineShift = state.style->baselineShift();
+
+        // Omit initial values, in the canonical order of the grammar. The legacy SVG `baseline` keyword of 'baseline-shift'
+        // computes to its initial value of 0.
+        bool hasInitialBaselineSource = baselineSource == ComputedStyle::initialBaselineSource();
+        bool hasInitialAlignmentBaseline = alignmentBaseline == ComputedStyle::initialAlignmentBaseline();
+        bool hasInitialBaselineShift = [&] {
+            if (baselineShift.isBaseline())
+                return true;
+            auto lengthPercentage = baselineShift.tryLengthPercentage();
+            if (!lengthPercentage)
+                return false;
+            auto fixed = lengthPercentage->tryFixed();
+            return fixed && fixed->isZero();
+        }();
+
+        if (hasInitialBaselineSource && hasInitialAlignmentBaseline && hasInitialBaselineShift)
+            return functor(CSS::Keyword::Baseline { });
+        if (hasInitialBaselineSource && hasInitialAlignmentBaseline)
+            return functor(baselineShift);
+        if (hasInitialBaselineSource && hasInitialBaselineShift)
+            return functor(alignmentBaseline);
+        if (hasInitialAlignmentBaseline && hasInitialBaselineShift)
+            return functor(baselineSource);
+        if (hasInitialBaselineSource)
+            return functor(SpaceSeparatedTuple { alignmentBaseline, baselineShift });
+        if (hasInitialAlignmentBaseline)
+            return functor(SpaceSeparatedTuple { baselineSource, baselineShift });
+        if (hasInitialBaselineShift)
+            return functor(SpaceSeparatedTuple { baselineSource, alignmentBaseline });
+        return functor(SpaceSeparatedTuple { baselineSource, alignmentBaseline, baselineShift });
     }
 };
 
@@ -2163,6 +2238,16 @@ inline Ref<CSSValue> ExtractorCustom::extractWordSpacing(ExtractorState& state)
 inline void ExtractorCustom::extractWordSpacingSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyID::WordSpacing>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBaselineShift(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyID::BaselineShift>(state);
+}
+
+inline void ExtractorCustom::extractBaselineShiftSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyID::BaselineShift>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractLineHeight(ExtractorState& state)
@@ -3808,6 +3893,20 @@ inline RefPtr<CSSValue> ExtractorCustom::extractWhiteSpaceShorthand(ExtractorSta
 inline void ExtractorCustom::extractWhiteSpaceShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyID::WhiteSpace>(state, builder, context);
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractInternalVerticalAlignShorthand(ExtractorState& state)
+{
+    if (!PropertyExtractorAdaptor<CSSPropertyID::InternalVerticalAlign>::canRepresent(state))
+        return nullptr;
+    return extractCSSValue<CSSPropertyID::InternalVerticalAlign>(state);
+}
+
+inline void ExtractorCustom::extractInternalVerticalAlignShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (!PropertyExtractorAdaptor<CSSPropertyID::InternalVerticalAlign>::canRepresent(state))
+        return;
+    extractSerialization<CSSPropertyID::InternalVerticalAlign>(state, builder, context);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderImageShorthand(ExtractorState& state)

@@ -52,6 +52,12 @@ NODELETE static void applyUASheetBehaviorsToContext(CSSParserContext& context)
     context.cssAppearanceBaseEnabled = true;
     context.cssRubyDisplayTypesEnabled = true;
     context.cssTextTransformMathAutoEnabled = true;
+    // verticalAlignShorthand.css and mathmlVerticalAlignShorthand.css, which are only loaded when the setting is enabled,
+    // use the 'vertical-align' longhand values it gates, and 'baseline-source'. This applies to every parse in user agent
+    // mode, including html.css and <style> in user agent shadow trees, so whether 'vertical-align' is parsed as the
+    // shorthand must not depend on it (see resolveVerticalAlignShorthand()). Otherwise html.css would always set the shorthand.
+    context.cssVerticalAlignShorthandEnabled = true;
+    context.propertySettings.cssBaselineSourceEnabled = true;
     context.popoverAttributeEnabled = true;
     context.propertySettings.cssInputSecurityEnabled = true;
     context.propertySettings.supportHDRDisplayEnabled = true;
@@ -147,6 +153,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssSymbolsFunctionEnabled { settings.cssSymbolsFunctionEnabled() }
     , cssMeshGradientsEnabled { settings.cssMeshGradientsEnabled() }
     , cssFreeformGradientsEnabled { settings.cssFreeformGradientsEnabled() }
+    , cssVerticalAlignShorthandEnabled { settings.cssVerticalAlignShorthandEnabled() }
     , viewportSegmentsAPIEnabled { settings.viewportSegmentsAPIEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
@@ -219,6 +226,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssSymbolsFunctionEnabled,
         context.cssMeshGradientsEnabled,
         context.cssFreeformGradientsEnabled,
+        context.cssVerticalAlignShorthandEnabled,
         context.legacyFontFaceAttributeMode,
         context.viewportSegmentsAPIEnabled
     );

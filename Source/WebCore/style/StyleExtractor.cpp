@@ -412,7 +412,8 @@ CheckedPtr<const Style::ComputedStyle> Extractor::computeStyle(CSSPropertyID pro
     if (!element)
         return nullptr;
 
-    if (!isExposed(propertyID, protect(element->document().settings()))) {
+    // 'vertical-align' resolves to the internal CSS Inline 3 shorthand when it is enabled (see resolveVerticalAlignShorthand()).
+    if (!isExposed(propertyID, protect(element->document().settings())) && propertyID != CSSPropertyID::InternalVerticalAlign) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -530,7 +531,7 @@ WTF::String Extractor::propertyValueSerialization(CSSPropertyID propertyID, cons
 
 RefPtr<CSSValue> Extractor::propertyValueInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
 {
-    ASSERT(isExposed(propertyID, m_element->document().settings()));
+    ASSERT(isExposed(propertyID, m_element->document().settings()) || propertyID == CSSPropertyID::InternalVerticalAlign);
 
     ExtractorState state {
         .valueType = valueType,
@@ -546,7 +547,7 @@ RefPtr<CSSValue> Extractor::propertyValueInStyle(const Style::ComputedStyle& sty
 
 WTF::String Extractor::propertyValueSerializationInStyle(const Style::ComputedStyle& style, CSSPropertyID propertyID, const CSS::SerializationContext& serializationContext, CSSValuePool& cssValuePool, const RenderElement* renderer, ExtractorState::PropertyValueType valueType) const
 {
-    ASSERT(isExposed(propertyID, m_element->document().settings()));
+    ASSERT(isExposed(propertyID, m_element->document().settings()) || propertyID == CSSPropertyID::InternalVerticalAlign);
 
     StringBuilder builder;
 

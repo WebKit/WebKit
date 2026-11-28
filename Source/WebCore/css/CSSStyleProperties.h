@@ -119,6 +119,7 @@ private:
     Ref<MutableStyleProperties> copyProperties() const final;
 
     bool isExposed(CSSPropertyID) const;
+    CSSPropertyID resolveVerticalAlignShorthand(CSSPropertyID) const;
 
     RefPtr<DeprecatedCSSOMValue> wrapForDeprecatedCSSOM(CSSValue*);
 

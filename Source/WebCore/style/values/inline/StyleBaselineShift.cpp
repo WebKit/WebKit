@@ -23,26 +23,37 @@
  */
 
 #include "config.h"
-#include "StyleSVGBaselineShift.h"
+#include "StyleBaselineShift.h"
 
 #include "AnimationUtilities.h"
 #include "CSSKeywordValue.h"
+#include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore::Style {
 
-auto CSSValueConversion<SVGBaselineShift>::operator()(BuilderState& state, const CSSValue& value) -> SVGBaselineShift
+auto CSSValueConversion<BaselineShift>::operator()(BuilderState& state, const CSSValue& value) -> BaselineShift
 {
+    using namespace CSS::Literals;
+
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         case CSSValueID::Baseline:
+            if (state.document().settings().cssVerticalAlignShorthandEnabled())
+                return 0_css_px;
             return CSS::Keyword::Baseline { };
         case CSSValueID::Sub:
             return CSS::Keyword::Sub { };
         case CSSValueID::Super:
             return CSS::Keyword::Super { };
+        case CSSValueID::Top:
+            return CSS::Keyword::Top { };
+        case CSSValueID::Center:
+            return CSS::Keyword::Center { };
+        case CSSValueID::Bottom:
+            return CSS::Keyword::Bottom { };
         default:
             break;
         }
@@ -51,17 +62,17 @@ auto CSSValueConversion<SVGBaselineShift>::operator()(BuilderState& state, const
         return CSS::Keyword::Baseline { };
     }
 
-    return toStyleFromCSSValue<SVGBaselineShift::LengthPercentage>(state, value);
+    return toStyleFromCSSValue<BaselineShift::LengthPercentage>(state, value);
 }
 
 // MARK: - Blending
 
-auto Blending<SVGBaselineShift>::canBlend(const SVGBaselineShift& a, const SVGBaselineShift& b) -> bool
+auto Blending<BaselineShift>::canBlend(const BaselineShift& a, const BaselineShift& b) -> bool
 {
     return a.m_value.index() == b.m_value.index();
 }
 
-auto Blending<SVGBaselineShift>::requiresInterpolationForAccumulativeIteration(const SVGBaselineShift& a, const SVGBaselineShift& b) -> bool
+auto Blending<BaselineShift>::requiresInterpolationForAccumulativeIteration(const BaselineShift& a, const BaselineShift& b) -> bool
 {
     if (a.m_value.index() != b.m_value.index())
         return true;
@@ -70,7 +81,7 @@ auto Blending<SVGBaselineShift>::requiresInterpolationForAccumulativeIteration(c
     return Style::requiresInterpolationForAccumulativeIteration(*a.tryLengthPercentage(), *b.tryLengthPercentage());
 }
 
-auto Blending<SVGBaselineShift>::blend(const SVGBaselineShift& a, const SVGBaselineShift& b, const BlendingContext& context) -> SVGBaselineShift
+auto Blending<BaselineShift>::blend(const BaselineShift& a, const BaselineShift& b, const BlendingContext& context) -> BaselineShift
 {
     if (!a.isLengthPercentage() || !b.isLengthPercentage())
         return context.progress < 0.5 ? a : b;

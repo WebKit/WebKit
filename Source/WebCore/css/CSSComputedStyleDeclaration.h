@@ -77,6 +77,7 @@ private:
 
     NODELETE const Settings* settings() const final;
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
+    CSSPropertyID resolveVerticalAlignShorthand(CSSPropertyID) const;
 
     Style::Extractor extractor() const;
 

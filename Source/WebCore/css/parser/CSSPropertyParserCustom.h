@@ -185,6 +185,7 @@ public:
     static bool consumeTextBoxShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeTextWrapShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeWhiteSpaceShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
+    static bool consumeVerticalAlignShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumePositionTryShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeMarkerShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
 };
@@ -2292,6 +2293,61 @@ inline bool PropertyParserCustom::consumeWhiteSpaceShorthand(CSSParserTokenRange
     result.addPropertyForCurrentShorthand(state, CSSPropertyID::WhiteSpaceCollapse, WTF::move(whiteSpaceCollapse));
     result.addPropertyForCurrentShorthand(state, CSSPropertyID::TextWrapMode, WTF::move(textWrapMode));
     result.addPropertyForCurrentShorthand(state, CSSPropertyID::WhiteSpaceTrim, WTF::move(whiteSpaceTrim));
+    return true;
+}
+
+inline bool PropertyParserCustom::consumeVerticalAlignShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand&, PropertyParserResult& result)
+{
+    // https://drafts.csswg.org/css-inline-3/#transverse-alignment
+    // [ first | last ] || <'alignment-baseline'> || <'baseline-shift'>
+    // The legacy SVG values of 'alignment-baseline' and 'baseline-shift' are not allowed in the shorthand.
+    if (range.atEnd())
+        return false;
+
+    auto consumeAlignmentBaseline = [](CSSParserTokenRange& range) {
+        return consumeIdent<
+            CSSValueID::Baseline,
+            CSSValueID::TextBottom,
+            CSSValueID::Alphabetic,
+            CSSValueID::Ideographic,
+            CSSValueID::Middle,
+            CSSValueID::Central,
+            CSSValueID::Mathematical,
+            CSSValueID::TextTop,
+            CSSValueID::WebkitBaselineMiddle
+        >(range);
+    };
+
+    RefPtr<CSSValue> baselineSource;
+    RefPtr<CSSValue> alignmentBaseline;
+    RefPtr<CSSValue> baselineShift;
+
+    for (unsigned propertiesParsed = 0; propertiesParsed < 3 && !range.atEnd(); ++propertiesParsed) {
+        if (!baselineSource && state.context.propertySettings.cssBaselineSourceEnabled && (baselineSource = consumeIdent<CSSValueID::First, CSSValueID::Last>(range)))
+            continue;
+        if (!alignmentBaseline && (alignmentBaseline = consumeAlignmentBaseline(range)))
+            continue;
+        if (!baselineShift && range.peek().id() != CSSValueID::Baseline && (baselineShift = CSSPropertyParsing::consumeBaselineShift(range, state)))
+            continue;
+        // If we didn't find at least one match, this is an invalid shorthand and we have to ignore it.
+        return false;
+    }
+
+    if (!range.atEnd())
+        return false;
+
+    // Omitted longhands are set to their initial values. The initial value of 'baseline-shift' is 0 in CSS Inline 3;
+    // the legacy SVG 'baseline' keyword that is its initial value in WebKit computes to 0.
+    if (!baselineSource)
+        baselineSource = CSSKeywordValue::create(CSSValueID::Auto);
+    if (!alignmentBaseline)
+        alignmentBaseline = CSSKeywordValue::create(CSSValueID::Baseline);
+    if (!baselineShift)
+        baselineShift = CSSPrimitiveValue::create(0, CSSUnitType::Px);
+
+    result.addPropertyForCurrentShorthand(state, CSSPropertyID::BaselineSource, WTF::move(baselineSource));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyID::AlignmentBaseline, WTF::move(alignmentBaseline));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyID::BaselineShift, WTF::move(baselineShift));
     return true;
 }
 

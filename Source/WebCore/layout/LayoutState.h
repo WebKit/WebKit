@@ -84,6 +84,7 @@ public:
     const SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
     bool isTextShapingAcrossInlineBoxesEnabled() const { return m_isTextShapingAcrossInlineBoxesEnabled; }
     bool isAlignmentBaselineOnInlineBoxesEnabled() const { return m_isAlignmentBaselineOnInlineBoxesEnabled; }
+    bool isVerticalAlignShorthandEnabled() const { return m_isVerticalAlignShorthandEnabled; }
 
     const ElementBox& root() const { return m_rootContainer; }
 
@@ -105,6 +106,7 @@ private:
     QuirksMode m_quirksMode { QuirksMode::No };
     bool m_isTextShapingAcrossInlineBoxesEnabled { false };
     bool m_isAlignmentBaselineOnInlineBoxesEnabled { false };
+    bool m_isVerticalAlignShorthandEnabled { false };
 
     const CheckedRef<const ElementBox> m_rootContainer;
     const Ref<SecurityOrigin> m_securityOrigin;

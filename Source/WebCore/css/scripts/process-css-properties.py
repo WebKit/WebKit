@@ -5293,7 +5293,7 @@ class GenerateStyleExtractorGenerated:
                     if not isinstance(property, StyleProperty):
                         to.write(f"// Skipped - Descriptor-only property")
                         to.write(f"return nullptr;")
-                    elif property.codegen_properties.internal_only:
+                    elif property.codegen_properties.internal_only and not property.codegen_properties.style_extractor_custom:
                         to.write(f"// Skipped - Internal only")
                         to.write(f"return nullptr;")
                     elif property.codegen_properties.skip_style_extractor:
@@ -5341,7 +5341,7 @@ class GenerateStyleExtractorGenerated:
                     if not isinstance(property, StyleProperty):
                         to.write(f"// Skipped - Descriptor-only property")
                         to.write(f"return;")
-                    elif property.codegen_properties.internal_only:
+                    elif property.codegen_properties.internal_only and not property.codegen_properties.style_extractor_custom:
                         to.write(f"// Skipped - Internal only")
                         to.write(f"return;")
                     elif property.codegen_properties.skip_style_extractor:

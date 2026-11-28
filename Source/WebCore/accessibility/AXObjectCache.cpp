@@ -3495,7 +3495,12 @@ void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference diff
     if (oldStyle->visitedDependentBackgroundColor() != newStyle.visitedDependentBackgroundColor())
         tree->queueNodeUpdate(object->objectID(), { AXProperty::BackgroundColor });
 
-    if (oldStyle->verticalAlign() != newStyle.verticalAlign())
+    // With 'vertical-align' as the CSS Inline 3 shorthand, sub and super come from 'baseline-shift'.
+    auto& settings = renderText.document().settings();
+    auto verticalAlignChanged = settings.cssVerticalAlignShorthandEnabled()
+        ? oldStyle->baselineShift().isSub() != newStyle.baselineShift().isSub() || oldStyle->baselineShift().isSuper() != newStyle.baselineShift().isSuper()
+        : Style::effectiveVerticalAlign(*oldStyle, settings) != Style::effectiveVerticalAlign(newStyle, settings);
+    if (verticalAlignChanged)
         tree->queueNodeUpdate(object->objectID(), { { AXProperty::IsSuperscript, AXProperty::IsSubscript } });
 
     if (oldStyle->textShadow().isNone() != newStyle.textShadow().isNone())

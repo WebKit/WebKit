@@ -562,6 +562,12 @@ float effectiveOutlineSize(const ComputedStyle& style, Style::ZoomFactor zoom, f
     return std::max(0.0f, Style::evaluate<float>(effectiveOutlineWidth(style), zoom, deviceScaleFactor) + Style::evaluate<float>(effectiveOutlineOffset(style), zoom, deviceScaleFactor));
 }
 
+VerticalAlign effectiveVerticalAlign(const ComputedStyle& style, const Settings& settings)
+{
+    ASSERT_UNUSED(settings, !settings.cssVerticalAlignShorthandEnabled());
+    return style.verticalAlign();
+}
+
 BlendMode ComputedStyle::usedBlendMode() const
 {
     if (m_nonInheritedData->rareData->overrideBlendMode) [[unlikely]]

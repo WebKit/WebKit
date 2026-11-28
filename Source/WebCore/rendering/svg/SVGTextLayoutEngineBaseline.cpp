@@ -50,7 +50,17 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedS
         [&](const CSS::Keyword::Super&) -> float {
             return m_font->metricsOfPrimaryFont().height() / 2;
         },
-        [&](const Style::SVGBaselineShift::LengthPercentage& value) -> float {
+        [](const CSS::Keyword::Top&) -> float {
+            // The line-relative shifts align to the bounds of the line box, which SVG text does not have.
+            return 0;
+        },
+        [](const CSS::Keyword::Center&) -> float {
+            return 0;
+        },
+        [](const CSS::Keyword::Bottom&) -> float {
+            return 0;
+        },
+        [&](const Style::BaselineShift::LengthPercentage& value) -> float {
             return Style::evaluate<float>(value, m_font->size(), style.usedZoomForLength());
         }
     );
@@ -104,7 +114,8 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
 {
     // Text has the style of its parent, so this is also the parent's dominant-baseline.
     AlignmentBaseline baseline = textStyle.alignmentBaseline();
-    if (baseline == AlignmentBaseline::Baseline) {
+    // -webkit-baseline-middle only has a meaning in CSS inline layout, so SVG text aligns to the dominant baseline, as for baseline.
+    if (baseline == AlignmentBaseline::Baseline || baseline == AlignmentBaseline::WebkitBaselineMiddle) {
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textStyle);
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }

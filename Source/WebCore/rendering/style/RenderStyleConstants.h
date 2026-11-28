@@ -1158,7 +1158,8 @@ enum class AlignmentBaseline : uint8_t {
     Hanging,
     Mathematical,
     TextTop,
-    TextBottom
+    TextBottom,
+    WebkitBaselineMiddle
 };
 
 enum class DominantBaseline : uint8_t {

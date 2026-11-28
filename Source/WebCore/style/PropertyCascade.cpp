@@ -345,10 +345,12 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
             if (propertyAllowlist == PropertyAllowlist::Highlight && !isValidHighlightStyleProperty(propertyID))
                 return false;
 
-            if (propertyAllowlist == PropertyAllowlist::FirstLetter && !isValidFirstLetterStyleProperty(propertyID))
+            // Both allow 'vertical-align', and so declarations set through the CSS Inline 3 'vertical-align' shorthand,
+            // which can only exist when it is enabled.
+            if (propertyAllowlist == PropertyAllowlist::FirstLetter && !isValidFirstLetterStyleProperty(propertyID) && !isSetThroughVerticalAlignShorthand(current.shorthandID()))
                 return false;
 
-            if (propertyAllowlist == PropertyAllowlist::FirstLine && !isValidFirstLineStyleProperty(propertyID))
+            if (propertyAllowlist == PropertyAllowlist::FirstLine && !isValidFirstLineStyleProperty(propertyID) && !isSetThroughVerticalAlignShorthand(current.shorthandID()))
                 return false;
 
             if (m_includedProperties.types.containsAll(normalPropertyTypes()))

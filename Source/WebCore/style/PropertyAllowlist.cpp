@@ -360,6 +360,29 @@ bool isValidFirstLineStyleProperty(CSSPropertyID id)
     return false;
 }
 
+// The longhands of the CSS Inline 3 'vertical-align' shorthand, which ::first-letter and ::first-line
+// allow in place of the 'vertical-align' they allow, while 'vertical-align' is that shorthand.
+bool isVerticalAlignShorthandLonghand(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyID::BaselineSource:
+    case CSSPropertyID::AlignmentBaseline:
+    case CSSPropertyID::BaselineShift:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// Whether a declaration was set through the CSS Inline 3 'vertical-align' shorthand, which can only
+// happen when it is enabled.
+// FIXME: Also allow its longhands on ::first-letter and ::first-line when they are set on their own and
+// the shorthand is enabled.
+bool isSetThroughVerticalAlignShorthand(CSSPropertyID shorthandID)
+{
+    return shorthandID == CSSPropertyID::InternalVerticalAlign;
+}
+
 #if ENABLE(VIDEO)
 bool isValidCueStyleProperty(CSSPropertyID id)
 {

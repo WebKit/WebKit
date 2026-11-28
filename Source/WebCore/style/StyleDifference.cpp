@@ -158,12 +158,7 @@ public:
         // All text related properties influence layout.
         if (a.inheritedFlags.textAnchor != b.inheritedFlags.textAnchor
             || a.inheritedFlags.glyphOrientationVertical != b.inheritedFlags.glyphOrientationVertical
-            || a.nonInheritedFlags.alignmentBaseline != b.nonInheritedFlags.alignmentBaseline
             || a.nonInheritedFlags.dominantBaseline != b.nonInheritedFlags.dominantBaseline)
-            return true;
-
-        // Text related properties influence layout.
-        if (a.miscData->baselineShift != b.miscData->baselineShift)
             return true;
 
         // The x and y properties influence layout.
@@ -434,7 +429,9 @@ public:
                     || a.nonInheritedData().boxData->maxHeight != b.nonInheritedData().boxData->maxHeight)
                     return true;
 
-                if (a.nonInheritedData().boxData->verticalAlign != b.nonInheritedData().boxData->verticalAlign)
+                if (a.nonInheritedData().boxData->verticalAlign != b.nonInheritedData().boxData->verticalAlign
+                    || a.nonInheritedData().boxData->alignmentBaseline != b.nonInheritedData().boxData->alignmentBaseline
+                    || a.nonInheritedData().boxData->baselineShift != b.nonInheritedData().boxData->baselineShift)
                     return true;
 
                 if (a.nonInheritedData().boxData->hasAutoUsedZIndex != b.nonInheritedData().boxData->hasAutoUsedZIndex)

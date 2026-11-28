@@ -113,6 +113,7 @@ float BaselineAlignment::baselineOffsetFromAlphabeticBaseline(AlignmentBaseline 
     case AlignmentBaseline::Ideographic:
         return -descent;
     case AlignmentBaseline::Baseline:
+    case AlignmentBaseline::WebkitBaselineMiddle:
     case AlignmentBaseline::Alphabetic:
         return 0;
     case AlignmentBaseline::Hanging:
