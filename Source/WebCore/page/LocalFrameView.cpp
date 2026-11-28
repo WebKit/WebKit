@@ -1958,9 +1958,28 @@ void LocalFrameView::setBaseLayoutViewportOrigin(LayoutPoint origin, TriggerLayo
         return;
 
     m_layoutViewportOrigin = origin;
-    if (layoutTriggering == TriggerLayoutOrNot::Yes)
-        setViewportConstrainedObjectsNeedLayout();
-    
+    if (layoutTriggering == TriggerLayoutOrNot::Yes && hasViewportConstrainedObjects()) {
+        // A sticky offset depends on the layout viewport, not on layout. Outside layout, recompute the layer positions from
+        // the new origin instead of laying out every sticky box on every scroll step, which made script-driven scrolling
+        // slow on pages with sticky content. The scroll path updated them before the origin moved, so they are stale here.
+        bool updateStickyWithoutLayout = layoutContext().layoutPhase() == LocalFrameViewLayoutContext::LayoutPhase::OutsideLayout;
+        bool hasStickyObjects = false;
+        for (CheckedRef renderer : *m_viewportConstrainedObjects) {
+            if (updateStickyWithoutLayout && renderer->isStickilyPositioned()) {
+                hasStickyObjects = true;
+                continue;
+            }
+            renderer->setNeedsLayout();
+            if (renderer->hasLayer())
+                downcast<RenderBoxModelObject>(renderer).layer()->setNeedsCompositingGeometryUpdate();
+        }
+        if (hasStickyObjects) {
+            updateLayerPositionsAfterScrolling();
+            if (CheckedPtr renderView = this->renderView(); renderView && renderView->usesCompositing())
+                protect(renderView->compositor())->scheduleCompositingLayerUpdate();
+        }
+    }
+
     if (CheckedPtr tiledBacking = this->tiledBacking()) {
         FloatRect layoutViewport = layoutViewportRect();
         layoutViewport.moveBy(unscaledScrollOrigin()); // tiledBacking deals in top-left relative coordinates.
