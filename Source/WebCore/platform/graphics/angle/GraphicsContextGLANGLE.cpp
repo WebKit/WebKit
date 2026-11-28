@@ -174,8 +174,92 @@ static std::optional<GCGLExtension> extensionEnum(const UTF8CString& extension)
 
 GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
     : GraphicsContextGL(attributes)
+    , m_isForWebGL2(attributes.isWebGL2)
 {
 }
+
+// The subclass destructors destroy the context and release the display.
+GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
+{
+    ASSERT(!m_texture);
+    ASSERT(!m_fbo);
+    ASSERT(m_eglImages.isEmpty());
+    ASSERT(m_eglSyncs.isEmpty());
+    ASSERT(!m_contextObj);
+    ASSERT(!m_angleSharingContextObj);
+#if USE(TEXTURE_MAPPER) || USE(COORDINATED_GRAPHICS)
+    ASSERT(!m_surfaceObj);
+#endif
+    ASSERT(!m_displayObj);
+}
+
+#if PLATFORM(COCOA)
+void GraphicsContextGLANGLE::platformDidLoseDisplay()
+{
+}
+
+GCGLint GraphicsContextGLANGLE::initializeConfigAndContext(std::span<const GCGLint> platformContextAttributes)
+{
+    EGLint configAttributes[] = {
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_RED_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_BLUE_SIZE, 8,
+        EGL_ALPHA_SIZE, 8,
+        EGL_DEPTH_SIZE, 0,
+        EGL_STENCIL_SIZE, 0,
+        EGL_NONE
+    };
+    EGLint numberConfigsReturned = 0;
+    EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
+    if (numberConfigsReturned != 1) {
+        LOG(WebGL, "EGLConfig Initialization failed.");
+        return EGL_BAD_CONFIG;
+    }
+    LOG(WebGL, "Got EGLConfig");
+
+    EGL_BindAPI(EGL_OPENGL_ES_API);
+    if (EGLint error = EGL_GetError(); error != EGL_SUCCESS) {
+        LOG(WebGL, "Unable to bind to OPENGL_ES_API");
+        return error;
+    }
+
+    Vector<EGLint> eglContextAttributes;
+    if (m_isForWebGL2) {
+        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+        eglContextAttributes.append(3);
+    } else {
+        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+        eglContextAttributes.append(2);
+        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+        eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        eglContextAttributes.append(EGL_FALSE);
+    }
+    eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
+    eglContextAttributes.append(EGL_TRUE);
+
+    // WebGL requires that all resources are cleared at creation.
+    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+    eglContextAttributes.append(EGL_TRUE);
+
+    // Report GPU resets, so that the context can be lost when the GPU resets.
+    eglContextAttributes.append(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT);
+    eglContextAttributes.append(EGL_LOSE_CONTEXT_ON_RESET_EXT);
+
+    // WebGL doesn't allow client arrays.
+    eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    eglContextAttributes.append(EGL_FALSE);
+    // WebGL doesn't allow implicit creation of objects on bind.
+    eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    eglContextAttributes.append(EGL_FALSE);
+
+    eglContextAttributes.append(platformContextAttributes);
+    eglContextAttributes.append(EGL_NONE);
+
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.span().data());
+    return m_contextObj == EGL_NO_CONTEXT ? EGL_GetError() : EGL_SUCCESS;
+}
+#endif
 
 SUPPRESS_NODELETE std::optional<size_t> GraphicsContextGLANGLE::estimatedMemoryCost()
 {
