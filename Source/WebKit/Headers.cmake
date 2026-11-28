@@ -685,6 +685,7 @@ set(_webkit_ios_headers
     UIProcess/ios/WKExtendedTextInputTraits.h
     UIProcess/ios/WKExtrinsicButton.h
     UIProcess/ios/WKFormInputSession.h
+    UIProcess/ios/WKFoundTextRange.h
     UIProcess/ios/WKGeolocationProviderIOS.h
     UIProcess/ios/WKHighlightLongPressGestureRecognizer.h
     UIProcess/ios/WKImageAnalysisGestureRecognizer.h
