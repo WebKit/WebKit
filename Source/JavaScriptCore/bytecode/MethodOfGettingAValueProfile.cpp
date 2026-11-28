@@ -29,11 +29,42 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArithProfile.h"
+#include "BytecodeStructs.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
+#include "InlineCallFrame.h"
+#include "JITOperations.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {
+
+void MethodOfGettingAValueProfile::emitReportGeneratorLocals(CCallHelpers& jit, VM& vm, const CodeOrigin& exitOrigin) const
+{
+    if (m_kind != Kind::GeneratorLocalValueProfiles)
+        return;
+
+    InlineCallFrame* inlineCallFrame = m_codeOrigin.inlineCallFrame();
+    const CodeOrigin* codeOrigin = &exitOrigin;
+    while (codeOrigin->inlineCallFrame() != inlineCallFrame) {
+        if (!codeOrigin->inlineCallFrame())
+            return;
+        codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls();
+        if (!codeOrigin)
+            return;
+    }
+
+    CodeBlock* profiledBlock = jit.baselineCodeBlockFor(m_codeOrigin);
+    if (profiledBlock->instructions().at(codeOrigin->bytecodeIndex())->is<OpSaveGeneratorLocals>())
+        return;
+
+    auto instruction = profiledBlock->instructions().at(m_codeOrigin.bytecodeIndex());
+    VirtualRegister scope = remapOperand(inlineCallFrame, instruction->as<OpRestoreGeneratorLocals>().m_scope).virtualRegister();
+    jit.loadPtr(CCallHelpers::addressFor(scope), GPRInfo::nonArgGPR0);
+    jit.setupArguments<decltype(operationOSRExitReportGeneratorLocals)>(CCallHelpers::TrustedImmPtr(profiledBlock), CCallHelpers::TrustedImmPtr(instruction.ptr()), GPRInfo::nonArgGPR0);
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationOSRExitReportGeneratorLocals)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+}
 
 void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock* optimizedCodeBlock, GPRReg valueGPR, GPRReg tempGPR, TagRegistersMode mode) const
 {
@@ -46,7 +77,10 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock*
     case Kind::None:
         RELEASE_ASSERT_NOT_REACHED();
         return;
-        
+
+    case Kind::GeneratorLocalValueProfiles:
+        return;
+
     case Kind::LazyOperandValueProfile: {
         LazyOperandValueProfileKey key(m_codeOrigin.bytecodeIndex(), Operand::fromBits(m_rawOperand));
         

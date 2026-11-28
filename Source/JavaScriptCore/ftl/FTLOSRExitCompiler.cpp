@@ -639,6 +639,7 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
 
     handleExitCounts(vm, jit, exit);
     reifyInlinedCallFrames(jit, exit);
+    exit.m_descriptor->m_valueProfile.emitReportGeneratorLocals(jit, vm, exit.m_codeOrigin);
     adjustAndJumpToTarget(vm, jit, exit);
     
     LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::FTLOSRExit);
