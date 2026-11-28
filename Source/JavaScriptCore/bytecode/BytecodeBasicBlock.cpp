@@ -132,6 +132,15 @@ auto BytecodeBasicBlock<OpcodeTraits>::computeImpl(Block* codeBlock, const Instr
         ASSERT(basicBlocks.last().isExitBlock());
     }
     // After this point, we never change basicBlocks.
+    ASSERT(std::ranges::is_sorted(basicBlocks, { }, &BytecodeBasicBlock<OpcodeTraits>::leaderOffset));
+
+    auto blockWithLeader = [&](unsigned leaderOffset) -> auto& {
+        auto* block = tryBinarySearch<BytecodeBasicBlock<OpcodeTraits>, unsigned>(basicBlocks, basicBlocks.size(), leaderOffset, [](auto* block) {
+            return block->leaderOffset();
+        });
+        RELEASE_ASSERT(block);
+        return *block;
+    };
 
     // Link basic blocks together.
     for (unsigned i = 0; i < basicBlocks.size(); i++) {
@@ -166,12 +175,7 @@ auto BytecodeBasicBlock<OpcodeTraits>::computeImpl(Block* codeBlock, const Instr
                     linkBlocks(block, basicBlocks.last());
                     break;
                 }
-                for (auto& otherBlock : basicBlocks) {
-                    if (handler->target == otherBlock.leaderOffset()) {
-                        linkBlocks(block, otherBlock);
-                        break;
-                    }
-                }
+                linkBlocks(block, blockWithLeader(handler->target));
                 break;
             }
 
@@ -181,21 +185,11 @@ auto BytecodeBasicBlock<OpcodeTraits>::computeImpl(Block* codeBlock, const Instr
                 Vector<typename InstructionStreamType::Offset, 1> bytecodeOffsetsJumpedTo;
                 findJumpTargetsForInstruction(codeBlock, instruction, bytecodeOffsetsJumpedTo);
 
-                size_t numberOfJumpTargets = bytecodeOffsetsJumpedTo.size();
-                ASSERT(numberOfJumpTargets);
-                for (auto& otherBlock : basicBlocks) {
-                    if (bytecodeOffsetsJumpedTo.contains(otherBlock.leaderOffset())) {
-                        linkBlocks(block, otherBlock);
-                        --numberOfJumpTargets;
-                        if (!numberOfJumpTargets)
-                            break;
-                    }
-                }
-                // numberOfJumpTargets may not be 0 here if there are multiple jumps targeting the same
-                // basic blocks (e.g. in a switch type opcode). Since we only decrement numberOfJumpTargets
-                // once per basic block, the duplicates are not accounted for. For our purpose here,
-                // that doesn't matter because we only need to link to the target block once regardless
-                // of how many ways this block can jump there.
+                ASSERT(!bytecodeOffsetsJumpedTo.isEmpty());
+                std::ranges::sort(bytecodeOffsetsJumpedTo);
+                removeRepeatedElements(bytecodeOffsetsJumpedTo);
+                for (auto bytecodeOffset : bytecodeOffsetsJumpedTo)
+                    linkBlocks(block, blockWithLeader(bytecodeOffset));
 
                 if (isUnconditionalBranch(opcodeID))
                     fallsThrough = false;
@@ -208,7 +202,8 @@ auto BytecodeBasicBlock<OpcodeTraits>::computeImpl(Block* codeBlock, const Instr
         if (fallsThrough) {
             ASSERT(i + 1 < basicBlocks.size());
             auto& nextBlock = basicBlocks[i + 1];
-            linkBlocks(block, nextBlock);
+            if (!block.successors().contains(nextBlock.index()))
+                linkBlocks(block, nextBlock);
         }
     }
 
