@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Color picker was not shown because showing it requires a user gesture.
+
