@@ -6630,7 +6630,7 @@ imported/w3c/web-platform-tests/css/css-backgrounds/local-attachment-rtl-scroll.
 
 
 # Flaky test that sometimes passes and sometimes fails.
-imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
+webkit.org/b/333217 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
 
 # Skipping scrollbar-color tests until the feature gets implemented. webkit.org/b/231590
 imported/w3c/web-platform-tests/css/css-scrollbars/transparent-on-root.html [ Skip ]

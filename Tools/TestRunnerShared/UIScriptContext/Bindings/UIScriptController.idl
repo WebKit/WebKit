@@ -77,6 +77,7 @@ interface UIScriptController {
 
     undefined doAfterPresentationUpdate(object callback); // Call the callback after sending a message to the WebProcess and receiving a subsequent update.
     undefined doAfterNextStablePresentationUpdate(object callback);
+    undefined waitForOrientationToSettle(object callback);
     undefined ensurePositionInformationIsUpToDateAt(long x, long y, object callback);
     undefined doAfterVisibleContentRectUpdate(object callback);
     undefined doAfterNextVisibleContentRectAndStablePresentationUpdate(object callback);

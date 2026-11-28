@@ -87,35 +87,50 @@ static unsigned globalKeyboardUpdateForChangedSelectionCount = 0;
 
 #if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
 
-@interface WindowDidRotateObserver : NSObject
+@interface WindowRotationObserver : NSObject
 @property (nonatomic, readonly) void (^callback)();
+@property (nonatomic, readonly) NSInteger rotationsInFlight;
+@property (nonatomic, readonly) double lastActivityTime;
 @end
 
-@implementation WindowDidRotateObserver {
+@implementation WindowRotationObserver {
 }
 
-- (WindowDidRotateObserver *)initWithCallback:(void (^)())callback
+- (WindowRotationObserver *)initWithCallback:(void (^)())callback
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _callback = callback;
+    _callback = [callback copy];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillRotate) name:UIWindowWillRotateNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidRotate) name:UIWindowDidRotateNotification object:nil];
     return self;
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowWillRotateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidRotateNotification object:nil];
+    [_callback release];
     [super dealloc];
+}
+
+- (void)_windowWillRotate
+{
+    ++_rotationsInFlight;
+    _lastActivityTime = MonotonicTime::now().secondsSinceEpoch().seconds();
 }
 
 - (void)_windowDidRotate
 {
-    callOnMainThread([self, protectedSelf = RetainPtr<WindowDidRotateObserver>(self)] {
-        if (_callback)
-            _callback();
+    if (_rotationsInFlight > 0)
+        --_rotationsInFlight;
+    _lastActivityTime = MonotonicTime::now().secondsSinceEpoch().seconds();
+    if (!_callback)
+        return;
+    callOnMainThread([self, protectedSelf = RetainPtr<WindowRotationObserver>(self)] {
+        _callback();
     });
 }
 
@@ -307,11 +322,31 @@ void TestController::restorePortraitOrientationIfNeeded()
     TestRunnerWKWebView *webView = mainWebView()->platformView();
 
     auto *scene = webView.window.windowScene;
-    if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
+    if (!m_didLockOrientation && scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
         return;
 
+    if (m_didLockOrientation) {
+        // UIKit applies orientation requests asynchronously, so a lock that a test cancelled right away can still be pending while the scene reports portrait.
+        // Rotating to a different orientation and waiting for that rotation to finish should mean every earlier request has been applied too, assuming UIKit applies requests in order.
+        bool isLandscapeLeft = scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationLandscapeLeft;
+        auto extraOrientation = isLandscapeLeft ? kWKScreenOrientationTypeLandscapePrimary : kWKScreenOrientationTypeLandscapeSecondary;
+        auto extraInterfaceOrientation = isLandscapeLeft ? UIInterfaceOrientationLandscapeRight : UIInterfaceOrientationLandscapeLeft;
+
+        RetainPtr<WindowRotationObserver> extraObserver = adoptNS([[WindowRotationObserver alloc] initWithCallback:nil]);
+        lockScreenOrientation(extraOrientation);
+
+        auto extraStartTime = MonotonicTime::now();
+        bool didFinishExtraRotation = false;
+        while (!didFinishExtraRotation && MonotonicTime::now() - extraStartTime < m_currentInvocation->shortTimeout()) {
+            [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.005]];
+            didFinishExtraRotation = ![extraObserver rotationsInFlight] && scene.effectiveGeometry.interfaceOrientation == extraInterfaceOrientation;
+        }
+        if (!didFinishExtraRotation)
+            NSLog(@"Timed out waiting for the previous test's orientation requests to be applied.");
+    }
+
     __block bool didRotate = false;
-    auto rotationObserver = adoptNS([[WindowDidRotateObserver alloc] initWithCallback:^{
+    RetainPtr<WindowRotationObserver> rotationObserver = adoptNS([[WindowRotationObserver alloc] initWithCallback:^{
         didRotate = true;
     }]);
 
@@ -671,6 +706,7 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
 {
+    noteOrientationRequest();
     TestRunnerWKWebView *webView = mainWebView()->platformView();
 
     // Make sure this is the top-most window or the call to setNeedsUpdateOfSupportedInterfaceOrientations
@@ -701,11 +737,46 @@ void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
 
 void TestController::unlockScreenOrientation()
 {
+    noteOrientationRequest();
     TestRunnerWKWebView *webView = mainWebView()->platformView();
     webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;
     [UIView performWithoutAnimation:^{
         [webView.window.rootViewController setNeedsUpdateOfSupportedInterfaceOrientations];
     }];
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    // Unlocking returns to the simulated device's upright orientation. UIKit alone keeps a landscape scene landscape on iPhone, so a page waiting for the orientation to change back never sees it.
+    RetainPtr<UIWindowSceneGeometryPreferencesIOS> geometryPreferences = adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:UIInterfaceOrientationMaskPortrait]);
+    [webView.window.windowScene requestGeometryUpdateWithPreferences:geometryPreferences.get() errorHandler:^(NSError *error) {
+        NSLog(@"Failed to return to portrait after unlock with error: %@.", error);
+    }];
+#endif
+}
+
+void TestController::noteOrientationRequest()
+{
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    if (!m_windowRotationObserver)
+        m_windowRotationObserver = adoptNS([[WindowRotationObserver alloc] initWithCallback:nil]);
+    m_lastOrientationRequestTime = MonotonicTime::now();
+#endif
+}
+
+void TestController::waitForOrientationToSettle()
+{
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    if (!m_windowRotationObserver)
+        return;
+
+    // UIKit starts a rotation up to about 80 ms after a lock or unlock and can follow it with a second one about 60 ms after the first ends.
+    static constexpr auto quietPeriod = 200_ms;
+    auto deadline = MonotonicTime::now() + 2_s;
+    while (MonotonicTime::now() < deadline) {
+        auto lastActivity = std::max(m_lastOrientationRequestTime, MonotonicTime::fromRawSeconds([m_windowRotationObserver lastActivityTime]));
+        if (![m_windowRotationObserver rotationsInFlight] && MonotonicTime::now() - lastActivity >= quietPeriod)
+            break;
+        [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.005]];
+    }
+#endif
 }
 #endif
 

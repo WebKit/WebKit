@@ -284,6 +284,14 @@ void UIScriptControllerIOS::doAfterNextStablePresentationUpdate(JSValueRef callb
     }).get()];
 }
 
+void UIScriptControllerIOS::waitForOrientationToSettle(JSValueRef callback)
+{
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    TestController::singleton().waitForOrientationToSettle();
+#endif
+    doAsyncTask(callback);
+}
+
 void UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

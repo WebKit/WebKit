@@ -7215,12 +7215,7 @@ webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-di
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 
-# webkit.org/b/246701 Flaky failure only on iOS
-imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Pass Failure ]
-
-webkit.org/b/259134 imported/w3c/web-platform-tests/screen-orientation/unlock.html [ Failure ]
+webkit.org/b/333191 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
 
 # UserActivation tests rely on test_driver.click() which is not supported on iOS
 imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.html [ Skip ]
@@ -7899,9 +7894,6 @@ fast/forms/ios/focus-button.html [ Pass Timeout ]
 fast/forms/ios/focus-checkbox.html [ Pass Timeout ]
 fast/forms/ios/focus-checked-checkbox.html [ Pass Timeout ]
 fast/forms/ios/focus-checked-radio.html [ Pass Timeout ]
-
-# webkit.org/b/278329 [ iOS ] imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html is a flaky failure
-imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ Pass Failure ]
 
 # webkit.org/b/278330 [ iOS ] imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html is a flaky text failure
 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]
