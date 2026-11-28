@@ -2326,10 +2326,12 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, OverlayScrol
     LayoutRect clipRect = borderBoxRect();
     clipRect.setLocation(location + clipRect.location() + LayoutSize(borderLeft(), borderTop()));
     clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
-    if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible)
-        clipRect.expandToInfiniteY();
-    else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible)
-        clipRect.expandToInfiniteX();
+    if (auto clippedAxis = style().singleAxisOverflowClip()) {
+        if (*clippedAxis == BoxAxis::Horizontal)
+            clipRect.expandToInfiniteY();
+        else
+            clipRect.expandToInfiniteX();
+    }
 
     // Subtract out scrollbars if we have them.
     if (CheckedPtr scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
@@ -5118,15 +5120,15 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const WritingMode parentW
 
     if (!shouldApplyLayoutContainment()) {
         if (hasNonVisibleOverflow()) {
-            if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
+            if (auto clippedAxis = style().singleAxisOverflowClip()) {
                 LayoutRect clippedOverflowRect = layoutOverflowRect();
-                clippedOverflowRect.setX(rect.x());
-                clippedOverflowRect.setWidth(rect.width());
-                rect.unite(clippedOverflowRect);
-            } else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible) {
-                LayoutRect clippedOverflowRect = layoutOverflowRect();
-                clippedOverflowRect.setY(rect.y());
-                clippedOverflowRect.setHeight(rect.height());
+                if (*clippedAxis == BoxAxis::Horizontal) {
+                    clippedOverflowRect.setX(rect.x());
+                    clippedOverflowRect.setWidth(rect.width());
+                } else {
+                    clippedOverflowRect.setY(rect.y());
+                    clippedOverflowRect.setHeight(rect.height());
+                }
                 rect.unite(clippedOverflowRect);
             }
         } else

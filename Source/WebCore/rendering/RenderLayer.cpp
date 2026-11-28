@@ -5786,7 +5786,15 @@ LayoutRect RenderLayer::clipRectRelativeToAncestor(const RenderLayer* ancestor, 
     if ((m_enclosingPaginationLayer && m_enclosingPaginationLayer != ancestor) || temporaryClipRects)
         options.add(ClipRectsOption::Temporary);
     ClipRectsContext clipRectsContext(ancestor, PaintingClipRects, options);
-    auto backgroundRect = calculateBackgroundRect(clipRectsContext, offsetFromAncestor);
+    auto backgroundClipRect = calculateBackgroundClipRect(clipRectsContext, offsetFromAncestor);
+    auto backgroundRect = calculateBackgroundRect(clipRectsContext, offsetFromAncestor, backgroundClipRect);
+
+    // With overflow: clip on one axis only, descendants may extend past the border box along the other axis.
+    if (renderer().isRenderBox() && renderer().style().singleAxisOverflowClip()) {
+        auto foregroundRect = calculateForegroundRect(clipRectsContext, offsetFromAncestor, WTF::move(backgroundClipRect));
+        return intersection(unionRect(backgroundRect.rect(), foregroundRect.rect()), constrainingRect);
+    }
+
     return intersection(backgroundRect.rect(), constrainingRect);
 }
 
@@ -6092,10 +6100,20 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer&>(*this));
 #endif
 
-    auto computeLayersUnion = [this, &unionBounds, flags, descendantFlags] (const RenderLayer& childLayer) {
+    // The local clip rect is unbounded along the unclipped axis, so descendants are united instead,
+    // but those in our containing block chain remain clipped along the other axis.
+    std::optional<LayoutRect> singleAxisOverflowClipRect;
+    if (flags.containsAny({ UseLocalClipRectIfPossible, UseLocalClipRectExcludingCompositingIfPossible })) {
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer()); box && box->style().singleAxisOverflowClip())
+            singleAxisOverflowClipRect = box->overflowClipRect({ });
+    }
+
+    auto computeLayersUnion = [this, &unionBounds, &singleAxisOverflowClipRect, flags, descendantFlags](const RenderLayer& childLayer) {
         if (!(flags & IncludeCompositedDescendants) && (childLayer.isComposited() || childLayer.paintsIntoProvidedBacking()))
             return;
         LayoutRect childBounds = childLayer.calculateLayerBounds(this, childLayer.offsetFromAncestor(this), descendantFlags);
+        if (singleAxisOverflowClipRect && childLayer.ancestorLayerIsInContainingBlockChain(*this))
+            childBounds.intersect(*singleAxisOverflowClipRect);
         // Ignore child layer (and behave as if we had overflow: hidden) when it is positioned off the parent layer so much
         // that we hit the max LayoutUnit value.
         unionBounds.checkedUnite(childBounds);
