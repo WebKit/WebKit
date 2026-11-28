@@ -375,16 +375,62 @@ void JITWorklist::suspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         slot->m_rightToRun.lock();
 }
 
+void JITWorklist::requestSuspension(MonotonicTime deadline)
+{
+    MonotonicTime oldDeadline = m_suspensionRequestDeadline.load();
+    while (oldDeadline < deadline && !m_suspensionRequestDeadline.compare_exchange_weak(oldDeadline, deadline)) { }
+}
+
+void JITWorklist::cancelSuspensionRequest()
+{
+    Locker locker { m_suspensionRequestLock };
+    m_suspensionRequestDeadline.store({ });
+    m_suspensionRequestCondition.notifyAll();
+}
+
+bool JITWorklist::trySuspendAllThreads()
+{
+    if (!m_suspensionLock.tryLock())
+        return false;
+    unsigned lockedSlots = 0;
+    for (; lockedSlots < m_slots.size(); ++lockedSlots) {
+        if (!m_slots[lockedSlots].m_rightToRun.tryLock())
+            break;
+    }
+    if (lockedSlots < m_slots.size()) {
+        while (lockedSlots--)
+            m_slots[lockedSlots].m_rightToRun.unlock();
+        m_suspensionLock.unlock();
+        return false;
+    }
+    {
+        Locker locker { m_lock };
+        m_isSuspended = true;
+        publishDemand(locker);
+    }
+    return true;
+}
+
 void JITWorklist::lockRightToRun(JITWorkerSlot& slot) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    if (slot.m_rightToRun.tryLock())
+    auto suspensionIsRequested = [&] {
+        MonotonicTime deadline = m_suspensionRequestDeadline.load();
+        return deadline && MonotonicTime::now() < deadline;
+    };
+    if (!suspensionIsRequested() && slot.m_rightToRun.tryLock())
         return;
     HelperThreadPool::BlockingScope blockingScope(*this);
+    {
+        Locker locker { m_suspensionRequestLock };
+        while (suspensionIsRequested())
+            m_suspensionRequestCondition.waitUntil(m_suspensionRequestLock, m_suspensionRequestDeadline.load());
+    }
     slot.m_rightToRun.lock();
 }
 
 void JITWorklist::resumeAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+    cancelSuspensionRequest();
     for (CheckedRef slot : m_slots)
         slot->m_rightToRun.unlock();
     {

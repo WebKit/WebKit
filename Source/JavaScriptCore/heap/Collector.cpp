@@ -35,6 +35,7 @@
 #include "MutatorScheduler.h"
 #include "SpaceTimeMutatorScheduler.h"
 #include "StochasticSpaceTimeMutatorScheduler.h"
+#include "StopIfNecessaryTimer.h"
 #include "SynchronousStopTheWorldMutatorScheduler.h"
 #include "TypeProfiler.h"
 #include "VerifierSlotVisitorInlines.h"
@@ -348,12 +349,13 @@ void Collector::collectInCollectorThread()
     }
 }
 
-void Collector::collectInMutatorThread(Heap& conductor)
+void Collector::collectInMutatorThread(Heap& conductor, CanDeferStop canDeferStop)
 {
     conductor.assertIsAccessHolder();
     ASSERT(hasHeap(conductor));
     ASSERT(!m_conductingHeap);
     SetForScope setConductingHeap { m_conductingHeap, &conductor };
+    SetForScope setCanDeferStop { m_conductingMutatorCanDeferStop, canDeferStop };
     checkIsConductor(GCConductor::Mutator);
     for (;;) {
         RunCurrentPhaseResult result = runCurrentPhase(GCConductor::Mutator, nullptr);
@@ -393,11 +395,10 @@ auto Collector::runCurrentPhase(GCConductor conn, CurrentThreadState* conducting
     if (conn == GCConductor::Mutator)
         sanitizeStackForVM(m_conductingHeap->vm());
 
-    // If the collector transfers the conn to the mutator, it leaves us in between phases.
     if (!finishChangingPhase(conn)) {
         // A mischevious mutator could repeatedly relinquish the conn back to us. We try to avoid doing
         // this, but it's probably not the end of the world if it did happen.
-        dataLogLnIf(CollectorInternal::verbose, "Conn bounce-back.");
+        dataLogLnIf(CollectorInternal::verbose, "Phase change left pending.");
         return RunCurrentPhaseResult::Finished;
     }
 
@@ -798,8 +799,9 @@ bool Collector::changePhase(GCConductor conn, CollectorPhase nextPhase)
     return finishChangingPhase(conn);
 }
 
-// Returns false only when the collector thread conducts and cannot stop the mutator because it holds heap access. The
-// mutator is handed the conn instead, and finishes the transition at its next poll.
+// Returns false when the transition is left pending: either the collector thread conducts and cannot stop the mutator
+// because it holds heap access, so the mutator is handed the conn, or a conducting mutator returns to running JS while
+// compiler threads reach a safepoint. Either way the mutator finishes the transition at its next poll.
 NEVER_INLINE bool Collector::finishChangingPhase(GCConductor conn)
 {
     checkIsConductor(conn);
@@ -841,9 +843,13 @@ NEVER_INLINE bool Collector::finishChangingPhase(GCConductor conn)
                     return false;
                 }
             } else {
-                sanitizeStackForVM(heap().vm());
                 // A mutator runs any pending epilogue before it starts conducting, and only End sets the bit.
                 RELEASE_ASSERT(!heap().needCollectionEpilogue());
+                // Keep running JS instead of waiting for a compiler thread to reach a safepoint. The next poll
+                // finishes the transition.
+                if (m_conductingMutatorCanDeferStop == CanDeferStop::Yes && shouldDeferStopForCompilerThreads())
+                    return false;
+                sanitizeStackForVM(heap().vm());
             }
             stopThePeriphery(conn);
         }
@@ -894,11 +900,56 @@ bool Collector::suspendCompilerThreads()
 #if ENABLE(JIT)
     if (!Options::useJIT())
         return false;
-    // The worklist is process-wide, so one heap's active plans are enough to need every compiler thread suspended.
-    if (std::ranges::none_of(m_heaps, [](Heap* heap) { return heap->vm().numberOfActiveJITPlans(); }))
+    bool didRequestSuspension = !!std::exchange(m_compilerThreadSuspensionRequestTime, { });
+    if (std::exchange(m_didSuspendCompilerThreadsWithoutWaiting, false))
+        return true;
+    if (!anyHeapHasActiveJITPlans()) {
+        if (didRequestSuspension)
+            JITWorklist::ensureGlobalWorklist().cancelSuspensionRequest();
         return false;
+    }
     JITWorklist::ensureGlobalWorklist().suspendAllThreads();
     return true;
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(JIT)
+bool Collector::anyHeapHasActiveJITPlans() const
+{
+    // The worklist is process-wide, so one heap's active plans are enough to need every compiler thread suspended.
+    return std::ranges::any_of(m_heaps, [](Heap* heap) {
+        return heap->vm().numberOfActiveJITPlans();
+    });
+}
+#endif
+
+bool Collector::shouldDeferStopForCompilerThreads()
+{
+#if ENABLE(JIT)
+    static constexpr Seconds maximumDelayForCompilerThreadSuspension = 2_ms;
+    // Longer than the mutator defers, so that the blocking fallback still finds the waiting threads parked. Bounded so
+    // that a mutator that stops polling cannot hold the compiler threads of every VM.
+    static constexpr Seconds maximumWaitForCompilerThreads = 10_ms;
+    if (!Options::useJIT() || !anyHeapHasActiveJITPlans())
+        return false;
+    // Only the run loop timer guarantees another poll once the mutator stops running JS.
+    auto& stopIfNecessaryTimer = heap().m_stopIfNecessaryTimer.get();
+    if (stopIfNecessaryTimer.isDisabled())
+        return false;
+    auto& worklist = JITWorklist::ensureGlobalWorklist();
+    if (!m_compilerThreadSuspensionRequestTime) {
+        m_compilerThreadSuspensionRequestTime = MonotonicTime::now();
+        stopIfNecessaryTimer.scheduleSoon();
+    }
+    // Republished on every poll, since another collector finishing its own stop clears the worklist's request.
+    worklist.requestSuspension(m_compilerThreadSuspensionRequestTime + maximumWaitForCompilerThreads);
+    if (worklist.trySuspendAllThreads()) {
+        m_didSuspendCompilerThreadsWithoutWaiting = true;
+        return false;
+    }
+    return MonotonicTime::now() < m_compilerThreadSuspensionRequestTime + maximumDelayForCompilerThreadSuspension;
 #else
     return false;
 #endif

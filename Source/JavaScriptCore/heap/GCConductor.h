@@ -40,6 +40,11 @@ enum class GCConductor : uint8_t {
 
 NODELETE const char* gcConductorShortName(GCConductor officer);
 
+// Whether a conducting mutator may leave a stop of the world pending while compiler threads reach a safepoint. Only
+// one that goes back to running JS gains from it; a poll from the run loop or from waiting for the collector has
+// nothing to run.
+enum class CanDeferStop : bool { No, Yes };
+
 // Being the conductor: the collector thread, or a mutator holding the conn. One global capability rather than one per
 // Collector, so that Heap's methods can require it too. Exists only for thread-safety analysis; the variable is never
 // defined.

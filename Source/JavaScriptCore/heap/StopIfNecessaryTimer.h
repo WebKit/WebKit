@@ -41,6 +41,7 @@ public:
     void scheduleSoon();
 
     NODELETE void disable();
+    bool isDisabled() const { return m_isDisabled; }
 
 private:
     bool m_isDisabled { false };

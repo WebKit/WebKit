@@ -86,6 +86,12 @@ public:
     void suspendAllThreads();
     void resumeAllThreads();
 
+    // Until the deadline, compiler threads wait at their next safepoint instead of resuming, so that a GC can take
+    // them all with trySuspendAllThreads() without blocking.
+    void requestSuspension(MonotonicTime deadline);
+    void cancelSuspensionRequest();
+    bool trySuspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
+
     void lockRightToRun(JITWorkerSlot& slot) WTF_ACQUIRES_LOCK(slot.m_rightToRun);
 
     enum State { NotKnown, Compiling, Compiled };
@@ -170,6 +176,9 @@ private:
     Vector<Ref<JITPlan>, 16> m_readyPlans;
 
     Lock m_suspensionLock;
+    std::atomic<MonotonicTime> m_suspensionRequestDeadline;
+    Lock m_suspensionRequestLock;
+    Condition m_suspensionRequestCondition;
     mutable Lock m_lock;
 
     Condition m_planCompiledOrCancelled;

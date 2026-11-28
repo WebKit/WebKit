@@ -1495,10 +1495,22 @@ void Heap::stopIfNecessarySlow()
         vm().verifyCanGC();
 
     assertIsAccessHolder();
-    stopIfNecessarySlow(m_worldState.load());
+    stopIfNecessarySlow(m_worldState.load(), CanDeferStop::Yes);
 }
 
-void Heap::stopIfNecessarySlow(unsigned oldState)
+void Heap::stopIfNecessaryFromRunLoop()
+{
+    if constexpr (validateDFGDoesGC)
+        vm().verifyCanGC();
+
+    ASSERT(m_mutatorHadAccessSinceLastStop);
+    if (!mayNeedToStop())
+        return;
+    assertIsAccessHolder();
+    stopIfNecessarySlow(m_worldState.load(), CanDeferStop::No);
+}
+
+void Heap::stopIfNecessarySlow(unsigned oldState, CanDeferStop canDeferStop)
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
@@ -1513,7 +1525,7 @@ void Heap::stopIfNecessarySlow(unsigned oldState)
     // and there would be some other bit indicating whether we were in some GC phase other than the
     // NotRunning or Concurrent ones.
     if (oldState & mutatorHasConnBit) {
-        collectInMutatorThread();
+        collectInMutatorThread(canDeferStop);
 
         // Conducting leaves the mutator with heap access, and resuming the world ran any epilogue.
         unsigned state = m_worldState.load();
@@ -1524,10 +1536,10 @@ void Heap::stopIfNecessarySlow(unsigned oldState)
     }
 }
 
-NEVER_INLINE void Heap::collectInMutatorThread()
+NEVER_INLINE void Heap::collectInMutatorThread(CanDeferStop canDeferStop)
 {
     CollectingScope collectingScope(*this);
-    m_collector->collectInMutatorThread(*this);
+    m_collector->collectInMutatorThread(*this, canDeferStop);
 }
 
 void Heap::waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone)
@@ -1542,7 +1554,7 @@ void Heap::waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone)
 
         // We hold access, so the collector cannot stop us. If it handed us the conn, we must run the phase ourselves.
         unsigned oldState = m_worldState.load();
-        stopIfNecessarySlow(oldState);
+        stopIfNecessarySlow(oldState, CanDeferStop::No);
 
         // Give the conn back so the collector thread can carry the collection forward, since we won't poll while parked.
         // FIXME: Could conduct the whole collection here instead, since this thread has nothing else to do.
@@ -1599,8 +1611,8 @@ void Heap::releaseAccessSlow()
 
         if ((oldState & mutatorHasConnBit)
             && m_collector->m_nextPhase != m_collector->m_currentPhase) {
-            // This means that the collector thread had given us the conn so that we would do something
-            // for it. Stop ourselves as we release access. This ensures that acquireAccess blocks. In
+            // This means that a phase change is pending that we were to finish as the conductor. Stop
+            // ourselves as we release access. This ensures that acquireAccess blocks. In
             // the meantime, since we're handing the conn over, the collector will be awoken and it is
             // sure to have work to do.
             newState |= stoppedBit;

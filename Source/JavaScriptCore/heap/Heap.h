@@ -600,6 +600,7 @@ public:
     // discipline (i.e. you don't block the runloop) then you can be sure that stopIfNecessary() will
     // already be called for you at the right times.
     inline void stopIfNecessary();
+    void stopIfNecessaryFromRunLoop();
     
     // This gives the conn to the collector.
     void relinquishConn() WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
@@ -687,7 +688,7 @@ private:
 
     void checkConn(GCConductor);
 
-    void collectInMutatorThread() WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
+    void collectInMutatorThread(CanDeferStop) WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
     
     void stopThePeriphery() WTF_REQUIRES_CAPABILITY(conductorRole);
     void resumeThePeriphery() WTF_REQUIRES_CAPABILITY(conductorRole);
@@ -697,7 +698,7 @@ private:
     void resumeTheMutator();
     
     JS_EXPORT_PRIVATE void stopIfNecessarySlow();
-    void stopIfNecessarySlow(unsigned extraStateBits) WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
+    void stopIfNecessarySlow(unsigned extraStateBits, CanDeferStop) WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
     
     void waitForCollector(NOESCAPE const ConstInvocable<bool()> auto& isDone) WTF_REQUIRES_SHARED_CAPABILITY(m_accessHolderRole);
     

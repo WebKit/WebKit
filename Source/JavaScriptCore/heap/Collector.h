@@ -197,7 +197,7 @@ private:
     bool shouldCollectInCollectorThread() WTF_REQUIRES_LOCK(*m_threadLock) WTF_REQUIRES_CAPABILITY(m_collectorThreadRole);
     CollectionScope decideCollectionScope() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
     void collectInCollectorThread() WTF_REQUIRES_CAPABILITY(m_collectorThreadRole);
-    void collectInMutatorThread(Heap& conductor);
+    void collectInMutatorThread(Heap& conductor, CanDeferStop);
 
     void startCollectingContinuously();
     void stopCollectingContinuously();
@@ -235,6 +235,10 @@ private:
     void resumeThePeriphery(GCConductor) WTF_REQUIRES_CAPABILITY(conductorRole);
 
     bool suspendCompilerThreads() WTF_REQUIRES_CAPABILITY(conductorRole);
+    bool shouldDeferStopForCompilerThreads() WTF_REQUIRES_CAPABILITY(conductorRole);
+#if ENABLE(JIT)
+    bool anyHeapHasActiveJITPlans() const;
+#endif
     void resumeCompilerThreads() WTF_REQUIRES_CAPABILITY(conductorRole);
 
     void verifyGC() WTF_REQUIRES_CAPABILITY(conductorWithWorldStoppedRole);
@@ -297,6 +301,9 @@ private:
     bool m_threadIsWorking WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
     bool m_threadShouldStop WTF_GUARDED_BY_LOCK(*m_threadLock) { false };
     bool m_isCompilerThreadsSuspended { false };
+    bool m_didSuspendCompilerThreadsWithoutWaiting { false };
+    CanDeferStop m_conductingMutatorCanDeferStop { CanDeferStop::No };
+    MonotonicTime m_compilerThreadSuspensionRequestTime;
 #if ASSERT_ENABLED
     // For assertIsConductorWithWorldStopped(): set once stopThePeriphery() has stopped every heap, and cleared before
     // resumeThePeriphery() resumes any.
