@@ -24,12 +24,12 @@
  */
 
 #import "config.h"
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -59,21 +59,22 @@ static void writeRTFDToPasteboard(NSData *data)
 #endif
 
 @interface SubresourceForBlobURLFrameLoadDelegate : NSObject <WebFrameLoadDelegate, WebUIDelegate> {
+@public
+    bool _didFinishLoad;
+    bool _didAlert;
 }
 @end
-
-static bool didAlert = false;
 
 @implementation SubresourceForBlobURLFrameLoadDelegate
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-    didFinishLoad = true;
+    _didFinishLoad = true;
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
-    didAlert = true;
+    _didAlert = true;
 }
 
 @end
@@ -89,7 +90,7 @@ TEST(WebKitLegacy, AccessingImageInPastedRTFD)
 
     auto *mainFrame = webView.get().mainFrame;
     [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"paste-rtfd" withExtension:@"html"]]];
-    Util::run(&didFinishLoad);
+    Util::run(&delegate->_didFinishLoad);
     [webView.get() setEditable:YES];
 
     auto *pngData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-200px" ofType:@"png"]];
@@ -99,7 +100,7 @@ TEST(WebKitLegacy, AccessingImageInPastedRTFD)
 
     writeRTFDToPasteboard(RTFDData);
     [webView paste:nil];
-    Util::run(&didAlert);
+    Util::run(&delegate->_didAlert);
 
     DOMDocument *document = [mainFrame DOMDocument];
     DOMElement *documentElement = document.documentElement;
@@ -126,19 +127,19 @@ TEST(WebKitLegacy, AccessingImageInPastedWebArchive)
     [destinationWebView.get() setUIDelegate:delegate.get()];
 
     [[sourceWebView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"image-and-contenteditable" withExtension:@"html"]]];
-    Util::run(&didFinishLoad);
+    Util::run(&delegate->_didFinishLoad);
     [sourceWebView.get() setEditable:YES];
 
-    didFinishLoad = false;
+    delegate->_didFinishLoad = false;
     [[destinationWebView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"paste-rtfd" withExtension:@"html"]]];
-    Util::run(&didFinishLoad);
+    Util::run(&delegate->_didFinishLoad);
     [destinationWebView.get() setEditable:YES];
 
     [sourceWebView stringByEvaluatingJavaScriptFromString:@"document.body.focus(); document.execCommand('selectAll');"];
     [sourceWebView copy:nil];
 
     [destinationWebView paste:nil];
-    Util::run(&didAlert);
+    Util::run(&delegate->_didAlert);
 
     auto *mainFrame = destinationWebView.get().mainFrame;
     DOMDocument *document = [mainFrame DOMDocument];
