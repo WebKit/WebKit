@@ -282,6 +282,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/CachedMatchFinder.cpp
         Tests/WebCore/ColorTests.cpp
         Tests/WebCore/ComplexTextController.cpp
+        Tests/WebCore/ConnectionAllowlist.cpp
         Tests/WebCore/ContextMenuAction.cpp
         Tests/WebCore/CookieJar.cpp
         Tests/WebCore/CredentialStorage.cpp
