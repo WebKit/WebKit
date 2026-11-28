@@ -304,8 +304,8 @@ public:
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
-    NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
+    LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
