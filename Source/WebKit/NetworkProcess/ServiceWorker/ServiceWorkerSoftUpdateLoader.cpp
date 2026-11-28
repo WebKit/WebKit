@@ -62,7 +62,7 @@ ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& ses
 
         OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
         bool allowPrivacyProxy { true };
-        cache->retrieve(request, std::nullopt, NavigatingToAppBoundDomain::No, allowPrivacyProxy, advancedPrivacyProtections, [weakThis = WeakPtr { *this }, request, shouldRefreshCache](auto&& entry, auto&&) mutable {
+        cache->retrieve(request, StoredCredentialsPolicy::Use, std::nullopt, NavigatingToAppBoundDomain::No, allowPrivacyProxy, advancedPrivacyProtections, [weakThis = WeakPtr { *this }, request, shouldRefreshCache](auto&& entry, auto&&) mutable {
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
                 return;

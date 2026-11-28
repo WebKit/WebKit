@@ -55,6 +55,7 @@ class SharedBuffer;
 class ThermalMitigationNotifier;
 class URLPattern;
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class StoredCredentialsPolicy : uint8_t;
 }
 
 namespace WebKit {
@@ -208,9 +209,9 @@ public:
         }; }
     };
     using RetrieveCompletionHandler = Function<void(std::unique_ptr<Entry>, const RetrieveInfo&)>;
-    void retrieve(const WebCore::ResourceRequest&, std::optional<GlobalFrameID>, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, RetrieveCompletionHandler&&);
-    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, Function<void(MappedBody&&)>&& = nullptr);
-    std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap);
+    void retrieve(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<GlobalFrameID>, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, RetrieveCompletionHandler&&);
+    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, Function<void(MappedBody&&)>&& = nullptr);
+    std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap);
     void storeCompressionDictionary(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::FragmentedSharedBuffer>&&, CompressionDictionaryEntry::Info&&);
 
     using CompressionDictionaryHash = std::array<uint8_t, CompressionDictionaryEntry::hashSize>;
@@ -237,14 +238,14 @@ public:
     void traverseCompressionDictionaryRecords(const String& partition, Function<void(const TraversalRecord*)>&&);
 
     void remove(const Key&);
-    void remove(const WebCore::ResourceRequest&);
+    void remove(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy);
     void remove(const Vector<Key>&, Function<void()>&&, WallTime dictionariesRegisteredNotAfter = WallTime::infinity());
 
     void clear();
     void clear(WallTime modifiedSince, Function<void()>&&);
 
-    std::unique_ptr<Entry> makeEntry(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&);
-    std::unique_ptr<Entry> makeRedirectEntry(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
+    std::unique_ptr<Entry> makeEntry(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&);
+    std::unique_ptr<Entry> makeRedirectEntry(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
 
     void dumpContentsToFile();
 
@@ -266,7 +267,7 @@ public:
 private:
     Cache(const String& storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
 
-    Key makeCacheKey(RecordType, const WebCore::ResourceRequest&);
+    Key makeCacheKey(RecordType, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy);
 
     void traverseRecordsOfTypes(OptionSet<RecordType>, const std::optional<String>& partition, OptionSet<Storage::TraverseFlag>, Function<void(const TraversalRecord*)>&&);
 

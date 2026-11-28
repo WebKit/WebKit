@@ -72,7 +72,7 @@ void ServiceWorkerNavigationPreloader::start()
 
     if (RefPtr cache = session->cache()) {
         NetworkCache::GlobalFrameID globalID { *m_parameters.webPageProxyID, *m_parameters.webPageID, *m_parameters.webFrameID };
-        cache->retrieve(m_parameters.request, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
+        cache->retrieve(m_parameters.request, m_parameters.storedCredentialsPolicy, globalID, m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [weakThis = WeakPtr { *this }](auto&& entry, auto&&) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || protectedThis->m_isCancelled)
                 return;

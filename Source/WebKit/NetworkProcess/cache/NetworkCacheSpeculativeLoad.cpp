@@ -102,10 +102,10 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
     std::optional<Seconds> maxAgeCap;
     if (CheckedPtr networkStorageSession = NetworkProcess::singleton().storageSession(m_cache->sessionID()))
         maxAgeCap = networkStorageSession->maxAgeCacheCap(request, NetworkSession::isRequestToKnownCrossSiteTracker(request));
-    m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
+    m_cacheEntry = m_cache->storeRedirect(request, StoredCredentialsPolicy::Use, redirectResponse, redirectRequest, maxAgeCap);
     // Create a synthetic cache entry if we can't store.
     if (!m_cacheEntry)
-        m_cacheEntry = m_cache->makeRedirectEntry(request, redirectResponse, redirectRequest);
+        m_cacheEntry = m_cache->makeRedirectEntry(request, StoredCredentialsPolicy::Use, redirectResponse, redirectRequest);
 
     // Don't follow the redirect. The redirect target will be registered for speculative load when it is loaded.
     didComplete();
@@ -148,10 +148,10 @@ void SpeculativeLoad::didFinishLoading(const WebCore::NetworkLoadMetrics&)
     if (m_didComplete)
         return;
     if (!m_cacheEntry && m_bufferedDataForCache) {
-        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.buffer(), [](auto&& mappedBody) { });
+        m_cacheEntry = m_cache->store(m_originalRequest, StoredCredentialsPolicy::Use, m_response, m_privateRelayed, m_bufferedDataForCache.buffer(), [](auto&& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
         if (!m_cacheEntry && isStatusCodeCacheableByDefault(m_response.httpStatusCode()))
-            m_cacheEntry = m_cache->makeEntry(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.takeBuffer());
+            m_cacheEntry = m_cache->makeEntry(m_originalRequest, StoredCredentialsPolicy::Use, m_response, m_privateRelayed, m_bufferedDataForCache.takeBuffer());
     }
 
     didComplete();

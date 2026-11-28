@@ -45,6 +45,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/ThermalMitigationNotifier.h>
 #include <WebCore/URLPattern.h>
 #include <WebCore/URLPatternOptions.h>
@@ -174,12 +175,12 @@ void Cache::updateCapacity()
     m_storage->setCapacity(newCapacity);
 }
 
-Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& request)
+Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() ? WebCore::IncludesCredentials::No : WebCore::IncludesCredentials::Yes;
+    auto includesCredentials = recordType == RecordType::Resource && !request.allowCookies() && storedCredentialsPolicy != WebCore::StoredCredentialsPolicy::Use ? WebCore::IncludesCredentials::No : WebCore::IncludesCredentials::Yes;
     return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt(), includesCredentials };
 }
 
@@ -273,6 +274,9 @@ static UseDecision makeUseDecision(PAL::SessionID sessionID, const Entry& entry,
         return UseDecision::NoDueToRequestContainingFragments;
 
     auto decision = responseNeedsRevalidation(*protect(NetworkProcess::singleton().networkSession(sessionID)), entry.response(), request, entry.timeStamp());
+    // Asynchronous revalidations include credentials.
+    if (decision == UseDecision::AsyncRevalidate && !request.allowCookies())
+        decision = UseDecision::Validate;
     if (decision != UseDecision::Validate)
         return decision;
 
@@ -430,13 +434,13 @@ void Cache::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, WebCor
         loader->cancel();
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<GlobalFrameID> frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, RetrieveCompletionHandler&& completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<GlobalFrameID> frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), static_cast<int>(request.priority()));
 
-    Key storageKey = makeCacheKey(RecordType::Resource, request);
+    Key storageKey = makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy);
     auto priority = static_cast<unsigned>(request.priority());
 
     RetrieveInfo info;
@@ -542,28 +546,28 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     handler(WTF::move(entry), info);
 }
     
-std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
+std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
-    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
 }
 
-std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
+std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
     auto cachedRedirectRequest = redirectRequest;
     cachedRedirectRequest.clearHTTPAuthorization();
-    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
 {
     ASSERT(responseData);
 
-    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing "_s << request.url().stringWithoutFragmentIdentifier() << ", partition "_s << (makeCacheKey(RecordType::Resource, request).partition()));
+    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing "_s << request.url().stringWithoutFragmentIdentifier() << ", partition "_s << (makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy).partition()));
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
-        auto key = makeCacheKey(RecordType::Resource, request);
+        auto key = makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy);
 
         auto isSuccessfulRevalidation = response.httpStatusCode() == httpStatus304NotModified;
         if (!isSuccessfulRevalidation) {
@@ -574,7 +578,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         return nullptr;
     }
 
-    auto cacheEntry = makeEntry(request, response, privateRelayed, WTF::move(responseData));
+    auto cacheEntry = makeEntry(request, storedCredentialsPolicy, response, privateRelayed, WTF::move(responseData));
     auto record = cacheEntry->encodeAsStorageRecord();
     bool storeBlobInMemoryCache = request.isTopSite();
 
@@ -600,7 +604,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
     return cacheEntry;
 }
 
-std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap)
+std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap)
 {
     LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing redirect "_s << request.url().string() << " -> "_s << redirectRequest.url().string());
 
@@ -610,7 +614,7 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
         return nullptr;
     }
 
-    auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
+    auto cacheEntry = makeRedirectEntry(request, storedCredentialsPolicy, response, redirectRequest);
 
     if (maxAgeCap) {
         LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) capping max age for redirect "_s << request.url().string() << " -> "_s << redirectRequest.url().string());
@@ -628,7 +632,7 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
 {
     ASSERT(responseData);
 
-    auto key = makeCacheKey(RecordType::CompressionDictionary, request);
+    auto key = makeCacheKey(RecordType::CompressionDictionary, request, WebCore::StoredCredentialsPolicy::Use);
 
     LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), makeUTF8CString(key.partition()));
 
@@ -867,9 +871,9 @@ void Cache::remove(const Key& key)
     m_storage->remove(key);
 }
 
-void Cache::remove(const WebCore::ResourceRequest& request)
+void Cache::remove(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
-    remove(makeCacheKey(RecordType::Resource, request));
+    remove(makeCacheKey(RecordType::Resource, request, storedCredentialsPolicy));
 }
 
 void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler, WallTime dictionariesRegisteredNotAfter)
