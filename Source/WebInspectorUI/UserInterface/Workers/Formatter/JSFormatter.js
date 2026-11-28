@@ -107,6 +107,28 @@ JSFormatter = class JSFormatter
         this._builder.appendNewline(force);
     }
 
+    _wouldFuseWithLastToken(tokenValue)
+    {
+        let lastToken = this._builder.lastToken;
+        if (!lastToken || !tokenValue)
+            return false;
+
+        // `+ +`, `- -`, `+ ++` and `- --` would become `++`, `--`, `+++` and `---`.
+        let firstCharacter = tokenValue.charAt(0);
+        if (firstCharacter === "+" || firstCharacter === "-")
+            return lastToken.charAt(0) === firstCharacter && /^(?:\+\+?|--?)$/.test(lastToken);
+
+        // `1 .toString()` would become `1.toString()`, which does not parse.
+        return firstCharacter === "." && /^[0-9][0-9_]*$/.test(lastToken);
+    }
+
+    _appendToken(tokenValue, tokenOffset)
+    {
+        if (!this._builder.lastTokenWasWhitespace && this._wouldFuseWithLastToken(tokenValue))
+            this._builder.appendSpace();
+        this._builder.appendToken(tokenValue, tokenOffset);
+    }
+
     _insertNewlinesBeforeToken(node, token)
     {
         let force = false;
@@ -235,13 +257,13 @@ JSFormatter = class JSFormatter
 
         // Very common types that just pass through.
         if (nodeType === "MemberExpression" || nodeType === "Literal" || nodeType === "ThisExpression" || nodeType === "UpdateExpression") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         // Most identifiers just pass through, but a few are special.
         if (nodeType === "Identifier" || nodeType === "PrivateIdentifier") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenValue === "async" && node.parent.type === "Property" && node.parent.value.async && token.range[1] !== node.range[1])
                 builder.appendSpace();
             return;
@@ -253,7 +275,7 @@ JSFormatter = class JSFormatter
         if (tokenValue === ";") {
             // Avoid newlines for for loop header semicolons.
             if (nodeType === "ForStatement") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 // Do not include spaces in empty for loop header sections: for(;;)
                 for (let value of [node.test, node.test?.expression, node.update]) {
                     if (value?.range?.length && this._isRangeWhitespace(token.range[1], value.range[0])) {
@@ -267,34 +289,34 @@ JSFormatter = class JSFormatter
             // Sometimes more specific nodes gets the semicolon inside a for loop header.
             // Avoid newlines. Example is a VariableDeclaration in: for (var a, b; ...; ...).
             if (this._isInForHeader(node)) {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
 
             // Avoid newline for single statement arrow functions with semicolons.
             if (node.parent.type === "BlockStatement" && node.parent.body.length === 1 && node.parent.parent && node.parent.parent.type === "ArrowFunctionExpression") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             this._appendNewline(node);
             return;
         }
 
         if (nodeType === "CallExpression" || nodeType === "ArrayExpression" || nodeType === "ArrayPattern" || nodeType === "ObjectPattern") {
             if (tokenValue === ",") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "SequenceExpression") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenValue === ",") {
                 if (node.parent.type === "ExpressionStatement")
                     this._appendNewline(node);
@@ -307,18 +329,18 @@ JSFormatter = class JSFormatter
         if (nodeType === "LogicalExpression" || nodeType === "BinaryExpression") {
             if (tokenValue !== "(" && tokenValue !== ")") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenType === "Keyword") {
                 // in, instanceof, ...
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -327,12 +349,12 @@ JSFormatter = class JSFormatter
                 // Class methods we put the opening brace on its own line.
                 if (node.parent && node.parent.parent && node.parent.parent.type === "MethodDefinition" && node.body.length) {
                     this._appendNewline(node);
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     this._appendNewline(node);
                     builder.indent();
                     return;
                 }
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.body.length)
                     this._appendNewline(node);
                 builder.indent();
@@ -342,26 +364,26 @@ JSFormatter = class JSFormatter
                 if (node.body.length)
                     this._appendNewline(node);
                 builder.dedent();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 return;
             }
             console.warn("Unexpected BlockStatement or StaticBlock token", token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "VariableDeclaration") {
             if (tokenValue === ",") {
                 if (this._isInForHeader(node)) {
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 this._appendNewline(node);
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             builder.appendSpace();
             // If this is a multiple variable declaration, indent.
             if (node.declarations.length > 1 && !node.__autoDedent) {
@@ -376,13 +398,13 @@ JSFormatter = class JSFormatter
                 let surroundWithSpaces = tokenValue !== "(" && tokenValue !== ")";
                 if (surroundWithSpaces)
                     builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (surroundWithSpaces)
                     builder.appendSpace();
                 return;
             }
             console.warn("Unexpected " + nodeType + " token", token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -394,7 +416,7 @@ JSFormatter = class JSFormatter
                         node.__autoDedent = false;
                     }
                     builder.appendSpace();
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
 
                     if (node.alternate && (node.alternate.type !== "BlockStatement" && node.alternate.type !== "IfStatement")) {
                         this._appendNewline(node);
@@ -406,7 +428,7 @@ JSFormatter = class JSFormatter
                 }
 
                 console.assert(tokenValue === "if", token);
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
@@ -415,28 +437,28 @@ JSFormatter = class JSFormatter
             if (tokenValue === ")" && this._isRangeWhitespace(token.range[1], node.consequent.range[0])) {
                 if (node.consequent.type === "BlockStatement") {
                     // The block will handle indenting.
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
 
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ReturnStatement") {
             if (tokenValue === ";") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (node.argument) {
                 // Multi-line LogicalExpressions (&& and ||) are a common style of return
                 // statement that benefits from indentation.
@@ -452,7 +474,7 @@ JSFormatter = class JSFormatter
         if (nodeType === "FunctionDeclaration" || nodeType === "FunctionExpression") {
             if (tokenType === "Keyword") {
                 console.assert(tokenValue === "function", token);
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.id)
                     builder.appendSpace();
                 return;
@@ -460,27 +482,27 @@ JSFormatter = class JSFormatter
             if (tokenType === "Punctuator") {
                 if (tokenValue === "*") {
                     builder.tryRemoveLastWhitespace();
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (tokenValue === ")" || tokenValue === ",")
                     builder.appendSpace();
                 return;
             }
             if (tokenType === "Identifier" && tokenValue === "async") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "WhileStatement" || nodeType === "WithStatement") {
             if (tokenValue === "while" || tokenValue === "with") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
@@ -489,31 +511,31 @@ JSFormatter = class JSFormatter
             if (tokenValue === ")" && this._isRangeWhitespace(token.range[1], node.body.range[0])) {
                 if (node.body.type === "BlockStatement") {
                     // The block will handle indenting.
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
 
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ForStatement" || nodeType === "ForOfStatement" || nodeType === "ForInStatement") {
             if (tokenValue === "for" || tokenValue === "await") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === "in" || tokenValue === "of") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
@@ -522,69 +544,69 @@ JSFormatter = class JSFormatter
             if (tokenValue === ")" && this._isRangeWhitespace(token.range[1], node.body.range[0])) {
                 if (node.body.type === "BlockStatement") {
                     // The block will handle indenting.
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
 
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 this._appendNewline(node);
                 builder.indent();
                 node.__autoDedent = true;
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "SwitchStatement") {
             if (tokenValue === "switch") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenType === "Punctuator") {
                 if (tokenValue === ")") {
                     // FIXME: Would be nice to only add a space if this the ')' closing the discriminant: switch((1)){}
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
                 if (tokenValue === "{") {
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     this._appendNewline(node);
                     return;
                 }
                 if (tokenValue === "}") {
                     this._appendNewline(node);
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     this._appendNewline(node);
                     return;
                 }
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "SwitchCase") {
             if (tokenType === "Keyword") {
                 if (tokenValue === "case") {
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
                 if (tokenValue === "default") {
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     return;
                 }
                 console.warn("Unexpected SwitchCase Keyword token", token);
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 return;
             }
 
             if (tokenValue === ":") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 this._appendNewline(node);
                 if (node.consequent.length) {
                     builder.indent();
@@ -593,71 +615,71 @@ JSFormatter = class JSFormatter
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "NewExpression") {
             if (tokenValue === "new") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === ",") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "DoWhileStatement") {
             if (tokenValue === "do") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === "while") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ThrowStatement") {
             if (tokenValue === "throw") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "UnaryExpression") {
             if (tokenType === "Keyword") {
                 // typeof, instanceof, void
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ConditionalExpression") {
             if (tokenValue === "?" || tokenValue === ":") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -667,7 +689,7 @@ JSFormatter = class JSFormatter
             // instead of always adding newlines. Objects like: {a}, {a:1} but
             // not objects like {a:function(){1;}}.
             if (tokenValue === "{") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.properties.length) {
                     this._appendNewline(node);
                     builder.indent();
@@ -679,18 +701,18 @@ JSFormatter = class JSFormatter
                     this._appendNewline(node);
                     builder.dedent();
                 }
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 return;
             }
             if (tokenValue === ",") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.properties.length)
                     this._appendNewline(node);
                 else
                     builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -698,24 +720,24 @@ JSFormatter = class JSFormatter
             if (tokenType === "Punctuator") {
                 if (tokenValue === "=>") {
                     builder.appendSpace();
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
                 if (tokenValue === ",") {
-                    builder.appendToken(tokenValue, tokenOffset);
+                    this._appendToken(tokenValue, tokenOffset);
                     builder.appendSpace();
                     return;
                 }
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenType === "Identifier" && tokenValue === "async")
                 builder.appendSpace();
             return;
         }
 
         if (nodeType === "AwaitExpression") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenType === "Identifier" && tokenValue === "await")
                 builder.appendSpace();
             return;
@@ -727,7 +749,7 @@ JSFormatter = class JSFormatter
             if (tokenValue === "=")
                 builder.appendSpace();
 
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
 
             if (tokenValuesRequiringTrailingWhitespace.includes(tokenValue))
                 builder.appendSpace();
@@ -737,14 +759,14 @@ JSFormatter = class JSFormatter
         if (nodeType === "MethodDefinition") {
             const tokenValuesRequiringTrailingWhitespace = ["static", "get", "set", "async"];
             console.assert([...tokenValuesRequiringTrailingWhitespace, "*", "[", "]", "(", ")", "#"].includes(tokenValue), token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenValuesRequiringTrailingWhitespace.includes(tokenValue))
                 builder.appendSpace();
             return;
         }
 
         if (nodeType === "BreakStatement" || nodeType === "ContinueStatement") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenType === "Keyword" && node.label)
                 builder.appendSpace();
             return;
@@ -752,58 +774,58 @@ JSFormatter = class JSFormatter
 
         if (nodeType === "LabeledStatement") {
             console.assert(tokenValue === ":", token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             builder.appendNewline();
             return;
         }
 
         if (nodeType === "TryStatement") {
             if (tokenValue === "try") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === "finally") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             console.warn("Unexpected TryStatement token", token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "CatchClause") {
             if (tokenValue === "catch") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === ")") {
                 // The block will handle indenting.
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ClassExpression" || nodeType === "ClassDeclaration") {
             if (tokenValue === "class") {
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
             if (tokenValue === "extends") {
                 builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -811,7 +833,7 @@ JSFormatter = class JSFormatter
             if (tokenValue === "{") {
                 if (node.parent.id)
                     builder.appendSpace();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.body.length)
                     builder.appendNewline();
                 builder.indent();
@@ -821,31 +843,31 @@ JSFormatter = class JSFormatter
                 if (node.body.length)
                     builder.appendNewline();
                 builder.dedent();
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 builder.appendNewline();
                 return;
             }
             console.warn("Unexpected ClassBody token", token);
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "YieldExpression") {
             if (tokenType === "Keyword") {
                 console.assert(tokenValue === "yield", token);
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
                 if (node.argument)
                     builder.appendSpace();
                 return;
             }
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
         if (nodeType === "ImportDeclaration" || nodeType === "ExportNamedDeclaration") {
             if (tokenValue === "}" || (tokenType === "Identifier" && (tokenValue === "from" || tokenValue === "assert")))
                 builder.appendSpace();
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenValue !== "}")
                 builder.appendSpace();
             return;
@@ -854,7 +876,7 @@ JSFormatter = class JSFormatter
         if (nodeType === "ExportSpecifier" || nodeType === "ImportSpecifier") {
             if (tokenType === "Identifier" && (tokenValue === "as" || tokenValue === "assert"))
                 builder.appendSpace();
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             builder.appendSpace();
             return;
         }
@@ -862,7 +884,7 @@ JSFormatter = class JSFormatter
         if (nodeType === "ExportAllDeclaration" || nodeType === "ExportDefaultDeclaration" || nodeType === "ImportDefaultSpecifier" || nodeType === "ImportNamespaceSpecifier") {
             if (tokenValue === "}" || (tokenType === "Identifier" && tokenValue === "assert"))
                 builder.appendSpace();
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             if (tokenValue !== "(" && tokenValue !== ")" && tokenValue !== "}")
                 builder.appendSpace();
             return;
@@ -873,7 +895,7 @@ JSFormatter = class JSFormatter
                 builder.appendStringWithPossibleNewlines(tokenValue, tokenOffset);
                 this._advanceLineEndingsIndexToEndOfToken(token);
             } else
-                builder.appendToken(tokenValue, tokenOffset);
+                this._appendToken(tokenValue, tokenOffset);
 
             return;
         }
@@ -889,7 +911,7 @@ JSFormatter = class JSFormatter
             || nodeType === "DebuggerStatement"
             || nodeType === "AssignmentPattern"
             || nodeType === "ChainExpression") {
-            builder.appendToken(tokenValue, tokenOffset);
+            this._appendToken(tokenValue, tokenOffset);
             return;
         }
 
@@ -897,7 +919,7 @@ JSFormatter = class JSFormatter
         console.warn(nodeType, tokenValue);
 
         // Fallback behavior in case there are unhandled types.
-        builder.appendToken(tokenValue, tokenOffset);
+        this._appendToken(tokenValue, tokenOffset);
 
         if (tokenType === "Keyword")
             builder.appendSpace();
