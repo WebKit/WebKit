@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Recording.InitialState.NestedSave");
+
+    // A recording that starts inside a save() has one saved state per stack level, each with the absolute matrix.
+    function createPayload(parameters) {
+        return {
+            version: 3,
+            type: "canvas-2d",
+            initialState: {
+                attributes: {width: 100, height: 100},
+                states: [{"0": [2, 0, 0, 2, 0, 0]}, {"0": [2, 0, 0, 2, 20, 20]}],
+                parameters,
+                content: "",
+            },
+            frames: [],
+            data: ["setTransform"],
+        };
+    }
+
+    async function createProcessedRecording(parameters = []) {
+        let recording = WI.Recording.fromPayload(createPayload(parameters));
+        await new Promise((resolve) => {
+            recording.addEventListener(WI.Recording.Event.ProcessedAction, () => {
+                if (recording.ready)
+                    resolve();
+            });
+            recording.startProcessing();
+            if (recording.ready)
+                resolve();
+        });
+        return recording;
+    }
+
+    function matrixString(context) {
+        let {a, b, c, d, e, f} = context.getTransform();
+        return [a, b, c, d, e, f].join(",");
+    }
+
+    suite.addTestCase({
+        name: "Recording.InitialState.NestedSave.Preview",
+        description: "Applying each saved state in turn should leave the matrix the page had when the recording started.",
+        async test() {
+            let recording = await createProcessedRecording();
+            let states = recording.actions[0].states;
+            InspectorTest.expectEqual(states.length, 2, "Should have one state per save level.");
+            InspectorTest.expectEqual(JSON.stringify(states[0].get("transform")), "[2,0,0,2,0,0]", "The first state should keep the absolute matrix.");
+            InspectorTest.expectEqual(JSON.stringify(states[1].get("transform")), "[2,0,0,2,20,20]", "The second state should keep the absolute matrix.");
+
+            // The same steps as the preview in `WI.RecordingContentView`, which is not loaded in the test frontend.
+            let {context} = recording.createContext();
+            for (let state of states) {
+                state.apply(recording.type, context);
+                context.save();
+            }
+            InspectorTest.expectEqual(matrixString(context), "2,0,0,2,20,20", "The preview should not compound the saved transforms.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Recording.InitialState.NestedSave.Reduction",
+        description: "The reduction should replay the saved states to the matrix the page had when the recording started.",
+        async test() {
+            let recording = await createProcessedRecording();
+            let html = recording.toHTML();
+            InspectorTest.expectFalse(html.includes("context.transform("), "The reduction should not multiply the saved matrices.");
+
+            let {context} = recording.createContext();
+            for (let line of html.split("\n")) {
+                let match = line.match(/^\s+context\.(setTransform|transform|save)\((.*)\);$/);
+                if (!match)
+                    continue;
+                if (match[1] === "save")
+                    context.save();
+                else
+                    context[match[1]](...match[2].split(",").map(Number));
+            }
+            InspectorTest.expectEqual(matrixString(context), "2,0,0,2,20,20", "The replayed reduction should end at the starting matrix.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Recording.InitialState.NestedSave.Snapshot",
+        description: "Applying the saved states of an action inside recorded save() calls should leave the matrix that the action ran with.",
+        async test() {
+            let payload = createPayload([]);
+            payload.initialState.states = [{"0": [1, 0, 0, 1, 0, 0]}];
+            payload.data = ["setTransform", "save", "translate", "fillRect"];
+            payload.frames = [{
+                actions: [
+                    [1, [], []],
+                    [2, [10, 10], [WI.Recording.Swizzle.Number, WI.Recording.Swizzle.Number]],
+                    [1, [], []],
+                    [2, [5, 5], [WI.Recording.Swizzle.Number, WI.Recording.Swizzle.Number]],
+                    [3, [0, 0, 1, 1], [WI.Recording.Swizzle.Number, WI.Recording.Swizzle.Number, WI.Recording.Swizzle.Number, WI.Recording.Swizzle.Number]],
+                ],
+                duration: 1,
+                incomplete: false,
+            }];
+
+            let recording = WI.Recording.fromPayload(payload);
+            await new Promise((resolve) => {
+                recording.addEventListener(WI.Recording.Event.ProcessedAction, () => {
+                    if (recording.ready)
+                        resolve();
+                });
+                recording.startProcessing();
+                if (recording.ready)
+                    resolve();
+            });
+
+            let action = recording.actions.lastValue;
+            InspectorTest.expectEqual(action.name, "fillRect", "The last action should be the fillRect().");
+            InspectorTest.expectEqual(action.states.length, 3, "Two recorded save() calls should leave two saved states and the current state.");
+
+            // A preview snapshot starts from the states of the action before it.
+            let {context} = recording.createContext();
+            for (let state of action.states) {
+                state.apply(recording.type, context);
+                context.save();
+            }
+            InspectorTest.expectEqual(matrixString(context), "1,0,0,1,15,15", "The snapshot should not compound the saved transforms.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Recording.InitialState.NestedSave.ContextAttributes",
+        description: "The reduction should create its context with the original context attributes.",
+        async test() {
+            let attributes = {desynchronized: false, willReadFrequently: true};
+            let recording = await createProcessedRecording([attributes]);
+            let html = recording.toHTML();
+
+            let line = html.split("\n").find((line) => line.includes("getContext("));
+            InspectorTest.expectEqual(line, `let context = canvas.getContext("2d", ${JSON.stringify(attributes)});`, "The getContext() call should carry the attributes inline.");
+            InspectorTest.expectFalse(line.includes("objects["), "The attributes should not be left as an object reference.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that a recording that starts inside save() replays at the right transform and keeps its context attributes.</p>
+</body>
+</html>

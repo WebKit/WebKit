@@ -168,7 +168,10 @@ WI.RecordingState = class RecordingState
                 continue;
 
             try {
-                if (WI.RecordingAction.isFunctionForType(type, name))
+                // The state holds the absolute matrix, so replace the current one instead of multiplying it.
+                if (name === "transform")
+                    context.setTransform(...value);
+                else if (WI.RecordingAction.isFunctionForType(type, name))
                     context[name](...value);
                 else
                     context[name] = value;
