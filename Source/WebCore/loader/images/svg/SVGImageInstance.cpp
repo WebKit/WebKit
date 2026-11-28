@@ -41,6 +41,7 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "PageConfiguration.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGImage.h"
@@ -136,7 +137,7 @@ Ref<SVGImageInstance> SVGImageInstance::create(SVGImage& image, const std::optio
 SVGImageInstance::SVGImageInstance(Ref<Page>&& page)
     : m_page(WTF::move(page))
     , m_appliedDocumentState {
-        .containerSize = IntSize { },
+        .containerSize = FloatSize { },
         .rendition = {
             .fragmentURL = URL { },
             .linkParameters = CSS::Keyword::None { },
@@ -287,20 +288,30 @@ void SVGImageInstance::setContainerSize(const FloatSize& size)
     if (!rootElement || !rootElement->renderer() || !rootElement->renderer()->isRenderOrLegacyRenderSVGRoot())
         return;
 
+    // The root is laid out at the exact (possibly fractional) size so the viewBox maps onto the
+    // concrete object size without distortion. The frame view itself can only have an integral size.
+    auto setContainerSize = [&](auto& renderer) {
+        LayoutSize containerSize { size };
+        if (renderer.containerSize() == containerSize)
+            return;
+        renderer.setContainerSize(containerSize);
+        renderer.setNeedsLayout();
+    };
+
     if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer())) {
-        renderer->setContainerSize(IntSize(size));
+        setContainerSize(*renderer);
         return;
     }
 
     if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer())) {
-        renderer->setContainerSize(IntSize(size));
+        setContainerSize(*renderer);
         return;
     }
 }
 
 auto SVGImageInstance::documentStateForDraw(const ImageDrawDescriptor& descriptor) const -> DocumentState
 {
-    DocumentState state { roundedIntSize(descriptor.concreteObjectSize.size()), descriptor.rendition };
+    DocumentState state { descriptor.concreteObjectSize.size(), descriptor.rendition };
 
     if (!state.rendition.contentSettings)
         state.rendition.contentSettings = m_appliedDocumentState.rendition.contentSettings;
@@ -396,7 +407,7 @@ void SVGImageInstance::paint(GraphicsContext& context, const FloatRect& source)
     if (!frameView)
         return;
 
-    frameView->resize(m_appliedDocumentState.containerSize);
+    frameView->resize(expandedIntSize(m_appliedDocumentState.containerSize));
 
     {
         ScriptDisallowedScope::DisableAssertionsInScope disabledScope;

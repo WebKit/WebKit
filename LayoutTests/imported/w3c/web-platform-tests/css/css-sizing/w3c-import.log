@@ -277,6 +277,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-2b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-mismatched-aspect-ratio-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-mismatched-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/image-max-width-and-height-behaves-as-auto-expected.html

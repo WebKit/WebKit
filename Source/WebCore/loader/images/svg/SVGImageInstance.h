@@ -90,7 +90,7 @@ public:
 #endif
 
     struct DocumentState {
-        IntSize containerSize;
+        FloatSize containerSize;
         ImageRenditionOptions rendition;
 
         bool operator==(const DocumentState&) const = default;
