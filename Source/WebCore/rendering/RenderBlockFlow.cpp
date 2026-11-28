@@ -2742,10 +2742,8 @@ void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::Comput
             if (ancestor.isRenderView())
                 break;
             if (ancestor.hasOverhangingFloats()) {
-                for (auto& floatingObject : m_floatingObjects->set()) {
-                    if (!floatingObject->renderer())
-                        continue;
-                    if (ancestor.hasOverhangingFloat(*floatingObject->renderer())) {
+                for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+                    if (ancestor.hasOverhangingFloat(downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration()))) {
                         parentBlock = &ancestor;
                         break;
                     }
@@ -3356,17 +3354,16 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child)
     return lowestFloatLogicalBottom;
 }
 
-bool RenderBlockFlow::hasOverhangingFloat(RenderBox& renderer)
+bool RenderBlockFlow::hasOverhangingFloat(const RenderBox& floatBox)
 {
     if (!m_floatingObjects || !parent())
         return false;
 
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    const auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(renderer);
-    if (it == floatingObjectSet.end())
-        return false;
-
-    return logicalBottomForFloat(*it->get()) > logicalHeight();
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        if (&floatItem.layoutBox() == &floatBox.layoutBox())
+            return floatItem.marginBoxBottom().value() > logicalHeight();
+    }
+    return false;
 }
 
 void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* previousBlock, RenderBlockFlow* container, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset)
@@ -3473,11 +3470,8 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     if (!m_floatingObjects)
         return;
 
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        markSiblingsWithIntrusiveFloatForLayoutIfApplicable(*floatingObject->renderer());
-    }
+    for (auto& floatItem : m_floatingObjects->placedFloats().list())
+        markSiblingsWithIntrusiveFloatForLayoutIfApplicable(downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration()));
 }
 
 LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutUnit logicalTop)
