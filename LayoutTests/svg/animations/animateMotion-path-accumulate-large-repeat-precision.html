@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<title>&lt;animateMotion> path animation with accumulate="sum" keeps precision for a large repeat iteration</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<!-- The motion path ends at (1.5, 2), so its length is exactly 2.5. With dur=1s,
+     seeking to a whole number of seconds T lands at the start of repeat
+     iteration T, so the accumulated offset is (1.5T, 2T). The seek times are
+     multiples of 256 just below 2^32, so they are exact as single-precision
+     floats, but 1.5T is not, and rounding it to float is off by up to 256. -->
+
+<svg width="100" height="100">
+  <rect width="10" height="10" fill="green">
+    <animateMotion path="M 0 0 L 1.5 2" dur="1s" repeatCount="indefinite" accumulate="sum"/>
+  </rect>
+</svg>
+
+<script>
+const svg = document.querySelector("svg");
+const rect = document.querySelector("rect");
+svg.pauseAnimations();
+
+promise_setup(() => new Promise(
+  resolve => window.addEventListener("load", resolve, {once: true})));
+
+promise_test(async t => {
+  for (let i = 0; i < 10; ++i) {
+    const time = 4294967040 - i * 256;
+    svg.setCurrentTime(time);
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    const m = rect.getCTM();
+    assert_not_equals(m, null, `t=${time}: getCTM()`);
+    assert_approx_equals(m.e, 1.5 * time, 1, `t=${time}: translate x`);
+    assert_approx_equals(m.f, 2 * time, 1, `t=${time}: translate y`);
+  }
+}, 'accumulate="sum" on a motion path computes the accumulated offset without float rounding, for a large repeat count');
+</script>
