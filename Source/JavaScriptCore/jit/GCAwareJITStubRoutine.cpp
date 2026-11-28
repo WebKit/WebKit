@@ -166,13 +166,20 @@ void PolymorphicAccessJITStubRoutine::addedToSharedJITStubSet()
 
 bool PolymorphicAccessJITStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
 {
-    bool isValid = true;
-    for (StructureID weakReference : m_weakStructures)
-        isValid &= vm.heap.isMarked(weakReference.decode());
-    for (auto& accessCase : m_cases)
-        isValid &= accessCase->isStillLive(vm);
-    isValid &= Base::reconcileWeakReferencesAtGCEndImpl(vm);
-    return isValid;
+    return !hasDeadWeakReferenceAtGCEndImpl(vm);
+}
+
+bool PolymorphicAccessJITStubRoutine::hasDeadWeakReferenceAtGCEndImpl(VM& vm) const
+{
+    for (StructureID weakReference : m_weakStructures) {
+        if (!vm.heap.isMarked(weakReference.decode()))
+            return true;
+    }
+    for (auto& accessCase : m_cases) {
+        if (!accessCase->isStillLive(vm))
+            return true;
+    }
+    return Base::hasDeadWeakReferenceAtGCEndImpl(vm);
 }
 
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
@@ -213,6 +220,15 @@ bool MarkingGCAwareJITStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
             callLinkInfo->reconcileWeakReferencesAtGCEnd(vm);
     }
     return Base::reconcileWeakReferencesAtGCEndImpl(vm);
+}
+
+bool MarkingGCAwareJITStubRoutine::hasDeadWeakReferenceAtGCEndImpl(VM& vm) const
+{
+    for (auto& callLinkInfo : m_callLinkInfos) {
+        if (callLinkInfo && callLinkInfo->hasDeadWeakReferenceAtGCEnd(vm))
+            return true;
+    }
+    return Base::hasDeadWeakReferenceAtGCEndImpl(vm);
 }
 
 CallLinkInfo* MarkingGCAwareJITStubRoutine::callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned index)

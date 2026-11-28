@@ -53,11 +53,24 @@ struct RecordedStatuses {
     
     void reconcileWeakReferencesWithoutDeleting(VM&);
     void reconcileWeakReferences(VM&);
+    bool hasStatusToRemove(VM&) const;
     
     void shrinkToFit();
     
     template<typename Func>
     void forEachVector(NOESCAPE const Func& func)
+    {
+        func(calls);
+        func(gets);
+        func(puts);
+        func(ins);
+        func(deletes);
+        func(checkPrivateBrands);
+        func(setPrivateBrands);
+    }
+
+    template<typename Func>
+    void forEachVector(NOESCAPE const Func& func) const
     {
         func(calls);
         func(gets);

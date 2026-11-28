@@ -219,6 +219,24 @@ void CallLinkInfo::reconcileWeakReferencesAtGCEnd(VM& vm)
     }
 }
 
+bool CallLinkInfo::hasDeadWeakReferenceAtGCEnd(VM& vm) const
+{
+    switch (mode()) {
+    case Mode::Init:
+    case Mode::Virtual:
+        break;
+    case Mode::Polymorphic:
+        if (stub() && stub()->hasDeadWeakReferenceAtGCEnd(vm))
+            return true;
+        break;
+    case Mode::Monomorphic:
+        if (auto* callee = m_callee.get(); callee && !vm.heap.isMarked(callee))
+            return true;
+        break;
+    }
+    return haveLastSeenCallee() && !vm.heap.isMarked(lastSeenCallee());
+}
+
 void CallLinkInfo::revertCallToStub()
 {
     RELEASE_ASSERT(stub());
@@ -447,6 +465,11 @@ void DirectCallLinkInfo::reconcileWeakReferencesAtGCEnd(VM& vm)
         dataLogLnIf(Options::verboseOSR(), "Clearing call to ", RawPointer(m_codeBlock), " (", pointerDump(m_codeBlock), ").");
         unlinkOrUpgrade(vm, nullptr, nullptr);
     }
+}
+
+bool DirectCallLinkInfo::hasDeadWeakReferenceAtGCEnd(VM& vm) const
+{
+    return m_codeBlock && !vm.heap.isMarked(m_codeBlock);
 }
 
 CCallHelpers::JumpList DirectCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)

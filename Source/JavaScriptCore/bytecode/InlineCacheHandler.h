@@ -80,6 +80,7 @@ public:
 
     // If this returns false then we are requesting a reset of the owning PropertyInlineCache.
     bool reconcileWeakReferencesAtGCEnd(VM&);
+    bool hasDeadWeakReferenceAtGCEnd(VM&) const;
 
     void dump(PrintStream&) const;
 

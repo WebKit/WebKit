@@ -33,6 +33,7 @@
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/VirtualRegister.h>
 #include <span>
+#include <wtf/Atomics.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
@@ -217,16 +218,20 @@ public:
 
     void update(ValueProfile& profile)
     {
-        SpeculatedType newType = profile.m_prediction | m_prediction;
-        profile.m_prediction = newType;
-        m_prediction = newType;
+        SpeculatedType profilePrediction = profile.m_prediction;
+        SpeculatedType oldPrediction = WTF::atomicLoad<MemoryOrder::Relaxed>(&m_prediction);
+        if ((oldPrediction | profilePrediction) != oldPrediction) [[unlikely]]
+            oldPrediction = WTF::atomicExchangeOr<MemoryOrder::Relaxed>(&m_prediction, profilePrediction);
+        profile.m_prediction = oldPrediction | profilePrediction;
     }
 
     void update(ArgumentValueProfile& profile)
     {
-        SpeculatedType newType = profile.m_prediction | m_prediction;
-        profile.m_prediction = newType;
-        m_prediction = newType;
+        SpeculatedType profilePrediction = profile.m_prediction;
+        SpeculatedType oldPrediction = WTF::atomicLoad<MemoryOrder::Relaxed>(&m_prediction);
+        if ((oldPrediction | profilePrediction) != oldPrediction) [[unlikely]]
+            oldPrediction = WTF::atomicExchangeOr<MemoryOrder::Relaxed>(&m_prediction, profilePrediction);
+        profile.m_prediction = oldPrediction | profilePrediction;
     }
 
 private:

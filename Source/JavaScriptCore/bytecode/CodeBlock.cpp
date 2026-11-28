@@ -1239,12 +1239,11 @@ void CodeBlock::visitChildren(Visitor& visitor)
         stronglyVisitWeakReferences(locker, visitor);
     }
 
-    // Update profiles from concurrent markers to reduce the cost of update at the GC end phase as its execution is serialized.
     if constexpr (std::is_same_v<Visitor, SlotVisitor>) {
         if (visitor.isFirstVisit() && JITCode::isBaselineCode(jitType()))
             updatePredictionsConcurrently();
     }
-    
+
     Heap::CodeBlockSpaceAndSet::setFor(*subspace()).add(this);
 }
 
@@ -1515,7 +1514,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
 template void CodeBlock::determineLiveness(const ConcurrentJSLocker&, AbstractSlotVisitor&);
 template void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor&);
 
-void CodeBlock::reconcileLLIntInlineCachesAtGCEnd()
+void CodeBlock::reconcileLLIntMetadataAtGCEnd()
 {
     VM& vm = *m_vm;
 
@@ -1706,6 +1705,11 @@ void CodeBlock::reconcileLLIntInlineCachesAtGCEnd()
         m_metadata->forEach<OpGetFromScope>(handleGetPutFromScope);
         m_metadata->forEach<OpPutToScope>(handleGetPutFromScope);
     }
+}
+
+void CodeBlock::reconcileLLIntGetByIdWatchpointsAtGCEnd()
+{
+    VM& vm = *m_vm;
 
     // We can't just remove all the sets when we clear the caches since we might have created a watchpoint set
     // then cleared the cache without GCing in between.
@@ -1791,35 +1795,107 @@ void CodeBlock::reconcileJITInlineCachesAtGCEnd()
         return IterationStatus::Continue;
     });
 }
+
+bool CodeBlock::jitInlineCachesHaveDeadWeakReferenceAtGCEnd()
+{
+    VM& vm = this->vm();
+#if ENABLE(DFG_JIT)
+    if (JSC::JITCode::isOptimizingJIT(jitType())) {
+        for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_callLinkInfos) {
+            if (callLinkInfo->hasDeadWeakReferenceAtGCEnd(vm))
+                return true;
+        }
+        for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_directCallLinkInfos) {
+            if (callLinkInfo->hasDeadWeakReferenceAtGCEnd(vm))
+                return true;
+        }
+        if (auto* jitData = dfgJITData()) {
+            for (auto& callLinkInfo : jitData->callLinkInfos()) {
+                if (callLinkInfo.hasDeadWeakReferenceAtGCEnd(vm))
+                    return true;
+            }
+        }
+    }
 #endif
+    bool result = false;
+    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
+        if (propertyCache.hasDeadWeakReferenceAtGCEnd(vm)) {
+            result = true;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return result;
+}
+#endif
+
+bool CodeBlock::llintOrBaselineCallLinkInfosHaveDeadWeakReferenceAtGCEnd()
+{
+    bool result = false;
+    forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
+        if (!result)
+            result = callLinkInfo.hasDeadWeakReferenceAtGCEnd(vm());
+    });
+    return result;
+}
+
+#if ENABLE(DFG_JIT)
+bool CodeBlock::recordedStatusesHaveStatusToRemoveAtGCEnd()
+{
+    auto* statuses = m_jitCode->dfgCommon()->recordedStatuses.get();
+    return statuses && statuses->hasStatusToRemove(vm());
+}
+#endif
+
+void CodeBlock::reconcileOwnDataAtGCEnd()
+{
+    ASSERT(!m_ownDataReconciledAtGCEnd);
+    if (JITCode::isBaselineCode(jitType()))
+        updatePredictionsConcurrently();
+    if (JITCode::couldBeInterpreted(jitType()))
+        reconcileLLIntMetadataAtGCEnd();
+    m_callLinkInfosNeedReconciliationAtGCEnd = JITCode::couldBeInterpreted(jitType()) && llintOrBaselineCallLinkInfosHaveDeadWeakReferenceAtGCEnd();
+#if ENABLE(JIT)
+    m_jitInlineCachesNeedReconciliationAtGCEnd = JITCode::isJIT(jitType()) && jitInlineCachesHaveDeadWeakReferenceAtGCEnd();
+#endif
+#if ENABLE(DFG_JIT)
+    m_recordedStatusesNeedReconciliationAtGCEnd = JSC::JITCode::isOptimizingJIT(jitType()) && recordedStatusesHaveStatusToRemoveAtGCEnd();
+#endif
+    m_ownDataReconciledAtGCEnd = true;
+}
 
 void CodeBlock::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
-    UNUSED_PARAM(vm);
+    if (!m_ownDataReconciledAtGCEnd)
+        reconcileOwnDataAtGCEnd();
+    m_ownDataReconciledAtGCEnd = false;
 
-    // Called for all live CodeBlocks.
-    // We do not need to call updateAllPredictions for DFG / FTL since the same thing happens in LLInt / Baseline CodeBlock for them.
     if (JITCode::isBaselineCode(jitType()))
-        updateAllPredictions();
+        updateAllArrayAllocationProfilePredictions();
 
     if (JITCode::couldBeInterpreted(jitType())) {
-        reconcileLLIntInlineCachesAtGCEnd();
-        // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
-        forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
-            callLinkInfo.reconcileWeakReferencesAtGCEnd(vm);
-        });
+        reconcileLLIntGetByIdWatchpointsAtGCEnd();
+        if (m_callLinkInfosNeedReconciliationAtGCEnd) {
+            forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
+                callLinkInfo.reconcileWeakReferencesAtGCEnd(vm);
+            });
+        } else
+            ASSERT(!llintOrBaselineCallLinkInfosHaveDeadWeakReferenceAtGCEnd());
     }
 
 #if ENABLE(JIT)
-    if (!!jitCode())
+    if (m_jitInlineCachesNeedReconciliationAtGCEnd)
         reconcileJITInlineCachesAtGCEnd();
+    else
+        ASSERT(!JITCode::isJIT(jitType()) || !jitInlineCachesHaveDeadWeakReferenceAtGCEnd());
 #endif
 
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
-        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        if (auto* statuses = dfgCommon->recordedStatuses.get())
-            statuses->reconcileWeakReferences(vm);
+        if (m_recordedStatusesNeedReconciliationAtGCEnd)
+            m_jitCode->dfgCommon()->recordedStatuses->reconcileWeakReferences(vm);
+        else
+            ASSERT(!recordedStatusesHaveStatusToRemoveAtGCEnd());
 
         if (auto* jitData = dfgJITData())
             jitData->reconcileWeakReferencesAtGCEnd();

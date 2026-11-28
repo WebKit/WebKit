@@ -127,6 +127,7 @@ public:
     }
     
     bool reconcileWeakReferencesAtGCEnd(VM&);
+    bool hasDeadWeakReferenceAtGCEnd(VM&) const;
     CallLinkInfo* callLinkInfoAt(const ConcurrentJSLocker&, unsigned);
     void markRequiredObjects(AbstractSlotVisitor&);
     void markRequiredObjects(SlotVisitor&);
@@ -150,6 +151,7 @@ protected:
     // false, you will usually not do any clearing because the idea is that you will simply be
     // destroyed.
     ALWAYS_INLINE bool reconcileWeakReferencesAtGCEndImpl(VM&) { return true; }
+    ALWAYS_INLINE bool hasDeadWeakReferenceAtGCEndImpl(VM&) const { return false; }
     ALWAYS_INLINE CallLinkInfo* callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned) { return nullptr; }
 
     template<typename Func>

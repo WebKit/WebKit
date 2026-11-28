@@ -89,6 +89,15 @@ bool JITStubRoutine::reconcileWeakReferencesAtGCEnd(VM& vm)
     return result;
 }
 
+bool JITStubRoutine::hasDeadWeakReferenceAtGCEnd(VM& vm) const
+{
+    bool result = false;
+    const_cast<JITStubRoutine*>(this)->runWithDowncast([&](const auto* derived) {
+        result = derived->hasDeadWeakReferenceAtGCEndImpl(vm);
+    });
+    return result;
+}
+
 CallLinkInfo* JITStubRoutine::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)
 {
     CallLinkInfo* result = nullptr;

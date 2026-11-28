@@ -262,6 +262,17 @@ bool InlineCacheHandler::reconcileWeakReferencesAtGCEnd(VM& vm)
     return isValid;
 }
 
+bool InlineCacheHandler::hasDeadWeakReferenceAtGCEnd(VM& vm) const
+{
+    if (auto* withJSCall = dynamicDowncast<InlineCacheHandlerWithJSCall>(*this)) {
+        if (withJSCall->m_callLinkInfo.hasDeadWeakReferenceAtGCEnd(vm))
+            return true;
+    }
+    if (m_accessCase && !m_accessCase->isStillLive(vm))
+        return true;
+    return m_stubRoutine && m_stubRoutine->hasDeadWeakReferenceAtGCEnd(vm);
+}
+
 void InlineCacheHandler::addOwner(CodeBlock* codeBlock)
 {
     if (!m_stubRoutine)

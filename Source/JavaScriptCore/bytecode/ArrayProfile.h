@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/Structure.h>
+#include <wtf/Atomics.h>
 #include <wtf/OptionSet.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -282,19 +283,24 @@ public:
 
     void update(ArrayProfile& arrayProfile)
     {
-        ArrayModes newModes = arrayProfile.m_observedArrayModes | m_observedArrayModes;
-        m_observedArrayModes = newModes;
-        arrayProfile.m_observedArrayModes = newModes;
+        ArrayModes profileModes = arrayProfile.m_observedArrayModes;
+        ArrayModes oldModes = WTF::atomicLoad<MemoryOrder::Relaxed>(&m_observedArrayModes);
+        if ((oldModes | profileModes) != oldModes) [[unlikely]]
+            oldModes = WTF::atomicExchangeOr<MemoryOrder::Relaxed>(&m_observedArrayModes, profileModes);
+        arrayProfile.m_observedArrayModes = oldModes | profileModes;
 
-        arrayProfile.m_arrayProfileFlags.add(m_arrayProfileFlags);
-        auto unlinkedArrayProfileFlags = arrayProfile.m_arrayProfileFlags;
-        unlinkedArrayProfileFlags.remove(ArrayProfileFlag::DidPerformFirstRunPruning); // We do not propagate DidPerformFirstRunPruning.
-        m_arrayProfileFlags = unlinkedArrayProfileFlags;
+        auto flagsToPropagate = arrayProfile.m_arrayProfileFlags;
+        flagsToPropagate.remove(ArrayProfileFlag::DidPerformFirstRunPruning);
+        auto rawFlags = flagsToPropagate.toRaw();
+        auto oldRawFlags = WTF::atomicLoad<MemoryOrder::Relaxed>(&m_arrayProfileFlags);
+        if ((oldRawFlags | rawFlags) != oldRawFlags) [[unlikely]]
+            oldRawFlags = WTF::atomicExchangeOr<MemoryOrder::Relaxed>(&m_arrayProfileFlags, rawFlags);
+        arrayProfile.m_arrayProfileFlags.add(OptionSet<ArrayProfileFlag>::fromRaw(oldRawFlags));
     }
 
 private:
     ArrayModes m_observedArrayModes { 0 };
-    OptionSet<ArrayProfileFlag> m_arrayProfileFlags { };
+    OptionSet<ArrayProfileFlag>::StorageType m_arrayProfileFlags { 0 };
 };
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 

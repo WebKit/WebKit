@@ -125,6 +125,7 @@ private:
     void markRequiredObjectsImpl(SlotVisitor&);
 
     bool reconcileWeakReferencesAtGCEndImpl(VM&);
+    bool hasDeadWeakReferenceAtGCEndImpl(VM&) const;
 
     CallLinkInfo* m_callLinkInfo { nullptr };
     bool m_notUsingCounting : 1 { false };

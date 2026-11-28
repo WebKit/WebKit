@@ -247,6 +247,10 @@ public:
     static size_t estimatedSize(JSCell*, VM&);
     static void destroy(JSCell*);
     void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
+    // Runs on GC helper threads once marking has finished, with the world stopped and compiler threads suspended. Other
+    // CodeBlocks run it at the same time, so it must not write state they share except atomically. Must be followed by
+    // reconcileWeakReferencesAtGCEnd() in the same collection, which consumes its results.
+    void reconcileOwnDataAtGCEnd();
 
     void notifyLexicalBindingUpdate();
 
@@ -875,9 +879,15 @@ public:
     double optimizationThresholdScalingFactor() const;
 
 protected:
-    void reconcileLLIntInlineCachesAtGCEnd();
+    void reconcileLLIntMetadataAtGCEnd();
+    void reconcileLLIntGetByIdWatchpointsAtGCEnd();
+    bool llintOrBaselineCallLinkInfosHaveDeadWeakReferenceAtGCEnd();
 #if ENABLE(JIT)
     void reconcileJITInlineCachesAtGCEnd();
+    bool jitInlineCachesHaveDeadWeakReferenceAtGCEnd();
+#endif
+#if ENABLE(DFG_JIT)
+    bool recordedStatusesHaveStatusToRemoveAtGCEnd();
 #endif
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();
@@ -945,6 +955,15 @@ private:
 
     template<typename Func>
     void forEachPropertyInlineCache(Func);
+
+    bool m_ownDataReconciledAtGCEnd : 1 { false };
+    bool m_callLinkInfosNeedReconciliationAtGCEnd : 1 { false };
+#if ENABLE(JIT)
+    bool m_jitInlineCachesNeedReconciliationAtGCEnd : 1 { false };
+#endif
+#if ENABLE(DFG_JIT)
+    bool m_recordedStatusesNeedReconciliationAtGCEnd : 1 { false };
+#endif
 
     const unsigned m_numCalleeLocals;
     const unsigned m_numVars;

@@ -262,6 +262,7 @@ public:
     }
 
     void reconcileWeakReferencesAtGCEnd(VM&);
+    bool hasDeadWeakReferenceAtGCEnd(VM&) const;
 
     Type type() const { return static_cast<Type>(m_type); }
 
@@ -384,6 +385,7 @@ public:
     void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock);
 
     void reconcileWeakReferencesAtGCEnd(VM&);
+    bool hasDeadWeakReferenceAtGCEnd(VM&) const;
 
     CodeOrigin codeOrigin() const { return m_codeOrigin; }
     bool isDataIC() const { return m_useDataIC == UseDataIC::Yes; }
