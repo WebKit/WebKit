@@ -106,17 +106,18 @@ DeleteByStatus DeleteByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedb
             ASSERT(!access.viaGlobalProxy());
 
             Structure* structure = access.structure();
-            ASSERT(structure);
 
             switch (access.type()) {
             case AccessCase::DeleteMiss:
             case AccessCase::DeleteNonConfigurable: {
+                ASSERT(structure);
                 DeleteByVariant variant(access.identifier(), access.type() == AccessCase::DeleteMiss, structure, nullptr, invalidOffset);
                 if (!result.appendVariant(variant))
                     return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
                 break;
             }
             case AccessCase::Delete: {
+                ASSERT(structure);
                 PropertyOffset offset;
                 Structure* newStructure = Structure::removePropertyTransitionFromExistingStructureConcurrently(structure, access.identifier().uid(), offset);
                 if (!newStructure)
@@ -128,6 +129,10 @@ DeleteByStatus DeleteByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedb
                     return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
                 break;
             }
+            case AccessCase::IndexedInt32Delete:
+            case AccessCase::IndexedDoubleDelete:
+            case AccessCase::IndexedContiguousDelete:
+                return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);
             default:
                 ASSERT_NOT_REACHED();
                 return DeleteByStatus(JSC::slowVersion(summary), *propertyCache);

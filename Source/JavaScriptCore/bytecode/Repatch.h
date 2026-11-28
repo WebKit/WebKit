@@ -80,6 +80,7 @@ void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, con
 void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, PutByKind);
 void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, PropertyInlineCache&, PutByKind, bool isNonStringPrimitiveKey);
 void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, PropertyInlineCache&, DelByKind, ECMAMode);
+void repatchArrayDeleteByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, DelByKind, ECMAMode);
 void repatchArrayInByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, InByKind);
 void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, PropertyInlineCache&, InByKind);
 void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  PropertyInlineCache&);

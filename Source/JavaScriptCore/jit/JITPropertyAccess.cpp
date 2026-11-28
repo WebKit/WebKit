@@ -498,7 +498,6 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseGPR, base);
-    emitJumpSlowCaseIfNotJSCell(propertyGPR, property);
 
     JITDelByValGenerator gen(
         nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
