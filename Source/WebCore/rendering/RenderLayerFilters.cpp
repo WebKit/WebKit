@@ -128,7 +128,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
 void RenderLayerFilters::removeReferenceFilterClients()
 {
     for (auto& resourceHandle : m_externalSVGReferences)
-        resourceHandle->removeClient(*this);
+        protect(resourceHandle)->removeClient(*this);
 
     m_externalSVGReferences.clear();
 
@@ -153,7 +153,7 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
 {
-    auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
+    auto preferredFilterRenderingModes = protect(renderer.page())->preferredFilterRenderingModes(context);
     auto outsets = calculateOutsets(renderer, filterBoxRect);
 
     auto dirtyFilterRegion = dirtyRect;
@@ -222,7 +222,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         m_lastUnclampedFilterScale = filterScale;
         hasUpdatedBackingStore = true;
     } else if (!usesSVGUserSpace && filterRegion != m_filter->filterRegion()) {
-        m_filter->setFilterRegion(filterRegion);
+        protect(m_filter)->setFilterRegion(filterRegion);
         hasUpdatedBackingStore = true;
     }
 

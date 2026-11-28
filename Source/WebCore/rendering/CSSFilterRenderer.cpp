@@ -151,10 +151,10 @@ RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& ren
             return createReferenceFilter(*this, filterReference, renderer, preferredRenderingModes, renderingOptions, destinationContext);
         },
         [&](const Style::BlurFunction& blurFunction) -> RefPtr<FilterFunction> {
-            return Style::evaluate<Ref<FilterEffect>>(blurFunction, renderer.style());
+            return Style::evaluate<Ref<FilterEffect>>(blurFunction, protect(renderer.style()));
         },
         [&](const Style::DropShadowFunction& dropShadowFunction) -> RefPtr<FilterFunction> {
-            return Style::evaluate<Ref<FilterEffect>>(dropShadowFunction, renderer.style());
+            return Style::evaluate<Ref<FilterEffect>>(dropShadowFunction, protect(renderer.style()));
         },
         []<CSSValueID C, typename T>(const FunctionNotation<C, T>& filterFunction) -> RefPtr<FilterFunction> {
             return Style::evaluate<Ref<FilterEffect>>(filterFunction);

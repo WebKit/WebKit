@@ -416,7 +416,7 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
 
     if (!textBox.writingMode().isLogicalLeftLineLeft())
         runPosition = textBox.logicalWidth() - runPosition;
-    return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), runPosition, true);
+    return protect(textBox.fontCascade())->offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), runPosition, true);
 }
 
 static FontCascade::CodePath computeFontCodePath(const String& text, bool containsOnlyASCII)
@@ -470,9 +470,9 @@ NODELETE Text* RenderText::textNode() const
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
-    const Style::ComputedStyle& style = this->style();
-    const auto& fontDescription = style.fontDescription();
-    if (style.fontCascade().useBackslashAsYenSymbol())
+    CheckedRef style = this->style();
+    const auto& fontDescription = style->fontDescription();
+    if (style->fontCascade().useBackslashAsYenSymbol())
         return true;
     if (fontDescription.hasAuthorSpecifiedNonGenericPrimaryFont())
         return false;
@@ -528,7 +528,7 @@ void RenderText::clearStyleInheritedFromDisplayContentsParent()
 
 void RenderText::displayContentsParentStyleDidChange(const Style::ComputedStyle& oldStyle, bool didChangeStyleSource)
 {
-    auto diff = Style::difference(oldStyle, style());
+    auto diff = Style::difference(oldStyle, protect(style()));
     // Inline layout has simpler paths for text that inherits from its parent box.
     bool needsLineLayoutInvalidation = didChangeStyleSource || diff == Style::DifferenceResult::Layout;
     if (needsLineLayoutInvalidation && LayoutIntegration::BoxTreeUpdater::isInLiveFormattingContext(*this)) {
@@ -540,7 +540,7 @@ void RenderText::displayContentsParentStyleDidChange(const Style::ComputedStyle&
     // The text has no parent style change to take care of it.
     repaint();
     if (diff == Style::DifferenceResult::Overflow)
-        parent()->setNeedsLayoutForOverflowChange();
+        protect(parent())->setNeedsLayoutForOverflowChange();
     styleDidChange(diff, &oldStyle);
 }
 

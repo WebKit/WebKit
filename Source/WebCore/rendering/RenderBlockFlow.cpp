@@ -1203,7 +1203,7 @@ void RenderBlockFlow::adjustBlockEndChildrenForMarginTrim()
     // its containing block, so walk back up the container to find them.
     // The children it positions are in flow, so their containing block is the block whose children it walks.
     CheckedPtr<RenderBlockFlow> containingBlock = this;
-    auto* child = lastChildBox();
+    CheckedPtr child = lastChildBox();
     while (child) {
         if (child->isExcludedFromNormalLayout() || !child->isInFlow()) {
             child = child->previousSiblingBox();
@@ -1213,7 +1213,7 @@ void RenderBlockFlow::adjustBlockEndChildrenForMarginTrim()
         if (child->isSelfCollapsingBlock()) {
             containingBlock->setLogicalTopForChild(*child, containingBlock->logicalHeight());
             child = child->previousSiblingBox();
-        }  else if (auto* nestedBlock = dynamicDowncast<RenderBlockFlow>(child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd)) {
+        }  else if (CheckedPtr nestedBlock = dynamicDowncast<RenderBlockFlow>(*child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(Style::MarginTrimSide::BlockEnd)) {
             // The margins *inside* this nested block are protected so we should not introspect and try to trim any of them.
             if (!MarginInfo { *nestedBlock }.canCollapseMarginAfterWithChildren())
                 break;
@@ -2815,7 +2815,7 @@ void RenderBlockFlow::addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const
     if (!m_floatingObjects)
         return;
 
-    if (layoutContext().isSkippedContentForLayout(toBlockFlow))
+    if (protect(layoutContext())->isSkippedContentForLayout(toBlockFlow))
         return;
 
     if (!toBlockFlow.m_floatingObjects)
@@ -4459,13 +4459,13 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
 std::optional<LayoutUnit> RenderBlockFlow::updateLineClampStateAndLogicalHeightAfterLayout()
 {
     auto& layoutState = *view().frameView().layoutContext().layoutState();
-    auto& inlineLayout = *this->inlineLayout();
-
     auto legacyLineClamp = layoutState.legacyLineClamp();
     if (!legacyLineClamp || isFloatingOrOutOfFlowPositioned())
         return { };
 
-    legacyLineClamp->currentLineCount += inlineLayout.lineCount();
+    CheckedRef inlineLayout = *this->inlineLayout();
+
+    legacyLineClamp->currentLineCount += inlineLayout->lineCount();
     if (legacyLineClamp->clampedRenderer) {
         // We've already clamped this flex container at a previous flex item.
         layoutState.setLegacyLineClamp(*legacyLineClamp);
@@ -4473,11 +4473,11 @@ std::optional<LayoutUnit> RenderBlockFlow::updateLineClampStateAndLogicalHeightA
     }
 
     auto clampedContentHeight = [&]() -> std::optional<LayoutUnit> {
-        if (auto clampedHeight = inlineLayout.clampedContentLogicalHeight())
+        if (auto clampedHeight = inlineLayout->clampedContentLogicalHeight())
             return clampedHeight;
         if (legacyLineClamp->currentLineCount == legacyLineClamp->maximumLineCount) {
             // Even if we did not truncate the content, this might be our clamping position.
-            return LayoutUnit { inlineLayout.contentLogicalHeight() };
+            return LayoutUnit { inlineLayout->contentLogicalHeight() };
         }
         return { };
     };
@@ -4774,7 +4774,7 @@ void RenderBlockFlow::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderBlock::layoutExcludedChildren(relayoutChildren);
 
-    auto* fragmentedFlow = multiColumnFlow();
+    CheckedPtr fragmentedFlow = multiColumnFlow();
     if (!fragmentedFlow)
         return;
 
@@ -4786,7 +4786,7 @@ void RenderBlockFlow::layoutExcludedChildren(RelayoutChildren relayoutChildren)
         fragmentedFlow->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
     if (fragmentedFlow->needsLayout()) {
-        for (RenderMultiColumnSet* columnSet = fragmentedFlow->firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
+        for (CheckedPtr columnSet = fragmentedFlow->firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
             columnSet->prepareForLayout(!fragmentedFlow->inBalancingPass());
 
         fragmentedFlow->invalidateFragments(MarkingBehavior::OnlyThis);
@@ -4813,7 +4813,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
         return;
     
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
-    if (RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow()) {
+    if (CheckedPtr fragmentedFlow = multiColumnFlow()) {
         LayoutUnit newColumnHeight;
         if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Mode::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());

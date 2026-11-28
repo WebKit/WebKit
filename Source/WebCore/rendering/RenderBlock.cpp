@@ -1145,7 +1145,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
                 if (!hasLayer()) {
                     gapRectsBounds = localToContainerQuad(FloatRect(gapRectsBounds), &layer->renderer()).enclosingBoundingBox();
                     if (layer->renderer().isRenderBox())
-                        gapRectsBounds.moveBy(layer->renderBox()->scrollPosition());
+                        gapRectsBounds.moveBy(protect(layer->renderBox())->scrollPosition());
                 }
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
             }
@@ -1620,7 +1620,7 @@ Node* RenderBlock::nodeForHitTest() const
                 if (!element->renderer())
                     continue;
                 ASSERT(element->renderer()->pseudoElementRenderer(PseudoElementType::Backdrop));
-                if (element->renderer()->pseudoElementRenderer(PseudoElementType::Backdrop) == this)
+                if (protect(element->renderer())->pseudoElementRenderer(PseudoElementType::Backdrop) == this)
                     return element.ptr();
             }
             ASSERT_NOT_REACHED();
@@ -2088,9 +2088,9 @@ NODELETE static inline bool isRenderBlockFlowOrRenderButton(RenderElement& rende
     return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
 }
 
-static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
+static inline CheckedPtr<RenderBlock> findFirstLetterBlock(RenderBlock* start)
 {
-    RenderBlock* firstLetterBlock = start;
+    CheckedPtr firstLetterBlock = start;
     while (true) {
         bool canHaveFirstLetterRenderer = firstLetterBlock->style().hasPseudoStyle(PseudoElementType::FirstLetter)
             && firstLetterBlock->canHaveGeneratedChildren()
@@ -2098,7 +2098,7 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
         if (canHaveFirstLetterRenderer)
             return firstLetterBlock;
 
-        RenderElement* parentBlock = firstLetterBlock->parent();
+        CheckedPtr parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isBlockLevelReplacedOrAtomicInline() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
             || !isRenderBlockFlowOrRenderButton(*parentBlock))
             return nullptr;
@@ -2116,12 +2116,12 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
     
     // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
     // an efficient way to check for that situation though before implementing anything.
-    RenderElement* firstLetterContainer = findFirstLetterBlock(this);
+    CheckedPtr<RenderElement> firstLetterContainer = findFirstLetterBlock(this);
     if (!firstLetterContainer)
         return { };
     
     // Drill into inlines looking for our first text descendant.
-    auto* firstLetter = firstLetterContainer->firstChild();
+    CheckedPtr firstLetter = firstLetterContainer->firstChild();
     while (firstLetter) {
         if (is<RenderText>(*firstLetter)) {
             if (firstLetter == skipThisAsFirstLetter) {
@@ -2131,25 +2131,25 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
             break;
         }
 
-        RenderElement& current = downcast<RenderElement>(*firstLetter);
-        if (current.style().isListMarkerStyle())
-            firstLetter = current.nextSibling();
-        else if (current.isFloatingOrOutOfFlowPositioned()) {
-            if (current.style().pseudoElementType() == PseudoElementType::FirstLetter) {
-                firstLetter = current.firstChild();
+        CheckedRef current = downcast<RenderElement>(*firstLetter);
+        if (current->style().isListMarkerStyle())
+            firstLetter = current->nextSibling();
+        else if (current->isFloatingOrOutOfFlowPositioned()) {
+            if (current->style().pseudoElementType() == PseudoElementType::FirstLetter) {
+                firstLetter = current->firstChild();
                 break;
             }
-            firstLetter = current.nextSibling();
-        } else if (current.isBlockLevelReplacedOrAtomicInline() || isAnyOf<RenderButton, RenderMenuList>(current))
+            firstLetter = current->nextSibling();
+        } else if (current->isBlockLevelReplacedOrAtomicInline() || isAnyOf<RenderButton, RenderMenuList>(current))
             break;
-        else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
+        else if (current->isFlexibleBoxIncludingDeprecated() || current->isRenderGrid())
             return { };
-        else if (current.style().hasPseudoStyle(PseudoElementType::FirstLetter) && current.canHaveGeneratedChildren())  {
+        else if (current->style().hasPseudoStyle(PseudoElementType::FirstLetter) && current->canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style
-            firstLetterContainer = &current;
-            firstLetter = current.firstChild();
+            firstLetterContainer = current.ptr();
+            firstLetter = current->firstChild();
         } else
-            firstLetter = current.firstChild();
+            firstLetter = current->firstChild();
     }
     
     if (!firstLetter)
@@ -2200,7 +2200,7 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
 {
     RenderBlockRareData* rareData = blockRareData();
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
-        return updateCachedEnclosingFragmentedFlow(RenderBox::locateEnclosingFragmentedFlow());
+        return updateCachedEnclosingFragmentedFlow(protect(RenderBox::locateEnclosingFragmentedFlow()));
 
     ASSERT(rareData->m_enclosingFragmentedFlow.value() == RenderBox::locateEnclosingFragmentedFlow());
     return rareData->m_enclosingFragmentedFlow.value().get();
@@ -2306,8 +2306,8 @@ void RenderBlock::computeFragmentRangeForBoxChild(const RenderBox& box) const
     ASSERT(fragmentedFlow && canComputeFragmentRangeForBox(*this, box, *fragmentedFlow));
     ASSERT(box.fragmentedFlowState() == FragmentedFlowState::InsideFlow);
 
-    RenderFragmentContainer* startFragment;
-    RenderFragmentContainer* endFragment;
+    CheckedPtr<RenderFragmentContainer> startFragment;
+    CheckedPtr<RenderFragmentContainer> endFragment;
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
     if (childBoxIsUnsplittableForFragmentation(box))
         startFragment = endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
@@ -2332,8 +2332,8 @@ void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
 
     auto estimatedValues = box.computeLogicalHeight(RenderFragmentedFlow::maxLogicalHeight(), logicalTopForChild(box));
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
-    RenderFragmentContainer* startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
-    RenderFragmentContainer* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);
+    CheckedPtr startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
+    CheckedPtr endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);
 
     fragmentedFlow->setFragmentRangeForBox(box, startFragment, endFragment);
 }
@@ -2708,7 +2708,7 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     setIntrinsicBorderForFieldset(0);
     setIntrinsicMarginBeforeForFieldset(0);
 
-    RenderBox* box = findFieldsetLegend();
+    CheckedPtr box = findFieldsetLegend();
     if (!box)
         return;
 
@@ -2719,14 +2719,14 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
         child.setIsExcludedFromNormalLayout(false);
     }
 
-    RenderBox& legend = *box;
+    CheckedRef legend = *box;
     if (relayoutChildren == RelayoutChildren::Yes)
-        legend.setChildNeedsLayout(MarkingBehavior::OnlyThis);
-    legend.layoutIfNeeded();
+        legend->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+    legend->layoutIfNeeded();
     
     LayoutUnit logicalLeft;
     if (writingMode().isBidiLTR()) {
-        switch (legend.style().textAlign()) {
+        switch (legend->style().textAlign()) {
         case Style::TextAlign::Center:
             logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
             break;
@@ -2738,7 +2738,7 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
             break;
         }
     } else {
-        switch (legend.style().textAlign()) {
+        switch (legend->style().textAlign()) {
         case Style::TextAlign::Left:
             logicalLeft = borderAndPaddingStart();
             break;
@@ -2804,7 +2804,7 @@ void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
     if (!isFieldset() || !intrinsicBorderForFieldset())
         return;
     
-    auto* legend = findFieldsetLegend();
+    CheckedPtr legend = findFieldsetLegend();
     if (!legend)
         return;
 
@@ -2826,7 +2826,7 @@ LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect
     LayoutRect clipRect;
     if (!isFieldset())
         return clipRect;
-    auto* legend = findFieldsetLegend();
+    CheckedPtr legend = findFieldsetLegend();
     if (!legend)
         return clipRect;
 

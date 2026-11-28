@@ -236,7 +236,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
         if (child->isOutOfFlowPositioned()) {
             // Fragmented status propagation stops at out-of-flow boundary.
             auto isInsideMulticolumnFlow = [&] {
-                auto* containingBlock = child->containingBlock();
+                CheckedPtr containingBlock = child->containingBlock();
                 if (!containingBlock) {
                     ASSERT_NOT_REACHED();
                     return false;
@@ -364,7 +364,7 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren(const RenderObject* stay
 RenderObject* RenderObject::previousInPreOrder() const
 {
     if (RenderObject* o = previousSibling()) {
-        while (RenderObject* last = o->lastChildSlow())
+        while (CheckedPtr last = o->lastChildSlow())
             o = last;
         return o;
     }
@@ -392,7 +392,7 @@ RenderObject* RenderObject::firstLeafChild() const
 {
     RenderObject* r = firstChildSlow();
     while (r) {
-        RenderObject* n = nullptr;
+        CheckedPtr<RenderObject> n;
         n = r->firstChildSlow();
         if (!n)
             break;
@@ -405,7 +405,7 @@ RenderObject* RenderObject::lastLeafChild() const
 {
     RenderObject* r = lastChildSlow();
     while (r) {
-        RenderObject* n = nullptr;
+        CheckedPtr<RenderObject> n;
         n = r->lastChildSlow();
         if (!n)
             break;
@@ -1942,7 +1942,7 @@ void RenderObject::willBeDestroyed()
     if (RefPtr node = this->node()) {
         ASSERT(!node->renderer() || node->renderer() == this);
         if (node->renderer() == this)
-            node->setRenderer({ });
+            node->setRenderer(nullptr);
     }
 
     view().willDestroyRenderer();

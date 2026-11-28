@@ -91,17 +91,17 @@ static ExtraMarginsFromSubgrids extraMarginForSubgrid(const RenderGrid& parent, 
     if (!hasRelativeOrKeywordOrAutoSizeForGridItem(parent, direction))
         availableSpace = parent.availableSpaceForGutters(direction);
 
-    RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
+    CheckedRef grandParent = downcast<RenderGrid>(*parent.parent());
     ExtraMarginsFromSubgrids extraMargins;
     if (!startLine)
         extraMargins.addTrackStartMargin((direction == Style::GridTrackSizingDirection::Columns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore());
     else
-        extraMargins.addTrackStartMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
+        extraMargins.addTrackStartMargin((parent.gridGap(direction, availableSpace) - grandParent->gridGap(direction)) / 2);
 
     if (endLine == numTracks)
         extraMargins.addTrackEndMargin((direction == Style::GridTrackSizingDirection::Columns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter());
     else
-        extraMargins.addTrackEndMargin((parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2);
+        extraMargins.addTrackEndMargin((parent.gridGap(direction, availableSpace) - grandParent->gridGap(direction)) / 2);
 
     return extraMargins;
 }
@@ -109,8 +109,8 @@ static ExtraMarginsFromSubgrids extraMarginForSubgrid(const RenderGrid& parent, 
 ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(Style::GridTrackSizingDirection direction, const RenderBox& gridItem)
 {
     ExtraMarginsFromSubgrids extraMargins;
-    for (auto& currentAncestorSubgrid : ancestorSubgridsOfGridItem(gridItem, direction)) {
-        GridSpan span = currentAncestorSubgrid.gridSpanForGridItem(gridItem, direction);
+    for (CheckedRef currentAncestorSubgrid : ancestorSubgridsOfGridItem(gridItem, direction)) {
+        GridSpan span = currentAncestorSubgrid->gridSpanForGridItem(gridItem, direction);
         extraMargins += extraMarginForSubgrid(currentAncestorSubgrid, span.startLine(), span.endLine(), direction);
     }
     return extraMargins;

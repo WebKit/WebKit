@@ -129,7 +129,7 @@ void RenderView::styleDidChange(Style::Difference diff, const Style::ComputedSty
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
         if (frameView().pagination().mode != Pagination::Mode::Unpaginated)
-            updateColumnProgressionFromStyle(style());
+            updateColumnProgressionFromStyle(protect(style()));
         updateStylesForColumnChildren(oldStyle);
     }
 
@@ -193,14 +193,14 @@ void RenderView::layout()
     if (relayoutChildren) {
         setChildNeedsLayout(MarkingBehavior::OnlyThis);
 
-        for (auto& box : childrenOfType<RenderBox>(*this)) {
-            if (box.hasRelativeLogicalHeight()
-                || box.style().logicalHeight().isPercentOrCalculated()
-                || box.style().logicalMinHeight().isPercentOrCalculated()
-                || box.style().logicalMaxHeight().isPercentOrCalculated()
-                || box.isRenderOrLegacyRenderSVGRoot()
-                )
-                box.setChildNeedsLayout(MarkingBehavior::OnlyThis);
+        for (CheckedRef box : childrenOfType<RenderBox>(*this)) {
+            if (box->hasRelativeLogicalHeight()
+                || box->style().logicalHeight().isPercentOrCalculated()
+                || box->style().logicalMinHeight().isPercentOrCalculated()
+                || box->style().logicalMaxHeight().isPercentOrCalculated()
+                || box->isRenderOrLegacyRenderSVGRoot()) {
+                box->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+            }
         }
     }
 
@@ -406,7 +406,7 @@ void RenderView::repaintRootContents()
     }
 
     if (layer()->isComposited()) {
-        layer()->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
+        protect(layer())->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
         return;
     }
 
@@ -610,7 +610,7 @@ IntRect RenderView::unscaledDocumentRect() const
 
 bool RenderView::rootBackgroundIsEntirelyFixed() const
 {
-    if (auto* rootBackgroundRenderer = rendererForRootBackground())
+    if (CheckedPtr rootBackgroundRenderer = rendererForRootBackground())
         return Style::hasEntirelyFixedBackground(rootBackgroundRenderer->style().backgroundLayers());
     return false;
 }
@@ -696,7 +696,7 @@ IntRect RenderView::documentRect() const
 {
     FloatRect overflowRect(unscaledDocumentRect());
     if (isTransformed())
-        overflowRect = layer()->currentTransform().mapRect(overflowRect);
+        overflowRect = protect(layer())->currentTransform().mapRect(overflowRect);
     return IntRect(overflowRect);
 }
 
@@ -778,8 +778,10 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (result.innerNode())
         return;
 
-    if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
-        return multiColumnFlow()->firstMultiColumnSet()->updateHitTestResult(result, point);
+    if (multiColumnFlow()) {
+        if (CheckedPtr firstMultiColumnSet = multiColumnFlow()->firstMultiColumnSet())
+            return firstMultiColumnSet->updateHitTestResult(result, point);
+    }
 
     if (RefPtr node = nodeForHitTest()) {
         result.setInnerNode(node.get());
@@ -835,9 +837,9 @@ void RenderView::updateVisibleViewportRect(const IntRect& visibleRect)
 {
     resumePausedImageAnimationsIfNeeded(visibleRect);
 
-    for (auto& renderer : m_visibleInViewportRenderers) {
-        auto state = visibleRect.intersects(enclosingIntRect(renderer.absoluteClippedOverflowRectForRepaint())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
-        renderer.setVisibleInViewportState(state);
+    for (CheckedRef renderer : m_visibleInViewportRenderers) {
+        auto state = visibleRect.intersects(enclosingIntRect(renderer->absoluteClippedOverflowRectForRepaint())) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+        renderer->setVisibleInViewportState(state);
     }
 }
 
@@ -953,9 +955,8 @@ RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
 {
     if (m_wasAccumulatingRepaintRegion)
         return;
-    if (!m_view)
-        return;
-    m_view->flushAccumulatedRepaintRegion();
+    if (CheckedPtr view = m_view)
+        view->flushAccumulatedRepaintRegion();
 }
 
 unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const

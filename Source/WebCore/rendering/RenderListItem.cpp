@@ -186,7 +186,7 @@ UniqueRef<Style::ComputedStyle> RenderListItem::computeMarkerStyle() const
         // The marker always inherits from the list item, regardless of where it might end
         // up (e.g., in some deeply nested line box). See CSS3 spec.
         auto markerStyle = Style::ComputedStyle::create();
-        markerStyle->inheritFrom(style());
+        markerStyle->inheritFrom(protect(style()));
 
         // In the case of a ::before or ::after pseudo-element, we manually apply the properties
         // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
@@ -209,7 +209,7 @@ UniqueRef<Style::ComputedStyle> RenderListItem::computeMarkerStyle() const
         auto fontDescription = FontCascadeDescription { markerStyle->fontDescription() };
         fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
         markerStyle->setFontDescription(WTF::move(fontDescription));
-        markerStyle->fontCascade().update(&protect(document())->fontSelector());
+        protect(markerStyle->fontCascade())->update(&protect(document())->fontSelector());
     }
 
     // The marker box is a text-decoration boundary: the originating element's text-decoration must
@@ -248,7 +248,7 @@ static Element* enclosingList(const RenderListItem& listItem)
     return parent;
 }
 
-static RenderListItem* nextListItemHelper(const Element& list, const Element& element)
+static CheckedPtr<RenderListItem> nextListItemHelper(const Element& list, const Element& element)
 {
     RefPtr current = &element;
     auto advance = [&] {
@@ -259,7 +259,7 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
     };
     advance();
     while (current) {
-        auto* item = dynamicDowncast<RenderListItem>(current->renderer());
+        CheckedPtr item = dynamicDowncast<RenderListItem>(current->renderer());
         if (!item) {
             advance();
             continue;
@@ -281,17 +281,17 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
     return nullptr;
 }
 
-static inline RenderListItem* nextListItem(const Element& list, const RenderListItem& item)
+static inline CheckedPtr<RenderListItem> nextListItem(const Element& list, const RenderListItem& item)
 {
     return nextListItemHelper(list, protect(*item.element()));
 }
 
-static inline RenderListItem* firstListItem(const Element& list)
+static inline CheckedPtr<RenderListItem> firstListItem(const Element& list)
 {
     return nextListItemHelper(list, list);
 }
 
-static RenderListItem* previousListItem(const Element& list, const RenderListItem& item)
+static CheckedPtr<RenderListItem> previousListItem(const Element& list, const RenderListItem& item)
 {
     RefPtr current = item.element();
     auto advance = [&] {
@@ -299,7 +299,7 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
     };
     advance();
     while (current) {
-        auto* item = dynamicDowncast<RenderListItem>(current->renderer());
+        CheckedPtr item = dynamicDowncast<RenderListItem>(current->renderer());
         if (!item) {
             advance();
             continue;
@@ -359,7 +359,7 @@ void RenderListItem::updateValueNow() const
     // FIXME: This should skip over items with counter-reset.
     auto* startItem = this;
     if (list) {
-        auto* item = this;
+        CheckedPtr item = this;
         while ((item = previousListItem(*list, *item))) {
             startItem = item;
             if (item->m_value)
@@ -396,7 +396,7 @@ void RenderListItem::updateValueNow() const
 
     int value = *startValue;
 
-    for (auto* item = startItem; item != this; ) {
+    for (CheckedPtr item = startItem; item != this; ) {
         item = nextListItem(*list, *item);
         auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
         item->m_value = valueForItem(value, directives);
@@ -419,7 +419,7 @@ void RenderListItem::updateValue()
 static RenderImage* imageForMarker(const RenderBlockFlow& marker)
 {
     ASSERT(marker.isOutsideListMarker());
-    if (listMarkerHasContent(marker.style(), marker.document()) || !listMarkerImage(marker.style()))
+    if (listMarkerHasContent(marker.style(), marker.document()) || !listMarkerImage(protect(marker.style())))
         return nullptr;
     return dynamicDowncast<RenderImage>(marker.firstChild());
 }
@@ -448,15 +448,16 @@ void RenderListItem::updateMarkerContent()
             return;
 
         if (CheckedPtr imageRenderer = markerImage()) {
-            RefPtr image = listMarkerImage(markerBox->style());
+            RefPtr image = listMarkerImage(protect(markerBox->style()));
             auto imageSize = markerImageSize(*image);
             auto usedZoom = imageRenderer->style().usedZoomForLength();
             auto logicalWidth = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.width() / usedZoom.value } };
             auto logicalHeight = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.height() / usedZoom.value } };
             if (imageRenderer->style().width() == logicalWidth && imageRenderer->style().height() == logicalHeight)
                 return;
-            imageRenderer->mutableStyle().setWidth(WTF::move(logicalWidth));
-            imageRenderer->mutableStyle().setHeight(WTF::move(logicalHeight));
+            CheckedRef imageStyle = imageRenderer->mutableStyle();
+            imageStyle->setWidth(WTF::move(logicalWidth));
+            imageStyle->setHeight(WTF::move(logicalHeight));
             imageRenderer->setNeedsLayout();
             return;
         }
@@ -466,8 +467,9 @@ void RenderListItem::updateMarkerContent()
         CheckedPtr textRenderer = dynamicDowncast<RenderText>(markerBox->firstChild());
         if (!textRenderer)
             return;
-        auto textContent = listMarkerTextContent(markerBox->style(), *this);
-        if (listMarkerSynthesizesGlyph(markerBox->style(), protect(document()))) {
+        CheckedRef markerStyle = markerBox->style();
+        auto textContent = listMarkerTextContent(markerStyle, *this);
+        if (listMarkerSynthesizesGlyph(markerStyle, protect(document()))) {
             textRenderer->setText(textContent.textWithoutSuffix().toString());
             return;
         }
@@ -483,7 +485,7 @@ void RenderListItem::updateMarkerContent()
     if (CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(marker->firstChild())) {
         // The image is a renderer of its own; all the marker owes the line is the room after it, which the image keeps
         // on its own end edge so that the inline formatting context puts it on the side the line runs towards.
-        setListMarkerInlineMargins(imageRenderer->mutableStyle(), writingMode(), { }, listMarkerImagePadding);
+        setListMarkerInlineMargins(protect(imageRenderer->mutableStyle()), writingMode(), { }, listMarkerImagePadding);
         return;
     }
 
@@ -491,8 +493,9 @@ void RenderListItem::updateMarkerContent()
     if (!textRenderer)
         return;
 
-    auto textContent = listMarkerTextContent(marker->style(), *this);
-    if (!listMarkerSynthesizesGlyph(marker->style(), protect(document()))) {
+    CheckedRef markerStyle = marker->style();
+    auto textContent = listMarkerTextContent(markerStyle, *this);
+    if (!listMarkerSynthesizesGlyph(markerStyle, protect(document()))) {
         textRenderer->setText(textContent.textWithSuffix);
         return;
     }
@@ -501,9 +504,9 @@ void RenderListItem::updateMarkerContent()
     // letter-spacing leave it be. TextBoxPainter draws it at a size the font metrics give it rather than at the counter
     // style character's, so the room after it is measured from that same size (see Layout::TextUtil::width).
     textRenderer->setText(textContent.textWithoutSuffix().toString());
-    auto& fontMetrics = marker->style().metricsOfPrimaryFont();
+    auto& fontMetrics = markerStyle->metricsOfPrimaryFont();
     auto glyphWidth = LayoutUnit { (fontMetrics.intAscent() * 2 / 3 + 1) / 2 + 2 };
-    setListMarkerInlineMargins(marker->mutableStyle(), writingMode(), -1_lu, fontMetrics.intAscent() - glyphWidth + 1);
+    setListMarkerInlineMargins(protect(marker->mutableStyle()), writingMode(), -1_lu, fontMetrics.intAscent() - glyphWidth + 1);
 }
 
 void RenderListItem::updateValueAndMarkerContent()
@@ -761,15 +764,16 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
         if (auto altText = marker->style().content().altText(); !altText.isNull())
             return altText;
         StringBuilder text;
-        for (auto& textRenderer : descendantsOfType<RenderText>(*marker))
-            text.append(textRenderer.text());
+        for (CheckedRef textRenderer : descendantsOfType<RenderText>(*marker))
+            text.append(textRenderer->text());
         return text.toString();
     }
 
-    if (listMarkerImage(marker->style()))
+    CheckedRef markerStyle = marker->style();
+    if (listMarkerImage(markerStyle))
         return { };
 
-    auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));
+    auto textContent = listMarkerTextContent(markerStyle, const_cast<RenderListItem&>(*this));
     return includeSuffix == ListMarkerIncludeSuffix::Yes ? textContent.textWithSuffix : textContent.textWithoutSuffix().toString();
 }
 
@@ -809,7 +813,7 @@ Vector<CheckedRef<RenderListItem>> RenderListItem::updateListMarkerNumbers()
     // If an item has been marked for update before, we know that all following items have, too.
     // This gives us the opportunity to stop and avoid marking the same nodes again.
     Vector<CheckedRef<RenderListItem>> itemsNeedingMarkerUpdate;
-    auto* item = this;
+    CheckedPtr item = this;
     auto subsequentListItem = isInReversedOrderedList ? previousListItem : nextListItem;
     while ((item = subsequentListItem(*list, *item)) && item->m_value) {
         item->updateValue();
@@ -881,8 +885,8 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
         return { };
     };
 
-    for (auto& child : childrenOfType<RenderObject>(blockContainer)) {
-        if (&child == &marker)
+    for (CheckedRef child : childrenOfType<RenderObject>(blockContainer)) {
+        if (child.ptr() == &marker)
             continue;
 
         switch (markerSearchBoxType(child)) {
@@ -898,7 +902,7 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
                 fallbackParent = &blockContainer;
                 break;
             }
-            if (child.isInlineBox()) {
+            if (child->isInlineBox()) {
                 CheckedRef inlineBox = downcast<RenderBoxModelObject>(child);
                 if (isEmptyInline(inlineBox.get())) {
                     fallbackParent = &blockContainer;
@@ -941,7 +945,7 @@ Vector<CheckedPtr<RenderListItem>> RenderListItem::listItemsWithOutsideMarkerFor
             ASSERT_NOT_REACHED();
             continue;
         }
-        auto candidate = firstFormattedLineRootFor(*listItem, *marker);
+        auto candidate = firstFormattedLineRootFor(protect(*listItem), *marker);
         if ((candidate.parent ? candidate.parent : candidate.fallbackParent) == &inlineRoot)
             listItems.append(listItem.get());
     }
@@ -964,7 +968,7 @@ void RenderListItem::invalidateOutsideMarkerContainer()
     }
 
     if (m_outsideMarkerPosition->firstFormattedLineRoot->isDescendantOf(this))
-        return m_outsideMarkerPosition->firstFormattedLineRoot->setNeedsLayout();
+        return protect(m_outsideMarkerPosition->firstFormattedLineRoot)->setNeedsLayout();
 
     m_outsideMarkerPosition = { };
 }

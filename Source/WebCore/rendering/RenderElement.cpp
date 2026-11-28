@@ -835,7 +835,7 @@ static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& rend
 
     if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(renderer); layerModelObject && isInTopLayerOrBackdrop(renderer.style(), renderer.element())) {
         ASSERT(layerModelObject->hasLayer());
-        auto topLayerLayers = RenderLayer::topLayerRenderLayers(renderer.view());
+        auto topLayerLayers = RenderLayer::topLayerRenderLayers(protect(renderer.view()));
         auto layerIndex = topLayerLayers.find(layerModelObject->layer());
         if (layerIndex != notFound && layerIndex < topLayerLayers.size() - 1)
             return topLayerLayers[layerIndex + 1];
@@ -1389,10 +1389,10 @@ void RenderElement::willBeDestroyed()
 {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (!renderTreeBeingDestroyed() && element())
-        protect(document())->contentChangeObserver().rendererWillBeDestroyed(protect(*element()));
+        protect(protect(document())->contentChangeObserver())->rendererWillBeDestroyed(protect(*element()));
 #endif
     if (Style::hasImageWithAttachment(style().backgroundLayers(), FillAttachment::FixedBackground) && !settings().fixedBackgroundsPaintRelativeToDocument())
-        view().frameView().removeSlowRepaintObject(*this);
+        protect(view().frameView())->removeSlowRepaintObject(*this);
 
     unregisterForVisibleInViewportCallback();
 
@@ -1403,7 +1403,7 @@ void RenderElement::willBeDestroyed()
 
     clearSubtreeLayoutRootIfNeeded();
 
-    auto unregisterImages = [&](auto& style) {
+    auto unregisterImages = [&](const Style::ComputedStyle& style) {
         forEachRegisteredImageInStyle(style, [&](Style::Image& image) {
             image.removeClient(*this);
         });
@@ -1412,7 +1412,7 @@ void RenderElement::willBeDestroyed()
     if (hasInitializedStyle()) {
         unregisterImages(style());
 
-        if (style().hasOutline())
+        if (protect(style())->hasOutline())
             view().decrementRendersWithOutline();
 
         if (style().filter().hasFilterThatMovesPixels())
@@ -1421,7 +1421,7 @@ void RenderElement::willBeDestroyed()
         if (style().pageName().isCustomIdent())
             view().frameView().layoutContext().decrementRenderersWithNamedPage();
 
-        if (auto* firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
+        if (CheckedPtr firstLineStyle = style().pseudoElementStyle({ PseudoElementType::FirstLine }))
             unregisterImages(*firstLineStyle);
     }
 
@@ -1873,7 +1873,7 @@ bool RenderElement::isVisibleIgnoringGeometry() const
         return false;
     if (usedStyle().visibility() != UsedVisibility::Visible)
         return false;
-    if (view().frameView().isOffscreen())
+    if (protect(view().frameView())->isOffscreen())
         return false;
 
     return true;
@@ -1888,8 +1888,8 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
     // FIXME: This is overly conservative as the image may not be a background-image, in which case it will not
     // be propagated to the root. At this point, we unfortunately don't have access to the image anymore so we
     // can no longer check if it is a background image.
-    auto backgroundIsPaintedByRoot = isDocumentElementRenderer() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
-    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? view().backgroundRect() : absoluteClippedOverflowRectForRepaint();
+    auto backgroundIsPaintedByRoot = isDocumentElementRenderer() || (isBody() && !rendererHasBackground(protect(document().documentElement()->renderer())));
+    LayoutRect backgroundPaintingRect = backgroundIsPaintedByRoot ? protect(view())->backgroundRect() : absoluteClippedOverflowRectForRepaint();
     if (!documentRect.intersects(enclosingIntRect(backgroundPaintingRect)))
         return false;
 
@@ -1953,7 +1953,7 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
     if (isVisible || animatingState == ImageAnimatingState::No)
         imageChanged(&image, changeRect);
 
-    if (element() && protect(image)->image()->isBitmapImage())
+    if (element() && protect(protect(image)->image())->isBitmapImage())
         protect(element())->dispatchWebKitImageReadyEventForTesting();
 
     return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
@@ -2065,7 +2065,7 @@ const Style::ComputedStyle* RenderElement::lazyPseudoElementStyle(const Style::P
 
     std::unique_ptr<Style::ComputedStyle> result = resolvePseudoElementStyle(pseudoElementIdentifier, parentStyle);
     if (result) {
-        return const_cast<Style::ComputedStyle&>(style()).addPseudoElementStyle(WTF::move(result));
+        return protect(const_cast<Style::ComputedStyle&>(style()))->addPseudoElementStyle(WTF::move(result));
     }
     return nullptr;
 }
@@ -2090,7 +2090,7 @@ std::unique_ptr<Style::ComputedStyle> RenderElement::resolvePseudoElementStyle(c
     if (!resolvedStyle)
         return nullptr;
 
-    Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.ptr());
+    Style::loadPendingResources(protect(*resolvedStyle->style), protect(document()), element.ptr());
 
     return WTF::move(resolvedStyle->style);
 }
@@ -2645,7 +2645,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
 
         if (enclosingFragmentedFlow->fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
             break;
-        auto* parent = enclosingFragmentedFlow->parent();
+        CheckedPtr parent = enclosingFragmentedFlow->parent();
         if (!parent)
             break;
         enclosingFragmentedFlow = parent->enclosingFragmentedFlow();
@@ -2694,7 +2694,7 @@ void RenderElement::clearReferencedSVGResources()
 // This needs to run when the entire render tree has been constructed, so can't be called from styleDidChange.
 void RenderElement::updateReferencedSVGResources()
 {
-    auto referencedElementIDs = ReferencedSVGResources::referencedSVGResourceIDs(style(), protect(document()));
+    auto referencedElementIDs = ReferencedSVGResources::referencedSVGResourceIDs(protect(style()), protect(document()));
     if (!referencedElementIDs.isEmpty())
         ensureReferencedSVGResources().updateReferencedResources(protect(treeScopeForSVGReferences()), referencedElementIDs);
     else

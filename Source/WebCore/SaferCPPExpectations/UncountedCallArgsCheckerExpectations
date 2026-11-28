@@ -7,11 +7,8 @@ rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
-rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
-rendering/RenderLayerScrollableArea.cpp
 rendering/RenderObject.cpp
-rendering/RenderView.cpp
 rendering/paint/BackgroundPainter.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h
