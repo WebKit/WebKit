@@ -6226,8 +6226,15 @@ NODELETE void Page::startDeferringResizeEvents()
 void Page::flushDeferredResizeEvents()
 {
     m_shouldDeferResizeEvents = false;
+    bool hadDeferredMouseEventTargetUpdate = std::exchange(m_needsMouseEventTargetUpdateAfterDeferredResize, false);
     forEachDocument([&] (Document& document) {
         document.flushDeferredResizeEvents();
+    });
+    forEachDocument([&](Document& document) {
+        if (RefPtr frame = document.frame(); frame && frame->isRootFrame()) {
+            if (hadDeferredMouseEventTargetUpdate || !document.quirks().needsSuppressPostLayoutBoundaryEventsQuirk())
+                frame->eventHandler().updateMouseEventTargetAfterLayoutIfNeeded();
+        }
     });
 }
 

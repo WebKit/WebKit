@@ -37,6 +37,7 @@
 #include "DocumentView.h"
 #include "Element.h"
 #include "ElementInlines.h"
+#include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -53,6 +54,7 @@
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
+#include "Quirks.h"
 #include "RenderBlock.h"
 #include "RenderVideoInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -832,6 +834,14 @@ void DocumentFullscreen::setAnimatingFullscreen(bool flag)
     if (RefPtr fullscreenElement = this->fullscreenElement())
         emplace(styleInvalidation, *fullscreenElement, { { CSSSelector::PseudoClass::InternalAnimatingFullscreenTransition, flag } });
     m_isAnimatingFullscreen = flag;
+
+    if (!flag) {
+        if (RefPtr page = this->page(); !page || !page->shouldDeferResizeEvents()) {
+            Ref protectedDocument = document();
+            if (RefPtr frame = this->frame(); frame && !protectedDocument->quirks().needsSuppressPostLayoutBoundaryEventsQuirk())
+                frame->eventHandler().scheduleMouseEventTargetUpdateAfterLayout();
+        }
+    }
 }
 
 void DocumentFullscreen::clear()
