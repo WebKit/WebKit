@@ -102,7 +102,6 @@
 #import "WebAutocorrectionData.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEvent.h"
-#import "WebFoundTextRange.h"
 #import "WebFrameProxy.h"
 #import "WebIOSEventFactory.h"
 #import "WebMouseEvent.h"
@@ -12227,26 +12226,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if HAVE(UIFINDINTERACTION)
 
-- (void)find:(id)sender
-{
-    [self.webView find:sender];
-}
-
-- (void)findAndReplace:(id)sender
-{
-    [self.webView findAndReplace:sender];
-}
-
-- (void)findNext:(id)sender
-{
-    [self.webView findNext:sender];
-}
-
-- (void)findPrevious:(id)sender
-{
-    [self.webView findPrevious:sender];
-}
-
 - (void)useSelectionForFindForWebView:(id)sender
 {
     if (!protect(_page)->hasSelectedRange())
@@ -12270,124 +12249,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     [self useSelectionForFindForWebView:sender];
     [self.webView find:sender];
-}
-
-- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
-{
-    OptionSet<WebKit::FindOptions> findOptions;
-    switch (options.wordMatchMethod) {
-    case UITextSearchMatchMethodStartsWith:
-        findOptions.add(WebKit::FindOptions::AtWordStarts);
-        break;
-    case UITextSearchMatchMethodFullWord:
-        findOptions.add({ WebKit::FindOptions::AtWordStarts, WebKit::FindOptions::AtWordEnds });
-        break;
-    default:
-        break;
-    }
-
-    if (options.stringCompareOptions & NSCaseInsensitiveSearch)
-        findOptions.add(WebKit::FindOptions::CaseInsensitive);
-
-    // The limit matches the limit set on existing WKWebView find API.
-    constexpr auto maxMatches = 1000;
-    protect(_page)->findTextRangesForStringMatches(string, findOptions, maxMatches, [string = retainPtr(string), aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
-        for (auto& range : ranges) {
-            RetainPtr textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
-            [aggregator foundRange:textRange.get() forSearchString:string.get() inDocument:nil];
-        }
-
-        [aggregator finishedSearching];
-    });
-}
-
-- (void)replaceFoundTextInRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document withText:(NSString *)replacementText
-{
-    if (!self.supportsTextReplacement)
-        return;
-
-    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
-    if (!foundTextRange)
-        return;
-
-    protect(_page)->replaceFoundTextRangeWithString([foundTextRange webFoundTextRange], replacementText);
-}
-
-- (void)decorateFoundTextRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document usingStyle:(UITextSearchFoundTextStyle)style
-{
-    auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range);
-    if (!foundTextRange)
-        return;
-
-    auto decorationStyle = WebKit::FindDecorationStyle::Normal;
-    if (style == UITextSearchFoundTextStyleFound)
-        decorationStyle = WebKit::FindDecorationStyle::Found;
-    else if (style == UITextSearchFoundTextStyleHighlighted)
-        decorationStyle = WebKit::FindDecorationStyle::Highlighted;
-
-    protect(_page)->decorateTextRangeWithStyle([foundTextRange webFoundTextRange], decorationStyle);
-}
-
-- (void)scrollRangeToVisible:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
-{
-    if (auto foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range))
-        protect(_page)->scrollTextRangeToVisible([foundTextRange webFoundTextRange]);
-}
-
-- (void)clearAllDecoratedFoundText
-{
-    protect(_page)->clearAllDecoratedFoundText();
-}
-
-- (void)didBeginTextSearchOperation
-{
-    [self.webView _showFindOverlay];
-    protect(_page)->didBeginTextSearchOperation();
-}
-
-- (void)didEndTextSearchOperation
-{
-    [self.webView _hideFindOverlay];
-}
-
-- (BOOL)supportsTextReplacement
-{
-    return self.webView.supportsTextReplacement;
-}
-
-- (BOOL)supportsTextReplacementForWebView
-{
-    return self.webView._editable;
-}
-
-- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(UITextSearchDocumentIdentifier)document
-{
-    return [self offsetFromPosition:from toPosition:toPosition];
-}
-
-- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document
-{
-    NSInteger offset = [self offsetFromPosition:fromRange.start toPosition:toRange.start];
-
-    if (offset < 0)
-        return NSOrderedAscending;
-
-    if (offset > 0)
-        return NSOrderedDescending;
-
-    return NSOrderedSame;
-}
-
-- (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler
-{
-    if (RetainPtr foundTextRange = dynamic_objc_cast<WKFoundTextRange>(range)) {
-        protect(_page)->requestRectForFoundTextRange([foundTextRange webFoundTextRange], [completionHandler = makeBlockPtr(completionHandler)] (WebCore::FloatRect rect) {
-            completionHandler(rect);
-        });
-        return;
-    }
-
-    completionHandler(CGRectZero);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

@@ -677,9 +677,6 @@ struct ImageAnalysisContextMenuActionData {
 #endif
     , WKTouchActionGestureRecognizerDelegate
     , WKClickHighlightControllerDelegate
-#if HAVE(UIFINDINTERACTION)
-    , UITextSearching
-#endif
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     , WKMouseInteractionDelegate
 #endif
@@ -976,15 +973,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)requestTextRecognition:(NSURL *)imageURL imageData:(WebCore::ShareableBitmap::Handle&&)imageData sourceLanguageIdentifier:(NSString *)sourceLanguageIdentifier targetLanguageIdentifier:(NSString *)targetLanguageIdentifier completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion;
 #endif
 
-#if HAVE(UIFINDINTERACTION)
-@property (nonatomic, readonly) BOOL supportsTextReplacementForWebView;
-- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(UITextSearchDocumentIdentifier)document;
-- (void)didBeginTextSearchOperation;
-- (void)didEndTextSearchOperation;
-
-- (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler;
-#endif
-
 - (void)beginTextRecognitionForFullscreenVideo:(WebCore::ShareableBitmap::Handle&&)imageHandle playerViewController:(AVPlayerViewController *)playerViewController;
 - (void)cancelTextRecognitionForFullscreenVideo:(AVPlayerViewController *)controller;
 @property (nonatomic, readonly) BOOL isTextRecognitionInFullscreenVideoEnabled;
@@ -1019,6 +1007,17 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #endif
 
 @end
+
+#if HAVE(UIFINDINTERACTION)
+@interface WKContentView (WKFind) <UITextSearching>
+@property (nonatomic, readonly) BOOL supportsTextReplacementForWebView;
+- (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)toPosition inDocument:(UITextSearchDocumentIdentifier)document;
+- (void)didBeginTextSearchOperation;
+- (void)didEndTextSearchOperation;
+
+- (void)requestRectForFoundTextRange:(UITextRange *)range completionHandler:(void (^)(CGRect))completionHandler;
+@end
+#endif
 
 @interface WKContentView (WKTesting)
 
