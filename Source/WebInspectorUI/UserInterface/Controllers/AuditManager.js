@@ -104,7 +104,7 @@ WI.AuditManager = class AuditManager extends WI.Object
             let disabledDefaultTests = [];
             let saveDisabledDefaultTest = (test) => {
                 if (test.supported && test.disabled)
-                    disabledDefaultTests.push(test.name);
+                    disabledDefaultTests.push(this._pathForDefaultTest(test));
 
                 if (test instanceof WI.AuditTestGroup) {
                     for (let child of test.tests)
@@ -300,8 +300,22 @@ WI.AuditManager = class AuditManager extends WI.Object
 
             test.disabled = true;
 
+            // Save descendants too in case edit mode never ends, since restoring a top-level
+            // group checks that its supported children were also saved.
             let disabledTests = this._disabledDefaultTestsSetting.value.slice();
-            disabledTests.push(test.name);
+            let saveDisabledDefaultTest = (test) => {
+                if (test.supported && test.disabled) {
+                    let path = this._pathForDefaultTest(test);
+                    if (!disabledTests.includes(path))
+                        disabledTests.push(path);
+                }
+
+                if (test instanceof WI.AuditTestGroup) {
+                    for (let child of test.tests)
+                        saveDisabledDefaultTest(child);
+                }
+            };
+            saveDisabledDefaultTest(test);
             this._disabledDefaultTestsSetting.value = disabledTests;
 
             return;
@@ -317,6 +331,16 @@ WI.AuditManager = class AuditManager extends WI.Object
     }
 
     // Private
+
+    _pathForDefaultTest(test)
+    {
+        console.assert(test.default, test);
+
+        let path = [];
+        for (let ancestor = test; ancestor; ancestor = ancestor._parent)
+            path.unshift(ancestor.name);
+        return path.join("/");
+    }
 
     _addResult(result)
     {
@@ -415,16 +439,24 @@ WI.AuditManager = class AuditManager extends WI.Object
             ], {description: WI.UIString("Diagnoses common accessibility problems affecting screen readers and other assistive technology.")}),
         ];
 
+        let disabledDefaultTests = this._disabledDefaultTestsSetting.value;
+
         let checkDisabledDefaultTest = (test) => {
             test.markAsDefault();
 
-            if (this._disabledDefaultTestsSetting.value.includes(test.name))
-                test.disabled = true;
-
+            let testPath = this._pathForDefaultTest(test);
             if (test instanceof WI.AuditTestGroup) {
+                // COMPATIBILITY: older versions saved the bare name of every disabled default test, so a bare group
+                // name only disables the group when all of its supported children were also saved.
+                if (test._parent && disabledDefaultTests.includes(testPath))
+                    test.disabled = true;
+                else if (disabledDefaultTests.includes(test.name) && test.tests.every((child) => !child.supported || disabledDefaultTests.includes(child.name) || disabledDefaultTests.includes(`${testPath}/${child.name}`)))
+                    test.disabled = true;
+
                 for (let child of test.tests)
                     checkDisabledDefaultTest(child);
-            }
+            } else if (disabledDefaultTests.includes(testPath) || disabledDefaultTests.includes(test.name))
+                test.disabled = true;
         };
 
         for (let test of defaultTests) {
