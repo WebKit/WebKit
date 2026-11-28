@@ -189,7 +189,6 @@ Tests/WebKit/WKWebView/GetUserMediaReprompt.mm @nonARC
 Tests/WebKit/WKWebView/HistoryDelegate.mm @nonARC
 Tests/WebKit/WKWebView/HSTS.mm @nonARC
 Tests/WebKit/WKWebView/IDBCheckpointWAL.mm @nonARC
-Tests/WebKit/WKWebView/IDBDeleteRecovery.mm @nonARC
 Tests/WebKit/WKWebView/IDBIndexUpgradeToV2.mm @nonARC
 Tests/WebKit/WKWebView/IDBObjectStoreInfoUpgradeToV2.mm @nonARC
 Tests/WebKit/WKWebView/IPCTestingAPI.mm @nonARC
