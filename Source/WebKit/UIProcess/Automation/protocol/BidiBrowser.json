@@ -13,6 +13,28 @@
             "type": "string"
         },
         {
+            "id": "ClientWindowState",
+            "description": "The state of a client window.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-ClientWindowInfo",
+            "type": "string",
+            "enum": [ "fullscreen", "maximized", "minimized", "normal" ]
+        },
+        {
+            "id": "ClientWindowInfo",
+            "description": "Represents properties of a client window.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-ClientWindowInfo",
+            "type": "object",
+            "properties": [
+                { "name": "active", "type": "boolean", "description": "Whether the client window can receive keyboard input from the operating system." },
+                { "name": "clientWindow", "$ref": "BidiBrowser.ClientWindow", "description": "Id of the client window." },
+                { "name": "height", "type": "integer", "description": "Height of the client window in CSS pixels." },
+                { "name": "state", "$ref": "BidiBrowser.ClientWindowState", "description": "State of the client window." },
+                { "name": "width", "type": "integer", "description": "Width of the client window in CSS pixels." },
+                { "name": "x", "type": "integer", "description": "X coordinate of the client window, in CSS pixels." },
+                { "name": "y", "type": "integer", "description": "Y coordinate of the client window, in CSS pixels." }
+            ]
+        },
+        {
             "id": "UserContext",
             "description": "Unique string identifying a user context with separate storage.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-UserContext",
@@ -40,6 +62,15 @@
             "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-createUserContext",
             "returns": [
                 { "name": "userContext", "$ref": "BidiBrowser.UserContext", "description": "Identifier of created user context." }
+            ]
+        },
+        {
+            "name": "getClientWindows",
+            "description": "Returns a list of client windows.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-getClientWindows",
+            "async": true,
+            "returns": [
+                { "name": "clientWindows", "type": "array", "items": { "$ref": "BidiBrowser.ClientWindowInfo" }, "description": "List of client windows." }
             ]
         },
         {

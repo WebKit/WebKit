@@ -53,6 +53,24 @@
 namespace WebKit {
 using namespace WebCore;
 
+std::optional<WebAutomationSession::PlatformClientWindowState> WebAutomationSession::platformClientWindowStateForPage(WebPageProxy& page)
+{
+    RetainPtr window = page.platformWindow();
+    if (!window)
+        return std::nullopt;
+
+    auto state = [&] {
+        if ([window styleMask] & NSWindowStyleMaskFullScreen)
+            return ClientWindowState::Fullscreen;
+        if ([window isMiniaturized])
+            return ClientWindowState::Minimized;
+        if ([window isZoomed])
+            return ClientWindowState::Maximized;
+        return ClientWindowState::Normal;
+    }();
+    return PlatformClientWindowState { state, !![window isKeyWindow] };
+}
+
 #pragma mark Commands for 'PLATFORM(MAC)'
 
 void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<bool>&& enableAutoCapturing, Inspector::CommandCallback<void>&& callback)

@@ -393,6 +393,18 @@ public:
 
     std::expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
 
+    // https://w3c.github.io/webdriver-bidi/#client-window
+    // Each top-level browsing context is reported as its own client window, identified by its WebPageProxy.
+    // The identifier, and everything else about the window, lives in the UI process, so it does not change
+    // when the page's main frame moves to another web process or when frames are hosted by other processes.
+    // FIXME: A client window is the operating system window, which can hold several tabs. Tabs in one window
+    // should share one identifier; settle this before browser.setClientWindowState (webkit.org/b/288109).
+    enum class ClientWindowState : uint8_t { Normal, Minimized, Maximized, Fullscreen };
+    static String clientWindowForPage(const WebPageProxy&);
+    ClientWindowState clientWindowStateForPage(WebPageProxy&);
+    // Whether the operating system window hosting the page can receive keyboard input.
+    bool isClientWindowActiveForPage(WebPageProxy&);
+
 #if ENABLE(WEBDRIVER_BIDI)
     bool isValidUserContext(const String& userContextID) const;
     std::expected<String, AutomationCommandError> nodeHandleForSharedReference(const JSON::Object& sharedReference) const;
@@ -497,6 +509,14 @@ private:
     // Calls the completion handler once the window server has drawn the view's latest layer changes.
     static void platformCallAfterWindowServerDrawsView(WebPageProxy&, Function<void()>&&);
 #endif
+
+    // Read from the operating system window hosting the page. Returns std::nullopt when the platform cannot
+    // find that window.
+    struct PlatformClientWindowState {
+        ClientWindowState state;
+        bool isActive;
+    };
+    std::optional<PlatformClientWindowState> platformClientWindowStateForPage(WebPageProxy&);
 
     // Save base64-encoded file contents to a local file path and return the path.
     // This reuses the basename of the remote file path so that the filename exposed to DOM API remains the same.
