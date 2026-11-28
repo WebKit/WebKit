@@ -825,6 +825,9 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
     Tests/WebKit/WKWebView/ImageServicesMenuTests.swift
+    Tests/WebKit/WKWebView/IndexedDBInPageCache.swift
+    Tests/WebKit/WKWebView/IndexedDBStructuredCloneBackwardCompatibility.swift
+    Tests/WebKit/WKWebView/IndexedDBUserDelete.swift
     Tests/WebKit/WKWebView/LayoutModeTests.swift
     Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
