@@ -2930,6 +2930,13 @@ void RenderBlockFlow::placeFloatingBox(FloatingObject& floatingObject, const Lay
     m_floatingObjects->place(floatingObject, frameRect, marginOffset);
 }
 
+Layout::PlacedFloats& RenderBlockFlow::placedFloats()
+{
+    if (!m_floatingObjects)
+        createFloatingObjects();
+    return m_floatingObjects->placedFloats();
+}
+
 void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
 {
     if (!m_floatingObjects)

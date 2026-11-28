@@ -30,23 +30,19 @@
 
 namespace WebCore::Layout {
 
-class ElementBox;
-
 // BlockFormattingState holds the state for a particular block formatting context tree.
 class BlockFormattingState {
     WTF_MAKE_NONCOPYABLE(BlockFormattingState);
     WTF_MAKE_TZONE_ALLOCATED(BlockFormattingState);
 public:
-    explicit BlockFormattingState(const ElementBox& blockFormattingContextRoot);
+    explicit BlockFormattingState(PlacedFloats&);
     ~BlockFormattingState();
 
     const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
     PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
 
-    void shrinkToFit();
-
 private:
-    PlacedFloats m_placedFloats;
+    PlacedFloats& m_placedFloats;
 };
 
 }

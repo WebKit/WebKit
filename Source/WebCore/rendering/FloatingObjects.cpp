@@ -319,12 +319,25 @@ void FloatingObjects::place(FloatingObject& floatingObject, const LayoutRect& fr
 {
     // The float may already be in m_placedFloatsTree, indexed on the rect it had then. Take it out before
     // changing the rect, so the entry is keyed on the rect the float actually has.
-    if (floatingObject.isPlaced())
-        removePlacedObject(&floatingObject);
+    if (floatingObject.isPlaced() && m_placedFloatsTree) {
+        auto removed = m_placedFloatsTree->remove(intervalForFloatingObject(&floatingObject));
+        ASSERT_UNUSED(removed, removed);
+#if ASSERT_ENABLED
+        floatingObject.setIsInPlacedTree(false);
+#endif
+    }
 
     floatingObject.setFrameRect(frameRect);
     floatingObject.setMarginOffset(marginOffset);
-    addPlacedObject(&floatingObject);
+    floatingObject.setIsPlaced(true);
+    // Inline layout may have put the float anywhere in the list (see PlacedFloats::add()), where FloatingContext::constraints() may skip it.
+    m_floatingContext = nullptr;
+    if (m_placedFloatsTree) {
+        m_placedFloatsTree->add(intervalForFloatingObject(&floatingObject));
+#if ASSERT_ENABLED
+        floatingObject.setIsInPlacedTree(true);
+#endif
+    }
 }
 
 FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)
@@ -376,7 +389,7 @@ std::unique_ptr<Layout::PlacedFloats> FloatingObjects::makePlacedFloats() const
     return placedFloats;
 }
 
-const Layout::PlacedFloats& FloatingObjects::placedFloats()
+Layout::PlacedFloats& FloatingObjects::placedFloats()
 {
     if (!m_placedFloats)
         m_placedFloats = makePlacedFloats();

@@ -156,13 +156,14 @@ public:
     void remove(FloatingObject*);
     void addPlacedObject(FloatingObject*);
     void removePlacedObject(FloatingObject*);
+    // For a float inline layout placed, which put it in placedFloats() already.
     void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
     bool hasRightObjects() const { return m_rightObjectsCount > 0; }
     const FloatingObjectSet& set() const LIFETIME_BOUND { return m_set; }
-    const Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
+    Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
     const Layout::PlacedFloats* keptPlacedFloats() const LIFETIME_BOUND { return m_placedFloats.get(); }
     std::unique_ptr<Layout::PlacedFloats> makePlacedFloats() const;
     // Built on placedFloats() and dropped with it, so that FloatingContext::constraints() continues from its last position during the child layout.
