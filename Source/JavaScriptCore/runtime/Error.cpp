@@ -202,7 +202,7 @@ bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, LineColumn& 
         StackFrame& frame = stackTrace->at(i);
         if (frame.hasLineAndColumnInfo()) {
             lineColumn = frame.computeLineAndColumn();
-            sourceURL = frame.sourceURLStripped(vm);
+            sourceURL = truncateSourceURLForStackTrace(frame.sourceURLStripped(vm));
             return true;
         }
     }
@@ -260,7 +260,7 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     if (line != -1)
         error->putDirect(vm, vm.propertyNames->line, jsNumber(line));
     if (!sourceURL.isNull())
-        error->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, sourceURL));
+        error->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, truncateSourceURLForStackTrace(sourceURL)));
     return error;
 }
 

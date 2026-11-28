@@ -35,6 +35,7 @@
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <JavaScriptCore/StackFrame.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -157,7 +158,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
         exceptionDetails->message = errorMessage;
         exceptionDetails->lineNumber = lineNumber;
         exceptionDetails->columnNumber = columnNumber;
-        exceptionDetails->sourceURL = exceptionSourceURL;
+        exceptionDetails->sourceURL = JSC::truncateSourceURLForStackTrace(exceptionSourceURL);
     }
 }
 
