@@ -1,0 +1,13 @@
+This test verifies that an iframe that starts out with pointer-events: none can be scrolled after its pointer-events is changed to auto. To manually run the test, load the page and scroll the box.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasFrameHostingNode() is false
+PASS hasFrameHostingNode() is true
+PASS iframe.contentWindow.scrollY is 200
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

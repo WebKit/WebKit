@@ -124,6 +124,7 @@ public:
     WEBCORE_EXPORT void updateCanHaveScrollbars();
 
     bool isVisibleToHitTesting() const final;
+    void frameOwnerVisibleToHitTestingDidChange();
 
     Ref<Scrollbar> createScrollbar(ScrollbarOrientation) final;
 

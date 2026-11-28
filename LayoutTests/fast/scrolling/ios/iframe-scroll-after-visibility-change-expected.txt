@@ -1,0 +1,13 @@
+This test verifies that an iframe inside a container that starts out with visibility: hidden can be scrolled after the container becomes visible. To manually run the test, load the page and scroll the box.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasFrameHostingNode() is false
+PASS hasFrameHostingNode() is true
+PASS iframe.contentWindow.scrollY is 200
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

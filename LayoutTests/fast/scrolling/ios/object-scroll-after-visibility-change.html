@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+}
+
+#description {
+    margin-top: 320px;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 300px;
+    visibility: hidden;
+}
+
+object {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that an object element showing an HTML document inside a container that starts out with visibility: hidden can be scrolled after the container becomes visible. To manually run the test, load the page and scroll the box.");
+
+var objectElement;
+
+function hasFrameHostingNode() {
+    return internals.scrollingStateTreeAsText().includes("Frame hosting node");
+}
+
+addEventListener("load", async () => {
+    const container = document.querySelector(".container");
+    objectElement = document.querySelector("object");
+
+    if (!window.testRunner) {
+        container.style.visibility = "visible";
+        return;
+    }
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("hasFrameHostingNode()", "false");
+
+    container.style.visibility = "visible";
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("hasFrameHostingNode()", "true");
+
+    await UIHelper.immediateScrollElementAtContentPointToOffset(150, 150, 0, 200);
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("objectElement.contentWindow.scrollY", "200");
+    shouldBe("window.scrollY", "0");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <object type="text/html" data="../resources/scroll-notifying-page.html"></object>
+    </div>
+</body>
+</html>

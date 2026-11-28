@@ -252,6 +252,12 @@ void RenderWidget::layout()
     clearNeedsLayout();
 }
 
+// This is a subset of RenderElement::visibleToHitTesting(), only considering styles. Keep in sync.
+NODELETE static bool isStyleVisibleToHitTesting(const Style::ComputedStyle& style)
+{
+    return style.visibility() == Visibility::Visible && !style.isForceHidden() && style.usedPointerEvents() != PointerEvents::None;
+}
+
 void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
@@ -272,6 +278,13 @@ void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedS
     if (oldStyle && oldStyle->usedZoom() != style().usedZoom()) {
         if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
             protect(frameView->frame())->frameOwnerZoomDidChange();
+    }
+
+    // If this is an frame and its own or an ancestor's visibility to hit testing changes, the
+    // iframe needs to check if it becomes scrollable.
+    if (oldStyle && isStyleVisibleToHitTesting(*oldStyle) != isStyleVisibleToHitTesting(style())) {
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget))
+            frameView->frameOwnerVisibleToHitTestingDidChange();
     }
 }
 
