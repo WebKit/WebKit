@@ -27,12 +27,6 @@
 
 #ifdef __cplusplus
 
-#include <wtf/RetainPtr.h>
-OBJC_CLASS TestWKWebView;
-
-RetainPtr<TestWKWebView> createWebViewWithCustomPasteboardDataEnabled(bool colorFilterEnabled = false);
-RetainPtr<TestWKWebView> createLockdownModeWebViewWithCustomPasteboardDataEnabled();
-
 NSString *readURLFromPasteboard();
 NSString *readTitleFromPasteboard();
 
