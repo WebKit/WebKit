@@ -300,6 +300,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, NOESCAPE const Cust
     CLONE_STATUS(NewArrayWithButterfly, Common) \
     CLONE_STATUS(NewArrayWithSize, Common) \
     CLONE_STATUS(NewArrayWithSpread, Common) \
+    CLONE_STATUS(NewButterflyWithSize, Common) \
     CLONE_STATUS(NewFunction, Common) \
     CLONE_STATUS(NewInternalFieldObject, Common) \
     CLONE_STATUS(NewPromise, Common) \
