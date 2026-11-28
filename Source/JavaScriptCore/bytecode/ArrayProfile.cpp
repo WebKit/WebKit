@@ -133,6 +133,11 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* lastSeenStructure)
 {
+    computeUpdatedPrediction(codeBlock->globalObject(), lastSeenStructure);
+}
+
+void ArrayProfile::computeUpdatedPrediction(JSGlobalObject* globalObject, Structure* lastSeenStructure)
+{
     m_observedArrayModes |= arrayModesFromStructure(lastSeenStructure);
 
     if (!m_arrayProfileFlags.contains(ArrayProfileFlag::DidPerformFirstRunPruning) && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
@@ -143,7 +148,6 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* las
     if (lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
         m_arrayProfileFlags.add(ArrayProfileFlag::MayInterceptIndexedAccesses);
 
-    JSGlobalObject* globalObject = codeBlock->globalObject();
     bool isResizableOrGrowableShared = false;
     if (!globalObject->isOriginalArrayStructure(lastSeenStructure) && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure, isResizableOrGrowableShared)) {
         m_arrayProfileFlags.add(ArrayProfileFlag::UsesNonOriginalArrayStructures);

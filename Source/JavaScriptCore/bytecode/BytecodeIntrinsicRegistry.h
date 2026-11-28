@@ -51,7 +51,6 @@ enum class LinkTimeConstant : int32_t;
     macro(getGeneratorInternalField) \
     macro(getIteratorHelperInternalField) \
     macro(getAsyncDisposableStackInternalField) \
-    macro(getArrayIteratorInternalField) \
     macro(getProxyInternalField) \
     macro(getWrapForValidIteratorInternalField) \
     macro(getDisposableStackInternalField) \
@@ -69,7 +68,6 @@ enum class LinkTimeConstant : int32_t;
     macro(isRegExpObject) \
     macro(isMap) \
     macro(isSet) \
-    macro(isArrayIterator) \
     macro(isUndefinedOrNull) \
     macro(isWrapForValidIterator) \
     macro(isDisposableStack) \
@@ -83,7 +81,6 @@ enum class LinkTimeConstant : int32_t;
     macro(putByValWithThisStrict) \
     macro(putGeneratorInternalField) \
     macro(putAsyncDisposableStackInternalField) \
-    macro(putArrayIteratorInternalField) \
     macro(putDisposableStackInternalField) \
     macro(superSamplerBegin) \
     macro(superSamplerEnd) \
@@ -109,9 +106,6 @@ enum class LinkTimeConstant : int32_t;
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(macro) \
     macro(undefined) \
     macro(Infinity) \
-    macro(iterationKindKey) \
-    macro(iterationKindValue) \
-    macro(iterationKindEntries) \
     macro(MAX_ARRAY_INDEX) \
     macro(MAX_STRING_LENGTH) \
     macro(MAX_SAFE_INTEGER) \
@@ -135,9 +129,6 @@ enum class LinkTimeConstant : int32_t;
     macro(GeneratorStateInit) \
     macro(iteratorHelperFieldGenerator) \
     macro(iteratorHelperFieldUnderlyingIterator) \
-    macro(arrayIteratorFieldIndex) \
-    macro(arrayIteratorFieldIteratedObject) \
-    macro(arrayIteratorFieldKind) \
     macro(wrapForValidIteratorFieldIteratedIterator) \
     macro(wrapForValidIteratorFieldIteratedNextMethod) \
     macro(disposableStackFieldState) \

@@ -135,7 +135,6 @@ namespace JSC {
     macro(isTypedArrayView) \
     macro(isSharedTypedArrayView) \
     macro(isResizableOrGrowableSharedTypedArrayView) \
-    macro(isDetached) \
     macro(isTypedArrayOutOfBounds) \
     macro(typedArrayFromFast) \
     macro(instanceOf) \

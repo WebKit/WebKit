@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ArrayProfile.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/JSSegmentedVariableObject.h>
 #include <JavaScriptCore/LazyClassStructure.h>
@@ -30,6 +31,7 @@
 #include <JavaScriptCore/RegExpGlobalData.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <JavaScriptCore/SourceTaintedness.h>
+#include <JavaScriptCore/SpeculatedType.h>
 #include <JavaScriptCore/StructureCache.h>
 #include <JavaScriptCore/Watchpoint.h>
 #include <JavaScriptCore/WeakGCMap.h>
@@ -507,6 +509,12 @@ public:
     // If this hasn't been invalidated, it means the array iterator protocol
     // is not observable to user code yet.
     InlineWatchpointSet m_arrayIteratorProtocolWatchpointSet { IsWatched };
+
+    // %ArrayIteratorPrototype%.next is a host function shared by every call site, so it records what
+    // it iterates here. DFG uses this when a call site has no profile of its own.
+    ArrayProfile m_arrayIteratorNextArrayProfile;
+    SpeculatedType m_arrayIteratorNextIteratedObjectSpeculation { SpecNone };
+
     InlineWatchpointSet m_mapIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_setIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringIteratorProtocolWatchpointSet { IsWatched };
@@ -859,6 +867,8 @@ public:
     GeneratorPrototype* generatorPrototype() const LIFETIME_BOUND { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const LIFETIME_BOUND { return m_asyncFunctionPrototype.get(); }
     ArrayIteratorPrototype* arrayIteratorPrototype() const LIFETIME_BOUND { return m_arrayIteratorPrototype.get(); }
+    ArrayProfile& arrayIteratorNextArrayProfile() LIFETIME_BOUND { return m_arrayIteratorNextArrayProfile; }
+    SpeculatedType& arrayIteratorNextIteratedObjectSpeculation() LIFETIME_BOUND { return m_arrayIteratorNextIteratedObjectSpeculation; }
     MapIteratorPrototype* mapIteratorPrototype() const LIFETIME_BOUND { return m_mapIteratorPrototype.get(); }
     SetIteratorPrototype* setIteratorPrototype() const LIFETIME_BOUND { return m_setIteratorPrototype.get(); }
     JSObject* mapPrototype() const LIFETIME_BOUND;

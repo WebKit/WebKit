@@ -62,13 +62,6 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsResizableOrGrowableSharedTyp
     return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(value)->isResizableOrGrowableShared()));
 }
 
-JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, CallFrame* callFrame))
-{
-    JSValue argument = callFrame->uncheckedArgument(0);
-    ASSERT(argument.isCell() && isTypedView(argument.asCell()->type()));
-    return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(argument)->isDetached()));
-}
-
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsOutOfBounds, (JSGlobalObject*, CallFrame* callFrame))
 {
     JSValue argument = callFrame->uncheckedArgument(0);

@@ -33,7 +33,6 @@
 #include "GlobalObjectMethodTable.h"
 #include "IdentifierInlines.h"
 #include "IterationKind.h"
-#include "JSArrayIterator.h"
 #include "JSAsyncDisposableStack.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
@@ -70,9 +69,6 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
 
     m_undefined.set(m_vm, jsUndefined());
     m_Infinity.set(m_vm, jsDoubleNumber(std::numeric_limits<double>::infinity()));
-    m_iterationKindKey.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Keys)));
-    m_iterationKindValue.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Values)));
-    m_iterationKindEntries.set(m_vm, jsNumber(static_cast<unsigned>(IterationKind::Entries)));
     m_MAX_ARRAY_INDEX.set(m_vm, jsNumber(MAX_ARRAY_INDEX));
     m_MAX_STRING_LENGTH.set(m_vm, jsNumber(JSString::MaxLength));
     m_MAX_SAFE_INTEGER.set(m_vm, jsDoubleNumber(maxSafeInteger()));
@@ -91,9 +87,6 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_GeneratorStateCompleted.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Completed)));
     m_GeneratorStateExecuting.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Executing)));
     m_GeneratorStateInit.set(m_vm, jsNumber(static_cast<int32_t>(JSGenerator::State::Init)));
-    m_arrayIteratorFieldIteratedObject.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::IteratedObject)));
-    m_arrayIteratorFieldIndex.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Index)));
-    m_arrayIteratorFieldKind.set(m_vm, jsNumber(static_cast<int32_t>(JSArrayIterator::Field::Kind)));
 
     m_wrapForValidIteratorFieldIteratedIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedIterator)));
     m_wrapForValidIteratorFieldIteratedNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedNextMethod)));
