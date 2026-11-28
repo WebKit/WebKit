@@ -1,0 +1,24 @@
+Test that Open Quickly offers eval code with a sourceURL, in the main frame and in a cross-origin iframe, under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts
+-- Running test case: SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.Setup
+PASS: Should find the main frame target.
+PASS: Should find the cross-origin iframe's frame target.
+PASS: The page target should own no scripts.
+
+-- Running test case: SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.MainFrame
+PASS: Open Quickly should offer the main frame's eval script once.
+PASS: The offered item should be a script.
+PASS: The script should belong to the main frame target.
+
+-- Running test case: SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.CrossOriginIFrame
+PASS: Open Quickly should offer the iframe's eval script once.
+PASS: The offered item should be a script.
+PASS: The script should belong to the iframe's frame target.
+
+-- Running test case: SiteIsolation.Debugger.OpenResourceDialog.FrameTargetScripts.ScriptFileListedOnce
+PASS: Open Quickly should offer the iframe's script file once.
+PASS: The offered item should be the resource.
+
