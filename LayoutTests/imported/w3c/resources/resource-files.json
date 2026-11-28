@@ -1078,6 +1078,7 @@
         "web-platform-tests/css/CSS2/floats-clear/margin-collapse-clear-015-ref.xht",
         "web-platform-tests/css/CSS2/floats-clear/margin-collapse-clear-016-ref.xht",
         "web-platform-tests/css/CSS2/floats-clear/margin-collapse-clear-017-ref.xht",
+        "web-platform-tests/css/CSS2/floats/float-after-wrapped-out-of-flow-box-ref.html",
         "web-platform-tests/css/CSS2/floats/float-no-content-beside-001-ref.html",
         "web-platform-tests/css/CSS2/floats/float-nowrap-1-notref.html",
         "web-platform-tests/css/CSS2/floats/float-nowrap-4-ref.html",
