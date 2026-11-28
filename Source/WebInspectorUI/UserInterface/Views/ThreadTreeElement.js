@@ -32,8 +32,6 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         this._target = target;
 
         this._idleTreeElement = new WI.IdleTreeElement;
-
-        target.addEventListener(WI.Target.Event.NameChanged, this._handleNameChanged, this);
     }
 
     // Public
@@ -76,8 +74,18 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
     {
         super.onattach();
 
+        // The sidebar discards this row while its target lives on (see SourcesNavigationSidebarPanel._addTarget), so the listener must not outlive the attachment.
+        this._target.addEventListener(WI.Target.Event.NameChanged, this._handleNameChanged, this);
+
         this.refresh();
         this.expand();
+    }
+
+    ondetach()
+    {
+        this._target.removeEventListener(WI.Target.Event.NameChanged, this._handleNameChanged, this);
+
+        super.ondetach();
     }
 
     populateContextMenu(contextMenu, event)
