@@ -259,6 +259,11 @@ inline TextAutospace ComputedStyleProperties::textAutospace() const
     return fontDescription().textAutospace();
 }
 
+inline TextAutospaceSize ComputedStyleProperties::textAutospaceSize() const
+{
+    return fontDescription().textAutospaceSize();
+}
+
 inline TextSpacingTrim ComputedStyleProperties::textSpacingTrim() const
 {
     return fontDescription().textSpacingTrim();

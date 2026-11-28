@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-autospace-size is a proportion of ic at the font-size of the text</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/8510#issuecomment-6438888621">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<link rel="match" href="text-autospace-size-002-ref.html">
+<style>
+.test {
+  font-family: Ahem;
+  font-size: 40px;
+  text-autospace: normal;
+  text-autospace-size: 0.5;
+}
+.small {
+  font-size: 20px;
+}
+</style>
+<div class="test"><span class="small">国国XX国</span></div>
+<div class="test" dir="rtl"><span class="small">国国XX国</span></div>

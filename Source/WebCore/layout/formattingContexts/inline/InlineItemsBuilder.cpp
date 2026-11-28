@@ -435,8 +435,10 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList[inlineBoxStartOnBoundaryIndex];
         CheckedRef boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         auto boundaryTextAutospace = boundaryOwnerStyle->textAutospace();
-        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun))
-            spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(protect(boundaryOwnerStyle->fontCascade())->primaryFont()));
+        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun)) {
+            CheckedRef fontCascade = boundaryOwnerStyle->fontCascade();
+            spacings.add(boundaryIndex, fontCascade->textAutospaceSize(fontCascade->primaryFont()));
+        }
 
         lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
         lastCharacterDepth = currentCharacterDepth;
@@ -1033,8 +1035,10 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
     if (!autospace.isNoAutospace()) {
         // We need to store information about spacing added between inline text items since it needs to be trimmed during line breaking if the consecutive items are placed on different lines
         auto characterClass = TextSpacing::characterClass(inlineTextItem.content().codePointAt(0));
-        if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
-            trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(protect(inlineTextItem.style().fontCascade())->primaryFont()));
+        if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass)) {
+            CheckedRef fontCascade = inlineTextItem.style().fontCascade();
+            trimmableTextSpacings.add(inlineItemIndex, fontCascade->textAutospaceSize(fontCascade->primaryFont()));
+        }
 
         auto lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(inlineTextItem.content());
         spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(lastCharacterFromPreviousRun);

@@ -125,6 +125,13 @@ inline void ComputedStyleProperties::setTextAutospace(TextAutospace value)
     setFontDescription(WTF::move(description));
 }
 
+inline void ComputedStyleProperties::setTextAutospaceSize(TextAutospaceSize value)
+{
+    auto description = fontDescription();
+    description.setTextAutospaceSize(value.value);
+    setFontDescription(WTF::move(description));
+}
+
 inline void ComputedStyleProperties::setFontSize(float size)
 {
     ASSERT(std::isfinite(size));

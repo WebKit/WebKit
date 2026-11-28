@@ -3857,7 +3857,6 @@ imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-eleme
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-elements-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-elements-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-mixed-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-preformatted-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-vertical-combine-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-vertical-upright-001.html [ ImageOnlyFailure ]

@@ -441,6 +441,16 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     return width;
 }
 
+float FontCascade::textAutospaceSize(const Font& font) const
+{
+    // https://drafts.csswg.org/css-text-4/#text-autospace-property
+    // The space introduced by text-autospace is a proportion of the CJK advance measure (ic) of the font,
+    // controlled by text-autospace-size (0.125ic by default).
+    // Clamp to the LayoutUnit range so extreme values do not produce infinite advances.
+    double width = static_cast<double>(m_fontDescription.textAutospaceSize()) * font.fontMetrics().ideogramWidth().value_or(0);
+    return clampTo<float>(width, 0, LayoutUnit::max().toFloat());
+}
+
 float FontCascade::zeroWidth() const
 {
     // This represents the advance measure of the glyph 0 (zero, the Unicode character U+0030)

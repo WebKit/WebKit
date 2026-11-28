@@ -58,6 +58,7 @@ public:
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     TextSpacingTrim textSpacingTrim() const { return m_textSpacingTrim; }
     TextAutospace textAutospace() const { return m_textAutospace; }
+    float textAutospaceSize() const { return m_textAutospaceSize; }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
     const AtomString& usedLocale() const LIFETIME_BOUND { return m_usedLocale; } // This is what you should be using for things like text shaping and font fallback
     const AtomString& computedLocale() const LIFETIME_BOUND { return m_computedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
@@ -110,6 +111,7 @@ public:
     void setUsedSize(float s, float zoom = 1.0f) { m_usedSize = clampToFloat(s); m_usedZoomFactor = zoom; }
     void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
     void setTextAutospace(TextAutospace v) { m_textAutospace = v; }
+    void setTextAutospaceSize(float size) { m_textAutospaceSize = size; }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontSelectionRequest.slopeAxis = axis; updatePenalizeObliqueFontSelection(); }
     void setFontStyleSlope(std::optional<FontSelectionValue> slope) { m_fontSelectionRequest.slope = slope; }
     void setIsItalic(bool isItalic) { setFontStyleSlope(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
@@ -173,6 +175,7 @@ private:
     TextAutospace m_textAutospace;
     float m_usedSize { 0 }; // Size adjusted for the minimum font size and the zoom factor.
     float m_usedZoomFactor { 1.0 };
+    float m_textAutospaceSize { 0.125 }; // Proportion of the ideographic advance (ic) inserted by text-autospace.
 
     PREFERRED_TYPE(FontOrientation) unsigned m_orientation : 1; // Whether the font is rendering on a horizontal line or a vertical line.
     PREFERRED_TYPE(NonCJKGlyphOrientation) unsigned m_nonCJKGlyphOrientation : 1; // Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
