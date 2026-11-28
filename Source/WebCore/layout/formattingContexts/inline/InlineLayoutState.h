@@ -67,9 +67,6 @@ public:
     void resetSuccessiveHyphenatedLineCount() { m_successiveHyphenatedLineCount = 0; }
     bool isHyphenationDisabled() const { return m_hyphenateLimitLines && *m_hyphenateLimitLines <= m_successiveHyphenatedLineCount; }
 
-    void setFirstLineStartTrimForInitialLetter(InlineLayoutUnit trimmedThisMuch) { m_firstLineStartTrimForInitialLetter = trimmedThisMuch; }
-    InlineLayoutUnit firstLineStartTrimForInitialLetter() const { return m_firstLineStartTrimForInitialLetter; }
-
     void setInStandardsMode() { m_inStandardsMode = true; }
     bool inStandardsMode() const { return m_inStandardsMode; }
     void setInQuirksMode() { m_inQuirksMode = true; }
@@ -96,7 +93,6 @@ private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
-    InlineLayoutUnit m_firstLineStartTrimForInitialLetter { 0.f };
     std::optional<size_t> m_legacyClampedLineIndex { };
     std::optional<size_t> m_hyphenateLimitLines { };
     size_t m_successiveHyphenatedLineCount { 0 };

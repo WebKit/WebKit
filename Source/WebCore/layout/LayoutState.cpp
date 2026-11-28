@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#include "BlockFormattingState.h"
 #include "Document.h"
 #include "InlineContentCache.h"
 #include "LayoutBox.h"
@@ -95,18 +94,6 @@ InlineContentCache& LayoutState::inlineContentCache(const ElementBox& formatting
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
     return protect(downcast<RenderBlockFlow>(*formattingContextRoot.rendererForIntegration()))->ensureInlineContentCache();
-}
-
-BlockFormattingState& LayoutState::ensureBlockFormattingState(const ElementBox& formattingContextRoot)
-{
-    ASSERT(formattingContextRoot.establishesBlockFormattingContext());
-    return *m_blockFormattingStates.ensure(formattingContextRoot, [&] { return makeUnique<BlockFormattingState>(formattingContextRoot); }).iterator->value;
-}
-
-void LayoutState::destroyBlockFormattingState(const ElementBox& formattingContextRoot)
-{
-    ASSERT(formattingContextRoot.establishesBlockFormattingContext());
-    m_blockFormattingStates.remove(formattingContextRoot);
 }
 
 void LayoutState::layoutWithFormattingContextForBox(const ElementBox& box, std::optional<LayoutUnit> overridingBorderBoxLogicalWidth, std::optional<LayoutUnit> overridingBorderBoxLogicalHeight) const
