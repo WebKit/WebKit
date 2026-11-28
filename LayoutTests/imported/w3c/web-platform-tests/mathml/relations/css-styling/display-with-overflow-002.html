@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Overflowing block math is scrollable and keeps its width</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#the-top-level-math-element">
+<meta name="assert" content="Content of a math element with display: block math that is wider than the content box uses safe centering: the box keeps its width, the content starts at the content box start edge and the overflow is reachable with scroll.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<style>
+  math, .reference {
+    width: 100px;
+    margin: 0;
+    padding-left: 20px;
+    padding-right: 30px;
+    overflow: scroll;
+  }
+  mspace, .reference > div {
+    background: blue;
+  }
+  .reference > div {
+    width: 200px;
+    height: 50px;
+  }
+</style>
+<script>
+  const epsilon = 1;
+
+  setup({ explicit_done: true });
+  window.addEventListener("load", runTests);
+
+  function measure(element) {
+      const box = element.getBoundingClientRect();
+      const childBox = element.firstElementChild.getBoundingClientRect();
+      return {
+          width: box.width,
+          left: childBox.left - box.left,
+          right: box.right - childBox.right,
+      };
+  }
+
+  function testOverflow(direction, endScrollLeft) {
+      test(function() {
+          assert_true(MathMLFeatureDetection.has_mspace());
+          const math = document.getElementById(direction);
+          const reference = document.getElementById(`${direction}-reference`);
+          const s = measure(math);
+          const r = measure(reference);
+          assert_approx_equals(s.width, 150, epsilon, "math width");
+          assert_approx_equals(s.left, r.left, epsilon, "content left edge");
+          assert_approx_equals(s.right, r.right, epsilon, "content right edge");
+          assert_approx_equals(math.scrollWidth, 20 + 200 + 30, epsilon, "scrollWidth");
+          math.scrollLeft = endScrollLeft;
+          reference.scrollLeft = endScrollLeft;
+          assert_approx_equals(math.scrollLeft, reference.scrollLeft, epsilon, "scrollLeft at the end");
+      }, `Overflowing block math (${direction})`);
+  }
+
+  function runTests() {
+      testOverflow("ltr", 1000);
+      testOverflow("rtl", -1000);
+      done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+  <math id="ltr" display="block">
+    <mspace width="200px" height="50px"/>
+  </math>
+  <math id="rtl" display="block" dir="rtl">
+    <mspace width="200px" height="50px"/>
+  </math>
+  <div id="ltr-reference" class="reference"><div></div></div>
+  <div id="rtl-reference" class="reference" dir="rtl"><div></div></div>
+</body>
+</html>

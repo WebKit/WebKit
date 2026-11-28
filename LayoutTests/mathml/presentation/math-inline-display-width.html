@@ -31,7 +31,9 @@
 
         test(function() {
           let math = document.getElementById('display-400');
-          assert_equals(math.clientWidth, 400);
+          assert_equals(math.clientWidth, 200);
+          assert_equals(math.scrollWidth, 400);
+          assert_equals(math.parentElement.scrollWidth, 400);
         }, "display math, 400px content, 200px container");
         done();
       }

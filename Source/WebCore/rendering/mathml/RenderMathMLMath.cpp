@@ -90,15 +90,16 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
     getContentBoundingBox(width, ascent, descent);
     layoutRowItems(width, ascent);
 
-    // Display formulas must be centered horizontally within the content box if there is extra space left.
-    // Otherwise, logical width must be updated to fit the content to avoid truncation.
-    auto nonContentWidth = borderAndPaddingLogicalWidth() + scrollbarLogicalWidth();
-    auto availableContentWidth = logicalWidth() - nonContentWidth;
+    // MathML Core: "if the computed display property is equal to block math then that math content box
+    // is rendered horizontally centered within the content box."
+    // CSS Box Alignment, safe: "If the size of the alignment subject overflows the alignment container,
+    // the alignment subject is instead aligned as if the alignment mode were flow-start."
+    auto availableContentWidth = logicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth();
     LayoutUnit centerOffset;
     if (width < availableContentWidth)
         centerOffset = (availableContentWidth - width) / 2;
-    else
-        setLogicalWidth(width + nonContentWidth);
+    else if (writingMode().isBidiRTL())
+        centerOffset = availableContentWidth - width;
 
     auto contentLeft = borderAndPaddingLogicalLeft();
     if (shouldPlaceVerticalScrollbarOnLeft())
@@ -109,7 +110,10 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
     setLogicalHeight(ascent + descent + borderAndPaddingLogicalHeight() + horizontalScrollbarHeight());
     updateLogicalHeight();
 
+    computeInFlowOverflow(blockStartRelativeContentBoxRect(), { ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY });
+
     layoutOutOfFlowBoxes(relayoutChildren);
+    addOverflowFromOutOfFlowBoxes();
 }
 
 }
