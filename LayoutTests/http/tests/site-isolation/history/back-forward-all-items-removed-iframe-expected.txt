@@ -1,0 +1,5 @@
+
+PASS BackForwardAllItems sends the state of a removed subframe to a process for the site that wrote it
+PASS BackForwardAllItems does not send the state of a removed subframe to a process for another site
+PASS BackForwardAllItems does not send the state of a removed subframe that another site rewrote when the subframe replaced itself cross-site
+

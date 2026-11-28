@@ -67,6 +67,7 @@ header: "SessionState.h"
     WebCore::IsInitialAboutBlank isInitialAboutBlank;
     std::optional<WebCore::PolicyContainer> policyContainer;
     [NotSerialized] std::optional<WebCore::Site> inheritedSite;
+    [NotSerialized] std::optional<WebCore::Site> writerSite;
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;

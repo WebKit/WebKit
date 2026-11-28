@@ -10581,6 +10581,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (redirectReplaceFrameState) {
         MESSAGE_CHECK_BASE(!frame->isMainFrame(), connection);
         MESSAGE_CHECK_BASE(redirectReplaceFrameState->children.isEmpty(), connection);
+        WebBackForwardListFrameItem::setWriterSite(*redirectReplaceFrameState, WebProcessProxy::fromConnection(connection), protect(browsingContextGroup()));
         if (RefPtr currentItem = backForwardList().currentItem())
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
             backForwardList().replaceFrameStateForChild(&*currentItem, frameID, redirectReplaceFrameState.releaseNonNull());
