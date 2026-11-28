@@ -178,10 +178,13 @@ enum class AnchorSizeDimension : uint8_t {
 struct ResolvedAnchor {
     SingleThreadWeakPtr<RenderBoxModelObject> renderer;
     ResolvedScopedName name;
+    // The anchor resolved to a box. If `renderer` is later null, the box went away (removed or display: none).
+    bool hadRenderer { false };
 };
 
 struct AnchorPositionedToAnchorEntry {
     Vector<ResolvedAnchor> anchors;
+    SingleThreadWeakPtr<RenderBlock> containingBlock;
 
     // True if all anchors above have been laid out and positioned.
     // Only then can this anchor-positioned element be positioned.
