@@ -160,6 +160,12 @@ PASS syntax:'foo bar', initialValue:'foo bar' is invalid
 PASS syntax:'foo foo foo', initialValue:'foo foo foo' is invalid
 PASS syntax:'foo § bar', initialValue:'foo § bar' is invalid
 PASS syntax:'foo \1F914 bar', initialValue:'foo \1F914 bar' is invalid
+PASS syntax:'foo+bar', initialValue:'foo' is invalid
+PASS syntax:'foo#bar', initialValue:'foo' is invalid
+PASS syntax:'foo+ bar', initialValue:'foo' is invalid
+PASS syntax:'foo+bar | <length>', initialValue:'foo' is invalid
+PASS syntax:'foo++', initialValue:'foo' is invalid
+PASS syntax:'foo+#', initialValue:'foo' is invalid
 PASS syntax:'<length> <number>', initialValue:'0px 0' is invalid
 PASS syntax:'<length> <length> <length>', initialValue:'0px 0px 0px' is invalid
 PASS syntax:'<integer>+ | <percentage>+ | <length>+ ', initialValue:'1 1%' is invalid
