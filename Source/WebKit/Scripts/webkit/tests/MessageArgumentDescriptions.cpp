@@ -676,6 +676,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::PDFPluginIdentifier"_s,
         "WebKit::PageGroupIdentifier"_s,
         "WebKit::PolicyListenerIdentifier"_s,
+        "WebKit::PreloadScriptIdentifier"_s,
         "WebKit::QuotaIncreaseRequestIdentifier"_s,
         "WebKit::RemoteAudioDestinationIdentifier"_s,
         "WebKit::RemoteAudioHardwareListenerIdentifier"_s,

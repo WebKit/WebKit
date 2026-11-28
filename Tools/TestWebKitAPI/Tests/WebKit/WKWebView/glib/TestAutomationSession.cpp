@@ -33,9 +33,7 @@
 #include <wtf/URL.h>
 #endif
 #include <wtf/glib/GLibExtras.h>
-#if ENABLE(WEBDRIVER_BIDI) && OS(LINUX)
 #include <wtf/glib/GUniquePtr.h>
-#endif
 #include <wtf/glib/SocketConnection.h>
 #include <wtf/text/MakeString.h>
 #if ENABLE(WEBDRIVER_BIDI) && OS(LINUX)
@@ -874,6 +872,153 @@ static void verifyIframeRealmEnumeration(AutomationTest& test, WebKitWebView* we
     g_assert_true(callFunctionRealmInfo->getString("origin"_s) == expectedOrigin);
 }
 
+static String addPreloadScript(AutomationTest& test, int commandIdentifier, ASCIILiteral functionDeclaration, Ref<JSON::Object>&& parameters = JSON::Object::create())
+{
+    parameters->setString("functionDeclaration"_s, functionDeclaration);
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "script.addPreloadScript"_s, WTF::move(parameters));
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    auto scriptIdentifier = result->getString("script"_s);
+    g_assert_false(scriptIdentifier.isEmpty());
+    return scriptIdentifier;
+}
+
+static void removePreloadScript(AutomationTest& test, int commandIdentifier, const String& scriptIdentifier)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("script"_s, scriptIdentifier);
+    test.sendBidiCommandAndWait(commandIdentifier, "script.removePreloadScript"_s, WTF::move(parameters));
+}
+
+static void assertPreloadScriptState(AutomationTest& test, WebKitWebView* webView, const char* expression)
+{
+    struct State {
+        GMainLoop* loop;
+        const char* expression;
+        bool completed { false };
+    } state { test.m_mainLoop.get(), expression };
+    webkit_web_view_evaluate_javascript(webView, expression, -1, nullptr, nullptr, nullptr, [](GObject* object, GAsyncResult* result, gpointer data) {
+        auto& state = *static_cast<State*>(data);
+        GUniqueOutPtr<GError> error;
+        GRefPtr value = adoptGRef(webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error.outPtr()));
+        bool success = value && jsc_value_is_boolean(value.get()) && jsc_value_to_boolean(value.get());
+        if (!success)
+            g_test_message("Expected preload state: %s", state.expression);
+        g_assert_no_error(error.get());
+        g_assert_true(success);
+        state.completed = true;
+        g_main_loop_quit(state.loop);
+    }, &state);
+    while (!state.completed)
+        g_main_loop_run(state.loop);
+}
+
+static void testBidiPreloadScriptsAtDocumentStart(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    auto sessionID = createVersion4UUIDString().utf8();
+    g_assert_nonnull(test->requestSession(sessionID));
+    test->setupIfNeeded();
+
+    // This registration must reach the first controlled process before its initial about:blank.
+    auto defaultContextParameters = JSON::Object::create();
+    auto defaultUserContexts = JSON::Array::create();
+    defaultUserContexts->pushString("default"_s);
+    defaultContextParameters->setArray("userContexts"_s, WTF::move(defaultUserContexts));
+    auto firstScript = addPreloadScript(*test, 1, R"JS(() => {
+        (document.preloadTrace || (document.preloadTrace = [])).push('first');
+        document.addEventListener('DOMContentLoaded', () => {
+            document.preloadSawParsedContent = !!document.querySelector('#marker');
+        });
+    })JS"_s, WTF::move(defaultContextParameters));
+
+    auto sandboxParameters = JSON::Object::create();
+    sandboxParameters->setString("functionDeclaration"_s, "() => { document.sandboxPreloadRan = true; }"_s);
+    sandboxParameters->setString("sandbox"_s, "example"_s);
+    test->sendBidiCommand(2, "script.addPreloadScript"_s, WTF::move(sandboxParameters));
+    auto sandboxResponse = test->waitForBidiMessage([](const JSON::Object& message) {
+        return message.getInteger("id"_s) == 2;
+    });
+    g_assert_true(!!sandboxResponse);
+    g_assert_true(sandboxResponse->getString("error"_s) == "unsupported operation"_s);
+
+    auto firstWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(firstWebView.get()));
+    auto firstContext = test->browsingContextHandleFromLastResponse();
+    assertPreloadScriptState(*test, firstWebView.get(), "document.preloadTrace.join(',') === 'first'");
+
+    auto createdUserContext = test->sendBidiCommandAndWait(3, "browser.createUserContext"_s, JSON::Object::create())->getObject("result"_s);
+    g_assert_true(!!createdUserContext);
+    auto otherUserContext = createdUserContext->getString("userContext"_s);
+    g_assert_false(otherUserContext.isEmpty());
+    auto otherContextParameters = JSON::Object::create();
+    auto otherUserContexts = JSON::Array::create();
+    otherUserContexts->pushString(otherUserContext);
+    otherContextParameters->setArray("userContexts"_s, WTF::move(otherUserContexts));
+    addPreloadScript(*test, 4, "() => { document.otherUserContextPreloadRan = true; }"_s, WTF::move(otherContextParameters));
+
+    auto subscribeParameters = JSON::Object::create();
+    auto events = JSON::Array::create();
+    events->pushString("log.entryAdded"_s);
+    subscribeParameters->setArray("events"_s, WTF::move(events));
+    test->sendBidiCommandAndWait(5, "session.subscribe"_s, WTF::move(subscribeParameters));
+
+    auto throwingScript = addPreloadScript(*test, 6, "() => { throw new Error('expected preload failure'); }"_s);
+    auto commentOnlyScript = addPreloadScript(*test, 7, "// no callable source"_s);
+    auto arguments = JSON::Array::create();
+    auto argument = JSON::Object::create();
+    argument->setString("type"_s, "string"_s);
+    argument->setString("value"_s, "last"_s);
+    arguments->pushObject(WTF::move(argument));
+    auto lastScriptParameters = JSON::Object::create();
+    lastScriptParameters->setArray("arguments"_s, WTF::move(arguments));
+    addPreloadScript(*test, 8, "// leading comment\n(label) => { (document.preloadTrace || (document.preloadTrace = [])).push(label); } // trailing comment"_s, WTF::move(lastScriptParameters));
+
+    auto targetedScriptParameters = JSON::Object::create();
+    auto contexts = JSON::Array::create();
+    contexts->pushString(firstContext);
+    targetedScriptParameters->setArray("contexts"_s, WTF::move(contexts));
+    addPreloadScript(*test, 9, "() => { document.contextPreloadRan = true; }"_s, WTF::move(targetedScriptParameters));
+
+    auto removedScript = addPreloadScript(*test, 10, "() => { document.removedPreloadRan = true; }"_s);
+    removePreloadScript(*test, 11, removedScript);
+
+    // The document has no author script to initialize its JavaScript window.
+    test->loadURIAndWait(firstWebView.get(), kServer->getURIForPath("/preload-script-free.html").legacyCStringPointer());
+    assertPreloadScriptState(*test, firstWebView.get(), "document.preloadSawParsedContent === true && document.preloadTrace.join(',') === 'first,last' && document.contextPreloadRan === true && !document.removedPreloadRan && !document.otherUserContextPreloadRan && !document.sandboxPreloadRan");
+
+    auto waitForPreloadError = [test](ASCIILiteral textPrefix) {
+        auto exception = test->waitForBidiMessage([textPrefix](const JSON::Object& message) {
+            if (message.getString("method"_s) != "log.entryAdded"_s)
+                return false;
+            auto parameters = message.getObject("params"_s);
+            return parameters && parameters->getString("text"_s).startsWith(textPrefix) && parameters->getString("level"_s) == "error"_s;
+        });
+        g_assert_true(!!exception);
+    };
+    waitForPreloadError("Error: expected preload failure"_s);
+    waitForPreloadError("SyntaxError:"_s);
+
+    removePreloadScript(*test, 12, throwingScript);
+    removePreloadScript(*test, 13, commentOnlyScript);
+    test->loadURIAndWait(firstWebView.get(), kServer->getURIForPath("/preload-inline.html").legacyCStringPointer());
+    assertPreloadScriptState(*test, firstWebView.get(), "document.authorObservedPreloads === 'first,last:true:false'");
+
+    auto secondWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createNewWindow(secondWebView.get()));
+    test->loadURIAndWait(secondWebView.get(), kServer->getURIForPath("/preload-inline.html").legacyCStringPointer());
+    assertPreloadScriptState(*test, secondWebView.get(), "document.authorObservedPreloads === 'first,last:false:false'");
+
+    auto uncontrolledWebView = test->createWebView();
+    test->loadURIAndWait(uncontrolledWebView.get(), kServer->getURIForPath("/preload-inline.html").legacyCStringPointer());
+    assertPreloadScriptState(*test, uncontrolledWebView.get(), "document.authorObservedPreloads === 'missing:false:false'");
+
+    removePreloadScript(*test, 14, firstScript);
+    auto crossSiteURI = makeString("http://localhost:"_s, kServer->port(), "/preload-inline.html"_s).utf8();
+    test->loadURIAndWait(firstWebView.get(), crossSiteURI.legacyCStringPointer());
+    assertPreloadScriptState(*test, firstWebView.get(), "document.authorObservedPreloads === 'last:true:false'");
+}
+
 static void testBidiCallFunctionNavigationCancelsPendingCommand(AutomationTest* test, gconstpointer)
 {
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
@@ -1306,9 +1451,17 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         return;
     }
 
+    static constexpr auto preloadInlineHTML = R"HTML(<!doctype html><script>
+        document.authorObservedPreloads = (document.preloadTrace?.join(',') ?? 'missing') + ':' + !!document.contextPreloadRan + ':' + !!document.removedPreloadRan;
+    </script>)HTML";
+
     const char* html = "<p>target</p>";
     if (g_str_equal(path, "/iframe-realm-enumeration.html"))
         html = "<!doctype html><iframe src='/iframe.html'></iframe>";
+    else if (g_str_equal(path, "/preload-script-free.html"))
+        html = "<!doctype html><p id='marker'>No author script</p>";
+    else if (g_str_equal(path, "/preload-inline.html"))
+        html = preloadInlineHTML;
     else if (g_str_equal(path, "/iframe-realm-lifecycle.html"))
         html = "<!doctype html><iframe src='/initial-iframe.html'></iframe>";
     else if (g_str_equal(path, "/iframe.html"))
@@ -1343,6 +1496,7 @@ void beforeAll()
     g_socket_listener_close(listener.get());
 
 #if ENABLE(WEBDRIVER_BIDI)
+    AutomationTest::add("WebKitAutomationSession", "bidi-preload-scripts-at-document-start", testBidiPreloadScriptsAtDocumentStart);
     AutomationTest::add("WebKitAutomationSession", "bidi-call-function-navigation-cancels-pending-command", testBidiCallFunctionNavigationCancelsPendingCommand);
 #if OS(LINUX)
     AutomationTest::add("WebKitAutomationSession", "bidi-iframe-realm-destroyed-when-iframe-process-terminates", testBidiIframeRealmDestroyedWhenIframeProcessTerminates);

@@ -321,6 +321,11 @@ public:
     void addRemotePageProxy(RemotePageProxy&);
     void removeRemotePageProxy(RemotePageProxy&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    bool hasAutomationControlledPage() const;
+    void synchronizePreloadScriptsForAutomationIfNeeded();
+#endif
+
     Vector<Ref<WebPageProxy>> pages() const;
     Vector<Ref<WebPageProxy>> mainPages() const;
     unsigned pageCount() const { return m_pageMap.size(); }

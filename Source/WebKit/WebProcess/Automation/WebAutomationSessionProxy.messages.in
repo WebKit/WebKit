@@ -60,6 +60,9 @@ messages -> WebAutomationSessionProxy {
     DeleteCookie(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (std::optional<String> errorType)
 
 #if ENABLE(WEBDRIVER_BIDI)
+    SetPreloadScripts(Vector<WebKit::BidiPreloadScript> registrations)
+    AddPreloadScript(struct WebKit::BidiPreloadScript registration) -> ()
+    RemovePreloadScript(WebKit::PreloadScriptIdentifier identifier) -> ()
     GetBidiRealmInfo(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID) -> (std::optional<WebKit::RealmIdentifier> realmIdentifier)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
     ReloadFrame(WebCore::FrameIdentifier frameID, OptionSet<WebCore::ReloadOption> reloadOptions)

@@ -1906,6 +1906,11 @@ RefPtr<LocalFrame> WebLocalFrameLoaderClient::createFrame(const AtomString& name
     if (!coreSubframe)
         return nullptr;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = WebProcess::singleton().automationSessionProxy(); automationSession && coreSubframe->loader().stateMachine().isDisplayingInitialEmptyDocument())
+        automationSession->runPreloadScriptsForFrame(subframe);
+#endif
+
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!coreSubframe->page())
         return nullptr;
@@ -2033,6 +2038,12 @@ void WebLocalFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& w
 #endif
 
     webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(*webPage, m_frame, world);
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // This callback also runs when the new document has no JavaScript window proxy yet.
+    if (RefPtr automationSession = WebProcess::singleton().automationSessionProxy(); automationSession && world.isNormal())
+        automationSession->runPreloadScriptsForFrame(m_frame);
+#endif
 }
 
 void WebLocalFrameLoaderClient::dispatchServiceWorkerGlobalObjectAvailable(DOMWrapperWorld& world)

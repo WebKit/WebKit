@@ -4066,14 +4066,26 @@
     "imported/w3c/webdriver/tests/bidi/script/add_preload_script/add_preload_script.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
         "subtests": {
+            "test_add_preload_script[tab]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_add_preload_script[window]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_script_order": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_page_script_can_access_preload_script_properties": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
             "test_add_same_preload_script_twice": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
             "test_add_preload_script_with_error": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["PASS"]}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_add_preload_script_in_iframe": {
-                "expected": {"mac": {"status": ["PASS"]}}
+                "expected": { "gtk": { "status": ["PASS"]}, "mac": {"status": ["PASS"]} }
             }
         }
     },
@@ -4081,24 +4093,24 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
         "subtests": {
             "test_channel[default]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_channel[with ownership]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_channel[with serializationOptions]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_channel_with_multiple_arguments": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_mutation_observer": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             }
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/add_preload_script/contexts.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
+        "expected": { "gtk": { "status": ["PASS"]}, "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
         "subtests": {
             "test_page_script_context_isolation[tab]": {
                 "expected": { "all": { "status": ["PASS"]}}
@@ -4120,17 +4132,35 @@
     "imported/w3c/webdriver/tests/bidi/script/add_preload_script/execution_order_tentative.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
         "subtests": {
+            "test_preload_script_properties_available_immediately[iframe-current_context_with_url]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_preload_script_properties_available_immediately[iframe-current_context_with_non_blank_url]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_preload_script_properties_available_immediately[iframe-current_context_without_url]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_preload_script_properties_available_immediately[iframe-opener_context_with_url]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_preload_script_properties_available_immediately[iframe-opener_context_without_url]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_preload_script_properties_available_immediately[iframe-inline_script]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
             "test_preload_script_properties_available_immediately[popup-current_context_with_url]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_preload_script_properties_available_immediately[popup-current_context_without_url]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_preload_script_properties_available_immediately[popup-opener_context_with_url]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_preload_script_properties_available_immediately[popup-opener_context_without_url]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
+                "expected": { "gtk": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}, "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288057"}}
             },
             "test_preload_script_properties_available_immediately[popup-current_context_with_non_blank_url]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
@@ -4257,15 +4287,10 @@
                 "expected": { "all": { "status": ["PASS"]}}
             }
         },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}}
+        "expected": { "gtk": { "status": ["PASS"]}, "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/add_preload_script/sandbox.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}},
-        "subtests": {
-            "test_arguments": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
-            }
-        }
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/305819"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/add_preload_script/user_contexts.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288057"}}
@@ -4916,6 +4941,12 @@
     },
     "imported/w3c/webdriver/tests/bidi/script/remove_preload_script/remove_preload_script.py": {
         "subtests": {
+            "test_remove_preload_script[tab]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
+            "test_remove_preload_script[window]": {
+                "expected": { "gtk": { "status": ["PASS"]} }
+            },
             "test_remove_preload_script_twice": {
                 "expected": { "all": { "status": ["PASS"]}}
             },
@@ -4926,12 +4957,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288062"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/remove_preload_script/sandbox.py": {
-        "subtests": {
-            "test_remove_preload_script_from_sandbox": {
-                "expected": { "all": { "status": ["PASS"]}}
-            }
-        },
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288062"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/305819"}}
     },
 
     "imported/w3c/webdriver/tests/bidi/session/capabilities/unhandled_prompt_behavior/file/accept.py": {

@@ -128,8 +128,13 @@ bool BidiBrowserAgent::isValidUserContext(const String& userContextID) const
 
 String BidiBrowserAgent::userContextForPage(const WebPageProxy& page) const
 {
-    String userContextID = toUserContextIDProtocolString(page.sessionID());
-    if (m_userContexts.contains(userContextID))
+    return userContextForSessionID(page.sessionID());
+}
+
+String BidiBrowserAgent::userContextForSessionID(PAL::SessionID sessionID) const
+{
+    String userContextID = toUserContextIDProtocolString(sessionID);
+    if (m_userContexts.contains(userContextID) || m_userContextsPendingDeletion.contains(userContextID))
         return userContextID;
     return defaultUserContextID();
 }

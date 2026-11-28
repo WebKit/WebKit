@@ -3508,6 +3508,16 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
     if (m_controlledByAutomation == controlled)
         return;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (controlled && hasRunningProcess()) {
+        forEachWebContentProcess([](auto& process, auto) {
+            process.synchronizePreloadScriptsForAutomationIfNeeded();
+        });
+        if (RefPtr provisionalPage = m_provisionalPage)
+            protect(provisionalPage->process())->synchronizePreloadScriptsForAutomationIfNeeded();
+    }
+#endif
+
     m_controlledByAutomation = controlled;
 
     if (!hasRunningProcess())
@@ -3516,6 +3526,10 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
     forEachWebContentProcess([&](auto& process, auto pageID) {
         process.send(Messages::WebPage::SetControlledByAutomation(controlled), pageID);
     });
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr provisionalPage = m_provisionalPage)
+        protect(provisionalPage->process())->send(Messages::WebPage::SetControlledByAutomation(controlled), provisionalPage->webPageID());
+#endif
     protect(protect(websiteDataStore())->networkProcess())->send(Messages::NetworkProcess::SetSessionIsControlledByAutomation(sessionID(), m_controlledByAutomation), 0);
 }
 

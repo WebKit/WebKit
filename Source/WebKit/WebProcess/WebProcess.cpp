@@ -1105,6 +1105,9 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 
     // Read before the parameters are moved from.
     auto accessibilityMode = parameters.accessibilityMode;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool isProcessSwap = parameters.isProcessSwap;
+#endif
 
     auto addResult = m_pageMap.ensure(pageID, [&] {
         return WebPage::create(pageID, WTF::move(parameters));
@@ -1143,6 +1146,15 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
         m_hasPendingAccessibilityUnsuspension = false;
         accessibilityRelayProcessSuspended(false);
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (addResult.isNewEntry && !isProcessSwap) {
+        if (RefPtr automationSession = automationSessionProxy()) {
+            if (RefPtr frame = page->localMainFrame(); frame && frame->loader().stateMachine().isDisplayingInitialEmptyDocument())
+                automationSession->runPreloadScriptsForFrame(page->mainWebFrame());
+        }
+    }
+#endif
 }
 
 Awaitable<unsigned> WebProcess::countWebPagesForTesting()

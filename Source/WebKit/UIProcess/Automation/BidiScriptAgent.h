@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#include "BidiPreloadScript.h"
 #include "IdentifierTypes.h"
 #include "WebDriverBidiBackendDispatchers.h"
 #include "WebPageProxyIdentifier.h"
@@ -35,7 +36,6 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
-#include <utility>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -43,19 +43,17 @@
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-enum PreloadScriptIdentifierType { };
-using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType>;
 using WorkerIdentifier = String;
 
 class WebAutomationSession;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessProxy;
 struct FrameTreeNodeData;
 struct FrameInfoData;
 
@@ -104,18 +102,15 @@ public:
     // Access active realms for realm destruction without WebFrameProxy.
     const HashMap<RealmIdentifier, RealmInfo>& activeRealms() const LIFETIME_BOUND { return m_activeRealms; }
 
-    void executePreloadScriptsForContext(const String& browsingContext, const String& frameHandle);
+    void synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy&) const;
 
 private:
-    struct AllContextsTag { };
-
     struct PreloadScriptInfo {
-        String functionDeclaration;
-        RefPtr<JSON::Array> arguments;
-        Variant<AllContextsTag, Vector<String>> contexts;
-        String sandbox;
+        BidiPreloadScript registration;
         std::optional<Vector<String>> userContexts;
     };
+
+    std::optional<BidiPreloadScript> preloadScriptForProcess(const PreloadScriptInfo&, const WebProcessProxy&) const;
 
     struct DedicatedWorkerRealmInfo {
         WorkerIdentifier workerIdentifier;
@@ -164,7 +159,7 @@ private:
 
     // Store dedicated worker identity and ownership by realm identifier.
     HashMap<RealmIdentifier, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealms;
-    Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
+    Vector<PreloadScriptInfo> m_preloadScripts;
 };
 
 } // namespace WebKit

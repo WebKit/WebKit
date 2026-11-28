@@ -340,6 +340,39 @@ unsigned WebProcessProxy::provisionalPageCount() const
     return m_provisionalPages.computeSize();
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+bool WebProcessProxy::hasAutomationControlledPage() const
+{
+    if (isDummyProcessProxy())
+        return false;
+
+    if (std::ranges::any_of(m_pageMap.values(), [](const auto& page) { return page->isControlledByAutomation(); }))
+        return true;
+
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (RefPtr page = provisionalPage->page(); page && page->isControlledByAutomation())
+            return true;
+    }
+
+    for (Ref remotePage : m_remotePages) {
+        if (RefPtr page = remotePage->page(); page && page->isControlledByAutomation())
+            return true;
+    }
+
+    return false;
+}
+
+void WebProcessProxy::synchronizePreloadScriptsForAutomationIfNeeded()
+{
+    if (isDummyProcessProxy() || hasAutomationControlledPage())
+        return;
+
+    // The first controlled page needs the current registry before it can create a document.
+    if (RefPtr session = processPool().automationSession())
+        session->synchronizePreloadScriptRegistrationsWithProcess(*this);
+}
+#endif
+
 bool WebProcessProxy::hasVisiblePage() const
 {
     for (Ref page : pages()) {
@@ -796,6 +829,10 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
 
     ASSERT(!m_isInProcessCache);
     ASSERT(!m_provisionalPages.contains(provisionalPage));
+#if ENABLE(WEBDRIVER_BIDI)
+    if (provisionalPage.page()->isControlledByAutomation())
+        synchronizePreloadScriptsForAutomationIfNeeded();
+#endif
     m_provisionalPages.add(provisionalPage);
     initializePreferencesForGPUAndNetworkProcesses(*protect(provisionalPage.page()));
     updateRegistrationWithDataStore();
@@ -822,6 +859,10 @@ void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
 
     ASSERT(!m_isInProcessCache);
     ASSERT(!m_remotePages.contains(remotePage));
+#if ENABLE(WEBDRIVER_BIDI)
+    if (remotePage.page()->isControlledByAutomation())
+        synchronizePreloadScriptsForAutomationIfNeeded();
+#endif
     m_remotePages.add(remotePage);
     updateRegistrationWithDataStore();
     initializePreferencesForGPUAndNetworkProcesses(*protect(remotePage.page()));
@@ -1174,6 +1215,10 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
         setRunningBoardThrottlingEnabled();
+#endif
+#if ENABLE(WEBDRIVER_BIDI)
+    if (webPage.isControlledByAutomation())
+        synchronizePreloadScriptsForAutomationIfNeeded();
 #endif
     m_pageMap.set(webPage.identifier(), webPage);
     globalPageMap().set(webPage.identifier(), webPage);
