@@ -333,6 +333,9 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test(arguments: [false, true])
     func goingBackToCOOPPageAfterItsProcessExited(siteIsolationEnabled: Bool) async throws {
         var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
@@ -361,6 +364,9 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test(arguments: [false, true])
     func goingBackToCOOPPageWithoutBackForwardCache(siteIsolationEnabled: Bool) async throws {
         var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
@@ -383,6 +389,9 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test(arguments: [false, true])
     func goingBackToCOOPPageFromCOOPPageOfAnotherSite(siteIsolationEnabled: Bool) async throws {
         var server = try HTTPServer(protocol: .httpsProxy) { Self.coopRoutes }
@@ -451,10 +460,16 @@ struct ProcessSwapBackForwardTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func processSwappingProcessPool(backForwardCacheEnabled: Bool) -> WKProcessPool {
         .processSwapping(backForwardCacheEnabled: backForwardCacheEnabled, webProcessCacheEnabled: false)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func terminate(_ processIdentifier: pid_t, in processPool: WKProcessPool) async throws {
         let processCount = processPool._webProcessCountIgnoringPrewarmedAndCached()
         kill(processIdentifier, SIGKILL)

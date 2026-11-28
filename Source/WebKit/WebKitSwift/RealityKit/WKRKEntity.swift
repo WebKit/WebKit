@@ -580,7 +580,7 @@ extension WKRKEntity {
 
             #if canImport(CoreRE)
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
-            if let coreEnvironmentResourceAsset = unsafe environment.coreIBLAsset?.__as(REAssetRef.self) {
+            if let coreEnvironmentResourceAsset = unsafe Self.coreIBLAsset(of: environment) {
                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
                 unsafe attributionHandler(coreEnvironmentResourceAsset)
             }
@@ -594,6 +594,16 @@ extension WKRKEntity {
             return false
         }
     }
+
+    #if canImport(CoreRE)
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses coreIBLAsset until migrating to coreIBLAssetRef")
+    #endif
+    private static func coreIBLAsset(of environment: EnvironmentResource) -> REAssetRef? {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe environment.coreIBLAsset?.__as(REAssetRef.self)
+    }
+    #endif
 
     func applyDefaultIBL() {
         #if canImport(RealityFoundation, _version: 380)
