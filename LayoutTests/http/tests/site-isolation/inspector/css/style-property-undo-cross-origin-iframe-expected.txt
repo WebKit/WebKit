@@ -1,0 +1,29 @@
+Test that undo after a CSS property edit made in the Styles sidebar reaches a node in a cross-origin iframe under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame
+-- Running test case: SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.Setup
+PASS: Should find the cross-origin iframe's frame target.
+PASS: The main target should not be the iframe's frame target.
+PASS: The node's owning target should be the frame target.
+PASS: The color property should start as red.
+PASS: The iframe should render red.
+PASS: Should load the Styles sidebar's property view.
+
+-- Running test case: SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.UndoEachEdit
+PASS: Editing the color to blue should succeed.
+PASS: Finishing a property edit should mark one undo point.
+PASS: The undo point should be on the frame target that owns the edited node.
+PASS: The iframe should render blue after the first edit.
+PASS: Editing the color to green should succeed.
+PASS: Finishing a property edit should mark one undo point.
+PASS: The undo point should be on the frame target that owns the edited node.
+PASS: The iframe should render green after the second edit.
+PASS: The first undo should revert only the second edit.
+PASS: The second undo should revert the first edit.
+
+-- Running test case: SiteIsolation.CSS.StylePropertyUndo.CrossOriginIFrame.Redo
+PASS: The first redo should re-apply the first edit.
+PASS: The second redo should re-apply the second edit.
+

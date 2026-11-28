@@ -459,7 +459,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._delegate.spreadsheetStylePropertyFocusMoved(this, {direction: null});
 
         if (changed) {
-            let target = WI.assumingMainTarget();
+            let target = this._property.ownerStyle?.node?.owningTarget;
             WI.domUndoCoordinator.markUndoableState(target);
         }
     }
