@@ -84,6 +84,23 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     } else if (g_str_equal(path, "/service/empty-worker.js")) {
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/shared-worker.html")) {
+        static const char* sharedWorkerHTML = "<html><body><script>"
+            "const worker = new SharedWorker('/shared-worker.js');"
+            "worker.port.onmessage = (event) => document.title = event.data;"
+            "</script></body></html>";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, sharedWorkerHTML, strlen(sharedWorkerHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/shared-worker.js")) {
+        static const char* sharedWorkerJS = "onconnect = (event) => event.ports[0].postMessage('Connected');";
+        auto* responseHeaders = soup_server_message_get_response_headers(message);
+        soup_message_headers_replace(responseHeaders, "Content-Type", "text/javascript");
+        // The page is not cross-origin isolated and the worker is, so the worker cannot run in the page's process.
+        soup_message_headers_replace(responseHeaders, "Cross-Origin-Embedder-Policy", "require-corp");
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, sharedWorkerJS, strlen(sharedWorkerJS));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/compression-dictionary/page")) {
         // The query string is forwarded to the dictionary request so that every registration is a
         // network load, and names the dictionary to fetch.
@@ -1076,6 +1093,16 @@ static void testWebsiteDataServiceWorkerRegistrations(WebsiteDataTest* test, gco
     g_assert_null(dataList);
 }
 
+static void testWebsiteDataRemovalWithSharedWorker(WebsiteDataTest* test, gconstpointer)
+{
+    // The shared worker runs in its own process, which does not exit while the page exists, so the removal must not wait for it.
+    test->loadURI(kServer->getURIForPath("/shared-worker.html"));
+    test->waitUntilTitleChangedTo("Connected");
+    gint64 start = g_get_monotonic_time();
+    test->clear(WEBKIT_WEBSITE_DATA_ALL, 0);
+    g_assert_cmpint(g_get_monotonic_time() - start, <, 2 * G_USEC_PER_SEC);
+}
+
 static void testWebsiteDataDOMCache(WebsiteDataTest* test, gconstpointer)
 {
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DOM_CACHE);
@@ -1278,6 +1305,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "deviceidhashsalt", testWebsiteDataDeviceIdHashSalt);
     WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
+    WebsiteDataTest::add("WebKitWebsiteData", "removal-with-shared-worker", testWebsiteDataRemovalWithSharedWorker);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
     WebsiteDataTest::add("WebKitWebsiteData", "sizes", testWebsiteDataSizes);
     WebsiteDataTest::add("WebKitWebsiteData", "file-system", testWebsiteDataFileSystem);
