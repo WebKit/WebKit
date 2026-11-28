@@ -1,0 +1,78 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>UpdateMouseEventTargetAfterWindowAndViewFramesChanged is only sent when the cursor is over the view</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<body>
+<script>
+// The web process picks when to reply to WindowAndViewFramesChanged, so it picks when the UI process
+// samples the cursor for the UpdateMouseEventTargetAfterWindowAndViewFramesChanged that follows. It can
+// also mint fresh cycles at will with SetWindowFrameIPC, because resizing the window makes AppKit post
+// NSWindowDidResizeNotification, which ends in another WindowAndViewFramesChanged. The web process has no
+// window server connection of its own, so the UI process must only answer with a cursor position when the
+// cursor is really over this view in an active window -- otherwise a compromised web process could read
+// the system-wide cursor position at instants of its own choosing.
+
+let receivedCount = 0;
+
+function countReportedPositions()
+{
+    const updateMouseEventTargetName = IPC.messages.WebPage_UpdateMouseEventTargetAfterWindowAndViewFramesChanged.name;
+    IPC.addIncomingMessageListener('UI', (message) => {
+        if (message.name === updateMouseEventTargetName)
+            ++receivedCount;
+    });
+}
+
+// Resizing the window is what starts a WindowAndViewFramesChanged cycle, and it also resizes the view,
+// which is how this test controls whether the cursor ends up inside the view or outside it.
+async function resizeWindowTo(width, height)
+{
+    const countBefore = receivedCount;
+    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetWindowFrameIPC.name,
+        [{ type: 'FloatRect', value: { x: 600, y: 100, width, height } }]);
+    await UIHelper.ensureStablePresentationUpdate();
+    return receivedCount - countBefore;
+}
+
+async function runTest()
+{
+    countReportedPositions();
+
+    // WKTR only positions the window off-screen once, in PlatformWebView's constructor -- the
+    // between-test reset (TestController::resetStateToConsistentValues) never restores window
+    // frame. Since this test moves the real window on-screen via raw IPC to control where the
+    // cursor lands relative to it, it must put the frame back itself or later tests in the same
+    // run inherit an on-screen main window instead of the expected off-screen one.
+    const defaultTimeout = 1000;
+    const originalFrame = IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_GetWindowFrame.name,
+        defaultTimeout, []).arguments[0].value;
+
+    try {
+        // Put the cursor near the top of a tall view. Window coordinates have a bottom-left origin, so this
+        // is a point high up in the window, which shrinking the window will leave outside the view.
+        eventSender.mouseMoveTo(10, 10);
+        assert_equals(await resizeWindowTo(300, 300), 0,
+            "no cursor position is sent to the web process while the cursor is outside the view");
+
+        // The gate must not cost the web process the updates this message exists for: with the cursor over
+        // the view, a frame change still has to report where it is.
+        eventSender.mouseMoveTo(150, 150);
+        assert_greater_than(await resizeWindowTo(301, 300), 0,
+            "the cursor position is still sent to the web process while the cursor is over the view");
+    } finally {
+        IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetWindowFrameIPC.name,
+            [{ type: 'FloatRect', value: originalFrame }]);
+        await UIHelper.ensureStablePresentationUpdate();
+    }
+
+    done();
+}
+
+setup({ single_test: true });
+if (window.IPC && window.eventSender)
+    runTest();
+else
+    done();
+</script>
+</body>
