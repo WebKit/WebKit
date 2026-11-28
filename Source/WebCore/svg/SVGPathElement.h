@@ -26,11 +26,13 @@
 #include "SVGNames.h"
 #include "SVGPath.h"
 #include "SVGPathByteStream.h"
+#include "SVGPathSegment.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SVGPoint;
+struct SVGPathDataSettings;
 
 class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGPathElement);
@@ -41,6 +43,13 @@ public:
     float getTotalLength() const final;
     ExceptionOr<Ref<SVGPoint>> getPointAtLength(float distance) const final;
     unsigned getPathSegAtLength(float distance) const;
+
+    // https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData
+    Vector<SVGPathSegment> getPathData(SVGPathDataSettings&&) const;
+    void setPathData(Vector<SVGPathSegment>&&);
+
+    // https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength
+    std::optional<SVGPathSegment> getPathSegmentAtLength(float distance) const;
 
     FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow) final;
 

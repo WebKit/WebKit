@@ -1,0 +1,11 @@
+
+PASS SVGPathElement has the SVGPathData members
+PASS SVGRectElement does not have the SVGPathData members
+PASS SVGCircleElement does not have the SVGPathData members
+PASS SVGEllipseElement does not have the SVGPathData members
+PASS SVGLineElement does not have the SVGPathData members
+PASS SVGPolygonElement does not have the SVGPathData members
+PASS SVGPolylineElement does not have the SVGPathData members
+PASS SVGGeometryElement does not have the SVGPathData members
+PASS the SVGPathData members sit on SVGPathElement.prototype
+

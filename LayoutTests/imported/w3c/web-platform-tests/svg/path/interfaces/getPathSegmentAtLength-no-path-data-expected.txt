@@ -1,0 +1,7 @@
+
+PASS getPathSegmentAtLength() returns null with a missing d attribute
+PASS getPathSegmentAtLength() returns null with an empty d attribute
+PASS getPathSegmentAtLength() returns null with d of closepath only
+PASS getPathSegmentAtLength() returns null with d beginning with a lineto
+PASS getPathSegmentAtLength() returns null with d beginning with an unknown command
+
