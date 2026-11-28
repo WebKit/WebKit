@@ -83,9 +83,6 @@ function test() {
             InspectorTest.expectNotNull(frameCTarget, "Should find the frame target for the inserted frame C.");
             InspectorTest.expectThat(await waitForExpressionInTarget(frameCTarget, "'ticks' in window"), "Frame C's script should have run.");
 
-            // DebuggerManager asks a target that appears during a pause to pause too; cancel that, or frame C pauses once frame A resumes.
-            await frameCTarget.DebuggerAgent.resume();
-
             await expectHeldUntilResumed(frameCTarget, "Frame C");
         }
     });
@@ -118,9 +115,6 @@ function test() {
             InspectorTest.expectNotNull(newFrameDTarget, "Should find the frame target for frame D's new document.");
             InspectorTest.expectEqual(processIdentifier(newFrameDTarget), processIdentifier(frameATarget), "Frame D's new document should be in frame A's process.");
             InspectorTest.expectThat(await waitForExpressionInTarget(newFrameDTarget, "'ticks' in window"), "Frame D's new script should have run.");
-
-            // Cancel the pause request that DebuggerManager sent to the new target, for the same reason as for frame C.
-            await newFrameDTarget.DebuggerAgent.resume();
 
             await expectHeldUntilResumed(newFrameDTarget, "Frame D's new document");
         }

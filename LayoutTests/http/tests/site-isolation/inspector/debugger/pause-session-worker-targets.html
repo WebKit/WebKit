@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.workerReplies = [];
+
+function startWorker()
+{
+    window.worker = new Worker("resources/message-worker.js");
+    window.worker.onmessage = (event) => { window.workerReplies.push(event.data); };
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionWorkerTargets");
+
+    let frameATarget;
+
+    function workerTargets() {
+        return WI.targets.filter((target) => target.type === WI.TargetType.Worker);
+    }
+
+    function awaitWorkerTarget() {
+        return new Promise((resolve) => {
+            let listener = WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                if (event.data.target.type !== WI.TargetType.Worker)
+                    return;
+                WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, listener);
+                resolve(event.data.target);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionWorkerTargets.Setup",
+        description: "Find the frame target of the cross-site iframe.",
+        async test() {
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionWorkerTargets.ArmedPauseIsResumed",
+        description: "A pause armed in an idle worker when the page is paused should be cancelled by the resume, because a session does not hold or cancel workers.",
+        async test() {
+            let workerTargetAdded = awaitWorkerTarget();
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "startWorker(), 0");
+            let workerTarget = await workerTargetAdded;
+            InspectorTest.expectNotNull(workerTarget, "Should find the worker target.");
+            if (WI.debuggerManager.dataForTarget(workerTarget).paused)
+                await workerTarget.DebuggerAgent.resume();
+
+            await WI.debuggerManager.pause();
+            await WI.debuggerManager.resume();
+
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.worker.postMessage('after resume'), 0");
+            let replied = await waitForExpressionInTarget(InspectorTest.mainFrameTarget, "window.workerReplies.length > 0");
+            let workerPaused = WI.debuggerManager.dataForTarget(workerTarget).paused;
+            if (workerPaused)
+                await workerTarget.DebuggerAgent.resume();
+
+            InspectorTest.expectThat(replied, "The worker should answer a message sent after the resume.");
+            InspectorTest.expectFalse(workerPaused, "The worker should not pause by itself after the resume.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionWorkerTargets.NewWorkerJoinsPause",
+        description: "A worker that appears while a frame is paused is not held by the session, so it should be asked to pause.",
+        async test() {
+            if (workerTargets().length)
+                await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "window.worker.terminate(), 0");
+
+            await GlobalPause.pause(frameATarget);
+            let workerTargetAdded = awaitWorkerTarget();
+            await GlobalPause.evaluate(InspectorTest.mainFrameTarget, "startWorker(), 0");
+            let workerTarget = await workerTargetAdded;
+
+            let workerPaused = false;
+            for (let i = 0; i < 50 && !workerPaused; ++i) {
+                workerPaused = WI.debuggerManager.dataForTarget(workerTarget).paused;
+                if (!workerPaused)
+                    await GlobalPause.sleep(100);
+            }
+
+            await GlobalPause.resumeAll();
+            InspectorTest.expectThat(workerPaused, "The new worker should pause while the frame is paused.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a worker target joins and leaves a pause like any target: a pause armed in an idle worker is cancelled by the resume, and a worker created during a pause is asked to pause.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

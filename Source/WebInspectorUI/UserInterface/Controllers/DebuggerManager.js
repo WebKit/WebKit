@@ -271,7 +271,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (WI.engineeringSettingsAllowed())
             target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
 
-        if (this.paused)
+        // A frame target that appears while a session is open is held by it, and asking it to pause too would leave a pause armed after the session closes. Other targets are not held.
+        if (this.paused && !(this._pauseSession && target instanceof WI.FrameTarget))
             targetData.pauseIfNeeded();
 
         // Initialize breakpoints.
@@ -734,7 +735,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             // Only resume targets that are actually paused. Frame targets in separate
             // processes should not receive spurious resume commands.
             if (targetData.paused || targetData.pausing)
-                promises.push(targetData.resumeIfNeeded());
+                // The backend refuses the resume when a session hold already cancelled the armed pause; the target is running then anyway.
+                promises.push(targetData.resumeIfNeeded().catch(() => { }));
         }
         return Promise.all(promises);
     }
@@ -1148,7 +1150,18 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     debuggerPauseSessionChanged(sessionId, state, stoppingTargetIds)
     {
         let isPaused = state === InspectorBackend.Enum.Target.DebuggerPauseSessionState.Paused;
+        let didOpen = isPaused && this._pauseSession?.sessionId !== sessionId;
         this._pauseSession = isPaused ? {sessionId, stoppingTargetIds} : null;
+
+        // The backend cancels the pauses armed in the frames it holds when a session opens, and does not touch other targets. A frame target asked to pause
+        // just before may not have been armed yet when the backend cancelled, so cancel through the target as well; the backend refuses if nothing is armed.
+        if (didOpen) {
+            for (let [target, targetData] of this._targetDebuggerDataMap) {
+                if (target instanceof WI.FrameTarget && targetData.pausing && !targetData.paused)
+                    targetData.resumeIfNeeded().catch(() => { });
+            }
+        }
+
         this.dispatchEventToListeners(WI.DebuggerManager.Event.PauseSessionChanged, {sessionId, state, stoppingTargetIds});
     }
 
