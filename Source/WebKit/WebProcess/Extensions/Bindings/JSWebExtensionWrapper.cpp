@@ -610,6 +610,16 @@ String toJSONString(JSContextRef context, JSValueRef value)
     return serializeJSObject(context, value, nullptr);
 }
 
+String toSortedJSONString(JSContextRef context, JSValueRef value)
+{
+    String data = toJSONString(context, value);
+    RefPtr<JSON::Value> json = JSON::Value::parseJSON(data);
+    if (!json)
+        return nullString();
+
+    return json->toJSONString(true);
+}
+
 bool isFunction(JSContextRef context, JSValueRef value)
 {
     if (!context || !value || !JSValueIsObject(context, value))

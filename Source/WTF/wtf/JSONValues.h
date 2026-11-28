@@ -111,7 +111,7 @@ public:
     static RefPtr<Value> parseJSON(StringView, ParsingMode);
     static std::optional<Ref<Value>> optionalParseJSON(StringView);
 
-    String toJSONString() const;
+    String toJSONString(bool sort = false) const;
 
     void dump(PrintStream&) const;
 
@@ -121,7 +121,7 @@ public:
     bool asString(String&) const;
 
     size_t memoryCost() const;
-    void writeJSON(StringBuilder& output) const;
+    void writeJSON(StringBuilder& output, bool sort = false) const;
 
 protected:
     Value() = default;
@@ -159,7 +159,7 @@ protected:
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
     NODELETE size_t memoryCostImpl() const;
-    void writeJSONImpl(StringBuilder& output) const;
+    void writeJSONImpl(StringBuilder& output, bool sort = false) const;
 
 private:
     WTF::Variant<std::monostate, bool, double, int, String, ObjectTypeTag, ArrayTypeTag> m_value;
@@ -221,7 +221,7 @@ protected:
 
 private:
     size_t memoryCostImpl() const;
-    void writeJSONImpl(StringBuilder& output) const;
+    void writeJSONImpl(StringBuilder& output, bool sort = false) const;
 
     DataStorage m_map;
     OrderStorage m_order;
@@ -302,7 +302,7 @@ protected:
 
 private:
     size_t memoryCostImpl() const;
-    void writeJSONImpl(StringBuilder& output) const;
+    void writeJSONImpl(StringBuilder& output, bool sort = false) const;
 
     DataStorage m_map;
 };
