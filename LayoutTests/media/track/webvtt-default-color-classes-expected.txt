@@ -1,0 +1,28 @@
+
+EVENT(canplay)
+EVENT(addtrack)
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.textTracks[0].mode = 'showing')
+RUN(video.currentTime = 1)
+EVENT(seeked)
+EXPECTED (window.internals.shadowRoot(video).querySelectorAll('c').length == '17') OK
+EXPECTED (getComputedStyle(c[0]).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(c[8]).backgroundColor == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(c[1]).color == 'rgb(0, 255, 0)') OK
+EXPECTED (getComputedStyle(c[9]).backgroundColor == 'rgb(0, 255, 0)') OK
+EXPECTED (getComputedStyle(c[2]).color == 'rgb(0, 255, 255)') OK
+EXPECTED (getComputedStyle(c[10]).backgroundColor == 'rgb(0, 255, 255)') OK
+EXPECTED (getComputedStyle(c[3]).color == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(c[11]).backgroundColor == 'rgb(255, 0, 0)') OK
+EXPECTED (getComputedStyle(c[4]).color == 'rgb(255, 255, 0)') OK
+EXPECTED (getComputedStyle(c[12]).backgroundColor == 'rgb(255, 255, 0)') OK
+EXPECTED (getComputedStyle(c[5]).color == 'rgb(255, 0, 255)') OK
+EXPECTED (getComputedStyle(c[13]).backgroundColor == 'rgb(255, 0, 255)') OK
+EXPECTED (getComputedStyle(c[6]).color == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(c[14]).backgroundColor == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(c[7]).color == 'rgb(0, 0, 0)') OK
+EXPECTED (getComputedStyle(c[15]).backgroundColor == 'rgb(0, 0, 0)') OK
+EXPECTED (getComputedStyle(c[16]).color == 'rgb(255, 255, 0)') OK
+EXPECTED (getComputedStyle(c[16]).backgroundColor == 'rgb(0, 0, 255)') OK
+END OF TEST
+
