@@ -72,6 +72,10 @@ function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
     # Depend on platform-swift-args.resp
     set_source_files_properties(${_swift_source} OBJECT_DEPENDS
         "${CMAKE_CURRENT_BINARY_DIR}/${_consumer}.platform-swift-args.resp")
+    # Recompile when the consumer's other response files change.
+    if (${_consumer}_SWIFT_RESPONSE_FILES)
+        webkit_target_add_swift_response_file_dependencies(${_prewarm} ${${_consumer}_SWIFT_RESPONSE_FILES})
+    endif ()
 
     WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(${_prewarm})
     add_dependencies(${_consumer} ${_prewarm})
