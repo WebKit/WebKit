@@ -673,11 +673,6 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
         let descriptors = @createArrayWithoutPrototype();
         this._forEachPropertyDescriptor(object, collectionMode, (descriptor) => {
-            if (start > 0) {
-                --start;
-                return InjectedScript.PropertyFetchAction.Continue;
-            }
-
             if ("get" in descriptor)
                 descriptor.get = RemoteObject.create(descriptor.get, objectGroupName);
             if ("set" in descriptor)
@@ -695,6 +690,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         }, @createObjectWithoutPrototype(
             "nativeGettersAsValues", nativeGettersAsValues,
             "includeProto", includeProto,
+            "fetchStart", start,
         ));
         return descriptors;
     }
@@ -719,7 +715,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         return descriptors;
     }
 
-    _forEachPropertyDescriptor(object, collectionMode, callback, {nativeGettersAsValues, includeProto})
+    _forEachPropertyDescriptor(object, collectionMode, callback, {nativeGettersAsValues, includeProto, fetchStart})
     {
         let subtype = RemoteObject.subtype(object);
         if (subtype === "proxy" || subtype === "weakref")
@@ -741,6 +737,18 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
         // Handled below when `includeProto`.
         nameProcessed.@add("__proto__");
+
+        // The first `fetchStart` descriptors are skipped instead of being passed to `callback`.
+        let skipCount = fetchStart > 0 ? fetchStart : 0;
+
+        function emit(descriptor)
+        {
+            if (skipCount > 0) {
+                --skipCount;
+                return InjectedScript.PropertyFetchAction.Continue;
+            }
+            return callback(descriptor);
+        }
 
         function createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, possibleNativeBindingGetter)
         {
@@ -788,16 +796,16 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         {
             // All properties.
             if (collectionMode & InjectedScript.CollectionMode.AllProperties)
-                return callback(descriptor);
+                return emit(descriptor);
 
             // Own properties.
             if (collectionMode & InjectedScript.CollectionMode.OwnProperties && isOwnProperty)
-                return callback(descriptor);
+                return emit(descriptor);
 
             // Native Getter properties.
             if (collectionMode & InjectedScript.CollectionMode.NativeGetterProperties) {
                 if (possibleNativeBindingGetter)
-                    return callback(descriptor);
+                    return emit(descriptor);
             }
         }
 
@@ -837,6 +845,23 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             if (isPrivate)
                 descriptor.isPrivate = true;
             return processDescriptor(descriptor, isOwnProperty, possibleNativeBindingGetter);
+        }
+
+        // Checking each index of a large sparse array is slow. After this many holes, list the indexes that are present.
+        const maximumHoleCount = 100000;
+
+        // Every own index property of an array is passed to `callback`, so the ones before `fetchStart` can be
+        // counted without getting their descriptors.
+        let canSkipIndexes = !!(collectionMode & (InjectedScript.CollectionMode.AllProperties | InjectedScript.CollectionMode.OwnProperties));
+
+        function skipIndex(propertyName)
+        {
+            if (!canSkipIndexes || skipCount <= 0)
+                return false;
+
+            nameProcessed.@add(propertyName);
+            --skipCount;
+            return true;
         }
 
         let isArrayLike = false;
@@ -885,14 +910,42 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
             // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
             if (isArrayLike && isOwnProperty) {
-                for (let i = 0; i < o.length; ++i) {
-                    if (!(i in o))
+                let length = o.length;
+                let holeCount = 0;
+                let i = 0;
+                for (; i < length; ++i) {
+                    if (!(i in o)) {
+                        if (++holeCount > maximumHoleCount)
+                            break;
+                        continue;
+                    }
+
+                    let propertyName = toString(i);
+                    if (skipIndex(propertyName))
                         continue;
 
-                    let result = processProperty(o, toString(i), isOwnProperty);
+                    let result = processProperty(o, propertyName, isOwnProperty);
                     shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
                     if (shouldBreak)
                         break;
+                }
+
+                if (!shouldBreak && i < length) {
+                    let propertyNames = @Object.@getOwnPropertyNames(o);
+                    for (let j = 0; j < propertyNames.length; ++j) {
+                        let propertyName = propertyNames[j];
+                        let index = propertyName >>> 0;
+                        if (!isUInt32(propertyName) || index < i || index >= length)
+                            continue;
+
+                        if (skipIndex(propertyName))
+                            continue;
+
+                        let result = processProperty(o, propertyName, isOwnProperty);
+                        shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                        if (shouldBreak)
+                            break;
+                    }
                 }
             } else {
                 let propertyNames = @Object.@getOwnPropertyNames(o);
