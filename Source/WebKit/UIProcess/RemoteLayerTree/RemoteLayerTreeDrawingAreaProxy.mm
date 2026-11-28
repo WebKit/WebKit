@@ -128,7 +128,16 @@ std::span<IPC::ReceiverName> RemoteLayerTreeDrawingAreaProxy::messageReceiverNam
 
 void RemoteLayerTreeDrawingAreaProxy::addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy& proxy)
 {
-    m_remotePageProcessState.add(proxy.process().coreProcessIdentifier(), ProcessState(proxy.process(), proxy.webPageID()));
+    auto processIdentifier = proxy.process().coreProcessIdentifier();
+    if (m_remoteLayerTreeHost) {
+        RefPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr;
+        if (scrollingCoordinator)
+            scrollingCoordinator->willCommitLayerAndScrollingTrees();
+        m_remoteLayerTreeHost->removeLayersFromProcess(processIdentifier);
+        if (scrollingCoordinator)
+            scrollingCoordinator->didCommitLayerAndScrollingTrees();
+    }
+    m_remotePageProcessState.add(processIdentifier, ProcessState(proxy.process(), proxy.webPageID()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy& proxy)
