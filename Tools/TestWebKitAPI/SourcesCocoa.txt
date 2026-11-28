@@ -123,9 +123,6 @@ Tests/WebKit/WKWebView/ContextMenus.mm @nonARC
 Tests/WebKit/WKWebView/CookieAcceptPolicy.mm @nonARC
 Tests/WebKit/WKWebView/CookiePrivateBrowsing.mm @nonARC
 Tests/WebKit/WKWebView/CookieStoreAPI.mm @nonARC
-Tests/WebKit/WKWebView/CopyHTML.mm @nonARC
-Tests/WebKit/WKWebView/CopyRTF.mm @nonARC
-Tests/WebKit/WKWebView/CopyURL.mm @nonARC
 Tests/WebKit/WKWebView/Copying.mm @nonARC
 Tests/WebKit/WKWebView/CreateWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/CustomUserAgent.mm @nonARC
