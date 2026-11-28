@@ -48,7 +48,9 @@
 #include <cmath>
 #include <ranges>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkAnnotation.h>
 #include <skia/core/SkColorFilter.h>
+#include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPathBuilder.h>
 #include <skia/core/SkPathEffect.h>
@@ -63,6 +65,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MathExtras.h>
+#include <wtf/URL.h>
+#include <wtf/text/CString.h>
 
 #if USE(THEME_ADWAITA)
 #include "Adwaita.h"
@@ -1332,6 +1336,39 @@ void GraphicsContextSkia::drawSkiaText(const sk_sp<SkTextBlob>& blob, SkScalar x
 RenderingMode GraphicsContextSkia::renderingMode() const
 {
     return m_renderingMode;
+}
+
+// Skia's annotation values are null-terminated UTF-8 strings. Annotations take
+// user-space geometry: the PDF backend applies the current matrix and clip, and
+// every other backend ignores them.
+static sk_sp<SkData> skiaAnnotationData(const String& string)
+{
+    auto utf8 = string.utf8();
+    auto bytes = utf8.spanIncludingNullTerminator();
+    return SkData::MakeWithCopy(bytes.data(), bytes.size());
+}
+
+void GraphicsContextSkia::setURLForRect(const URL& link, const FloatRect& destRect)
+{
+    if (!link.isValid())
+        return;
+
+    SkAnnotateRectWithURL(&m_canvas, destRect, skiaAnnotationData(link.string()).get());
+}
+
+void GraphicsContextSkia::setDestinationForRect(const String& name, const FloatRect& destRect)
+{
+    SkAnnotateLinkToDestination(&m_canvas, destRect, skiaAnnotationData(name).get());
+}
+
+void GraphicsContextSkia::addDestinationAtPoint(const String& name, const FloatPoint& position)
+{
+    SkAnnotateNamedDestination(&m_canvas, SkPoint::Make(position.x(), position.y()), skiaAnnotationData(name).get());
+}
+
+bool GraphicsContextSkia::supportsInternalLinks() const
+{
+    return true;
 }
 
 } // namespace WebCore
