@@ -50,6 +50,7 @@ public:
     const Vector<double>& feedforward() const LIFETIME_BOUND { return m_feedforward; }
     const Vector<double>& feedback() const LIFETIME_BOUND { return m_feedback; }
     bool isFilterStable() const { return m_isFilterStable; }
+    double tailTime() const final { return m_tailTime; }
 
 private:
     Type processorType() const final { return Type::IIR; }
@@ -57,6 +58,7 @@ private:
     Vector<double> m_feedforward;
     Vector<double> m_feedback;
     bool m_isFilterStable;
+    double m_tailTime { 0 };
 
     const std::unique_ptr<IIRDSPKernel> m_responseKernel;
 };
