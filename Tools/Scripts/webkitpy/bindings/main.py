@@ -26,6 +26,7 @@ import fnmatch
 import json
 import os
 import os.path
+import re
 import shutil
 import sys
 import tempfile
@@ -237,7 +238,7 @@ class BindingsTests:
         def modification_times():
             return {name: os.stat(os.path.join(output_directory, name)).st_mtime_ns for name in os.listdir(output_directory)}
 
-        def generate(modified_names):
+        def generate(modified_names, excluded_names=()):
             idl_files = sorted(os.path.join(idl_directory, name) for name in os.listdir(idl_directory))
             with open(idl_files_list, 'w') as list_file:
                 list_file.write(''.join(idl_file + '\n' for idl_file in idl_files))
@@ -245,7 +246,6 @@ class BindingsTests:
                 modification_time = time.time() + 1000 if os.path.splitext(os.path.basename(idl_file))[0] in modified_names else unmodified_time
                 os.utime(idl_file, (modification_time, modification_time))
 
-            before = modification_times()
             cmd = ['perl',
                    'WebCore/bindings/scripts/generate-bindings-all.pl',
                    '--outputDir', output_directory,
@@ -255,14 +255,17 @@ class BindingsTests:
                    '--defines', '',
                    '--generator', 'JS',
                    '--generatorDependency', 'WebCore/bindings/scripts/CodeGenerator.pm',
-                   '--generatorDependency', 'WebCore/bindings/scripts/CodeGeneratorJS.pm']
+                   '--generatorDependency', 'WebCore/bindings/scripts/CodeGeneratorJS.pm',
+                   '--showProgress']
+            for name in excluded_names:
+                cmd += ['--exclude', name + '.idl']
             try:
-                self.executive.run_command(cmd, env=self.generator_env)
+                output = self.executive.run_command(cmd, env=self.generator_env)
             except ScriptError as e:
                 print(e.output)
                 return None
-            after = modification_times()
-            return {os.path.splitext(name)[0][len('JS'):] for name in after if name.endswith('.cpp') and before.get(name) != after[name]}
+            # Bindings whose contents didn't change keep their modification times, so use the progress output.
+            return set(re.findall(r'^\[\d+/\d+\] (\w+)\.idl$', output, re.MULTILINE))
 
         passed = True
 
@@ -291,14 +294,28 @@ class BindingsTests:
 
         write_idl('TestChild', [exposed], parent='TestParent', members='    readonly attribute long value;\n')
         write_idl('TestCustomChild', [exposed], parent='TestCustomParent', members='    readonly attribute long value;\n')
+        before = modification_times()
         regenerated = generate({'TestChild', 'TestCustomChild'}) or set()
         check('Changing a child interface regenerates its parent', 'TestParent' in regenerated)
+        check("Regenerating bindings that didn't change doesn't rewrite them", modification_times()['JSTestParent.cpp'] == before['JSTestParent.cpp'])
         check("Changing a child interface doesn't regenerate a [CustomToJSObject] parent", 'TestCustomParent' not in regenerated)
 
         os.remove(os.path.join(idl_directory, 'TestChild.idl'))
         regenerated = generate(set()) or set()
         check('Removing a child interface regenerates its parent', 'TestParent' in regenerated)
         check("The regenerated parent doesn't convert to the removed child interface", not bindings_contain('TestParent', 'is<TestChild>'))
+
+        write_idl('TestExcluded', [exposed], members='    readonly attribute long initial;\n')
+        generate({'TestExcluded'})
+        # Change the interface after its bindings were generated (generate() dates unchanged IDL files in the past), and
+        # generate the bindings without it.
+        for extension in ('cpp', 'h'):
+            os.utime(os.path.join(output_directory, 'JSTestExcluded.%s' % extension), (unmodified_time - 1000, unmodified_time - 1000))
+        write_idl('TestExcluded', [exposed], members='    readonly attribute long revised;\n')
+        regenerated = generate(set(), excluded_names={'TestExcluded'}) or set()
+        check('Excluded interfaces are not regenerated', 'TestExcluded' not in regenerated)
+        generate(set())
+        check('An interface changed while it was excluded is regenerated once included', bindings_contain('TestExcluded', 'revised'))
 
         check('Unchanged interfaces are not regenerated', generate(set()) == set())
 

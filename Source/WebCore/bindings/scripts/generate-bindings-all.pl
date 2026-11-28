@@ -30,6 +30,8 @@ use lib $FindBin::Bin;
 
 use File::Basename;
 use File::Spec;
+use Digest::SHA qw(sha256_hex);
+use File::Temp qw(tempfile);
 use Getopt::Long;
 use Cwd;
 use English;
@@ -97,6 +99,16 @@ open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
 @idlFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
 close($fh) or die;
 
+# CodeGenerator::UpdateFile() does not rewrite generated files whose contents did not change, so that
+# the build does not recompile everything that depends on them. Their modification times therefore do not
+# tell whether they are up to date. Instead, every run that successfully generated all the bindings that
+# needed updating records its settings and IDL files in this file, and sets its modification time to the run's
+# start time. If the settings match, the generated files of those IDL files are considered to be at least as
+# new as it. Modification times have a granularity of one second here, so back the run start time off by a
+# second to make sure that input files changed while the run was starting are processed again.
+my $lastSuccessfulRunFile = File::Spec->catfile($outputDirectory, basename($idlFilesList) . ".last-generate-bindings-run");
+my $runStartTime = time() - 1;
+
 if (@exclude) {
     my %excluded = map { $_ => 1 } @exclude;
     @idlFiles = grep { !$excluded{basename($_)} } @idlFiles;
@@ -109,13 +121,29 @@ if ($ppIDLFilesList) {
     close($fh) or die;
 }
 
+# Settings that apply to every generated file. A change to any of them regenerates everything.
+my $settings = sha256_hex(encode_json([
+    $generator, $defines, $idlAttributesFile, $ppIDLFilesList, $supplementalDependencyFile,
+    $ignoreStandaloneConstructorAttributes, \@generatorDependency, \@ppExtraArgs, \@ppExtraOutput,
+]));
+my $lastSuccessfulRunTime;
+my %coveredByLastSuccessfulRun;
+if (open(my $previousRun, '<', $lastSuccessfulRunFile)) {
+    my ($previousSettings, @previousIDLFiles) = map { s/\r?\n?$//r } <$previousRun>;
+    if (defined $previousSettings && $previousSettings eq $settings) {
+        $lastSuccessfulRunTime = (stat $previousRun)[9];
+        %coveredByLastSuccessfulRun = map { $_ => 1 } @previousIDLFiles;
+    }
+    close($previousRun) or die "Cannot close $lastSuccessfulRunFile: $!";
+}
+
 my %oldSupplements;
 my %newSupplements;
 if ($supplementalDependencyFile) {
     if ($ppIDLFilesList) {
         my @output = ($supplementalDependencyFile, @ppExtraOutput);
         my @deps = ($ppIDLFilesList, @ppIDLFiles, @generatorDependency);
-        if (needsUpdate(\@output, \@deps)) {
+        if (!defined $lastSuccessfulRunTime || needsUpdate(\@output, \@deps, $lastSuccessfulRunTime)) {
             readSupplementalDependencyFile($supplementalDependencyFile, \%oldSupplements) if -e $supplementalDependencyFile;
             my @args = (File::Spec->catfile($scriptDir, 'preprocess-idls.pl'),
                         '--defines', $defines,
@@ -138,6 +166,7 @@ my %idlFilesByInterfaceName = map { (fileparse($_, '.idl'))[0] => $directoryCach
 my $childInterfaceNamesByParent = CodeGenerator::ChildInterfaceNamesByParent(\%idlFilesByInterfaceName);
 
 my @idlFilesToUpdate = grep &{sub {
+    return 1 unless defined $lastSuccessfulRunTime;
     my $absPath = Cwd::abs_path($_) || $_;
     my $oldSupplement = $oldSupplements{$absPath};
     if (defined($oldSupplement)
@@ -161,7 +190,7 @@ my @idlFilesToUpdate = grep &{sub {
                 @generatorDependency,
                 @{$newSupplements{$absPath} or []},
                 implicitDependencies($depFile));
-    needsUpdate(\@output, \@deps);
+    needsUpdate(\@output, \@deps, $coveredByLastSuccessfulRun{$_} ? $lastSuccessfulRunTime : undef);
 }}, @idlFiles;
 
 # Pre-parse shared data once in the parent process so forked children inherit it.
@@ -215,11 +244,18 @@ while (waitpid(-1, 0) != -1) {
     }
     spawnGenerateBindingsIfNeeded();
 }
+if (!$abort) {
+    my ($runFh, $temporary) = tempfile(".bindings-run-XXXXXXXX", DIR => $outputDirectory, UNLINK => 1);
+    print {$runFh} map { "$_\n" } $settings, @idlFiles or die "Cannot write $temporary: $!";
+    close($runFh) or die "Cannot close $temporary: $!";
+    utime($runStartTime, $runStartTime, $temporary) or die "Cannot set the time of $temporary: $!";
+    rename($temporary, $lastSuccessfulRunFile) or die "Cannot replace $lastSuccessfulRunFile: $!";
+}
 exit $abort;
 
 sub needsUpdate
 {
-    my ($objects, $depends) = @_;
+    my ($objects, $depends, $minimumObjectTime) = @_;
     my $oldestObjectTime;
     for (@$objects) {
         return 1 if !-f;
@@ -227,6 +263,9 @@ sub needsUpdate
         if (!defined $oldestObjectTime || $m < $oldestObjectTime) {
             $oldestObjectTime = $m;
         }
+    }
+    if (defined $minimumObjectTime && $oldestObjectTime < $minimumObjectTime) {
+        $oldestObjectTime = $minimumObjectTime;
     }
     for (@$depends) {
         die "Missing required dependency: $_" if !-f;
@@ -263,7 +302,8 @@ sub spawnGenerateBindingsIfNeeded
         for my $targetIdlFile (@files) {
             my $targetParser = IDLParser->new($suppressVerboseOutput);
             my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $idlAttributes);
-            my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList, $ignoreStandaloneConstructorAttributes);
+            my $writeIfChanged = 1;
+            my $codeGen = CodeGenerator->new($generator, $outputDirectory, $outputDirectory, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes, \%supplementalDependencies, $idlFileNamesList, $ignoreStandaloneConstructorAttributes, $writeIfChanged);
             $codeGen->ProcessDocument($targetDocument, $defines);
         }
         exit 0;
