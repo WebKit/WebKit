@@ -39,6 +39,9 @@ public:
 
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
+    static void destroy(JSCell*);
+
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -50,14 +53,18 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Ref<const Wasm::RTT>&&);
+    static WebAssemblyWrapperFunction* createFromJSFunction(VM&, JSGlobalObject*, Structure*, JSObject*, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSObject* function() LIFETIME_BOUND { return m_function.get(); }
+    void clearJSCallICs(VM&);
 
 private:
     WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* function, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
 
     WriteBarrier<JSObject> m_function;
+    std::unique_ptr<Wasm::WasmOrJSImportableFunctionCallLinkInfo> m_ownedCallLinkInfo;
+    RefPtr<const Wasm::RTT> m_ownedRTT;
 };
 
 } // namespace JSC
