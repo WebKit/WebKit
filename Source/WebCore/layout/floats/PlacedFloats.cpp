@@ -79,6 +79,13 @@ const Box& PlacedFloats::Item::layoutBox() const
     return m_renderer->layoutBox();
 }
 
+void PlacedFloats::Item::moveOnBlockAxis(LayoutUnit offset)
+{
+    m_absoluteBoxGeometry.moveVertically(offset);
+    m_marginBoxRect.moveVertically(offset);
+    m_localTopLeft.move(0_lu, offset);
+}
+
 PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
     : m_blockFormattingContextRoot(blockFormattingContextRoot)
     , m_writingMode(blockFormattingContextRoot.writingMode())
@@ -125,6 +132,17 @@ void PlacedFloats::add(Item newFloatItem)
     m_list.insert(m_list.findIf([&](auto& floatItem) {
         return isOnSameSideAndSharesBlockAxisPosition(floatItem) && isFurtherInward(floatItem);
     }), newFloatItem);
+}
+
+void PlacedFloats::moveOnBlockAxis(size_t index, LayoutUnit offset)
+{
+    ASSERT(offset >= 0);
+    auto& floatItem = m_list[index];
+    floatItem.moveOnBlockAxis(offset);
+    // A float that moves down can only lower these.
+    auto& lowestPositionOnBlockAxis = floatItem.isStartPositioned() ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
+    lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(floatItem.marginBoxBottom()), floatItem.marginBoxBottom());
+    m_lowestTopPositionOnBlockAxis = std::max(m_lowestTopPositionOnBlockAxis.value_or(floatItem.marginBoxTop()), floatItem.marginBoxTop());
 }
 
 bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingContextRoot) const

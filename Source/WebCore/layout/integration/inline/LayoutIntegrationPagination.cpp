@@ -30,11 +30,13 @@
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
 #include "LayoutContainingBlockChainIterator.h"
+#include "LayoutState.h"
 #include "PlacedFloats.h"
 #include "RenderBlockFlow.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleOrphans.h"
 #include "StyleWidows.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore::LayoutIntegration {
 
@@ -181,6 +183,23 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
             box.moveVertically(offset);
         else
             box.moveHorizontally(offset);
+    }
+}
+
+void adjustFloatPositionsForPagination(Layout::PlacedFloats& placedFloats, Layout::LayoutState& layoutState, const Vector<LineAdjustment>& adjustments, size_t layoutStartLineIndex)
+{
+    Borrow floats = placedFloats.list();
+    for (size_t index = 0; index < floats->size(); ++index) {
+        // A float moves with the line that placed it. The ones an earlier layout placed on the lines before the first line a partial layout
+        // lays out stay where that layout put them.
+        auto line = floats[index].placedByLine();
+        if (!line || *line < layoutStartLineIndex)
+            continue;
+        auto offset = adjustments[*line].offset;
+        if (!offset)
+            continue;
+        layoutState.ensureGeometryForBox(protect(floats[index].layoutBox())).moveVertically(offset);
+        placedFloats.moveOnBlockAxis(index, offset);
     }
 }
 

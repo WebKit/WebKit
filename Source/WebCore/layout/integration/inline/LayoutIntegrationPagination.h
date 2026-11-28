@@ -33,6 +33,7 @@ class RenderBlockFlow;
 
 namespace Layout {
 class BlockLayoutState;
+class LayoutState;
 class PlacedFloats;
 }
 
@@ -50,6 +51,7 @@ struct LayoutRestartLine {
 
 std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent&, const Layout::PlacedFloats&, size_t layoutStartLineIndex, bool allowLayoutRestart, const Layout::BlockLayoutState&, RenderBlockFlow&);
 void adjustLinePositionsForPagination(InlineContent&, const Vector<LineAdjustment>&);
+void adjustFloatPositionsForPagination(Layout::PlacedFloats&, Layout::LayoutState&, const Vector<LineAdjustment>&, size_t layoutStartLineIndex);
 
 }
 }

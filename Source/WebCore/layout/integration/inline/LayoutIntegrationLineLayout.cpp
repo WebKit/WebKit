@@ -795,14 +795,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         }
     }
 
-    HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
+    // Pagination moved these floats with their lines (see adjustFloatPositionsForPagination()).
+    HashSet<CheckedRef<const Layout::Box>> floatsOnPaginatedLines;
     if (!lineAdjustments.isEmpty()) {
         for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
-            // Floats an earlier layout placed on the lines before the first line a partial layout lays out stay where that layout put them.
-            if (!floatItem.placedByLine() || *floatItem.placedByLine() < layoutStartLineIndex)
-                continue;
-            auto adjustmentOffset = visualAdjustmentOffset(*floatItem.placedByLine());
-            floatPaginationOffsetMap.add(floatItem.layoutBox(), adjustmentOffset);
+            if (floatItem.placedByLine() && *floatItem.placedByLine() >= layoutStartLineIndex)
+                floatsOnPaginatedLines.add(floatItem.layoutBox());
         }
     }
 
@@ -836,12 +834,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto& floatingObject = blockFlow->insertFloatingBox(renderer);
             hasFloats = true;
             auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(logicalGeometry, m_inlineContentConstraints->formattingRootBorderBoxSize(), placedFloatsWritingMode);
-
-            auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
-            if (paginationOffset) {
-                marginBoxVisualRect.move(*paginationOffset);
-                borderBoxVisualRect.move(*paginationOffset);
-            }
             if (isInitialLetter) {
                 auto firstLineTrim = LayoutUnit { inlineLayoutState.firstLineStartTrimForInitialLetter() };
                 marginBoxVisualRect.move(0_lu, -firstLineTrim);
@@ -861,7 +853,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                     renderer->repaint();
             }
 
-            if (paginationOffset)
+            if (floatsOnPaginatedLines.contains(layoutBox))
                 relayoutAfterPaginationOffset(renderer);
 
             continue;
@@ -1329,6 +1321,7 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
 
     if (!adjustments.isEmpty()) {
         adjustLinePositionsForPagination(*m_inlineContent, adjustments);
+        adjustFloatPositionsForPagination(ensureBlockFormattingState().placedFloats(), protect(this->layoutState()), adjustments, layoutStartLineIndex);
         m_inlineContent->setFirstLinePaginationOffset(adjustments[0].offset);
     }
 

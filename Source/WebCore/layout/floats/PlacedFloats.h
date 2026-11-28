@@ -81,6 +81,8 @@ public:
 
         const Box& layoutBox() const;
 
+        void moveOnBlockAxis(LayoutUnit);
+
     private:
         SingleThreadWeakPtr<const RenderElement> m_renderer;
         Position m_position;
@@ -95,6 +97,7 @@ public:
 
     void add(Item);
     bool remove(const Box&);
+    void moveOnBlockAxis(size_t index, LayoutUnit offset);
     void clear();
 
     bool isEmpty() const { return list().isEmpty(); }
