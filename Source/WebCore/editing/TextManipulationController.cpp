@@ -403,7 +403,7 @@ bool TextManipulationController::shouldExcludeNodeBasedOnStyle(const Node& node)
     if (!style)
         return false;
 
-    Ref font = protect(style->fontCascade())->primaryFont();
+    Ref font = style->fontCascade().primaryFont();
     auto familyName = font->platformData().familyName();
     if (familyName.isEmpty())
         return false;

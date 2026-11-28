@@ -293,7 +293,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                             // <length> values should behave here.
 
                             RefPtr document = dynamicDowncast<Document>(context);
-                            CheckedPtr rootFontCascade = rootFontCascadeForRootFontUnits(context);
+                            auto* rootFontCascade = rootFontCascadeForRootFontUnits(context);
                             return {
                                 .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyID::FontSize, fontCascade, rootFontCascade ? *rootFontCascade : fontCascade, document ? document->renderView() : nullptr)),
                                 .keyword = CSSValueID::Invalid

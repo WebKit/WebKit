@@ -32,14 +32,11 @@ rendering/RenderText.cpp
 rendering/RenderView.cpp
 rendering/TextBoxTrimmer.cpp
 rendering/paint/BackgroundPainter.cpp
-rendering/paint/EllipsisBoxPainter.cpp
 rendering/paint/InlineBoxPainter.cpp
 rendering/paint/TextBoxPainter.cpp
-rendering/paint/TextDecorationPainter.cpp
 style/ElementRuleCollector.cpp
 style/MatchResultCache.cpp
 style/MatchedDeclarationsCache.cpp
 style/StyleResolver.cpp
 style/StyleTreeResolver.cpp
-style/computed/StyleComputedStyleBase.cpp
 style/values/primitives/StyleLengthResolution.cpp

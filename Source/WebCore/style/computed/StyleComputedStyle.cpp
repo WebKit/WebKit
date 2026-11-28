@@ -417,7 +417,7 @@ const WTF::String& ComputedStyle::hyphenString() const
             static MainThreadNeverDestroyed<const WTF::String> hyphenMinusString(span(hyphenMinus));
             static MainThreadNeverDestroyed<const WTF::String> hyphenString(span(hyphen));
 
-            return protect(protect(fontCascade())->primaryFont())->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
+            return protect(fontCascade().primaryFont())->glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
         },
         [](const String& string) -> const WTF::String& {
             return string.value;

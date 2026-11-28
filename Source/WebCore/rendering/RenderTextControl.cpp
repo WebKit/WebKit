@@ -161,15 +161,15 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
 float RenderTextControl::getAverageCharWidth()
 {
     CheckedRef style = this->style();
-    CheckedRef font = style->fontCascade();
+    auto& font = style->fontCascade();
     float width;
-    if (font->fastAverageCharWidthIfAvailable(width))
+    if (font.fastAverageCharWidthIfAvailable(width))
         return width;
 
     const char16_t ch = '0';
     const String str = span(ch);
     TextRun textRun = constructTextRun(str, style, ExpansionBehavior::allowRightOnly());
-    return font->width(textRun);
+    return font.width(textRun);
 }
 
 float RenderTextControl::scaleEmToUnits(int x) const

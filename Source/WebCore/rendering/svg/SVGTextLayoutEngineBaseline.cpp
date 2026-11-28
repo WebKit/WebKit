@@ -45,13 +45,13 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedS
             return 0;
         },
         [&](const CSS::Keyword::Sub&) -> float {
-            return -m_font->metricsOfPrimaryFont().height() / 2;
+            return -m_font.metricsOfPrimaryFont().height() / 2;
         },
         [&](const CSS::Keyword::Super&) -> float {
-            return m_font->metricsOfPrimaryFont().height() / 2;
+            return m_font.metricsOfPrimaryFont().height() / 2;
         },
         [&](const Style::SVGBaselineShift::LengthPercentage& value) -> float {
-            return Style::evaluate<float>(value, m_font->size(), style.usedZoomForLength());
+            return Style::evaluate<float>(value, m_font.size(), style.usedZoomForLength());
         }
     );
 }
@@ -108,7 +108,7 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textStyle);
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }
-    return BaselineAlignment::baselineOffsetFromAlphabeticBaseline(baseline, m_font->metricsOfPrimaryFont());
+    return BaselineAlignment::baselineOffsetFromAlphabeticBaseline(baseline, m_font.metricsOfPrimaryFont());
 }
 
 float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVerticalText, const Style::ComputedStyle& style, const char32_t& character) const
@@ -173,7 +173,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
     // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
     // 180 degrees, then the current text position is incremented according to the horizontal metrics of the glyph.
 
-    const FontMetrics& fontMetrics = m_font->metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = m_font.metricsOfPrimaryFont();
     float ascent = fontMetrics.ascent();
     float descent = fontMetrics.descent();
 

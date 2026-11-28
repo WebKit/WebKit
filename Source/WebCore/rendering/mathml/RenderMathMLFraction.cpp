@@ -80,7 +80,7 @@ RenderBox& RenderMathMLFraction::denominator() const
 
 LayoutUnit RenderMathMLFraction::defaultLineThickness() const
 {
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::FractionRuleThickness));
     return ruleThicknessFallback();
@@ -108,7 +108,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
 
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
     bool display = style().mathStyle() == MathStyle::Normal;
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::MathConstant::FractionNumDisplayStyleGapMin : OpenTypeMathData::MathConstant::FractionNumeratorGapMin);
         denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::MathConstant::FractionDenomDisplayStyleGapMin : OpenTypeMathData::MathConstant::FractionDenominatorGapMin);
@@ -148,7 +148,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
     
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
     bool display = style().mathStyle() == MathStyle::Normal;
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::MathConstant::StackDisplayStyleGapMin : OpenTypeMathData::MathConstant::StackGapMin);
         parameters.numeratorShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::MathConstant::StackTopDisplayStyleShiftUp : OpenTypeMathData::MathConstant::StackTopShiftUp);

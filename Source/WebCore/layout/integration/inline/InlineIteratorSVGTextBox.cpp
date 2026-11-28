@@ -69,7 +69,7 @@ FloatRect SVGTextBox::calculateBoundariesIncludingSVGTransform(const RenderSVGIn
     float scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
 
-    float baseline = protect(text.scaledFont())->metricsOfPrimaryFont().ascent() / scalingFactor;
+    float baseline = text.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
     for (auto& fragment : fragments) {
         auto fragmentRect = FloatRect { fragment.x, fragment.y - baseline, fragment.width, fragment.height };
 

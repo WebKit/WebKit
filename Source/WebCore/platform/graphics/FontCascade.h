@@ -89,9 +89,12 @@ public:
 
 enum class ForTextEmphasis : bool { No, Yes };
 
-class FontCascade final : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+// FontCascade is a value type that is frequently embedded in other objects (e.g. Style::FontData,
+// canvas state), so it intentionally does not support CheckedPtr / WeakPtr. Code that needs to
+// hold on to a FontCascade should either copy it, protect its owner, or be stack-only
+// (WTF_FORBID_HEAP_ALLOCATION) and hold a reference to a FontCascade that outlives it.
+class FontCascade final {
     WTF_MAKE_TZONE_ALLOCATED(FontCascade);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontCascade);
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);

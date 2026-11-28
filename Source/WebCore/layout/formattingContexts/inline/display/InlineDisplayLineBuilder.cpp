@@ -255,7 +255,7 @@ static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float 
     if (displayBox.isText()) {
         CheckedRef inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
         auto& textContent = displayBox.text();
-        CheckedRef fontCascade = displayBox.style().fontCascade();
+        auto& fontCascade = displayBox.style().fontCascade();
         auto start = textContent.start();
         auto length = textContent.length();
         auto isLeftToRightContent = !(displayBox.bidiLevel() % 2);
@@ -369,7 +369,7 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     auto& rootInlineBox = displayBoxes.front();
     // The ellipsis is not part of ::first-line, and it is painted with the root style too (see EllipsisBoxPainter).
     CheckedRef rootStyle = rootInlineBox.layoutBox().style();
-    auto ellipsisWidth = std::max(0.f, protect(rootStyle->fontCascade())->width(ellipsisText));
+    auto ellipsisWidth = std::max(0.f, rootStyle->fontCascade().width(ellipsisText));
 
     auto contentNeedsTruncation = [&] {
         switch (lineEndingTruncationPolicy) {
@@ -672,7 +672,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::placeTrai
             return displayBox.isInlineBox();
         });
         // The block ellipsis is measured and painted with the root style, not the ::first-line style (see InlineFormattingUtils::blockEllipsisForLine).
-        truncateBlockEllipsisForTextOverflow(ellipsis, blockEllipsis->hangingWidth, isFirstContentOnLine, displayLine, styleForTruncation, protect(displayBoxes[0].layoutBox().style().fontCascade()));
+        truncateBlockEllipsisForTextOverflow(ellipsis, blockEllipsis->hangingWidth, isFirstContentOnLine, displayLine, styleForTruncation, displayBoxes[0].layoutBox().style().fontCascade());
         return ellipsis;
     }
     if (truncationPolicy == LineEndingTruncationPolicy::NoTruncation)

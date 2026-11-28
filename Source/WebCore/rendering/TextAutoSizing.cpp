@@ -121,7 +121,7 @@ unsigned TextAutoSizingHashTranslator::hash(const Style::ComputedStyle& style)
     hash ^= std::to_underlying(style.lineBreak());
     hash ^= std::to_underlying(style.textSecurity());
     hash ^= style.lineHeight().valueForHash();
-    hash ^= computeFontHash(protect(style.fontCascade()));
+    hash ^= computeFontHash(style.fontCascade());
     hash ^= WTF::FloatHash<float>::hash(style.borderHorizontalSpacing().unresolvedValue());
     hash ^= WTF::FloatHash<float>::hash(style.borderVerticalSpacing().unresolvedValue());
     hash ^= std::to_underlying(style.boxDirection());
@@ -151,7 +151,7 @@ bool TextAutoSizingHashTranslator::equal(const Style::ComputedStyle& styleA, con
         && styleA.lineBreak() == styleB.lineBreak()
         && styleA.textSecurity() == styleB.textSecurity()
         && styleA.lineHeight() == styleB.lineHeight()
-        && protect(styleA.fontCascade())->equalForTextAutoSizing(protect(styleB.fontCascade()))
+        && styleA.fontCascade().equalForTextAutoSizing(styleB.fontCascade())
         && styleA.borderHorizontalSpacing() == styleB.borderHorizontalSpacing()
         && styleA.borderVerticalSpacing() == styleB.borderVerticalSpacing()
         && styleA.boxDirection() == styleB.boxDirection()

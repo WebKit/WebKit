@@ -158,7 +158,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
     if (paintInfo.phase == PaintPhase::Foreground) {
         const String& displayedFilename = fileTextValue();
         CheckedRef style = this->style();
-        CheckedRef font = style->fontCascade();
+        auto& font = style->fontCascade();
         TextRun textRun = constructTextRun(displayedFilename, style, ExpansionBehavior::allowRightOnly(), RespectDirection | RespectDirectionOverride);
 #if PLATFORM(COCOA)
         int iconLogicalHeight = nodeLogicalHeight(uploadButton());
@@ -182,7 +182,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
         if (writingMode().isLogicalLeftInlineStart())
             textLogicalLeft = contentLogicalLeft + buttonAndIconLogicalWidth;
         else
-            textLogicalLeft = contentLogicalLeft + contentBoxLogicalWidth() - buttonAndIconLogicalWidth - font->width(textRun);
+            textLogicalLeft = contentLogicalLeft + contentBoxLogicalWidth() - buttonAndIconLogicalWidth - font.width(textRun);
 
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
@@ -194,7 +194,7 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
                         textVisualRect.setLocation(buttonTextRenderer->localToContainerPoint(textVisualRect.location(), this));
                         textVisualRect.moveBy(roundPointToDevicePixels(paintOffset, document().deviceScaleFactor()));
 
-                        auto metrics = protect(textBox->style()->fontCascade())->metricsOfPrimaryFont();
+                        auto metrics = textBox->style()->fontCascade().metricsOfPrimaryFont();
 
                         if (!isHorizontalWritingMode) {
                             if (isBlockFlipped)
@@ -221,8 +221,8 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
             GraphicsContextStateSaver stateSaver(paintInfo.context());
 
             if (writingMode().isLineOverLeft()) {
-                textLogicalLeft += font->width(textRun);
-                textLogicalTop += font->metricsOfPrimaryFont().ascent();
+                textLogicalLeft += font.width(textRun);
+                textLogicalTop += font.metricsOfPrimaryFont().ascent();
             }
 
             auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, document().deviceScaleFactor());
@@ -287,14 +287,14 @@ std::pair<LayoutUnit, LayoutUnit> RenderFileUploadControl::computeIntrinsicLogic
     const char16_t character = '0';
     const String characterAsString = span(character);
     CheckedRef style = this->style();
-    CheckedRef font = style->fontCascade();
+    auto& font = style->fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
     auto characterTextRun = constructTextRun(characterAsString, style, ExpansionBehavior::allowRightOnly());
-    float minDefaultLabelWidth = defaultWidthNumChars * font->width(characterTextRun);
+    float minDefaultLabelWidth = defaultWidthNumChars * font.width(characterTextRun);
 
     const String label = theme().fileListDefaultLabel(inputElement().multiple());
     auto labelTextRun = constructTextRun(label, style, ExpansionBehavior::allowRightOnly());
-    float defaultLabelWidth = font->width(labelTextRun);
+    float defaultLabelWidth = font.width(labelTextRun);
     if (RefPtr button = uploadButton()) {
         if (CheckedPtr buttonRenderer = dynamicDowncast<RenderBox>(button->renderer()))
             defaultLabelWidth += buttonRenderer->maxContentLogicalWidthContribution() + afterButtonSpacing;
@@ -345,7 +345,7 @@ String RenderFileUploadControl::fileTextValue() const
     Ref input = inputElement();
     if (!input->files())
         return { };
-    CheckedRef fontCascade = style().fontCascade();
+    auto& fontCascade = style().fontCascade();
     if (input->files()->length() && !input->displayString().isEmpty()) {
         if (input->files()->length() == 1)
             return StringTruncator::centerTruncate(input->displayString(), maxFilenameLogicalWidth(), fontCascade);

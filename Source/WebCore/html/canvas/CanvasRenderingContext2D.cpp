@@ -246,7 +246,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     // When there is no root font, they resolve against `fontDescription` and are covered by it.
     // See https://github.com/whatwg/html/issues/10893 for the open question of how non-absolute
     // <length> values should behave here.
-    CheckedPtr rootFontCascade = Style::rootFontCascadeForRootFontUnits(document.get());
+    auto* rootFontCascade = Style::rootFontCascadeForRootFontUnits(document.get());
 
     if (newFont == state().unparsedFont && protect(state().font)->realized()
         && fontDescription == state().fontResolutionBase
@@ -274,7 +274,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     modifiableState().fontResolutionBase = WTF::move(fontDescription);
     modifiableState().rootFontResolutionBase = rootFontCascade ? rootFontCascade->fontDescription() : FontCascadeDescription { };
 
-    protect(modifiableState().font)->initialize(protect(document->fontSelector()), protect(*fontCascade));
+    protect(modifiableState().font)->initialize(protect(document->fontSelector()), *fontCascade);
     ASSERT(protect(state().font)->realized());
     ASSERT(protect(state().font)->isPopulated());
 

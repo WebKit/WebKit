@@ -1399,9 +1399,9 @@ Style::LineWidthBox RenderTheme::controlBorder(StyleAppearance appearance, const
 void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(Style::ComputedStyle& style, const Element* element) const
 {
     auto appearance = style.usedAppearance();
-    CheckedRef fontCascade = style.fontCascade();
+    auto& fontCascade = style.fontCascade();
 
-    auto borderBox = controlBorder(appearance, fontCascade.get(), Style::effectiveBorderWidths(style).to<Style::LineWidthBox>(), style.usedZoom(), element);
+    auto borderBox = controlBorder(appearance, fontCascade, Style::effectiveBorderWidths(style).to<Style::LineWidthBox>(), style.usedZoom(), element);
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
@@ -1457,14 +1457,14 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     // The width and height here are affected by the zoom.
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     auto zoomForDeterminingControlSize = Style::ZoomFactor { usedZoomForComputedStyle(style) };
-    auto controlSize = this->controlSize(appearance, fontCascade.get(), { style.width(), style.height() }, zoomForDeterminingControlSize.value);
+    auto controlSize = this->controlSize(appearance, fontCascade, { style.width(), style.height() }, zoomForDeterminingControlSize.value);
     if (controlSize.width() != style.width())
         style.setWidth(Style::PreferredSize { controlSize.width() });
     if (controlSize.height() != style.height())
         style.setHeight(Style::PreferredSize { controlSize.height() });
 
     // Min-Width / Min-Height
-    auto minimumControlSize = this->minimumControlSize(appearance, fontCascade.get(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, zoomForDeterminingControlSize.value);
+    auto minimumControlSize = this->minimumControlSize(appearance, fontCascade, { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, zoomForDeterminingControlSize.value);
 
     // FIXME: The min-width/min-heigh value should use `calc-size()` when supported to make non-specified overrides work.
 
@@ -1517,7 +1517,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     }
 
     // Font
-    if (auto controlFont = this->controlFont(appearance, fontCascade.get(), style.usedZoom())) {
+    if (auto controlFont = this->controlFont(appearance, fontCascade, style.usedZoom())) {
         // If overriding the specified font with the theme font, also override the line height with the standard line height.
         style.setLineHeight(Style::ComputedStyle::initialLineHeight());
         style.setTextAutosizingAdjustedLineHeight(Style::ComputedStyle::initialLineHeight());
@@ -1727,7 +1727,7 @@ void RenderTheme::adjustSwitchStyle(Style::ComputedStyle& style, const Element*)
     // FIXME: This probably has the same flaw as
     // RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle() by not taking
     // min-width/min-height into account.
-    auto controlSize = this->controlSize(StyleAppearance::Switch, protect(style.fontCascade()).get(), { style.logicalWidth(), style.logicalHeight() }, usedZoomForComputedStyle(style));
+    auto controlSize = this->controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, usedZoomForComputedStyle(style));
     style.setLogicalWidth(Style::PreferredSize { controlSize.width() });
     style.setLogicalHeight(Style::PreferredSize { controlSize.height() });
 }

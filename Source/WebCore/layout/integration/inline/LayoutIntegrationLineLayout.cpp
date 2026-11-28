@@ -497,8 +497,8 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
             lineGridOffset = lineGridOffset.transposedSize();
         }
 
-        CheckedRef fontCascade = lineGrid->style().fontCascade();
-        auto columnWidth = fontCascade->primaryFont().maxCharWidth();
+        auto& fontCascade = lineGrid->style().fontCascade();
+        auto columnWidth = fontCascade.primaryFont().maxCharWidth();
         auto rowHeight = LayoutUnit::fromFloatCeil(protect(lineGrid->style())->usedLineHeight());
         auto topRowOffset = lineGrid->borderAndPaddingBefore();
 
@@ -511,7 +511,7 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
             pageLogicalTop = rootRenderer.pageLogicalTopForOffset(0_lu);
         }
 
-        return Layout::BlockLayoutState::LineGrid { layoutOffset, lineGridOffset, columnWidth, rowHeight, topRowOffset, fontCascade->primaryFont(), paginationOrigin, pageLogicalTop };
+        return Layout::BlockLayoutState::LineGrid { layoutOffset, lineGridOffset, columnWidth, rowHeight, topRowOffset, fontCascade.primaryFont(), paginationOrigin, pageLogicalTop };
     }
 
     return { };

@@ -3155,6 +3155,8 @@ static void applyCommonButtonPaddingToStyleForVectorBasedControls(Style::Compute
 
 // FIXME: This is a copy of RenderThemeMeasureTextClient from RenderThemeIOS. Refactor to remove duplicate code.
 class RenderThemeMeasureTextClientForVectorBasedControls : public MeasureTextClient {
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     RenderThemeMeasureTextClientForVectorBasedControls(const FontCascade& font, const Style::ComputedStyle& style)
         : m_font(font)
@@ -3164,10 +3166,10 @@ public:
     float measureText(const String& string) const override
     {
         TextRun run = RenderBlock::constructTextRun(string, m_style);
-        return m_font->width(run);
+        return m_font.width(run);
     }
 private:
-    const CheckedRef<const FontCascade> m_font;
+    const FontCascade& m_font;
     const CheckedRef<const Style::ComputedStyle> m_style;
 };
 
@@ -3192,7 +3194,7 @@ static void adjustInputElementButtonStyleForVectorBasedControls(Style::ComputedS
 #endif
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    FontCascade font { CheckedRef { style.fontCascade() } };
+    FontCascade font { style.fontCascade() };
 
     float estimatedMaximumWidth = localizedDateCache().estimatedMaximumWidthForDateType(dateType, font, RenderThemeMeasureTextClientForVectorBasedControls(font, style));
 

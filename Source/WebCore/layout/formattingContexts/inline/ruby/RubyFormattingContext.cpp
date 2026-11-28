@@ -184,7 +184,7 @@ static InlineLayoutUnit overhangableSpaceAdvance(const InlineDisplay::Box& adjac
             ++end;
         return { displayText.start(), end };
     }();
-    return TextUtil::width(*adjacentTextBox, protect(adjacentDisplayBox.style().fontCascade()), whitespaceStart, whitespaceEnd, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+    return TextUtil::width(*adjacentTextBox, adjacentDisplayBox.style().fontCascade(), whitespaceStart, whitespaceEnd, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
 }
 
 InlineLayoutUnit RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext& inlineFormattingContext)

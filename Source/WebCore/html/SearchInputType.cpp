@@ -130,7 +130,7 @@ PopupMenuStyle SearchInputType::menuStyle() const
     return PopupMenuStyle(
         style->visitedDependentColorApplyingColorFilter(),
         style->visitedDependentUsedBackgroundColorApplyingColorFilter(),
-        protect(style->fontCascade()),
+        style->fontCascade(),
         nullString(),
         renderer ? renderer->usedStyle().visibility() == UsedVisibility::Visible : style->visibility() == Visibility::Visible,
         style->display() == Style::DisplayType::None,

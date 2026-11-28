@@ -215,11 +215,11 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
 
         if (textRun.is8Bit()) {
             Latin1TextIterator textIterator { textRun.span8(), 0, textRun.length() };
-            fallbackFontsForRunWithIterator(fallbackFonts, protect(style.fontCascade()), textRun, textIterator);
+            fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
             return;
         }
         SurrogatePairAwareTextIterator textIterator { textRun.span16(), 0, textRun.length() };
-        fallbackFontsForRunWithIterator(fallbackFonts, protect(style.fontCascade()), textRun, textIterator);
+        fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
     };
 
     if (includeHyphen == IncludeHyphen::Yes)
@@ -263,17 +263,17 @@ TextUtil::EnclosingAscentDescent TextUtil::enclosingGlyphBoundsForText(StringVie
         return { };
 
     if (shouldUseSimpleGlyphOverflowCodePath == ShouldUseSimpleGlyphOverflowCodePath::No) {
-        auto overflow = ComplexTextController::enclosingGlyphBoundsForTextRun(protect(style.fontCascade()), TextRun { textContent });
+        auto overflow = ComplexTextController::enclosingGlyphBoundsForTextRun(style.fontCascade(), TextRun { textContent });
         return { overflow.first, overflow.second };
     }
 
     if (textContent.is8Bit()) {
         Latin1TextIterator textIterator { textContent.span8(), 0, textContent.length() };
-        return enclosingGlyphBoundsForRunWithIterator(protect(style.fontCascade()), style.writingMode().isBidiRTL(), textIterator);
+        return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), style.writingMode().isBidiRTL(), textIterator);
     }
 
     SurrogatePairAwareTextIterator textIterator { textContent.span16(), 0, textContent.length() };
-    return enclosingGlyphBoundsForRunWithIterator(protect(style.fontCascade()), style.writingMode().isBidiRTL(), textIterator);
+    return enclosingGlyphBoundsForRunWithIterator(style.fontCascade(), style.writingMode().isBidiRTL(), textIterator);
 }
 
 TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
@@ -773,7 +773,7 @@ AtomString TextUtil::ellipsisStringWithCollapsedForcedLineBreaks(const String& s
 
 InlineLayoutUnit TextUtil::hyphenWidth(const Style::ComputedStyle& style)
 {
-    return std::max(0.f, protect(style.fontCascade())->width(StringView { style.hyphenString() }));
+    return std::max(0.f, style.fontCascade().width(StringView { style.hyphenString() }));
 }
 
 NODELETE static bool isASCIIHangableQuote(char32_t character)
@@ -811,7 +811,7 @@ float TextUtil::hangablePunctuationStartWidth(const InlineTextItem& inlineTextIt
         return { };
     ASSERT(inlineTextItem.length());
     auto leadingPosition = inlineTextItem.start();
-    return width(inlineTextItem, protect(style.fontCascade()), leadingPosition, leadingPosition + 1, { });
+    return width(inlineTextItem, style.fontCascade(), leadingPosition, leadingPosition + 1, { });
 }
 
 bool TextUtil::hasHangablePunctuationEnd(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style)
@@ -828,7 +828,7 @@ float TextUtil::hangablePunctuationEndWidth(const InlineTextItem& inlineTextItem
         return { };
     ASSERT(inlineTextItem.length());
     auto trailingPosition = inlineTextItem.end() - 1;
-    return width(inlineTextItem, protect(style.fontCascade()), trailingPosition, trailingPosition + 1, { });
+    return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
 float TextUtil::hangablePunctuationEndWidth(const String& text, const Style::ComputedStyle& style)
@@ -837,7 +837,7 @@ float TextUtil::hangablePunctuationEndWidth(const String& text, const Style::Com
         return { };
     if (!isHangableClosePunctuation(text[text.length() - 1]))
         return { };
-    return protect(style.fontCascade())->width(text.right(1));
+    return style.fontCascade().width(text.right(1));
 }
 
 bool TextUtil::hasHangableStopOrCommaEnd(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style)
@@ -862,7 +862,7 @@ float TextUtil::hangableStopOrCommaEndWidth(const InlineTextItem& inlineTextItem
         return { };
     ASSERT(inlineTextItem.length());
     auto trailingPosition = inlineTextItem.end() - 1;
-    return width(inlineTextItem, protect(style.fontCascade()), trailingPosition, trailingPosition + 1, { });
+    return width(inlineTextItem, style.fontCascade(), trailingPosition, trailingPosition + 1, { });
 }
 
 template<typename CharacterType>

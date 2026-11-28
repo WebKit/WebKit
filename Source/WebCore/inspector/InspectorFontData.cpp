@@ -448,7 +448,7 @@ std::optional<FontData> getFontData(Node& node)
         renderedFonts.appendIfNotContains(renderedFont);
 
     return { {
-        buildObjectForFont(protect(protect(computedStyle->fontCascade())->primaryFont())),
+        buildObjectForFont(protect(computedStyle->fontCascade().primaryFont())),
         buildRenderedFonts(renderedFonts),
         buildCharacterRanges(recorder.missingCharacters()),
     } };

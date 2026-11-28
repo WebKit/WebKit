@@ -2983,7 +2983,7 @@ PopupMenuStyle HTMLSelectElement::itemStyle(unsigned listIndex) const
     return PopupMenuStyle(
         style->visitedDependentColorApplyingColorFilter(),
         itemBackgroundColor,
-        protect(style->fontCascade()),
+        style->fontCascade(),
         element->getAttribute(langAttr),
         style->visibility() == Visibility::Visible,
         style->display() == Style::DisplayType::None,
@@ -3005,7 +3005,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
         return PopupMenuStyle(
             Color::black,
             Color::white,
-            protect(defaultStyle->fontCascade()),
+            defaultStyle->fontCascade(),
             nullString(),
             true,
             false,
@@ -3021,7 +3021,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
     return PopupMenuStyle(
         outerStyle->visitedDependentColorApplyingColorFilter(),
         outerStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(),
-        protect(outerStyle->fontCascade()),
+        outerStyle->fontCascade(),
         nullString(),
         renderer->usedStyle().visibility() == UsedVisibility::Visible,
         outerStyle->display() == Style::DisplayType::None,

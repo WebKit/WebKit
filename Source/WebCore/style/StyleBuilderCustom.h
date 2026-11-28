@@ -528,7 +528,7 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
 
     // Step 4.
 #if ENABLE(MATHML)
-    Ref primaryFont = protect(builderState.style().fontCascade())->primaryFont();
+    Ref primaryFont = builderState.style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         float scriptPercentScaleDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::ScriptPercentScaleDown);
         if (!scriptPercentScaleDown)

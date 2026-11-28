@@ -648,7 +648,7 @@ LayoutRect TextBoxPainter::measuredSelectionRectForRange(unsigned startOffset, u
 
         buildTextForShaping(shapedContent, makeIterator(), true);
         if (shapedContent.text.isEmpty()) {
-            protect(fontCascade())->adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
+            fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
             return rect;
         }
         rect.setX(rect.x() - shapedContent.textBoxVisualLeft);
@@ -661,11 +661,11 @@ LayoutRect TextBoxPainter::measuredSelectionRectForRange(unsigned startOffset, u
         paintRect.shiftXEdgeTo(shapedContent.visualLeft);
         auto run = TextRun { shapedContent.text, paintRect.x(), expansion.horizontalExpansion, expansion.behavior, m_textBox.direction(), m_style->rtlOrdering() == Order::Visual, characterScanForCodePath };
 
-        protect(fontCascade())->adjustSelectionRectForText(false, run, rect, adjustedStartOffset, adjustedStartOffset + rangeLength);
+        fontCascade().adjustSelectionRectForText(false, run, rect, adjustedStartOffset, adjustedStartOffset + rangeLength);
         return rect;
     }
 
-    protect(fontCascade())->adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
+    fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring(), m_paintTextRun, rect, startOffset, endOffset);
     return rect;
 }
 
@@ -1523,7 +1523,7 @@ void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& under
     if (!useWholeWidth) {
         float widthBeforeRange;
         float widthAfterRange;
-        width = protect(fontCascade())->widthOfTextRange(m_paintTextRun, paintStart - textBox().start(), paintEnd - textBox().start(), widthBeforeRange, widthAfterRange);
+        width = fontCascade().widthOfTextRange(m_paintTextRun, paintStart - textBox().start(), paintEnd - textBox().start(), widthBeforeRange, widthAfterRange);
         start = m_paintTextRun.ltr() ? widthBeforeRange : widthAfterRange;
     }
 
@@ -1733,14 +1733,14 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
 
 FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
 {
-    CheckedRef font = textBox->fontCascade();
+    auto& font = textBox->fontCascade();
     auto [y, height] = DocumentMarkerController::markerYPositionAndHeightForFont(font);
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
     if (markedText.startOffset || markedText.endOffset != textBox->selectableRange().clamp(textBox->end())) {
         auto run = textBox->textRun();
         auto selectionRect = LayoutRect { 0_lu, y, 0_lu, height };
-        font->adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), run, selectionRect, markedText.startOffset, markedText.endOffset);
+        font.adjustSelectionRectForText(textBox->renderer().canUseSimplifiedTextMeasuring(), run, selectionRect, markedText.startOffset, markedText.endOffset);
         return selectionRect;
     }
 

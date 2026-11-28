@@ -525,7 +525,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
         auto rect = protect(protect(document)->view())->contentsToMainFrameView(unionRect(RenderObject::absoluteTextRects(rangeToReplace)));
 
         if (CheckedPtr renderStyle = node.renderStyle()) {
-            CheckedRef font = renderStyle->fontCascadeOutOfLine();
+            auto& font = renderStyle->fontCascadeOutOfLine();
             auto [_, height] = DocumentMarkerController::markerYPositionAndHeightForFont(font);
 
             rect.setY(rect.y() + std::round(height / 2.0));

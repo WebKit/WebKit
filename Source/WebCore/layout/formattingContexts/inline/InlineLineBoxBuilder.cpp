@@ -126,7 +126,7 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLeve
         // Text in a display: contents element can have a font of its own. Like glyphs from fallback fonts, it only stretches
         // a parent inline box with line-height: normal (css-inline-3).
         CheckedRef parentStyle = isFirstFormattedLine() ? parentInlineBox.layoutBox().firstLineStyle() : parentInlineBox.layoutBox().style();
-        if (Ref primaryFont = protect(style.fontCascade())->primaryFont(); primaryFont.ptr() != &protect(parentStyle->fontCascade())->primaryFont())
+        if (Ref primaryFont = style.fontCascade().primaryFont(); primaryFont.ptr() != &parentStyle->fontCascade().primaryFont())
             fallbackFonts.add(primaryFont.get());
     }
     if (fallbackFonts.computeIsEmpty())
@@ -726,7 +726,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
             return false;
 
         auto primaryFontRequiresIdeographicBaseline = [&](const Style::ComputedStyle& style) {
-            return style.fontDescription().orientation() == FontOrientation::Vertical || protect(style.fontCascade())->primaryFont().hasVerticalGlyphs();
+            return style.fontDescription().orientation() == FontOrientation::Vertical || style.fontCascade().primaryFont().hasVerticalGlyphs();
         };
 
         if (m_fallbackFontRequiresIdeographicBaseline || primaryFontRequiresIdeographicBaseline(rootInlineBoxStyle))

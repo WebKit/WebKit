@@ -194,8 +194,7 @@ void ComputedStyleBase::setFontCascade(FontCascade&& fontCascade)
     if (fontCascade == this->fontCascade())
         return;
 
-    CheckedRef cascade = m_inheritedData.access().fontData.access().fontCascade;
-    cascade.get() = fontCascade;
+    m_inheritedData.access().fontData.access().fontCascade = fontCascade;
 }
 
 // MARK: - FontCascadeDescription support.
@@ -215,8 +214,8 @@ void ComputedStyleBase::setFontDescription(FontCascadeDescription&& description)
     if (fontDescription() == description)
         return;
 
-    CheckedRef existingFontCascade = this->fontCascade();
-    RefPtr fontSelector = existingFontCascade->fontSelector();
+    auto& existingFontCascade = this->fontCascade();
+    RefPtr fontSelector = existingFontCascade.fontSelector();
 
     auto newCascade = FontCascade { WTF::move(description), existingFontCascade };
     newCascade.update(WTF::move(fontSelector));
@@ -228,8 +227,8 @@ bool ComputedStyleBase::setFontDescriptionWithoutUpdate(FontCascadeDescription&&
     if (fontDescription() == description)
         return false;
 
-    CheckedRef cascade = m_inheritedData.access().fontData.access().fontCascade;
-    cascade.get() = FontCascade { WTF::move(description), cascade };
+    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
+    cascade = FontCascade { WTF::move(description), cascade };
     return true;
 }
 

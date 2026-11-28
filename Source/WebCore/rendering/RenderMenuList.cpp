@@ -100,9 +100,9 @@ void RenderMenuList::updateOptionsWidth()
         auto transformed = applyTextTransform(style, text);
         if (transformed.isEmpty())
             return;
-        CheckedRef font = style->fontCascade();
+        auto& font = style->fontCascade();
         auto run = RenderBlock::constructTextRun(transformed, style);
-        maxOptionWidth = std::max(maxOptionWidth, font->width(run));
+        maxOptionWidth = std::max(maxOptionWidth, font.width(run));
     };
 
     if (RefPtr button = select->buttonElement()) {
@@ -122,7 +122,7 @@ void RenderMenuList::updateOptionsWidth()
 
     // https://html.spec.whatwg.org/#width-of-the-select's-labels
     if (select->multiple()) {
-        CheckedRef font = style->fontCascade();
+        auto& font = style->fontCascade();
         // A button shows the count in place of its selectedcontent elements, see HTMLSelectElement::buttonText().
         bool countReplacesSelectedContent = select->buttonElement() && select->updatesSelectedContent();
         auto countTextWidth = [&](unsigned count) {
@@ -131,7 +131,7 @@ void RenderMenuList::updateOptionsWidth()
                 text = select->buttonLabelText(text);
             auto transformed = applyTextTransform(style, text);
             auto run = RenderBlock::constructTextRun(transformed, style);
-            return font->width(run);
+            return font.width(run);
         };
         widthWithoutOptions = countTextWidth(0);
         maxOptionWidth = std::max(maxOptionWidth, widthWithoutOptions);

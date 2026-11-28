@@ -3031,7 +3031,7 @@ String RenderBlock::updateSecurityDiscCharacters(const Style::ComputedStyle& sty
         return WTF::move(string);
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
     constexpr char16_t textSecurityDiscPUACodePoint = 0xF79A;
-    Ref font = protect(style.fontCascade())->primaryFont();
+    Ref font = style.fontCascade().primaryFont();
     if (!(font->platformData().isSystemFont() && font->glyphForCharacter(textSecurityDiscPUACodePoint)))
         return WTF::move(string);
 

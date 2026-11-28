@@ -249,7 +249,7 @@ RenderMathMLUnderOver::VerticalParameters RenderMathMLUnderOver::verticalParamet
     parameters.overExtraAscender = 0;
     parameters.accentBaseHeight = 0;
 
-    Ref primaryFont = protect(style().fontCascade())->primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     RefPtr mathData = primaryFont->mathData();
     if (!mathData) {
         // The MATH table specification does not really provide any suggestions, except for some underbar/overbar values and AccentBaseHeight.

@@ -20,7 +20,7 @@
 #pragma once
 
 #include <unicode/uchar.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -30,13 +30,15 @@ class FontCascade;
 // Helper class used by SVGTextLayoutAlgorithm to handle 'letter-spacing' and 'word-spacing'.
 class SVGTextLayoutEngineSpacing {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineSpacing);
+    // Stack-only: holds a reference to a FontCascade that must outlive it.
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     SVGTextLayoutEngineSpacing(const FontCascade&);
 
     NODELETE float calculateCSSSpacing(char32_t);
 
 private:
-    const CheckedRef<const FontCascade> m_font;
+    const FontCascade& m_font;
     char32_t m_lastCharacter { '\0' };
 };
 

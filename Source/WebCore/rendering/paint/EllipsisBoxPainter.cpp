@@ -149,7 +149,7 @@ void EllipsisBoxPainter::paintSelection()
 
     auto ellipsisText = m_lineBox.ellipsisText();
     constexpr bool canUseSimplifiedTextMeasuring = false;
-    protect(rootStyle->fontCascade())->adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
+    rootStyle->fontCascade().adjustSelectionRectForText(canUseSimplifiedTextMeasuring, ellipsisText, visualRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 

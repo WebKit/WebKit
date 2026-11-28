@@ -45,7 +45,7 @@ FontData::FontData()
 FontData::FontData(const FontData& o)
     : letterSpacing(o.letterSpacing)
     , wordSpacing(o.wordSpacing)
-    , fontCascade(protect(o.fontCascade))
+    , fontCascade(o.fontCascade)
 {
 }
 

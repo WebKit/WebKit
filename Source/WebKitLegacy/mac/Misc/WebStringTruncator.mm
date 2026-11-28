@@ -45,7 +45,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
         return currentFont;
     currentNSFont.get() = font;
     WebCore::FontCascade newFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-    protect(currentFont.get()).get() = newFont;
+    currentFont.get() = newFont;
     return currentFont;
 }
 
@@ -64,7 +64,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
     if (!menuFont.get())
         return nil;
 
-    return WebCore::StringTruncator::centerTruncate(string, maxWidth, protect(fontFromNSFont(menuFont.get().get()))).createNSString().autorelease();
+    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(menuFont.get().get())).createNSString().autorelease();
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
@@ -72,7 +72,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
     if (!font)
         return nil;
 
-    return WebCore::StringTruncator::centerTruncate(string, maxWidth, protect(fontFromNSFont(font))).createNSString().autorelease();
+    return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font)).createNSString().autorelease();
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
@@ -80,7 +80,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
     if (!font)
         return nil;
 
-    return WebCore::StringTruncator::rightTruncate(string, maxWidth, protect(fontFromNSFont(font))).createNSString().autorelease();
+    return WebCore::StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font)).createNSString().autorelease();
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
@@ -88,7 +88,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
     if (!font)
         return 0;
 
-    return WebCore::StringTruncator::width(string, protect(fontFromNSFont(font)));
+    return WebCore::StringTruncator::width(string, fontFromNSFont(font));
 }
 
 @end
