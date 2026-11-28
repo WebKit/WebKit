@@ -72,6 +72,7 @@ public struct Route: Sendable {
         let headerFields: [String: String]
         let response: Data
         var behavior: HTTPResponseData.Behavior = .sendResponseNormally
+        var heldResponse: HeldResponse?
 
         var path: String { pathComponents.joined() }
 
@@ -80,7 +81,8 @@ public struct Route: Sendable {
                 statusCode: UInt(statusCode),
                 headerFields: headerFields.map { (name: $0.key, value: $0.value) },
                 body: response,
-                behavior: behavior
+                behavior: behavior,
+                heldResponse: heldResponse
             )
         }
     }
@@ -96,7 +98,8 @@ public struct Route: Sendable {
         statusCode: Int,
         headerFields: [String: String],
         response: Data,
-        behavior: HTTPResponseData.Behavior = .sendResponseNormally
+        behavior: HTTPResponseData.Behavior = .sendResponseNormally,
+        heldResponse: HeldResponse? = nil
     ) {
         self.children = [
             Storage(
@@ -104,7 +107,8 @@ public struct Route: Sendable {
                 statusCode: statusCode,
                 headerFields: headerFields,
                 response: response,
-                behavior: behavior
+                behavior: behavior,
+                heldResponse: heldResponse
             )
         ]
     }
@@ -122,7 +126,8 @@ public struct Route: Sendable {
                     statusCode: $0.statusCode,
                     headerFields: $0.headerFields,
                     response: $0.response,
-                    behavior: $0.behavior
+                    behavior: $0.behavior,
+                    heldResponse: $0.heldResponse
                 )
             }
     }
@@ -154,6 +159,11 @@ public struct Route: Sendable {
         self.init(path: path, statusCode: 200, headerFields: headerFields, response: Data(response().utf8), behavior: .neverFinishResponse)
     }
 
+    /// Creates a Route whose response the server sends only once the test sends `heldResponse`.
+    public init(_ path: String, headerFields: [String: String] = [:], heldBy heldResponse: HeldResponse, _ response: () -> String) {
+        self.init(path: path, statusCode: 200, headerFields: headerFields, response: Data(response().utf8), heldResponse: heldResponse)
+    }
+
     /// Changes how this route responds to requests for its path.
     ///
     /// For example, a route can close the connection instead of responding:
@@ -173,10 +183,62 @@ public struct Route: Sendable {
                     statusCode: child.statusCode,
                     headerFields: child.headerFields,
                     response: child.response,
-                    behavior: .init(behavior)
+                    behavior: .init(behavior),
+                    heldResponse: child.heldResponse
                 )
             }
         )
+    }
+}
+
+/// A response that the server holds back until the test sends it, so that a load stays in flight while the test acts.
+@MainActor
+public final class HeldResponse {
+    private enum State {
+        case held
+        case sent
+        case abandoned
+    }
+
+    /// Whether the server has received a request for the route.
+    public private(set) var hasReceivedRequest = false
+
+    private var state = State.held
+    private var waitingRequests: [CheckedContinuation<Bool, Never>] = []
+
+    /// Creates a response that the server holds until the test sends it.
+    public init() {}
+
+    /// Sends the response to the requests that wait for it, and to later requests right away.
+    public func send() {
+        finish(.sent)
+    }
+
+    func abandon() {
+        finish(.abandoned)
+    }
+
+    func waitUntilSent() async -> Bool {
+        hasReceivedRequest = true
+        switch state {
+        case .held:
+            return await withCheckedContinuation { waitingRequests.append($0) }
+        case .sent:
+            return true
+        case .abandoned:
+            return false
+        }
+    }
+
+    private func finish(_ newState: State) {
+        guard state == .held else {
+            return
+        }
+
+        state = newState
+        for request in exchange(&waitingRequests, with: []) {
+            request.resume(returning: newState == .sent)
+        }
     }
 }
 

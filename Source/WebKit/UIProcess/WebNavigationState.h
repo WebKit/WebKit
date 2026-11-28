@@ -71,6 +71,8 @@ public:
     RefPtr<API::Navigation> findNavigation(NOESCAPE const Function<bool(API::Navigation&)>&) const;
     void didDestroyNavigation(WebCore::ProcessIdentifier, WebCore::NavigationIdentifier);
     void clearAllNavigations();
+    void markAllNavigationsAsStopped();
+    void markNavigationsAsReplaced(const API::Navigation& newNavigation);
 
     void clearNavigationsFromProcess(WebCore::ProcessIdentifier);
 
