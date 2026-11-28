@@ -60,7 +60,7 @@ public:
     constexpr bool concurrentTestAndClear(size_t, Dependency = Dependency()); // Returns the previous bit value.
     constexpr size_t nextPossiblyUnset(size_t) const;
     constexpr void clear(size_t);
-    constexpr void clearAll();
+    NODELETE constexpr void clearAll();
     constexpr void setAll();
     constexpr void invert();
     constexpr int64_t findRunOfZeros(size_t runLength) const;
@@ -236,7 +236,7 @@ inline constexpr void BitSet<bitSetSize, WordType>::clear(size_t n)
 }
 
 template<size_t bitSetSize, typename WordType>
-inline constexpr void BitSet<bitSetSize, WordType>::clearAll()
+NODELETE inline constexpr void BitSet<bitSetSize, WordType>::clearAll()
 {
     zeroSpan(std::span { bits });
 }

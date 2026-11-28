@@ -501,7 +501,24 @@ public:
     NODELETE void notifyFunctionUsesSIMD()
     {
         ASSERT(m_info.usesSIMD(m_functionIndex));
+        // AAPCS64 preserves only the low 64 bits of q8-q15.
+        if (m_proc.usesSIMD())
+            return;
         m_proc.setUsesSIMD();
+
+        RegisterSet scalarCallClobber = RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters());
+        RegisterSet vectorCallClobber = RegisterSet::registersToSaveForJSCall(RegisterSet::allRegisters());
+        for (BasicBlock* block : m_proc) {
+            for (Value* value : *block) {
+                if (value->opcode() != Patchpoint)
+                    continue;
+                auto* patchpoint = value->as<PatchpointValue>();
+                if (patchpoint->earlyClobbered().subsumes(scalarCallClobber))
+                    patchpoint->clobberEarly(vectorCallClobber);
+                if (patchpoint->lateClobbered().subsumes(scalarCallClobber))
+                    patchpoint->clobberLate(vectorCallClobber);
+            }
+        }
     }
 
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType pointer, uint64_t offset, ExpressionType& result, uint8_t memoryIndex);
