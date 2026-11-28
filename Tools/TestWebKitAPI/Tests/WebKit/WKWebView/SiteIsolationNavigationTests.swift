@@ -40,6 +40,147 @@ import struct Swift.String
 
 @MainActor
 struct SiteIsolationNavigationTests {
+    enum NavigatedFrame: Sendable, CaseIterable, CustomTestStringConvertible {
+        case main
+        case child
+
+        var pagePath: String {
+            switch self {
+            case .main: "/main"
+            case .child: "/example"
+            }
+        }
+
+        var testDescription: String {
+            switch self {
+            case .main: "main frame"
+            case .child: "child frame"
+            }
+        }
+    }
+
+    // Cross-site frames share a process by default, so the child frame is same-site with the main frame, and is in its
+    // process. Each navigation goes to apple.com in another process, then a redirect brings it back.
+    private static func beforeUnloadCountingServer() throws -> HTTPServer {
+        let countBeforeUnload =
+            "<script>onbeforeunload = () => { sessionStorage.beforeUnloadCount = Number(sessionStorage.beforeUnloadCount || 0) + 1 }</script>"
+
+        return try HTTPServer(protocol: .httpsProxy) {
+            Route("/example") {
+                "<iframe src='/frame'></iframe>"
+            }
+
+            Route("/main") {
+                countBeforeUnload
+            }
+
+            Route("/frame") {
+                countBeforeUnload
+            }
+
+            Route("/leave", statusCode: 302, headerFields: ["Location": "https://apple.com/return"]) {
+                "redirecting..."
+            }
+
+            Route("/return", statusCode: 302, headerFields: ["Location": "https://example.com/destination"]) {
+                "redirecting..."
+            }
+
+            Route("/leave-twice", statusCode: 302, headerFields: ["Location": "https://apple.com/return-and-leave"]) {
+                "redirecting..."
+            }
+
+            Route("/return-and-leave", statusCode: 302, headerFields: ["Location": "https://example.com/leave"]) {
+                "redirecting..."
+            }
+
+            Route("/leave-for-no-content", statusCode: 302, headerFields: ["Location": "https://apple.com/return-to-no-content"]) {
+                "redirecting..."
+            }
+
+            Route("/return-to-no-content", statusCode: 302, headerFields: ["Location": "https://example.com/no-content"]) {
+                "redirecting..."
+            }
+
+            Route("/no-content", statusCode: 204, headerFields: ["Set-Cookie": "returned=1"]) {
+                ""
+            }
+
+            Route("/destination") {
+                "<script>alert(`beforeunload ${sessionStorage.beforeUnloadCount}`)</script>"
+            }
+        }
+    }
+
+    @Test(
+        arguments: NavigatedFrame.allCases,
+        [
+            "navigation.navigate('/leave')",
+            "location.href = '/leave'",
+            "navigation.navigate('/leave-twice')",
+            "location.href = '/leave-twice'",
+        ]
+    )
+    func beforeUnloadFiresOnceWhenNavigationReturnsToFrameProcess(
+        navigatedFrame: NavigatedFrame,
+        navigationScript: String
+    ) async throws {
+        var server = try Self.beforeUnloadCountingServer()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
+            let uiDelegate = BeforeUnloadAlertRecorder()
+            webView.uiDelegate = uiDelegate
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com\(navigatedFrame.pagePath)"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let frame: WKFrameInfo?
+            let expectedFrameTrees: FrameTreesInProcesses
+            switch navigatedFrame {
+            case .main:
+                frame = nil
+                expectedFrameTrees = [.local("https://example.com")]
+            case .child:
+                frame = try #require(await webView.firstChildFrame)
+                expectedFrameTrees = [.local("https://example.com", children: [.local("https://example.com")])]
+            }
+            try await webView.callJavaScript(in: frame) { "setTimeout(() => { \(navigationScript) }, 0)" }
+
+            let alert = try await uiDelegate.nextAlert()
+            #expect(alert == "beforeunload 1", "\(navigationScript)")
+            #expect(await webView.frameTreesInProcesses() == expectedFrameTrees)
+        }
+    }
+
+    @Test(arguments: [
+        "navigation.navigate('/leave-for-no-content')",
+        "location.href = '/leave-for-no-content'",
+    ])
+    func beforeUnloadFiresForNextNavigationAfterNavigationReturnsWithoutCommitting(navigationScript: String) async throws {
+        var server = try Self.beforeUnloadCountingServer()
+
+        try await server.run { serverConfiguration in
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: .init(httpsProxyFor: serverConfiguration))
+            let uiDelegate = BeforeUnloadAlertRecorder()
+            webView.uiDelegate = uiDelegate
+
+            webView.load(URLRequest(url: try #require(URL(string: "https://example.com/example"))))
+            try await navigationDelegate.waitForDidFinishNavigation()
+
+            let childFrame = try #require(await webView.firstChildFrame)
+            try await webView.callJavaScript(in: childFrame) { "setTimeout(() => { \(navigationScript) }, 0)" }
+            try await waitForCondition("the navigation to return and get its 204 response") {
+                try await webView.callJavaScript(returning: Bool.self, in: childFrame) { "return document.cookie.includes('returned')" }
+            }
+
+            try await webView.callJavaScript(in: childFrame) { "setTimeout(() => { location.href = '/destination' }, 0)" }
+
+            let alert = try await uiDelegate.nextAlert()
+            #expect(alert == "beforeunload 2", "\(navigationScript)")
+        }
+    }
+
     @Test
     func grandchildIframeSameOriginAsGrandparent() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
