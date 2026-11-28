@@ -48,8 +48,8 @@ public:
 
     virtual ~RemoteXRSubImageProxy();
 
-    RemoteGPUProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent; }
+    RemoteGPUProxy& parent() LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent; }
     WebGPUXRSubImageIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Texture> colorTexture() final;

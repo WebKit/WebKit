@@ -250,7 +250,7 @@ bool WebExtensionAPIPermissions::validatePermissionsDetails(HashSet<String>& per
     return true;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
+WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onAdded
 
@@ -260,7 +260,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
     return *m_onAdded;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved()
+WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onRemoved
 

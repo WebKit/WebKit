@@ -1560,7 +1560,7 @@ void AudioVideoRendererRemote::updateCacheState(const RemoteAudioVideoRendererSt
         updateVideoPlaybackMetricsUpdateInterval(0_s);
 }
 
-AudioVideoRendererRemote::ReadyForMoreDataState& AudioVideoRendererRemote::readyForMoreDataState(TrackIdentifier trackIdentifier)
+AudioVideoRendererRemote::ReadyForMoreDataState& AudioVideoRendererRemote::readyForMoreDataState(TrackIdentifier trackIdentifier) LIFETIME_BOUND
 {
     assertIsHeld(m_lock);
     auto addResult = m_readyForMoreDataStates.add(trackIdentifier, ReadyForMoreDataState { });

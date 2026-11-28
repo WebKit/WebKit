@@ -670,7 +670,7 @@ public:
 
     static WebPage* fromCorePage(WebCore::Page&);
 
-    WebCore::Page* corePage() const { return m_page.get(); }
+    WebCore::Page* corePage() const LIFETIME_BOUND { return m_page.get(); }
     WebCore::PageIdentifier identifier() const { return m_identifier; }
     inline StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const;
     PAL::SessionID sessionID() const;
@@ -680,7 +680,7 @@ public:
     const WebCore::IntSize& size() const LIFETIME_BOUND { return m_viewSize; }
     inline WebCore::IntRect bounds() const;
 
-    DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+    DrawingArea* drawingArea() const LIFETIME_BOUND { return m_drawingArea.get(); }
 
     // Mirror the drawing area's scrolling-delegation mode onto the main frame's RemoteFrameView so its
     // coordinate conversions (e.g. selection rects) match the local main frame in the process that
@@ -695,7 +695,7 @@ public:
     const WebCore::CornerRadii& scrollbarAvoidanceCornerRadii() const LIFETIME_BOUND { return m_scrollbarAvoidanceCornerRadii; }
 #endif
 
-    WebPageGroupProxy& pageGroup() const { return m_pageGroup; }
+    WebPageGroupProxy& pageGroup() const LIFETIME_BOUND { return m_pageGroup; }
 
     bool scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
@@ -777,12 +777,12 @@ public:
     void inspectorFrontendCountChanged(unsigned);
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    PlaybackSessionManager& playbackSessionManager();
+    PlaybackSessionManager& playbackSessionManager() LIFETIME_BOUND;
     void videoControlsManagerDidChange();
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    VideoPresentationManager& videoPresentationManager();
+    VideoPresentationManager& videoPresentationManager() LIFETIME_BOUND;
 
     void startPlayingPredominantVideo(CompletionHandler<void(bool)>&&);
 #endif
@@ -795,7 +795,7 @@ public:
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    WebFullScreenManager& fullScreenManager();
+    WebFullScreenManager& fullScreenManager() LIFETIME_BOUND;
 
     enum class IsInFullscreenMode : bool { No, Yes };
     void isInFullscreenChanged(IsInFullscreenMode);
@@ -872,7 +872,7 @@ public:
     void didChooseDate(const String&);
     void didEndDateTimePicker();
 
-    WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
+    WebOpenPanelResultListener* activeOpenPanelResultListener() const LIFETIME_BOUND { return m_activeOpenPanelResultListener.get(); }
     void setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -904,12 +904,12 @@ public:
     void setTextIndicator(RefPtr<WebCore::TextIndicator>&&);
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&);
 
-    WebFrame& mainWebFrame() const { return m_mainFrame; }
+    WebFrame& mainWebFrame() const LIFETIME_BOUND { return m_mainFrame; }
 
     // Receives the page's network interception configuration from the UI process
     // authority. Created on first use, since most pages are never inspected.
-    NetworkInterceptionSink& networkInterceptionSink();
-    const URL& mainFrameOpenerURL() const { return m_mainFrameOpenerURL; }
+    NetworkInterceptionSink& networkInterceptionSink() LIFETIME_BOUND;
+    const URL& mainFrameOpenerURL() const LIFETIME_BOUND { return m_mainFrameOpenerURL; }
 
     NODELETE WebCore::Frame* mainFrame() const;
     WebCore::FrameView* mainFrameView() const;
@@ -1369,7 +1369,7 @@ public:
     void pageDidScroll();
 
 #if ENABLE(CONTEXT_MENUS)
-    WebContextMenu& contextMenu();
+    WebContextMenu& contextMenu() LIFETIME_BOUND;
     RefPtr<WebContextMenu> contextMenuAtPointInWindow(WebCore::FrameIdentifier, const WebCore::DoublePoint&);
 #endif
 
@@ -1924,7 +1924,7 @@ public:
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&);
     void clearLoadedSubresourceDomains();
     void getLoadedSubresourceDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>)>&&);
-    NODELETE const HashSet<WebCore::RegistrableDomain>& loadedSubresourceDomains() const;
+    NODELETE const HashSet<WebCore::RegistrableDomain>& loadedSubresourceDomains() const LIFETIME_BOUND;
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
@@ -2113,7 +2113,7 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
     void gpuProcessConnectionWasDestroyed();
-    RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
+    RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy() LIFETIME_BOUND;
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -2297,7 +2297,7 @@ public:
     void updateOpener(WebCore::FrameIdentifier, std::optional<WebCore::FrameIdentifier>);
     void setFramePrinting(WebCore::FrameIdentifier, bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize shouldAdjustViewSize);
 
-    WebHistoryItemClient& historyItemClient() const { return m_historyItemClient.get(); }
+    WebHistoryItemClient& historyItemClient() const LIFETIME_BOUND { return m_historyItemClient.get(); }
 
     bool isAlwaysOnLoggingAllowed() const;
 

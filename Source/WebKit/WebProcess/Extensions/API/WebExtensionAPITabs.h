@@ -89,15 +89,15 @@ public:
     NODELETE NSDictionary *tabStatus();
     NODELETE NSDictionary *windowType();
 
-    WebExtensionAPIEvent& onActivated();
-    WebExtensionAPIEvent& onAttached();
-    WebExtensionAPIEvent& onCreated();
-    WebExtensionAPIEvent& onDetached();
-    WebExtensionAPIEvent& onHighlighted();
-    WebExtensionAPIEvent& onMoved();
-    WebExtensionAPIEvent& onRemoved();
-    WebExtensionAPIEvent& onReplaced();
-    WebExtensionAPIEvent& onUpdated();
+    WebExtensionAPIEvent& onActivated() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onAttached() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onCreated() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onDetached() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onHighlighted() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onMoved() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onRemoved() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onReplaced() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onUpdated() LIFETIME_BOUND;
 
 private:
     bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);

@@ -94,7 +94,7 @@ public:
 
     void layerHostingStrategyDidChange() final;
 
-    WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
+    WebCore::HTMLPlugInElement& pluginElement() const LIFETIME_BOUND { return m_pluginElement; }
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
     const URL& mainResourceURL() const LIFETIME_BOUND { return m_mainResourceURL; }
 

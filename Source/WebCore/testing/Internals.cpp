@@ -7975,7 +7975,7 @@ void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistr
 
     URL parsedURL = contextDocument->encodingParseURL(clientURL);
 
-    return protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->matchRegistration(SecurityOriginData { contextDocument->topOrigin().data() }, parsedURL, [promise = WTF::move(promise)] (auto&& result) mutable {
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection()->matchRegistration(SecurityOriginData { contextDocument->topOrigin().data() }, parsedURL, [promise = WTF::move(promise)](auto&& result) mutable {
         promise.resolve(!!result);
     });
 }
@@ -7989,7 +7989,7 @@ void Internals::terminateServiceWorker(ServiceWorker& worker, DOMPromiseDeferred
 
 void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseDeferred<void>&& promise)
 {
-    return protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->whenServiceWorkerIsTerminatedForTesting(worker.identifier(), [promise = WTF::move(promise)]() mutable {
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection()->whenServiceWorkerIsTerminatedForTesting(worker.identifier(), [promise = WTF::move(promise)] mutable {
         promise.resolve();
     });
 }

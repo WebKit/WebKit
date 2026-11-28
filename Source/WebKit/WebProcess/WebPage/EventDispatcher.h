@@ -98,7 +98,7 @@ public:
     void ref() const final;
     void deref() const final;
 
-    WorkQueue& queue() { return m_queue.get(); }
+    WorkQueue& queue() LIFETIME_BOUND { return m_queue.get(); }
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     void addScrollingTreeForPage(WebPage&);

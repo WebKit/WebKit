@@ -40,11 +40,11 @@ class WebExtensionAPIWebNavigation : public WebExtensionAPIObject, public JSWebE
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIWebNavigationEvent& onBeforeNavigate();
-    WebExtensionAPIWebNavigationEvent& onCommitted();
-    WebExtensionAPIWebNavigationEvent& onDOMContentLoaded();
-    WebExtensionAPIWebNavigationEvent& onCompleted();
-    WebExtensionAPIWebNavigationEvent& onErrorOccurred();
+    WebExtensionAPIWebNavigationEvent& onBeforeNavigate() LIFETIME_BOUND;
+    WebExtensionAPIWebNavigationEvent& onCommitted() LIFETIME_BOUND;
+    WebExtensionAPIWebNavigationEvent& onDOMContentLoaded() LIFETIME_BOUND;
+    WebExtensionAPIWebNavigationEvent& onCompleted() LIFETIME_BOUND;
+    WebExtensionAPIWebNavigationEvent& onErrorOccurred() LIFETIME_BOUND;
 
     void getAllFrames(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getFrame(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

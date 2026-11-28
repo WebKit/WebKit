@@ -71,50 +71,50 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
 public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 #if PLATFORM(COCOA)
-    WebExtensionAPIAction& action();
+    WebExtensionAPIAction& action() LIFETIME_BOUND;
 #endif
-    WebExtensionAPIAlarms& alarms();
-    WebExtensionAPIExtensionTypes& extensionTypes();
+    WebExtensionAPIAlarms& alarms() LIFETIME_BOUND;
+    WebExtensionAPIExtensionTypes& extensionTypes() LIFETIME_BOUND;
 #if PLATFORM(COCOA)
     WebExtensionAPIAction& browserAction() { return action(); }
-    WebExtensionAPICommands& commands();
-    WebExtensionAPICookies& cookies();
+    WebExtensionAPICommands& commands() LIFETIME_BOUND;
+    WebExtensionAPICookies& cookies() LIFETIME_BOUND;
     WebExtensionAPIMenus& contextMenus() { return menus(); }
-    WebExtensionAPIDeclarativeNetRequest& declarativeNetRequest();
+    WebExtensionAPIDeclarativeNetRequest& declarativeNetRequest() LIFETIME_BOUND;
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    WebExtensionAPIDevTools& devtools();
+    WebExtensionAPIDevTools& devtools() LIFETIME_BOUND;
 #endif
-    WebExtensionAPIDOM& dom();
-    WebExtensionAPIExtension& extension();
+    WebExtensionAPIDOM& dom() LIFETIME_BOUND;
+    WebExtensionAPIExtension& extension() LIFETIME_BOUND;
     WebExtensionAPILocalization& i18n();
-    WebExtensionAPIMenus& menus();
-    WebExtensionAPINotifications& notifications();
+    WebExtensionAPIMenus& menus() LIFETIME_BOUND;
+    WebExtensionAPINotifications& notifications() LIFETIME_BOUND;
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    WebExtensionAPIOffscreen& offscreen();
+    WebExtensionAPIOffscreen& offscreen() LIFETIME_BOUND;
 #endif
     WebExtensionAPIAction& pageAction() { return action(); }
-    WebExtensionAPIPermissions& permissions();
+    WebExtensionAPIPermissions& permissions() LIFETIME_BOUND;
 #endif
     WebExtensionAPIRuntime& runtime() final;
 #if PLATFORM(COCOA)
-    WebExtensionAPIScripting& scripting();
+    WebExtensionAPIScripting& scripting() LIFETIME_BOUND;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    WebExtensionAPISidePanel& sidePanel();
-    WebExtensionAPISidebarAction& sidebarAction();
+    WebExtensionAPISidePanel& sidePanel() LIFETIME_BOUND;
+    WebExtensionAPISidebarAction& sidebarAction() LIFETIME_BOUND;
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    WebExtensionAPIBookmarks& bookmarks();
+    WebExtensionAPIBookmarks& bookmarks() LIFETIME_BOUND;
 #endif
 #endif
-    WebExtensionAPIStorage& storage();
+    WebExtensionAPIStorage& storage() LIFETIME_BOUND;
 #if PLATFORM(COCOA)
-    WebExtensionAPITabs& tabs();
+    WebExtensionAPITabs& tabs() LIFETIME_BOUND;
 #endif
-    WebExtensionAPITest& test();
+    WebExtensionAPITest& test() LIFETIME_BOUND;
 #if PLATFORM(COCOA)
-    WebExtensionAPIWindows& windows();
-    WebExtensionAPIWebNavigation& webNavigation();
-    WebExtensionAPIWebRequest& webRequest();
+    WebExtensionAPIWindows& windows() LIFETIME_BOUND;
+    WebExtensionAPIWebNavigation& webNavigation() LIFETIME_BOUND;
+    WebExtensionAPIWebRequest& webRequest() LIFETIME_BOUND;
 #endif
 
 private:

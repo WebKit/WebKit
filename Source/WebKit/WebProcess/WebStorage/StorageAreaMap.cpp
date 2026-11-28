@@ -161,7 +161,7 @@ bool StorageAreaMap::contains(const String& key)
     return ensureMap().contains(key);
 }
 
-StorageMap& StorageAreaMap::ensureMap()
+StorageMap& StorageAreaMap::ensureMap() LIFETIME_BOUND
 {
     connectSync();
     if (!m_map)

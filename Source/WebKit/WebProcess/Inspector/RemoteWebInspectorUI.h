@@ -121,7 +121,7 @@ public:
     double pageZoomFactor() const override;
 
     void sendMessageToBackend(const String&) override;
-    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
+    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() LIFETIME_BOUND override { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;
 
 #if ENABLE(INSPECTOR_TELEMETRY)

@@ -128,7 +128,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 }
 
 #if PLATFORM(COCOA)
-WebExtensionAPIAction& WebExtensionAPINamespace::action()
+WebExtensionAPIAction& WebExtensionAPINamespace::action() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action
 
@@ -139,7 +139,7 @@ WebExtensionAPIAction& WebExtensionAPINamespace::action()
 }
 #endif
 
-WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
+WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms
 
@@ -149,7 +149,7 @@ WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
     return *m_alarms;
 }
 
-WebExtensionAPIExtensionTypes& WebExtensionAPINamespace::extensionTypes()
+WebExtensionAPIExtensionTypes& WebExtensionAPINamespace::extensionTypes() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes
 
@@ -160,7 +160,7 @@ WebExtensionAPIExtensionTypes& WebExtensionAPINamespace::extensionTypes()
 }
 
 #if PLATFORM(COCOA)
-WebExtensionAPICommands& WebExtensionAPINamespace::commands()
+WebExtensionAPICommands& WebExtensionAPINamespace::commands() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands
 
@@ -170,7 +170,7 @@ WebExtensionAPICommands& WebExtensionAPINamespace::commands()
     return *m_commands;
 }
 
-WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
+WebExtensionAPICookies& WebExtensionAPINamespace::cookies() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies
 
@@ -180,7 +180,7 @@ WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
     return *m_cookies;
 }
 
-WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest()
+WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/declarativeNetRequest
 
@@ -191,7 +191,7 @@ WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRe
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-WebExtensionAPIDevTools& WebExtensionAPINamespace::devtools()
+WebExtensionAPIDevTools& WebExtensionAPINamespace::devtools() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools
 
@@ -202,7 +202,7 @@ WebExtensionAPIDevTools& WebExtensionAPINamespace::devtools()
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-WebExtensionAPIDOM& WebExtensionAPINamespace::dom()
+WebExtensionAPIDOM& WebExtensionAPINamespace::dom() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/dom
 
@@ -212,7 +212,7 @@ WebExtensionAPIDOM& WebExtensionAPINamespace::dom()
     return *m_dom;
 }
 
-WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
+WebExtensionAPIExtension& WebExtensionAPINamespace::extension() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension
 
@@ -232,7 +232,7 @@ WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
     return *m_i18n;
 }
 
-WebExtensionAPIMenus& WebExtensionAPINamespace::menus()
+WebExtensionAPIMenus& WebExtensionAPINamespace::menus() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus
 
@@ -243,7 +243,7 @@ WebExtensionAPIMenus& WebExtensionAPINamespace::menus()
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-WebExtensionAPIOffscreen& WebExtensionAPINamespace::offscreen()
+WebExtensionAPIOffscreen& WebExtensionAPINamespace::offscreen() LIFETIME_BOUND
 {
     // Documentation: https://developer.chrome.com/docs/extensions/reference/api/offscreen
 
@@ -254,7 +254,7 @@ WebExtensionAPIOffscreen& WebExtensionAPINamespace::offscreen()
 }
 #endif
 
-WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
+WebExtensionAPINotifications& WebExtensionAPINamespace::notifications() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications
 
@@ -264,7 +264,7 @@ WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
     return *m_notifications;
 }
 
-WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()
+WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/permissions
 
@@ -289,7 +289,7 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime()
 }
 
 #if PLATFORM(COCOA)
-WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
+WebExtensionAPIScripting& WebExtensionAPINamespace::scripting() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting
 
@@ -300,7 +300,7 @@ WebExtensionAPIScripting& WebExtensionAPINamespace::scripting()
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-WebExtensionAPISidePanel& WebExtensionAPINamespace::sidePanel()
+WebExtensionAPISidePanel& WebExtensionAPINamespace::sidePanel() LIFETIME_BOUND
 {
     // Documentation: https://developer.chrome.com/docs/extensions/reference/api/sidePanel
 
@@ -310,7 +310,7 @@ WebExtensionAPISidePanel& WebExtensionAPINamespace::sidePanel()
     return *m_sidePanel;
 }
 
-WebExtensionAPISidebarAction& WebExtensionAPINamespace::sidebarAction()
+WebExtensionAPISidebarAction& WebExtensionAPINamespace::sidebarAction() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/sidebarAction
 
@@ -322,7 +322,7 @@ WebExtensionAPISidebarAction& WebExtensionAPINamespace::sidebarAction()
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-WebExtensionAPIBookmarks& WebExtensionAPINamespace::bookmarks()
+WebExtensionAPIBookmarks& WebExtensionAPINamespace::bookmarks() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks
 
@@ -335,7 +335,7 @@ WebExtensionAPIBookmarks& WebExtensionAPINamespace::bookmarks()
 
 #endif // PLATFORM(COCOA)
 
-WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
+WebExtensionAPIStorage& WebExtensionAPINamespace::storage() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage
 
@@ -346,7 +346,7 @@ WebExtensionAPIStorage& WebExtensionAPINamespace::storage()
 }
 
 #if PLATFORM(COCOA)
-WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
+WebExtensionAPITabs& WebExtensionAPINamespace::tabs() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs
 
@@ -357,7 +357,7 @@ WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
 }
 #endif
 
-WebExtensionAPITest& WebExtensionAPINamespace::test()
+WebExtensionAPITest& WebExtensionAPINamespace::test() LIFETIME_BOUND
 {
     // Documentation: None (Testing Only)
 
@@ -368,7 +368,7 @@ WebExtensionAPITest& WebExtensionAPINamespace::test()
 }
 
 #if PLATFORM(COCOA)
-WebExtensionAPIWindows& WebExtensionAPINamespace::windows()
+WebExtensionAPIWindows& WebExtensionAPINamespace::windows() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows
 
@@ -378,7 +378,7 @@ WebExtensionAPIWindows& WebExtensionAPINamespace::windows()
     return *m_windows;
 }
 
-WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation()
+WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation
 
@@ -388,7 +388,7 @@ WebExtensionAPIWebNavigation& WebExtensionAPINamespace::webNavigation()
     return *m_webNavigation;
 }
 
-WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest()
+WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest
 

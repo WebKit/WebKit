@@ -40,7 +40,7 @@ WebSharedWorkerProvider& WebSharedWorkerProvider::singleton()
 
 WebSharedWorkerProvider::WebSharedWorkerProvider() = default;
 
-WebCore::SharedWorkerObjectConnection* WebSharedWorkerProvider::sharedWorkerConnection()
+RefPtr<WebCore::SharedWorkerObjectConnection> WebSharedWorkerProvider::sharedWorkerConnection()
 {
     return &protect(WebProcess::singleton().ensureNetworkProcessConnection())->sharedWorkerConnection();
 }

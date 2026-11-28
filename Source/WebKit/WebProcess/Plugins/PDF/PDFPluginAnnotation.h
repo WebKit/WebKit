@@ -53,9 +53,9 @@ public:
     static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFPluginBase*);
     virtual ~PDFPluginAnnotation();
 
-    WebCore::Element* element() const { return m_element.get(); }
+    WebCore::Element* element() const LIFETIME_BOUND { return m_element.get(); }
     PDFAnnotation *annotation() const { return m_annotation.get(); }
-    PDFPluginBase* plugin() const { return m_plugin.get(); }
+    PDFPluginBase* plugin() const LIFETIME_BOUND { return m_plugin.get(); }
 
     virtual void updateGeometry();
     virtual void commit();
@@ -71,7 +71,7 @@ protected:
     }
 
     WebCore::Element* parent() const { return m_parent.get(); }
-    WebCore::EventListener* eventListener() const { return m_eventListener.get(); }
+    WebCore::EventListener* eventListener() const LIFETIME_BOUND { return m_eventListener.get(); }
 
     virtual bool handleEvent(WebCore::Event&);
 

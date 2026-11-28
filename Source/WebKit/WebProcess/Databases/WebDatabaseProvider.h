@@ -37,7 +37,7 @@ public:
     static Ref<WebDatabaseProvider> getOrCreate(PageGroupIdentifier);
     virtual ~WebDatabaseProvider();
 
-    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) final;
+    Ref<WebCore::IDBClient::IDBConnectionToServer> idbConnectionToServerForSession(PAL::SessionID) final;
 
 private:
     explicit WebDatabaseProvider(PageGroupIdentifier);

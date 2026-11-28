@@ -54,8 +54,8 @@ public:
 
     virtual ~RemoteDeviceProxy();
 
-    RemoteAdapterProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteAdapterProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
 
     // Called by RemoteGPUProxy, which implements the device commands that take WebCore sources.
     RefPtr<::WebGPU::ExternalTexture> importExternalTexture(const WebCore::WebGPUExternalTextureDescriptor&);
@@ -64,7 +64,7 @@ public:
 #endif
     WebGPUDeviceIdentifier backing() const { return m_backing; }
 
-    RemoteAdapterProxy& adapter() const final { return m_parent; }
+    RemoteAdapterProxy& adapter() const LIFETIME_BOUND final { return m_parent; }
     RefPtr<::WebGPU::Instance> instance() const final { return m_parent->instance(); }
     Vector<::WebGPU::FeatureName> features() const final { return m_features; }
     const ::WebGPU::Limits& limits() const LIFETIME_BOUND final { return m_limits; }

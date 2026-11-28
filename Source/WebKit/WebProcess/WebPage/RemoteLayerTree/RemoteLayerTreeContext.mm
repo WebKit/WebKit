@@ -295,7 +295,7 @@ void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier la
         RefPtr { it->value.get() }->animationEnded(key);
 }
 
-RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
+Ref<RemoteRenderingBackendProxy> RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
 {
     return protect(webPage())->ensureRemoteRenderingBackendProxy();
 }

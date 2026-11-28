@@ -239,7 +239,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::controlBlock(); }
     uint32_t weakRefCount() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::weakRefCount(); }
 
-    WorkQueue& workQueue() const { return m_queue; }
+    WorkQueue& workQueue() const LIFETIME_BOUND { return m_queue; }
 
     void clearConnectionForTesting() { clearConnection(); }
 

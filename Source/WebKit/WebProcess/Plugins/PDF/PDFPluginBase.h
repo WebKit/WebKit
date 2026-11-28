@@ -279,8 +279,8 @@ public:
     WebCore::AXObjectCache* axObjectCache() const;
 
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
-    WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
-    WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
+    WebCore::Scrollbar* horizontalScrollbar() const LIFETIME_BOUND override { return m_horizontalScrollbar.get(); }
+    WebCore::Scrollbar* verticalScrollbar() const LIFETIME_BOUND override { return m_verticalScrollbar.get(); }
     void setScrollOffset(const WebCore::ScrollOffset&) final;
 
     virtual void willAttachScrollingNode() { }
@@ -306,7 +306,7 @@ public:
     WebCore::ScrollPosition scrollPosition() const final;
 
 #if PLATFORM(MAC)
-    PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
+    PDFPluginAnnotation* activeAnnotation() const LIFETIME_BOUND { return m_activeAnnotation.get(); }
 #endif
 
     enum class IsInPluginCleanup : bool { No, Yes };

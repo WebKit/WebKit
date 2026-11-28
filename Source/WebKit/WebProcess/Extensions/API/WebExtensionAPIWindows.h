@@ -68,9 +68,9 @@ public:
     NODELETE NSDictionary *windowState();
     NODELETE NSDictionary *windowType();
 
-    WebExtensionAPIWindowsEvent& onCreated();
-    WebExtensionAPIWindowsEvent& onRemoved();
-    WebExtensionAPIWindowsEvent& onFocusChanged();
+    WebExtensionAPIWindowsEvent& onCreated() LIFETIME_BOUND;
+    WebExtensionAPIWindowsEvent& onRemoved() LIFETIME_BOUND;
+    WebExtensionAPIWindowsEvent& onFocusChanged() LIFETIME_BOUND;
 
 private:
     friend class WebExtensionAPITabs;

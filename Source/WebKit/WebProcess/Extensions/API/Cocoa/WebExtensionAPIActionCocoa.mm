@@ -704,7 +704,7 @@ void WebExtensionAPIAction::openPopup(WebPageProxyIdentifier webPageProxyIdentif
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPIAction::onClicked()
+WebExtensionAPIEvent& WebExtensionAPIAction::onClicked() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/onClicked
 

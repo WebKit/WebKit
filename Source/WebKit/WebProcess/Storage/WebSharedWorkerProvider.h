@@ -38,7 +38,7 @@ private:
     friend NeverDestroyed<WebSharedWorkerProvider>;
     WebSharedWorkerProvider();
 
-    WebCore::SharedWorkerObjectConnection* sharedWorkerConnection() final;
+    RefPtr<WebCore::SharedWorkerObjectConnection> sharedWorkerConnection() final;
 };
 
 } // namespace WebKit

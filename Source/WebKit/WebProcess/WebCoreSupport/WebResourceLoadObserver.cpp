@@ -96,7 +96,7 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
     }
 }
     
-ResourceLoadStatistics& WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
+ResourceLoadStatistics& WebResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain) LIFETIME_BOUND
 {
     RELEASE_ASSERT(!isEphemeral());
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace PAL {
@@ -40,7 +41,7 @@ class IDBConnectionToServer;
 class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
 public:
     virtual ~DatabaseProvider();
-    virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) = 0;
+    virtual Ref<IDBClient::IDBConnectionToServer> idbConnectionToServerForSession(PAL::SessionID) = 0;
 };
 
 } // namespace WebCore

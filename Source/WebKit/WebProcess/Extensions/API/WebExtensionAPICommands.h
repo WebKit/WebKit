@@ -40,8 +40,8 @@ public:
 #if PLATFORM(COCOA)
     void getAll(Ref<WebExtensionCallbackHandler>&&);
 
-    WebExtensionAPIEvent& onCommand();
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& onCommand() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onChanged() LIFETIME_BOUND;
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onCommand;

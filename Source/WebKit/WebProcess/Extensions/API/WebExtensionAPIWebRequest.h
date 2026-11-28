@@ -42,15 +42,15 @@ public:
 #if PLATFORM(COCOA)
     NODELETE NSDictionary *resourceType();
 
-    WebExtensionAPIWebRequestEvent& onBeforeRequest();
-    WebExtensionAPIWebRequestEvent& onBeforeSendHeaders();
-    WebExtensionAPIWebRequestEvent& onSendHeaders();
-    WebExtensionAPIWebRequestEvent& onHeadersReceived();
-    WebExtensionAPIWebRequestEvent& onAuthRequired();
-    WebExtensionAPIWebRequestEvent& onBeforeRedirect();
-    WebExtensionAPIWebRequestEvent& onResponseStarted();
-    WebExtensionAPIWebRequestEvent& onCompleted();
-    WebExtensionAPIWebRequestEvent& onErrorOccurred();
+    WebExtensionAPIWebRequestEvent& onBeforeRequest() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onBeforeSendHeaders() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onSendHeaders() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onHeadersReceived() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onAuthRequired() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onBeforeRedirect() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onResponseStarted() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onCompleted() LIFETIME_BOUND;
+    WebExtensionAPIWebRequestEvent& onErrorOccurred() LIFETIME_BOUND;
 
 private:
     const RefPtr<WebExtensionAPIWebRequestEvent> m_onBeforeRequestEvent;

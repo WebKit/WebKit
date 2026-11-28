@@ -424,7 +424,7 @@ void AsyncPDFRenderer::didRevalidateTiles(TiledBacking& tiledBacking, TileGridId
     revalidationStateForGrid(gridIdentifier).inFullTileRevalidation = false;
 }
 
-auto AsyncPDFRenderer::revalidationStateForGrid(TileGridIdentifier gridIdentifier) -> RevalidationStateForGrid&
+auto AsyncPDFRenderer::revalidationStateForGrid(TileGridIdentifier gridIdentifier) LIFETIME_BOUND -> RevalidationStateForGrid&
 {
     auto addResult = m_gridRevalidationState.ensure(gridIdentifier, [] {
         return makeUnique<RevalidationStateForGrid>();

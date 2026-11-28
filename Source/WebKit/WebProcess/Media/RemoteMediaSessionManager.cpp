@@ -225,7 +225,7 @@ void RemoteMediaSessionManager::setCurrentMediaSession(std::optional<WebCore::Me
         REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(*session);
 }
 
-RemoteMediaSessionState& RemoteMediaSessionManager::currentSessionState(const WebCore::PlatformMediaSessionInterface& session)
+RemoteMediaSessionState& RemoteMediaSessionManager::currentSessionState(const WebCore::PlatformMediaSessionInterface& session) LIFETIME_BOUND
 {
     auto addResult = m_cachedSessionState.ensure(session.mediaSessionIdentifier(), [&] {
         return makeUniqueRef<RemoteMediaSessionState>(fullSessionState(session));

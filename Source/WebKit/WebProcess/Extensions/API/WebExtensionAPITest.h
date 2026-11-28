@@ -45,9 +45,9 @@ public:
     void notifyPass(JSContextRef, const String& message);
 
     void sendMessage(JSContextRef, const String& message, JSValueRef argument);
-    WebExtensionAPIEvent& onMessage();
-    WebExtensionAPIEvent& onTestStarted();
-    WebExtensionAPIEvent& onTestFinished();
+    WebExtensionAPIEvent& onMessage() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onTestStarted() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onTestFinished() LIFETIME_BOUND;
 
     JSValueRef runWithUserGesture(WebFrame&, JSContextRef, JSValueRef function);
     bool isProcessingUserGesture();

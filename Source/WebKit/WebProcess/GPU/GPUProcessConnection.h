@@ -85,7 +85,7 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
-    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_connection.get(); }
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
 
     void didBecomeUnresponsive();
@@ -98,12 +98,12 @@ public:
     void resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
 #endif
 #if ENABLE(VIDEO)
-    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
+    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() LIFETIME_BOUND;
     RemoteMediaPlayerManager& mediaPlayerManager();
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
-    RemoteAudioSourceProviderManager& audioSourceProviderManager();
+    RemoteAudioSourceProviderManager& audioSourceProviderManager() LIFETIME_BOUND;
 #endif
 
     void updateMediaConfiguration(bool forceUpdate);

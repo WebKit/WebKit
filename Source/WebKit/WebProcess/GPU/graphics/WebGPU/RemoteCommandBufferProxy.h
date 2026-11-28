@@ -44,7 +44,7 @@ public:
 
     virtual ~RemoteCommandBufferProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     WebGPUCommandBufferIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;

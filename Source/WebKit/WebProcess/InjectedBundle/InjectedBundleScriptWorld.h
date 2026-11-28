@@ -54,8 +54,8 @@ public:
 
     virtual ~InjectedBundleScriptWorld();
 
-    NODELETE const WebCore::DOMWrapperWorld& coreWorld() const;
-    NODELETE WebCore::DOMWrapperWorld& coreWorld();
+    NODELETE const WebCore::DOMWrapperWorld& coreWorld() const LIFETIME_BOUND;
+    NODELETE WebCore::DOMWrapperWorld& coreWorld() LIFETIME_BOUND;
 
     void clearWrappers();
     NODELETE void setAllowAutofill();

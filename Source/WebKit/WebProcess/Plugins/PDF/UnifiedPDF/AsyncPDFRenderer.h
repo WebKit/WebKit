@@ -261,7 +261,7 @@ private:
         HashSet<PDFTileRenderIdentifier> renderIdentifiersForCurrentRevalidation;
     };
 
-    RevalidationStateForGrid& revalidationStateForGrid(WebCore::TileGridIdentifier);
+    RevalidationStateForGrid& revalidationStateForGrid(WebCore::TileGridIdentifier) LIFETIME_BOUND;
     void trackRendersForStaleTileMaintenance(WebCore::TileGridIdentifier, HashSet<PDFTileRenderIdentifier>&&);
     void trackRenderCompletionForStaleTileMaintenance(WebCore::TileGridIdentifier, PDFTileRenderIdentifier);
 

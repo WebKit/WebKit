@@ -539,7 +539,7 @@ void WebExtensionAPIWindows::remove(double windowID, Ref<WebExtensionCallbackHan
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated()
+WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onCreated
 
@@ -549,7 +549,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated()
     return *m_onCreated;
 }
 
-WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onRemoved()
+WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onRemoved() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onRemoved
 
@@ -559,7 +559,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onRemoved()
     return *m_onRemoved;
 }
 
-WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
+WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onFocusChanged
 

@@ -76,7 +76,7 @@ public:
 private:
     WebCookieCache() = default;
 
-    NetworkStorageSession& inMemoryStorageSession();
+    NetworkStorageSession& inMemoryStorageSession() LIFETIME_BOUND;
 
     void pruneCacheIfNecessary();
     NODELETE bool cacheMayBeOutOfSync() const;

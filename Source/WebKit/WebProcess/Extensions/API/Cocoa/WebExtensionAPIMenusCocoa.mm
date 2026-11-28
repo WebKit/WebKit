@@ -444,7 +444,7 @@ void WebExtensionAPIMenus::removeAll(Ref<WebExtensionCallbackHandler>&& callback
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPIMenus::onClicked()
+WebExtensionAPIEvent& WebExtensionAPIMenus::onClicked() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/onClicked
 

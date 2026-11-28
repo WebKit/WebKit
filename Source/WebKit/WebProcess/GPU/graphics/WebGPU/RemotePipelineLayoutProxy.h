@@ -44,8 +44,8 @@ public:
 
     virtual ~RemotePipelineLayoutProxy();
 
-    RemoteDeviceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteDeviceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUPipelineLayoutIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;

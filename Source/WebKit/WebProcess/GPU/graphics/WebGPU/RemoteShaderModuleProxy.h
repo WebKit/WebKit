@@ -44,11 +44,11 @@ public:
 
     virtual ~RemoteShaderModuleProxy();
 
-    RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteDeviceProxy& parent() LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUShaderModuleIdentifier backing() const { return m_backing; }
 
-    RemoteDeviceProxy& device() const final { return m_parent; }
+    RemoteDeviceProxy& device() const LIFETIME_BOUND final { return m_parent; }
     void compilationInfo(CompletionHandler<void(::WebGPU::CompilationInfo&&)>&&) final;
     void setLabel(String&&) final;
     bool isValid() const final;

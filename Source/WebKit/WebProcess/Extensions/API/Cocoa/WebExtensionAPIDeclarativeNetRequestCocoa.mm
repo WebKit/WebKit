@@ -438,7 +438,7 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
 }
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-WebExtensionAPIEvent& WebExtensionAPIDeclarativeNetRequest::onRuleMatchedDebug()
+WebExtensionAPIEvent& WebExtensionAPIDeclarativeNetRequest::onRuleMatchedDebug() LIFETIME_BOUND
 {
     if (!m_onRuleMatchedDebug)
         lazyInitialize(m_onRuleMatchedDebug, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug));

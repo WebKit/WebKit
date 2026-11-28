@@ -215,7 +215,7 @@ private:
 
     // Logger
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "AudioVideoRendererRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
@@ -250,7 +250,7 @@ private:
         bool m_decoderReadyForMoreData { true };
         bool m_awaitingFlush { false };
     };
-    ReadyForMoreDataState& readyForMoreDataState(TrackIdentifier);
+    ReadyForMoreDataState& readyForMoreDataState(TrackIdentifier) LIFETIME_BOUND;
     void resolveRequestMediaDataWhenReadyIfNeeded(TrackIdentifier);
 
     struct PendingSample {

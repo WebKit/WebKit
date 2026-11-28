@@ -44,7 +44,7 @@ public:
     void ref() const { }
     void deref() const { }
 
-    WebCore::RTCDataChannelRemoteHandlerConnection& remoteHandlerConnection();
+    WebCore::RTCDataChannelRemoteHandlerConnection& remoteHandlerConnection() LIFETIME_BOUND;
     bool connectToRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler);
 
 private:
@@ -64,7 +64,7 @@ private:
     void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, String&&);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, uint64_t);
 
-    WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection();
+    WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection() LIFETIME_BOUND;
     void postTaskToHandler(WebCore::RTCDataChannelIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&&);
     WebCore::RTCDataChannelRemoteSource* sourceFromIdentifier(WebCore::RTCDataChannelIdentifier);
 

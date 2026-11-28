@@ -306,7 +306,7 @@ void WebExtensionAPIStorageArea::setAccessLevel(WebPageProxyIdentifier webPagePr
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPIStorageArea::onChanged()
+WebExtensionAPIEvent& WebExtensionAPIStorageArea::onChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/onChanged
 

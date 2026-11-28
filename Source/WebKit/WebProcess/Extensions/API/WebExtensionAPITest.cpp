@@ -128,7 +128,7 @@ void WebExtensionAPITest::sendMessage(JSContextRef context, const String& messag
     WebProcess::singleton().send(Messages::WebExtensionController::TestSentMessage(message, toSortedJSONString(context, argument), location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
+WebExtensionAPIEvent& WebExtensionAPITest::onMessage() LIFETIME_BOUND
 {
     if (!m_onMessage)
         lazyInitialize(m_onMessage, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnMessage));
@@ -136,7 +136,7 @@ WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
     return *m_onMessage;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITest::onTestStarted()
+WebExtensionAPIEvent& WebExtensionAPITest::onTestStarted() LIFETIME_BOUND
 {
     if (!m_onTestStarted)
         lazyInitialize(m_onTestStarted, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestStarted));
@@ -144,7 +144,7 @@ WebExtensionAPIEvent& WebExtensionAPITest::onTestStarted()
     return *m_onTestStarted;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITest::onTestFinished()
+WebExtensionAPIEvent& WebExtensionAPITest::onTestFinished() LIFETIME_BOUND
 {
     if (!m_onTestFinished)
         lazyInitialize(m_onTestFinished, WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::TestOnTestFinished));

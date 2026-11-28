@@ -75,7 +75,7 @@ IPC::Connection* WebIDBConnectionToServer::messageSenderConnection() const
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()
+IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer() LIFETIME_BOUND
 {
     return *m_connectionToServer;
 }

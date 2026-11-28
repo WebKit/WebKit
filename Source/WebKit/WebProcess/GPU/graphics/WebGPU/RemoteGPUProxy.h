@@ -69,9 +69,9 @@ public:
 
     RemoteGPUProxy& root() { return *this; }
 
-    IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    IPC::StreamClientConnection& streamClientConnection() LIFETIME_BOUND { return *m_streamConnection; }
     // The connection of the GPU process connection that streamClientConnection() was created on.
-    IPC::Connection& gpuProcessIPCConnection() const { return *m_gpuProcessIPCConnection; }
+    IPC::Connection& gpuProcessIPCConnection() const LIFETIME_BOUND { return *m_gpuProcessIPCConnection; }
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }

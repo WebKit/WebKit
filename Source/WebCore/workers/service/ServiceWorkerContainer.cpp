@@ -82,7 +82,7 @@
 
 namespace WebCore {
 
-static inline SWClientConnection& mainThreadConnection()
+static inline Ref<SWClientConnection> mainThreadConnection()
 {
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }

@@ -48,7 +48,7 @@ public:
 
     NSString *themeName();
 
-    WebExtensionAPIEvent& onThemeChanged();
+    WebExtensionAPIEvent& onThemeChanged() LIFETIME_BOUND;
 #endif
 
 private:

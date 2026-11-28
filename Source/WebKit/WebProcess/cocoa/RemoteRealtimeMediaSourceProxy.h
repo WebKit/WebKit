@@ -51,7 +51,7 @@ public:
     RemoteRealtimeMediaSourceProxy(RemoteRealtimeMediaSourceProxy&&) = default;
     RemoteRealtimeMediaSourceProxy& operator=(RemoteRealtimeMediaSourceProxy&&) = default;
 
-    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_connection.get(); }
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
     WebCore::CaptureDevice::DeviceType deviceType() const { return m_device.type(); }
     const WebCore::CaptureDevice& device() const LIFETIME_BOUND { return m_device; }

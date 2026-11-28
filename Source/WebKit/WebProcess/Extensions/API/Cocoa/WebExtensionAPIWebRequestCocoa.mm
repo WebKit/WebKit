@@ -67,7 +67,7 @@ SUPPRESS_NODELETE NSDictionary *WebExtensionAPIWebRequest::resourceType()
     return types;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRequest()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRequest() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
 
@@ -77,7 +77,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRequest()
     return *m_onBeforeRequestEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeSendHeaders()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeSendHeaders() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeSendHeaders
 
@@ -87,7 +87,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeSendHeaders()
     return *m_onBeforeSendHeadersEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onSendHeaders()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onSendHeaders() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onSendHeaders
 
@@ -97,7 +97,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onSendHeaders()
     return *m_onSendHeadersEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onHeadersReceived()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onHeadersReceived() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onHeadersReceived
 
@@ -107,7 +107,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onHeadersReceived()
     return *m_onHeadersReceivedEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onAuthRequired()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onAuthRequired() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onAuthRequired
 
@@ -117,7 +117,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onAuthRequired()
     return *m_onAuthRequiredEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRedirect()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRedirect() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRedirect
 
@@ -127,7 +127,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onBeforeRedirect()
     return *m_onBeforeRedirectEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onResponseStarted()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onResponseStarted() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onResponseStarted
 
@@ -137,7 +137,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onResponseStarted()
     return *m_onResponseStartedEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onCompleted()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onCompleted() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onCompleted
 
@@ -147,7 +147,7 @@ WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onCompleted()
     return *m_onCompletedEvent;
 }
 
-WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred()
+WebExtensionAPIWebRequestEvent& WebExtensionAPIWebRequest::onErrorOccurred() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onErrorOccurred
 

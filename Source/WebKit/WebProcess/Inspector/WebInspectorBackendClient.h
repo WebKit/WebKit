@@ -119,7 +119,7 @@ private:
         std::unique_ptr<RepaintIndicatorLayerClient> layerClient;
         HashSet<Ref<WebCore::GraphicsLayer>> layers;
     };
-    PaintRectOverlayForFrame& ensurePaintRectOverlayForFrame(WebCore::LocalFrame&);
+    PaintRectOverlayForFrame& ensurePaintRectOverlayForFrame(WebCore::LocalFrame&) LIFETIME_BOUND;
 
     WeakHashMap<WebCore::LocalFrame, PaintRectOverlayForFrame> m_paintRectOverlays;
 };

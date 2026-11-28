@@ -103,7 +103,7 @@ bool ModelProcessModelPlayer::modelProcessEnabled() const
     return strongPage && strongPage->corePage() && strongPage->corePage()->settings().modelElementEnabled() && strongPage->corePage()->settings().modelProcessEnabled();
 }
 
-ModelProcessModelPlayer::NodeAnimationState& ModelProcessModelPlayer::ensureAnimationState(WebCore::NodeIdentifier nodeID)
+ModelProcessModelPlayer::NodeAnimationState& ModelProcessModelPlayer::ensureAnimationState(WebCore::NodeIdentifier nodeID) LIFETIME_BOUND
 {
     return m_animationStates.ensure(nodeID, [] {
         return NodeAnimationState { };

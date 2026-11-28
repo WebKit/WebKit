@@ -1177,7 +1177,7 @@ RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
     auto [result, changed] = sendResult.takeReply();
     if (changed) {
         if (result)
-            m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), reference, WTF::move(*result));
+            m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(protect(connection()), videoFrameObjectHeapProxy(), reference, WTF::move(*result));
         else
             m_videoFrameForCurrentTime = nullptr;
     }

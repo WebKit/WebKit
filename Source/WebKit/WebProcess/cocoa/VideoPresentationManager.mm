@@ -227,7 +227,7 @@ VideoPresentationManager::ModelInterfaceTuple VideoPresentationManager::createMo
     return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
-const VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier contextId, bool createlayerHostingContext)
+const VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier contextId, bool createlayerHostingContext) LIFETIME_BOUND
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId, createlayerHostingContext);

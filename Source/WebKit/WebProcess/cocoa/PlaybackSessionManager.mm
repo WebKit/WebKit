@@ -236,7 +236,7 @@ PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelA
     return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
-const PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier contextId)
+const PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier contextId) LIFETIME_BOUND
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId);

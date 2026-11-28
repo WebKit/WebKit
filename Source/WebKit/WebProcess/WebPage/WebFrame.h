@@ -154,7 +154,7 @@ public:
     void updateSandboxFlags(WebCore::SandboxFlags);
     void didAddHistoryItemToBackForwardItem(WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier);
     DidCacheOutgoingDocument loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>, std::optional<BackForwardItemIdentifiers>&& cacheIdentifiers);
-    WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
+    WebCore::LocalFrame* provisionalFrame() LIFETIME_BOUND { return m_provisionalFrame.get(); }
 
     Awaitable<std::optional<FrameInfoData>> getFrameInfo();
     FrameInfoData info() const;

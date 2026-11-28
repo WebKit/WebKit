@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onShown()
+WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onShown() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
 
@@ -51,7 +51,7 @@ WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onShown()
     return *m_onShown;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onHidden()
+WebExtensionAPIEvent& WebExtensionAPIDevToolsExtensionPanel::onHidden() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/ExtensionPanel
 

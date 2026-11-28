@@ -47,8 +47,8 @@ public:
 
     virtual ~RemoteRenderPipelineProxy();
 
-    RemoteDeviceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteDeviceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPURenderPipelineIdentifier backing() const { return m_backing; }
 
     Ref<::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;

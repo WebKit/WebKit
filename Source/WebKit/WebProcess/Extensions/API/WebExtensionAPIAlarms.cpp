@@ -164,7 +164,7 @@ void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()
+WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
 

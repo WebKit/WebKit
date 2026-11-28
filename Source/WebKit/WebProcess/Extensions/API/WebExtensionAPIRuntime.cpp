@@ -566,7 +566,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
     return port;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
 
@@ -576,7 +576,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessage()
     return *m_onMessage;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onConnect
 
@@ -586,7 +586,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
     return *m_onConnect;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
 
@@ -596,7 +596,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled()
     return *m_onInstalled;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onStartup
 
@@ -606,7 +606,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup()
     return *m_onStartup;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnectExternal()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnectExternal() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onConnectExternal
 
@@ -616,7 +616,7 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnectExternal()
     return *m_onConnectExternal;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessageExternal()
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onMessageExternal() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessageExternal
 

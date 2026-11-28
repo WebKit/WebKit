@@ -42,16 +42,16 @@ class WebExtensionAPIStorage : public WebExtensionAPIObject, public JSWebExtensi
 public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
-    WebExtensionAPIStorageArea& local();
-    WebExtensionAPIStorageArea& session();
-    WebExtensionAPIStorageArea& sync();
+    WebExtensionAPIStorageArea& local() LIFETIME_BOUND;
+    WebExtensionAPIStorageArea& session() LIFETIME_BOUND;
+    WebExtensionAPIStorageArea& sync() LIFETIME_BOUND;
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& onChanged() LIFETIME_BOUND;
 
 private:
     friend class WebExtensionContextProxy;
 
-    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType);
+    WebExtensionAPIStorageArea& storageAreaForType(WebExtensionDataType) LIFETIME_BOUND;
 
     const RefPtr<WebExtensionAPIStorageArea> m_local;
     const RefPtr<WebExtensionAPIStorageArea> m_session;

@@ -87,12 +87,12 @@ public:
     void sendNativeMessage(WebFrame&, const String& applicationID, const String& messageJSON, Ref<WebExtensionCallbackHandler>&&);
     RefPtr<WebExtensionAPIPort> connectNative(WebPageProxyIdentifier, JSContextRef, const String& applicationID);
 
-    WebExtensionAPIEvent& onConnect();
-    WebExtensionAPIEvent& onInstalled();
-    WebExtensionAPIEvent& onMessage();
-    WebExtensionAPIEvent& onStartup();
-    WebExtensionAPIEvent& onConnectExternal();
-    WebExtensionAPIEvent& onMessageExternal();
+    WebExtensionAPIEvent& onConnect() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onInstalled() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onMessage() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onStartup() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onConnectExternal() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onMessageExternal() LIFETIME_BOUND;
 
 private:
     friend class WebExtensionAPIWebPageRuntime;

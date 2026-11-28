@@ -55,7 +55,7 @@ bool RemoteMediaPlayerMIMETypeCache::isEmpty() const
     return m_hasPopulatedSupportedTypesCacheFromGPUProcess && m_supportedTypesCache.isEmpty();
 }
 
-HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes()
+HashSet<String>& RemoteMediaPlayerMIMETypeCache::supportedTypes() LIFETIME_BOUND
 {
     ASSERT(isMainRunLoop());
     if (!m_hasPopulatedSupportedTypesCacheFromGPUProcess) {

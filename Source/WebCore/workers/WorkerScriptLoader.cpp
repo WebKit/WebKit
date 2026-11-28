@@ -267,7 +267,7 @@ void WorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifier mai
     if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache && m_context) {
         m_isMatchingServiceWorkerRegistration = true;
         RefPtr worker = dynamicDowncast<WorkerGlobalScope>(*m_context);
-        Ref swConnection = worker ? static_cast<SWClientConnection&>(worker->swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        Ref swConnection = worker ? Ref { static_cast<SWClientConnection&>(worker->swClientConnection()) } : ServiceWorkerProvider::singleton().serviceWorkerConnection();
         swConnection->matchRegistration(WTF::move(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, mainContext, identifier](auto&& registrationData) mutable {
             m_isMatchingServiceWorkerRegistration = false;
             if (registrationData && registrationData->activeWorker)

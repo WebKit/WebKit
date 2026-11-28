@@ -35,7 +35,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
+NetworkStorageSession& WebCookieCache::inMemoryStorageSession() LIFETIME_BOUND
 {
     if (!m_inMemoryStorageSession) {
         String sessionName = makeString("WebKitInProcessStorage-"_s, getCurrentProcessID());

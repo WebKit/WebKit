@@ -58,10 +58,10 @@ public:
 
     virtual ~RemoteTextureProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     WebGPUTextureIdentifier backing() const { return m_backing; }
 
-    RemoteDeviceProxy& device() const final { return m_device; }
+    RemoteDeviceProxy& device() const LIFETIME_BOUND final { return m_device; }
     RefPtr<::WebGPU::TextureView> createView(const std::optional<::WebGPU::TextureViewDescriptor>&) final;
     RefPtr<::WebGPU::TextureView> createInvalidView() final;
 

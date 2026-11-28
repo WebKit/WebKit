@@ -122,7 +122,7 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
     m_shouldStopThread = false;
 }
 
-IPC::Connection* RemoteAudioDestinationProxy::connection()
+RefPtr<IPC::Connection> RemoteAudioDestinationProxy::connection()
 {
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
@@ -164,7 +164,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
     return m_destinationID ? &gpuProcessConnection->connection() : nullptr;
 }
 
-IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
+RefPtr<IPC::Connection> RemoteAudioDestinationProxy::existingConnection()
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     return gpuProcessConnection && m_destinationID ? &gpuProcessConnection->connection() : nullptr;

@@ -50,8 +50,8 @@ private:
     friend NeverDestroyed<WebServiceWorkerProvider>;
     WebServiceWorkerProvider();
 
-    WebCore::SWClientConnection& serviceWorkerConnection() final;
-    WebCore::SWClientConnection* existingServiceWorkerConnection() final;
+    Ref<WebCore::SWClientConnection> serviceWorkerConnection() final;
+    RefPtr<WebCore::SWClientConnection> existingServiceWorkerConnection() final;
     void terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
 }; // class WebServiceWorkerProvider
 

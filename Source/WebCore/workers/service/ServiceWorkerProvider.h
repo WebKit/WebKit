@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ServiceWorkerIdentifier.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,8 +41,8 @@ public:
     NODELETE static ServiceWorkerProvider& singleton();
     NODELETE static void setSharedProvider(ServiceWorkerProvider&);
 
-    virtual SWClientConnection& serviceWorkerConnection() = 0;
-    virtual SWClientConnection* existingServiceWorkerConnection() = 0;
+    virtual Ref<SWClientConnection> serviceWorkerConnection() = 0;
+    virtual RefPtr<SWClientConnection> existingServiceWorkerConnection() = 0;
     virtual void terminateWorkerForTesting(ServiceWorkerIdentifier, CompletionHandler<void()>&&) = 0;
 
     void setMayHaveRegisteredServiceWorkers() { m_mayHaveRegisteredServiceWorkers = true; }

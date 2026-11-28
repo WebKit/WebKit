@@ -78,9 +78,9 @@ public:
 
     WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
-    virtual WebExtensionAPIRuntimeBase& runtime() { return *m_runtime; }
+    virtual WebExtensionAPIRuntimeBase& runtime() LIFETIME_BOUND { return *m_runtime; }
 
-    WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
+    WebExtensionContextProxy& extensionContext() const LIFETIME_BOUND { return *m_extensionContext; }
     bool hasExtensionContext() const { return !!m_extensionContext; }
     bool usesStructuredCloneMessageSerialization() const { return m_extensionContext && contentWorldType() != WebExtensionContentWorldType::WebPage && m_extensionContext->usesStructuredCloneMessageSerialization(); }
 

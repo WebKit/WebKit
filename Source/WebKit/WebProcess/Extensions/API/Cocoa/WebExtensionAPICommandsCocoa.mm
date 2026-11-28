@@ -78,7 +78,7 @@ void WebExtensionAPICommands::getAll(Ref<WebExtensionCallbackHandler>&& callback
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()
+WebExtensionAPIEvent& WebExtensionAPICommands::onCommand() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
 
@@ -88,7 +88,7 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()
     return *m_onCommand;
 }
 
-WebExtensionAPIEvent& WebExtensionAPICommands::onChanged()
+WebExtensionAPIEvent& WebExtensionAPICommands::onChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onChanged
 

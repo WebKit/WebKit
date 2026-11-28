@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class SharedWorkerObjectConnection;
@@ -35,7 +37,7 @@ public:
     NODELETE WEBCORE_EXPORT static void setSharedProvider(SharedWorkerProvider&);
 
     virtual ~SharedWorkerProvider() { }
-    virtual SharedWorkerObjectConnection* sharedWorkerConnection() = 0;
+    virtual RefPtr<SharedWorkerObjectConnection> sharedWorkerConnection() = 0;
 };
 
 } // namespace WebCore

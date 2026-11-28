@@ -114,7 +114,7 @@ RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote& layer)
     }
 
     collection->backingStoreWasCreated(*this);
-    lazyInitialize(m_bufferSet, protect(protect(collection->layerTreeContext())->ensureRemoteRenderingBackendProxy())->createImageBufferSet(*CheckedPtr { this }));
+    lazyInitialize(m_bufferSet, protect(collection->layerTreeContext())->ensureRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }));
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()

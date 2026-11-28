@@ -44,8 +44,8 @@ public:
 
     virtual ~RemoteBindGroupProxy();
 
-    RemoteDeviceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteDeviceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUBindGroupIdentifier backing() const { return m_backing; }
 
     bool updateExternalTextures(::WebGPU::ExternalTexture&) final;
