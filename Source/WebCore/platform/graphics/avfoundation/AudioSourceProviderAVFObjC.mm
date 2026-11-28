@@ -455,18 +455,31 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
 
     auto [startFrame, endFrame, writeAhead] = m_ringBuffer->getStoreTimeBounds();
 
+    // After a seek or resume the tap can deliver a preroll from another
+    // position, including the start of the file. Drop that audio. A continuous
+    // stream is allowed to sit ahead of or behind the item timebase.
+    bool discontinuity = rangeStart != m_endTimeAtLastProcess;
+    double deltaSeconds = (rangeStart - currentTime).toDouble();
+    if (discontinuity && (deltaSeconds < -0.5 || deltaSeconds > 1)) {
+        m_seekTo = endFrame;
+        for (auto& buffer : span(*bufferListInOut))
+            zeroSpan(mutableSpan<uint8_t>(buffer));
+        *numberFramesOut = 0;
+        return;
+    }
+
     if (m_paused) {
         // Only check the write-ahead time when playback begins.
         m_paused = false;
-        MediaTime earlyBy = rangeStart - currentTime;
-        writeAhead = m_tapDescription->mSampleRate * m_playbackRate * earlyBy.toDouble();
+        double earlyBySeconds = deltaSeconds > 0 ? deltaSeconds : 0;
+        writeAhead = m_tapDescription->mSampleRate * m_playbackRate * earlyBySeconds;
     }
 
     bool needsFlush = false;
 
     // Check to see if the underlying media has seeked, which would require us to "flush"
     // our outstanding buffers.
-    if (rangeStart != m_endTimeAtLastProcess)
+    if (discontinuity)
         needsFlush = true;
 
     m_startTimeAtLastProcess = rangeStart;
