@@ -31,6 +31,7 @@
 #include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -161,6 +162,11 @@ Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardLis
     auto processIdentifier = item.backForwardCacheEntry()->processIdentifier();
     Ref suspendedPage = protect(item.backForwardCacheEntry())->takeSuspendedPage();
 
+    auto suspendedFrameItemID = suspendedPage->suspendedFrameItemID();
+    Vector<Ref<WebFrameProxy>> childFramesOfSuspendedDocument;
+    if (suspendedFrameItemID && *suspendedFrameItemID != item.mainFrameItem().identifier())
+        childFramesOfSuspendedDocument = suspendedPage->takeChildFramesOfSuspendedDocument();
+
     // Clear SuspendedPageProxy from other entries of the same page in the same process.
     // The process is about to be unsuspended, so these entries become
     // regular in-process BFCache entries. Entries of other pages keep their
@@ -168,8 +174,11 @@ Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardLis
     for (RefPtr otherItem : m_itemsWithCachedPage) {
         if (otherItem.get() == &item || otherItem->pageID() != item.pageID())
             continue;
-        if (RefPtr entry = otherItem->backForwardCacheEntryForProcess(processIdentifier); entry && entry->suspendedPage())
+        if (RefPtr entry = otherItem->backForwardCacheEntryForProcess(processIdentifier); entry && entry->suspendedPage()) {
             entry->clearSuspendedPage();
+            if (!childFramesOfSuspendedDocument.isEmpty() && otherItem->mainFrameItem().identifier() == suspendedFrameItemID)
+                entry->setCachedChildren(std::exchange(childFramesOfSuspendedDocument, { }));
+        }
     }
 
     removeEntry(item);
