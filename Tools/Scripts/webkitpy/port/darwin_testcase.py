@@ -66,6 +66,12 @@ class DarwinTest(port_testcase.PortTestCase):
         self.assertEqual('media', port.group_for_shard(TestShard('something/media', [])))
         self.assertEqual(None, port.group_for_shard(TestShard('fast/something', [])))
 
+    def test_sharding_groups_api_tests(self):
+        port = self.make_port()
+        self.assertEqual('media', port.group_for_shard('TestWebKitAPI.MediaLoading', suite='api-tests'))
+        self.assertEqual('media', port.group_for_shard('TestWebKitAPI.WebAudio', suite='api-tests'))
+        self.assertEqual(None, port.group_for_shard('TestWebKitAPI.SiteIsolation', suite='api-tests'))
+
     def test_default_timeout_ms(self):
         super(DarwinTest, self).test_default_timeout_ms()
         self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)

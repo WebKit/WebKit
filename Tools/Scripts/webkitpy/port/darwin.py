@@ -130,7 +130,7 @@ class DarwinPort(ApplePort):
 
     def sharding_groups(self, suite=None):
         return {
-            'media': lambda shard: 'media' in shard.name or 'webaudio' in shard.name,
+            'media': lambda shard: any(name in (shard if isinstance(shard, str) else shard.name).lower() for name in ('media', 'webaudio')),
         }
 
     def default_timeout_ms(self):

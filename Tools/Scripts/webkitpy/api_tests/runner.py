@@ -254,13 +254,22 @@ class Runner(object):
             shards = Runner._shard_tests(parallel_tests, self.port.get_option('fully_parallel'))
             self._num_workers = min(workers, max(len(shards), 1))
 
+            pool_groups = [group for group in mutually_exclusive_groups if group != 'system']
             with TaskPool(
                 workers=self._num_workers,
-                mutually_exclusive_groups=[group for group in mutually_exclusive_groups if group != 'system'],
+                mutually_exclusive_groups=pool_groups,
                 setup=setup_shard, setupkwargs=setupkwargs, teardown=teardown_shard,
             ) as pool:
+                shard_groups = {name: self.port.group_for_shard(name, suite='api-tests') for name in shards}
+
+                # Dispatch shards from groups first, so we start dedicated groups running before all our other shards
                 for name, shard_tests in iteritems(shards):
-                    pool.do(run_shard, name, *shard_tests)
+                    if shard_groups[name] in pool_groups:
+                        pool.do(run_shard, name, *shard_tests, group=shard_groups[name])
+
+                for name, shard_tests in iteritems(shards):
+                    if shard_groups[name] not in pool_groups:
+                        pool.do(run_shard, name, *shard_tests)
 
                 pool.wait()
 

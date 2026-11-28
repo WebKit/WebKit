@@ -124,14 +124,16 @@ class RunnerRunTest(unittest.TestCase):
     def tearDown(self):
         Runner.instance = self._saved_instance
 
-    def _run(self, parallel_safety_tests, num_workers=6, iterations=3):
+    def _run(self, parallel_safety_tests, num_workers=6, iterations=3, parallel=None, groups=None):
         options = dict(test_parallel_safety=parallel_safety_tests, parallel_safety_iterations=iterations, fully_parallel=False)
         port = MagicMock()
         port.get_option.side_effect = lambda name: options.get(name)
-        port.filter_api_tests_by_blocklist.return_value = (self.PARALLEL, self.BLOCKLISTED)
-        port.sharding_groups.return_value = {}
+        parallel = parallel or self.PARALLEL
+        port.filter_api_tests_by_blocklist.return_value = (parallel, self.BLOCKLISTED)
+        port.sharding_groups.return_value = {group: None for group in (groups or {}).values()}
+        port.group_for_shard.side_effect = lambda shard, suite=None: (groups or {}).get(shard)
         with patch('webkitpy.api_tests.runner.TaskPool') as task_pool:
-            Runner(port, MagicMock()).run(self.PARALLEL + self.BLOCKLISTED, num_workers)
+            Runner(port, MagicMock()).run(parallel + self.BLOCKLISTED, num_workers)
         return task_pool
 
     @staticmethod
@@ -199,6 +201,33 @@ class RunnerRunTest(unittest.TestCase):
         shard_names = [call.args[1] for call in self._calls(task_pool, run_shard)]
         self.assertEqual(shard_names, ['TestWebKitAPI.SiteIsolation', 'TestWebKitAPI.WebKit', 'TestWebKitAPI.System'])
         self.assertEqual(self._calls(task_pool, run_background_load), [])
+
+    def test_without_parallel_safety_dispatches_grouped_shards_first(self):
+        parallel = [
+            'TestWebKitAPI.SiteIsolation.Target',
+            'TestWebKitAPI.MediaLoading.A',
+            'TestWebKitAPI.WebKit.A',
+            'TestWebKitAPI.WebAudio.A',
+        ]
+        task_pool = self._run(None, parallel=parallel, groups={'TestWebKitAPI.MediaLoading': 'media', 'TestWebKitAPI.WebAudio': 'media'})
+
+        self.assertEqual(task_pool.call_args_list[0].kwargs['mutually_exclusive_groups'], ['media'])
+        self.assertEqual(
+            [(call.args[1], call.kwargs.get('group')) for call in self._calls(task_pool, run_shard)],
+            [
+                ('TestWebKitAPI.MediaLoading', 'media'),
+                ('TestWebKitAPI.WebAudio', 'media'),
+                ('TestWebKitAPI.SiteIsolation', None),
+                ('TestWebKitAPI.WebKit', None),
+                ('TestWebKitAPI.System', None),
+            ],
+        )
+
+    def test_without_parallel_safety_never_sends_the_system_group_to_the_pool(self):
+        task_pool = self._run(None, groups={'TestWebKitAPI.WebKit': 'system'})
+
+        self.assertEqual(task_pool.call_args_list[0].kwargs['mutually_exclusive_groups'], [])
+        self.assertTrue(all('group' not in call.kwargs for call in self._calls(task_pool, run_shard)))
 
 
 class ReportResultEarlyExitTest(unittest.TestCase):
