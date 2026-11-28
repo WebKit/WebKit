@@ -51,7 +51,7 @@ WI.Cookie = class Cookie
             this._header = header || "";
             this._expires = (!session && expires) || null;
             this._session = session || false;
-            this._maxAge = maxAge || null;
+            this._maxAge = maxAge ?? null;
             this._path = path || null;
             this._domain = domain || null;
             this._secure = secure || false;
@@ -189,7 +189,7 @@ WI.Cookie = class Cookie
             case "max-age":
                 console.assert(attributeValue);
                 maxAge = parseInt(attributeValue, 10);
-                if (isNaN(maxAge) || !/^\d+$/.test(attributeValue)) {
+                if (isNaN(maxAge) || !/^-?\d+$/.test(attributeValue)) {
                     console.warn("Invalid MaxAge value:", attributeValue);
                     maxAge = null;
                 }
@@ -223,7 +223,8 @@ WI.Cookie = class Cookie
             }
         }
 
-        if (!expires)
+        // A cookie is only a session cookie when it has neither an Expires nor a Max-Age attribute.
+        if (!expires && maxAge === null)
             session = true;
 
         return new WI.Cookie(WI.Cookie.Type.Response, name, value, {header, expires, session, maxAge, path, domain, secure, httpOnly, sameSite, partitioned});
@@ -260,9 +261,14 @@ WI.Cookie = class Cookie
         if (this._session)
             return null;
 
-        if (this._maxAge) {
+        if (this._maxAge != null) {
+            // RFC 6265 Section 5.2.2: a Max-Age of zero or less expires the cookie at the earliest representable time.
+            if (this._maxAge <= 0)
+                return new Date(0);
+
             let startDate = requestSentDate || new Date;
-            return new Date(startDate.getTime() + (this._maxAge * 1000));
+            let expirationDate = new Date(startDate.getTime() + (this._maxAge * 1000));
+            return isNaN(expirationDate.getTime()) ? null : expirationDate;
         }
 
         return this._expires;
