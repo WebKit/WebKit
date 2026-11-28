@@ -412,6 +412,8 @@ https://www.reddit.com/
     RequiresUserGestureToPauseInPictureInPictureQuirk
 https://routine.co/
     ShouldDisableCSSSizeShorthandQuirk
+https://satechi.com/
+    NeedsAnchorToBeMouseFocusableQuirk
 https://www.scribd.com/
     NeedsReuseLiveRangeForSelectionUpdateQuirk
 https://www.sfusd.edu/

@@ -1164,6 +1164,11 @@
             ]
         },
         {
+            "bugs": ["https://webkit.org/b/332753", "rdar://193429681"],
+            "matches": ["*://*.satechi.com/*"],
+            "behaviors": [{ "id": "NeedsAnchorToBeMouseFocusableQuirk" }]
+        },
+        {
             "matches": ["*://*.scribd.com/*"],
             "behaviors": [{ "id": "NeedsReuseLiveRangeForSelectionUpdateQuirk" }]
         },
