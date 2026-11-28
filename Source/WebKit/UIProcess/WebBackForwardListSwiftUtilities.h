@@ -41,10 +41,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-
-// Workaround for rdar://162358154
+// Workaround for rdar://162358154. StdlibExtras.swift uses this even without BACK_FORWARD_LIST_SWIFT.
 using SpanConstChar = std::span<const char>;
+
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 
 // Workaround for rdar://162357139
 template<typename T>

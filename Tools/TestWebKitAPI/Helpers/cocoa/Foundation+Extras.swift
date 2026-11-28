@@ -210,7 +210,7 @@ public struct ConditionTimedOut: Error, CustomStringConvertible {
 public func waitForCondition(
     _ description: String,
     timeout: Duration = .seconds(5),
-    _ condition: @concurrent () async throws -> Bool
+    _ condition: () async throws -> Bool
 ) async throws {
     let deadline = ContinuousClock.now + timeout
 

@@ -1358,7 +1358,7 @@ void WebPageProxy::insertMultiRepresentationHEIC(NSData *data, NSString *altText
 
 #endif
 
-void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t> data)
+void WebPageProxy::replaceSelectionWithPasteboardData(const PasteboardTypeNames& types, NOESCAPE std::span<const uint8_t> data)
 {
     sendToFocusedOrMainFrameProcess(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }

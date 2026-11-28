@@ -1864,7 +1864,8 @@ public:
     void registerWebProcessAccessibilityToken(std::span<const uint8_t>);
     // Called by the UI process when it is ready to send its tokens to the web process.
     void registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken);
-    void replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t>);
+    using PasteboardTypeNames = Vector<String>;
+    void replaceSelectionWithPasteboardData(const PasteboardTypeNames&, NOESCAPE std::span<const uint8_t>);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();
     RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
@@ -4789,6 +4790,16 @@ private:
 using WeakPtrWebPageProxy = WeakPtr<WebPageProxy>;
 
 } // namespace WebKit
+
+namespace WebKit::CxxInteropSupport {
+
+// FIXME: Remove this once Swift 6.4 is no longer supported. Swift code built with it uses this, since it doesn't find WeakPtr's constructors here.
+inline WeakPtrWebPageProxy makeWeakPtr(WebPageProxy* page)
+{
+    return page;
+}
+
+} // namespace WebKit::CxxInteropSupport
 
 #if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
 inline void refWebPageProxy(WebKit::WebPageProxy* WTF_NONNULL obj)

@@ -328,7 +328,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     imageRect = [webView convertRect:imageRect toView:nil];
     imageRect = [retainPtr([webView window]) convertRectToScreen:imageRect];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setSourceFrame:imageRect];
-    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setAttachmentID:m_context.controlledImageAttachmentID()];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setAttachmentID:m_context.controlledImageAttachmentID().createNSString().get()];
 
     m_menu = adoptNS([[picker menu] copy]);
 

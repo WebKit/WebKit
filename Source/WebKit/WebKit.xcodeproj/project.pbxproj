@@ -1242,6 +1242,7 @@
 		4C8E2A213D5F60718293A4D7 /* WKPortalVolumetricGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C8E2A1F3D5F60718293A4D5 /* WKPortalVolumetricGestureController.h */; };
 		4C8E2A223D5F60718293A4D8 /* WKPortalVolumetricGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */; };
 		4CAECB6627465AE400AB78D0 /* UnifiedSource114.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CAECB5E27465AE300AB78D0 /* UnifiedSource114.cpp */; };
+		5035BA8B9D39EE0007E13935 /* WKSharingServicePickerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E462C1AD837560016234A /* WKSharingServicePickerDelegate.swift */; };
 		510523741C73D38B007993CB /* WebIDBConnectionToServerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 510523731C73D37B007993CB /* WebIDBConnectionToServerMessages.h */; };
 		5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */; };
 		5109099723DACBF2003B1E4C /* WKScriptMessageHandlerWithReply.h in Headers */ = {isa = PBXBuildFile; fileRef = 5109099423D41F13003B1E4C /* WKScriptMessageHandlerWithReply.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -6171,7 +6172,7 @@
 		513C7B772E7CFD1100079881 /* RemoteAudioVideoRendererState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioVideoRendererState.h; sourceTree = "<group>"; };
 		513C7B792E7CFD4B00079881 /* RemoteAudioVideoRendererState.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioVideoRendererState.serialization.in; sourceTree = "<group>"; };
 		513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSharingServicePickerDelegate.h; sourceTree = "<group>"; };
-		513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSharingServicePickerDelegate.mm; sourceTree = "<group>"; };
+		513E462C1AD837560016234A /* WKSharingServicePickerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKSharingServicePickerDelegate.swift; sourceTree = "<group>"; };
 		513FFB8E201459C2002596EA /* WebMessagePortChannelProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMessagePortChannelProvider.cpp; sourceTree = "<group>"; };
 		513FFB8F201459C2002596EA /* WebMessagePortChannelProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMessagePortChannelProvider.h; sourceTree = "<group>"; };
 		514129911C6428100059E714 /* WebIDBConnectionToServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBConnectionToServer.cpp; sourceTree = "<group>"; };
@@ -17396,7 +17397,7 @@
 				F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */,
 				F446EDF1265EB3B60031DA8F /* WKRevealItemPresenter.swift */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
-				513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */,
+				513E462C1AD837560016234A /* WKSharingServicePickerDelegate.swift */,
 				440C0BE42BBCAA180086046E /* WKTextAnimationManagerMac.h */,
 				440C0BE22BBCA9E00086046E /* WKTextAnimationManagerMac.mm */,
 				2DD67A331BD861060053B251 /* WKTextFinderClient.h */,
@@ -22936,6 +22937,7 @@
 				B65437972EF31C4E00ED9855 /* WKSeparatedImageView.swift in Sources */,
 				B68905162EF46B0A009187D8 /* WKSeparatedImageViewConstants.swift in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
+				5035BA8B9D39EE0007E13935 /* WKSharingServicePickerDelegate.swift in Sources */,
 				B61F9E802F742CFE005CE453 /* WKStageModeOrbitSimulator.swift in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
 				9788BFD92EF4A6940038405A /* WKSurroundingsEffect.swift in Sources */,

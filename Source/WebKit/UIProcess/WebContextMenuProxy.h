@@ -33,6 +33,7 @@
 #include "WebContextMenuListenerProxy.h"
 #include "WebPageProxy.h"
 #include <wtf/RefCounted.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSArray;
@@ -82,8 +83,20 @@ private:
 
     RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
     WeakPtr<WebPageProxy> m_page;
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebContextMenuProxy, derefWebContextMenuProxy);
 
 } // namespace WebKit
+
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+inline void refWebContextMenuProxy(WebKit::WebContextMenuProxy* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefWebContextMenuProxy(WebKit::WebContextMenuProxy* WTF_NONNULL obj)
+{
+    obj->deref();
+}
+#endif
 
 #endif

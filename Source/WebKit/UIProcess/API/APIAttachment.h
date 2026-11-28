@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "APIObject.h"
@@ -123,9 +125,21 @@ private:
 #if PLATFORM(COCOA)
     bool m_isCreatedFromSerializedRepresentation { false };
 #endif
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refAttachment, derefAttachment);
 
 } // namespace API
+
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+inline void refAttachment(API::Attachment* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefAttachment(API::Attachment* WTF_NONNULL obj)
+{
+    obj->deref();
+}
+#endif
 
 SPECIALIZE_TYPE_TRAITS_API_OBJECT(Attachment);
 

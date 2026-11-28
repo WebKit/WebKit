@@ -23,37 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#import <wtf/Platform.h>
+
 #if ENABLE(SERVICE_CONTROLS)
 
-#import <wtf/RetainPtr.h>
-#import <wtf/WeakPtr.h>
-#import <wtf/text/WTFString.h>
+#import "WebContextMenuProxyMac.h"
+#import <AppKit/AppKit.h>
+#import <pal/spi/mac/NSSharingServiceSPI.h>
 
-namespace WebKit {
-class WebContextMenuProxyMac;
-}
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-@class NSSharingServicePicker;
+NS_SWIFT_UI_ACTOR
+@interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 
-@interface WKSharingServicePickerDelegate : NSObject <NSSharingServiceDelegate, NSSharingServicePickerDelegate> {
-    WeakPtr<WebKit::WebContextMenuProxyMac> _menuProxy;
-    RetainPtr<NSSharingServicePicker> _picker;
-    BOOL _filterEditingServices;
-    BOOL _handleEditingReplacement;
-    NSRect _sourceFrame;
-    String _attachmentID;
-}
+@property (class, nonatomic, readonly) WKSharingServicePickerDelegate *sharedSharingServicePickerDelegate NS_SWIFT_NAME(shared);
 
-+ (WKSharingServicePickerDelegate *)sharedSharingServicePickerDelegate;
-- (WebKit::WebContextMenuProxyMac*)menuProxy;
-- (void)setMenuProxy:(WebKit::WebContextMenuProxyMac*)menuProxy;
-- (void)setPicker:(NSSharingServicePicker *)picker;
-- (void)setFiltersEditingServices:(BOOL)filtersEditingServices;
-- (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
-- (void)setSourceFrame:(NSRect)sourceFrame;
-- (void)setAttachmentID:(String)attachmentID;
+@property (nonatomic, strong, nullable) NSSharingServicePicker *picker;
+@property (nonatomic) BOOL filtersEditingServices;
+@property (nonatomic) BOOL handlesEditingReplacement;
+@property (nonatomic) NSRect sourceFrame;
+@property (nonatomic, copy, nullable) NSString *attachmentID;
+
+- (void)setMenuProxy:(WebKit::WebContextMenuProxyMac *)menuProxy;
 - (void)removeBackground;
 
+// From the private NSSharingServicePickerDelegateNewAPI protocol, which the public SDK doesn't declare.
+- (NSArray<NSSharingService *> *)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker sharingServicesForItems:(NSArray *)items mask:(NSSharingServiceMask)mask proposedSharingServices:(NSArray<NSSharingService *> *)proposedServices;
+
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // ENABLE(SERVICE_CONTROLS)

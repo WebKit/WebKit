@@ -1568,9 +1568,7 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
         PROPERTIES GENERATED TRUE)
     list(APPEND WebKit_SOURCES
         ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
-        ${WEBKIT_DIR}/Platform/Logging.swift
         ${WEBKIT_DIR}/Shared/API/APIArray.swift
-        ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
         ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift
     )
 endif ()
@@ -1598,11 +1596,13 @@ if (SWIFT_REQUIRED)
         ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
         PROPERTIES GENERATED TRUE)
     list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/Platform/Logging.swift
         ${WEBKIT_DIR}/Shared/Concurrency+Extras.swift
         ${WEBKIT_DIR}/Shared/Foundation+Extras.swift
         ${WEBKIT_DIR}/Shared/IPCTesterReceiver.swift
         ${WEBKIT_DIR}/Shared/RunJavaScriptResult.swift
         ${WEBKIT_DIR}/Shared/WTFExpected+Extras.swift
+        ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
         ${WebKit_DERIVED_SOURCES_DIR}/IPCTesterReceiverMessageReceiver.swift
     )
 endif ()

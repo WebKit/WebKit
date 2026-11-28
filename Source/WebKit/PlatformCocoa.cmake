@@ -608,6 +608,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/mac/SpatialShim.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKRevealItemPresenter.swift
+    ${WEBKIT_DIR}/UIProcess/mac/WKSharingServicePickerDelegate.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKViewLayoutStrategy.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView+Testing.swift

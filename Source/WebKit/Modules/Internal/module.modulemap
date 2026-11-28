@@ -107,6 +107,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKSharingServicePickerDelegate {
+        requires cplusplus20,objc
+        header "../../UIProcess/mac/WKSharingServicePickerDelegate.h"
+        export *
+    }
+
     module WKViewLayoutStrategy {
         requires objc
         header "../../UIProcess/mac/WKViewLayoutStrategy.h"
@@ -214,6 +220,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WebContextMenuProxyMac {
+        requires cplusplus20,objc
+        header "../../UIProcess/mac/WebContextMenuProxyMac.h"
+        export *
+    }
+
     module WebsiteData {
         requires cplusplus20
         header "../../Shared/WebsiteData/WebsiteData.h"
@@ -223,6 +235,12 @@ module WebKit_Internal [system] {
     module APIArray {
         requires cplusplus20
         header "../../Shared/API/APIArray.h"
+        export *
+    }
+
+    module APIAttachment {
+        requires cplusplus20
+        header "../../UIProcess/API/APIAttachment.h"
         export *
     }
 

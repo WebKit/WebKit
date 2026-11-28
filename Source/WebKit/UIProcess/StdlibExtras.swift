@@ -33,33 +33,6 @@ extension WTF.String {
     }
 }
 
-// FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
-// (those parts which are not specific to WebKit-level types) - and enable
-// irrespective of BACK_FORWARD_LIST_SWIFT
-#if ENABLE_BACK_FORWARD_LIST_SWIFT
-
-/// Conform any WTF::Ref<T> to this protocol to get useful extensions.
-protocol CxxRef {
-    associatedtype Pointee // you only need to specify this in your conformance
-    init(_ object: Pointee)
-    func copyRef() -> Self
-}
-
-/// Conform any WTF::Vector<T> to this protocol to get useful extensions and iterators.
-protocol CxxVector {
-    associatedtype Element // you only need to specify this in your conformance
-    init()
-    mutating func append(consuming: Element)
-    mutating func reserveCapacity(_ newCapacity: Int)
-    func size() -> Int
-    // swift-format-ignore: AlwaysUseLowerCamelCase, NoLeadingUnderscores
-    func __atUnsafe(_ index: Int) -> UnsafePointer<Element>
-}
-
-/// Conform any WTF::Vector<WTF::Ref<T>> to this protocol to get useful extensions and iterators.
-protocol CxxRefVector: CxxVector where Element: CxxRef {
-}
-
 // FIXME(rdar://164119356): conform to LosslessStringConvertible
 // when this moves to WTF (requires members to be public)
 extension WTF.String {
@@ -93,6 +66,33 @@ extension WTF.String {
     init(stringLiteral: Swift.String) {
         self.init(stringLiteral)
     }
+}
+
+// FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
+// (those parts which are not specific to WebKit-level types) - and enable
+// irrespective of BACK_FORWARD_LIST_SWIFT
+#if ENABLE_BACK_FORWARD_LIST_SWIFT
+
+/// Conform any WTF::Ref<T> to this protocol to get useful extensions.
+protocol CxxRef {
+    associatedtype Pointee // you only need to specify this in your conformance
+    init(_ object: Pointee)
+    func copyRef() -> Self
+}
+
+/// Conform any WTF::Vector<T> to this protocol to get useful extensions and iterators.
+protocol CxxVector {
+    associatedtype Element // you only need to specify this in your conformance
+    init()
+    mutating func append(consuming: Element)
+    mutating func reserveCapacity(_ newCapacity: Int)
+    func size() -> Int
+    // swift-format-ignore: AlwaysUseLowerCamelCase, NoLeadingUnderscores
+    func __atUnsafe(_ index: Int) -> UnsafePointer<Element>
+}
+
+/// Conform any WTF::Vector<WTF::Ref<T>> to this protocol to get useful extensions and iterators.
+protocol CxxRefVector: CxxVector where Element: CxxRef {
 }
 
 extension CxxRefVector {

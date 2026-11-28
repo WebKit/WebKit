@@ -616,6 +616,7 @@
 				WebKit/WKWebView/DigitalCredentialsNetworkProcess.swift,
 				WebKit/WKWebView/HTTP2Server.swift,
 				WebKit/WKWebView/HTTP3Server.swift,
+				WebKit/WKWebView/ImageServicesMenuTests.swift,
 				WebKit/WKWebView/LayoutModeTests.swift,
 				WebKit/WKWebView/NavigationResponseProcessSwapTests.swift,
 				WebKit/WKWebView/PDFLookUpTests.swift,

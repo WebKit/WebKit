@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(MAC)
 
 #include "WebContextMenuProxy.h"
@@ -121,8 +123,32 @@ private:
 #if ENABLE(VIDEO)
     const RetainPtr<WKCaptionStyleMenuController> m_captionStyleMenuController;
 #endif
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refWebContextMenuProxyMac, derefWebContextMenuProxyMac);
+
+using WeakPtrWebContextMenuProxyMac = WeakPtr<WebContextMenuProxyMac>;
 
 } // namespace WebKit
+
+namespace WebKit::CxxInteropSupport {
+
+// FIXME: Remove this once Swift 6.4 is no longer supported. Swift code built with it uses this, since it doesn't find WeakPtr's constructors here.
+inline WeakPtrWebContextMenuProxyMac makeWeakPtr(WebContextMenuProxyMac& menuProxy)
+{
+    return menuProxy;
+}
+
+} // namespace WebKit::CxxInteropSupport
+
+#if !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+inline void refWebContextMenuProxyMac(WebKit::WebContextMenuProxyMac* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefWebContextMenuProxyMac(WebKit::WebContextMenuProxyMac* WTF_NONNULL obj)
+{
+    obj->deref();
+}
+#endif
 
 #endif // PLATFORM(MAC)
