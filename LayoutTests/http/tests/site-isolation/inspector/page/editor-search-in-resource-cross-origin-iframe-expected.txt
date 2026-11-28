@@ -1,0 +1,26 @@
+Test that searching in the source editor (Cmd+F) finds matches in a resource of a cross-origin iframe under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame
+-- Running test case: SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.Setup
+PASS: Should find the cross-origin iframe's frame.
+PASS: Should find the style sheet resource of the iframe.
+PASS: The editor should search the resource with Page.searchInResource.
+PASS: Should load the source code editor.
+
+-- Running test case: SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.FindsMatch
+PASS: The editor should search "rebeccapurple" in the backend.
+PASS: Should find one match in the iframe's resource.
+PASS: The match should start on line 0.
+PASS: The match should start at column 14.
+PASS: The match should end at column 27.
+
+-- Running test case: SiteIsolation.Page.EditorSearchInResource.CrossOriginIFrame.SearchOptions
+PASS: The editor should search "REBECCAPURPLE" in the backend.
+PASS: A case sensitive search should not match different case.
+PASS: The editor should search "REBECCAPURPLE" in the backend.
+PASS: A case insensitive search should match different case.
+PASS: The editor should search "reb[a-z]+purple" in the backend.
+PASS: A regular expression search should match.
+
