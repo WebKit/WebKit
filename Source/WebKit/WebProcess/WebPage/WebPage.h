@@ -715,6 +715,12 @@ public:
     void updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
 
+#if PLATFORM(MAC)
+    void frameInspectorHighlightNeedsUpdate(WebCore::LocalFrame&);
+    void frameInspectorHighlightsNeedUpdate();
+    void hideFrameInspectorHighlight(WebCore::FrameIdentifier);
+#endif
+
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
     void createPDFPageNumberIndicator(PDFPluginBase&, const WebCore::IntRect&, size_t pageCount);
     void updatePDFPageNumberIndicatorLocation(PDFPluginBase&, const WebCore::IntRect&);
@@ -1823,6 +1829,7 @@ public:
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();
     void sendMessageToTargetBackend(const String& message);
+    void setInspectorRulersSuppressed(bool);
 
     void insertNewlineInQuotedContent();
 
@@ -2472,6 +2479,7 @@ private:
 #if PLATFORM(MAC)
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
     void updateScrollerPairsForScrollbarStyleOverride();
+    void sendFrameInspectorHighlights();
 #endif
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&&);
@@ -3035,6 +3043,10 @@ private:
 #endif
 #if ENABLE(PDF_HUD)
     HashMap<PDFPluginIdentifier, WeakPtr<PDFPluginBase>> m_pdfPlugInsWithHUD;
+#endif
+#if PLATFORM(MAC)
+    HashSet<WebCore::FrameIdentifier> m_frameInspectorHighlightsNeedingUpdate;
+    HashSet<WebCore::FrameIdentifier> m_shownFrameInspectorHighlights;
 #endif
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
     std::pair<Markable<PDFPluginIdentifier>, WeakPtr<PDFPluginBase>> m_pdfPlugInWithPageNumberIndicator;

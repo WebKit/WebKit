@@ -1435,6 +1435,9 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
+#endif
 }
 
 void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&& updates)
@@ -1465,6 +1468,9 @@ void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&&
     updateRemoteIntersectionObservers();
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
+#endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
 #endif
 }
 
@@ -3358,6 +3364,9 @@ void WebPage::didScalePage(double scale, const IntPoint& origin)
 #if ENABLE(PDF_HUD)
     updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
+#if PLATFORM(MAC)
+    frameInspectorHighlightsNeedUpdate();
+#endif
 }
 
 void WebPage::didScalePageInViewCoordinates(double scale, const IntPoint& origin)
@@ -4999,11 +5008,21 @@ void WebPage::connectInspector(Inspector::FrontendChannel::ConnectionType connec
 void WebPage::disconnectInspector()
 {
     ensureInspectorTarget()->disconnect();
+
+    // Do not carry UI-driven ruler suppression past this inspector session.
+    if (RefPtr corePage = m_page)
+        protect(corePage->inspectorController())->setRulersSuppressed(false);
 }
 
 void WebPage::sendMessageToTargetBackend(const String& message)
 {
     ensureInspectorTarget()->sendMessageToTargetBackend(message);
+}
+
+void WebPage::setInspectorRulersSuppressed(bool suppressed)
+{
+    if (RefPtr corePage = m_page)
+        protect(corePage->inspectorController())->setRulersSuppressed(suppressed);
 }
 
 void WebPage::insertNewlineInQuotedContent()
@@ -6042,6 +6061,9 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
     }
 #endif
     flushDeferredDidReceiveMouseEvent();
+#if PLATFORM(MAC)
+    sendFrameInspectorHighlights();
+#endif
 
 #if !PLATFORM(COCOA)
     WTFEndSignpost(this, FinalizeRenderingUpdate);

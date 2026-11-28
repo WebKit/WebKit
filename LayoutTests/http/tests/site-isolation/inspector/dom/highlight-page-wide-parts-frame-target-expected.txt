@@ -1,0 +1,87 @@
+Tests that the UI process draws highlights of nodes in cross-site iframes over the page, in page coordinates.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameHighlightPageWideParts
+-- Running test case: Setup
+PASS: Should find the frame target for the cross-site iframe.
+PASS: Should find the frame target for the small cross-site iframe.
+PASS: Should find the frame target for the frame nested in the cross-site iframe.
+PASS: Cross-site iframes should not use the page target.
+PASS: Each cross-site iframe should have its own frame target.
+
+-- Running test case: CrossSiteBoxDrawnByUIProcess
+PASS: Should draw the box of '#target' at its page position.
+PASS: Should draw the title of '#target'.
+PASS: Should stop drawing after DOM.hideHighlight.
+
+-- Running test case: BoxPastIframeEdge
+PASS: Should draw the box of '#target' from y 130, above the iframe's top at y 150.
+
+-- Running test case: TitleOutsideSmallFrame
+PASS: Should draw the box of '#n' at its page position.
+PASS: Should draw the title above '#n'.
+PASS: Should draw the title past the iframe's top at y 480.
+
+-- Running test case: LongTitle
+PASS: Should draw the title with the whole 5004 character id.
+
+-- Running test case: NodeList
+PASS: Should draw the box of '#target' and '#n' at their page positions.
+PASS: Should draw the title of each node.
+
+-- Running test case: NestedFrameRect
+PASS: Should draw the rect at 230, 320 in the page.
+
+-- Running test case: MainFrameScrolled
+PASS: Main frame should be scrolled by 100px.
+PASS: Should draw the box of '#target' 100px higher.
+
+-- Running test case: RulersAndGuides
+PASS: Should draw the rulers along the top and left edges.
+PASS: Should draw guide lines from '#target' to the edges of the page's viewport.
+PASS: Should label the page's visual viewport size.
+
+-- Running test case: RulerExclusion
+PASS: Should draw the horizontal ruler along the bottom edge.
+
+-- Running test case: NoRulersRequested
+PASS: Should draw no rulers or guide lines.
+
+-- Running test case: RulersAtTinyPageScale
+PASS: UI process should draw the rulers of the cross-site iframe's highlight.
+PASS: The page's process should draw the rulers of the page's highlight.
+
+-- Running test case: ViewportSizeLabelWithHeader
+PASS: Should label the page's visual viewport size without the 50px header.
+
+-- Running test case: ControlStaysOnPagePath
+PASS: Page should draw the box of the same-site '#target'.
+PASS: UI process should draw no frame highlight.
+
+-- Running test case: InspectModeHover
+PASS: Should draw the box of the hovered '#target' at its page position.
+PASS: Should place labels against the page's viewport width.
+PASS: Should stop drawing after inspect mode ends.
+
+-- Running test case: HugeGridGaps
+PASS: UI process should draw the cross-site iframe's grid overlay.
+PASS: UI process should drop the frame's highlight once a grid overlay's geometry is not finite.
+PASS: The page's process should draw the page's grid overlay.
+
+-- Running test case: LongGridAreaName
+PASS: UI process should draw the cross-site iframe's grid overlay with its area name.
+PASS: The page's process should draw the page's grid overlay with its area name.
+
+-- Running test case: DisconnectedFrameTargetClearsUI
+PASS: Should draw the highlight before the frame target disconnects.
+PASS: Should stop drawing after the frame target disconnects.
+
+-- Running test case: RemovedFrameClearsUI
+PASS: Should draw the highlight before the iframe is removed.
+PASS: Should stop drawing after the iframe is removed.
+
+-- Running test case: NavigatedFrameClearsUI
+PASS: Should draw the highlight before the iframe navigates.
+PASS: Should stop drawing after the iframe navigates to another site.
+

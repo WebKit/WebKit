@@ -466,6 +466,16 @@ bool PageInspectorController::shouldShowOverlay() const
     return m_overlay->shouldShowOverlay();
 }
 
+void PageInspectorController::setRulersSuppressed(bool suppressed)
+{
+    m_overlay->setRulersSuppressed(suppressed);
+}
+
+bool PageInspectorController::rulersSuppressed() const
+{
+    return m_overlay->rulersSuppressed();
+}
+
 // The page DOM agent covers the main frame's document and the documents of the frames below it that live in
 // this process. A frame with a RemoteFrame ancestor is only reachable through its own FrameDOMAgent.
 bool PageInspectorController::isCoveredByPageDOMAgent(const LocalFrame& frame)

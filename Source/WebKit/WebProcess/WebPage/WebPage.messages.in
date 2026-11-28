@@ -187,6 +187,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DisconnectInspector()
     SendMessageToTargetBackend(String message)
 
+    SetInspectorRulersSuppressed(bool suppressed)
+
 #if ENABLE(REMOTE_INSPECTOR)
     SetIndicating(bool indicating);
 #endif
