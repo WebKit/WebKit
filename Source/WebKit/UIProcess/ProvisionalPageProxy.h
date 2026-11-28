@@ -153,6 +153,7 @@ public:
 #endif
 
     void loadData(API::Navigation&, Ref<WebCore::SharedBuffer>&&, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, WebCore::SubstituteData::SessionHistoryVisibility);
+    void loadAlternateHTML(API::Navigation&);
     void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, WebCore::NavigationUpgradeToHTTPSBehavior, MonotonicTime originalNavigationStartTime);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
     void cancel(ProvisionalLoadIsReplaced);
@@ -221,6 +222,7 @@ private:
 #endif
 
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&, bool isRestoringFromBFCache = false);
+    void tearDown();
     NODELETE bool validateInput(WebCore::FrameIdentifier, const std::optional<WebCore::NavigationIdentifier>& = std::nullopt);
 
     WeakPtr<WebPageProxy> m_page;
@@ -247,6 +249,7 @@ private:
     bool m_shouldClosePage { true };
     std::optional<WebCore::Site> m_siteOfTakenOverRemotePage;
     bool m_didFailProvisionalLoad { false };
+    bool m_didTearDown { false };
     std::optional<WebCore::Site> m_deferredRemoteTransitionSite;
     RefPtr<FrameProcess> m_previousMainFrameProcess;
     RefPtr<WebCore::DocumentSyncData> m_deferredTopDocumentSyncData;

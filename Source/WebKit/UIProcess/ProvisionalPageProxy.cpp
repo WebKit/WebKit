@@ -170,21 +170,32 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
 
 ProvisionalPageProxy::~ProvisionalPageProxy()
 {
+    tearDown();
+}
+
+void ProvisionalPageProxy::tearDown()
+{
+    if (m_didTearDown)
+        return;
+    m_didTearDown = true;
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (m_accessibilityBindCompletionHandler)
         m_accessibilityBindCompletionHandler({ });
 #endif
 
+    m_messageReceiverRegistration.stopReceivingMessages();
+
     Ref process = this->process();
-    if (RefPtr drawingArea = m_drawingArea)
+    if (RefPtr drawingArea = std::exchange(m_drawingArea, nullptr))
         drawingArea->stopReceivingMessages(process);
 
     if (!m_wasCommitted && m_page) {
         Ref page = *m_page;
-        page->inspectorController().willDestroyProvisionalPage(*this, m_mainFrame->frameID(), protect(m_frameProcess->process())->coreProcessIdentifier());
+        page->inspectorController().willDestroyProvisionalPage(*this, protect(m_mainFrame)->frameID(), protect(m_frameProcess->process())->coreProcessIdentifier());
 
         RefPtr dataStore = process->websiteDataStore();
-        if (dataStore && dataStore!= &page->websiteDataStore())
+        if (dataStore && dataStore != &page->websiteDataStore())
             protect(process->processPool())->pageEndUsingWebsiteDataStore(page, *dataStore);
 
         if (process->hasConnection() && m_shouldClosePage)
@@ -193,7 +204,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
     }
 
     process->removeProvisionalPageProxy(*this);
-    if (RefPtr takenRemotePage = m_takenRemotePage)
+    if (RefPtr takenRemotePage = std::exchange(m_takenRemotePage, nullptr))
         takenRemotePage->disconnect();
 }
 
@@ -361,8 +372,22 @@ void ProvisionalPageProxy::loadData(API::Navigation& navigation, Ref<WebCore::Sh
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadData:");
     ASSERT(shouldTreatAsContinuingLoad != WebCore::ShouldTreatAsContinuingLoad::No);
 
-    if (RefPtr page = m_page.get())
+    if (RefPtr page = m_page)
         page->loadDataWithNavigationShared(protect(process()), m_webPageID, navigation, WTF::move(data), mimeType, encoding, baseURL, userData, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain, WTF::move(websitePolicies), navigation.shouldOpenExternalURLsPolicy(), sessionHistoryVisibility);
+}
+
+void ProvisionalPageProxy::loadAlternateHTML(API::Navigation& navigation)
+{
+    PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "loadAlternateHTML:");
+    ASSERT(navigation.isAlternateHTMLLoad());
+
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    if (RefPtr mainFrame = m_mainFrame)
+        mainFrame->setUnreachableURL(navigation.unreachableURL());
+    page->loadAlternateHTMLWithNavigationShared(protect(process()), m_webPageID, navigation, protect(browsingContextGroup()));
 }
 
 void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::ResourceRequest&& request, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, RefPtr<API::WebsitePolicies>&& websitePolicies, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, MonotonicTime originalNavigationStartTime)
@@ -518,11 +543,13 @@ void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, Res
     if (!validateInput(frameInfo.frameID, navigationID))
         return;
 
+    Ref protectedThis { *this };
+
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didFailProvisionalLoadForFrame: frameID=%" PRIu64, frameInfo.frameID.toUInt64());
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
 
-    RefPtr page = m_page.get();
+    RefPtr page = m_page;
     if (!page)
         return;
 
@@ -531,9 +558,11 @@ void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, Res
     // When site isolation is enabled, we use the same WebFrameProxy so we don't need this duplicate call.
     // didFailProvisionalLoadForFrameShared will call didFailProvisionalLoad on the same main frame.
     if (protect(page->preferences())->siteIsolationEnabled()) {
-        if (m_shouldReuseMainFrame && willContinueLoading == WebCore::WillContinueLoading::No)
+        if (m_shouldReuseMainFrame && willContinueLoading == WebCore::WillContinueLoading::No) {
+            // The remote page must not keep the failed provisional frame, or the next provisional load in this process would create a second one.
+            protect(process())->send(Messages::WebFrame::DestroyProvisionalFrame(), frameInfo.frameID);
             m_browsingContextGroup->transitionProvisionalPageToRemotePage(*this, Site(request.url()));
-        else if (m_takenRemotePage)
+        } else if (m_takenRemotePage)
             m_browsingContextGroup->addRemotePage(*page, m_takenRemotePage.releaseNonNull());
         m_shouldClosePage = !m_shouldReuseMainFrame;
     } else if (RefPtr pageMainFrame = page->mainFrame())
@@ -541,7 +570,16 @@ void ProvisionalPageProxy::didFailProvisionalLoad(FrameInfoData&& frameInfo, Res
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK(frame);
-    page->didFailProvisionalLoadForFrameShared(protect(process()), *frame, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure, isReplaced); // May delete |this|.
+
+    // Tear down before notifying clients so a new load started in didFailProvisionalNavigation does not collide with
+    // or get cleared by this failed provisional page.
+    if (willContinueLoading == WebCore::WillContinueLoading::No) {
+        if (page->provisionalPageProxy() == this)
+            page->destroyProvisionalPage();
+        tearDown();
+    }
+
+    page->didFailProvisionalLoadForFrameShared(protect(process()), *frame, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(provisionalURL), WTF::move(error), willContinueLoading, userData, willInternallyHandleFailure, isReplaced);
 }
 
 void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedReportedOrigin, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, String&& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource source, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, DocumentSecurityPolicy&& documentSecurityPolicy, IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCSPOrigins, const UserData& userData, RestoredFromBackForwardCache restoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState)

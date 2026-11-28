@@ -148,6 +148,18 @@ public:
     void markAsFromLoadData() { m_isFromLoadData = true; }
     bool isFromLoadData() const { return m_isFromLoadData; }
 
+    // An alternate HTML load is not known to the client or the web process. Its navigation only stands in for
+    // the load while the UI process chooses the process to load it in.
+    void markAsAlternateHTMLLoad(const WTF::URL& unreachableURL, const WTF::String& provisionalLoadErrorURL)
+    {
+        m_isAlternateHTMLLoad = true;
+        m_unreachableURL = unreachableURL;
+        m_provisionalLoadErrorURL = provisionalLoadErrorURL;
+    }
+    bool isAlternateHTMLLoad() const { return m_isAlternateHTMLLoad; }
+    const WTF::URL& unreachableURL() const LIFETIME_BOUND { return m_unreachableURL; }
+    const WTF::String& provisionalLoadErrorURL() const LIFETIME_BOUND { return m_provisionalLoadErrorURL; }
+
     bool shouldPerformDownload() const { return m_lastNavigationAction && !m_lastNavigationAction->downloadAttribute.isNull(); }
 
     bool hasOpenedFrames() const { return m_lastNavigationAction && m_lastNavigationAction->hasOpenedFrames; }
@@ -291,10 +303,13 @@ private:
     bool m_backForwardTraversalDidCommitInAnyFrame : 1 { false };
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
+    bool m_isAlternateHTMLLoad : 1 { false };
     bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
     bool m_hasCrossOriginRedirect : 1 { false };
+    WTF::URL m_unreachableURL;
+    WTF::String m_provisionalLoadErrorURL;
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     std::optional<WebCore::RegistrableDomain> m_unpartitionedStorageSite;
