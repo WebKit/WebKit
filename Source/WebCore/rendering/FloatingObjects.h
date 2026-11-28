@@ -39,9 +39,6 @@ class RenderBlockFlow;
 class RenderBox;
 class FloatingObjects;
 
-template<typename, typename> class PODInterval;
-template<typename, typename> class PODIntervalTree;
-
 // Note that FloatingObjectType uses bits so you can use FloatLeftRight as a mask to query for both left and right.
 enum FloatingObjectType : uint8_t { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
 
@@ -77,20 +74,15 @@ public:
     LayoutUnit width() const { return m_frameRect.width(); }
     LayoutUnit height() const { return m_frameRect.height(); }
 
-    void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
-    void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
-    void setWidth(LayoutUnit width) { ASSERT(!isInPlacedTree()); m_frameRect.setWidth(width); }
-    void setHeight(LayoutUnit height) { ASSERT(!isInPlacedTree()); m_frameRect.setHeight(height); }
+    void setX(LayoutUnit x) { m_frameRect.setX(x); }
+    void setY(LayoutUnit y) { m_frameRect.setY(y); }
+    void setWidth(LayoutUnit width) { m_frameRect.setWidth(width); }
+    void setHeight(LayoutUnit height) { m_frameRect.setHeight(height); }
 
-    void setMarginOffset(LayoutSize offset) { ASSERT(!isInPlacedTree()); m_marginOffset = offset; }
+    void setMarginOffset(LayoutSize offset) { m_marginOffset = offset; }
 
     const LayoutRect& frameRect() const LIFETIME_BOUND { ASSERT(isPlaced()); return m_frameRect; }
-    void setFrameRect(const LayoutRect& frameRect) { ASSERT(!isInPlacedTree()); m_frameRect = frameRect; }
-
-#if ASSERT_ENABLED
-    bool isInPlacedTree() const { return m_isInPlacedTree; }
-    void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
-#endif
+    void setFrameRect(const LayoutRect& frameRect) { m_frameRect = frameRect; }
 
     bool isDescendant() const { return m_isDescendant; }
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
@@ -111,9 +103,6 @@ private:
     unsigned m_type : 2; // Type (left or right aligned)
     unsigned m_isDescendant : 1 { false };
     unsigned m_isPlaced : 1 { false };
-#if ASSERT_ENABLED
-    unsigned m_isInPlacedTree : 1 { false };
-#endif
 };
 
 // FIXME: This could be simplified if we made it inherit from PtrHash<std::unique_ptr<FloatingObject>> and
@@ -139,8 +128,12 @@ struct FloatingObjectHashTranslator {
 
 typedef ListHashSet<std::unique_ptr<FloatingObject>, FloatingObjectHashFunctions> FloatingObjectSet;
 
-typedef PODInterval<LayoutUnit, FloatingObject*> FloatingObjectInterval;
-typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
+// Where the floats on one side leave room for a new float at a position.
+struct OffsetForPositioningFloat {
+    LayoutUnit offset;
+    // How far down the float that sets the offset reaches, if a float does.
+    std::optional<LayoutUnit> heightRemaining;
+};
 
 // FIXME: This is really the same thing as FloatingObjectSet.
 // Change clients to use that set directly, and replace the moveAllToFloatInfoMap function with a takeSet function.
@@ -156,13 +149,14 @@ public:
     void remove(FloatingObject*);
     void addPlacedObject(FloatingObject*);
     void removePlacedObject(FloatingObject*);
+    // For a float inline layout placed, which put it in placedFloats() already.
     void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
     bool hasRightObjects() const { return m_rightObjectsCount > 0; }
     const FloatingObjectSet& set() const LIFETIME_BOUND { return m_set; }
-    const Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
+    Layout::PlacedFloats& placedFloats() LIFETIME_BOUND;
     const Layout::PlacedFloats* keptPlacedFloats() const LIFETIME_BOUND { return m_placedFloats.get(); }
     std::unique_ptr<Layout::PlacedFloats> makePlacedFloats() const;
     // Built on placedFloats() and dropped with it, so that FloatingContext::constraints() continues from its last position during the child layout.
@@ -173,24 +167,16 @@ public:
     // The FloatingContext takes the block's width, which may change with the next layout.
     void clearFloatingContext();
 
-    LayoutUnit logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
-    LayoutUnit logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
-
-    LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
-    LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit* heightRemaining);
+    OffsetForPositioningFloat offsetForPositioningFloat(FloatingObject::Type, LayoutUnit fixedOffset, LayoutUnit logicalTop);
 
     void shiftFloatsBy(LayoutUnit blockShift);
 
 private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }
-    void computePlacedFloatsTree();
-    const FloatingObjectTree* placedFloatsTree();
     NODELETE void increaseObjectsCount(FloatingObjectType);
     NODELETE void decreaseObjectsCount(FloatingObjectType);
-    NODELETE FloatingObjectInterval intervalForFloatingObject(FloatingObject*);
 
     FloatingObjectSet m_set;
-    std::unique_ptr<FloatingObjectTree> m_placedFloatsTree;
     std::unique_ptr<Layout::PlacedFloats> m_placedFloats;
     std::unique_ptr<Layout::FloatingContext> m_floatingContext;
     unsigned m_leftObjectsCount { 0 };
