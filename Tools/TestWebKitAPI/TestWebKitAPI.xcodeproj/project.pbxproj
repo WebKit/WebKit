@@ -636,6 +636,7 @@
 				WebKit/WKWebView/SiteIsolationContextMenuInteractionTests.swift,
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationDataDetectionTests.swift,
+				WebKit/WKWebView/SiteIsolationDialogTests.swift,
 				WebKit/WKWebView/SiteIsolationDragAndDropTests.swift,
 				WebKit/WKWebView/SiteIsolationDragPreviewTests.swift,
 				WebKit/WKWebView/SiteIsolationEditableRegionTests.swift,
