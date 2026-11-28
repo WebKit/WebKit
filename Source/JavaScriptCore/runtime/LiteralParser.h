@@ -321,6 +321,7 @@ private:
     JSValue parseRecursivelyEntry(VM&) requires (reviverMode == JSONReviverMode::Disabled);
     JSValue evalRecursivelyEntry(VM&) requires (reviverMode == JSONReviverMode::Disabled);
     template<ParserMode> JSValue parseRecursively(VM&, uint8_t* stackLimit) requires (reviverMode == JSONReviverMode::Disabled);
+    JSArray* parseArrayElements(VM&, unsigned stackBase, uint8_t* stackLimit) requires (reviverMode == JSONReviverMode::Disabled);
     JSValue parse(VM&, ParserState, JSONRanges*);
 
     JSValue parsePrimitiveValue(VM&);
@@ -337,6 +338,7 @@ private:
     JSGlobalObject* const m_globalObject;
     CodeBlock* const m_nullOrCodeBlock;
     JSONCache& m_jsonCache;
+    uint64_t m_objectTemplateOwner { 0 };
     Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;

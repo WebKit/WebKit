@@ -646,11 +646,113 @@ ALWAYS_INLINE const JSONCache::StringEntry* JSONCache::findOrCreateString(VM& vm
     return findLongString(vm, source, keepAlive);
 }
 
+ALWAYS_INLINE uint64_t JSONCache::objectTemplateHash(std::span<const Latin1Character> source)
+{
+    static_assert(objectTemplateLookAhead == 4 * sizeof(uint64_t));
+    ASSERT(source.size() >= objectTemplateLookAhead);
+    auto* characters = source.data();
+    uint64_t hash = (WTF::unalignedLoad<uint64_t>(characters) * 0x9E3779B97F4A7C15ULL)
+        ^ (WTF::unalignedLoad<uint64_t>(characters + 8) * 0xC2B2AE3D27D4EB4FULL)
+        ^ (WTF::unalignedLoad<uint64_t>(characters + 16) * 0x165667B19E3779F9ULL)
+        ^ (WTF::unalignedLoad<uint64_t>(characters + 24) * 0x27D4EB2F165667C5ULL);
+    return hash;
+}
+
+ALWAYS_INLINE unsigned JSONCache::objectTemplateIndex(uint64_t hash)
+{
+    static_assert(hasOneBitSet(objectTemplateSize) && hasOneBitSet(objectTemplateWays));
+    return (hash >> (64 - WTF::fastLog2(objectTemplateSize))) & ~(objectTemplateWays - 1);
+}
+
+ALWAYS_INLINE bool JSONCache::objectTemplateMatches(const ObjectTemplate& entry, uint64_t hash, uint64_t owner, std::span<const Latin1Character> source)
+{
+    return entry.hash == hash && objectTemplateTextMatches(entry, owner, source);
+}
+
+ALWAYS_INLINE bool JSONCache::objectTemplateTextMatches(const ObjectTemplate& entry, uint64_t owner, std::span<const Latin1Character> source)
+{
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    if (entry.owner != owner)
+        return false;
+    size_t length = entry.textLength;
+    ASSERT(length && length <= maxObjectTemplateTextLength && source.size() >= objectTemplateLookAhead);
+    if (length > source.size())
+        return false;
+    if (length < stride) {
+        // The source has at least objectTemplateLookAhead characters to compare against.
+        constexpr simde_uint8x16_t indices { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+        auto differences = SIMD::bitXor(SIMD::load(std::bit_cast<const uint8_t*>(entry.text.data())), SIMD::load(std::bit_cast<const uint8_t*>(source.data())));
+        return !SIMD::isNonZero(SIMD::bitAnd(differences, SIMD::lessThan(indices, SIMD::splat<uint8_t>(length))));
+    }
+    return longTextMatches(std::span { entry.text }.first(length), source.first(length));
+}
+
+ALWAYS_INLINE const JSONCache::ObjectTemplate* JSONCache::findObjectTemplate(std::span<const Latin1Character> source, uint64_t owner)
+{
+    if (!m_objectTemplates || source.size() < objectTemplateLookAhead)
+        return nullptr;
+    auto& templates = m_objectTemplates->m_entries;
+    uint64_t hash = objectTemplateHash(source);
+    unsigned set = objectTemplateIndex(hash);
+    static_assert(objectTemplateWays == 2);
+    for (unsigned way = 0; way < objectTemplateWays; ++way) {
+        if (objectTemplateMatches(templates[set + way], hash, owner, source)) {
+            m_objectTemplates->m_recentWays[set / objectTemplateWays] = way;
+            creditObjectTemplateUse();
+            return &templates[set + way];
+        }
+    }
+    debitObjectTemplates(objectTemplateMissCost);
+    return nullptr;
+}
+
+ALWAYS_INLINE const JSONCache::ObjectTemplate* JSONCache::findNextElementObjectTemplate(const ObjectTemplate* previous, std::span<const Latin1Character> source, uint64_t owner)
+{
+    if (!previous || source.size() < objectTemplateLookAhead)
+        return findObjectTemplate(source, owner);
+    auto& templates = m_objectTemplates->m_entries;
+    unsigned successor = previous->successor;
+    auto& predicted = templates[successor];
+    if (objectTemplateTextMatches(predicted, owner, source)) {
+        m_objectTemplates->m_recentWays[successor / objectTemplateWays] = successor % objectTemplateWays;
+        creditObjectTemplateUse();
+        return &predicted;
+    }
+    auto* result = findObjectTemplate(source, owner);
+    static_assert(objectTemplateSize <= std::numeric_limits<uint8_t>::max() + 1);
+    if (result)
+        templates[previous - templates.data()].successor = result - templates.data();
+    return result;
+}
+
+ALWAYS_INLINE const JSONCache::ObjectTemplate* JSONCache::lookUpObjectTemplate(const ObjectTemplate* previous, std::span<const Latin1Character> source, uint64_t owner)
+{
+    if (m_objectTemplatePause) [[unlikely]] {
+        --m_objectTemplatePause;
+        return nullptr;
+    }
+    return findNextElementObjectTemplate(previous, source, owner);
+}
+
 template<typename Visitor>
 void JSONCache::visitAggregate(Visitor& visitor)
 {
     if (!m_isParsing)
         return;
+    if (m_objectTemplates) {
+        for (auto& entry : m_objectTemplates->m_entries) {
+            if (entry.owner >> 32 != m_objectTemplateEpoch)
+                continue;
+            visitor.append(entry.structure);
+            for (auto& value : entry.values)
+                visitor.append(value);
+            for (auto& objectValue : std::span { entry.objectValues }.first(entry.objectValueCount)) {
+                visitor.append(objectValue.structure);
+                for (auto& value : objectValue.values)
+                    visitor.append(value);
+            }
+        }
+    }
     for (auto& entry : m_names.m_entries) {
         visitor.append(entry.from);
         visitor.append(entry.to);
