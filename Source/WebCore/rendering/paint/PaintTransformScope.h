@@ -72,8 +72,8 @@ public:
         }
     }
 
-    const RenderLayer::LayerPaintingInfo& transformedPaintingInfo() const { return m_transformedPaintingInfo; }
-    const AffineTransform& appliedTransform() const { return m_affineTransform; }
+    const RenderLayer::LayerPaintingInfo& transformedPaintingInfo() const LIFETIME_BOUND { return m_transformedPaintingInfo; }
+    const AffineTransform& appliedTransform() const LIFETIME_BOUND { return m_affineTransform; }
 
 private:
     GraphicsContext& m_context;

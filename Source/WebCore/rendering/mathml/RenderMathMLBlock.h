@@ -46,7 +46,7 @@ public:
     RenderMathMLBlock(Type, Document&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLBlock();
 
-    MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
+    MathMLStyle& mathMLStyle() const LIFETIME_BOUND { return m_mathMLStyle; }
 
     bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
@@ -114,7 +114,7 @@ public:
     inline RenderMathMLTable(MathMLElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~RenderMathMLTable();
 
-    MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
+    MathMLStyle& mathMLStyle() const LIFETIME_BOUND { return m_mathMLStyle; }
 
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLTable"_s; }

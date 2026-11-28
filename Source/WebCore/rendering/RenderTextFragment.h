@@ -54,7 +54,7 @@ public:
     CheckedPtr<RenderBlock> blockForAccompanyingFirstLetter();
 
     void setContentString(const String& text);
-    StringImpl* contentString() const { return m_contentString.impl(); }
+    StringImpl* contentString() const LIFETIME_BOUND { return m_contentString.impl(); }
 
     // Which quote mark an open-quote/close-quote shows depends on the quotes before it in document order,
     // so RenderTreeUpdater::GeneratedContent fills in the content string once the tree is built.

@@ -49,7 +49,7 @@ public:
     ScrollbarUpdateScope(const ScrollbarUpdateScope&) = delete;
     ScrollbarUpdateScope& operator=(const ScrollbarUpdateScope&) = delete;
 
-    const EnumSet<ScrollbarOrientation>& autoScrollbarChanges() const { return m_autoScrollbarChanges; }
+    const EnumSet<ScrollbarOrientation>& autoScrollbarChanges() const LIFETIME_BOUND { return m_autoScrollbarChanges; }
 
 private:
     const CheckedRef<RenderLayerScrollableArea> m_renderLayerScrollableArea;

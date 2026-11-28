@@ -60,7 +60,7 @@ public:
     const LayoutRect& dirtySourceRect() const LIFETIME_BOUND { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
 
-    CSSFilterRenderer* filter() const { return m_filter.get(); }
+    CSSFilterRenderer* filter() const LIFETIME_BOUND { return m_filter.get(); }
     void clearFilter() { m_filter = nullptr; }
     
     NODELETE bool hasFilterThatMovesPixels() const;

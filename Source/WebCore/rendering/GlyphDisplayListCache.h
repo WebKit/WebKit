@@ -64,7 +64,7 @@ public:
             && m_shouldSubpixelQuantizeFont == other.m_shouldSubpixelQuantizeFont;
     }
 
-    const DisplayList::DisplayList& displayList() const { return m_displayList.get(); }
+    const DisplayList::DisplayList& displayList() const LIFETIME_BOUND { return m_displayList.get(); }
 
 private:
     GlyphDisplayListCacheEntry(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)

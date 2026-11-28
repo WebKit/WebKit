@@ -66,18 +66,18 @@ public:
     WEBCORE_EXPORT HitTestResult& operator=(HitTestResult&&);
 
     WEBCORE_EXPORT void setInnerNode(Node*);
-    Node* innerNode() const { return m_innerNode.get(); }
+    Node* innerNode() const LIFETIME_BOUND { return m_innerNode.get(); }
 
     void setInnerNonSharedNode(Node*);
-    Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
+    Node* innerNonSharedNode() const LIFETIME_BOUND { return m_innerNonSharedNode.get(); }
 
     NODELETE WEBCORE_EXPORT Element* innerNonSharedElement() const;
 
     void setURLElement(Element*);
-    Element* URLElement() const { return m_innerURLElement.get(); }
+    Element* URLElement() const LIFETIME_BOUND { return m_innerURLElement.get(); }
 
     void setScrollbar(RefPtr<Scrollbar>&&);
-    Scrollbar* scrollbar() const { return m_scrollbar.get(); }
+    Scrollbar* scrollbar() const LIFETIME_BOUND { return m_scrollbar.get(); }
 
     bool isOverWidget() const { return m_isOverWidget; }
     void setIsOverWidget(bool isOverWidget) { m_isOverWidget = isOverWidget; }

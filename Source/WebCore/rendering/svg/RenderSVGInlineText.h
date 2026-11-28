@@ -58,7 +58,7 @@ public:
     static float computeNonScalingStrokeScaleForRenderer(const RenderObject&);
 
     float scalingFactor() const { return m_scalingFactor; }
-    const FontCascade& scaledFont() const { return m_scaledFont; }
+    const FontCascade& scaledFont() const LIFETIME_BOUND { return m_scaledFont; }
     void updateScaledFont();
     static void computeNewScaledFontForStyle(const RenderObject&, const Style::ComputedStyle&, float& scalingFactor, FontCascade& scaledFont);
 

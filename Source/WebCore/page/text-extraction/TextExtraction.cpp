@@ -2602,7 +2602,7 @@ static void dispatchSimulatedHover(LocalFrame& frame, IntPoint location, Complet
     completion(true, { });
 }
 
-static Node* findNodeAtRootViewLocation(const LocalFrameView& view, Document& document, FloatPoint locationInRootView)
+static RefPtr<Node> findNodeAtRootViewLocation(const LocalFrameView& view, Document& document, FloatPoint locationInRootView)
 {
     static constexpr OptionSet defaultHitTestOptions {
         HitTestRequest::Type::ReadOnly,

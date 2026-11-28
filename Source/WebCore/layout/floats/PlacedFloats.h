@@ -78,7 +78,7 @@ public:
         AxisPosition<ParentFormattingContextRoot> borderBoxLeft() const { return AxisPosition<ParentFormattingContextRoot> { BoxGeometry::borderBoxRect(m_absoluteBoxGeometry).left() }; }
         BoxGeometry::HorizontalEdges inlineAxisMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
 
-        const LayoutShape* shape() const { return m_shape.get(); }
+        const LayoutShape* shape() const LIFETIME_BOUND { return m_shape.get(); }
         std::optional<size_t> placedByLine() const { return m_placedByLine; }
 
         const Box* layoutBox() const;

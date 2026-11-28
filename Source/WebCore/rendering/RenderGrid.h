@@ -350,8 +350,8 @@ private:
 
     bool layoutUsingGridFormattingContext();
 
-    const LayoutIntegration::GridLayout* gridLayout() const { return m_gridLayout.get(); }
-    LayoutIntegration::GridLayout* gridLayout() { return m_gridLayout.get(); }
+    const LayoutIntegration::GridLayout* gridLayout() const LIFETIME_BOUND { return m_gridLayout.get(); }
+    LayoutIntegration::GridLayout* gridLayout() LIFETIME_BOUND { return m_gridLayout.get(); }
     LayoutIntegration::GridLayout& ensureGridLayout();
 
     std::unique_ptr<LayoutIntegration::GridLayout> m_gridLayout;

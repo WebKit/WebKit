@@ -62,8 +62,8 @@ public:
     RenderImage(Type, Document&, UniqueRef<Style::ComputedStyle>&&, Style::Image* = nullptr);
     virtual ~RenderImage();
 
-    RenderImageResource& imageResource() { return *m_imageResource; }
-    const RenderImageResource& imageResource() const { return *m_imageResource; }
+    RenderImageResource& imageResource() LIFETIME_BOUND { return *m_imageResource; }
+    const RenderImageResource& imageResource() const LIFETIME_BOUND { return *m_imageResource; }
     CachedImage* cachedImage() const { return imageResource().cachedImage(); }
 
     ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);

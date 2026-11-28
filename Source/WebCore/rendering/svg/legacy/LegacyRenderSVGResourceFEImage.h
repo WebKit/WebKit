@@ -39,7 +39,7 @@ public:
     LegacyRenderSVGResourceFEImage(SVGFEImageElement&, UniqueRef<Style::ComputedStyle>&&);
     virtual ~LegacyRenderSVGResourceFEImage();
 
-    RenderImageResource& imageResource() const { return m_imageResource; }
+    RenderImageResource& imageResource() const LIFETIME_BOUND { return m_imageResource; }
 
 private:
     void willBeDestroyed() final;

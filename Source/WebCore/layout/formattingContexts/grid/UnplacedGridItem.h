@@ -65,7 +65,7 @@ private:
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
 
-        const DefinitePosition& definitePosition() const { return std::get<DefinitePosition>(m_position); }
+        const DefinitePosition& definitePosition() const LIFETIME_BOUND { return std::get<DefinitePosition>(m_position); }
 
         size_t span() const;
 

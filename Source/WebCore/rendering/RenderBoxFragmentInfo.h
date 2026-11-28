@@ -43,7 +43,7 @@ public:
     LayoutUnit logicalWidth() const { return m_logicalWidth; }
     
     void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = makeUnique<RenderOverflow>(layoutOverflow, visualOverflow, LayoutRect { }); }
-    RenderOverflow* overflow() const { return m_overflow.get(); }
+    RenderOverflow* overflow() const LIFETIME_BOUND { return m_overflow.get(); }
     void clearOverflow() { m_overflow = { }; }
 
 private:

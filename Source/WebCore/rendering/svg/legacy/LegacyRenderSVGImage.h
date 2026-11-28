@@ -45,8 +45,8 @@ public:
     void setNeedsBoundariesUpdate() override { m_needsBoundariesUpdate = true; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
-    RenderImageResource& imageResource() { return m_imageResource; }
-    const RenderImageResource& imageResource() const { return m_imageResource; }
+    RenderImageResource& imageResource() LIFETIME_BOUND { return m_imageResource; }
+    const RenderImageResource& imageResource() const LIFETIME_BOUND { return m_imageResource; }
 
     // Note: Assumes the PaintInfo context has had all local transforms applied.
     void paintForeground(PaintInfo&);
