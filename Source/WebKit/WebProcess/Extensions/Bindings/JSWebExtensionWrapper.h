@@ -44,6 +44,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <optional>
 #include <wtf/JSONValues.h>
 #include <wtf/WeakPtr.h>
 
