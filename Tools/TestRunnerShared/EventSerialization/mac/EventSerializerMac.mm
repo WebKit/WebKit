@@ -225,6 +225,13 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     return dict.autorelease();
 }
 
+static NSScreen *firstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 + (RetainPtr<CGEventRef>)createEventForDictionary:(NSDictionary *)dict inWindow:(NSWindow *)window relativeToTime:(MonotonicTime)referenceTimestamp
 {
     const RetainPtr event = adoptCF(CGEventCreate(NULL));
@@ -244,7 +251,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     if (dict[@"windowLocation"]) {
         CGPoint windowLocation = NSPointToCGPoint(NSPointFromString(dict[@"windowLocation"]));
         NSPoint screenPoint = [window convertPointToScreen:windowLocation];
-        CGPoint flippedScreenPoint = CGPointMake(screenPoint.x, NSScreen.screens.firstObject.frame.size.height - screenPoint.y);
+        CGPoint flippedScreenPoint = CGPointMake(screenPoint.x, [firstScreen() frame].size.height - screenPoint.y);
 
         CGEventSetLocation(rawEvent, flippedScreenPoint);
         CGEventSetWindowLocation(rawEvent, windowLocation);

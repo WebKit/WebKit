@@ -107,7 +107,7 @@ using WebCore::narrowPrecisionToFloat;
 
 static void flipRect(NSRect* rect)
 {
-    rect->origin.y = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(*rect);
+    rect->origin.y = NSMaxY([[[NSScreen screens] firstObject] frame]) - NSMaxY(*rect);
 }
 
 static CGSConnectionID mainWindowServerConnectionID()
