@@ -152,6 +152,7 @@ set(WEBKIT_SWIFT_MEMORY_SAFETY_ERROR_FLAGS
 )
 
 set(WEBKIT_SWIFT_FATAL_DIAGNOSTIC_FLAGS
+    "-Werror DeprecatedDeclaration"
     "-Werror ExistentialAny"
     "-Werror NoUsage"
     "-Werror NoUseUnstructuredThrowingTask"
@@ -160,12 +161,6 @@ set(WEBKIT_SWIFT_FATAL_DIAGNOSTIC_FLAGS
     "-Werror VariableNeverMutated"
     ${WEBKIT_SWIFT_MEMORY_SAFETY_ERROR_FLAGS}
 )
-
-# Treat DeprecatedDeclaration warnings as errors only from Swift 6.4 onward, as CommonBase.xcconfig does.
-# Swift 6.3 doesn't support the `@diagnose` attribute used to suppress intentional uses of deprecated declarations.
-if (CMAKE_Swift_COMPILER_VERSION VERSION_GREATER_EQUAL 6.4)
-    list(APPEND WEBKIT_SWIFT_FATAL_DIAGNOSTIC_FLAGS "-Werror DeprecatedDeclaration")
-endif ()
 
 set(WEBKIT_SWIFT_CLANG_IMPORTER_FLAGS
     "-Xcc -fvisibility=hidden"

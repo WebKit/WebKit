@@ -39,6 +39,9 @@ extension WKUserContentController {
     ///   - contentWorld: The `WKContentWorld` to add the buffer to.
     ///     The buffer will only be visible to JavaScript executing in that content world.
     ///
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses Span(_bytes:) until Swift 6.5 is required")
+    #endif
     public func addBuffer(_ buffer: RawSpan, name: Swift.String, to contentWorld: WKContentWorld) {
         // Safety: This is safe because it's just the pre-API version of the safe `Span(viewing:)` API in Swift 6.4.
         // FIXME: (rdar://181879532) Adopt `Span(viewing:)` initializer instead of `Span(_bytes:)` in `WKUserContentController/addBuffer` implementation.
