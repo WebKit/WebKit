@@ -32,6 +32,8 @@
 #include <WebCore/CSSParserToken.h>
 #include <WebCore/CSSTokenizerInputStream.h>
 #include <climits>
+#include <optional>
+#include <span>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -132,5 +134,9 @@ private:
     Vector<String> m_stringPool;
     CSSTokenizerInputStream m_input;
 };
+
+std::optional<LexedNumericToken> lexNumericToken(std::span<const Latin1Character>);
+std::optional<LexedNumericToken> lexNumericToken(std::span<const char16_t>);
+std::optional<LexedNumericToken> lexNumericToken(StringView);
 
 } // namespace WebCore

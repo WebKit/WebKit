@@ -24,13 +24,11 @@
 
 #include "AnimationUtilities.h"
 #include "CSSParserContext.h"
-#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+MetaParser.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSToLengthConversionData.h"
-#include "CSSTokenizer.h"
 #include "CSSUnits.h"
 #include "ExceptionOr.h"
 #include "SVGElement.h"
@@ -377,34 +375,22 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
         .context = parserContext
     };
 
-    CSSTokenizer tokenizer(string);
-    auto tokenRange = tokenizer.tokenRange();
-
-    // Leading whitespace is allowed; the consumers below take care of the trailing
-    // whitespace by way of CSSParserTokenRange::consumeIncludingWhitespace().
-    tokenRange.consumeWhitespace();
-
-    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Number<>, CSS::LengthPercentage<>>::consume(tokenRange, parserState, { });
-    if (!parsedValue || !tokenRange.atEnd())
-        return Exception { ExceptionCode::SyntaxError };
-
-    return WTF::switchOn(WTF::move(*parsedValue),
-        [&](CSS::Number<>&& number) -> ExceptionOr<void> {
-            auto raw = number.raw();
-            if (!raw || isFloatOverflow(raw->value))
-                m_value = CSS::Number<>(0);
-            else
-                m_value = WTF::move(number);
-            return { };
+    // FIXME: Add support for calculated lengths.
+    auto parsedValue = CSSPropertyParserHelpers::MetaParser<CSS::NumberRaw<>, CSS::LengthPercentageRaw<>>::parse(string, parserState,
+        [&](CSS::NumberRaw<> number) -> decltype(m_value) {
+            if (isFloatOverflow(number.value))
+                return CSS::Number<>(0);
+            return CSS::Number<> { number };
         },
-        [&](CSS::LengthPercentage<>&& length) -> ExceptionOr<void> {
-            // FIXME: Add support for calculated lengths.
-            if (length.isCalc())
-                return Exception { ExceptionCode::SyntaxError };
-            m_value = WTF::move(length);
-            return { };
+        [](CSS::LengthPercentageRaw<> length) -> decltype(m_value) {
+            return CSS::LengthPercentage<> { length };
         }
     );
+    if (!parsedValue)
+        return Exception { ExceptionCode::SyntaxError };
+
+    m_value = WTF::move(*parsedValue);
+    return { };
 }
 
 ExceptionOr<void> SVGLengthValue::convertToSpecifiedUnits(const SVGLengthContext& context, SVGLengthType targetType)

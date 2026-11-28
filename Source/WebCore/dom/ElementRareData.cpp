@@ -56,6 +56,7 @@ struct SameSizeAsElementRareData : NodeRareData {
 #endif
     HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> randomCachingKeyMaps;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> invokedPopoverWeakPtr;
+    Vector<QualifiedName> dirtyPresentationalHintAttributes;
 };
 
 static_assert(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), "ElementRareData should stay small");

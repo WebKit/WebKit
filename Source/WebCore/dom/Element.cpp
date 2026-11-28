@@ -348,6 +348,16 @@ inline ElementRareData& Element::ensureElementRareData()
     return uncheckedDowncast<ElementRareData>(ensureRareData());
 }
 
+Vector<QualifiedName>* Element::dirtyPresentationalHintAttributes() const
+{
+    return hasRareData() ? &elementRareData()->dirtyPresentationalHintAttributes() : nullptr;
+}
+
+Vector<QualifiedName>& Element::ensureDirtyPresentationalHintAttributes()
+{
+    return ensureElementRareData().dirtyPresentationalHintAttributes();
+}
+
 void Element::setTabIndexExplicitly(std::optional<int> tabIndex)
 {
     if (!tabIndex) {
@@ -875,6 +885,9 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
         return;
     }
 
+    if (!elementData()->animatedSVGAttributesAreDirty())
+        return;
+
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
         const_cast<SVGElement&>(*svgElement).synchronizeAttribute(name);
     }
@@ -898,6 +911,9 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) co
         uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
         return;
     }
+
+    if (!elementData()->animatedSVGAttributesAreDirty())
+        return;
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
         const_cast<SVGElement&>(*svgElement).synchronizeAttribute(QualifiedName(nullAtom(), localName, nullAtom()));

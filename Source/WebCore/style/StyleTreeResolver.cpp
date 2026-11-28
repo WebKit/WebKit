@@ -203,7 +203,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
         }
 
         if (resolutionType == ResolutionType::FullWithMatchResultCache) {
-            if (auto cachedResult = m_document->styleScope().matchResultCache().resultWithCurrentInlineStyle(element.get())) {
+            if (auto cachedResult = m_document->styleScope().matchResultCache().resultWithCurrentDeclarations(element.get())) {
                 auto result = scope().resolver->unadjustedStyleForCachedMatchResult(element.get(), resolutionContext, WTF::move(*cachedResult));
                 MatchResultCache::update(*cachedResult, *result.style);
                 return result;
@@ -1266,7 +1266,7 @@ auto TreeResolver::determineResolutionType(const Element& element, const Style::
             return ResolutionType::AnimationOnly;
         if (combinedValidity == Validity::Valid && element.hasInvalidRenderer())
             return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
-        if (combinedValidity == Validity::InlineStyleInvalid && existingStyle)
+        if (combinedValidity == Validity::InlineOrPresentationalHintStyleInvalid && existingStyle)
             return ResolutionType::FullWithMatchResultCache;
     }
 

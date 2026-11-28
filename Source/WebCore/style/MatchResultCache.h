@@ -32,6 +32,8 @@
 namespace WebCore {
 
 class Element;
+class StyleProperties;
+class StyledElement;
 class WeakPtrImplWithEventTargetData;
 
 namespace Style {
@@ -48,15 +50,15 @@ public:
     MatchResultCache();
     ~MatchResultCache();
 
-    const std::optional<CachedMatchResult> resultWithCurrentInlineStyle(const Element&);
+    const std::optional<CachedMatchResult> resultWithCurrentDeclarations(const Element&);
     static void update(CachedMatchResult&, const Style::ComputedStyle&);
     void updateForFastPathInherit(const Element&, const Style::ComputedStyle& parentStyle);
     void set(const Element&, const UnadjustedStyle&);
 
+    NODELETE static bool canApplyPartially(CSSPropertyID);
+
 private:
     struct Entry;
-    NODELETE static bool isUsableAfterInlineStyleChange(const MatchResultCache::Entry&, const StyleProperties& inlineStyle);
-    static PropertyCascade::IncludedProperties computeAndUpdateChangedProperties(MatchResultCache::Entry&);
 
     WeakHashMap<const Element, UniqueRef<Entry>, WeakPtrImplWithEventTargetData> m_entries;
 };

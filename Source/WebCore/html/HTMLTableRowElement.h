@@ -53,7 +53,7 @@ public:
 private:
     HTMLTableRowElement(const QualifiedName&, Document&);
 
-    const MutableStyleProperties* additionalPresentationalHintStyle() const final;
+    const ImmutableStyleProperties* additionalPresentationalHintStyle() const final;
 };
 
 } // namespace

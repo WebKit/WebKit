@@ -41,11 +41,10 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+MetaParser.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleImageValue.h"
-#include "CSSTokenizer.h"
 #include "CachedImage.h"
 #include "CanvasDrawImageSizing.h"
 #include "CanvasFilterContextSwitcher.h"
@@ -3977,14 +3976,10 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     if (state().letterSpacing == letterSpacing)
         return;
     realizeSaves();
-    CSSTokenizer tokenizer(letterSpacing);
-    auto tokenRange = tokenizer.tokenRange();
-    tokenRange.consumeWhitespace();
-
     auto parserContext = CSSParserContext { HTMLStandardMode };
     auto parserState = CSS::PropertyParserState { .context = parserContext, .pool = protect(protect(canvasBase())->scriptExecutionContext())->cssValuePool() };
 
-    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Length<>>::consume(tokenRange, parserState);
+    auto parsedValue = CSSPropertyParserHelpers::MetaParser<CSS::Length<>>::parse(letterSpacing, parserState);
     if (!parsedValue)
         return;
     auto rawLength = parsedValue->raw();
@@ -4009,14 +4004,10 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
     if (state().wordSpacing == wordSpacing)
         return;
     realizeSaves();
-    CSSTokenizer tokenizer(wordSpacing);
-    auto tokenRange = tokenizer.tokenRange();
-    tokenRange.consumeWhitespace();
-
     auto parserContext = CSSParserContext { HTMLStandardMode };
     auto parserState = CSS::PropertyParserState { .context = parserContext, .pool = protect(protect(canvasBase())->scriptExecutionContext())->cssValuePool() };
 
-    auto parsedValue = CSSPropertyParserHelpers::MetaConsumer<CSS::Length<>>::consume(tokenRange, parserState);
+    auto parsedValue = CSSPropertyParserHelpers::MetaParser<CSS::Length<>>::parse(wordSpacing, parserState);
     if (!parsedValue)
         return;
     auto rawLength = parsedValue->raw();

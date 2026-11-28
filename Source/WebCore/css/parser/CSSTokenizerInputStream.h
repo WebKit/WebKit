@@ -67,23 +67,6 @@ public:
         ASSERT_UNUSED(cc, nextInputChar() == cc);
     }
 
-    double getDouble(unsigned start, unsigned end) const;
-
-    template<bool characterPredicate(char16_t)>
-    unsigned skipWhilePredicate(unsigned offset)
-    {
-        if (m_string.is8Bit()) {
-            auto characters8 = m_string.span8();
-            while ((m_offset + offset) < m_stringLength && characterPredicate(characters8[m_offset + offset]))
-                ++offset;
-        } else {
-            auto characters16 = m_string.span16();
-            while ((m_offset + offset) < m_stringLength && characterPredicate(characters16[m_offset + offset]))
-                ++offset;
-        }
-        return offset;
-    }
-
     bool is8Bit() const { return m_string.is8Bit(); }
 
     // Gets the 8-bit characters from lookaheadOffset to the end of the stream.
@@ -93,6 +76,14 @@ public:
         if ((m_offset + lookaheadOffset) >= m_stringLength)
             return { };
         return m_string.span8().subspan(m_offset + lookaheadOffset);
+    }
+
+    std::span<const char16_t> remainingSpan16(unsigned lookaheadOffset) const
+    {
+        ASSERT(!is8Bit());
+        if ((m_offset + lookaheadOffset) >= m_stringLength)
+            return { };
+        return m_string.span16().subspan(m_offset + lookaheadOffset);
     }
 
     void advanceUntilNonWhitespace();
