@@ -5751,11 +5751,6 @@
         "expected": {"glib": {"status": ["SKIP"], "note": "Not run on GLib ports yet"}}
     },
     "imported/w3c/webdriver/tests/bidi/emulation/set_scrollbar_type_override/rendering.py": {
-        "subtests": {
-            "test_rendering": {
-                "expected": {"all": {"status": ["FAIL"], "bug": ["webkit.org/b/288058", "webkit.org/b/282977"], "note": "compare_png_bidi passes string and number arguments to script.callFunction, and reads an object back"}}
-            }
-        },
         "expected": {"glib": {"status": ["SKIP"], "note": "Not run on GLib ports yet"}}
     },
     "imported/w3c/webdriver/tests/bidi/emulation/set_scrollbar_type_override/scrollbar_type.py": {
