@@ -54,18 +54,8 @@ void JIT::emit_op_mov(const JSInstruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister src = bytecode.m_src;
 
-    if (src.isConstant()) {
-        if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src)) {
-            storeValue(m_unlinkedCodeBlock->getConstant(src), addressFor(dst));
-        } else {
-            loadCodeBlockConstant(src, regT0);
-            storeValue(regT0, addressFor(dst));
-        }
-        return;
-    }
-
-    loadValue(addressFor(src), regT0);
-    storeValue(regT0, addressFor(dst));
+    emitGetVirtualRegister(src, regT0);
+    emitPutVirtualRegister(dst, regT0);
 }
 
 void JIT::emit_op_jmp(const JSInstruction* currentInstruction)
@@ -330,8 +320,7 @@ void JIT::emit_op_set_function_name(const JSInstruction* currentInstruction)
     constexpr GPRReg functionGPR = preferredArgumentGPR<SlowOperation, 1>();
     constexpr GPRReg nameGPR = preferredArgumentGPR<SlowOperation, 2>();
 
-    emitGetVirtualRegister(bytecode.m_function, functionGPR);
-    emitGetVirtualRegister(bytecode.m_name, nameGPR);
+    emitGetVirtualRegisters({ { bytecode.m_function, functionGPR }, { bytecode.m_name, nameGPR } });
     loadGlobalObject(globalObjectGPR);
     callOperation(operationSetFunctionName, globalObjectGPR, functionGPR, nameGPR);
 }
@@ -515,8 +504,7 @@ void JIT::compileOpEq(const JSInstruction* currentInstruction)
         emitPutVirtualRegister(bytecode.m_dst, regT0);
         return;
     }
-    emitGetVirtualRegister(bytecode.m_lhs, regT0);
-    emitGetVirtualRegister(bytecode.m_rhs, regT1);
+    emitGetVirtualRegisters({ { bytecode.m_lhs, regT0 }, { bytecode.m_rhs, regT1 } });
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     compare32(isEq ? Equal : NotEqual, regT1, regT0, regT0);
     boxBoolean(regT0, regT0);
@@ -546,8 +534,7 @@ void JIT::compileOpEqJump(const JSInstruction* currentInstruction)
         addSlowCase(branch64(NotEqual, regT0, TrustedImm32(jumpValue ^ 1)));
         return;
     }
-    emitGetVirtualRegister(bytecode.m_lhs, regT0);
-    emitGetVirtualRegister(bytecode.m_rhs, regT1);
+    emitGetVirtualRegisters({ { bytecode.m_lhs, regT0 }, { bytecode.m_rhs, regT1 } });
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     addJump(branch32(isEq ? Equal : NotEqual, regT0, regT1), target);
 }
@@ -707,8 +694,7 @@ void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
         return;
     }
 
-    emitGetVirtualRegister(src1, regT0);
-    emitGetVirtualRegister(src2, regT1);
+    emitGetVirtualRegisters({ { src1, regT0 }, { src2, regT1 } });
 
     auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
         if (!src.isConstant())
@@ -841,8 +827,7 @@ void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
         return;
     }
 
-    emitGetVirtualRegister(src1, regT0);
-    emitGetVirtualRegister(src2, regT1);
+    emitGetVirtualRegisters({ { src1, regT0 }, { src2, regT1 } });
 
     auto tryGetAtomStringConstant = [&](VirtualRegister src) -> JSString* {
         if (!src.isConstant())
@@ -990,6 +975,8 @@ void JIT::emit_op_to_number(const JSInstruction* currentInstruction)
     isInt32.link(this);
     if (srcVReg != dstVReg)
         emitPutVirtualRegister(dstVReg, regT0);
+    else
+        noteVirtualRegisterIsInRegister(dstVReg, regT0);
 }
 
 void JIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
@@ -1021,6 +1008,8 @@ void JIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
     isInt32.link(this);
     if (srcVReg != dstVReg)
         emitPutVirtualRegister(dstVReg, regT0);
+    else
+        noteVirtualRegisterIsInRegister(dstVReg, regT0);
 }
 
 void JIT::emit_op_to_string(const JSInstruction* currentInstruction)
@@ -1036,6 +1025,8 @@ void JIT::emit_op_to_string(const JSInstruction* currentInstruction)
 
     if (srcVReg != dstVReg)
         emitPutVirtualRegister(dstVReg, regT0);
+    else
+        noteVirtualRegisterIsInRegister(dstVReg, regT0);
 }
 
 void JIT::emit_op_to_object(const JSInstruction* currentInstruction)
@@ -1052,6 +1043,8 @@ void JIT::emit_op_to_object(const JSInstruction* currentInstruction)
     emitValueProfilingSite(bytecode, regT0);
     if (srcVReg != dstVReg)
         emitPutVirtualRegister(dstVReg, regT0);
+    else
+        noteVirtualRegisterIsInRegister(dstVReg, regT0);
 }
 
 void JIT::emit_op_catch(const JSInstruction* currentInstruction)
@@ -1506,6 +1499,7 @@ void JIT::emit_op_to_this(const JSInstruction* currentInstruction)
     addSlowCase(branchIfType(regT0, JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) }));
     emitValueProfilingSite(bytecode, regT0);
     done.link(this);
+    noteVirtualRegisterIsInRegister(srcDst, regT0);
 }
 
 void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
@@ -1553,6 +1547,7 @@ void JIT::emit_op_check_tdz(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpCheckTdz>();
     emitGetVirtualRegister(bytecode.m_targetVirtualRegister, regT0);
     addSlowCase(branchIfEmpty(regT0));
+    noteVirtualRegisterIsInRegister(bytecode.m_targetVirtualRegister, regT0);
 }
 
 // Slow cases
@@ -1907,9 +1902,8 @@ void JIT::emit_op_create_lexical_environment(const JSInstruction* currentInstruc
     ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(initialValue));
     JSValue value = m_unlinkedCodeBlock->getConstant(initialValue);
 
+    emitGetVirtualRegisters({ { scope, argumentGPR1 }, { symbolTable, argumentGPR2 } });
     loadGlobalObject(argumentGPR0);
-    emitGetVirtualRegister(scope, argumentGPR1);
-    emitGetVirtualRegister(symbolTable, argumentGPR2);
     callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, argumentGPR0, argumentGPR1, argumentGPR2);
 }
 

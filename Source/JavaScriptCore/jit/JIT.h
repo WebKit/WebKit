@@ -330,7 +330,12 @@ namespace JSC {
         ECMAMode ecmaMode(Op);
 
         void emitGetVirtualRegister(VirtualRegister src, GPRReg dst);
+        void emitGetVirtualRegisters(std::initializer_list<std::pair<VirtualRegister, GPRReg>>);
         void emitPutVirtualRegister(VirtualRegister dst, GPRReg src);
+        // Records that, on every path reaching the current location, the register holds the virtual register's value.
+        void noteVirtualRegisterIsInRegister(VirtualRegister, GPRReg);
+        void emitLoadVirtualRegister(VirtualRegister src, GPRReg dst);
+        void emitGetVirtualRegisterWithReusableResult(VirtualRegister src, GPRReg dst);
 
         Jump emitJumpIfNotInt(GPRReg, GPRReg, GPRReg scratch);
         void emitJumpSlowCaseIfNotInt(GPRReg, GPRReg, GPRReg scratch);
@@ -834,6 +839,7 @@ namespace JSC {
 #if ASSERT_ENABLED
         static MacroAssemblerCodeRef<JITThunkPtrTag> consistencyCheckGenerator(VM&);
         void emitConsistencyCheck();
+        void emitConsistencyCheckCall(GPRReg preservedGPR = InvalidGPRReg);
 #endif
 
         static bool reportCompileTimes();
@@ -848,6 +854,37 @@ namespace JSC {
         BaselineJITPlan& m_plan;
         Vector<FarCallRecord> m_farCalls;
         Vector<Label> m_labels;
+
+        // When the previous bytecode ends by storing a register to a stack slot (or by noting that
+        // the register holds a slot's value), and nothing is emitted or bound after that, the next
+        // bytecode's operand loads can copy the register instead of reloading the slot. Jump
+        // targets never do this. Every other entry that is not fall-through (slow paths of the
+        // previous bytecode, OSR exits, anything else resolved through m_labels) goes through an
+        // out-of-line stub that reloads the register first.
+        struct FallThroughPoint {
+            size_t codeSize;
+            unsigned boundLabelCount;
+            friend bool operator==(const FallThroughPoint&, const FallThroughPoint&) = default;
+        };
+        FallThroughPoint fallThroughPoint() { return { m_assembler.buffer().codeSize(), boundLabelCount() }; }
+        static bool canHoldResultAcrossBytecodes(GPRReg);
+
+        struct ResultInRegister {
+            VirtualRegister virtualRegister;
+            GPRReg gpr;
+            FallThroughPoint storeEnd;
+        };
+        struct ResultReload {
+            BytecodeIndex bytecodeIndex;
+            VirtualRegister virtualRegister;
+            GPRReg gpr;
+            Label bytecodeStart;
+        };
+        std::optional<ResultInRegister> m_resultInRegister;
+        std::optional<ResultInRegister> m_reusableResult;
+        FallThroughPoint m_operandLoadsEnd { };
+        Vector<ResultReload> m_resultReloads;
+
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         HashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
         Vector<JITGetByIdGenerator> m_getByIds;

@@ -41,13 +41,13 @@ JITSizeStatistics::Marker JITSizeStatistics::markStart(String identifier, CCallH
 {
     Marker marker;
     marker.identifier = identifier;
-    marker.start = jit.labelIgnoringWatchpoints();
+    marker.start = jit.offsetMarkerLabel();
     return marker;
 }
 
 void JITSizeStatistics::markEnd(Marker marker, CCallHelpers& jit, JITPlan& planRef)
 {
-    CCallHelpers::Label end = jit.labelIgnoringWatchpoints();
+    CCallHelpers::Label end = jit.offsetMarkerLabel();
     auto* plan = &planRef;
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         size_t size = linkBuffer.locationOf<NoPtrTag>(end).untaggedPtr<char*>() - linkBuffer.locationOf<NoPtrTag>(marker.start).untaggedPtr<char*>();

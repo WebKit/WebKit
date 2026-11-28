@@ -375,9 +375,8 @@ ALWAYS_INLINE double JIT::getOperandConstantDouble(VirtualRegister src)
     return getConstantOperand(src).asDouble();
 }
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, GPRReg dst)
+ALWAYS_INLINE void JIT::emitLoadVirtualRegister(VirtualRegister src, GPRReg dst)
 {
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     if (src.isConstant()) {
         if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
             moveValue(m_unlinkedCodeBlock->getConstant(src), dst);
@@ -388,9 +387,36 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, GPRReg dst)
     loadValue(addressFor(src), dst);
 }
 
+ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, GPRReg dst)
+{
+    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
+    if (m_reusableResult) {
+        emitGetVirtualRegisterWithReusableResult(src, dst);
+        return;
+    }
+    emitLoadVirtualRegister(src, dst);
+}
+
+ALWAYS_INLINE bool JIT::canHoldResultAcrossBytecodes(GPRReg gpr)
+{
+    // A reload stub writes the register, so it must be a temporary, not one holding a pinned value.
+    return GPRInfo::toIndex(gpr) != GPRInfo::InvalidIndex
+        && gpr != GPRInfo::numberTagRegister
+        && gpr != GPRInfo::notCellMaskRegister
+        && gpr != GPRInfo::jitDataRegister
+        && gpr != GPRInfo::metadataTableRegister;
+}
+
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, GPRReg from)
 {
     storeValue(from, addressFor(dst));
+    noteVirtualRegisterIsInRegister(dst, from);
+}
+
+ALWAYS_INLINE void JIT::noteVirtualRegisterIsInRegister(VirtualRegister virtualRegister, GPRReg gpr)
+{
+    if (canHoldResultAcrossBytecodes(gpr))
+        m_resultInRegister = ResultInRegister { virtualRegister, gpr, fallThroughPoint() };
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(GPRReg reg1, GPRReg reg2, GPRReg scratch)

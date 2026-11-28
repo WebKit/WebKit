@@ -60,8 +60,7 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::scratch1GPR;
     using BaselineJITRegisters::GetByVal::scratch2GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -138,8 +137,7 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByVal::resultGPR;
     using BaselineJITRegisters::GetByVal::propertyCacheGPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -178,8 +176,7 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PrivateBrand::propertyGPR;
     using BaselineJITRegisters::PrivateBrand::propertyCacheGPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(brand, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { brand, propertyGPR } });
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
 
@@ -218,8 +215,7 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PrivateBrand::propertyGPR;
     using BaselineJITRegisters::PrivateBrand::propertyCacheGPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(brand, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { brand, propertyGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -258,9 +254,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
     using BaselineJITRegisters::PutByVal::scratch1GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
-    emitGetVirtualRegister(value, valueGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR }, { value, valueGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -330,9 +324,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::valueGPR;
     using BaselineJITRegisters::PutByVal::propertyCacheGPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
-    emitGetVirtualRegister(value, valueGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR }, { value, valueGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -384,10 +376,8 @@ void JIT::emit_op_put_setter_by_id(const JSInstruction* currentInstruction)
 void JIT::emit_op_put_getter_setter_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterSetterById>();
-    emitGetVirtualRegister(bytecode.m_base, regT0);
+    emitGetVirtualRegisters({ { bytecode.m_base, regT0 }, { bytecode.m_getter, regT1 }, { bytecode.m_setter, regT2 } });
     int32_t attribute = bytecode.m_attributes;
-    emitGetVirtualRegister(bytecode.m_getter, regT1);
-    emitGetVirtualRegister(bytecode.m_setter, regT2);
     loadGlobalObject(regT3);
     callOperation(operationPutGetterSetter, regT3, regT0, TrustedImmPtr(m_unlinkedCodeBlock->identifier(bytecode.m_property).impl()), attribute, regT1, regT2);
 }
@@ -403,10 +393,8 @@ void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
     // Attributes in argument 3
     constexpr GPRReg setterGPR = preferredArgumentGPR<SlowOperation, 4>();
 
-    emitGetVirtualRegister(bytecode.m_base, baseGPR);
-    emitGetVirtualRegister(bytecode.m_property, propertyGPR);
+    emitGetVirtualRegisters({ { bytecode.m_base, baseGPR }, { bytecode.m_property, propertyGPR }, { bytecode.m_accessor, setterGPR } });
     int32_t attributes = bytecode.m_attributes;
-    emitGetVirtualRegister(bytecode.m_accessor, setterGPR);
     loadGlobalObject(globalObjectGPR);
     callOperation(operationPutGetterByVal, globalObjectGPR, baseGPR, propertyGPR, attributes, setterGPR);
 }
@@ -422,10 +410,8 @@ void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
     // Attributes in argument 3
     constexpr GPRReg setterGPR = preferredArgumentGPR<SlowOperation, 4>();
 
-    emitGetVirtualRegister(bytecode.m_base, baseGPR);
-    emitGetVirtualRegister(bytecode.m_property, propertyGPR);
+    emitGetVirtualRegisters({ { bytecode.m_base, baseGPR }, { bytecode.m_property, propertyGPR }, { bytecode.m_accessor, setterGPR } });
     int32_t attributes = bytecode.m_attributes;
-    emitGetVirtualRegister(bytecode.m_accessor, setterGPR);
     loadGlobalObject(globalObjectGPR);
     callOperation(operationPutSetterByVal, globalObjectGPR, baseGPR, propertyGPR, attributes, setterGPR);
 }
@@ -492,8 +478,7 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::DelByVal::propertyCacheGPR;
     using BaselineJITRegisters::DelByVal::scratch1GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR } });
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
 
@@ -674,8 +659,7 @@ void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByIdWithThis::resultGPR;
     using BaselineJITRegisters::GetByIdWithThis::propertyCacheGPR;
 
-    emitGetVirtualRegister(baseVReg, baseGPR);
-    emitGetVirtualRegister(thisVReg, thisGPR);
+    emitGetVirtualRegisters({ { baseVReg, baseGPR }, { thisVReg, thisGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -724,8 +708,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
 
-    emitGetVirtualRegister(baseVReg, baseGPR);
-    emitGetVirtualRegister(valueVReg, valueGPR);
+    emitGetVirtualRegisters({ { baseVReg, baseGPR }, { valueVReg, valueGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -811,8 +794,7 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::InByVal::profileGPR;
     using BaselineJITRegisters::InByVal::scratch1GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -849,8 +831,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     using BaselineJITRegisters::InByVal::resultGPR;
     using BaselineJITRegisters::InByVal::propertyCacheGPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(propertyOrBrand, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { propertyOrBrand, propertyGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -1237,6 +1218,9 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
         loadPtrFromMetadata(bytecode, Metadata::offsetOfOperand(), scratch1GPR);
         loadValue(BaseIndex(scopeGPR, scratch1GPR, TimesEight, JSLexicalEnvironment::offsetOfVariables()), returnValueGPR);
     } else {
+        if (profiledResolveType != GlobalVar && profiledResolveType != GlobalLexicalVar)
+            emitGetVirtualRegister(scope, scopeGPR);
+
         // Inlined fast path for common types.
         constexpr size_t metadataMinAlignment = 4;
         constexpr size_t metadataPointerAlignment = alignof(void*);
@@ -1258,7 +1242,6 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
         case GlobalProperty: {
             addSlowCase(branch32(NotEqual, scratch1GPR, TrustedImm32(profiledResolveType)));
             load32(structureIDAddress, scratch1GPR);
-            emitGetVirtualRegister(scope, scopeGPR);
             addSlowCase(branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratch1GPR));
             loadPtr(operandAddress, scratch1GPR);
             loadPtr(Address(scopeGPR, JSObject::butterflyOffset()), scopeGPR);
@@ -1289,12 +1272,6 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
             MacroAssemblerCodeRef<JITThunkPtrTag> code;
             if (profiledResolveType == ClosureVarWithVarInjectionChecks)
                 code = vm().getCTIStub(generateOpGetFromScopeThunk<ClosureVarWithVarInjectionChecks>);
-            if (profiledResolveType == GlobalProperty)
-                code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalProperty>);
-            if (profiledResolveType == GlobalVar)
-                code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
-            if (profiledResolveType == GlobalLexicalVar)
-                code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalLexicalVar>);
             else if (profiledResolveType == GlobalVarWithVarInjectionChecks)
                 code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVarWithVarInjectionChecks>);
             else if (profiledResolveType == GlobalLexicalVarWithVarInjectionChecks)
@@ -1302,7 +1279,6 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
             else
                 code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
 
-            emitGetVirtualRegister(scope, scopeGPR);
             move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
             nearCallThunk(CodeLocationLabel { code.retaggedCode<NoPtrTag>() });
             break;
@@ -1570,11 +1546,9 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             constexpr GPRReg scratch1GPR1 = regT3;
             constexpr GPRReg scratch1GPR2 = regT4;
             static_assert(noOverlap(valueGPR, scopeGPR, scratch1GPR1, scratch1GPR2));
+            emitGetVirtualRegisters({ { value, valueGPR }, { scope, scopeGPR } });
             load32(structureIDAddress, scratch1GPR1);
-            emitGetVirtualRegister(scope, scopeGPR);
             addSlowCase(branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratch1GPR1));
-
-            emitGetVirtualRegister(value, valueGPR);
 
             jitAssert([&] () -> Jump {
                 loadGlobalObject(scratch1GPR2);
@@ -1592,7 +1566,8 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
         case GlobalLexicalVarWithVarInjectionChecks: {
-            static_assert(noOverlap(regT0, regT2, regT3));
+            static_assert(noOverlap(regT0, regT1, regT2, regT3));
+            emitGetVirtualRegister(value, regT0);
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT2);
             emitVarReadOnlyCheck(resolveType, regT2);
 
@@ -1600,13 +1575,12 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
 
             if (!isInitialization(bytecode.m_getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                 // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
-                loadValue(Address(regT2), regT0);
-                addSlowCase(branchIfEmpty(regT0));
+                loadValue(Address(regT2), regT1);
+                addSlowCase(branchIfEmpty(regT1));
             }
 
             emitNotifyWriteWatchpoint(regT3);
 
-            emitGetVirtualRegister(value, regT0);
             storeValue(regT0, Address(regT2));
 
             emitWriteBarrier(scope, value, ShouldFilterValue);
@@ -1615,14 +1589,13 @@ void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
         case ResolvedClosureVar:
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
-            static_assert(noOverlap(regT0, regT2, regT3));
+            static_assert(noOverlap(regT0, regT1, regT2, regT3));
+            emitGetVirtualRegisters({ { value, regT0 }, { scope, regT1 } });
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT3);
 
             loadPairPtr(watchpointSetAddress, regT3, regT2);
             emitNotifyWriteWatchpoint(regT3);
-            emitGetVirtualRegister(value, regT0);
-            emitGetVirtualRegister(scope, regT3);
-            storeValue(regT0, BaseIndex(regT3, regT2, TimesEight, JSLexicalEnvironment::offsetOfVariables()));
+            storeValue(regT0, BaseIndex(regT1, regT2, TimesEight, JSLexicalEnvironment::offsetOfVariables()));
 
             emitWriteBarrier(scope, value, ShouldFilterValue);
             break;
@@ -1765,8 +1738,7 @@ void JIT::emit_op_put_to_arguments(const JSInstruction* currentInstruction)
     VirtualRegister value = bytecode.m_value;
 
     static_assert(noOverlap(regT2, regT0));
-    emitGetVirtualRegister(arguments, regT2);
-    emitGetVirtualRegister(value, regT0);
+    emitGetVirtualRegisters({ { arguments, regT2 }, { value, regT0 } });
     storeValue(regT0, Address(regT2, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>)));
 
     emitWriteBarrier(arguments, value, ShouldFilterValue);
@@ -1794,8 +1766,7 @@ void JIT::emit_op_put_internal_field(const JSInstruction* currentInstruction)
     unsigned index = bytecode.m_index;
 
     static_assert(noOverlap(regT2, regT0));
-    emitGetVirtualRegister(base, regT2);
-    emitGetVirtualRegister(value, regT0);
+    emitGetVirtualRegisters({ { base, regT2 }, { value, regT0 } });
     storeValue(regT0, Address(regT2, JSInternalFieldObjectImpl<>::offsetOfInternalField(index)));
     emitWriteBarrier(base, value, ShouldFilterValue);
 }
@@ -1816,9 +1787,7 @@ void JIT::emit_op_get_by_val_with_this(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetByValWithThis::profileGPR;
     using BaselineJITRegisters::GetByValWithThis::scratch1GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(property, propertyGPR);
-    emitGetVirtualRegister(thisValue, thisGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { property, propertyGPR }, { thisValue, thisGPR } });
 
     auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
     loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
@@ -2018,9 +1987,7 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::EnumeratorGetByVal::scratch2GPR;
     using BaselineJITRegisters::EnumeratorGetByVal::scratch3GPR;
 
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(mode, scratch3GPR);
-    emitGetVirtualRegister(propertyName, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { mode, scratch3GPR }, { propertyName, propertyGPR } });
 
     load8FromMetadata(bytecode, OpEnumeratorGetByVal::Metadata::offsetOfEnumeratorMetadata(), scratch2GPR);
     or32(scratch3GPR, scratch2GPR);
@@ -2110,9 +2077,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::EnumeratorPutByVal::scratch2GPR;
 
     // These four registers need to be set up before jumping to SlowPath code.
-    emitGetVirtualRegister(base, baseGPR);
-    emitGetVirtualRegister(value, valueGPR);
-    emitGetVirtualRegister(propertyName, propertyGPR);
+    emitGetVirtualRegisters({ { base, baseGPR }, { value, valueGPR }, { propertyName, propertyGPR } });
     materializePointerIntoMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     emitGetVirtualRegister(mode, scratch2GPR);
