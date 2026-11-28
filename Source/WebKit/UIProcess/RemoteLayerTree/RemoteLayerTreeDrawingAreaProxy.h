@@ -233,6 +233,7 @@ private:
 
     void didReceiveMirrorFullState(IPC::Connection&, WebPageProxy&, const RemoteLayerTreeFullState&, bool hasMainFrame);
     void completeMirrorAttachIfReady();
+    void updateMirrorGeometry();
 
     void initializeDebugIndicator();
 
