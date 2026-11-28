@@ -83,14 +83,14 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
 
-    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_connection.get(); }
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
-    ModelProcess& modelProcess() { return m_modelProcess.get(); }
+    ModelProcess& modelProcess() LIFETIME_BOUND { return m_modelProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
-    ModelProcessModelPlayerManagerProxy& modelProcessModelPlayerManagerProxy() { return m_modelProcessModelPlayerManagerProxy.get(); }
+    ModelProcessModelPlayerManagerProxy& modelProcessModelPlayerManagerProxy() LIFETIME_BOUND { return m_modelProcessModelPlayerManagerProxy.get(); }
 
     NODELETE Logger& logger();
 

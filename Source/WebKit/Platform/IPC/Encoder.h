@@ -109,17 +109,17 @@ public:
     static constexpr bool isIPCEncoder = true;
 
 private:
-    std::span<uint8_t> grow(size_t alignment, size_t);
+    std::span<uint8_t> grow(size_t alignment, size_t) LIFETIME_BOUND;
 
-    NODELETE std::span<uint8_t> bodyBuffer();
-    NODELETE std::span<const uint8_t> bodyBuffer() const;
+    NODELETE std::span<uint8_t> bodyBuffer() LIFETIME_BOUND;
+    NODELETE std::span<const uint8_t> bodyBuffer() const LIFETIME_BOUND;
     NODELETE size_t capacity() const;
 
     NODELETE bool hasAttachments() const;
 
     void encodeHeader();
-    NODELETE const OptionSet<MessageFlags>& messageFlags() const;
-    NODELETE OptionSet<MessageFlags>& messageFlags();
+    NODELETE const OptionSet<MessageFlags>& messageFlags() const LIFETIME_BOUND;
+    NODELETE OptionSet<MessageFlags>& messageFlags() LIFETIME_BOUND;
 
     void freeBufferIfNecessary();
 

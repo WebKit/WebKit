@@ -49,7 +49,7 @@ public:
     enum class WakeUpServer : bool { No, Yes };
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
-    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
+    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit) LIFETIME_BOUND;
     // Called once, from the connection receive thread, when the server sends its wake up semaphore.
     void setWakeUpSemaphore(IPC::Semaphore&&);
     bool hasWakeUpSemaphore() const { return m_hasWakeUpSemaphore.load(std::memory_order_acquire); }
@@ -257,7 +257,7 @@ inline void StreamClientConnectionBuffer::resetClientOffset()
     m_cachedClientLimit = invalidCachedClientLimit;
 }
 
-inline std::span<uint8_t> StreamClientConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamClientConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit) LIFETIME_BOUND
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());

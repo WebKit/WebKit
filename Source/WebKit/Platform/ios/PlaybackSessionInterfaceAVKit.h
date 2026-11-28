@@ -44,7 +44,7 @@ public:
     // PlaybackSessionInterfaceCocoa overrides
     WebAVPlayerController *playerController() const final { return nullptr; }
     WKSLinearMediaPlayer *linearMediaPlayer() const final { return nullptr; }
-    WKAVContentSource *contentSource() const { return m_contentSource.get(); }
+    WKAVContentSource *contentSource() const LIFETIME_BOUND { return m_contentSource.get(); }
     void durationChanged(double) final;
     void currentTimeChanged(double, double) final;
     void bufferedTimeChanged(double) final { }

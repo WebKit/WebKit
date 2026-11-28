@@ -47,7 +47,7 @@ StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
     return { WTF::move(*handle) };
 }
 
-std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
+std::span<uint8_t> StreamConnectionBuffer::headerForTesting() LIFETIME_BOUND
 {
     return m_sharedMemory->mutableSpan().first(headerSize());
 }

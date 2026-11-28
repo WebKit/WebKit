@@ -107,8 +107,8 @@ public:
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiverBase&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
-    NODELETE StreamClientConnectionBuffer& bufferForTesting();
-    NODELETE Connection& connectionForTesting();
+    NODELETE StreamClientConnectionBuffer& bufferForTesting() LIFETIME_BOUND;
+    NODELETE Connection& connectionForTesting() LIFETIME_BOUND;
 
     // Returns the timeout moment for current time.
     Timeout defaultTimeout() const { return m_defaultTimeoutDuration; }

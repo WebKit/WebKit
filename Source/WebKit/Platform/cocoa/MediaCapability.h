@@ -73,7 +73,7 @@ public:
     // ExtensionCapability
     String environmentIdentifier() const final;
 
-    BEMediaEnvironment *platformMediaEnvironment() const { return m_mediaEnvironment.get(); }
+    BEMediaEnvironment *platformMediaEnvironment() const LIFETIME_BOUND { return m_mediaEnvironment.get(); }
 
 private:
     explicit MediaCapability(URL&&, Kind);

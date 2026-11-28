@@ -183,12 +183,12 @@ void StreamClientConnection::wakeUpServerBatched(WakeUpServer wakeUpResult)
     }
 }
 
-StreamClientConnectionBuffer& StreamClientConnection::bufferForTesting()
+StreamClientConnectionBuffer& StreamClientConnection::bufferForTesting() LIFETIME_BOUND
 {
     return m_buffer;
 }
 
-Connection& StreamClientConnection::connectionForTesting()
+Connection& StreamClientConnection::connectionForTesting() LIFETIME_BOUND
 {
     return m_connection.get();
 }

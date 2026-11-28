@@ -140,19 +140,19 @@ void Encoder::encodeHeader()
     *this << m_destinationID;
 }
 
-OptionSet<MessageFlags>& Encoder::messageFlags()
+OptionSet<MessageFlags>& Encoder::messageFlags() LIFETIME_BOUND
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
     static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
     return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(bodyBuffer());
 }
 
-const OptionSet<MessageFlags>& Encoder::messageFlags() const
+const OptionSet<MessageFlags>& Encoder::messageFlags() const LIFETIME_BOUND
 {
     return reinterpretCastSpanStartTo<OptionSet<MessageFlags>>(bodyBuffer());
 }
 
-std::span<uint8_t> Encoder::grow(size_t alignment, size_t size)
+std::span<uint8_t> Encoder::grow(size_t alignment, size_t size) LIFETIME_BOUND
 {
     size_t alignedSize = roundUpToMultipleOf(alignment, m_bufferSize);
     size_t newBufferSize = CheckedSize { alignedSize } + size;
@@ -173,7 +173,7 @@ std::span<uint8_t> Encoder::grow(size_t alignment, size_t size)
     return buffer.subspan(alignedSize);
 }
 
-std::span<uint8_t> Encoder::bodyBuffer()
+std::span<uint8_t> Encoder::bodyBuffer() LIFETIME_BOUND
 {
 #if PLATFORM(COCOA)
     if (m_outOfLineBuffer)
@@ -182,7 +182,7 @@ std::span<uint8_t> Encoder::bodyBuffer()
     return m_buffer.mutableSpan();
 }
 
-std::span<const uint8_t> Encoder::bodyBuffer() const
+std::span<const uint8_t> Encoder::bodyBuffer() const LIFETIME_BOUND
 {
 #if PLATFORM(COCOA)
     if (m_outOfLineBuffer)

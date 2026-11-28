@@ -1326,7 +1326,7 @@ RetainPtr<WKRKEntity> ModelProcessModelPlayerProxy::entityForNode(WebCore::NodeI
     return nil;
 }
 
-ModelProcessModelPlayerProxy::TrackedModel& ModelProcessModelPlayerProxy::ensureTrackedModel(WebCore::NodeIdentifier nodeID)
+ModelProcessModelPlayerProxy::TrackedModel& ModelProcessModelPlayerProxy::ensureTrackedModel(WebCore::NodeIdentifier nodeID) LIFETIME_BOUND
 {
     return m_trackedModels.ensure(nodeID, [] {
         return makeUniqueRef<TrackedModel>();

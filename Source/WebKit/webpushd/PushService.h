@@ -60,8 +60,8 @@ public:
     static void createMockService(IncomingPushMessageHandler&&, CompletionHandler<void(RefPtr<PushService>&&)>&&);
     ~PushService();
 
-    PushServiceConnection& connection() const { return m_connection; }
-    WebCore::PushDatabase& database() const { return m_database; }
+    PushServiceConnection& connection() const LIFETIME_BOUND { return m_connection; }
+    WebCore::PushDatabase& database() const LIFETIME_BOUND { return m_database; }
 
     Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
     Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }

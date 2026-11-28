@@ -313,7 +313,7 @@ private:
     void setUpLoadedEntity(WebCore::NodeIdentifier, WKRKEntity *);
     simd_float3 reportingModelScale() const;
     void clearReportingModelIfNeeded(WebCore::NodeIdentifier);
-    TrackedModel& ensureTrackedModel(WebCore::NodeIdentifier);
+    TrackedModel& ensureTrackedModel(WebCore::NodeIdentifier) LIFETIME_BOUND;
     TrackedModel* trackedModel(WebCore::NodeIdentifier);
     const TrackedModel* trackedModel(WebCore::NodeIdentifier) const;
     TrackedModelMap::iterator findTrackedModelForLoader(const WebCore::REModelLoader&);

@@ -37,7 +37,7 @@ public:
     StreamServerConnectionBuffer(StreamServerConnectionBuffer&&) = default;
     StreamServerConnectionBuffer& operator=(StreamServerConnectionBuffer&&) = default;
     std::optional<std::span<uint8_t>> tryAcquire();
-    std::span<uint8_t> acquireAll();
+    std::span<uint8_t> acquireAll() LIFETIME_BOUND;
     enum class WakeUpClient : bool { No, Yes };
     WakeUpClient release(size_t readSize);
     WakeUpClient releaseAll();
@@ -46,7 +46,7 @@ private:
     using StreamConnectionBuffer::StreamConnectionBuffer;
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
-    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
+    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit) LIFETIME_BOUND;
     size_t size(size_t offset, size_t limit) const;
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     using ServerLimit = ClientOffset;
@@ -93,7 +93,7 @@ inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquir
     return result;
 }
 
-inline std::span<uint8_t> StreamServerConnectionBuffer::acquireAll()
+inline std::span<uint8_t> StreamServerConnectionBuffer::acquireAll() LIFETIME_BOUND
 {
     return alignedMutableSpan(0, dataSize() - 1);
 }
@@ -131,7 +131,7 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     return wakeUpClient;
 }
 
-inline std::span<uint8_t> StreamServerConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamServerConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit) LIFETIME_BOUND
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());

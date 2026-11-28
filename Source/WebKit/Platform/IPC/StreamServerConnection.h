@@ -103,7 +103,7 @@ public:
     // Stops the message receipt. Note: already received messages might still be delivered.
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
 
-    Connection& connection() { return m_connection; }
+    Connection& connection() LIFETIME_BOUND { return m_connection; }
 
     enum DispatchResult : bool {
         HasNoMessages,
@@ -122,7 +122,7 @@ public:
     // and must not have done anything with the message. Only when canCurrentlyDispatchedMessageWait().
     void markCurrentlyDispatchedMessageAsDeferred();
     // The work queue that dispatches the messages of this connection. Null until open().
-    StreamConnectionWorkQueue* workQueue() const { return m_workQueue.get(); }
+    StreamConnectionWorkQueue* workQueue() const LIFETIME_BOUND { return m_workQueue.get(); }
 
     void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();
