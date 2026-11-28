@@ -502,25 +502,64 @@ void JIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
     equal.link(this);
 }
 
-void JIT::emit_op_eq(const JSInstruction* currentInstruction)
+template<typename Op>
+void JIT::compileOpEq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpEq>();
+    constexpr bool isEq = std::is_same_v<Op, OpEq>;
+    auto bytecode = currentInstruction->as<Op>();
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        emitGetVirtualRegister(equality->operand, regT0);
+        addSlowCase(branchIfNotBoolean(regT0, regT2));
+        if (equality->literal != isEq)
+            xor64(TrustedImm32(1), regT0);
+        emitPutVirtualRegister(bytecode.m_dst, regT0);
+        return;
+    }
     emitGetVirtualRegister(bytecode.m_lhs, regT0);
     emitGetVirtualRegister(bytecode.m_rhs, regT1);
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    compare32(Equal, regT1, regT0, regT0);
+    compare32(isEq ? Equal : NotEqual, regT1, regT0, regT0);
     boxBoolean(regT0, regT0);
     emitPutVirtualRegister(bytecode.m_dst, regT0);
 }
 
-void JIT::emit_op_jeq(const JSInstruction* currentInstruction)
+void JIT::emit_op_eq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpJeq>();
+    compileOpEq<OpEq>(currentInstruction);
+}
+
+void JIT::emit_op_neq(const JSInstruction* currentInstruction)
+{
+    compileOpEq<OpNeq>(currentInstruction);
+}
+
+template<typename Op>
+void JIT::compileOpEqJump(const JSInstruction* currentInstruction)
+{
+    constexpr bool isEq = std::is_same_v<Op, OpJeq>;
+    auto bytecode = currentInstruction->as<Op>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        int32_t jumpValue = static_cast<int32_t>(equality->literal == isEq ? JSValue::ValueTrue : JSValue::ValueFalse);
+        emitGetVirtualRegister(equality->operand, regT0);
+        addJump(branch64(Equal, regT0, TrustedImm32(jumpValue)), target);
+        addSlowCase(branch64(NotEqual, regT0, TrustedImm32(jumpValue ^ 1)));
+        return;
+    }
     emitGetVirtualRegister(bytecode.m_lhs, regT0);
     emitGetVirtualRegister(bytecode.m_rhs, regT1);
     emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    addJump(branch32(Equal, regT0, regT1), target);
+    addJump(branch32(isEq ? Equal : NotEqual, regT0, regT1), target);
+}
+
+void JIT::emit_op_jeq(const JSInstruction* currentInstruction)
+{
+    compileOpEqJump<OpJeq>(currentInstruction);
+}
+
+void JIT::emit_op_jneq(const JSInstruction* currentInstruction)
+{
+    compileOpEqJump<OpJneq>(currentInstruction);
 }
 
 void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
@@ -578,28 +617,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "valueIsTruthy"_s, "Baseline: valueIsTruthy");
-}
-
-void JIT::emit_op_neq(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpNeq>();
-    emitGetVirtualRegister(bytecode.m_lhs, regT0);
-    emitGetVirtualRegister(bytecode.m_rhs, regT1);
-    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    compare32(NotEqual, regT1, regT0, regT0);
-    boxBoolean(regT0, regT0);
-
-    emitPutVirtualRegister(bytecode.m_dst, regT0);
-}
-
-void JIT::emit_op_jneq(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpJneq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    emitGetVirtualRegister(bytecode.m_lhs, regT0);
-    emitGetVirtualRegister(bytecode.m_rhs, regT1);
-    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
-    addJump(branch32(NotEqual, regT0, regT1), target);
 }
 
 void JIT::emit_op_throw(const JSInstruction* currentInstruction)
@@ -1540,49 +1557,76 @@ void JIT::emit_op_check_tdz(const JSInstruction* currentInstruction)
 
 // Slow cases
 
-void JIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+template<typename Op>
+void JIT::compileOpEqSlowCase(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    constexpr bool isEq = std::is_same_v<Op, OpEq>;
     linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpEq>();
+    auto bytecode = currentInstruction->as<Op>();
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs))
+        moveTrustedValue(jsBoolean(equality->literal), regT1);
+    else {
+        JumpList notBothBoolean;
+        notBothBoolean.append(branchIfNotBoolean(regT0, regT2));
+        notBothBoolean.append(branchIfNotBoolean(regT1, regT2));
+        compare64(isEq ? Equal : NotEqual, regT0, regT1, regT0);
+        boxBoolean(regT0, regT0);
+        emitPutVirtualRegister(bytecode.m_dst, regT0);
+        emitJumpSlowToHot(jump(), currentInstruction->size());
+        notBothBoolean.link(this);
+    }
+
     loadGlobalObject(regT2);
     callOperation(operationCompareEq, regT2, regT0, regT1);
+    if constexpr (!isEq)
+        xor32(TrustedImm32(0x1), returnValueGPR);
     boxBoolean(returnValueGPR, returnValueGPR);
     emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
+}
+
+void JIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpEqSlowCase<OpEq>(currentInstruction, iter);
 }
 
 void JIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    compileOpEqSlowCase<OpNeq>(currentInstruction, iter);
+}
+
+template<typename Op>
+void JIT::compileOpEqJumpSlowCase(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    constexpr bool isEq = std::is_same_v<Op, OpJeq>;
     linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpNeq>();
+    auto bytecode = currentInstruction->as<Op>();
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs))
+        moveTrustedValue(jsBoolean(equality->literal), regT1);
+    else {
+        JumpList notBothBoolean;
+        notBothBoolean.append(branchIfNotBoolean(regT0, regT2));
+        notBothBoolean.append(branchIfNotBoolean(regT1, regT2));
+        emitJumpSlowToHot(branch64(isEq ? Equal : NotEqual, regT0, regT1), target);
+        emitJumpSlowToHot(jump(), currentInstruction->size());
+        notBothBoolean.link(this);
+    }
+
     loadGlobalObject(regT2);
     callOperation(operationCompareEq, regT2, regT0, regT1);
-    xor32(TrustedImm32(0x1), regT0);
-    boxBoolean(returnValueGPR, returnValueGPR);
-    emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
+    emitJumpSlowToHot(branchTest32(isEq ? NonZero : Zero, returnValueGPR), target);
 }
 
 void JIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCases(iter);
-
-    auto bytecode = currentInstruction->as<OpJeq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
-    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
+    compileOpEqJumpSlowCase<OpJeq>(currentInstruction, iter);
 }
 
 void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCases(iter);
-
-    auto bytecode = currentInstruction->as<OpJneq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    loadGlobalObject(regT2);
-    callOperation(operationCompareEq, regT2, regT0, regT1);
-    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
+    compileOpEqJumpSlowCase<OpJneq>(currentInstruction, iter);
 }
 
 void JIT::emit_op_debug(const JSInstruction* currentInstruction)

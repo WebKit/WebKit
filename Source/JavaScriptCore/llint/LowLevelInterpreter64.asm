@@ -958,11 +958,20 @@ macro equalityComparisonOp(opcodeName, opcodeStruct, integerComparison)
     llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
         get(m_rhs, t0)
         get(m_lhs, t2)
-        loadConstantOrVariableInt32(size, t0, t1, .slow)
-        loadConstantOrVariableInt32(size, t2, t0, .slow)
+        loadConstantOrVariable(size, t0, t1)
+        loadConstantOrVariable(size, t2, t0)
+        bqb t0, numberTag, .notBothInt32
+        bqb t1, numberTag, .notBothInt32
+    .compare:
         integerComparison(t0, t1, t0)
         orq ValueFalse, t0
         return(t0)
+
+    .notBothInt32:
+        andq ~1, t0, t2
+        bqneq t2, ValueFalse, .slow
+        andq ~1, t1, t2
+        bqeq t2, ValueFalse, .compare
 
     .slow:
         callSlowPath(_slow_path_%opcodeName%)
@@ -2357,13 +2366,22 @@ macro equalityJumpOp(opcodeName, opcodeStruct, integerComparison)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
         get(m_lhs, t2)
         get(m_rhs, t3)
-        loadConstantOrVariableInt32(size, t2, t0, .slow)
-        loadConstantOrVariableInt32(size, t3, t1, .slow)
+        loadConstantOrVariable(size, t2, t0)
+        loadConstantOrVariable(size, t3, t1)
+        bqb t0, numberTag, .notBothInt32
+        bqb t1, numberTag, .notBothInt32
+    .compare:
         integerComparison(t0, t1, .jumpTarget)
         dispatch()
 
     .jumpTarget:
         jump(m_targetLabel)
+
+    .notBothInt32:
+        andq ~1, t0, t2
+        bqneq t2, ValueFalse, .slow
+        andq ~1, t1, t2
+        bqeq t2, ValueFalse, .compare
 
     .slow:
         callSlowPath(_llint_slow_path_%opcodeName%)

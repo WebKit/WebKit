@@ -68,7 +68,6 @@ JSBigIntComparisonResult compareBigInt(JSValue, JSValue);
 JSBigIntComparisonResult compareBigIntToOtherPrimitive(JSGlobalObject*, JSBigInt*, JSValue);
 bool bigIntCompareResult(JSBigIntComparisonResult, JSBigIntComparisonMode);
 bool bigIntCompare(JSGlobalObject*, JSValue, JSValue, JSBigIntComparisonMode);
-bool toPrimitiveNumeric(JSGlobalObject*, JSValue, JSValue&, double&);
 
 template<bool leftFirst>
 bool jsLess(JSGlobalObject*, JSValue, JSValue);

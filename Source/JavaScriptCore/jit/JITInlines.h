@@ -308,6 +308,24 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
     return getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
+ALWAYS_INLINE bool JIT::isOperandConstantBoolean(VirtualRegister src)
+{
+    if (!src.isConstant())
+        return false;
+    if (m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) == SourceCodeRepresentation::LinkTimeConstant)
+        return false;
+    return getConstantOperand(src).isBoolean();
+}
+
+ALWAYS_INLINE std::optional<JIT::BooleanLiteralEquality> JIT::booleanLiteralEquality(VirtualRegister lhs, VirtualRegister rhs)
+{
+    if (isOperandConstantBoolean(rhs))
+        return BooleanLiteralEquality { lhs, getConstantOperand(rhs).asBoolean() };
+    if (isOperandConstantBoolean(lhs))
+        return BooleanLiteralEquality { rhs, getConstantOperand(lhs).asBoolean() };
+    return std::nullopt;
+}
+
 template<typename Bytecode>
 inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, BytecodeIndex bytecodeIndex, GPRReg value)
 {

@@ -289,6 +289,10 @@ namespace JSC {
 
         template<typename Op> void compileOpStrictEq(const JSInstruction*);
         template<typename Op> void compileOpStrictEqJump(const JSInstruction*);
+        template<typename Op> void compileOpEq(const JSInstruction*);
+        template<typename Op> void compileOpEqJump(const JSInstruction*);
+        template<typename Op> void compileOpEqSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        template<typename Op> void compileOpEqJumpSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         enum class WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
         using enum WriteBarrierMode;
@@ -626,6 +630,13 @@ namespace JSC {
         bool isOperandConstantInt(VirtualRegister);
         int32_t getOperandConstantInt(VirtualRegister src);
         bool isOperandConstantChar(VirtualRegister);
+        bool isOperandConstantBoolean(VirtualRegister);
+
+        struct BooleanLiteralEquality {
+            VirtualRegister operand;
+            bool literal;
+        };
+        std::optional<BooleanLiteralEquality> booleanLiteralEquality(VirtualRegister lhs, VirtualRegister rhs);
 
         template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
         void emitMathICFast(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);

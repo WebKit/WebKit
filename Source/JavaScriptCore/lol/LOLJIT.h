@@ -442,6 +442,15 @@ private:
     void emitStrictEqJumpSlowImpl(const JSInstruction*, ResultCondition, Vector<SlowCaseEntry>::iterator&);
 
     template<typename Op>
+    void emitEqImpl(const JSInstruction*);
+    template<typename Op>
+    void emitEqSlowImpl(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+    template<typename Op>
+    void emitEqJumpImpl(const JSInstruction*);
+    template<typename Op>
+    void emitEqJumpSlowImpl(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+
+    template<typename Op>
     void emitNewFuncCommon(const JSInstruction*);
     template<typename Op>
     void emitNewFuncExprCommon(const JSInstruction*);

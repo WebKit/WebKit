@@ -666,7 +666,6 @@ JSRelationCondition JSValueCompare(JSContextRef ctx, JSValueRef left, JSValueRef
 
     ASSERT(!isLessThan || !isGreaterThan);
 
-    // This means either the left or right has a NaN result of toPrimitiveNumeric.
     if (!isLessThan && !isGreaterThan)
         return kJSRelationConditionUndefined;
 

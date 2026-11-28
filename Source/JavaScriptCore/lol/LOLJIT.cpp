@@ -847,69 +847,83 @@ void LOLJIT::emit_op_ret(const JSInstruction* currentInstruction)
 // Comparison bytecodes
 
 
-void LOLJIT::emit_op_eq(const JSInstruction* currentInstruction)
+template<typename Op>
+void LOLJIT::emitEqImpl(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpEq>();
+    constexpr bool isEq = std::is_same_v<Op, OpEq>;
+    auto bytecode = currentInstruction->as<Op>();
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ leftGPR, rightGPR ] = allocations.uses;
     auto [ destGPR ] = allocations.defs;
 
-    emitJumpSlowCaseIfNotInt(leftGPR, rightGPR, s_scratch);
-    compare32(Equal, leftGPR, rightGPR, destGPR);
-    boxBoolean(destGPR, destGPR);
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        GPRReg operandGPR = equality->operand == bytecode.m_lhs ? leftGPR : rightGPR;
+        addSlowCase(branchIfNotBoolean(operandGPR, s_scratch));
+        if (equality->literal != isEq)
+            xor64(TrustedImm32(1), operandGPR, destGPR);
+        else
+            move(operandGPR, destGPR);
+    } else {
+        emitJumpSlowCaseIfNotInt(leftGPR, rightGPR, s_scratch);
+        compare32(isEq ? Equal : NotEqual, leftGPR, rightGPR, destGPR);
+        boxBoolean(destGPR, destGPR);
+    }
 
     m_fastAllocator.releaseScratches(allocations);
 }
 
-void LOLJIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void LOLJIT::emit_op_eq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpEq>();
-    auto allocations = m_replayAllocator.allocate(*this, bytecode, m_bytecodeIndex);
-    auto [ leftGPR, rightGPR ] = allocations.uses;
-    auto [ destGPR ] = allocations.defs;
-
-    linkAllSlowCases(iter);
-
-    silentSpill(m_replayAllocator, allocations);
-    loadGlobalObject(s_scratch);
-    callOperation(operationCompareEq, s_scratch, leftGPR, rightGPR);
-    boxBoolean(returnValueGPR, destGPR);
-    silentFill(m_replayAllocator, destGPR);
-
-    m_replayAllocator.releaseScratches(allocations);
+    emitEqImpl<OpEq>(currentInstruction);
 }
 
 void LOLJIT::emit_op_neq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpNeq>();
-    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
-    auto [ leftGPR, rightGPR ] = allocations.uses;
-    auto [ destGPR ] = allocations.defs;
-
-    emitJumpSlowCaseIfNotInt(leftGPR, rightGPR, s_scratch);
-    compare32(NotEqual, leftGPR, rightGPR, destGPR);
-    boxBoolean(destGPR, destGPR);
-
-    m_fastAllocator.releaseScratches(allocations);
+    emitEqImpl<OpNeq>(currentInstruction);
 }
 
-void LOLJIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+template<typename Op>
+void LOLJIT::emitEqSlowImpl(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    linkAllSlowCases(iter);
-
-    auto bytecode = currentInstruction->as<OpNeq>();
+    constexpr bool isEq = std::is_same_v<Op, OpEq>;
+    auto bytecode = currentInstruction->as<Op>();
     auto allocations = m_replayAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ leftGPR, rightGPR ] = allocations.uses;
     auto [ destGPR ] = allocations.defs;
 
+    linkAllSlowCases(iter);
+
+    JumpList done;
+    if (!booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        JumpList notBothBoolean;
+        notBothBoolean.append(branchIfNotBoolean(leftGPR, s_scratch));
+        notBothBoolean.append(branchIfNotBoolean(rightGPR, s_scratch));
+        compare64(isEq ? Equal : NotEqual, leftGPR, rightGPR, destGPR);
+        boxBoolean(destGPR, destGPR);
+        done.append(jump());
+        notBothBoolean.link(this);
+    }
+
     silentSpill(m_replayAllocator, allocations);
     loadGlobalObject(s_scratch);
     callOperation(operationCompareEq, s_scratch, leftGPR, rightGPR);
-    xor32(TrustedImm32(0x1), returnValueGPR);
+    if constexpr (!isEq)
+        xor32(TrustedImm32(0x1), returnValueGPR);
     boxBoolean(returnValueGPR, destGPR);
     silentFill(m_replayAllocator, destGPR);
+    done.link(this);
 
     m_replayAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitEqSlowImpl<OpEq>(currentInstruction, iter);
+}
+
+void LOLJIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitEqSlowImpl<OpNeq>(currentInstruction, iter);
 }
 
 void LOLJIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
@@ -2040,59 +2054,44 @@ void LOLJIT::emit_op_get_prototype_of(const JSInstruction* currentInstruction)
     m_fastAllocator.releaseScratches(allocations);
 }
 
-void LOLJIT::emit_op_jeq(const JSInstruction* currentInstruction)
+template<typename Op>
+void LOLJIT::emitEqJumpImpl(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpJeq>();
+    constexpr bool isEq = std::is_same_v<Op, OpJeq>;
+    auto bytecode = currentInstruction->as<Op>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ lhsGPR, rhsGPR ] = allocations.uses;
 
-    addSlowCase(branchIfNotInt32(lhsGPR));
-    addSlowCase(branchIfNotInt32(rhsGPR));
-
-    addJump(branch32(Equal, lhsGPR, rhsGPR), target);
+    if (auto equality = booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        GPRReg operandGPR = equality->operand == bytecode.m_lhs ? lhsGPR : rhsGPR;
+        int32_t jumpValue = static_cast<int32_t>(equality->literal == isEq ? JSValue::ValueTrue : JSValue::ValueFalse);
+        addJump(branch64(Equal, operandGPR, TrustedImm32(jumpValue)), target);
+        addSlowCase(branch64(NotEqual, operandGPR, TrustedImm32(jumpValue ^ 1)));
+    } else {
+        addSlowCase(branchIfNotInt32(lhsGPR));
+        addSlowCase(branchIfNotInt32(rhsGPR));
+        addJump(branch32(isEq ? Equal : NotEqual, lhsGPR, rhsGPR), target);
+    }
 
     m_fastAllocator.releaseScratches(allocations);
 }
 
-
-void LOLJIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void LOLJIT::emit_op_jeq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpJeq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    auto allocations = m_replayAllocator.allocate(*this, bytecode, m_bytecodeIndex);
-    auto [ lhsGPR, rhsGPR ] = allocations.uses;
-
-    linkAllSlowCases(iter);
-
-    // We don't need to spill here since the allocator flushed all registers already
-    ASSERT(m_replayAllocator.allocatedRegisters().isEmpty());
-    loadGlobalObject(s_scratch);
-    callOperation(operationCompareEq, s_scratch, lhsGPR, rhsGPR);
-
-    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
-
-    m_replayAllocator.releaseScratches(allocations);
+    emitEqJumpImpl<OpJeq>(currentInstruction);
 }
 
 void LOLJIT::emit_op_jneq(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpJneq>();
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
-    auto [ lhsGPR, rhsGPR ] = allocations.uses;
-
-    addSlowCase(branchIfNotInt32(lhsGPR));
-    addSlowCase(branchIfNotInt32(rhsGPR));
-
-    addJump(branch32(NotEqual, lhsGPR, rhsGPR), target);
-
-    m_fastAllocator.releaseScratches(allocations);
+    emitEqJumpImpl<OpJneq>(currentInstruction);
 }
 
-void LOLJIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+template<typename Op>
+void LOLJIT::emitEqJumpSlowImpl(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    auto bytecode = currentInstruction->as<OpJneq>();
+    constexpr bool isEq = std::is_same_v<Op, OpJeq>;
+    auto bytecode = currentInstruction->as<Op>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
     auto allocations = m_replayAllocator.allocate(*this, bytecode, m_bytecodeIndex);
     auto [ lhsGPR, rhsGPR ] = allocations.uses;
@@ -2101,12 +2100,33 @@ void LOLJIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<Sl
 
     // We don't need to spill here since the allocator flushed all registers already
     ASSERT(m_replayAllocator.allocatedRegisters().isEmpty());
+
+    JumpList done;
+    if (!booleanLiteralEquality(bytecode.m_lhs, bytecode.m_rhs)) {
+        JumpList notBothBoolean;
+        notBothBoolean.append(branchIfNotBoolean(lhsGPR, s_scratch));
+        notBothBoolean.append(branchIfNotBoolean(rhsGPR, s_scratch));
+        emitJumpSlowToHot(branch64(isEq ? Equal : NotEqual, lhsGPR, rhsGPR), target);
+        done.append(jump());
+        notBothBoolean.link(this);
+    }
+
     loadGlobalObject(s_scratch);
     callOperation(operationCompareEq, s_scratch, lhsGPR, rhsGPR);
-
-    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
+    emitJumpSlowToHot(branchTest32(isEq ? NonZero : Zero, returnValueGPR), target);
+    done.link(this);
 
     m_replayAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitEqJumpSlowImpl<OpJeq>(currentInstruction, iter);
+}
+
+void LOLJIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitEqJumpSlowImpl<OpJneq>(currentInstruction, iter);
 }
 
 void LOLJIT::emit_op_jmp(const JSInstruction* currentInstruction)
