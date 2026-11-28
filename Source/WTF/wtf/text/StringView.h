@@ -29,6 +29,7 @@
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ConversionMode.h>
@@ -61,6 +62,10 @@ public:
     StringView(const StringView&);
     NODELETE StringView& operator=(StringView&&);
     StringView& operator=(const StringView&);
+#else
+    // FIXME: (rdar://193741772) Swift sees types declaring no copy constructor as views, unsafe to return from owners.
+    StringView(const StringView&) = default;
+    StringView& operator=(const StringView&) = default;
 #endif
 
     StringView(const AtomString& string LIFETIME_BOUND);
@@ -256,7 +261,11 @@ private:
 #if CHECK_STRINGVIEW_LIFETIME
     UnderlyingString* m_underlyingString { nullptr };
 #endif
-};
+} SWIFT_VIEW;
+
+#if !CHECK_STRINGVIEW_LIFETIME
+static_assert(std::is_trivially_copyable_v<StringView>);
+#endif
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
 
@@ -940,7 +949,7 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    NODELETE StringView operator*() const;
+    NODELETE StringView operator*() const LIFETIME_BOUND;
 
     NODELETE WTF_EXPORT_PRIVATE Iterator& operator++();
 
@@ -973,7 +982,7 @@ public:
     Iterator& operator=(const Iterator&) = delete;
     Iterator& operator=(Iterator&&) = delete;
 
-    NODELETE WTF_EXPORT_PRIVATE StringView operator*() const;
+    NODELETE WTF_EXPORT_PRIVATE StringView operator*() const LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
     NODELETE WTF_EXPORT_PRIVATE bool operator==(const Iterator&) const;

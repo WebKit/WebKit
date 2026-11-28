@@ -439,14 +439,9 @@ UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm @nonARC
 UIProcess/Cocoa/GroupActivities/GroupActivitiesSession.mm @nonARC
 UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm @nonARC
 
-UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm @nonARC
-UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm @nonARC
-UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm @nonARC
 UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm @nonARC
 UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.mm @nonARC
-UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm @nonARC
-UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm @nonARC
-UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationSwiftSupport.mm
 
 UIProcess/Cocoa/AppKitSoftLink.mm @nonARC
 UIProcess/Cocoa/AutomationClient.mm @nonARC

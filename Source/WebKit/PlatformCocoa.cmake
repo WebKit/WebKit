@@ -176,6 +176,11 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
+    ${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession+PopUp.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession+Presentation.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession+SubFrame.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/TextExtraction/WKWebView+TextExtraction.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKDeferringGestureRecognizer.swift
     ${WEBKIT_DIR}/UIProcess/PhoneNumberPossession/Cocoa/CocoaPhoneNumberPossessionManager.swift

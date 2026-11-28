@@ -383,7 +383,7 @@ public:
     WebsiteDataStoreClient& client() LIFETIME_BOUND { return m_client.get(); }
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTF::move(client); }
 
-    API::HTTPCookieStore& cookieStore() LIFETIME_BOUND;
+    API::HTTPCookieStore& cookieStore() LIFETIME_BOUND_EXCEPT_FOR_SWIFT;
     WebCore::LocalWebLockRegistry& webLockRegistry() LIFETIME_BOUND { return m_webLockRegistry.get(); }
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);

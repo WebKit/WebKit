@@ -889,7 +889,7 @@ public:
 
     WebNavigationState& navigationState() LIFETIME_BOUND { return m_navigationState; }
 
-    NODELETE WebsiteDataStore& websiteDataStore() LIFETIME_BOUND;
+    NODELETE WebsiteDataStore& websiteDataStore() LIFETIME_BOUND_EXCEPT_FOR_SWIFT;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
@@ -2182,6 +2182,8 @@ public:
 
     NODELETE const PageLoadState& pageLoadState() const LIFETIME_BOUND;
     NODELETE PageLoadState& pageLoadState() LIFETIME_BOUND;
+    // FIXME: (rdar://193738426) Remove once Swift can call pageLoadState(), which returns a reference, without unsafe.
+    URL activeURLCopy() const;
 
 #if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String& result);

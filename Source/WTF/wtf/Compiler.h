@@ -708,6 +708,35 @@
 #endif
 #endif
 
+/* NOESCAPE_FOR_SWIFT */
+/* NOESCAPE on a parameter that isn't a pointer, such as a std::span or a StringView, which Swift needs to pass a Span
+   to the function or to call it without unsafe. Only Swift sees it, because PlayStation's compiler rejects NOESCAPE on
+   a parameter that isn't a pointer. */
+// FIXME: Use NOESCAPE instead once every compiler WebKit builds with accepts it on a parameter that isn't a pointer.
+
+#if !defined(NOESCAPE_FOR_SWIFT)
+#if defined(__swift__)
+#define NOESCAPE_FOR_SWIFT NOESCAPE
+#else
+#define NOESCAPE_FOR_SWIFT
+#endif
+#endif
+
+/* LIFETIME_BOUND_EXCEPT_FOR_SWIFT */
+/* LIFETIME_BOUND for C++ alone. Swift treats a call to a LIFETIME_BOUND accessor of a type it imports as a shared
+   reference as unsafe when the accessor returns another shared reference, though Swift retains what it returns. Use it
+   only on an accessor that returns a reference-counted object Swift imports as a shared reference and retains. Hiding
+   the bound from Swift on anything else would let a reference dangle. */
+// FIXME: (rdar://193769594) Use LIFETIME_BOUND instead once Swift accepts it on an accessor of a shared reference.
+
+#if !defined(LIFETIME_BOUND_EXCEPT_FOR_SWIFT)
+#if defined(__swift__)
+#define LIFETIME_BOUND_EXCEPT_FOR_SWIFT
+#else
+#define LIFETIME_BOUND_EXCEPT_FOR_SWIFT LIFETIME_BOUND
+#endif
+#endif
+
 /* NO_UNIQUE_ADDRESS */
 
 #if !defined(NO_UNIQUE_ADDRESS)

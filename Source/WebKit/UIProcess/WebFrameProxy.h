@@ -172,9 +172,11 @@ public:
 
     void loadURL(const URL&, const String& referrer = String());
     // Sub frames only. For main frames, use WebPageProxy::loadData.
-    void loadData(std::span<const uint8_t>, const String& MIMEType, const String& encodingName, const URL& baseURL);
+    void loadData(NOESCAPE_FOR_SWIFT std::span<const uint8_t>, const String& mimeType, const String& encodingName, const URL& baseURL);
 
     const URL& url() const LIFETIME_BOUND { return m_frameLoadState.url(); }
+    // FIXME: (rdar://193738426) Remove once Swift can call url(), which returns a reference, without unsafe.
+    URL urlCopy() const { return m_frameLoadState.url(); }
     const URL& provisionalURL() const LIFETIME_BOUND { return m_frameLoadState.provisionalURL(); }
 
     void setUnreachableURL(const URL&);
