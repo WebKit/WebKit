@@ -1039,9 +1039,13 @@ TEST(RunLoopObserver, CrossThread_MultipleScheduleAttempts)
     WTF::initializeMainThread();
 
     std::atomic<unsigned> observerCallCount { 0 };
+    std::atomic<bool> observerFiredOnMainThread { false };
+    Thread* mainThread = &Thread::currentSingleton();
 
     auto observer = makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [&] {
         ++observerCallCount;
+        if (&Thread::currentSingleton() == mainThread)
+            observerFiredOnMainThread = true;
     });
 
     SecondaryRunLoopThread secondaryThread;
@@ -1079,7 +1083,6 @@ TEST(RunLoopObserver, CrossThread_MultipleScheduleAttempts)
     EXPECT_GE(observerCallCount.load(), 1u);
 
     // Run main loop - observer should NOT fire here
-    unsigned countBeforeMainLoop = observerCallCount.load();
     bool doneMain = false;
     RunLoop::currentSingleton().dispatch([&] {
         doneMain = true;
@@ -1087,8 +1090,7 @@ TEST(RunLoopObserver, CrossThread_MultipleScheduleAttempts)
 
     Util::run(&doneMain);
 
-    // Count should be unchanged since observer is on secondary loop
-    EXPECT_EQ(observerCallCount.load(), countBeforeMainLoop);
+    EXPECT_FALSE(observerFiredOnMainThread.load());
 
     observer->invalidate();
 }
