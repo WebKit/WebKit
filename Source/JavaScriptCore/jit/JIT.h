@@ -408,6 +408,7 @@ namespace JSC {
         void emit_op_instanceof(const JSInstruction*);
         void emit_op_is_empty(const JSInstruction*);
         void emit_op_typeof_is_undefined(const JSInstruction*);
+        void emit_op_typeof_is_object(const JSInstruction*);
         void emit_op_typeof_is_function(const JSInstruction*);
         void emit_op_is_undefined_or_null(const JSInstruction*);
         void emit_op_is_boolean(const JSInstruction*);

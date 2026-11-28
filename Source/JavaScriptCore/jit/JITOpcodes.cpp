@@ -153,6 +153,17 @@ void JIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction)
     emitPutVirtualRegister(dst, regT0);
 }
 
+void JIT::emit_op_typeof_is_object(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpTypeofIsObject>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister value = bytecode.m_operand;
+
+    emitGetVirtualRegister(value, regT0);
+    addSlowCase(emitTypeofIsObject(regT0, regT1));
+    emitPutVirtualRegister(dst, regT1);
+}
+
 void JIT::emit_op_typeof_is_function(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpTypeofIsFunction>();
@@ -160,11 +171,8 @@ void JIT::emit_op_typeof_is_function(const JSInstruction* currentInstruction)
     VirtualRegister value = bytecode.m_operand;
 
     emitGetVirtualRegister(value, regT0);
-    auto isNotCell = branchIfNotCell(regT0);
-    addSlowCase(branchIfObject(regT0));
-    isNotCell.link(this);
-    moveTrustedValue(jsBoolean(false), regT0);
-    emitPutVirtualRegister(dst, regT0);
+    addSlowCase(emitTypeofIsFunction(regT0, regT1));
+    emitPutVirtualRegister(dst, regT1);
 }
 
 void JIT::emit_op_is_undefined_or_null(const JSInstruction* currentInstruction)

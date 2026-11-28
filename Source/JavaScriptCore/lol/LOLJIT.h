@@ -86,6 +86,7 @@ namespace JSC::LOL {
     macro(op_mov) \
     macro(op_is_empty) \
     macro(op_typeof_is_undefined) \
+    macro(op_typeof_is_object) \
     macro(op_typeof_is_function) \
     macro(op_is_undefined_or_null) \
     macro(op_is_boolean) \
@@ -229,6 +230,7 @@ namespace JSC::LOL {
     macro(op_check_tdz) \
     macro(op_to_property_key) \
     macro(op_to_property_key_or_number) \
+    macro(op_typeof_is_object) \
     macro(op_typeof_is_function) \
 
 

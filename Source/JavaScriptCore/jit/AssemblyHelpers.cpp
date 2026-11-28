@@ -2070,6 +2070,50 @@ void AssemblyHelpers::loadTypedArrayLength(GPRReg baseGPR, GPRReg valueGPR, GPRR
     loadTypedArrayByteLengthCommonImpl(baseGPR, valueGPR, scratchGPR, scratch2GPR, typedArrayType, TypedArrayField::Length);
 }
 
+AssemblyHelpers::JumpList AssemblyHelpers::emitTypeofIsObject(GPRReg valueGPR, GPRReg resultGPR)
+{
+    ASSERT(noOverlap(valueGPR, resultGPR));
+    JumpList slowCases;
+
+    Jump isCell = branchIfCell(valueGPR);
+    isNull(valueGPR, resultGPR);
+    Jump box = jump();
+
+    isCell.link(this);
+    Jump isExotic = branchTest8(NonZero, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined | OverridesGetCallData));
+    compare8(AboveOrEqual, Address(valueGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType), resultGPR);
+
+    box.link(this);
+    boxBoolean(resultGPR, resultGPR);
+    Jump done = jump();
+
+    isExotic.link(this);
+    slowCases.append(branchTest8(NonZero, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
+    slowCases.append(branchIfNotType(valueGPR, JSTypeRange { JSFunctionType, InternalFunctionType }));
+    moveTrustedValue(jsBoolean(false), resultGPR);
+
+    done.link(this);
+    return slowCases;
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::emitTypeofIsFunction(GPRReg valueGPR, GPRReg resultGPR)
+{
+    ASSERT(noOverlap(valueGPR, resultGPR));
+    JumpList done;
+    JumpList slowCases;
+
+    moveTrustedValue(jsBoolean(false), resultGPR);
+    done.append(branchIfNotCell(valueGPR));
+    done.append(branchIfNotObject(valueGPR));
+    done.append(branchTest8(Zero, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined | OverridesGetCallData)));
+
+    slowCases.append(branchTest8(NonZero, Address(valueGPR, JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
+    slowCases.append(branchIfNotType(valueGPR, JSTypeRange { JSFunctionType, InternalFunctionType }));
+    moveTrustedValue(jsBoolean(true), resultGPR);
+
+    done.link(this);
+    return slowCases;
+}
 
 #if ENABLE(WEBASSEMBLY)
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)

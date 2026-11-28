@@ -264,6 +264,7 @@ using ReplayRegisterAllocator = RegisterAllocator<ReplayBackend>;
     macro(OpCreateThis, m_callee, 3) \
     macro(OpIsEmpty, m_operand, 0) \
     macro(OpTypeofIsUndefined, m_operand, 0) \
+    macro(OpTypeofIsObject, m_operand, 0) \
     macro(OpTypeofIsFunction, m_operand, 0) \
     macro(OpIsUndefinedOrNull, m_operand, 0) \
     macro(OpIsBoolean, m_operand, 0) \

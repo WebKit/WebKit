@@ -1514,13 +1514,45 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     return(t0)
 end)
 
+macro branchIfTypeofIsNotPlainObject(cell, notObject, function, slow)
+    bbb JSCell::m_type[cell], ObjectType, notObject
+    btbnz JSCell::m_flags[cell], MasqueradesAsUndefined, slow
+    btbz JSCell::m_flags[cell], constexpr OverridesGetCallData, .plainObject
+    bbb JSCell::m_type[cell], JSFunctionType, slow
+    bbbeq JSCell::m_type[cell], InternalFunctionType, function
+    jmp slow
+.plainObject:
+end
+
+llintOpWithReturn(op_typeof_is_object, OpTypeofIsObject, macro (size, get, dispatch, return)
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t0)
+    btqnz t0, notCellMask, .opTypeOfIsObjectIsImm
+    branchIfTypeofIsNotPlainObject(t0, .opTypeOfIsObjectFalse, .opTypeOfIsObjectFalse, .opTypeOfIsObjectSlowCase)
+    move ValueTrue, t0
+    return(t0)
+.opTypeOfIsObjectIsImm:
+    cqeq t0, ValueNull, t0
+    orq ValueFalse, t0
+    return(t0)
+.opTypeOfIsObjectFalse:
+    move ValueFalse, t0
+    return(t0)
+.opTypeOfIsObjectSlowCase:
+    callSlowPath(_slow_path_typeof_is_object)
+    dispatch()
+end)
+
 llintOpWithReturn(op_typeof_is_function, OpTypeofIsFunction, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
-    btqnz t0, notCellMask, .opTypeOfIsFunctionIsImm
-    bbaeq JSCell::m_type[t0], ObjectType, .opTypeOfIsFunctionSlowCase
-.opTypeOfIsFunctionIsImm:
+    btqnz t0, notCellMask, .opTypeOfIsFunctionFalse
+    branchIfTypeofIsNotPlainObject(t0, .opTypeOfIsFunctionFalse, .opTypeOfIsFunctionTrue, .opTypeOfIsFunctionSlowCase)
+.opTypeOfIsFunctionFalse:
     move ValueFalse, t0
+    return(t0)
+.opTypeOfIsFunctionTrue:
+    move ValueTrue, t0
     return(t0)
 .opTypeOfIsFunctionSlowCase:
     callSlowPath(_slow_path_typeof_is_function)

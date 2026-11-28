@@ -201,6 +201,7 @@ static constexpr uint32_t NumberOfTypedArrayTypesExcludingBigIntArraysAndDataVie
 
 static_assert(sizeof(JSType) == sizeof(uint8_t), "sizeof(JSType) is one byte.");
 static_assert(LastJSCObjectType < 0b11100000, "Embedder can use 0b11100000 or upper.");
+static_assert(InternalFunctionType == JSFunctionType + 1, "typeof checks JSFunction and InternalFunction, which are always callable, with one range.");
 
 inline constexpr bool isTypedArrayType(JSType type)
 {

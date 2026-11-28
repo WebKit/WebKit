@@ -322,7 +322,6 @@ void LOLJIT::privateCompileMainPass()
         DEFINE_SLOW_OP(is_callable)
         DEFINE_SLOW_OP(is_constructor)
         DEFINE_SLOW_OP(typeof)
-        DEFINE_SLOW_OP(typeof_is_object)
         DEFINE_SLOW_OP(strcat)
         DEFINE_SLOW_OP(push_with_scope)
         DEFINE_SLOW_OP(put_by_id_with_this)
@@ -400,6 +399,7 @@ void LOLJIT::privateCompileMainPass()
         DEFINE_OP(op_instanceof)
         DEFINE_OP(op_is_empty)
         DEFINE_OP(op_typeof_is_undefined)
+        DEFINE_OP(op_typeof_is_object)
         DEFINE_OP(op_typeof_is_function)
         DEFINE_OP(op_is_undefined_or_null)
         DEFINE_OP(op_is_boolean)
@@ -712,6 +712,7 @@ void LOLJIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(check_tdz, OpCheckTdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key, OpToPropertyKey)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key_or_number, OpToPropertyKeyOrNumber)
+        DEFINE_SLOWCASE_SLOW_OP(typeof_is_object, OpTypeofIsObject)
         DEFINE_SLOWCASE_SLOW_OP(typeof_is_function, OpTypeofIsFunction)
 
         REPLAY_ALLOCATION_FOR_OP(op_mov, OpMov)
@@ -1895,6 +1896,19 @@ void LOLJIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction
     m_fastAllocator.releaseScratches(allocations);
 }
 
+void LOLJIT::emit_op_typeof_is_object(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpTypeofIsObject>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ operandGPR ] = allocations.uses;
+    auto [ dstGPR ] = allocations.defs;
+
+    addSlowCase(emitTypeofIsObject(operandGPR, s_scratch));
+    move(s_scratch, dstGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
 void LOLJIT::emit_op_typeof_is_function(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpTypeofIsFunction>();
@@ -1902,10 +1916,8 @@ void LOLJIT::emit_op_typeof_is_function(const JSInstruction* currentInstruction)
     auto [ operandGPR ] = allocations.uses;
     auto [ dstGPR ] = allocations.defs;
 
-    auto isNotCell = branchIfNotCell(operandGPR);
-    addSlowCase(branchIfObject(operandGPR));
-    isNotCell.link(this);
-    moveTrustedValue(jsBoolean(false), dstGPR);
+    addSlowCase(emitTypeofIsFunction(operandGPR, s_scratch));
+    move(s_scratch, dstGPR);
 
     m_fastAllocator.releaseScratches(allocations);
 }

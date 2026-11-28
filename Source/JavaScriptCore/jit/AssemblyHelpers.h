@@ -1374,6 +1374,9 @@ public:
         return branchTest8(Zero, AbsoluteAddress(vm.heap.addressOfMutatorShouldBeFenced()));
     }
     
+    JumpList emitTypeofIsObject(GPRReg valueGPR, GPRReg resultGPR);
+    JumpList emitTypeofIsFunction(GPRReg valueGPR, GPRReg resultGPR);
+
     // Emits the branch structure for typeof. The code emitted by this doesn't fall through. The
     // functor is called at those points where we have pinpointed a type. One way to use this is to
     // have the functor emit the code to put the type string into an appropriate register and then
