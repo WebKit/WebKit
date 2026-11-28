@@ -619,6 +619,7 @@ UIProcess/ios/WKActionSheetAssistant.mm @nonARC
 UIProcess/ios/WKApplicationStateTrackingView.mm @nonARC
 UIProcess/ios/WKBaseScrollView.mm @nonARC
 UIProcess/ios/WKCapturePreviewViewController.mm @nonARC
+UIProcess/ios/WKContentView+Find.mm @nonARC
 UIProcess/ios/WKContentView.mm @nonARC @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
 UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC

@@ -3914,6 +3914,7 @@
 		0FCB4E3918BBE044000FCFC9 /* WKActionSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKActionSheet.mm; sourceTree = "<group>"; };
 		0FCB4E3A18BBE044000FCFC9 /* WKActionSheetAssistant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionSheetAssistant.h; sourceTree = "<group>"; };
 		0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKActionSheetAssistant.mm; sourceTree = "<group>"; };
+		C96877169938BDBDF2283E0B /* WKContentView+Find.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKContentView+Find.mm"; sourceTree = "<group>"; };
 		0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentView.h; sourceTree = "<group>"; };
 		0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentView.mm; sourceTree = "<group>"; };
 		0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeolocationProviderIOS.h; sourceTree = "<group>"; };
@@ -12822,6 +12823,7 @@
 				F4F0C48A2B2E5405006F226C /* WKBrowserEngineDefinitions.h */,
 				D723D5309D56B8E1462F5135 /* WKCapturePreviewViewController.h */,
 				60A43CA5CE63E3E98F4A4001 /* WKCapturePreviewViewController.mm */,
+				C96877169938BDBDF2283E0B /* WKContentView+Find.mm */,
 				0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */,
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
