@@ -191,6 +191,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeatn-remove-add-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/restart-never-and-begin-click.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/seek-repeat-event-condition.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/seek-to-zero-clears-stale-instance-times.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/seeking-events-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/seeking-events-2.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/seeking-events-3.html

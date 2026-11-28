@@ -235,6 +235,19 @@ static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& time
     });
 }
 
+void SVGSMILElement::clearInstanceTimesForRewind(SMILTime rewindTime)
+{
+    // SMIL 3.0, "Resetting element state": rewinding the time container replays it from zero,
+    // which discards instance times created by DOM method calls. The begin of the current
+    // interval is kept when the rewind lands inside the interval, so an active animation
+    // stays active across the rewind.
+    SMILTime keptBegin = m_intervalBegin.isFinite() && m_intervalBegin <= rewindTime ? m_intervalBegin : SMILTime::unresolved();
+    m_beginTimes.removeAllMatching([&](const SMILTimeWithOrigin& time) {
+        return time.originIsScript() && time.time() != keptBegin;
+    });
+    clearTimesWithDynamicOrigins(m_endTimes);
+}
+
 void SVGSMILElement::reset()
 {
     stopAnimation(protect(targetElement()).get());

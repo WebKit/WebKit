@@ -89,6 +89,7 @@ public:
     NODELETE SMILTime nextProgressTime() const;
 
     void reset();
+    void clearInstanceTimesForRewind(SMILTime rewindTime);
 
     static SMILTime parseClockValue(StringView);
     static SMILTime parseOffsetValue(StringView);

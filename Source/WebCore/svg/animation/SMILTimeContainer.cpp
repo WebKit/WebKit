@@ -185,6 +185,8 @@ void SMILTimeContainer::setElapsed(SMILTime time)
         return;
     }
 
+    bool isRewind = time < elapsed();
+
     if (m_beginTime)
         m_timer.stop();
 
@@ -198,7 +200,9 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     } else
         m_accumulatedActiveTime = 0_s;
 
-    processScheduledAnimations([](auto& animation) {
+    processScheduledAnimations([&](auto& animation) {
+        if (isRewind)
+            animation.clearInstanceTimesForRewind(time);
         animation.reset();
     });
 
