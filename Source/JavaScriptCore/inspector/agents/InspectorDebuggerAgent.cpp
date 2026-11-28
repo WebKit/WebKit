@@ -2106,6 +2106,9 @@ void InspectorDebuggerAgent::didDropPauseAtNextOpportunity()
 
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
 {
+    if (!m_debugger.canBreakProgram())
+        return;
+
     updatePauseReasonAndData(reason, WTF::move(data));
 
     m_debugger.breakProgram(WTF::move(specialBreakpoint));
