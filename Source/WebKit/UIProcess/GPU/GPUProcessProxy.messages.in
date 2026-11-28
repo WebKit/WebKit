@@ -51,6 +51,10 @@ messages -> GPUProcessProxy {
 #endif
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+    TabCaptureDidEnd(WebKit::TabCaptureWindowIdentifier identifier)
+#endif
+
     ProcessIsReadyToExit()
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, enum:uint16_t IPC::MessageName invalidMessageName)
 }

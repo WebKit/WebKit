@@ -30,6 +30,7 @@
 #include <WebCore/ScreenCaptureKitSelection.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -95,12 +96,12 @@ public:
 
     void cancelPicking();
 
-    ScreenCaptureKitSelection takeContentSelection(const CaptureDevice&);
+    std::unique_ptr<ScreenCaptureKitSelection> takeContentSelection(const CaptureDevice&);
     RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver>, SCContentFilter*, SCStreamConfiguration*, SCStreamDelegate*);
     void captureSourceWasDestroyedWithoutSession();
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
-    WEBCORE_EXPORT void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    WEBCORE_EXPORT void selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&&, ScreenCaptureKitSelection::UnregisterHandler&&);
     WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
 
 private:
@@ -108,7 +109,7 @@ private:
 
     void cleanupAllSessions();
     enum class IsTab : bool { No, Yes };
-    void completeDeviceSelection(SCContentFilter*, IsTab = IsTab::No);
+    void completeDeviceSelection(SCContentFilter*, IsTab = IsTab::No, ScreenCaptureKitSelection::UnregisterHandler&& = { });
 
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
@@ -118,7 +119,8 @@ private:
 
     Vector<WeakPtr<ScreenCaptureSessionSource>> m_activeSources;
 
-    ScreenCaptureKitSelection m_pendingContentSelection;
+    // FIXME: m_pendingContentSelection should be cleared after some time if not taken by a capture source.
+    std::unique_ptr<ScreenCaptureKitSelection> m_pendingContentSelection;
 
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;
     CompletionHandler<void(std::optional<CaptureDevice>)> m_completionHandler;

@@ -28,8 +28,10 @@
 #if HAVE(SCREEN_CAPTURE_KIT)
 
 #include <WebCore/CaptureDevice.h>
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS SCContentFilter;
@@ -37,29 +39,44 @@ OBJC_CLASS SCContentFilter;
 namespace WebCore {
 
 class ScreenCaptureKitSelection {
+    WTF_MAKE_TZONE_ALLOCATED(ScreenCaptureKitSelection);
     WTF_MAKE_NONCOPYABLE(ScreenCaptureKitSelection);
+    WTF_MAKE_NONMOVABLE(ScreenCaptureKitSelection);
 public:
-    ScreenCaptureKitSelection() = default;
-    ScreenCaptureKitSelection(RetainPtr<SCContentFilter>&& filter, String&& deviceID, CaptureDevice::DeviceType deviceType)
-        : m_filter(WTF::move(filter))
-        , m_deviceID(WTF::move(deviceID))
-        , m_deviceType(deviceType)
+    using UnregisterHandler = Function<void()>;
+
+    static std::unique_ptr<ScreenCaptureKitSelection> create(RetainPtr<SCContentFilter>&& filter, String&& deviceID, CaptureDevice::DeviceType deviceType, UnregisterHandler&& unregisterHandler)
     {
+        return std::unique_ptr<ScreenCaptureKitSelection>(new ScreenCaptureKitSelection(WTF::move(filter), WTF::move(deviceID), deviceType, WTF::move(unregisterHandler)));
     }
-    ScreenCaptureKitSelection(ScreenCaptureKitSelection&&) = default;
-    ScreenCaptureKitSelection& operator=(ScreenCaptureKitSelection&&) = default;
+
+    ~ScreenCaptureKitSelection() { unregister(); }
+
+    void unregister()
+    {
+        if (auto unregisterHandler = std::exchange(m_unregisterHandler, nullptr))
+            unregisterHandler();
+    }
 
     SCContentFilter* contentFilter() const { return m_filter.get(); }
-    explicit operator bool() const { return !!m_filter; }
     const String& deviceID() const { return m_deviceID; }
     CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
 
     void setFilter(RetainPtr<SCContentFilter>&& filter) { m_filter = WTF::move(filter); }
 
 private:
+    ScreenCaptureKitSelection(RetainPtr<SCContentFilter>&& filter, String&& deviceID, CaptureDevice::DeviceType deviceType, UnregisterHandler&& unregisterHandler)
+        : m_filter(WTF::move(filter))
+        , m_deviceID(WTF::move(deviceID))
+        , m_deviceType(deviceType)
+        , m_unregisterHandler(WTF::move(unregisterHandler))
+    {
+    }
+
     RetainPtr<SCContentFilter> m_filter;
-    String m_deviceID;
-    CaptureDevice::DeviceType m_deviceType { CaptureDevice::DeviceType::Unknown };
+    const String m_deviceID;
+    const CaptureDevice::DeviceType m_deviceType { CaptureDevice::DeviceType::Unknown };
+    UnregisterHandler m_unregisterHandler;
 };
 
 } // namespace WebCore

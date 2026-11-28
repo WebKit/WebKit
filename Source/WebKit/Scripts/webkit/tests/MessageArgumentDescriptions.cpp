@@ -710,6 +710,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::StorageAreaImplIdentifier"_s,
         "WebKit::StorageAreaMapIdentifier"_s,
         "WebKit::StorageNamespaceIdentifier"_s,
+        "WebKit::TabCaptureWindowIdentifier"_s,
         "WebKit::TapIdentifier"_s,
         "WebKit::TextCheckerRequestID"_s,
         "WebKit::UserContentControllerIdentifier"_s,

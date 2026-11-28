@@ -638,6 +638,7 @@ def serialized_identifiers():
         'WebKit::StorageAreaImplIdentifier',
         'WebKit::StorageAreaMapIdentifier',
         'WebKit::StorageNamespaceIdentifier',
+        'WebKit::TabCaptureWindowIdentifier',
         'WebKit::TapIdentifier',
         'WebKit::TextCheckerRequestID',
         'WebKit::UserContentControllerIdentifier',

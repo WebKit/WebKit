@@ -84,8 +84,7 @@ RefPtr<TabCaptureWindow> TabCaptureWindow::create(WebPageProxy& page)
 }
 
 TabCaptureWindow::TabCaptureWindow(WebPageProxy& page, RetainPtr<NSWindow>&& window)
-    : m_pageIdentifier(page.identifier())
-    , m_page(page)
+    : m_page(page)
     , m_window(WTF::move(window))
     , m_mirrorRequest(NativePromiseRequest::create())
 {

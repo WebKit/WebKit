@@ -68,6 +68,7 @@
 #endif
 
 #if HAVE(WINDOW_CAPTURE)
+#include "DisplayCaptureSessionManager.h"
 #include "TabCaptureWindow.h"
 #endif
 
@@ -90,6 +91,13 @@ void UserMediaPermissionRequestManagerProxy::forEach(NOESCAPE const WTF::Functio
     for (Ref proxy : proxies())
         function(proxy);
 }
+
+#if HAVE(WINDOW_CAPTURE)
+void UserMediaPermissionRequestManagerProxy::removeTabCaptureWindow(TabCaptureWindowIdentifier identifier)
+{
+    m_tabCaptureWindows.remove(identifier);
+}
+#endif
 #endif
 
 #if !PLATFORM(COCOA)
@@ -422,8 +430,10 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
             }
 #if HAVE(WINDOW_CAPTURE)
         } else if (RefPtr tabCaptureWindow = request->takeTabCaptureWindow()) {
-            auto pageIdentifier = tabCaptureWindow->pageIdentifier();
-            protectedThis->m_tabCaptureWindows.set(pageIdentifier, tabCaptureWindow.releaseNonNull());
+            // The GPU process selection may already be gone, in which case we do not keep the window.
+            auto identifier = tabCaptureWindow->identifier();
+            if (DisplayCaptureSessionManager::singleton().hasTabCapture(identifier))
+                protectedThis->m_tabCaptureWindows.set(identifier, tabCaptureWindow.releaseNonNull());
 #endif
         }
 #endif
@@ -1319,12 +1329,6 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMediaStateFlags oldState, MediaProducerMediaStateFlags newState)
 {
-#if HAVE(WINDOW_CAPTURE)
-    // FIXME: Remove the window of a tab when its capture ends, not only when the page stops capturing all tabs.
-    if (oldState.containsAny(MediaProducer::DisplayCaptureMask) && !newState.containsAny(MediaProducer::DisplayCaptureMask))
-        m_tabCaptureWindows.clear();
-#endif
-
     RefPtr page = m_page.get();
     if (!page || !page->hasRunningProcess())
         return;

@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "TabCaptureWindowIdentifier.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/MediaProducer.h>
@@ -89,6 +90,9 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     static void forEach(NOESCAPE const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
+#if HAVE(WINDOW_CAPTURE)
+    void removeTabCaptureWindow(TabCaptureWindowIdentifier);
+#endif
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
     bool isMonitoringCaptureDeviceRotation(const String&);
     void startMonitoringCaptureDeviceRotation(const String&, RotationMonitoringReason);
@@ -232,7 +236,7 @@ private:
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
 #if HAVE(WINDOW_CAPTURE)
-    HashMap<WebPageProxyIdentifier, Ref<TabCaptureWindow>> m_tabCaptureWindows;
+    HashMap<TabCaptureWindowIdentifier, Ref<TabCaptureWindow>> m_tabCaptureWindows;
 #endif
     HashMap<WebCore::FrameIdentifier, String> m_frameEphemeralHashSalts;
 

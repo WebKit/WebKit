@@ -76,6 +76,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+#include "DisplayCaptureSessionManager.h"
+#endif
+
 #if USE(GBM)
 #include "DRMMainDevice.h"
 #endif
@@ -519,14 +523,23 @@ void GPUProcessProxy::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType
     sendWithAsyncReply(Messages::GPUProcess::PromptForGetDisplayMedia { type }, WTF::move(completionHandler));
 }
 
-void GPUProcessProxy::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+void GPUProcessProxy::selectWindowForCapture(uint32_t windowID, TabCaptureWindowIdentifier tabCaptureWindowIdentifier, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::GPUProcess::SelectWindowForCapture { windowID }, WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::GPUProcess::SelectWindowForCapture { windowID, tabCaptureWindowIdentifier }, WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::cancelGetDisplayMediaPrompt()
 {
     send(Messages::GPUProcess::CancelGetDisplayMediaPrompt { }, 0);
+}
+
+void GPUProcessProxy::tabCaptureDidEnd(TabCaptureWindowIdentifier identifier)
+{
+#if HAVE(WINDOW_CAPTURE)
+    DisplayCaptureSessionManager::singleton().tabCaptureDidEnd(identifier);
+#else
+    UNUSED_PARAM(identifier);
+#endif
 }
 #endif
 

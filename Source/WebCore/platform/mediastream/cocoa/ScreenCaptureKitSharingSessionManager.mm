@@ -34,6 +34,7 @@
 #import "PlatformMediaSessionManager.h"
 #import "ScreenCaptureKitCaptureSource.h"
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/Entitlements.h>
 
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
@@ -124,6 +125,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScreenCaptureKitSelection);
+
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
     return PAL::getSCContentSharingPickerClassSingleton();
@@ -157,13 +160,17 @@ void ScreenCaptureKitSharingSessionManager::cancelGetDisplayMediaPrompt()
         cancelPicking();
 }
 
-void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
+void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t windowID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler, ScreenCaptureKitSelection::UnregisterHandler&& unregisterHandler)
 {
 #if HAVE(WINDOW_CAPTURE)
     ASSERT(isMainThread());
 
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled()) {
-        completionHandler(MockRealtimeMediaSourceCenter::tabForCapture());
+        auto device = MockRealtimeMediaSourceCenter::tabForCapture();
+        if (device)
+            m_pendingContentSelection = ScreenCaptureKitSelection::create(nullptr, String { device->persistentId() }, device->type(), WTF::move(unregisterHandler));
+
+        completionHandler(WTF::move(device));
         return;
     }
 
@@ -183,8 +190,8 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
     m_completionHandler = WTF::move(completionHandler);
     ++m_requestCount;
 
-    auto lookupBlock = makeBlockPtr([weakThis = WeakPtr { *this }, windowID, requestCount = m_requestCount](SCShareableContent *content, NSError *error) mutable {
-        callOnMainThread([weakThis = WTF::move(weakThis), windowID, content = retainPtr(content), error = retainPtr(error), requestCount] {
+    auto lookupBlock = makeBlockPtr([weakThis = WeakPtr { *this }, windowID, requestCount = m_requestCount, unregisterHandler = WTF::move(unregisterHandler)](SCShareableContent *content, NSError *error) mutable {
+        callOnMainThread([weakThis = WTF::move(weakThis), windowID, content = retainPtr(content), error = retainPtr(error), requestCount, unregisterHandler = WTF::move(unregisterHandler)] mutable {
             RefPtr protectedThis = weakThis;
             if (!protectedThis || protectedThis->m_requestCount != requestCount)
                 return;
@@ -209,7 +216,7 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
                 }
 
                 return adoptNS([PAL::allocSCContentFilterInstance() initWithDesktopIndependentWindow:targetWindow]);
-            }(), IsTab::Yes);
+            }(), IsTab::Yes, WTF::move(unregisterHandler));
         });
     });
 
@@ -228,6 +235,7 @@ void ScreenCaptureKitSharingSessionManager::selectWindowForCapture(uint32_t wind
     m_watchdogTimer->startOneShot(selectWatchdogInterval);
 #else
     UNUSED_PARAM(windowID);
+    UNUSED_PARAM(unregisterHandler);
     completionHandler(std::nullopt);
 #endif
 }
@@ -251,7 +259,7 @@ void ScreenCaptureKitSharingSessionManager::cancelPicking()
     completionHandler(std::nullopt);
 }
 
-void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter, IsTab isTab)
+void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFilter* contentFilter, IsTab isTab, ScreenCaptureKitSelection::UnregisterHandler&& unregisterHandler)
 {
     m_watchdogTimer = nullptr;
 
@@ -296,7 +304,7 @@ void ScreenCaptureKitSharingSessionManager::completeDeviceSelection(SCContentFil
     device = CaptureDevice("1"_str, CaptureDevice::DeviceType::Screen, "Screen "_str, emptyString(), true);
 #endif
 
-    m_pendingContentSelection = { contentFilter, String { device->persistentId() }, device->type() };
+    m_pendingContentSelection = ScreenCaptureKitSelection::create(contentFilter, String { device->persistentId() }, device->type(), WTF::move(unregisterHandler));
 
     auto completionHandler = std::exchange(m_completionHandler, nullptr);
     completionHandler(device);
@@ -441,11 +449,11 @@ void ScreenCaptureKitSharingSessionManager::captureSourceWasDestroyedWithoutSess
         cancelPicking();
 }
 
-ScreenCaptureKitSelection ScreenCaptureKitSharingSessionManager::takeContentSelection(const CaptureDevice& device)
+std::unique_ptr<ScreenCaptureKitSelection> ScreenCaptureKitSharingSessionManager::takeContentSelection(const CaptureDevice& device)
 {
     RELEASE_ASSERT(isMainThread());
 
-    if (!m_pendingContentSelection || m_pendingContentSelection.deviceID() != device.persistentId() || m_pendingContentSelection.deviceType() != device.type()) {
+    if (!m_pendingContentSelection || m_pendingContentSelection->deviceID() != device.persistentId() || m_pendingContentSelection->deviceType() != device.type()) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::takeContentSelection - unknown capture device.");
         return { };
     }
