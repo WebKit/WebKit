@@ -129,6 +129,10 @@ void AudioSessionMac::handleDefaultDeviceChange()
         handleSampleRateChange();
     if (m_lastMutedState)
         handleMutedStateChange();
+
+    m_configurationChangeObservers.forEach([this](auto& observer) {
+        observer.defaultOutputDeviceDidChange(*this);
+    });
 }
 
 const AudioObjectPropertyAddress& AudioSessionMac::defaultOutputDeviceAddress()

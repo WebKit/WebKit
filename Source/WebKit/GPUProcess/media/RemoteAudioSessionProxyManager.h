@@ -89,6 +89,7 @@ private:
     void hardwareMutedStateDidChange(const WebCore::AudioSession&) final;
     void bufferSizeDidChange(const WebCore::AudioSession&) final;
     void sampleRateDidChange(const WebCore::AudioSession&) final;
+    void defaultOutputDeviceDidChange(const WebCore::AudioSession&) final;
     void configurationDidChange(const WebCore::AudioSession&);
 
     bool hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude);
