@@ -185,6 +185,11 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     , m_fileReferences(connection.resolveBlobReferences(m_parameters))
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
+    , m_networkLoadChecker { NetworkLoadChecker::create(this, &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+        sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
+        URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
+        m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
+        connection.captureExtraNetworkLoadMetricsEnabled(), isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other) }
     , m_shouldCaptureExtraNetworkLoadMetrics(m_connection->captureExtraNetworkLoadMetricsEnabled())
     , m_resourceLoadID { NetworkResourceLoadIdentifier::generate() }
 {
@@ -192,13 +197,6 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (CheckedPtr session = NetworkProcess::singleton().networkSession(sessionID()))
         m_cache = session->cache();
-
-    NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-    lazyInitialize(m_networkLoadChecker, NetworkLoadChecker::create(this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
-        sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
-        URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
-        m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
-        shouldCaptureExtraNetworkLoadMetrics(), requestLoadType));
 
     if (m_parameters.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
@@ -251,7 +249,7 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
 
 bool NetworkResourceLoader::isAllowedToAskUserForCredentials() const
 {
-    return m_isAllowedToAskUserForCredentials && (!m_networkLoadChecker || m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials());
+    return m_isAllowedToAskUserForCredentials && m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials();
 }
 
 bool NetworkResourceLoader::canUseCachedRedirect(const ResourceRequest& request) const
@@ -280,50 +278,40 @@ void NetworkResourceLoader::start()
 void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
 {
     ASSERT(RunLoop::isMain());
-    LOADER_RELEASE_LOG("startRequest: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
+    LOADER_RELEASE_LOG("startRequest");
 
     m_networkActivityTracker = protect(connectionToWebProcess())->startTrackingResourceLoad(pageID(), coreIdentifier(), isMainFrameLoad());
 
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
 
-    if (m_networkLoadChecker) {
-        m_networkLoadChecker->check(ResourceRequest { newRequest }, this, [weakThis = WeakPtr { *this }] (auto&& result) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
+    m_networkLoadChecker->check(ResourceRequest { newRequest }, this, [weakThis = WeakPtr { *this }](auto&& result) {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
 
-            WTF::switchOn(result,
-                [protectedThis] (ResourceError& error) {
-                    LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d, isCancellation=%d)", makeUTF8CString(error.domain()), error.errorCode(), error.isCancellation());
-                    if (!error.isCancellation())
-                        protectedThis->didFailLoading(error);
-                },
-                [protectedThis] (NetworkLoadChecker::RedirectionTriplet& triplet) {
-                    LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check returned a synthetic redirect");
-                    protectedThis->m_isWaitingContinueWillSendRequestForCachedRedirect = true;
-                    protectedThis->willSendRedirectedRequest(WTF::move(triplet.request), WTF::move(triplet.redirectRequest), WTF::move(triplet.redirectResponse), [](auto) { });
-                },
-                [protectedThis] (ResourceRequest& request) {
-                    LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check is done");
-                    if (protectedThis->canUseCache(request)) {
-                        protectedThis->retrieveCacheEntry(request);
-                        return;
-                    }
-
-                    protectedThis->startNetworkLoad(WTF::move(request), FirstLoad::Yes);
+        WTF::switchOn(result,
+            [protectedThis](ResourceError& error) {
+                LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d, isCancellation=%d)", makeUTF8CString(error.domain()), error.errorCode(), error.isCancellation());
+                if (!error.isCancellation())
+                    protectedThis->didFailLoading(error);
+            },
+            [protectedThis](NetworkLoadChecker::RedirectionTriplet& triplet) {
+                LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check returned a synthetic redirect");
+                protectedThis->m_isWaitingContinueWillSendRequestForCachedRedirect = true;
+                protectedThis->willSendRedirectedRequest(WTF::move(triplet.request), WTF::move(triplet.redirectRequest), WTF::move(triplet.redirectResponse), [](auto) { });
+            },
+            [protectedThis](ResourceRequest& request) {
+                LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "start: NetworkLoadChecker::check is done");
+                if (protectedThis->canUseCache(request)) {
+                    protectedThis->retrieveCacheEntry(request);
+                    return;
                 }
-            );
-        });
-        return;
-    }
-    // FIXME: Remove that code path once m_networkLoadChecker is used for all network loads.
-    if (canUseCache(newRequest)) {
-        retrieveCacheEntry(originalRequest());
-        return;
-    }
 
-    startNetworkLoad(ResourceRequest { newRequest }, FirstLoad::Yes);
+                protectedThis->startNetworkLoad(WTF::move(request), FirstLoad::Yes);
+            }
+        );
+    });
 }
 
 #if ENABLE(CONTENT_FILTERING)
@@ -479,13 +467,13 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     NetworkLoadParameters parameters = m_parameters.networkLoadParameters();
     parameters.networkActivityTracker = m_networkActivityTracker;
-    if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
+    if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
     // NetworkLoadChecker::check() normally turns cookies off, but it doesn't run when
     // serviceWorkerDidNotHandle() restarts a load because its service worker didn't respond.
     // FIXME: Restart those loads through NetworkLoadChecker::check() instead, so that their
     // credentials are handled as for any other load.
-    if (m_networkLoadChecker && !m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials())
+    if (!m_networkLoadChecker->crossOriginEmbedderPolicyAllowsCredentials())
         request.setAllowCookies(false);
 
     parameters.siteIsolationEnabled = connectionToWebProcess().sharedPreferencesForWebProcess()->siteIsolationEnabled;
@@ -542,7 +530,7 @@ bool NetworkResourceLoader::shouldFetchWithCompressionDictionary(const ResourceR
     // 3. If request's mode is "no-cors", then return the result of running fallback.
     // Same-origin is allowed through: what this step guards against is an opaque response, and the
     // WPT tests require a no-cors subresource of its own origin to be served a dictionary.
-    if (m_parameters.options.mode == FetchOptions::Mode::NoCors && !(m_networkLoadChecker && m_networkLoadChecker->isSameOriginRequest()))
+    if (m_parameters.options.mode == FetchOptions::Mode::NoCors && !m_networkLoadChecker->isSameOriginRequest())
         return false;
 
     // 4. If the user agent is configured to block cookies for request, then return the result of
@@ -1418,7 +1406,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     };
 #endif
 
-    LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), makeUTF8CString(receivedResponse.mimeType()), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
+    LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, hasCachedEntryForValidation=%d)", receivedResponse.httpStatusCode(), makeUTF8CString(receivedResponse.mimeType()), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation);
 
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !protect(m_contentFilter)->continueAfterResponseReceived(receivedResponse))
@@ -1435,7 +1423,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     Ref connection = m_connection;
 
-    if (shouldCaptureExtraNetworkLoadMetrics() && m_networkLoadChecker) {
+    if (shouldCaptureExtraNetworkLoadMetrics()) {
         auto information = m_networkLoadChecker->takeNetworkLoadInformation();
         information.response = m_response;
         connection->addNetworkLoadInformation(coreIdentifier(), WTF::move(information));
@@ -1502,19 +1490,17 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation)
         return completionHandler(PolicyAction::Use);
 
-    if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
-        if (!error.isNull()) {
-            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", makeUTF8CString(error.domain()), error.errorCode());
-            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTF::move(error)] {
-                if (protectedThis->m_networkLoad)
-                    protectedThis->didFailLoading(error);
-            });
-            return completionHandler(PolicyAction::Ignore);
-        }
-        if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
-            networkLoad->setTimingAllowFailedFlag();
+    auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
+    if (!error.isNull()) {
+        LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", makeUTF8CString(error.domain()), error.errorCode());
+        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTF::move(error)] {
+            if (protectedThis->m_networkLoad)
+                protectedThis->didFailLoading(error);
+        });
+        return completionHandler(PolicyAction::Ignore);
     }
+    if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
+        networkLoad->setTimingAllowFailedFlag();
 
     initializeReportingEndpoints(m_response);
 
@@ -1765,7 +1751,7 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
 
     // Propagating the original start time to a destination that fails the TAO check would leak cross-origin redirect timing.
     // https://fetch.spec.whatwg.org/#navigation-tao-check
-    auto originalNavigationStartTime = (m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed()) ? m_parameters.originalNavigationStartTime : MonotonicTime { };
+    auto originalNavigationStartTime = m_networkLoadChecker->navigationTAOCheckPassed() ? m_parameters.originalNavigationStartTime : MonotonicTime { };
 
     NavigationResponseForProcessSwap responseForProcessSwap { response.url(), parseDocumentIsolationPolicy(response).value };
     protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, responseForProcessSwap, connection->webProcessIdentifier(), existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
@@ -1823,13 +1809,13 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
     // https://fetch.spec.whatwg.org/#navigation-tao-check
     std::optional<NetworkLoadMetrics> navigationMetrics;
     if (parameters().options.mode == FetchOptions::Mode::Navigate && originalNetworkLoadMetrics.hasCrossOriginRedirect
-        && !(m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed())) {
+        && !m_networkLoadChecker->navigationTAOCheckPassed()) {
         navigationMetrics = originalNetworkLoadMetrics;
         navigationMetrics->redirectCount = 0;
     }
     const NetworkLoadMetrics& networkLoadMetrics = navigationMetrics ? *navigationMetrics : originalNetworkLoadMetrics;
 
-    ASSERT(!m_networkLoadChecker || networkLoadMetrics.failsTAOCheck == m_networkLoadChecker->timingAllowFailedFlag());
+    ASSERT(networkLoadMetrics.failsTAOCheck == m_networkLoadChecker->timingAllowFailedFlag());
 
     LOADER_RELEASE_LOG("didFinishLoading: (numBytesReceived=%zd, hasCacheEntryForValidation=%d)", m_numBytesReceived, !!m_cacheEntryForValidation);
 
@@ -2062,60 +2048,56 @@ void NetworkResourceLoader::continueWillSendRedirectedRequestAfterLocalNetworkAc
         redirectRequest.resetTimeoutInterval();
     }
 
-    if (m_networkLoadChecker) {
-        if (privateClickMeasurementAttributionTriggerData)
-            m_networkLoadChecker->enableContentExtensionsCheck();
-        m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
+    if (privateClickMeasurementAttributionTriggerData)
+        m_networkLoadChecker->enableContentExtensionsCheck();
+    m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
 
-        LOADER_RELEASE_LOG("willSendRedirectedRequest: Checking redirect using NetworkLoadChecker");
-        auto continueAfterRedirectionCheck = [
-            this,
-            protectedThis = Ref { *this },
-            storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(),
-            privateClickMeasurementAttributionTriggerData = WTF::move(privateClickMeasurementAttributionTriggerData),
-            completionHandler = WTF::move(completionHandler)
-        ] (auto&& result) mutable {
-            if (!result.has_value()) {
-                if (result.error().isCancellation()) {
-                    LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned with a cancellation");
-                    return completionHandler({ });
-                }
-
-                LOADER_RELEASE_LOG_ERROR("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned an error");
-                this->didFailLoading(result.error());
+    LOADER_RELEASE_LOG("willSendRedirectedRequest: Checking redirect using NetworkLoadChecker");
+    auto continueAfterRedirectionCheck = [
+        this,
+        protectedThis = Ref { *this },
+        storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(),
+        privateClickMeasurementAttributionTriggerData = WTF::move(privateClickMeasurementAttributionTriggerData),
+        completionHandler = WTF::move(completionHandler)
+    ] (auto&& result) mutable {
+        if (!result.has_value()) {
+            if (result.error().isCancellation()) {
+                LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned with a cancellation");
                 return completionHandler({ });
             }
 
-            if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker && m_networkLoadChecker->timingAllowFailedFlag())
-                networkLoad->setTimingAllowFailedFlag();
+            LOADER_RELEASE_LOG_ERROR("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection returned an error");
+            this->didFailLoading(result.error());
+            return completionHandler({ });
+        }
 
-            LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection is done");
-            if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
-                this->didFinishWithRedirectResponse(WTF::move(result->request), WTF::move(result->redirectRequest), WTF::move(result->redirectResponse));
-                return completionHandler({ });
-            }
+        if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
+            networkLoad->setTimingAllowFailedFlag();
 
-            if (this->isSynchronous()) {
-                if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
-                    // We need to restart the load to update the session according the new credential policy.
-                    LOADER_RELEASE_LOG("willSendRedirectedRequest: Restarting network load due to credential policy change for synchronous load");
-                    this->restartNetworkLoad(WTF::move(result->redirectRequest), WTF::move(completionHandler));
-                    return;
-                }
+        LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection is done");
+        if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
+            this->didFinishWithRedirectResponse(WTF::move(result->request), WTF::move(result->redirectRequest), WTF::move(result->redirectResponse));
+            return completionHandler({ });
+        }
 
-                // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
-                // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
-                this->continueWillSendRequest(WTF::move(result->redirectRequest), false, WTF::move(completionHandler));
+        if (this->isSynchronous()) {
+            if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
+                // We need to restart the load to update the session according the new credential policy.
+                LOADER_RELEASE_LOG("willSendRedirectedRequest: Restarting network load due to credential policy change for synchronous load");
+                this->restartNetworkLoad(WTF::move(result->redirectRequest), WTF::move(completionHandler));
                 return;
             }
 
-            m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
-            this->continueWillSendRedirectedRequest(WTF::move(result->request), WTF::move(result->redirectRequest), WTF::move(result->redirectResponse), WTF::move(privateClickMeasurementAttributionTriggerData), WTF::move(completionHandler));
-        };
-        m_networkLoadChecker->checkRedirection(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), this, WTF::move(continueAfterRedirectionCheck));
-        return;
-    }
-    continueWillSendRedirectedRequest(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), WTF::move(privateClickMeasurementAttributionTriggerData), WTF::move(completionHandler));
+            // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
+            // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
+            this->continueWillSendRequest(WTF::move(result->redirectRequest), false, WTF::move(completionHandler));
+            return;
+        }
+
+        m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
+        this->continueWillSendRedirectedRequest(WTF::move(result->request), WTF::move(result->redirectRequest), WTF::move(result->redirectResponse), WTF::move(privateClickMeasurementAttributionTriggerData), WTF::move(completionHandler));
+    };
+    m_networkLoadChecker->checkRedirection(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), this, WTF::move(continueAfterRedirectionCheck));
 }
 
 void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<WebCore::PCM::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
@@ -2299,13 +2281,11 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         return;
     }
 
-    if (m_networkLoadChecker) {
-        // FIXME: We should be doing this check when receiving the redirection and not allow about protocol as per fetch spec.
-        if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().protocolIsAbout() && m_redirectCount) {
-            LOADER_RELEASE_LOG_ERROR("continueWillSendRequest: Failing load because it redirected to a scheme that is not HTTP(S)");
-            didFailLoading(ResourceError { String { }, 0, newRequest.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
-            return completionHandler({ });
-        }
+    // FIXME: We should be doing this check when receiving the redirection and not allow about protocol as per fetch spec.
+    if (!newRequest.url().protocolIsInHTTPFamily() && !newRequest.url().protocolIsAbout() && m_redirectCount) {
+        LOADER_RELEASE_LOG_ERROR("continueWillSendRequest: Failing load because it redirected to a scheme that is not HTTP(S)");
+        didFailLoading(ResourceError { String { }, 0, newRequest.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
+        return completionHandler({ });
     }
 
     m_isAllowedToAskUserForCredentials = isAllowedToAskUserForCredentials;
@@ -2618,13 +2598,11 @@ void NetworkResourceLoader::continueDidRetrieveCacheEntryAfterLocalNetworkAccess
         send(Messages::WebResourceLoader::StopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied { response });
         return;
     }
-    if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(originalRequest(), response);
-        if (!error.isNull()) {
-            LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Failing load due to NetworkLoadChecker::validateResponse");
-            didFailLoading(error);
-            return;
-        }
+    auto error = m_networkLoadChecker->validateResponse(originalRequest(), response);
+    if (!error.isNull()) {
+        LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Failing load due to NetworkLoadChecker::validateResponse");
+        didFailLoading(error);
+        return;
     }
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(response)) {

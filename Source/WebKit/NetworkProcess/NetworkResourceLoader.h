@@ -393,7 +393,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForMaxAgeCapValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
-    const RefPtr<NetworkLoadChecker> m_networkLoadChecker;
+    const Ref<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
     // Holds the completion handler of the response currently awaiting ContinueDidReceiveResponse from the WebProcess.
     // Multipart/x-mixed-replace can add more than one when the network layer does not serialize the parts itself
