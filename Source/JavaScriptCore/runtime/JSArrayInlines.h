@@ -236,7 +236,8 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ensureWritable(vm);
+    if (isCopyOnWrite(indexingMode()))
+        convertFromCopyOnWrite(vm, /* additionalLength */ 1);
 
     Butterfly* butterfly = this->butterfly();
 

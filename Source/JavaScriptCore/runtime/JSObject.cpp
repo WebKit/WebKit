@@ -1846,19 +1846,27 @@ void JSObject::convertInt32ForValue(VM& vm, JSValue value)
     convertInt32ToContiguous(vm);
 }
 
-void JSObject::convertFromCopyOnWrite(VM& vm)
+void JSObject::convertFromCopyOnWrite(VM& vm, unsigned additionalLength)
 {
     ASSERT(isCopyOnWrite(indexingMode()));
     ASSERT(structure()->indexingMode() == indexingMode());
 
     const bool hasIndexingHeader = true;
     Butterfly* oldButterfly = this->butterfly();
+    ASSERT(oldButterfly->publicLength() == oldButterfly->vectorLength());
     size_t propertyCapacity = 0;
-    unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min<size_t>(nextLength(oldButterfly->vectorLength()), MAX_STORAGE_VECTOR_LENGTH));
+    unsigned oldVectorLength = oldButterfly->vectorLength();
+    unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, oldVectorLength);
+    if (newVectorLength < oldVectorLength + additionalLength)
+        newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min<size_t>(nextLength(oldVectorLength + additionalLength), MAX_STORAGE_VECTOR_LENGTH));
     Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, 0, propertyCapacity, hasIndexingHeader, newVectorLength * sizeof(JSValue));
 
     // memcpy is fine since newButterfly is not tied to any object yet.
     memcpy(newButterfly->propertyStorage(), oldButterfly->propertyStorage(), oldButterfly->vectorLength() * sizeof(JSValue) + sizeof(IndexingHeader));
+    if (additionalLength) {
+        Butterfly::clearRange(indexingType(), newButterfly, oldVectorLength, newVectorLength);
+        newButterfly->setVectorLength(newVectorLength);
+    }
 
     WTF::storeStoreFence();
     TransitionKind transition = ([&] () {
@@ -1913,7 +1921,7 @@ ContiguousJSValues JSObject::tryMakeWritableInt32Slow(VM& vm)
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, Int32Shape) == Int32Shape) {
             ASSERT(hasInt32(indexingMode()));
-            convertFromCopyOnWrite(vm);
+            convertFromCopyOnWrite(vm, /* additionalLength */ 0);
             return this->butterfly()->contiguousInt32();
         }
         return ContiguousJSValues();
@@ -1949,7 +1957,7 @@ ContiguousDoubles JSObject::tryMakeWritableDoubleSlow(VM& vm)
 
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, DoubleShape) == DoubleShape) {
-            convertFromCopyOnWrite(vm);
+            convertFromCopyOnWrite(vm, /* additionalLength */ 0);
             if (hasDouble(indexingMode()))
                 return this->butterfly()->contiguousDouble();
             ASSERT(hasInt32(indexingMode()));
@@ -1988,7 +1996,7 @@ ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
 
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, ContiguousShape) == ContiguousShape) {
-            convertFromCopyOnWrite(vm);
+            convertFromCopyOnWrite(vm, /* additionalLength */ 0);
             if (hasContiguous(indexingMode()))
                 return this->butterfly()->contiguous();
             ASSERT(hasInt32(indexingMode()) || hasDouble(indexingMode()));
@@ -2463,7 +2471,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
         Butterfly* butterfly = thisObject->butterfly();
         if (i >= butterfly->vectorLength())
             return true;
-        thisObject->convertFromCopyOnWrite(vm);
+        thisObject->convertFromCopyOnWrite(vm, /* additionalLength */ 0);
         [[fallthrough]];
     }
 
@@ -2480,7 +2488,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
         Butterfly* butterfly = thisObject->butterfly();
         if (i >= butterfly->vectorLength())
             return true;
-        thisObject->convertFromCopyOnWrite(vm);
+        thisObject->convertFromCopyOnWrite(vm, /* additionalLength */ 0);
         [[fallthrough]];
     }
 
@@ -3895,7 +3903,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
 bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
 {
     if (isCopyOnWrite(indexingMode())) {
-        convertFromCopyOnWrite(vm);
+        convertFromCopyOnWrite(vm, /* additionalLength */ 0);
         if (this->butterfly()->vectorLength() >= length)
             return true;
     }
