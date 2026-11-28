@@ -1,0 +1,6 @@
+A content-visibility:auto element that is relevant must still have laid out content after its renderer is rebuilt. Changing the position of a block inside an inline element rebuilds the renderers of the inline's whole subtree, to clean up continuations.
+
+ PASS: row height while the section is relevant (expected 50, got 50)
+PASS: row height right after the ancestor's position changed (expected 50, got 50)
+PASS: row height after the next rendering updates (expected 50, got 50)
+

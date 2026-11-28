@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    #scroller { height: 400px; overflow: auto; }
+    .section {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 0 auto 500px;
+        background: #cde;
+    }
+    .row {
+        height: 50px;
+        background: #9ab;
+    }
+</style>
+</head>
+<body>
+<p>A content-visibility:auto element that is relevant must still have laid out content after its renderer is rebuilt.
+Changing the position of a block inside an inline element rebuilds the renderers of the inline's whole subtree, to clean up continuations.</p>
+<div id="scroller">
+    <!-- The inline wrapper makes the block children block-in-inline. -->
+    <span id="wrapper">
+        <div id="file"><div class="section" id="section"><div class="row" id="row"></div><div class="row"></div></div></div>
+    </span>
+</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const log = document.getElementById("log");
+const section = document.getElementById("section");
+const row = document.getElementById("row");
+const file = document.getElementById("file");
+
+function check(description, actual, expected)
+{
+    log.textContent += (actual === expected ? "PASS" : "FAIL") + ": " + description + " (expected " + expected + ", got " + actual + ")\n";
+}
+
+function nextFrames(count)
+{
+    return new Promise(resolve => {
+        function step()
+        {
+            if (!count--)
+                return resolve();
+            requestAnimationFrame(step);
+        }
+        step();
+    });
+}
+
+section.addEventListener("contentvisibilityautostatechange", async event => {
+    if (event.skipped)
+        return;
+
+    check("row height while the section is relevant", row.offsetHeight, 50);
+
+    // Same as :hover { position: relative } on a block child of an inline element.
+    file.style.position = "relative";
+
+    check("row height right after the ancestor's position changed", row.offsetHeight, 50);
+
+    await nextFrames(3);
+    check("row height after the next rendering updates", row.offsetHeight, 50);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, { once: true });
+</script>
+</body>
+</html>
