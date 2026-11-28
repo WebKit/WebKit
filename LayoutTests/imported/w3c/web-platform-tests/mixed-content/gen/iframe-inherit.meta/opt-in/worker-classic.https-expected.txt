@@ -1,0 +1,4 @@
+
+PASS Mixed-Content: Expects allowed for worker-classic to same-https origin and no-redirect redirection from https context.
+PASS Mixed-Content: Expects blocked for worker-classic to same-http origin and no-redirect redirection from https context.
+

@@ -1,0 +1,4 @@
+
+PASS Mixed-Content: Expects allowed for svg-a-tag to same-https origin and no-redirect redirection from https context.
+
+SVG Link to resource

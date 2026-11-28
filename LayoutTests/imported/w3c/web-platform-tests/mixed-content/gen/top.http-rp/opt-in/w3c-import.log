@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html
@@ -42,6 +40,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/svg-a-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/svg-a-tag.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/websocket.https.html

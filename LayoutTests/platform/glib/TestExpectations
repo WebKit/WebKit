@@ -5200,6 +5200,14 @@ webkit.org/b/328194 inspector/timeline/timeline-event-TimerRemove.html [ Failure
 
 webkit.org/b/328432 [ Debug ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Failure Pass ]
 
+# WebSockets from shared workers with data: URLs time out.
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp/opt-in/websocket.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/opt-in/websocket.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta/unset/websocket.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp/opt-in/websocket.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/opt-in/websocket.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta/unset/websocket.https.html [ Skip ]
+
 webkit.org/b/328474 media/track/track-paint-on-captions.html [ Pass Timeout ]
 webkit.org/b/328474 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/audio_has_no_subtitles.html [ ImageOnlyFailure Pass ]
 webkit.org/b/328474 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]

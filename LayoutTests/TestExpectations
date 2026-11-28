@@ -8287,15 +8287,6 @@ webkit.org/b/294105 webanimations/document-teardown-due-to-last-reference-crash.
 # Passes on WPT dashboard while fails locally
 imported/w3c/web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/marquee-with-trusted-types.html [ ImageOnlyFailure ]
 
-# Skip WPT tests that rely on the deprecated block-all-mixed-content CSP directive
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html [ Skip ]
-
 webkit.org/b/297505 ipc/LocalSampleBufferDisplayLayer-LogIdentifier-data-race-uaf.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-003.html [ ImageOnlyFailure ]

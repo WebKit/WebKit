@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html
@@ -28,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/svg-a-tag.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/websocket.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worker-classic.https.html

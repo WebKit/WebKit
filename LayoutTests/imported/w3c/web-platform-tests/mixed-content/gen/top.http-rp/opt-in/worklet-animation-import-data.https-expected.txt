@@ -4,9 +4,7 @@ FAIL Mixed-Content: Expects allowed for worklet-animation-import-data to same-ht
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to cross-http origin and keep-scheme redirection from https context.
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to cross-http origin and no-redirect redirection from https context.
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to cross-http origin and swap-scheme redirection from https context.
-PASS Mixed-Content: Expects blocked for worklet-animation-import-data to cross-https origin and swap-scheme redirection from https context.
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to same-http origin and keep-scheme redirection from https context.
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to same-http origin and no-redirect redirection from https context.
 PASS Mixed-Content: Expects blocked for worklet-animation-import-data to same-http origin and swap-scheme redirection from https context.
-PASS Mixed-Content: Expects blocked for worklet-animation-import-data to same-https origin and swap-scheme redirection from https context.
 
