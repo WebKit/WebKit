@@ -30,14 +30,12 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
-#include "MeshImpl.h"
 #include "ModelObjectHeap.h"
 #include "RemoteAdapter.h"
 #include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemoteImageBufferSet.h"
-#include "RemoteMesh.h"
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
@@ -59,7 +57,9 @@
 #endif
 
 #if ENABLE(GPU_PROCESS_MODEL)
+#include "MeshImpl.h"
 #include "ModelTypes.h"
+#include "RemoteMesh.h"
 #include "WebKitMesh.h"
 #endif
 
