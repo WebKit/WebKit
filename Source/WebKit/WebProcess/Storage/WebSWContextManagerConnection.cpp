@@ -201,6 +201,10 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         else if (WebProcess::singleton().isLockdownModeEnabled())
             WebPage::adjustSettingsForLockdownMode(page->settings(), nullptr);
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+        WebPage::setHasLaunchedWebContentProcess();
+#endif
+
         page->setupForRemoteWorker(contextData.scriptURL, contextData.registration.key.topOrigin(), contextData.referrerPolicy, advancedPrivacyProtections, contextData.globalPrivacyControlEnabled);
 
         if (RefPtr serviceWorkerPageMainFrame = serviceWorkerPage ? serviceWorkerPage->localMainFrame() : nullptr) {
