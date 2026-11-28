@@ -49,9 +49,9 @@ public:
     WEBCORE_EXPORT void clearName();
     NODELETE WEBCORE_EXPORT Frame* parent() const;
 
-    Frame* nextSibling() const { return m_nextSibling.get(); }
+    Frame* nextSibling() const LIFETIME_BOUND { return m_nextSibling.get(); }
     Frame* previousSibling() const { return m_previousSibling.get(); }
-    Frame* firstChild() const { return m_firstChild.get(); }
+    Frame* firstChild() const LIFETIME_BOUND { return m_firstChild.get(); }
     Frame* lastChild() const { return m_lastChild.get(); }
 
     RefPtr<Frame> firstRenderedChild() const;

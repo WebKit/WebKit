@@ -687,7 +687,9 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(const std::optional<BackFo
 #endif
 
     RefPtr<Frame> coreLocalFrame = m_localFrame.ptr();
-    auto& liveCSPOriginsThatUpgradeInsecureNavigations = protect(protect(m_localFrame->document())->contentSecurityPolicy())->insecureNavigationRequestsToUpgrade();
+    RefPtr document = m_localFrame->document();
+    CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy();
+    auto& liveCSPOriginsThatUpgradeInsecureNavigations = contentSecurityPolicy->insecureNavigationRequestsToUpgrade();
     const auto& cspOriginsThatUpgradeInsecureNavigations = backForwardCacheData ? backForwardCacheData->cspOriginsThatUpgradeInsecureNavigations : liveCSPOriginsThatUpgradeInsecureNavigations;
     auto documentSecurityPolicy = backForwardCacheData ? backForwardCacheData->documentSecurityPolicy : *coreLocalFrame->frameDocumentSecurityPolicy();
     bool containsPluginDocument = backForwardCacheData ? backForwardCacheData->isPluginDocument : m_localFrame->document()->isPluginDocument();

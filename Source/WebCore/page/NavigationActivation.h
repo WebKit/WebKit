@@ -44,8 +44,8 @@ public:
     WEBCORE_EXPORT ~NavigationActivation();
 
     NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry* from() const { return m_fromEntry.get(); };
-    const NavigationHistoryEntry& entry() const { return m_entry; };
+    NavigationHistoryEntry* from() const LIFETIME_BOUND { return m_fromEntry.get(); };
+    const NavigationHistoryEntry& entry() const LIFETIME_BOUND { return m_entry; };
 
 private:
     explicit NavigationActivation(NavigationNavigationType, Ref<NavigationHistoryEntry>&&, RefPtr<NavigationHistoryEntry>&& fromEntry);

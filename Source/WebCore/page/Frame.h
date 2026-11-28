@@ -79,8 +79,8 @@ public:
     enum class FrameType : bool { Local, Remote };
     FrameType frameType() const { return m_frameType; }
 
-    WindowProxy& windowProxy() { return m_windowProxy; }
-    const WindowProxy& windowProxy() const { return m_windowProxy; }
+    WindowProxy& windowProxy() LIFETIME_BOUND { return m_windowProxy; }
+    const WindowProxy& windowProxy() const LIFETIME_BOUND { return m_windowProxy; }
 
     DOMWindow* window() const { return virtualWindow(); }
     FrameTree& tree() const LIFETIME_BOUND { return m_treeNode; }
@@ -90,7 +90,7 @@ public:
     WEBCORE_EXPORT SecurityOrigin& topOrigin() const;
     inline Page* page() const; // Defined in DocumentPage.h.
     inline std::optional<PageIdentifier> pageID() const; // Defined in DocumentPage.h.
-    Settings& settings() const { return m_settings.get(); }
+    Settings& settings() const LIFETIME_BOUND { return m_settings.get(); }
     Frame& mainFrame() { return *m_mainFrame; }
     const Frame& mainFrame() const { return *m_mainFrame; }
     bool isMainFrame() const { return this == m_mainFrame.get(); }
@@ -155,7 +155,7 @@ public:
     WEBCORE_EXPORT void updateFrameTreeSyncData(const FrameTreeSyncSerializationData&);
 
     virtual bool frameCanCreatePaymentSession() const;
-    FrameTreeSyncData& frameTreeSyncData() const { return m_frameTreeSyncData.get(); }
+    FrameTreeSyncData& frameTreeSyncData() const LIFETIME_BOUND { return m_frameTreeSyncData.get(); }
     WEBCORE_EXPORT virtual SecurityOrigin* frameDocumentSecurityOrigin() const = 0;
     WEBCORE_EXPORT virtual std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const = 0;
     virtual std::optional<AgentClusterIdentifier> frameAgentClusterIdentifier() const = 0;

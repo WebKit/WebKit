@@ -146,7 +146,7 @@ public:
     BarProp& statusbar();
     BarProp& toolbar();
     WEBCORE_EXPORT Navigator& navigator();
-    Navigator* optionalNavigator() const { return m_navigator.get(); }
+    Navigator* optionalNavigator() const LIFETIME_BOUND { return m_navigator.get(); }
 
     NODELETE WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     // If forcedActivationToken is set, the activation was granted by the forced user gesture (e.g. evaluateJavaScript:)
@@ -311,8 +311,8 @@ public:
     // HTML 5 key/value storage
     ExceptionOr<Storage*> sessionStorage();
     ExceptionOr<Storage*> localStorage();
-    Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
-    Storage* optionalLocalStorage() const { return m_localStorage.get(); }
+    Storage* optionalSessionStorage() const LIFETIME_BOUND { return m_sessionStorage.get(); }
+    Storage* optionalLocalStorage() const LIFETIME_BOUND { return m_localStorage.get(); }
 
     NODELETE CustomElementRegistry& customElementRegistry();
 
@@ -394,7 +394,7 @@ public:
 
 #if ENABLE(DOCUMENT_PIP)
     DocumentPictureInPicture& documentPictureInPicture();
-    DocumentPictureInPicture* documentPictureInPictureIfExists() const { return m_documentPictureInPicture.get(); }
+    DocumentPictureInPicture* documentPictureInPictureIfExists() const LIFETIME_BOUND { return m_documentPictureInPicture.get(); }
 #endif
 
     CloseWatcherManager& closeWatcherManager();

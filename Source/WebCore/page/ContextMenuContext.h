@@ -60,7 +60,7 @@ public:
     Type type() const { return m_type; }
 
     const HitTestResult& hitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
-    Event* event() const { return m_event.get(); }
+    Event* event() const LIFETIME_BOUND { return m_event.get(); }
 
     void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
     const String& selectedText() const LIFETIME_BOUND { return m_selectedText; }
@@ -71,10 +71,10 @@ public:
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     void setPotentialQRCodeNodeSnapshotImage(NativeImage* image) { m_potentialQRCodeNodeSnapshotImage = image; }
-    NativeImage* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    NativeImage* potentialQRCodeNodeSnapshotImage() const LIFETIME_BOUND { return m_potentialQRCodeNodeSnapshotImage.get(); }
 
     void setPotentialQRCodeViewportSnapshotImage(NativeImage* image) { m_potentialQRCodeViewportSnapshotImage = image; }
-    NativeImage* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    NativeImage* potentialQRCodeViewportSnapshotImage() const LIFETIME_BOUND { return m_potentialQRCodeViewportSnapshotImage.get(); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

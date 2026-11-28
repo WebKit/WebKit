@@ -48,7 +48,7 @@ public:
         void didReceiveUpdate(SpeechRecognitionUpdate&&) final { }
     };
     DummySpeechRecognitionProvider() = default;
-    SpeechRecognitionConnection& speechRecognitionConnection()
+    SpeechRecognitionConnection& speechRecognitionConnection() LIFETIME_BOUND
     {
         if (!m_connection)
             lazyInitialize(m_connection, DummySpeechRecognitionConnection::create());

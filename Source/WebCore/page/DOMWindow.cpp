@@ -185,11 +185,10 @@ WindowProxy* DOMWindow::opener() const
     if (!frame)
         return nullptr;
 
-    RefPtr openerFrame = frame->opener();
-    if (!openerFrame)
+    if (!frame->opener())
         return nullptr;
 
-    return &openerFrame->windowProxy();
+    return &frame->opener()->windowProxy();
 }
 
 WindowProxy* DOMWindow::top() const

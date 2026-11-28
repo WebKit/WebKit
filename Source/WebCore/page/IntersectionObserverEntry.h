@@ -59,10 +59,10 @@ public:
     }
 
     double time() const { return m_time; }
-    DOMRectReadOnly* rootBounds() const { return m_rootBounds.get(); }
-    DOMRectReadOnly& boundingClientRect() const { return m_boundingClientRect; }
-    DOMRectReadOnly& intersectionRect() const { return m_intersectionRect; }
-    Element& target() const { return m_target; }
+    DOMRectReadOnly* rootBounds() const LIFETIME_BOUND { return m_rootBounds.get(); }
+    DOMRectReadOnly& boundingClientRect() const LIFETIME_BOUND { return m_boundingClientRect; }
+    DOMRectReadOnly& intersectionRect() const LIFETIME_BOUND { return m_intersectionRect; }
+    Element& target() const LIFETIME_BOUND { return m_target; }
 
     bool isIntersecting() const { return m_isIntersecting; }
     double intersectionRatio() const { return m_intersectionRatio; }

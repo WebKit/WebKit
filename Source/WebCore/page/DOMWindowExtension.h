@@ -55,7 +55,7 @@ public:
     void willDetachGlobalObjectFromFrame() final;
 
     NODELETE WEBCORE_EXPORT LocalFrame* frame() const;
-    DOMWrapperWorld& world() const { return m_world; }
+    DOMWrapperWorld& world() const LIFETIME_BOUND { return m_world; }
 
 private:
     WEBCORE_EXPORT DOMWindowExtension(LocalDOMWindow*, DOMWrapperWorld&);

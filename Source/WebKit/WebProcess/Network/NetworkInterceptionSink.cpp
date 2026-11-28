@@ -69,8 +69,9 @@ NetworkInterceptionSink::~NetworkInterceptionSink()
 const Inspector::NetworkInterception& NetworkInterceptionSink::configuration() const
 {
     static NeverDestroyed<Inspector::NetworkInterception> emptyConfiguration;
-    if (RefPtr corePage = Ref { m_page }->corePage())
-        return corePage->networkInterception();
+    Ref page = m_page;
+    if (page->corePage())
+        return page->corePage()->networkInterception();
     return emptyConfiguration.get();
 }
 

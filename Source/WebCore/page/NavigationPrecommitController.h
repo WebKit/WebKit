@@ -51,7 +51,7 @@ public:
     ExceptionOr<void> redirect(JSC::JSGlobalObject&, Document&, const String& url, NavigationNavigateOptions&&);
     ExceptionOr<void> addHandler(Document&, Ref<NavigationInterceptHandler>&&);
 
-    NavigateEvent& event() { return m_event.get(); }
+    NavigateEvent& event() LIFETIME_BOUND { return m_event.get(); }
 
 private:
     explicit NavigationPrecommitController(NavigateEvent&);

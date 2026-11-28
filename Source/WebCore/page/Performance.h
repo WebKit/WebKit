@@ -140,7 +140,7 @@ public:
 
     void scheduleTaskIfNeeded();
 
-    PerformanceNavigationTiming* navigationTiming() { return m_navigationTiming.get(); }
+    PerformanceNavigationTiming* navigationTiming() LIFETIME_BOUND { return m_navigationTiming.get(); }
 
 private:
     Performance(ScriptExecutionContext*, MonotonicTime timeOrigin);

@@ -53,7 +53,7 @@ public:
     static Ref<AsyncScrollingCoordinator> create(Page*);
     WEBCORE_EXPORT virtual ~AsyncScrollingCoordinator();
 
-    ScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
+    ScrollingTree* scrollingTree() const LIFETIME_BOUND { return m_scrollingTree.get(); }
 
     void scrollingStateTreePropertiesChanged();
     void scrollingThreadAddedPendingUpdate();

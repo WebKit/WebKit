@@ -55,7 +55,7 @@ public:
     void postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
     ExceptionOr<JSC::JSValue> postLegacySynchronousMessage(JSC::JSGlobalObject&, JSC::JSValue);
 
-    const UserMessageHandlerDescriptor* descriptor() const { return m_descriptor.get(); }
+    const UserMessageHandlerDescriptor* descriptor() const LIFETIME_BOUND { return m_descriptor.get(); }
     void invalidateDescriptor() { m_descriptor = nullptr; }
 
 private:

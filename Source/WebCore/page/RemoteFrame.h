@@ -62,7 +62,7 @@ public:
     const RemoteFrameClient& client() const LIFETIME_BOUND { return m_client.get(); }
     RemoteFrameClient& client() LIFETIME_BOUND { return m_client.get(); }
 
-    RemoteFrameView* view() const { return m_view.get(); }
+    RemoteFrameView* view() const LIFETIME_BOUND { return m_view.get(); }
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
     void updateViewScrollPositionFromFrameTreeSyncData();
 

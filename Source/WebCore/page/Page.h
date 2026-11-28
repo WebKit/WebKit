@@ -444,12 +444,12 @@ public:
     WEBCORE_EXPORT PluginData& pluginData();
     void clearPluginData();
 
-    OpportunisticTaskScheduler& opportunisticTaskScheduler() const { return m_opportunisticTaskScheduler.get(); }
+    OpportunisticTaskScheduler& opportunisticTaskScheduler() const LIFETIME_BOUND { return m_opportunisticTaskScheduler.get(); }
 
     WEBCORE_EXPORT void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
 
-    EditorClient& editorClient() { return m_editorClient.get(); }
+    EditorClient& editorClient() LIFETIME_BOUND { return m_editorClient.get(); }
 
     NODELETE WEBCORE_EXPORT LocalFrame* localMainFrame() const;
     WEBCORE_EXPORT bool hasAnyLocalFrame() const;
@@ -459,7 +459,7 @@ public:
     // so falls back to the local root frame. Document overlays and their geometry are relative to it.
     NODELETE WEBCORE_EXPORT LocalFrame* localMainOrRootFrame() const;
 
-    Frame& mainFrame() const { return m_mainFrame.get(); }
+    Frame& mainFrame() const LIFETIME_BOUND { return m_mainFrame.get(); }
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     NODELETE WEBCORE_EXPORT const URL& mainFrameURL() const LIFETIME_BOUND;
 
@@ -516,7 +516,7 @@ public:
 
     WEBCORE_EXPORT PageGroup& group();
 
-    BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
+    BroadcastChannelRegistry& broadcastChannelRegistry() LIFETIME_BOUND { return m_broadcastChannelRegistry; }
     WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
     WEBCORE_EXPORT static void forEachPage(NOESCAPE const Function<void(Page&)>&);
@@ -544,18 +544,18 @@ public:
     DragController& dragController() LIFETIME_BOUND { return m_dragController.get(); }
     const DragController& dragController() const LIFETIME_BOUND { return m_dragController.get(); }
 #endif
-    FocusController& focusController() const { return m_focusController; }
+    FocusController& focusController() const LIFETIME_BOUND { return m_focusController; }
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuController& contextMenuController() LIFETIME_BOUND { return m_contextMenuController.get(); }
     const ContextMenuController& contextMenuController() const LIFETIME_BOUND { return m_contextMenuController.get(); }
 #endif
-    PageInspectorController& inspectorController() { return m_inspectorController.get(); }
+    PageInspectorController& inspectorController() LIFETIME_BOUND { return m_inspectorController.get(); }
     PointerCaptureController& pointerCaptureController() LIFETIME_BOUND { return m_pointerCaptureController.get(); }
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() LIFETIME_BOUND { return m_pointerLockController.get(); }
 #endif
     WebRTCProvider& webRTCProvider() LIFETIME_BOUND { return m_webRTCProvider.get(); }
-    RTCController& rtcController() { return m_rtcController.get(); }
+    RTCController& rtcController() LIFETIME_BOUND { return m_rtcController.get(); }
     WEBCORE_EXPORT void disableICECandidateFiltering();
     WEBCORE_EXPORT void enableICECandidateFiltering();
     bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
@@ -583,17 +583,17 @@ public:
 
     WEBCORE_EXPORT void settingsDidChange();
 
-    Settings& settings() const { return *m_settings; }
+    Settings& settings() const LIFETIME_BOUND { return *m_settings; }
 
-    ProgressTracker& progress() { return m_progress.get(); }
-    const ProgressTracker& progress() const { return m_progress.get(); }
+    ProgressTracker& progress() LIFETIME_BOUND { return m_progress.get(); }
+    const ProgressTracker& progress() const LIFETIME_BOUND { return m_progress.get(); }
 
     WEBCORE_EXPORT void applyWindowFeatures(const WindowFeatures&);
 
     void progressEstimateChanged(LocalFrame&) const;
     void progressFinished(LocalFrame&) const;
-    BackForwardController& backForward() { return m_backForwardController.get(); }
-    ElementTargetingController& elementTargetingController() { return m_elementTargetingController.get(); }
+    BackForwardController& backForward() LIFETIME_BOUND { return m_backForwardController.get(); }
+    ElementTargetingController& elementTargetingController() LIFETIME_BOUND { return m_elementTargetingController.get(); }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
     Seconds domTimerAlignmentIntervalIncreaseLimit() const { return m_domTimerAlignmentIntervalIncreaseLimit; }
@@ -808,7 +808,7 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT ImageAnalysisQueue& imageAnalysisQueue();
-    ImageAnalysisQueue* imageAnalysisQueueIfExists() { return m_imageAnalysisQueue.get(); }
+    ImageAnalysisQueue* imageAnalysisQueueIfExists() LIFETIME_BOUND { return m_imageAnalysisQueue.get(); }
 #endif
 
     // Non-empty while the user agent is presenting this page as a machine translation (e.g. a
@@ -823,7 +823,7 @@ public:
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 #if ENABLE(APPLE_PAY)
-    PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
+    PaymentCoordinator& paymentCoordinator() const LIFETIME_BOUND { return *m_paymentCoordinator; }
     WEBCORE_EXPORT void setPaymentCoordinator(Ref<PaymentCoordinator>&&);
 #endif
 
@@ -839,7 +839,7 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     AuthenticatorCoordinator& authenticatorCoordinator() LIFETIME_BOUND { return m_authenticatorCoordinator.get(); }
-    CredentialRequestCoordinator& credentialRequestCoordinator() { return m_credentialRequestCoordinator.get(); }
+    CredentialRequestCoordinator& credentialRequestCoordinator() LIFETIME_BOUND { return m_credentialRequestCoordinator.get(); }
 #if ENABLE(PHONE_NUMBER_POSSESSION)
     PhoneNumberPossessionCoordinator& phoneNumberPossessionCoordinator() LIFETIME_BOUND { return m_phoneNumberPossessionCoordinator.get(); }
 #endif
@@ -850,7 +850,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    MediaSessionCoordinatorPrivate* mediaSessionCoordinator() { return m_mediaSessionCoordinator.get(); }
+    MediaSessionCoordinatorPrivate* mediaSessionCoordinator() LIFETIME_BOUND { return m_mediaSessionCoordinator.get(); }
     WEBCORE_EXPORT void setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
     WEBCORE_EXPORT void invalidateMediaSessionCoordinator();
 #endif
@@ -928,7 +928,7 @@ public:
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
     NODELETE WEBCORE_EXPORT bool imageAnimationEnabled() const;
-    ImageAnimationTimeline& imageAnimationTimeline() const { return m_imageAnimationTimeline; }
+    ImageAnimationTimeline& imageAnimationTimeline() const LIFETIME_BOUND { return m_imageAnimationTimeline; }
 
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
     NODELETE WEBCORE_EXPORT void setVideoAutoplayPreviewsEnabled(bool);
@@ -1034,7 +1034,7 @@ public:
     bool isPainting() const { return m_isPainting; }
 #endif
 
-    AlternativeTextClient* alternativeTextClient() const { return m_alternativeTextClient.get(); }
+    AlternativeTextClient* alternativeTextClient() const LIFETIME_BOUND { return m_alternativeTextClient.get(); }
 
     bool hasSeenPlugin(const String& serviceType) const;
     NODELETE WEBCORE_EXPORT bool hasSeenAnyPlugin() const;
@@ -1065,16 +1065,16 @@ public:
     void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
     unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
-    DatabaseProvider& databaseProvider() { return m_databaseProvider; }
-    CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
-    SocketProvider& socketProvider() { return m_socketProvider; }
-    CookieJar& cookieJar() { return m_cookieJar.get(); }
+    DatabaseProvider& databaseProvider() LIFETIME_BOUND { return m_databaseProvider; }
+    CacheStorageProvider& cacheStorageProvider() LIFETIME_BOUND { return m_cacheStorageProvider; }
+    SocketProvider& socketProvider() LIFETIME_BOUND { return m_socketProvider; }
+    CookieJar& cookieJar() LIFETIME_BOUND { return m_cookieJar.get(); }
 
-    StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
+    StorageNamespaceProvider& storageNamespaceProvider() LIFETIME_BOUND { return m_storageNamespaceProvider.get(); }
 
     NODELETE PluginInfoProvider& pluginInfoProvider();
 
-    UserContentProvider& userContentProviderForFrame() { return m_userContentProvider; }
+    UserContentProvider& userContentProviderForFrame() LIFETIME_BOUND { return m_userContentProvider; }
     WEBCORE_EXPORT void setUserContentProviderForWebKitLegacy(Ref<UserContentProvider>&&);
 
     NODELETE ScreenOrientationManager* screenOrientationManager() const;
@@ -1178,7 +1178,7 @@ public:
     // The network interception configuration active in this process for this page. Under Site
     // Isolation the authoritative copy lives in the UI process, which pushes it down to every
     // process hosting one of the page's frames.
-    const Inspector::NetworkInterception& networkInterception() const { return m_networkInterception; }
+    const Inspector::NetworkInterception& networkInterception() const LIFETIME_BOUND { return m_networkInterception; }
     void setNetworkInterception(Inspector::NetworkInterception&& interception) { m_networkInterception = WTF::move(interception); }
 
     std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
@@ -1188,7 +1188,7 @@ public:
     void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
+    SpeechSynthesisClient* speechSynthesisClient() const LIFETIME_BOUND { return m_speechSynthesisClient.get(); }
 #endif
 
     WEBCORE_EXPORT SpeechRecognitionConnection& speechRecognitionConnection();
@@ -1197,7 +1197,7 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
-    const NetworkLoadPolicy& networkLoadPolicy() const { return m_networkLoadPolicy; }
+    const NetworkLoadPolicy& networkLoadPolicy() const LIFETIME_BOUND { return m_networkLoadPolicy; }
     WEBCORE_EXPORT bool hasLocalDataForURL(const URL&);
 
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
@@ -1237,7 +1237,7 @@ public:
     WEBCORE_EXPORT void devicePostureTypeChanged();
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
-    DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const { return m_deviceOrientationUpdateProvider.get(); }
+    DeviceOrientationUpdateProvider* deviceOrientationUpdateProvider() const LIFETIME_BOUND { return m_deviceOrientationUpdateProvider.get(); }
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -1324,8 +1324,8 @@ public:
     WEBCORE_EXPORT void analyzeImagesForFindInPage(Function<void()>&& callback);
 #endif
 
-    BadgeClient& badgeClient() { return m_badgeClient.get(); }
-    HistoryItemClient& historyItemClient() { return m_historyItemClient.get(); }
+    BadgeClient& badgeClient() LIFETIME_BOUND { return m_badgeClient.get(); }
+    HistoryItemClient& historyItemClient() LIFETIME_BOUND { return m_historyItemClient.get(); }
 
     NODELETE void willBeginScrolling();
     NODELETE void didFinishScrolling();
@@ -1407,7 +1407,7 @@ public:
     WEBCORE_EXPORT void intelligenceTextAnimationsDidComplete();
 #endif
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
-    TextEffectController& textEffectController() { return m_textEffectController.get(); }
+    TextEffectController& textEffectController() LIFETIME_BOUND { return m_textEffectController.get(); }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

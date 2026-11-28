@@ -66,15 +66,15 @@ public:
         return m_identifier == other.m_identifier;
     }
 
-    const String& key() const { return m_key; }
+    const String& key() const LIFETIME_BOUND { return m_key; }
     void setKey(const String& key) { m_key = key; }
-    JSValueInWrappedObject& info() { return m_info; }
-    SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
+    JSValueInWrappedObject& info() LIFETIME_BOUND { return m_info; }
+    SerializedScriptValue* serializedState() const LIFETIME_BOUND { return m_serializedState.get(); }
     void setSerializedState(RefPtr<SerializedScriptValue>&& serializedState) { m_serializedState = WTF::move(serializedState); }
-    DeferredPromise& committedPromise() { return m_committedPromise; }
-    const DeferredPromise& committedPromise() const { return m_committedPromise; }
-    DeferredPromise& finishedPromise() { return m_finishedPromise; }
-    const DeferredPromise& finishedPromise() const { return m_finishedPromise; }
+    DeferredPromise& committedPromise() LIFETIME_BOUND { return m_committedPromise; }
+    const DeferredPromise& committedPromise() const LIFETIME_BOUND { return m_committedPromise; }
+    DeferredPromise& finishedPromise() LIFETIME_BOUND { return m_finishedPromise; }
+    const DeferredPromise& finishedPromise() const LIFETIME_BOUND { return m_finishedPromise; }
 
     bool hasCommitted() const { return !!m_committedToEntry; }
     bool isSettled() const { return m_state == State::Settled; }
@@ -139,8 +139,8 @@ public:
 
     const Vector<Ref<NavigationHistoryEntry>>& entries() const LIFETIME_BOUND;
     NavigationHistoryEntry* currentEntry() const;
-    NavigationTransition* transition() { return m_transition.get(); };
-    NavigationActivation* activation() { return m_activation.get(); };
+    NavigationTransition* transition() LIFETIME_BOUND { return m_transition.get(); };
+    NavigationActivation* activation() LIFETIME_BOUND { return m_activation.get(); };
 
     bool canGoBack() const;
     bool canGoForward() const;
@@ -250,7 +250,7 @@ public:
     // Testing support
     RateLimiter& rateLimiterForTesting() LIFETIME_BOUND { return m_rateLimiter; }
 
-    NavigateEvent* ongoingNavigateEvent() { return m_ongoingNavigateEvent.get(); } // This may get called on a GC thread.
+    NavigateEvent* ongoingNavigateEvent() LIFETIME_BOUND { return m_ongoingNavigateEvent.get(); } // This may get called on a GC thread.
     bool hasInterceptedOngoingNavigateEvent() const { return m_ongoingNavigateEvent && m_ongoingNavigateEvent->wasIntercepted(); }
 
     void updateNavigationEntry(Ref<HistoryItem>&&, ShouldCopyStateObjectFromCurrentEntry);

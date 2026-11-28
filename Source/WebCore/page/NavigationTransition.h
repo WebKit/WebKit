@@ -42,8 +42,8 @@ public:
     NODELETE static Ref<NavigationTransition> create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<NavigationDestination>&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
 
     NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry& from() { return m_from; };
-    NavigationDestination& to() { return m_destination; };
+    NavigationHistoryEntry& from() LIFETIME_BOUND { return m_from; };
+    NavigationDestination& to() LIFETIME_BOUND { return m_destination; };
     DOMPromise& committed();
     DOMPromise& finished();
 

@@ -61,7 +61,7 @@ public:
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void captionPreferencesChanged();
     NODELETE WEBCORE_EXPORT CaptionUserPreferences& ensureCaptionPreferences();
-    CaptionUserPreferences* captionPreferences() const { return m_captionPreferences.get(); }
+    CaptionUserPreferences* captionPreferences() const LIFETIME_BOUND { return m_captionPreferences.get(); }
 #endif
 
 private:

@@ -102,14 +102,14 @@ public:
     bool userInitiated() const { return m_userInitiated; }
     bool hashChange() const { return m_hashChange; }
     bool hasUAVisualTransition() const { return m_hasUAVisualTransition; }
-    NavigationDestination& destination() { return m_destination; }
-    AbortSignal& signal() { return m_signal; }
-    DOMFormData* formData() { return m_formData.get(); }
+    NavigationDestination& destination() LIFETIME_BOUND { return m_destination; }
+    AbortSignal& signal() LIFETIME_BOUND { return m_signal; }
+    DOMFormData* formData() LIFETIME_BOUND { return m_formData.get(); }
     String downloadRequest() { return m_downloadRequest; }
     NODELETE JSC::JSValue info();
     void setInfo(JSC::JSGlobalObject&, JSC::JSValue);
     JSValueInWrappedObject& infoWrapper() LIFETIME_BOUND { return m_info; }
-    Element* sourceElement() { return m_sourceElement.get(); }
+    Element* sourceElement() LIFETIME_BOUND { return m_sourceElement.get(); }
 
     ExceptionOr<void> sharedChecks(Document&);
     ExceptionOr<void> intercept(Document&, NavigationInterceptOptions&&);

@@ -52,7 +52,7 @@ public:
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
     String randomUUID() const;
 
-    SubtleCrypto& subtle() { return m_subtle; }
+    SubtleCrypto& subtle() LIFETIME_BOUND { return m_subtle; }
 
 private:
     Crypto(ScriptExecutionContext*);

@@ -130,8 +130,8 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    NODELETE const LocalFrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
-    NODELETE LocalFrameViewLayoutContext& layoutContext() { return m_layoutContext; }
+    NODELETE const LocalFrameViewLayoutContext& layoutContext() const LIFETIME_BOUND { return m_layoutContext; }
+    NODELETE LocalFrameViewLayoutContext& layoutContext() LIFETIME_BOUND { return m_layoutContext; }
 
     NODELETE WEBCORE_EXPORT bool didFirstLayout() const;
 

@@ -190,14 +190,14 @@ public:
     WEBCORE_EXPORT HitTestResult hitTestResultAtPoint(const LayoutPoint& pointInContentsCoordinateSpace, OptionSet<HitTestRequest::Type>) const;
 
     bool mousePressed() const { return m_mousePressed; }
-    Node* mousePressNode() const { return m_mousePressNode; }
+    Node* mousePressNode() const LIFETIME_BOUND { return m_mousePressNode; }
 
     NODELETE WEBCORE_EXPORT bool mouseDownMayStartSelect() const;
 
     WEBCORE_EXPORT ScrollableArea* focusedScrollableArea() const;
 
     WEBCORE_EXPORT void setCapturingMouseEventsElement(RefPtr<Element>&&);
-    Element* capturingMouseEventsElement() const { return m_capturingMouseEventsElement.get(); }
+    Element* capturingMouseEventsElement() const LIFETIME_BOUND { return m_capturingMouseEventsElement.get(); }
     void pointerCaptureElementDidChange(Element*);
 
 #if ENABLE(DRAG_SUPPORT)
@@ -218,7 +218,7 @@ public:
     void setResizingFrameSet(HTMLFrameSetElement*);
 
     void setLastTouchedNode(Node* node) { m_lastTouchedNode = node; }
-    Node* lastTouchedNode() const { return m_lastTouchedNode.get(); }
+    Node* lastTouchedNode() const LIFETIME_BOUND { return m_lastTouchedNode.get(); }
 
     void resizeLayerDestroyed();
 
@@ -279,7 +279,7 @@ public:
     void updateTouchLastGlobalPositionAndDelta(PointerID, const DoublePoint&, InTouchEventHandling, InMotion);
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
     WEBCORE_EXPORT bool dispatchSimulatedTouchEvent(IntPoint location);
-    Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
+    Frame* touchEventTargetSubframe() const LIFETIME_BOUND { return m_touchEventTargetSubframe.get(); }
     const TouchArray& touches() const LIFETIME_BOUND { return m_touches; }
 #endif
 

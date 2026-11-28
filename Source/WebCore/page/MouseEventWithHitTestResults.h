@@ -34,10 +34,10 @@ public:
     const PlatformMouseEvent& event() const LIFETIME_BOUND { return m_event; }
     const HitTestResult& hitTestResult() const LIFETIME_BOUND { return m_hitTestResult; }
     LayoutPoint localPoint() const { return m_hitTestResult.localPoint(); }
-    Scrollbar* scrollbar() const { return m_hitTestResult.scrollbar(); }
+    Scrollbar* scrollbar() const LIFETIME_BOUND { return m_hitTestResult.scrollbar(); }
     NODELETE bool isOverLink() const;
     bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }
-    Node* targetNode() const { return m_hitTestResult.targetNode(); }
+    Node* targetNode() const LIFETIME_BOUND { return m_hitTestResult.targetNode(); }
 
 private:
     PlatformMouseEvent m_event;

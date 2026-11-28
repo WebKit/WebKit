@@ -57,7 +57,7 @@ public:
     static Ref<ResourceUsageOverlay> create(Page&);
     ~ResourceUsageOverlay();
 
-    PageOverlay& overlay() { return m_overlay; }
+    PageOverlay& overlay() LIFETIME_BOUND { return m_overlay; }
 
 #if PLATFORM(COCOA)
     void platformDraw(CGContextRef);

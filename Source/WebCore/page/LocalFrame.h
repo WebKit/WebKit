@@ -167,16 +167,16 @@ public:
     inline Editor& editor() LIFETIME_BOUND; // Defined in LocalFrameInlines.h
     inline const Editor& editor() const LIFETIME_BOUND; // Defined in LocalFrameInlines.h
 
-    EventHandler& eventHandler() { return m_eventHandler; }
-    const EventHandler& eventHandler() const { return m_eventHandler; }
+    EventHandler& eventHandler() LIFETIME_BOUND { return m_eventHandler; }
+    const EventHandler& eventHandler() const LIFETIME_BOUND { return m_eventHandler; }
 
     const FrameLoader& loader() const LIFETIME_BOUND { return m_loader.get(); }
     FrameLoader& loader() LIFETIME_BOUND { return m_loader.get(); }
 
     inline FrameSelection& selection(); // Defined in LocalFrameInlines.h
     inline const FrameSelection& selection() const; // Defined in LocalFrameInlines.h
-    ScriptController& script() { return m_script; }
-    const ScriptController& script() const { return m_script; }
+    ScriptController& script() LIFETIME_BOUND { return m_script; }
+    const ScriptController& script() const LIFETIME_BOUND { return m_script; }
     void resetScript();
     NODELETE FrameView* virtualView() const final;
 
@@ -382,10 +382,10 @@ public:
 
     bool frameCanCreatePaymentSession() const final;
 
-    FrameInspectorController& inspectorController() { return m_inspectorController.get(); }
-    const FrameInspectorController& inspectorController() const { return m_inspectorController.get(); }
-    FrameConsoleClient& console() { return m_consoleClient.get(); }
-    const FrameConsoleClient& console() const { return m_consoleClient.get(); }
+    FrameInspectorController& inspectorController() LIFETIME_BOUND { return m_inspectorController.get(); }
+    const FrameInspectorController& inspectorController() const LIFETIME_BOUND { return m_inspectorController.get(); }
+    FrameConsoleClient& console() LIFETIME_BOUND { return m_consoleClient.get(); }
+    const FrameConsoleClient& console() const LIFETIME_BOUND { return m_consoleClient.get(); }
 
     // The debugger to attach to this frame's global objects.
     NODELETE JSC::Debugger* debugger() const LIFETIME_BOUND;

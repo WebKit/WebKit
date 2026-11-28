@@ -130,7 +130,7 @@ public:
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();
 
-    IntersectionObserverCallback& callbackConcurrently() { return m_callback; }
+    IntersectionObserverCallback& callbackConcurrently() LIFETIME_BOUND { return m_callback; }
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:

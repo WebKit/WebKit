@@ -169,8 +169,8 @@ public:
     bool immediateRendererDestructionEnabledForTesting() const { return m_immediateRendererDestructionEnabledForTesting; }
     void setImmediateRendererDestructionEnabledForTesting(bool enabled) { m_immediateRendererDestructionEnabledForTesting = enabled; }
 
-    std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() { return m_subtreeScrollbarChangesState; }
-    const std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() const { return m_subtreeScrollbarChangesState; }
+    std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() LIFETIME_BOUND { return m_subtreeScrollbarChangesState; }
+    const std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() const LIFETIME_BOUND { return m_subtreeScrollbarChangesState; }
     void setSubtreeScrollbarChangesState(std::optional<SubtreeScrollbarChangesState>);
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction() LIFETIME_BOUND;

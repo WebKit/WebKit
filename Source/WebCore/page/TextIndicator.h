@@ -179,11 +179,11 @@ public:
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
     void setContentImageScaleFactor(float contentImageScaleFactor) { m_data.contentImageScaleFactor = contentImageScaleFactor; }
 
-    NativeImage* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
-    NativeImage* contentImageWithoutSelection() const { return m_data.contentImageWithoutSelection.get(); }
+    NativeImage* contentImageWithHighlight() const LIFETIME_BOUND { return m_data.contentImageWithHighlight.get(); }
+    NativeImage* contentImageWithoutSelection() const LIFETIME_BOUND { return m_data.contentImageWithoutSelection.get(); }
     void setContentImageWithoutSelection(NativeImage* contentImageWithoutSelection) { m_data.contentImageWithoutSelection = contentImageWithoutSelection; }
 
-    NativeImage* contentImage() const { return m_data.contentImage.get(); }
+    NativeImage* contentImage() const LIFETIME_BOUND { return m_data.contentImage.get(); }
     void setContentImage(NativeImage* contentImage) { m_data.contentImage = contentImage; }
 
     TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }

@@ -71,7 +71,7 @@ public:
     void deliver();
 
     bool isRegistered() const { return m_registered; }
-    PerformanceObserverCallback& callback() { return m_callback.get(); }
+    PerformanceObserverCallback& callback() LIFETIME_BOUND { return m_callback.get(); }
     Seconds durationThreshold() const { return m_durationThreshold; }
 
 private:

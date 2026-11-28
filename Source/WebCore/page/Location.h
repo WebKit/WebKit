@@ -73,7 +73,7 @@ public:
     String toString() const { return href(); }
 
     Ref<DOMStringList> ancestorOrigins() const;
-    DOMStringList* cachedAncestorOrigins() const { return m_ancestorOrigins.get(); }
+    DOMStringList* cachedAncestorOrigins() const LIFETIME_BOUND { return m_ancestorOrigins.get(); }
 
     DOMWindow* window() { return m_window.get(); }
 

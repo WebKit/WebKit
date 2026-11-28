@@ -64,9 +64,9 @@ public:
     JSC::JSValue getState(JSDOMGlobalObject&) const;
 
     void setState(RefPtr<SerializedScriptValue>&&);
-    SerializedScriptValue* state() const { return m_state.get(); }
+    SerializedScriptValue* state() const LIFETIME_BOUND { return m_state.get(); }
 
-    HistoryItem& associatedHistoryItem() const { return m_associatedHistoryItem; }
+    HistoryItem& associatedHistoryItem() const LIFETIME_BOUND { return m_associatedHistoryItem; }
 
     void dispatchDisposeEvent();
 

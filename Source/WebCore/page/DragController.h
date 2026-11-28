@@ -92,7 +92,7 @@ public:
     OptionSet<DragSourceAction> dragSourceAction() const { return m_dragSourceAction; }
     DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
 
-    Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
+    Document* documentUnderMouse() const LIFETIME_BOUND { return m_documentUnderMouse.get(); }
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
     OptionSet<DragSourceAction> delegateDragSourceAction(const IntPoint& rootViewPoint);
 

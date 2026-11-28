@@ -223,7 +223,7 @@ public:
 
     NODELETE WEBCORE_EXPORT bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
-    ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
+    ScrollingTreeFrameScrollingNode* rootNode() const LIFETIME_BOUND { return m_rootNode.get(); }
     NODELETE std::optional<ScrollingNodeID> latchedNodeID() const;
     NODELETE bool isLatchedToUnscrollableRoot() const;
     NODELETE WEBCORE_EXPORT void clearLatchedNode();

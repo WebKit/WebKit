@@ -43,7 +43,7 @@ public:
     static Ref<NavigationCurrentEntryChangeEvent> create(const AtomString& type, Init&&);
 
     std::optional<NavigationNavigationType> navigationType() const { return m_navigationType; };
-    NavigationHistoryEntry& from() const { return m_from; };
+    NavigationHistoryEntry& from() const LIFETIME_BOUND { return m_from; };
 
 private:
     NavigationCurrentEntryChangeEvent(const AtomString& type, Init&&);

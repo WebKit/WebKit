@@ -59,8 +59,8 @@ public:
 #endif
     bool ownerHasRenderer() const { return m_ownerHasRenderer; }
     bool ownerIsFullyClipped() const { return m_ownerIsFullyClipped; }
-    const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
-    const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
+    const TransformationMatrix& childFrameOwnerToRootContentTransform() const LIFETIME_BOUND { return m_childFrameOwnerToRootContentTransform; }
+    const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const LIFETIME_BOUND { return m_absoluteToChildFrameOwnerLocalTransform; }
     float frameOwnerZoomFactor() const { return m_frameOwnerZoomFactor; }
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }

@@ -95,8 +95,8 @@ public:
     bool inLiveResize() const { return m_inLiveResize; }
 
     // Only for use by WebScrollerImpPairDelegateMac. Do not use elsewhere!
-    ScrollerMac& verticalScroller() { return m_verticalScroller.get(); }
-    ScrollerMac& horizontalScroller() { return m_horizontalScroller.get(); }
+    ScrollerMac& verticalScroller() LIFETIME_BOUND { return m_verticalScroller.get(); }
+    ScrollerMac& horizontalScroller() LIFETIME_BOUND { return m_horizontalScroller.get(); }
 
     String scrollbarStateForOrientation(ScrollbarOrientation) const;
 

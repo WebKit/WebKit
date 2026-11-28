@@ -82,9 +82,9 @@ LocalFrame* DocumentPictureInPicture::openFrame() const
 // https://wicg.github.io/document-picture-in-picture/#dom-documentpictureinpicture-window
 WindowProxy* DocumentPictureInPicture::pictureInPictureWindow() const
 {
-    if (RefPtr frame = openFrame())
-        return &frame->windowProxy();
-    return nullptr;
+    if (!openFrame())
+        return nullptr;
+    return &m_lastOpenedFrame->windowProxy();
 }
 
 // https://html.spec.whatwg.org/multipage/document-sequences.html#close-a-top-level-traversable
