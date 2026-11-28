@@ -25,6 +25,7 @@ import os
 import re
 import time
 
+from webkitpy.api_tests.runner import suite_name
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
@@ -110,12 +111,11 @@ class DarwinPort(ApplePort):
 
         A test is blocklisted if:
         1. Its full name (BINARY.SUITE.TESTCASE) is in the blocklist, OR
-        2. Its suite prefix (BINARY.SUITE) is in the blocklist
+        2. Its suite (BINARY.SUITE) is in the blocklist
         The entry's configurations and version_specifiers are its gate, and its line_number is its line in the blocklist.
         """
         entries = self._blocklist_entries()
-        suite_prefix = '.'.join(test_name.split('.')[:-1])
-        return entries.get(test_name) or entries.get(suite_prefix)
+        return entries.get(test_name) or entries.get(suite_name(test_name))
 
     def filter_api_tests_by_blocklist(self, tests):
         """Split API tests into parallel and blocklisted (system shard) groups."""

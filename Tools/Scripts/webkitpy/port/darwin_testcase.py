@@ -137,6 +137,24 @@ class DarwinTest(port_testcase.PortTestCase):
         self.assertIsNone(port.is_test_blocklisted('TestIPC.Unlisted'))
         self.assertEqual(port.filter_api_tests_by_blocklist(['TestIPC.Gated', 'TestIPC.Unlisted']), (['TestIPC.Unlisted'], ['TestIPC.Gated']))
 
+    def test_api_test_blocklist_swift_testing_entries(self):
+        port = self.make_port()
+        blocklist_path = os.path.join(os.path.dirname(darwin_module.__file__), '..', 'api_tests', 'blocklist.txt')
+        port._filesystem.write_text_file(blocklist_path, '\n'.join([
+            'TestWebKitAPI.Outer/Inner',
+            'TestWebKitAPI.SwiftSuite',
+            'TestWebKitAPI.SwiftTests/blocked()',
+            '',
+        ]))
+
+        self.assertTrue(port.is_test_blocklisted('TestWebKitAPI.SwiftSuite/works()'))
+        self.assertTrue(port.is_test_blocklisted('TestWebKitAPI.SwiftSuite/works(argument:)'))
+        self.assertTrue(port.is_test_blocklisted('TestWebKitAPI.Outer/Inner/works()'))
+        self.assertTrue(port.is_test_blocklisted('TestWebKitAPI.SwiftTests/blocked()'))
+        self.assertFalse(port.is_test_blocklisted('TestWebKitAPI.SwiftTests/works()'))
+        self.assertFalse(port.is_test_blocklisted('TestWebKitAPI.Outer/works()'))
+        self.assertFalse(port.is_test_blocklisted('TestWebKitAPI.OtherSwiftSuite/works()'))
+
     def assert_name(self, port_name, os_version_string, expected):
         host = MockSystemHost(os_name=self.os_name, os_version=VersionNameMap.map().from_name(os_version_string)[1])
         port = self.make_port(host=host, port_name=port_name)

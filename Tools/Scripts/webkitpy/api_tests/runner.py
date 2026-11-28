@@ -48,6 +48,14 @@ class _NoisyOutputFilter(logging.Filter):
 _log.addFilter(_NoisyOutputFilter())
 
 
+def suite_name(test_name):
+    # GoogleTest names are BINARY.SUITE.TESTCASE, where SUITE and TESTCASE can contain slashes.
+    # Swift Testing names are BINARY.SUITE/test(), where nested suites are also separated by slashes.
+    if test_name.endswith(')'):
+        return test_name.rsplit('/', 1)[0]
+    return test_name.rsplit('.', 1)[0]
+
+
 def setup_shard(port=None, devices=None, log_limit=None):
     if devices and getattr(port, 'DEVICE_MANAGER', None):
         port.DEVICE_MANAGER.AVAILABLE_DEVICES = devices.get('available_devices', [])
@@ -157,14 +165,10 @@ class Runner(object):
         return args
 
     @staticmethod
-    def _suite_name(test):
-        return '.'.join(test.split('.')[:-1])
-
-    @staticmethod
     def _shard_tests(tests, fully_parallel):
         shards = {}
         for test in tests:
-            suite = Runner._suite_name(test)
+            suite = suite_name(test)
             if suite not in shards:
                 shards[suite] = []
             shards[suite].append(test)
@@ -293,8 +297,8 @@ class Runner(object):
             _log.info('Test-parallel-safety mode: no tests to check')
             return
 
-        checked_suites = {Runner._suite_name(test) for test in checked_tests}
-        background_chunks = Runner._parallel_safety_background_chunks([test for test in parallel_tests if Runner._suite_name(test) not in checked_suites], checked_tests)
+        checked_suites = {suite_name(test) for test in checked_tests}
+        background_chunks = Runner._parallel_safety_background_chunks([test for test in parallel_tests if suite_name(test) not in checked_suites], checked_tests)
         iterations = self.port.get_option('parallel_safety_iterations') or 1
         checked_workers = min(len(checked_tests), max(1, workers // 3))
         background_workers = min(len(background_chunks), workers - checked_workers)

@@ -7,12 +7,15 @@
 # Format: Both suite-level and test-level entries are supported:
 #   - BINARY.SUITE - blocklists all tests in the suite, including ones added later
 #   - BINARY.SUITE.TESTCASE - blocklists a specific test
+#   - BINARY.SUITE/testFunction() - blocklists a specific Swift Testing test
 #
 # A test is blocklisted if either:
-#   1. Its full name (BINARY.SUITE.TESTCASE) is in this list, OR
-#   2. Its suite prefix (BINARY.SUITE) is in this list
+#   1. Its full name is in this list, OR
+#   2. Its suite (BINARY.SUITE) is in this list
 #
 # SUITE can contain slashes for parametrized tests (e.g., WTF_Int128IntegerConversionTest/0)
+# and nested Swift Testing suites (e.g., OuterSuite/InnerSuite). A Swift Testing suite entry
+# does not cover the suites nested in it.
 #
 # Optional configuration gate: prefix a line with a bracketed token list to
 # restrict the entry to a subset of ports. Recognized tokens include platform

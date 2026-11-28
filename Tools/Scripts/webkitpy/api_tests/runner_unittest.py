@@ -25,7 +25,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result, run_background_load, run_parallel_safety_iterations, run_shard
+from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result, run_background_load, run_parallel_safety_iterations, run_shard, suite_name
 from webkitpy.common.program_status import ProgramStatus
 from webkitpy.common.program_status_mock import TTYStringIO, encoded
 
@@ -51,6 +51,37 @@ class RunnerTest(unittest.TestCase):
     def test_is_disabled_test_allows_enabled_test(self):
         self.assertFalse(Runner._is_disabled_test(
             "TestWebKitAPI.SiteIsolation.LoadingCallbacksAndPostMessage"))
+
+    def test_is_disabled_test_allows_swift_test(self):
+        self.assertFalse(Runner._is_disabled_test('TestWebKitAPI.SwiftSuite/works()'))
+
+    def test_suite_name(self):
+        self.assertEqual(suite_name('TestWebKitAPI.WebKit.A'), 'TestWebKitAPI.WebKit')
+        self.assertEqual(suite_name('TestWTF.WTF_Int128IntegerConversionTest/0.Basic'), 'TestWTF.WTF_Int128IntegerConversionTest/0')
+        self.assertEqual(suite_name('TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAsync/ClientIsA'), 'TestIPC.ConnectionTest/ConnectionRunLoopTest')
+        self.assertEqual(suite_name('TestWebKitAPI.SwiftSuite/works()'), 'TestWebKitAPI.SwiftSuite')
+        self.assertEqual(suite_name('TestWebKitAPI.SwiftSuite/works(inset:expectHit:)'), 'TestWebKitAPI.SwiftSuite')
+        self.assertEqual(suite_name('TestWebKitAPI.Outer/Inner/works()'), 'TestWebKitAPI.Outer/Inner')
+
+    def test_shard_tests_groups_tests_by_suite(self):
+        tests = [
+            'TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAsync/ClientIsA',
+            'TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAsync/ServerIsA',
+            'TestWebKitAPI.Outer/Inner/works()',
+            'TestWebKitAPI.Outer/works()',
+            'TestWebKitAPI.SwiftSuite/works()',
+            'TestWebKitAPI.SwiftSuite/works(argument:)',
+            'TestWebKitAPI.OtherSwiftSuite/works()',
+            'TestWebKitAPI.WebKit.A',
+        ]
+        self.assertEqual(Runner._shard_tests(tests, False), {
+            'TestIPC.ConnectionTest/ConnectionRunLoopTest': tests[0:2],
+            'TestWebKitAPI.Outer/Inner': ['TestWebKitAPI.Outer/Inner/works()'],
+            'TestWebKitAPI.Outer': ['TestWebKitAPI.Outer/works()'],
+            'TestWebKitAPI.SwiftSuite': tests[4:6],
+            'TestWebKitAPI.OtherSwiftSuite': ['TestWebKitAPI.OtherSwiftSuite/works()'],
+            'TestWebKitAPI.WebKit': ['TestWebKitAPI.WebKit.A'],
+        })
 
     def test_chunk_shards_splits_large_shards(self):
         shards = {
@@ -121,6 +152,18 @@ class RunnerRunTest(unittest.TestCase):
         background_tests = sorted(test for call in background_calls for _, tests in call.args[1] for test in tests)
         self.assertEqual(background_tests, ['TestWebKitAPI.WebKit.A', 'TestWebKitAPI.WebKit.B'])
         self.assertEqual(task_pool.call_args.kwargs['workers'], 2 + len(background_calls))
+
+    def test_parallel_safety_leaves_only_the_checked_swift_suite_out_of_the_background(self):
+        self.PARALLEL = [
+            'TestWebKitAPI.SwiftSuite/target()',
+            'TestWebKitAPI.SwiftSuite/other()',
+            'TestWebKitAPI.OtherSwiftSuite/works()',
+            'TestWebKitAPI.WebKit.A',
+        ]
+        task_pool = self._run(['TestWebKitAPI.SwiftSuite/target()'])
+
+        background_tests = sorted(test for call in self._calls(task_pool, run_background_load) for _, tests in call.args[1] for test in tests)
+        self.assertEqual(background_tests, ['TestWebKitAPI.OtherSwiftSuite/works()', 'TestWebKitAPI.WebKit.A'])
 
     def test_parallel_safety_checks_a_blocklisted_test(self):
         task_pool = self._run(['TestWebKitAPI.System.Target'], iterations=1)

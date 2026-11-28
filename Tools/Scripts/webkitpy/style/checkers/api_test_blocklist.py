@@ -24,6 +24,7 @@ import re
 
 from webkitexpectationspy.parser import ExpectationParser
 from webkitexpectationspy.suites.api_tests import APITestSuite
+from webkitpy.api_tests.runner import suite_name
 from webkitpy.style.checkers.common import TabChecker
 
 # Valid entry format: BINARY.SUITE or BINARY.SUITE.TESTCASE
@@ -79,7 +80,7 @@ class APITestBlocklistChecker(object):
         seen = set()
         previous_pattern_by_gate = {}
         for line_number, entry_text, gate, pattern in entries:
-            suite_key = pattern.rsplit('.', 1)[0]
+            suite_key = suite_name(pattern)
             covering_entries = [listed[key] for key in [(_UNGATED, pattern), (_UNGATED, suite_key), (gate, suite_key)] if key != (gate, pattern) and key in listed]
             if (gate, pattern) in seen:
                 self.handle_style_error(line_number, 'api-test-blocklist/duplicate', 5, f"Duplicate entry: '{entry_text}'")

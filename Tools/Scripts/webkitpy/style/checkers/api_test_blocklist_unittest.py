@@ -88,6 +88,20 @@ TestWTF.WTF_Lock.Basic
 [ mac ] TestIPC.Suite.test
 '''))
 
+    def test_redundant_swift_testing_entries(self):
+        self.assertEqual([
+            (6, 'api-test-blocklist/redundant', 5, "Redundant entry: 'TestWebKitAPI.SwiftSuite/works()' ('TestWebKitAPI.SwiftSuite' already covers it)"),
+            (7, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ ios ] TestWebKitAPI.Outer/Inner/works()' ('TestWebKitAPI.Outer/Inner' already covers it)"),
+        ], self.check('''\
+TestIPC.ConnectionTest
+TestIPC.ConnectionTest/ConnectionRunLoopTest
+TestWebKitAPI.Outer
+TestWebKitAPI.Outer/Inner
+TestWebKitAPI.SwiftSuite
+TestWebKitAPI.SwiftSuite/works()
+[ ios ] TestWebKitAPI.Outer/Inner/works()
+'''))
+
     def test_redundant_before_covering_entry(self):
         self.assertEqual([
             (1, 'api-test-blocklist/redundant', 5, "Redundant entry: '[ ios ] TestWTF.WTF_Lock.Basic' ('TestWTF.WTF_Lock' already covers it)"),
