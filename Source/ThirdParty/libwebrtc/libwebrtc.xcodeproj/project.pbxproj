@@ -2037,7 +2037,7 @@
 		416B0A1D2A3C7FDE0017367B /* video_render_frames.cc in Sources */ = {isa = PBXBuildFile; fileRef = 416B0A192A3C7FDD0017367B /* video_render_frames.cc */; };
 		416B0A1E2A3C7FDE0017367B /* incoming_video_stream.h in Headers */ = {isa = PBXBuildFile; fileRef = 416B0A1A2A3C7FDE0017367B /* incoming_video_stream.h */; };
 		416B0A1F2A3C7FDE0017367B /* incoming_video_stream.cc in Sources */ = {isa = PBXBuildFile; fileRef = 416B0A1B2A3C7FDE0017367B /* incoming_video_stream.cc */; };
-		416B0A222A3C80280017367B /* i410_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 416B0A202A3C80280017367B /* i410_buffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		416B0A222A3C80280017367B /* i410_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 416B0A202A3C80280017367B /* i410_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		416B0A232A3C80280017367B /* i410_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 416B0A212A3C80280017367B /* i410_buffer.cc */; };
 		416B0A2B2A3C805E0017367B /* video_encoder_config.cc in Sources */ = {isa = PBXBuildFile; fileRef = 416B0A252A3C805D0017367B /* video_encoder_config.cc */; };
 		416B0A2C2A3C805E0017367B /* encoder_stream_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 416B0A262A3C805D0017367B /* encoder_stream_factory.h */; };

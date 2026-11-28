@@ -36,8 +36,10 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/video/i010_buffer.h>
 #include <webrtc/api/video/i210_buffer.h>
+#include <webrtc/api/video/i410_buffer.h>
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/api/video/i422_buffer.h>
+#include <webrtc/api/video/i444_buffer.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 using WebCore::ComputedPlaneLayout;
@@ -94,14 +96,14 @@ static std::optional<Vector<uint8_t>> copyToPlanarBuffer(VideoFrame& frame, Vide
 }
 
 template<typename Buffer>
-static void expectPlanes(const std::optional<Vector<uint8_t>>& destination, VideoPixelFormat format, const Buffer& buffer, int chromaHeight, size_t destinationSampleSize, unsigned shift)
+static void expectPlanes(const std::optional<Vector<uint8_t>>& destination, VideoPixelFormat format, const Buffer& buffer, int chromaHeight, size_t destinationSampleSize, unsigned shift, int chromaPlaneWidth = chromaWidth)
 {
     ASSERT_TRUE(destination);
     auto layouts = VideoFrame::planarBufferLayout({ frameWidth, frameHeight }, format);
     ASSERT_EQ(layouts.size(), 3u);
     expectPlane(destination->span(), layouts[0], buffer.DataY(), buffer.StrideY(), frameWidth, frameHeight, destinationSampleSize, shift);
-    expectPlane(destination->span(), layouts[1], buffer.DataU(), buffer.StrideU(), chromaWidth, chromaHeight, destinationSampleSize, shift);
-    expectPlane(destination->span(), layouts[2], buffer.DataV(), buffer.StrideV(), chromaWidth, chromaHeight, destinationSampleSize, shift);
+    expectPlane(destination->span(), layouts[1], buffer.DataU(), buffer.StrideU(), chromaPlaneWidth, chromaHeight, destinationSampleSize, shift);
+    expectPlane(destination->span(), layouts[2], buffer.DataV(), buffer.StrideV(), chromaPlaneWidth, chromaHeight, destinationSampleSize, shift);
 }
 
 TEST(VideoFrameLibWebRTC, CopyI420)
@@ -138,7 +140,7 @@ TEST(VideoFrameLibWebRTC, CopyI422)
     fillPlane(buffer->MutableDataV(), buffer->StrideV(), chromaWidth, frameHeight, 6, 255);
     RefPtr frame = createFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer> { buffer });
     ASSERT_TRUE(frame);
-    EXPECT_EQ(frame->pixelFormat(), static_cast<uint32_t>(kCVPixelFormatType_422YpCbCr8BiPlanarFullRange));
+    EXPECT_EQ(frame->pixelFormat(), static_cast<uint32_t>(kCVPixelFormatType_422YpCbCr8BiPlanarVideoRange));
 
     expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I422), VideoPixelFormat::I422, *buffer, frameHeight, 1, 0);
     // 4:2:2 is not downsampled to 4:2:0.
@@ -157,6 +159,36 @@ TEST(VideoFrameLibWebRTC, CopyI210)
     expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I422P10), VideoPixelFormat::I422P10, *buffer, frameHeight, 2, 0);
     // 4:2:2 is not downsampled to 4:2:0.
     EXPECT_FALSE(copyToPlanarBuffer(*frame, VideoPixelFormat::I420).has_value());
+}
+
+TEST(VideoFrameLibWebRTC, CopyI444)
+{
+    auto buffer = webrtc::I444Buffer::Create(frameWidth, frameHeight);
+    fillPlane(buffer->MutableDataY(), buffer->StrideY(), frameWidth, frameHeight, 7, 255);
+    fillPlane(buffer->MutableDataU(), buffer->StrideU(), frameWidth, frameHeight, 8, 255);
+    fillPlane(buffer->MutableDataV(), buffer->StrideV(), frameWidth, frameHeight, 9, 255);
+    RefPtr frame = createFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer> { buffer });
+    ASSERT_TRUE(frame);
+    EXPECT_EQ(frame->pixelFormat(), static_cast<uint32_t>(kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange));
+
+    expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I444), VideoPixelFormat::I444, *buffer, frameHeight, 1, 0, frameWidth);
+    // 4:4:4 is not downsampled.
+    EXPECT_FALSE(copyToPlanarBuffer(*frame, VideoPixelFormat::I422).has_value());
+}
+
+TEST(VideoFrameLibWebRTC, CopyI410)
+{
+    auto buffer = webrtc::I410Buffer::Create(frameWidth, frameHeight);
+    fillPlane(buffer->MutableDataY(), buffer->StrideY(), frameWidth, frameHeight, 800, 1023);
+    fillPlane(buffer->MutableDataU(), buffer->StrideU(), frameWidth, frameHeight, 400, 1023);
+    fillPlane(buffer->MutableDataV(), buffer->StrideV(), frameWidth, frameHeight, 20, 1023);
+    RefPtr frame = createFrame(webrtc::scoped_refptr<webrtc::VideoFrameBuffer> { buffer });
+    ASSERT_TRUE(frame);
+    EXPECT_EQ(frame->pixelFormat(), static_cast<uint32_t>(kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange));
+
+    expectPlanes(copyToPlanarBuffer(*frame, VideoPixelFormat::I444P10), VideoPixelFormat::I444P10, *buffer, frameHeight, 2, 0, frameWidth);
+    // 10-bit samples are not narrowed to 8 bits.
+    EXPECT_FALSE(copyToPlanarBuffer(*frame, VideoPixelFormat::I444).has_value());
 }
 
 template<typename Buffer>

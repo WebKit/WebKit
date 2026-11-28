@@ -2179,6 +2179,44 @@ TEST(MediaSamplesDecoder, DecodeVP9Profile3)
     for (auto& frame : decoded.frames)
         expectTenBitLSBSamples(frame);
 }
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile1YUV444)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    testDecodeVP9(@"test-vp9-yuv444p", VideoPixelFormat::I444, 8, FloatSize(128, 96), 128 * 96 * 3);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile3YUV444)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto decoded = testDecodeVP9(@"test-vp9-yuv444p10", VideoPixelFormat::I444P10, 10, FloatSize(128, 96), 128 * 96 * 3 * 2);
+    for (auto& frame : decoded.frames)
+        expectTenBitLSBSamples(frame);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile1YUV444WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-444");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I444A);
+}
+
+TEST(MediaSamplesDecoder, DecodeVP9Profile3YUV444WithAlpha)
+{
+    if (!isVPXDecodingAvailable())
+        GTEST_SKIP() << "VPx software decoding is not available";
+
+    auto blocks = parseWebMVP9File(@"video-with-alpha-444-10bit");
+    ScopedVP9HardwareDecoder noHardwareDecoder { false };
+    testDecodeAlphaStripes(WTF::move(blocks), VideoPixelFormat::I444AP10);
+}
 #endif
 
 } // namespace TestWebKitAPI
