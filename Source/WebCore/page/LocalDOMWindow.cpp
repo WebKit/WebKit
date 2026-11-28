@@ -1932,6 +1932,8 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
         view->contentsScrollPosition().x(), view->contentsScrollPosition().y()
     );
 
+    view->cancelScheduledScrolls();
+
     // This is an optimization for the common case of scrolling to (0, 0) when the scroller is already at the origin.
     // If an animated scroll is in progress, this optimization is skipped to ensure that the animated scroll is really stopped.
     if (view->scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating && !scrollToOptions.left.value() && !scrollToOptions.top.value() && view->contentsScrollPosition().isZero()) {
@@ -1939,7 +1941,6 @@ void LocalDOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping cla
         return;
     }
 
-    view->cancelScheduledScrolls();
     protect(document())->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     IntPoint layoutPos(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
