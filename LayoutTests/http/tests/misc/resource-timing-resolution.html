@@ -15,9 +15,8 @@ document.write("<img src='" + url + "'>");
 
 var t0, t1, shouldBeNearZeroOrOne;
 window.addEventListener("load", function() {
-    var entries = performance.getEntries();
-    t0 = entries[0].fetchStart;
-    t1 = entries[1].fetchStart;
+    t0 = performance.getEntriesByType("navigation")[0].fetchStart;
+    t1 = performance.getEntriesByType("resource")[0].fetchStart;
 
     var expectedResolutionMilliseconds = 0.005;
     var integerMultipleOfResolution = (t1 - t0) / expectedResolutionMilliseconds;

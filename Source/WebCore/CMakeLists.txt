@@ -1528,6 +1528,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/UndoItem.idl
     page/UndoManager.idl
     page/Viewport.idl
+    page/VisibilityStateEntry.idl
     page/VisualViewport.idl
     page/WebKitBuffer.idl
     page/WebKitBufferNamespace.idl

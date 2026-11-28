@@ -811,16 +811,16 @@ PASS CustomStateSet interface: existence and properties of interface prototype o
 PASS CustomStateSet interface: existence and properties of interface prototype object's "constructor" property
 PASS CustomStateSet interface: existence and properties of interface prototype object's @@unscopables property
 PASS CustomStateSet interface: setlike<DOMString>
-FAIL VisibilityStateEntry interface: existence and properties of interface object assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface object length assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface object name assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: existence and properties of interface prototype object assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: attribute name assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: attribute entryType assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: attribute startTime assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
-FAIL VisibilityStateEntry interface: attribute duration assert_own_property: self does not have own property "VisibilityStateEntry" expected property "VisibilityStateEntry" missing
+PASS VisibilityStateEntry interface: existence and properties of interface object
+PASS VisibilityStateEntry interface object length
+PASS VisibilityStateEntry interface object name
+PASS VisibilityStateEntry interface: existence and properties of interface prototype object
+PASS VisibilityStateEntry interface: existence and properties of interface prototype object's "constructor" property
+PASS VisibilityStateEntry interface: existence and properties of interface prototype object's @@unscopables property
+FAIL VisibilityStateEntry interface: attribute name assert_own_property: expected property "name" missing
+FAIL VisibilityStateEntry interface: attribute entryType assert_own_property: expected property "entryType" missing
+FAIL VisibilityStateEntry interface: attribute startTime assert_own_property: expected property "startTime" missing
+FAIL VisibilityStateEntry interface: attribute duration assert_own_property: expected property "duration" missing
 PASS UserActivation interface: existence and properties of interface object
 PASS UserActivation interface object length
 PASS UserActivation interface object name
