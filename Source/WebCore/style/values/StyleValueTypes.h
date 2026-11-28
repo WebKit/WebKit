@@ -282,11 +282,6 @@ template<typename To, typename From, typename... Rest> auto toStyleOnTupleLike(c
     return WTF::apply([&](const auto& ...x) { return To { toStyle(x, rest...)... }; }, tupleLike);
 }
 
-template<typename To, typename From, typename... Rest> auto toStyleNoConversionDataRequiredOnTupleLike(const From& tupleLike, Rest&&... rest) -> To
-{
-    return WTF::apply([&](const auto& ...x) { return To { toStyleNoConversionDataRequired(x, rest...)... }; }, tupleLike);
-}
-
 template<typename CSSType> using StyleType = std::decay_t<decltype(toStyle(std::declval<const CSSType&>(), std::declval<const BuilderState&>()))>;
 
 // Standard NonConverting type mappings (identity mappings):
@@ -884,9 +879,6 @@ template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIter
 };
 template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithComputedStyle = requires {
     { Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Style::ComputedStyle&>(), std::declval<const Style::ComputedStyle&>()) } -> std::same_as<bool>;
-};
-template<typename StyleType> concept HasBlendWithoutComputedStyleAndWithInterpolationContext = requires {
-    { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Interpolation::Context&>()) } -> std::same_as<StyleType>;
 };
 template<typename StyleType> concept HasBlendWithoutComputedStyleAndWithBlendingContext = requires {
     { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const BlendingContext&>()) } -> std::same_as<StyleType>;

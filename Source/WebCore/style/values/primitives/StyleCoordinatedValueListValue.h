@@ -253,13 +253,6 @@ constexpr bool allOfCoordinatedValueListProperties(NOESCAPE const F& f)
     return WTF::apply([&]<typename... Ts>(const Ts& ...) { return (f.template operator()<Ts::value>() && ...); }, T::properties);
 }
 
-// Applies the provided functor to each property of the CoordinatedValueList value, invoking the functor with each properties CSSPropertyID as the first template argument, and then or'ing the results.
-template<CoordinatedValueListValue T, typename F>
-constexpr bool anyOfCoordinatedValueListProperties(NOESCAPE const F& f)
-{
-    return WTF::apply([&]<typename... Ts>(const Ts& ...) { return (f.template operator()<Ts::value>() || ...); }, T::properties);
-}
-
 // Applies the provided functor to each property of the CoordinatedValueList value, invoking the functor with each properties CSSPropertyID as the first template argument.
 template<CoordinatedValueListValue T, typename F>
 constexpr void eachCoordinatedValueListProperties(NOESCAPE const F& f)
