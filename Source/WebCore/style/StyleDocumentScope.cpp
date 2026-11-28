@@ -407,40 +407,65 @@ bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContex
 
     Vector<CheckedRef<Element>> anchoredElementsToInvalidate;
 
-    if (m_document->renderView()->anchors().computeIsEmpty())
-        return false;
-
-    auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);
-
-    auto makeAnchorPosition = [&](const RenderBoxModelObject& anchorRenderer) {
-        AnchorPosition result;
-        result.absoluteRect = anchorRenderer.absoluteBoundingBoxRect();
-        // Include containing block sizes as anchor function insets may be computed against any side and if they change
-        // we need to invalidate.
-        for (CheckedPtr containingBlock = anchorRenderer.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
-            if (containingBlock->canContainAbsolutelyPositionedObjects())
-                result.containingBlockSizes.append(containingBlock->contentBoxSize());
+    // Flag anchor-positioned elements whose anchor box vanished (removed, display: none) or whose containing block changed.
+    // A vanished anchor is no longer in anchors(), so check from the positioned side.
+    for (auto [anchorPositionedRenderer, entry] : m_anchorPositionedToAnchorMap) {
+        bool lostAnchor = false;
+        for (auto& anchor : entry.anchors) {
+            if (anchor.hadRenderer && !anchor.renderer) {
+                anchor.hadRenderer = false;
+                lostAnchor = true;
+            }
         }
-        return result;
-    };
-
-    for (CheckedRef anchorRenderer : m_document->renderView()->anchors()) {
-        auto anchorPosition = makeAnchorPosition(anchorRenderer);
-        m_anchorPositionsOnLastUpdate.add(anchorRenderer, anchorPosition);
-
-        auto it = previousAnchorPositions.find(anchorRenderer);
-        bool changed = it == previousAnchorPositions.end() || it->value != anchorPosition;
-        if (!changed)
+        CheckedPtr containingBlock = protect(anchorPositionedRenderer)->containingBlock();
+        bool changedContainingBlock = entry.containingBlock.get() != containingBlock.get();
+        if (!lostAnchor && !changedContainingBlock)
             continue;
+        entry.containingBlock = containingBlock.get();
 
-        auto anchoredElements = anchorMap.getOptional(anchorRenderer);
-        if (!anchoredElements)
+        auto anchorPositioned = Styleable::fromRenderer(protect(anchorPositionedRenderer));
+        if (!anchorPositioned)
             continue;
+        RefPtr element = anchorPositioned->element.ptr();
+        if (anchorPositioned->pseudoElementIdentifier)
+            element = element->pseudoElementIfExists(*anchorPositioned->pseudoElementIdentifier);
+        if (element && context.invalidatedAnchorPositioned.add(*element).isNewEntry)
+            anchoredElementsToInvalidate.append(*element);
+    }
 
-        for (auto& anchoredElement : *anchoredElements) {
-            if (!context.invalidatedAnchorPositioned.add(anchoredElement.get()).isNewEntry)
+    if (!m_document->renderView()->anchors().computeIsEmpty()) {
+        auto anchorMap = AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(m_anchorPositionedToAnchorMap);
+
+        auto makeAnchorPosition = [&](const RenderBoxModelObject& anchorRenderer) {
+            AnchorPosition result;
+            result.absoluteRect = anchorRenderer.absoluteBoundingBoxRect();
+            // Include containing block sizes as anchor function insets may be computed against any side and if they change
+            // we need to invalidate.
+            for (CheckedPtr containingBlock = anchorRenderer.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {
+                if (containingBlock->canContainAbsolutelyPositionedObjects())
+                    result.containingBlockSizes.append(containingBlock->contentBoxSize());
+            }
+            return result;
+        };
+
+        for (CheckedRef anchorRenderer : m_document->renderView()->anchors()) {
+            auto anchorPosition = makeAnchorPosition(anchorRenderer);
+            m_anchorPositionsOnLastUpdate.add(anchorRenderer, anchorPosition);
+
+            auto it = previousAnchorPositions.find(anchorRenderer);
+            bool changed = it == previousAnchorPositions.end() || it->value != anchorPosition;
+            if (!changed)
                 continue;
-            anchoredElementsToInvalidate.append(anchoredElement);
+
+            auto anchoredElements = anchorMap.getOptional(anchorRenderer);
+            if (!anchoredElements)
+                continue;
+
+            for (auto& anchoredElement : *anchoredElements) {
+                if (!context.invalidatedAnchorPositioned.add(anchoredElement.get()).isNewEntry)
+                    continue;
+                anchoredElementsToInvalidate.append(anchoredElement);
+            }
         }
     }
 

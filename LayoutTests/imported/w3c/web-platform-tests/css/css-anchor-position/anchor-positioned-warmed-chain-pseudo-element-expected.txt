@@ -1,0 +1,6 @@
+
+PASS Initial chain
+PASS First anchor moved: the chain follows
+PASS First anchor removed: fallback is used along the chain
+PASS First anchor inserted again: the chain is anchored again
+

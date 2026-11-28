@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>CSS Anchor Positioning Test: position-visibility: no-overflow follows containing block resizes</title>
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#position-visibility">
+<link rel="match" href="position-visibility-no-overflow-containing-block-resize-ref.html">
+<meta name="assert" content="A non-anchored out-of-flow element with position-visibility: no-overflow follows containing block resizes while its own style is unchanged.">
+<script src="/common/reftest-wait.js"></script>
+<script src="/common/rendering-utils.js"></script>
+<style>
+  body { margin: 8px; }
+  #container { position: relative; width: 400px; height: 150px; }
+  #target {
+    position: absolute;
+    position-visibility: no-overflow;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 200px;
+    background: green;
+  }
+  #unrelated { position: absolute; left: 300px; top: 0; width: 50px; height: 50px; background-color: rgb(0, 128, 0); }
+</style>
+<div id="container"><div id="target"></div></div>
+<div id="unrelated"></div>
+<script>
+async function unrelatedStyleChanges() {
+  for (let i = 0; i < 3; ++i) {
+    unrelated.style.backgroundColor = i % 2 ? "rgb(0, 128, 0)" : "rgb(0, 100, 0)";
+    await waitForAtLeastOneFrame();
+  }
+  unrelated.style.backgroundColor = "rgb(0, 128, 0)";
+  await waitForAtLeastOneFrame();
+}
+async function run() {
+  await waitForAtLeastOneFrame();
+  // 150px: target (200px) overflows and is hidden. 250px: fits and is visible. Then back and forth.
+  for (const height of ["250px", "150px", "250px"]) {
+    await unrelatedStyleChanges();
+    container.style.height = height;
+    await waitForAtLeastOneFrame();
+  }
+  takeScreenshot();
+}
+run();
+</script>
+</html>
