@@ -234,7 +234,7 @@ private:
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const Latin1Character>, TextDirection, ExpansionBehavior);
-    NODELETE static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
+    static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
 
     friend struct WidthIterator;
     friend class ComplexTextController;

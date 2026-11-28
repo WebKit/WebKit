@@ -3844,7 +3844,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/
 # <rdar://problem/50383285>
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/writing-system/writing-system-line-break-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-003.html [ ImageOnlyFailure ]

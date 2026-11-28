@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Text Test: justification of emoji ZWJ sequences separated by a space</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#justification-opportunity">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#text-align-last-property">
+<link rel="match" href="reference/text-justify-emoji-zwj-sequence-ref.html">
+<meta name="assert" content="A justified line containing two emoji ZWJ sequences separated by a space places the first sequence at the start edge and the second at the end edge, without expanding inside either sequence.">
+<style>
+div {
+  width: 300px;
+  font: 32px/1 sans-serif;
+  text-align-last: justify;
+}
+</style>
+<div>&#x1F635;&#x200D;&#x1F4AB; &#x1F635;&#x200D;&#x1F4AB;</div>
