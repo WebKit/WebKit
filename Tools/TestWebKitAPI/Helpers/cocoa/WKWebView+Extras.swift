@@ -387,3 +387,74 @@ extension TestNavigationDelegate {
         return heldDecisionHandler
     }
 }
+
+// MARK: Script messages
+
+/// A script message handler that records each message posted to it, so that a test can wait for them in order.
+///
+/// The recorder keeps messages that arrive before a test waits for them, so a test can start a load or script that
+/// posts a message, and then wait for it. A user content controller holds its script message handlers strongly, so the
+/// recorder lives as long as the configuration it was added to.
+@MainActor
+public final class ScriptMessageRecorder: NSObject, WKScriptMessageHandler {
+    private var messages: [WKScriptMessage] = []
+
+    /// Creates a recorder that isn't yet registered with a user content controller.
+    ///
+    /// Register it with `WKUserContentController.add(_:name:)`.
+    public override init() {
+        super.init()
+    }
+
+    /// Creates a recorder and registers it as a script message handler of a configuration.
+    ///
+    /// - Parameters:
+    ///   - configuration: The configuration whose user content controller receives the recorder.
+    ///   - name: The name JavaScript uses to reach the handler, as in `webkit.messageHandlers.<name>.postMessage()`.
+    public convenience init(addingTo configuration: WKWebViewConfiguration, name: String = "testHandler") {
+        self.init()
+        configuration.userContentController.add(self, name: name)
+    }
+
+    /// The messages that have been received but not yet returned by ``nextMessage(timeout:)``, in order.
+    ///
+    /// Use this to check that no other message was posted, or to wait for one of several outcomes.
+    public var pendingMessages: [WKScriptMessage] {
+        messages
+    }
+
+    /// Waits for the next message, if it hasn't already been received.
+    ///
+    /// - Parameter timeout: How long to wait for the message.
+    /// - Returns: The message.
+    /// - Throws: ``ConditionTimedOut`` if no message is received before the timeout.
+    public func nextMessage(timeout: Duration = .seconds(10)) async throws -> WKScriptMessage {
+        try await waitForCondition("a script message", timeout: timeout) {
+            !messages.isEmpty
+        }
+        return messages.removeFirst()
+    }
+
+    /// Waits for the next message, and returns its body as a string.
+    ///
+    /// - Parameter timeout: How long to wait for the message.
+    /// - Returns: The body of the message.
+    /// - Throws: ``ConditionTimedOut`` if no message is received before the timeout, or
+    ///   ``UnexpectedJavaScriptResult`` if the body of the message isn't a string.
+    public func nextStringMessage(timeout: Duration = .seconds(10)) async throws -> String {
+        let message = try await nextMessage(timeout: timeout)
+        guard let body = message.body as? String else {
+            throw UnexpectedJavaScriptResult(
+                script: "webkit.messageHandlers.\(message.name).postMessage(...)",
+                expectedType: "String",
+                actualValue: "\(message.body)"
+            )
+        }
+        return body
+    }
+
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        messages.append(message)
+    }
+}

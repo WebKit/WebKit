@@ -776,6 +776,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+JavaScriptExpression.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPageConfiguration+Extras.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebsiteDataStoreTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WKWebView+Extras.swift
 
     ${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm
@@ -824,6 +825,8 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
     Tests/WebKit/WKWebView/ImageServicesMenuTests.swift
+    Tests/WebKit/WKWebView/IndexedDBDatabaseProcessKill.swift
+    Tests/WebKit/WKWebView/IndexedDBMultiProcess.swift
     Tests/WebKit/WKWebView/LayoutModeTests.swift
     Tests/WebKit/WKWebView/NavigationResponseProcessSwapTests.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
@@ -906,6 +909,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebViewHitTestTests.swift
     Tests/WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift
     Tests/WebKit/WKWebView/WebAutomationWebExtensionPages.swift
+    Tests/WebKit/WKWebView/WebProcessKillIDBCleanup.swift
 
     Tests/WebKit/WebPage/ControlledByExternalAgent.swift
     Tests/WebKit/WebPage/EditingFontSizeTests.swift
