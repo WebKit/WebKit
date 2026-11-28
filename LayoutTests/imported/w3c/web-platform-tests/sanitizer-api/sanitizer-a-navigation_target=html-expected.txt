@@ -1,0 +1,31 @@
+
+Harness Error (FAIL), message = Test named '[SAFE] [setHTML] HTML <a> with href (STANDARD)' specified 2 'cleanup' functions, and 1 failed.
+
+FAIL [SAFE] [setHTML] HTML <a> with href (STANDARD) promise_test: Unhandled rejection with value: object "TypeError: container.setHTML is not a function. (In 'container.setHTML(rawHTML)', 'container.setHTML' is undefined)"
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (STANDARD)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (STANDARD)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (CASE_MIXED)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (CASE_MIXED)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (CASE_MIXED)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (TAB_ENTITY)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (TAB_ENTITY)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (TAB_ENTITY)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (NEWLINE_ENTITY)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (NEWLINE_ENTITY)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (NEWLINE_ENTITY)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (COLON_ENTITY)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (COLON_ENTITY)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (COLON_ENTITY)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (LEADING_WHITESPACE)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (LEADING_WHITESPACE)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (LEADING_WHITESPACE)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (TAB_RAW)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (TAB_RAW)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (TAB_RAW)
+NOTRUN [SAFE] [setHTML] HTML <a> with href (NEWLINE_RAW)
+NOTRUN [SAFE] [ShadowRoot.setHTML] HTML <a> with href (NEWLINE_RAW)
+NOTRUN [SAFE] [parseHTML] HTML <a> with href (NEWLINE_RAW)
+NOTRUN [UNSAFE] [setHTMLUnsafe] HTML <a> with href
+NOTRUN [UNSAFE] [ShadowRoot.setHTMLUnsafe] HTML <a> with href
+NOTRUN [UNSAFE] [parseHTMLUnsafe] HTML <a> with href
+

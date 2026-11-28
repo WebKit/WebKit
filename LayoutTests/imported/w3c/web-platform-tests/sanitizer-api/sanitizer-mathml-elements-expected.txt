@@ -1,0 +1,86 @@
+
+FAIL Element.setHTML [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>"
+PASS Document.parseHTMLUnsafe [all] #0, "<math><a href="https://example.com" hreflang="en" type="text/html">MathML Link</a></math>"
+FAIL Element.setHTML [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>"
+PASS Document.parseHTMLUnsafe [all] #1, "<math><mo fence="true" form="prefix" largeop="true" lspace="1em" maxsize="100%" minsize="10%" movablelimits="true" rspace="1em" separator="true" stretchy="true" symmetric="true">+</mo></math>"
+FAIL Element.setHTML [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>"
+PASS Document.parseHTMLUnsafe [all] #2, "<math><mover accent="true"><mi>x</mi><mo>-</mo></mover></math>"
+FAIL Element.setHTML [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>"
+PASS Document.parseHTMLUnsafe [all] #3, "<math><mpadded depth="1px" height="2px" lspace="3px" voffset="4px" width="5px"><mi>x</mi></mpadded></math>"
+FAIL Element.setHTML [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>"
+PASS Document.parseHTMLUnsafe [all] #4, "<math><mspace depth="1px" height="2px" width="3px"></mspace></math>"
+FAIL Element.setHTML [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>"
+PASS Document.parseHTMLUnsafe [all] #5, "<math><mtable><mtr><mtd columnspan="2" rowspan="2"><mi>x</mi></mtd></mtr></mtable></math>"
+FAIL Element.setHTML [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>"
+PASS Document.parseHTMLUnsafe [all] #6, "<math><munder accentunder="true"><mi>x</mi><mo>→</mo></munder></math>"
+FAIL Element.setHTML [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>"
+PASS Document.parseHTMLUnsafe [all] #7, "<math><munderover accent="true" accentunder="true"><mi>x</mi><mo>‾</mo><mo>‾</mo></munderover></math>"
+FAIL Element.setHTML [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>"
+PASS ShadowRoot.setHTMLUnsafe [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>"
+PASS Document.parseHTMLUnsafe [all] #8, "<math><merror><mfrac><mmultiscripts><mn>1</mn><mprescripts/><mroot><mrow><ms>s</ms></mrow><mphantom><msqrt><mstyle><msub><msubsup><msup><mtext>t</mtext></msup></msub></mstyle></msqrt></mphantom></mroot></mmultiscripts></mfrac></merror></math>"
+FAIL Element.setHTML [safe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [safe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [safe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+FAIL Element.setHTML [safe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [safe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [safe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+FAIL Element.setHTML [safe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [safe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [safe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+FAIL Element.setHTML [safe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [safe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [safe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+FAIL Element.setHTML [safe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>" div.setHTML is not a function. (In 'div.setHTML(testcase.data)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML [safe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data)', 'shadowRoot.setHTML' is undefined)
+FAIL Document.parseHTML [safe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>" Document.parseHTML is not a function. (In 'Document.parseHTML("<body>" + testcase.data)', 'Document.parseHTML' is undefined)
+PASS Element.setHTMLUnsafe [unsafe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>"
+PASS ShadowRoot.setHTMLUnsafe [unsafe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>"
+PASS Document.parseHTMLUnsafe [unsafe] #0, "<math><a xlink:href="https://example.com">xlink Link</a></math>"
+PASS Element.setHTMLUnsafe [unsafe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>"
+PASS ShadowRoot.setHTMLUnsafe [unsafe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>"
+PASS Document.parseHTMLUnsafe [unsafe] #1, "<math><a href="https://example.com" download="file" ping="https://track.com" target="_blank">Restricted</a></math>"
+PASS Element.setHTMLUnsafe [unsafe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>"
+PASS ShadowRoot.setHTMLUnsafe [unsafe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>"
+PASS Document.parseHTMLUnsafe [unsafe] #2, "<math><mrow hreflang="en" type="text/html" href="https://example.com" fence="true" accent="true" depth="1px" columnspan="2"></mrow></math>"
+PASS Element.setHTMLUnsafe [unsafe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>"
+PASS ShadowRoot.setHTMLUnsafe [unsafe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>"
+PASS Document.parseHTMLUnsafe [unsafe] #3, "<math><mi fence="true" depth="1px" columnspan="2"></mi></math>"
+PASS Element.setHTMLUnsafe [unsafe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>"
+PASS ShadowRoot.setHTMLUnsafe [unsafe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>"
+PASS Document.parseHTMLUnsafe [unsafe] #4, "<math><mtext><a href="javascript:alert(1)">Integration Point</a></mtext></math>"
+

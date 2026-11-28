@@ -1,0 +1,8 @@
+
+PASS document is in quirks mode
+FAIL setHTML parses in quirks mode el.setHTML is not a function. (In 'el.setHTML(input)', 'el.setHTML' is undefined)
+FAIL setHTML with a config parses in quirks mode el.setHTML is not a function. (In 'el.setHTML(input, { sanitizer: { elements: ["p", "table"] } })', 'el.setHTML' is undefined)
+PASS setHTMLUnsafe parses in quirks mode
+PASS setHTMLUnsafe with a config parses in quirks mode
+PASS innerHTML parses in quirks mode (control)
+

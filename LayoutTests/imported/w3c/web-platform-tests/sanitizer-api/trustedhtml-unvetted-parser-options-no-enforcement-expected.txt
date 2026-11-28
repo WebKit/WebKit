@@ -1,0 +1,31 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Element.setHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true is allowed assert_true: script ran expected true got false
+FAIL Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Element.appendHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Element.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL ShadowRoot.setHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is allowed assert_true: script ran expected true got false
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.beforeHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.beforeHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.afterHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.afterHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.replaceWithHTMLUnsafe: string with a sanitizer config is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true is allowed target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+FAIL Document.parseHTMLUnsafe: string with a sanitizer config is allowed assert_equals: sanitizer was applied expected null but got Element node <div id="wrapper"><span id="inner"></span></div>
+

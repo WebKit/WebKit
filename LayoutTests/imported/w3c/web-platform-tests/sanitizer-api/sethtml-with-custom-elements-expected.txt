@@ -1,0 +1,38 @@
+
+FAIL Custom element that is removed during sanitization. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe></x-probe>")', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element that is allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe></x-probe>",
+    {sanitizer: {elements: ["x-probe"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element that is allowed, on a disconnected element. div.setHTML is not a function. (In 'div.setHTML("<x-probe></x-probe>", {sanitizer: {elements: ["x-probe"]}})', 'div.setHTML' is undefined)
+PASS Custom element on a disconnected element, setHTMLUnsafe().
+FAIL Custom element inside an element that is replaced with its children, on a disconnected element, setHTML(). div[method] is not a function. (In 'div[method]("<span><x-probe></x-probe></span>",
+      {sanitizer: {elements: ["x-probe"], replaceWithChildrenElements: ["span"]}})', 'div[method]' is undefined)
+FAIL Custom element inside nested elements that are replaced with their children, setHTML(). target[method] is not a function. (In 'target[method]("<span><b><x-probe></x-probe></b></span>",
+      {sanitizer: {elements: ["x-probe"], replaceWithChildrenElements: ["span", "b"]}})', 'target[method]' is undefined)
+FAIL Custom element inside an element that is replaced with its children uses the target's scoped registry, setHTML(). shadow[method] is not a function. (In 'shadow[method]("<span><x-probe></x-probe></span>",
+      {sanitizer: {elements: ["x-probe"], replaceWithChildrenElements: ["span"]}})', 'shadow[method]' is undefined)
+FAIL Custom element inside an element that is replaced with its children, on a disconnected element, setHTMLUnsafe(). assert_equals: expected "x-probe" but got "span"
+FAIL Custom element inside nested elements that are replaced with their children, setHTMLUnsafe(). assert_equals: expected "x-probe" but got "span"
+FAIL Custom element inside an element that is replaced with its children uses the target's scoped registry, setHTMLUnsafe(). assert_equals: expected "x-probe" but got "span"
+FAIL Custom element in a declarative shadow root on a removed host is not constructed. assert_equals: expected 0 but got 1
+FAIL Custom element inside a removed element is not constructed. assert_equals: expected 0 but got 1
+FAIL attributeChangedCallback only fires for attributes the sanitizer keeps. target.setHTML is not a function. (In 'target.setHTML('<x-attrs a="1" b="2"></x-attrs>',
+    {sanitizer: {elements: ["x-attrs"], attributes: ["a"]}})', 'target.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is not default-allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>")', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is removed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["div"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is removed but the custom element would have been allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["div", "x-div"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element with an is-attribute, where the is=-attribute is blocked. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe is='x-div'></x-probe>",
+    {sanitizer: {elements:["div", "x-probe"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is not. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["p", "x-div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is removed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {removeElements:["div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is replaced. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {replaceWithChildrenElements:["div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+PASS Custom element via is-attribute with unsafe, where is attribute is not default-allowed.
+FAIL Sanity check, that is= processing still works when allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML(
+    "<div is='x-div'></div>",
+    {sanitizer: {elements:["p", "div"], attributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+PASS Custom element via is-attribute on script element, where is attribute is not allowed.
+

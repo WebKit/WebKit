@@ -1,0 +1,53 @@
+
+FAIL parseHTML testcase 0, "text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 1, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 2, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 3, "<div>text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTML testcase 4, "<html onload="3 + 3"><div>a"
+FAIL parseHTML testcase 5, "<body><body onload="alert(1)">Hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 6, "<!-- a --><html><body>x<!-- b --></body></html><!-- c -->" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 7, "<?a b?><html><body>x<?c d?></body></html><?e f?>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 8, "x<p>y" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 9, "<noscript><p>x</noscript>y" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 10, "<noscript><p>x</noscript>y" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 11, "<script>hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 12, "<html onload="2+2"><body onload="3+3"><div>hello" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 13, "<div data-xyz="1" id="2" title="3">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 14, "<div>a<!-- xx -->b" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTML testcase 15, "<html onload="2 + 2"><div>a"
+FAIL parseHTML testcase 16, "<br id="document">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 17, "<br id="document">" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 18, "<p onclick="alert(document.cookie)">Click handler!</p>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 19, "<p onclick="alert(document.cookie)">Click handler!</p>" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTML testcase 20, "<noscript><p>x</noscript>y" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, config)', 'Document.parseHTML' is undefined)
+PASS parseHTMLUnsafe testcase 0, "text"
+FAIL parseHTMLUnsafe testcase 1, "<div>text" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 2, "<div>text" assert_true: [object HTMLHtmlElement].isEqual(null) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 3, "<div>text" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 4, "<html onload="3 + 3"><div>a" assert_throws_js: function "() => Document.parseHTMLUnsafe(testcase.data, config)" did not throw
+FAIL parseHTMLUnsafe testcase 5, "<body><body onload="alert(1)">Hello" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 6, "<!-- a --><html><body>x<!-- b --></body></html><!-- c -->" assert_true: [object Comment].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / [object Comment]. expected true got false
+FAIL parseHTMLUnsafe testcase 7, "<?a b?><html><body>x<?c d?></body></html><?e f?>" assert_true: [object ProcessingInstruction].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / [object ProcessingInstruction]. expected true got false
+FAIL parseHTMLUnsafe testcase 8, "x<p>y" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+PASS parseHTMLUnsafe testcase 9, "<noscript><p>x</noscript>y"
+PASS parseHTMLUnsafe testcase 10, "<noscript><p>x</noscript>y"
+PASS parseHTMLUnsafe testcase 11, "<script>hello"
+PASS parseHTMLUnsafe testcase 12, "<html onload="2+2"><body onload="3+3"><div>hello"
+FAIL parseHTMLUnsafe testcase 13, "<div data-xyz="1" id="2" title="3">" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+PASS parseHTMLUnsafe testcase 14, "<div>a<!-- xx -->b"
+FAIL parseHTMLUnsafe testcase 15, "<html onload="2 + 2"><div>a" assert_throws_js: function "() => Document.parseHTMLUnsafe(testcase.data, config)" did not throw
+PASS parseHTMLUnsafe testcase 16, "<div>a<!-- xx -->b"
+PASS parseHTMLUnsafe testcase 17, "<!-- 1 --><html><body>x<!-- 2 --></body></html><!-- 3 -->"
+FAIL parseHTMLUnsafe testcase 18, "a<template>x</template>b" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+PASS parseHTMLUnsafe testcase 19, "<noscript><p>x</noscript>y"
+FAIL parseHTMLUnsafe testcase 20, "<head><meta></head><body>x" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 21, "<head></head><body>x<p>y" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 22, "<head></head><meta><body>x" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+FAIL parseHTMLUnsafe testcase 23, "<div></div><frameset>" assert_true: [object HTMLHtmlElement].isEqual([object HTMLHtmlElement]) fails. Path: [object HTMLDocument] / <HTML>. expected true got false
+PASS parseHTMLUnsafe testcase 24, "<div></div><frameset>"
+PASS parseHTMLUnsafe() without options keeps comments
+PASS parseHTMLUnsafe full document testcase 0, "<!DOCTYPE html>
+text"
+FAIL parseHTML full document testcase 0, "<!DOCTYPE html>
+text" Document.parseHTML is not a function. (In 'Document.parseHTML(testcase.data, {})', 'Document.parseHTML' is undefined)
+

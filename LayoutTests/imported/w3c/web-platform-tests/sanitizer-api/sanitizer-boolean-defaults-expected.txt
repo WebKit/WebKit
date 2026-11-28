@@ -1,0 +1,5 @@
+
+FAIL comments Can't find variable: Sanitizer
+FAIL data attributes Can't find variable: Sanitizer
+FAIL javascript URLs Can't find variable: Sanitizer
+

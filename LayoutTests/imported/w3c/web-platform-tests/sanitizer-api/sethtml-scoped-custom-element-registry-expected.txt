@@ -1,0 +1,19 @@
+
+FAIL setHTML uses the target's scoped custom element registry target[method] is not a function. (In 'target[method]("<scoped-element></scoped-element>",
+                     safe ? { sanitizer: { elements: ["scoped-element"] } } : undefined)', 'target[method]' is undefined)
+FAIL setHTML with replaceWithChildrenElements preserves the scoped custom element registry for children target[method] is not a function. (In 'target[method]("<div><scoped-replaced-child></scoped-replaced-child></div>", {
+        sanitizer: {
+          elements: ["scoped-replaced-child"],
+          replaceWithChildrenElements: ["div"],
+        },
+      })', 'target[method]' is undefined)
+FAIL setHTML on a shadow root uses the shadow root's registry, not the host's shadow[method] is not a function. (In 'shadow[method]("<scoped-target-ce></scoped-target-ce>",
+                     safe ? { sanitizer: { elements: ["scoped-target-ce"] } } : undefined)', 'shadow[method]' is undefined)
+FAIL setHTML constructs nested custom elements with the scoped registry target[method] is not a function. (In 'target[method]("<section><p><scoped-nested></scoped-nested></p></section>",
+                     safe ? { sanitizer: { elements: ["section", "p", "scoped-nested"] } } : undefined)', 'target[method]' is undefined)
+PASS setHTMLUnsafe uses the target's scoped custom element registry
+PASS setHTMLUnsafe with a sanitizer uses the target's scoped custom element registry
+FAIL setHTMLUnsafe with replaceWithChildrenElements preserves the scoped custom element registry for children assert_equals: expected "scoped-replaced-child" but got "div"
+PASS setHTMLUnsafe on a shadow root uses the shadow root's registry, not the host's
+PASS setHTMLUnsafe constructs nested custom elements with the scoped registry
+
