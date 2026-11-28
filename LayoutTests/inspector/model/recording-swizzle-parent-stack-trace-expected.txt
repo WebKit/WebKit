@@ -1,0 +1,32 @@
+Test that Recording parent stack traces are swizzled.
+
+
+== Running test suite: Model.Recording.Swizzle.StackTrace
+-- Running test case: Model.Recording.Swizzle.StackTrace.ParentChain
+PASS: Call stack should be a StackTrace.
+PASS: Call stack should have two call frames.
+PASS: Call stack should not have a boundary call frame.
+PASS: Parent stack trace should be a StackTrace.
+PASS: Parent stack trace should have one call frame.
+PASS: Parent stack trace should have the right function name.
+PASS: Parent stack trace should have a boundary call frame.
+PASS: Grandparent stack trace should be a StackTrace.
+PASS: Grandparent stack trace should have one call frame.
+PASS: Grandparent stack trace should not have its own parent stack trace.
+
+-- Running test case: Model.Recording.Swizzle.StackTrace.SelfReferencingParent
+PASS: Call stack with a self-referencing parent should be a StackTrace.
+PASS: Call stack with a self-referencing parent should have two call frames.
+PASS: Self-referencing parent stack trace should be a StackTrace.
+PASS: Self-referencing parent stack trace should have one call frame.
+PASS: Self-referencing parent stack trace should not have its own parent stack trace.
+
+-- Running test case: Model.Recording.Swizzle.StackTrace.ParentCycle
+PASS: Call stack with a parent cycle should be a StackTrace.
+PASS: Call stack with a parent cycle should have two call frames.
+PASS: Parent in a cycle should be a StackTrace.
+PASS: Parent in a cycle should have one call frame.
+PASS: Second parent in a cycle should be a StackTrace.
+PASS: Second parent in a cycle should have one call frame.
+PASS: The parent chain should end at the cycle.
+

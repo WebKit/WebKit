@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Model.Recording.Swizzle.StackTrace");
+
+    let data = [
+        "callStackFunctionName",                    // 0
+        "http://example.com/recording-swizzle-parent-stack-trace.html", // 1
+        [0, 1, 10, 5],                              // 2
+        [0, 1, 20, 7],                              // 3
+        [[2, 3], false, false, 5],                  // 4
+        [[2], true, false, 6],                      // 5
+        [[2], true, false],                         // 6
+        [[2, 3], false, false, 8],                  // 7
+        [[2], true, false, 8],                      // 8
+        [[2, 3], false, false, 10],                 // 9
+        [[2], true, false, 11],                     // 10
+        [[2], true, false, 10],                     // 11
+    ];
+    let recording = WI.Recording.fromPayload({
+        version: WI.Recording.Version,
+        type: "canvas-2d",
+        initialState: {},
+        frames: [],
+        data,
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.StackTrace.ParentChain",
+        description: "A call stack should be swizzled together with its parent stack traces.",
+        async test() {
+            let stackTrace = await recording.swizzle(4, WI.Recording.Swizzle.CallStack);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Call stack should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 2, "Call stack should have two call frames.");
+            InspectorTest.expectFalse(stackTrace.topCallFrameIsBoundary, "Call stack should not have a boundary call frame.");
+
+            let parentStackTrace = stackTrace.parentStackTrace;
+            InspectorTest.expectThat(parentStackTrace instanceof WI.StackTrace, "Parent stack trace should be a StackTrace.");
+            InspectorTest.expectEqual(parentStackTrace.callFrames.length, 1, "Parent stack trace should have one call frame.");
+            InspectorTest.expectEqual(parentStackTrace.callFrames[0].functionName, data[0], "Parent stack trace should have the right function name.");
+            InspectorTest.expectTrue(parentStackTrace.topCallFrameIsBoundary, "Parent stack trace should have a boundary call frame.");
+
+            let grandparentStackTrace = parentStackTrace.parentStackTrace;
+            InspectorTest.expectThat(grandparentStackTrace instanceof WI.StackTrace, "Grandparent stack trace should be a StackTrace.");
+            InspectorTest.expectEqual(grandparentStackTrace.callFrames.length, 1, "Grandparent stack trace should have one call frame.");
+            InspectorTest.expectNull(grandparentStackTrace.parentStackTrace, "Grandparent stack trace should not have its own parent stack trace.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.StackTrace.SelfReferencingParent",
+        description: "A call stack whose parent refers to itself should not hang the swizzle.",
+        async test() {
+            let stackTrace = await recording.swizzle(7, WI.Recording.Swizzle.CallStack);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Call stack with a self-referencing parent should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 2, "Call stack with a self-referencing parent should have two call frames.");
+
+            let parentStackTrace = stackTrace.parentStackTrace;
+            InspectorTest.expectThat(parentStackTrace instanceof WI.StackTrace, "Self-referencing parent stack trace should be a StackTrace.");
+            InspectorTest.expectEqual(parentStackTrace.callFrames.length, 1, "Self-referencing parent stack trace should have one call frame.");
+            InspectorTest.expectNull(parentStackTrace.parentStackTrace, "Self-referencing parent stack trace should not have its own parent stack trace.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Model.Recording.Swizzle.StackTrace.ParentCycle",
+        description: "A call stack whose parents form a cycle should not hang the swizzle.",
+        async test() {
+            let stackTrace = await recording.swizzle(9, WI.Recording.Swizzle.CallStack);
+
+            InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "Call stack with a parent cycle should be a StackTrace.");
+            InspectorTest.expectEqual(stackTrace.callFrames.length, 2, "Call stack with a parent cycle should have two call frames.");
+
+            let parentStackTrace = stackTrace.parentStackTrace;
+            InspectorTest.expectThat(parentStackTrace instanceof WI.StackTrace, "Parent in a cycle should be a StackTrace.");
+            InspectorTest.expectEqual(parentStackTrace.callFrames.length, 1, "Parent in a cycle should have one call frame.");
+
+            let secondParentStackTrace = parentStackTrace.parentStackTrace;
+            InspectorTest.expectThat(secondParentStackTrace instanceof WI.StackTrace, "Second parent in a cycle should be a StackTrace.");
+            InspectorTest.expectEqual(secondParentStackTrace.callFrames.length, 1, "Second parent in a cycle should have one call frame.");
+            InspectorTest.expectNull(secondParentStackTrace.parentStackTrace, "The parent chain should end at the cycle.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Recording parent stack traces are swizzled.</p>
+</body>
+</html>
