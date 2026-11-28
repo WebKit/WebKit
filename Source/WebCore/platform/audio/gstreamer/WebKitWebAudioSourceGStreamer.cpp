@@ -96,6 +96,10 @@ struct _WebKitWebAudioSrcPrivate {
     // sink, GST_CLOCK_TIME_NONE until measured.
     std::atomic<GstClockTime> outputLatency { GST_CLOCK_TIME_NONE };
 
+    // Latency added after the sink of the pipeline, by the audio mixer, updated when a buffer is
+    // rendered.
+    std::atomic<GstClockTime> downstreamLatency { 0 };
+
     GRefPtr<GstBufferPool> pool;
 
     bool hasRenderedAudibleFrame { false };
@@ -296,11 +300,13 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
     // Estimate the outputLatency, that is to say the delay until the first
     // frame of the buffer is rendered by the sink.
     auto playbackTime = MonotonicTime::now();
+    auto downstreamLatency = destination->downstreamLatency();
+    priv->downstreamLatency.store(downstreamLatency);
     if (GST_STATE(element.get()) == GST_STATE_PLAYING) {
         auto currentRunningTime = gst_element_get_current_running_time(element.get());
         if (GST_CLOCK_TIME_IS_VALID(currentRunningTime)) {
             auto bufferRunningTime = static_cast<GstClockTimeDiff>(timestamp) + gst_pad_get_offset(priv->sourcePad);
-            auto renderingTime = bufferRunningTime + static_cast<GstClockTimeDiff>(priv->pipelineLatency.load());
+            auto renderingTime = bufferRunningTime + static_cast<GstClockTimeDiff>(priv->pipelineLatency.load() + downstreamLatency);
             auto delay = renderingTime - static_cast<GstClockTimeDiff>(currentRunningTime);
             playbackTime += Seconds::fromNanoseconds(delay);
             priv->outputLatency.store(static_cast<GstClockTime>(std::max<GstClockTimeDiff>(delay, 0)));
@@ -509,7 +515,7 @@ GstClockTime webkitWebAudioSourceGetOutputLatency(WebKitWebAudioSrc* src)
     // Until a buffer is rendered in PLAYING, fallback to the pipeline latency.
     auto latency = src->priv->outputLatency.load();
     if (!GST_CLOCK_TIME_IS_VALID(latency))
-        return src->priv->pipelineLatency.load();
+        return src->priv->pipelineLatency.load() + src->priv->downstreamLatency.load();
     return latency;
 }
 

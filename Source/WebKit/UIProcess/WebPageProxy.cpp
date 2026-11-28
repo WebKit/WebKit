@@ -538,6 +538,10 @@
 #include "EnhancedSecurityLinkUtilities.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "VirtualAudioDeviceDataChannel.h"
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
@@ -2111,6 +2115,13 @@ void WebPageProxy::close()
     // Make sure we do this before we clear the UIClient so that we can ask the UIClient
     // to release the wake locks.
     internals().sleepDisablers.clear();
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    // The web process may keep rendering until it closes the page, the audio of a closed page is
+    // no longer delivered to the application.
+    for (Ref receiver : std::exchange(internals().virtualAudioDeviceReceivers, { }))
+        receiver->invalidate();
+#endif
 
 #if PLATFORM(MAC)
     internals().printProcessUseToken = nullptr;
@@ -17654,6 +17665,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
     parameters.preferredBufferFormats = preferredBufferFormats();
+#endif
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    parameters.virtualAudioDevices = createVirtualAudioDeviceParameters(process);
 #endif
 
 #if HAVE(AUDIT_TOKEN)

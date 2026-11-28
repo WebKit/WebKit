@@ -1,0 +1,206 @@
+/*
+ * Copyright (C) 2026 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitVirtualAudioDevice_h
+#define WebKitVirtualAudioDevice_h
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+G_BEGIN_DECLS
+
+/**
+ * WebKitAudioSampleFormat:
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S8: signed 8-bit samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_U8: unsigned 8-bit samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S16LE: signed 16-bit little-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S16BE: signed 16-bit big-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_U16LE: unsigned 16-bit little-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_U16BE: unsigned 16-bit big-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S24LE: signed 24-bit little-endian samples packed in 3 bytes
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S24BE: signed 24-bit big-endian samples packed in 3 bytes
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S24_32LE: signed 24-bit little-endian samples in 4 bytes
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S24_32BE: signed 24-bit big-endian samples in 4 bytes
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S32LE: signed 32-bit little-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_S32BE: signed 32-bit big-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_U32LE: unsigned 32-bit little-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_U32BE: unsigned 32-bit big-endian samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_F32LE: 32-bit little-endian floating point samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_F32BE: 32-bit big-endian floating point samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_F64LE: 64-bit little-endian floating point samples
+ * @WEBKIT_AUDIO_SAMPLE_FORMAT_F64BE: 64-bit big-endian floating point samples
+ *
+ * Format of the audio samples delivered by a #WebKitVirtualAudioDevice.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S8,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_U8,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S16LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S16BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_U16LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_U16BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S24LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S24BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S24_32LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S24_32BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S32LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_S32BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_U32LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_U32BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_F32LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_F32BE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_F64LE,
+    WEBKIT_AUDIO_SAMPLE_FORMAT_F64BE
+} WebKitAudioSampleFormat;
+
+/**
+ * WebKitAudioLayout:
+ * @WEBKIT_AUDIO_LAYOUT_INTERLEAVED: samples of all the channels are interleaved
+ * @WEBKIT_AUDIO_LAYOUT_NON_INTERLEAVED: the samples of each channel are stored in a separate plane,
+ *    one after the other
+ *
+ * Layout of the channels in the audio buffers delivered by a #WebKitVirtualAudioDevice.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_AUDIO_LAYOUT_INTERLEAVED,
+    WEBKIT_AUDIO_LAYOUT_NON_INTERLEAVED
+} WebKitAudioLayout;
+
+#define WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE            (webkit_virtual_audio_device_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_VIRTUAL_AUDIO_DEVICE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE, WebKitVirtualAudioDevice))
+#define WEBKIT_IS_VIRTUAL_AUDIO_DEVICE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE))
+#define WEBKIT_VIRTUAL_AUDIO_DEVICE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE, WebKitVirtualAudioDeviceClass))
+#define WEBKIT_IS_VIRTUAL_AUDIO_DEVICE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE))
+#define WEBKIT_VIRTUAL_AUDIO_DEVICE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_VIRTUAL_AUDIO_DEVICE, WebKitVirtualAudioDeviceClass))
+
+struct _WebKitVirtualAudioDeviceClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitVirtualAudioDevice, webkit_virtual_audio_device, WEBKIT, VIRTUAL_AUDIO_DEVICE, GObject)
+
+/**
+ * WebKitVirtualAudioDeviceBufferFunc:
+ * @device: the #WebKitVirtualAudioDevice
+ * @data: (array length=size) (element-type guint8): the audio data
+ * @size: the size of @data in bytes
+ * @timestamp: the timestamp of the first sample of @data, in nanoseconds
+ * @user_data: user data passed to webkit_virtual_audio_device_set_buffer_callback()
+ *
+ * Function called every time an audio buffer has been rendered on @device.
+ *
+ * The callback is always called from the main thread of the UI process, dispatched
+ * by the global default #GMainContext. Buffers are produced in real time, paced
+ * by the monotonic clock of the web process, not by any audio output of the application:
+ * an application that plays the audio on its own output device must handle the drift
+ * between both clocks, for instance by resampling or by dropping or inserting samples.
+ *
+ * @data is formatted as described by the device configuration and is only valid during
+ * the call, it must be copied if it is needed afterwards. It always contains the number
+ * of frames returned by webkit_virtual_audio_device_get_frames_per_buffer().
+ *
+ * @timestamp is the position of @data in the audio stream rendered on @device, in
+ * nanoseconds: while audio is being rendered, every buffer starts where the previous one
+ * ended, so the timestamp of a buffer is the timestamp of the previous one plus its
+ * duration (computed from its size, the sample format, the number of channels and the
+ * sample rate). A bigger difference means that buffers were dropped because they were
+ * not consumed in time.
+ *
+ * While at least one producer (media element or audio context) is rendering on the
+ * device, buffers are delivered continuously, other producers attached to the device
+ * but paused contribute silence. When all the producers attached to the device are
+ * paused, no buffers are delivered, and the timestamps continue from where they
+ * stopped when rendering resumes. When all the producers are stopped or detached from
+ * the device, the stream ends: the timestamps of the next stream start from zero again.
+ *
+ * Since: 2.56
+ */
+typedef void (* WebKitVirtualAudioDeviceBufferFunc) (WebKitVirtualAudioDevice *device,
+                                                     const guint8             *data,
+                                                     gsize                     size,
+                                                     guint64                   timestamp,
+                                                     gpointer                  user_data);
+
+WEBKIT_API WebKitVirtualAudioDevice *
+webkit_virtual_audio_device_new                   (const char                          *name,
+                                                   const char                          *description,
+                                                   WebKitAudioSampleFormat              format,
+                                                   guint                                rate,
+                                                   guint                                channels,
+                                                   guint64                              channel_mask,
+                                                   WebKitAudioLayout                    layout,
+                                                   guint                                frames_per_buffer,
+                                                   gboolean                             is_default);
+
+WEBKIT_API const char *
+webkit_virtual_audio_device_get_name              (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API const char *
+webkit_virtual_audio_device_get_description       (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API WebKitAudioSampleFormat
+webkit_virtual_audio_device_get_format            (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API guint
+webkit_virtual_audio_device_get_rate              (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API guint
+webkit_virtual_audio_device_get_channels          (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API guint64
+webkit_virtual_audio_device_get_channel_mask      (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API WebKitAudioLayout
+webkit_virtual_audio_device_get_layout            (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API guint
+webkit_virtual_audio_device_get_frames_per_buffer (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API gboolean
+webkit_virtual_audio_device_get_is_default        (WebKitVirtualAudioDevice            *device);
+
+WEBKIT_API void
+webkit_virtual_audio_device_set_buffer_callback   (WebKitVirtualAudioDevice            *device,
+                                                   WebKitVirtualAudioDeviceBufferFunc   callback,
+                                                   gpointer                             user_data,
+                                                   GDestroyNotify                       destroy_notify);
+
+G_END_DECLS
+
+#endif /* WebKitVirtualAudioDevice_h */

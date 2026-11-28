@@ -27,6 +27,7 @@
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
 #include "GStreamerQuirks.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/audio/gstaudiobasesink.h>
 #include <gst/gst.h>
@@ -169,8 +170,12 @@ void AudioDestinationGStreamer::initializePipeline()
     webkitWebAudioSourceSetDestination(WEBKIT_WEB_AUDIO_SRC(m_src.get()), this);
     webkitWebAudioSourceSetSilent(WEBKIT_WEB_AUDIO_SRC(m_src.get()), isSilent());
 
+    // The audio of a page using embedder outputs can be switched to an embedder output at any
+    // time, which is only possible when rendering through the audio mixer: such pages never use
+    // the platform quirk audio sinks.
+    auto audioMixerUsage = doesEmbedderUseAudioOutputs() ? AudioMixerUsage::Required : AudioMixerUsage::Optional;
     auto& quirksManager = GStreamerQuirksManager::singleton();
-    if (quirksManager.isEnabled()) {
+    if (quirksManager.isEnabled() && audioMixerUsage == AudioMixerUsage::Optional) {
 #if ENABLE(MEDIA_STREAM)
         if (!m_audioSink && !outputDeviceId().isEmpty()) {
             auto [resolvedId, device] = gstResolveAudioOutputDevice(outputDeviceId());
@@ -190,7 +195,7 @@ void AudioDestinationGStreamer::initializePipeline()
     if (!m_audioSink && !outputDeviceId().isEmpty()) {
         auto [resolvedId, device] = gstResolveAudioOutputDevice(outputDeviceId());
         if (device)
-            m_audioSink = createPlatformAudioSink("webaudio"_s, resolvedId, device);
+            m_audioSink = createPlatformAudioSink("webaudio"_s, resolvedId, device, audioMixerUsage);
 
         if (!m_audioSink)
             GST_WARNING_OBJECT(m_pipeline.get(), "Failed to create a GStreamer audio sink for device '%s'. Falling back to the default device.", makeUTF8CString(outputDeviceId()).legacyCStringPointer());
@@ -198,7 +203,7 @@ void AudioDestinationGStreamer::initializePipeline()
 #endif
 
     if (!m_audioSink)
-        m_audioSink = createPlatformAudioSink("webaudio"_s);
+        m_audioSink = createPlatformAudioSink("webaudio"_s, { }, { }, audioMixerUsage);
 
     if (!m_audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
@@ -305,6 +310,13 @@ MediaTime AudioDestinationGStreamer::outputLatency() const
     if (!m_src)
         return MediaTime::zeroTime();
     return fromGstClockTime(webkitWebAudioSourceGetOutputLatency(WEBKIT_WEB_AUDIO_SRC(m_src.get())));
+}
+
+GstClockTime AudioDestinationGStreamer::downstreamLatency() const
+{
+    // The latency of the pipeline ends when the audio is handed to the mixer, which renders it
+    // with its own pipeline.
+    return m_audioSink ? webkitAudioSinkGetMixerLatency(m_audioSink.get()) : 0;
 }
 
 bool AudioDestinationGStreamer::handleMessage(GstMessage* message, bool handleLatencyMessage)

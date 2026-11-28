@@ -1644,13 +1644,18 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networ
 GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
     auto& quirksManager = GStreamerQuirksManager::singleton();
+    RefPtr player = m_player;
+
+    // The audio of a page using embedder outputs can be switched to an embedder output at any
+    // time, which is only possible when rendering through the audio mixer: such pages never use
+    // the platform quirk audio sinks.
+    auto audioMixerUsage = player && player->doesEmbedderUseAudioOutputs() ? AudioMixerUsage::Required : AudioMixerUsage::Optional;
 
     // If audio is being controlled by an another pipeline, creating sink here may interfere with
     // audio playback. Instead, check if an audio sink was setup in handleMessage and use it.
-    if (quirksManager.isEnabled())
+    if (quirksManager.isEnabled() && audioMixerUsage == AudioMixerUsage::Optional)
         return quirksManager.createAudioSink();
 
-    RefPtr player = m_player.get();
     if (!player)
         return nullptr;
 
@@ -1662,12 +1667,12 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
     if (!deviceId.isEmpty()) {
         auto [resolvedId, device] = gstResolveAudioOutputDevice(deviceId);
         if (device)
-            audioSink = createPlatformAudioSink(role, resolvedId, device);
+            audioSink = createPlatformAudioSink(role, resolvedId, device, audioMixerUsage);
     }
 #endif
 
     if (!audioSink)
-        audioSink = createPlatformAudioSink(role);
+        audioSink = createPlatformAudioSink(role, { }, { }, audioMixerUsage);
     RELEASE_ASSERT(audioSink);
     if (!audioSink)
         return nullptr;

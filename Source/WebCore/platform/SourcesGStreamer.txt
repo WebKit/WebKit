@@ -29,6 +29,7 @@ platform/audio/gstreamer/AudioEncoderGStreamer.cpp
 platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
 platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp
 platform/audio/gstreamer/FFTFrameGStreamer.cpp
+platform/audio/gstreamer/GStreamerVirtualAudioDeviceManager.cpp
 platform/audio/gstreamer/PlatformRawAudioDataGStreamer.cpp
 platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 

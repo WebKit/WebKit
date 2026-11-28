@@ -547,3 +547,8 @@ set(WPEWebProcessExtension_Uninstalled_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/${WPE_
 
 include(BubblewrapSandboxChecks)
 include(GStreamerChecks)
+
+# Audio output devices implemented by the application, see WebKitVirtualAudioDevice.
+if (ENABLE_MEDIA_STREAM AND USE_GSTREAMER)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_VIRTUAL_AUDIO_DEVICES ON)
+endif ()

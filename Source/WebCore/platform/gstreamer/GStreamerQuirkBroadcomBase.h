@@ -39,6 +39,9 @@ public:
     void resetBufferingPercentage(MediaPlayerPrivateGStreamer*, int bufferingPercentage) const;
     void setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer*, GstState currentState, GstState newState, GRefPtr<GstElement>&&) const;
     std::optional<GstState> eosMediaPlayerState() const final { return GST_STATE_PAUSED; }
+    // Autoplugging stops at the parsers, the decoders are plugged in the platform sinks: the
+    // compressed audio isn't accepted by webkitaudiosink.
+    bool doesSupportAudioMixer() const final { return false; }
 
 protected:
     class MovingAverage {

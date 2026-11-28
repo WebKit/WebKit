@@ -24,7 +24,12 @@
 
 #include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
+#include <gst/base/gstbasesink.h>
 #include <wtf/glib/WTFGType.h>
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "GStreamerVirtualAudioDeviceManager.h"
+#endif
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioDestination.h"
@@ -35,10 +40,17 @@ using namespace WebCore;
 
 struct _WebKitAudioSinkPrivate {
     GRefPtr<GstElement> interAudioSink;
+    // Both are protected by the object lock, the latency is read from the streaming thread of the
+    // producer.
     GRefPtr<GstPad> mixerPad;
+    GStreamerAudioMixer::SharedLatency mixerLatency;
     String role;
     String deviceId;
     GRefPtr<GstDevice> device;
+
+    // Producer state applied again to the mixer pad when switching device.
+    double volume { 1 };
+    bool isMuted { false };
 };
 
 enum {
@@ -65,10 +77,31 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitAudioSink, webkit_audio_sink, GST_TYPE_BIN,
 // renders about 20ms ahead, a bigger margin wouldn't help.
 static constexpr GstClockTime interAudioSinkMargin = 20 * GST_MSECOND;
 
-static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
+// Default period-time of the interaudiosrc, used by the producers of media elements.
+static constexpr GstClockTime interAudioSrcPeriodTime = 25 * GST_MSECOND;
+
+static void webKitAudioSinkUpdateRenderDelay(WebKitAudioSink*);
+
+static bool webKitAudioSinkShouldUseAudioMixer(WebKitAudioSink* sink, AudioMixerUsage mixerUsage)
 {
+    if (mixerUsage == AudioMixerUsage::Required)
+        return true;
+
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    // Virtual audio devices are only rendered by the mixer.
+    if (GStreamerVirtualAudioDeviceManager::isVirtualDevice(sink->priv->device.get()))
+        return true;
+#else
+    UNUSED_PARAM(sink);
+#endif
+
     auto enableAudioMixer = UTF8CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_AUDIO_MIXER"));
-    if (!enableAudioMixer || enableAudioMixer != "1"_s)
+    return enableAudioMixer && enableAudioMixer == "1"_s;
+}
+
+static bool webKitAudioSinkConfigure(WebKitAudioSink* sink, AudioMixerUsage mixerUsage)
+{
+    if (!webKitAudioSinkShouldUseAudioMixer(sink, mixerUsage))
         return false;
 
     if (!GStreamerAudioMixer::isAvailable()) {
@@ -91,10 +124,19 @@ static bool webKitAudioSinkConfigure(WebKitAudioSink* sink)
     gst_element_link_many(audioConvert, capsFilter, sink->priv->interAudioSink.get(), nullptr);
     GRefPtr convertPad = adoptGRef(gst_element_get_static_pad(audioConvert, "sink"));
     gst_element_add_pad(GST_ELEMENT_CAST(sink), webkitGstGhostPadFromStaticTemplate(&audioSinkTemplate, "sink"_s, convertPad.get()));
+
+    // The mixer latency is only known once the mixer pipeline plays, after the producer started.
+    if (sink->priv->role != "webaudio"_s) {
+        GRefPtr interAudioSinkPad = adoptGRef(gst_element_get_static_pad(sink->priv->interAudioSink.get(), "sink"));
+        gst_pad_add_probe(interAudioSinkPad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo*, gpointer userData) -> GstPadProbeReturn {
+            webKitAudioSinkUpdateRenderDelay(WEBKIT_AUDIO_SINK(userData));
+            return GST_PAD_PROBE_OK;
+        }, sink, nullptr);
+    }
     return true;
 }
 
-static GRefPtr<GstPad> webKitAudioSinkRegisterProducer(WebKitAudioSink* sink)
+static GStreamerAudioMixer::Producer webKitAudioSinkRegisterProducer(WebKitAudioSink* sink)
 {
     auto* priv = sink->priv;
     std::optional<int> forcedSampleRate;
@@ -116,19 +158,26 @@ static void webKitAudioSinkSetProperty(GObject* object, guint propID, const GVal
 {
     WebKitAudioSink* sink = WEBKIT_AUDIO_SINK(object);
 
-    switch (propID) {
-    case WEBKIT_AUDIO_SINK_PROP_VOLUME: {
-        g_object_set_property(G_OBJECT(sink->priv->mixerPad.get()), "volume", value);
-        break;
+    // The mixer pad can be replaced from the streaming thread, see webKitAudioSinkSetProducer().
+    GRefPtr<GstPad> mixerPad;
+    {
+        GstObjectLocker locker(sink);
+        switch (propID) {
+        case WEBKIT_AUDIO_SINK_PROP_VOLUME:
+            sink->priv->volume = g_value_get_double(value);
+            break;
+        case WEBKIT_AUDIO_SINK_PROP_MUTE:
+            sink->priv->isMuted = g_value_get_boolean(value);
+            break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
+            return;
+        }
+        mixerPad = sink->priv->mixerPad;
     }
-    case WEBKIT_AUDIO_SINK_PROP_MUTE: {
-        g_object_set_property(G_OBJECT(sink->priv->mixerPad.get()), "mute", value);
-        break;
-    }
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
-        break;
-    }
+    // The volume and mute properties of the mixer pad have the same names.
+    if (mixerPad)
+        g_object_set_property(G_OBJECT(mixerPad.get()), pspec->name, value);
 }
 
 static void webKitAudioSinkGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* pspec)
@@ -137,17 +186,67 @@ static void webKitAudioSinkGetProperty(GObject* object, guint propID, GValue* va
 
     switch (propID) {
     case WEBKIT_AUDIO_SINK_PROP_VOLUME: {
-        g_object_get_property(G_OBJECT(sink->priv->mixerPad.get()), "volume", value);
+        GstObjectLocker locker(sink);
+        g_value_set_double(value, sink->priv->volume);
         break;
     }
     case WEBKIT_AUDIO_SINK_PROP_MUTE: {
-        g_object_get_property(G_OBJECT(sink->priv->mixerPad.get()), "mute", value);
+        GstObjectLocker locker(sink);
+        g_value_set_boolean(value, sink->priv->isMuted);
         break;
     }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
         break;
     }
+}
+
+static void webKitAudioSinkSetProducer(WebKitAudioSink* sink, GStreamerAudioMixer::Producer&& producer)
+{
+    GstObjectLocker locker(sink);
+    // A new mixer pad starts with the default volume and unmuted. It's configured with the lock
+    // held, so that a volume change made meanwhile from another thread is not lost.
+    if (producer.mixerPad)
+        g_object_set(producer.mixerPad.get(), "volume", sink->priv->volume, "mute", static_cast<gboolean>(sink->priv->isMuted), nullptr);
+    sink->priv->mixerPad = WTF::move(producer.mixerPad);
+    sink->priv->mixerLatency = WTF::move(producer.latency);
+}
+
+static GstClockTime webKitAudioSinkMixerLatency(WebKitAudioSink* sink)
+{
+    GstObjectLocker locker(sink);
+    return sink->priv->mixerLatency ? sink->priv->mixerLatency->load() : 0;
+}
+
+// The audio of a media element is played after the mixer pipeline, which its own pipeline doesn't
+// know: the video would be ahead of the audio. The render delay of the interaudiosink is reported
+// as latency to the producer pipeline, which delays the video accordingly, and the interaudiosink
+// renders the audio that much earlier. By default, it only accounts for the latency of the
+// interaudiosrc. Once rendered, the audio waits in the inter surface, the interaudiosrc reads it one
+// period before the timestamp of the buffer it creates, and the mixer pipeline plays that buffer
+// after its latency. The surface holds about the margin of the interaudiosink and one period of
+// audio, as the audio is written by producer buffers and read once per period: measured, the audio
+// is played about the mixer latency, two periods and the margin after it's rendered.
+//
+// The mixer latency is only known once the mixer pipeline plays, after the producer started: the
+// render delay is updated when the producer pipeline is already playing, its latency is recomputed
+// then, which delays the video once.
+//
+// WebAudio producers keep the default render delay: the AudioContext reports the mixer latency
+// in its outputLatency instead, see webkitAudioSinkGetMixerLatency().
+static void webKitAudioSinkUpdateRenderDelay(WebKitAudioSink* sink)
+{
+    auto mixerLatency = webKitAudioSinkMixerLatency(sink);
+    if (!mixerLatency)
+        return;
+
+    auto renderDelay = mixerLatency + 2 * interAudioSrcPeriodTime + interAudioSinkMargin;
+    auto* interAudioSink = GST_BASE_SINK_CAST(sink->priv->interAudioSink.get());
+    if (gst_base_sink_get_render_delay(interAudioSink) == renderDelay)
+        return;
+
+    GST_DEBUG_OBJECT(sink, "Mixer latency %" GST_TIME_FORMAT ", setting the render delay to %" GST_TIME_FORMAT, GST_TIME_ARGS(mixerLatency), GST_TIME_ARGS(renderDelay));
+    gst_base_sink_set_render_delay(interAudioSink, renderDelay);
 }
 
 static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstStateChange stateChange)
@@ -158,17 +257,29 @@ static GstStateChangeReturn webKitAudioSinkChangeState(GstElement* element, GstS
     GST_DEBUG_OBJECT(sink, "Handling %s transition", gst_state_change_get_name(stateChange));
 
     auto& mixer = GStreamerAudioMixer::singleton();
-    if (priv->interAudioSink && stateChange == GST_STATE_CHANGE_NULL_TO_READY)
-        priv->mixerPad = webKitAudioSinkRegisterProducer(sink);
+    if (priv->interAudioSink && !priv->mixerPad && stateChange == GST_STATE_CHANGE_NULL_TO_READY)
+        webKitAudioSinkSetProducer(sink, webKitAudioSinkRegisterProducer(sink));
 
     if (priv->mixerPad)
-        mixer.ensureState(stateChange, priv->deviceId);
+        mixer.ensureState(stateChange, priv->mixerPad);
 
     GstStateChangeReturn result = GST_ELEMENT_CLASS(webkit_audio_sink_parent_class)->change_state(element, stateChange);
 
-    if (priv->mixerPad && stateChange == GST_STATE_CHANGE_READY_TO_NULL && result > GST_STATE_CHANGE_FAILURE) {
+    // The mixer pipeline is shared by the producers of the device: a producer that failed to change
+    // state must not keep it in the target state.
+    if (priv->mixerPad && result == GST_STATE_CHANGE_FAILURE)
+        mixer.ensureState(GST_STATE_TRANSITION(GST_STATE_TRANSITION_NEXT(stateChange), GST_STATE_TRANSITION_CURRENT(stateChange)), priv->mixerPad);
+
+    // The interaudiosink resets its render delay when it starts. The mixer latency is already known
+    // when the mixer pipeline is already playing.
+    if (priv->mixerPad && stateChange == GST_STATE_CHANGE_NULL_TO_READY && priv->role != "webaudio"_s)
+        webKitAudioSinkUpdateRenderDelay(sink);
+
+    // The producer is unregistered once it stopped, or when it failed to start.
+    bool isStopped = stateChange == GST_STATE_CHANGE_READY_TO_NULL ? result > GST_STATE_CHANGE_FAILURE : stateChange == GST_STATE_CHANGE_NULL_TO_READY && result == GST_STATE_CHANGE_FAILURE;
+    if (priv->mixerPad && isStopped) {
         mixer.unregisterProducer(priv->mixerPad);
-        priv->mixerPad = nullptr;
+        webKitAudioSinkSetProducer(sink, { });
     }
 
     return result;
@@ -206,16 +317,17 @@ static void webkit_audio_sink_class_init(WebKitAudioSinkClass* klass)
     eklass->change_state = GST_DEBUG_FUNCPTR(webKitAudioSinkChangeState);
 }
 
-GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device)
+GstElement* /* (transfer floating) */ webkitAudioSinkNew(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device, AudioMixerUsage mixerUsage)
 {
     auto element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_AUDIO_SINK, nullptr));
     auto audioSink = WEBKIT_AUDIO_SINK(element);
 
     audioSink->priv->role = role;
-    audioSink->priv->deviceId = deviceId;
+    // Used from the streaming threads, always with the state lock of the sink held.
+    audioSink->priv->deviceId = deviceId.isolatedCopy();
     if (device)
         audioSink->priv->device = device;
-    if (!webKitAudioSinkConfigure(audioSink)) {
+    if (!webKitAudioSinkConfigure(audioSink, mixerUsage)) {
         gst_object_unref(element);
         return nullptr;
     }
@@ -231,6 +343,12 @@ bool webkitAudioSinkSetDevice(GstElement* element, const String& deviceId, const
     auto* sink = WEBKIT_AUDIO_SINK(element);
     auto* priv = sink->priv;
 
+    // Serialized with the state changes, which register the producer when reaching
+    // GST_STATE_READY and unregister it when going back to GST_STATE_NULL, possibly from
+    // another thread. The mixer is always called with the state lock of the sink held, as in
+    // webKitAudioSinkChangeState().
+    auto stateLocker = GstStateLocker(element);
+
     // No-op if already on the requested device.
     if (priv->deviceId == deviceId)
         return true;
@@ -239,25 +357,44 @@ bool webkitAudioSinkSetDevice(GstElement* element, const String& deviceId, const
 
     if (priv->mixerPad) {
         mixer.unregisterProducer(priv->mixerPad);
-        priv->mixerPad = nullptr;
+        webKitAudioSinkSetProducer(sink, { });
     }
 
-    priv->deviceId = deviceId;
+    priv->deviceId = deviceId.isolatedCopy();
     priv->device = device;
 
-    if (priv->interAudioSink) {
-        priv->mixerPad = webKitAudioSinkRegisterProducer(sink);
+    // Below READY, the producer is registered on the new device when it reaches READY.
+    GstState currentState;
+    gst_element_get_state(element, &currentState, nullptr, 0);
+    if (priv->interAudioSink && currentState >= GST_STATE_READY) {
+        webKitAudioSinkSetProducer(sink, webKitAudioSinkRegisterProducer(sink));
 
         // Bring the new pipeline to the current element state.
-        GstState currentState;
-        gst_element_get_state(element, &currentState, nullptr, 0);
-        if (currentState >= GST_STATE_PAUSED) {
-            mixer.ensureState(GST_STATE_CHANGE_READY_TO_PAUSED, priv->deviceId);
+        if (priv->mixerPad && currentState >= GST_STATE_PAUSED) {
+            mixer.ensureState(GST_STATE_CHANGE_READY_TO_PAUSED, priv->mixerPad);
             if (currentState >= GST_STATE_PLAYING)
-                mixer.ensureState(GST_STATE_CHANGE_PAUSED_TO_PLAYING, priv->deviceId);
+                mixer.ensureState(GST_STATE_CHANGE_PAUSED_TO_PLAYING, priv->mixerPad);
         }
     }
     return true;
+}
+
+GstClockTime webkitAudioSinkGetMixerLatency(GstElement* element)
+{
+    if (!WEBKIT_IS_AUDIO_SINK(element))
+        return 0;
+
+    // Called from the streaming thread of the producer, for every buffer, while the producer can
+    // be changed from another thread.
+    auto* sink = WEBKIT_AUDIO_SINK(element);
+    auto mixerLatency = webKitAudioSinkMixerLatency(sink);
+    if (!mixerLatency)
+        return 0;
+
+    // The interaudiosink already reports the latency of the interaudiosrc as its render delay,
+    // and renders the audio that much earlier. Only the rest of the mixer pipeline latency adds up.
+    auto renderDelay = gst_base_sink_get_render_delay(GST_BASE_SINK_CAST(sink->priv->interAudioSink.get()));
+    return mixerLatency > renderDelay ? mixerLatency - renderDelay : 0;
 }
 
 #undef GST_CAT_DEFAULT

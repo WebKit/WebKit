@@ -9192,6 +9192,19 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
     return SleepType::Display;
 }
 
+String HTMLMediaElement::audioOutputDeviceId() const
+{
+    if (RefPtr page = document().page())
+        return page->effectiveAudioOutputDeviceId(m_audioOutputPersistentDeviceId);
+    return m_audioOutputPersistentDeviceId;
+}
+
+bool HTMLMediaElement::doesMediaPlayerUseEmbedderAudioOutputs() const
+{
+    RefPtr page = document().page();
+    return page && page->doesEmbedderUseAudioOutputs();
+}
+
 String HTMLMediaElement::mediaPlayerReferrer() const
 {
     RefPtr frame = document().frame();

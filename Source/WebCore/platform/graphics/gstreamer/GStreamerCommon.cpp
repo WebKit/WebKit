@@ -80,6 +80,10 @@
 #include "GStreamerMediaStreamSource.h"
 #endif
 
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+#include "GStreamerVirtualAudioDeviceManager.h"
+#endif
+
 #if USE(FLITE)
 #include "WebKitFliteSourceGStreamer.h"
 #endif
@@ -1259,14 +1263,14 @@ IGNORE_WARNINGS_END
     return audioSink;
 }
 
-GstElement* /* (transfer floating) */ createPlatformAudioSink(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device)
+GstElement* /* (transfer floating) */ createPlatformAudioSink(const String& role, const String& deviceId, const GRefPtr<GstDevice>& device, AudioMixerUsage mixerUsage)
 {
-    GstElement* audioSink = webkitAudioSinkNew(role, deviceId, device);
+    GstElement* audioSink = webkitAudioSinkNew(role, deviceId, device, mixerUsage);
     if (!audioSink) {
         // This means the WebKit audio sink configuration failed. It can happen for the following reasons:
-        // - audio mixing was not requested using the WEBKIT_GST_ENABLE_AUDIO_MIXER
-        // - audio mixing was requested using the WEBKIT_GST_ENABLE_AUDIO_MIXER but the audio mixer
-        //   runtime requirements are not fullfilled.
+        // - audio mixing was neither required by the caller, nor requested using the
+        //   WEBKIT_GST_ENABLE_AUDIO_MIXER environment variable
+        // - audio mixing was requested but the audio mixer runtime requirements are not fullfilled.
         if (device)
             audioSink = gst_device_create_element(device.get(), "audio-output-sink");
         else
@@ -1279,6 +1283,11 @@ GstElement* /* (transfer floating) */ createPlatformAudioSink(const String& role
 #if ENABLE(MEDIA_STREAM)
 std::pair<String, GRefPtr<GstDevice>> gstResolveAudioOutputDevice(const String& deviceId)
 {
+#if ENABLE(VIRTUAL_AUDIO_DEVICES)
+    if (GRefPtr<GstDevice> virtualDevice = GStreamerVirtualAudioDeviceManager::singleton().deviceForPersistentId(deviceId))
+        return { deviceId, WTF::move(virtualDevice) };
+#endif
+
     auto resolvedId = deviceId;
     if (resolvedId == "default"_s) {
         const auto& devices = GStreamerAudioCaptureDeviceManager::singleton().speakerDevices();

@@ -207,6 +207,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserContentManager.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMediaPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMessage.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitVirtualAudioDevice.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebContext.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebResource.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebView.h.in
@@ -239,6 +240,17 @@ if (ENABLE_2022_GLIB_API)
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionContext.cpp
+    )
+endif ()
+
+if (ENABLE_VIRTUAL_AUDIO_DEVICES)
+    list(APPEND WebKit_SOURCES
+        Shared/glib/VirtualAudioDeviceDataChannel.cpp
+
+        UIProcess/glib/VirtualAudioDevicesGLib.cpp
+    )
+    list(APPEND WebKit_SERIALIZATION_IN_FILES
+        Shared/glib/VirtualAudioDeviceParameters.serialization.in
     )
 endif ()
 
