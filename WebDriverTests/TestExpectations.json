@@ -2358,13 +2358,28 @@
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
             },
             "test_client_window[tab]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
             },
             "test_client_window[window]": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
+                "expected": {"glib": {"status": ["PASS"]}, "all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
             },
             "test_with_user_context_subscription": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/288336"}}
+            },
+            "test_navigate_iframe[same_origin]": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_delete_iframe": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_nested_iframes_delete_top_iframe": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_nested_iframes_delete_deepest_iframe": {
+                "expected": {"glib": {"status": ["PASS"]}}
+            },
+            "test_iframe_destroy_parent": {
+                "expected": {"glib": {"status": ["PASS"]}}
             },
             "test_navigate_iframe[cross_origin]": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}

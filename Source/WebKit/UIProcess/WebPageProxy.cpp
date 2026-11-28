@@ -7413,6 +7413,17 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         protect(m_browsingContextGroup)->transitionPageToRemotePage(*this, *provisionalPage->deferredRemoteTransitionSite());
     }
 
+#if ENABLE(WEBDRIVER_BIDI)
+    // Caching in place has already taken the children, so any left belong to a discarded document that its process no
+    // longer reports.
+    // FIXME: Report the cached children when suspending or caching the document fails after this point.
+    // https://bugs.webkit.org/show_bug.cgi?id=332960
+    if (!didSuspendPreviousPage && mainFrameInPreviousProcess) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForChildFramesOfPreviousDocument(*mainFrameInPreviousProcess);
+    }
+#endif
+
     if (!didSuspendPreviousPage && mainFrameInPreviousProcess && preferences->siteIsolationEnabled())
         mainFrameInPreviousProcess->removeChildFrames();
 
@@ -9535,6 +9546,23 @@ void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier n
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void WebPageProxy::frameWillBeDetached(IPC::Connection& connection, FrameIdentifier frameID)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != this)
+        return;
+
+    // A frame that moved to another process is also detached by its previous process, which commitProvisionalFrame()
+    // has already replaced as the frame's process.
+    if (&frame->process() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->contextDestroyedForFrame(*frame);
+}
+#endif
+
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameID);
@@ -9566,6 +9594,13 @@ void WebPageProxy::frameWasRemoved(FrameIdentifier frameID, WebFrameProxy* frame
 #if ENABLE(PHONE_NUMBER_POSSESSION)
     if (RefPtr phoneNumberPossessionCoordinatorProxy = m_phoneNumberPossessionCoordinatorProxy)
         phoneNumberPossessionCoordinatorProxy->cancelRequestForFrame(frameID);
+#endif
+#if ENABLE(WEBDRIVER_BIDI)
+    // A frame no longer among its parent's children left the tree with a previous document that was cached or reported.
+    if (frame && frame->page() == this && !frame->isMainFrame() && frame->isConnected()) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForFrame(*frame);
+    }
 #endif
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
@@ -16781,8 +16816,14 @@ void WebPageProxy::nonMainFrameProcessDidTerminate(WebProcessProxy& process)
     resetFocusedFrameIfInProcess(process);
     if (RefPtr drawingArea = m_drawingArea)
         drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
-    if (RefPtr mainFrame = m_mainFrame)
+    if (RefPtr mainFrame = m_mainFrame) {
+#if ENABLE(WEBDRIVER_BIDI)
+        // remoteProcessDidTerminate() removes descendants before their ancestors, so report each removed subtree first.
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForFramesRemovedByProcessTermination(*mainFrame, process);
+#endif
         mainFrame->remoteProcessDidTerminate(process);
+    }
     clearStateForTerminatedProcess(process);
 }
 

@@ -100,6 +100,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPageInspectorController;
 class WebProcessPool;
+class WebProcessProxy;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class InspectorPassthroughChannel;
@@ -216,11 +217,14 @@ public:
     bool sameDocumentNavigationOccurredForFrame(const WebFrameProxy&, SameDocumentNavigationType, std::optional<WebCore::NavigationIdentifier>, const URL& previousURL);
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
-    void willDestroyFrame(const WebFrameProxy&);
+    void clearContextDestroyedStateForFrame(const WebFrameProxy&);
     void webProcessDidTerminate(WebCore::ProcessIdentifier);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
+    void contextDestroyedForChildFramesOfPreviousDocument(const WebFrameProxy& mainFrame);
+    void contextDestroyedForFramesRemovedByProcessTermination(const WebFrameProxy&, const WebProcessProxy&);
+    std::pair<String, String> clientWindowAndUserContextForPage(const WebPageProxy&) const;
     void setViewportForPage(WebPageProxy&, std::optional<int> width, std::optional<int> height, std::optional<double> devicePixelRatio, Inspector::CommandCallback<void>&&);
 #endif
     void willClosePage(const WebPageProxy&);
@@ -529,6 +533,10 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+    // Frames already reported destroyed, alone or inside an ancestor's subtree, whether or not the event was delivered.
+    HashSet<WebCore::FrameIdentifier> m_framesReportedDestroyed;
+    // Recorded when the page is created, because the opener may be closed before the page is.
+    HashMap<WebPageProxyIdentifier, String> m_originalOpenerHandles;
 
     // A browsingContext.navigate or reload in flight: the id to report, filled in from the API::Navigation for a main frame or
     // from WebCore's first navigationStarted/fragmentNavigated report for a child frame, and whether WebCore reported

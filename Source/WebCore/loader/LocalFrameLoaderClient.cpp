@@ -50,6 +50,10 @@ void LocalFrameLoaderClient::deref() const
     m_loader->deref();
 }
 
+void LocalFrameLoaderClient::willDetachFromParent()
+{
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 void LocalFrameLoaderClient::didExceedNetworkUsageThreshold()
 {

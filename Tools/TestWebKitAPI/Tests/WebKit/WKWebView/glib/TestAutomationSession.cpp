@@ -33,7 +33,7 @@
 #include <wtf/URL.h>
 #endif
 #include <wtf/glib/GLibExtras.h>
-#if ENABLE(WEBDRIVER_BIDI) && OS(LINUX)
+#if ENABLE(WEBDRIVER_BIDI)
 #include <wtf/glib/GUniquePtr.h>
 #endif
 #include <wtf/glib/SocketConnection.h>
@@ -206,7 +206,7 @@ public:
         return browsingContext;
     }
 
-    void loadURIAndWait(WebKitWebView* webView, const char* uri)
+    void runAndWaitUntilLoadFinished(WebKitWebView* webView, NOESCAPE const Function<void()>& operation)
     {
         m_loadFinished = false;
         auto loadChangedHandler = g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView*, WebKitLoadEvent loadEvent, AutomationTest* test) {
@@ -216,10 +216,36 @@ public:
             g_main_loop_quit(test->m_mainLoop.get());
         }), this);
 
-        webkit_web_view_load_uri(webView, uri);
+        operation();
         while (!m_loadFinished)
             g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(webView, loadChangedHandler);
+    }
+
+    void loadURIAndWait(WebKitWebView* webView, const char* uri)
+    {
+        runAndWaitUntilLoadFinished(webView, [&] {
+            webkit_web_view_load_uri(webView, uri);
+        });
+    }
+
+    void goBackAndWait(WebKitWebView* webView)
+    {
+        runAndWaitUntilLoadFinished(webView, [&] {
+            webkit_web_view_go_back(webView);
+        });
+    }
+
+    Vector<Ref<JSON::Object>> bidiEvents(ASCIILiteral method) const
+    {
+        Vector<Ref<JSON::Object>> events;
+        for (auto& message : m_bidiMessages) {
+            if (message->getString("method"_s) != method)
+                continue;
+            if (auto parameters = message->getObject("params"_s))
+                events.append(parameters.releaseNonNull());
+        }
+        return events;
     }
 
     void sendBidiCommand(int commandIdentifier, const String& method, Ref<JSON::Object>&& parameters)
@@ -756,6 +782,27 @@ static Ref<JSON::Array> getRealms(AutomationTest& test, int commandIdentifier, R
     return realms.releaseNonNull();
 }
 
+static void subscribeToEvents(AutomationTest& test, int commandIdentifier, std::initializer_list<ASCIILiteral> eventNames)
+{
+    auto parameters = JSON::Object::create();
+    auto events = JSON::Array::create();
+    for (auto eventName : eventNames)
+        events->pushString(eventName);
+    parameters->setArray("events"_s, WTF::move(events));
+    test.sendBidiCommandAndWait(commandIdentifier, "session.subscribe"_s, WTF::move(parameters));
+}
+
+static void evaluateInContext(AutomationTest& test, int commandIdentifier, const String& expression, const String& browsingContext)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("expression"_s, expression);
+    parameters->setBoolean("awaitPromise"_s, false);
+    auto target = JSON::Object::create();
+    target->setString("context"_s, browsingContext);
+    parameters->setObject("target"_s, WTF::move(target));
+    test.sendBidiCommandAndWait(commandIdentifier, "script.evaluate"_s, WTF::move(parameters));
+}
+
 static String getIframeBrowsingContext(AutomationTest& test, int commandIdentifier, const String& topLevelBrowsingContext)
 {
     auto parameters = JSON::Object::create();
@@ -934,6 +981,62 @@ static void testBidiCallFunctionNavigationCancelsPendingCommand(AutomationTest* 
     }));
 }
 
+static size_t childCount(JSON::Object& navigableInfo)
+{
+    auto children = navigableInfo.getArray("children"_s);
+    g_assert_nonnull(children.get());
+    return children->length();
+}
+
+static Ref<JSON::Object> onlyChild(JSON::Object& navigableInfo)
+{
+    g_assert_cmpuint(childCount(navigableInfo), ==, 1);
+    auto child = navigableInfo.getArray("children"_s)->get(0)->asObject();
+    g_assert_nonnull(child.get());
+    return child.releaseNonNull();
+}
+
+struct NestedFrames {
+    String outer;
+    String inner;
+};
+
+static std::optional<NestedFrames> findCreatedNestedFrames(const AutomationTest& test, const String& parentHandle)
+{
+    auto events = test.bidiEvents("browsingContext.contextCreated"_s);
+    NestedFrames frames;
+    for (auto& event : events) {
+        if (event->getString("parent"_s) == parentHandle)
+            frames.outer = event->getString("context"_s);
+    }
+    for (auto& event : events) {
+        if (!frames.outer.isEmpty() && event->getString("parent"_s) == frames.outer)
+            frames.inner = event->getString("context"_s);
+    }
+    if (frames.inner.isEmpty())
+        return std::nullopt;
+    return frames;
+}
+
+static NestedFrames loadNestedFrames(AutomationTest& test, WebKitWebView* webView, const String& pageHandle, const char* path)
+{
+    test.m_bidiMessages.clear();
+    test.loadURIAndWait(webView, kServer->getURIForPath(path).legacyCStringPointer());
+    std::optional<NestedFrames> frames;
+    test.waitUntil([&] {
+        frames = findCreatedNestedFrames(test, pageHandle);
+        return !!frames;
+    });
+    return *frames;
+}
+
+// The reply follows the events that the UI process has already sent. Messages still on their way from a web process
+// are not waited for.
+static void waitForEventsAlreadySentByUIProcess(AutomationTest& test)
+{
+    test.waitForResponse(test.sendCommandToBackend("getBrowsingContexts"_s));
+}
+
 #if OS(LINUX)
 static std::optional<uint64_t> protocolRealmProcessIdentifier(const String& realmIdentifier)
 {
@@ -1043,27 +1146,6 @@ static PageRealms getPageRealms(AutomationTest& test, int commandIdentifier, con
     return { WTF::move(topLevelRealm), WTF::move(*iframeRealm) };
 }
 
-static void subscribeToRealmEvents(AutomationTest& test, int commandIdentifier)
-{
-    auto parameters = JSON::Object::create();
-    auto events = JSON::Array::create();
-    events->pushString("script.realmCreated"_s);
-    events->pushString("script.realmDestroyed"_s);
-    parameters->setArray("events"_s, WTF::move(events));
-    test.sendBidiCommandAndWait(commandIdentifier, "session.subscribe"_s, WTF::move(parameters));
-}
-
-static void evaluateInContext(AutomationTest& test, int commandIdentifier, const String& expression, const String& browsingContext)
-{
-    auto parameters = JSON::Object::create();
-    parameters->setString("expression"_s, expression);
-    parameters->setBoolean("awaitPromise"_s, false);
-    auto target = JSON::Object::create();
-    target->setString("context"_s, browsingContext);
-    parameters->setObject("target"_s, WTF::move(target));
-    test.sendBidiCommandAndWait(commandIdentifier, "script.evaluate"_s, WTF::move(parameters));
-}
-
 static bool isRealmEvent(const JSON::Object& message, ASCIILiteral method, const String& realmIdentifier)
 {
     if (message.getString("method"_s) != method)
@@ -1124,13 +1206,24 @@ static void testBidiIframeRealmDestroyedWhenIframeProcessTerminates(AutomationTe
     auto topLevelProcessIdentifier = protocolRealmProcessIdentifier(initialRealms.topLevel);
     g_assert_true(!!topLevelProcessIdentifier);
 
-    subscribeToRealmEvents(*test, 2);
+    subscribeToEvents(*test, 2, { "script.realmCreated"_s, "script.realmDestroyed"_s, "browsingContext.contextCreated"_s, "browsingContext.contextDestroyed"_s });
     auto crossSiteIframeURL = makeString("http://localhost:"_s, kServer->port(), "/replacement-iframe.html"_s);
     evaluateInContext(*test, 3, makeString("document.querySelector('iframe').src = \""_s, crossSiteIframeURL, "\";"_s), topLevelBrowsingContext);
     auto iframeRealm = waitForReplacementRealmCreated(*test, initialRealms.iframe);
     auto iframeProcessIdentifier = protocolRealmProcessIdentifier(iframeRealm);
     g_assert_true(!!iframeProcessIdentifier);
     g_assert_cmpuint(*iframeProcessIdentifier, !=, *topLevelProcessIdentifier);
+
+    // The iframe's previous process detached it when it moved, but the iframe is not destroyed.
+    std::optional<NestedFrames> nestedFrames;
+    test->waitUntil([&] {
+        nestedFrames = findCreatedNestedFrames(*test, initialRealms.iframe.browsingContext);
+        return !!nestedFrames;
+    });
+    // The top-level process replies after the iframe it detached.
+    evaluateInContext(*test, 6, "0"_s, topLevelBrowsingContext);
+    waitForEventsAlreadySentByUIProcess(*test);
+    g_assert_true(test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty());
 
     auto topLevelProcess = webProcessPIDForProtocolIdentifier(*topLevelProcessIdentifier);
     auto iframeProcess = webProcessPIDForProtocolIdentifier(*iframeProcessIdentifier);
@@ -1157,8 +1250,148 @@ static void testBidiIframeRealmDestroyedWhenIframeProcessTerminates(AutomationTe
     }
     g_assert_true(topLevelRealmIsListed);
     assertRealmWasDestroyedOnce(*test, 5, iframeRealm);
+
+    // The UI process removes the frames of the terminated process from the bottom up, yet one event reports the subtree.
+    test->waitUntil([&] {
+        return !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+    waitForEventsAlreadySentByUIProcess(*test);
+    auto contextDestroyedEvents = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(contextDestroyedEvents.size(), ==, 1);
+    g_assert_true(contextDestroyedEvents[0]->getString("context"_s) == nestedFrames->outer);
+    g_assert_true(contextDestroyedEvents[0]->getString("parent"_s) == initialRealms.iframe.browsingContext);
+    auto innerFrame = onlyChild(contextDestroyedEvents[0].get());
+    g_assert_true(innerFrame->getString("context"_s) == nestedFrames->inner);
+    g_assert_cmpuint(childCount(innerFrame.get()), ==, 0);
 }
 #endif
+
+static void testBidiContextDestroyedReportsSubtree(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    auto sessionID = createVersion4UUIDString().utf8();
+    g_assert_nonnull(test->requestSession(sessionID));
+
+    auto webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+    auto pageHandle = test->browsingContextHandleFromLastResponse();
+
+    subscribeToEvents(*test, 1, { "browsingContext.contextCreated"_s, "browsingContext.contextDestroyed"_s });
+
+    // Removing the outer frame destroys the inner one first inside WebCore, yet one event reports both, under the
+    // identifiers they were announced with.
+    auto frames = loadNestedFrames(*test, webView.get(), pageHandle, "/nested-frames");
+    test->m_bidiMessages.clear();
+    evaluateInContext(*test, 2, "document.getElementById('outer').remove()"_s, pageHandle);
+    waitForEventsAlreadySentByUIProcess(*test);
+    auto destroyedEvents = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(destroyedEvents.size(), ==, 1);
+    g_assert_true(destroyedEvents[0]->getString("context"_s) == frames.outer);
+    g_assert_true(destroyedEvents[0]->getString("parent"_s) == pageHandle);
+    auto originalOpener = destroyedEvents[0]->getValue("originalOpener"_s);
+    g_assert_nonnull(originalOpener.get());
+    g_assert_true(originalOpener->isNull());
+    auto innerFrame = onlyChild(destroyedEvents[0].get());
+    g_assert_true(innerFrame->getString("context"_s) == frames.inner);
+    g_assert_cmpuint(childCount(innerFrame.get()), ==, 0);
+
+    // The child navigables of a document in the back/forward cache are not destroyed, so leaving the document and
+    // restoring it reports nothing, and they keep their identifiers.
+    auto cachedFrames = loadNestedFrames(*test, webView.get(), pageHandle, "/cached-nested-frames");
+    loadNestedFrames(*test, webView.get(), pageHandle, "/nested-frames");
+    waitForEventsAlreadySentByUIProcess(*test);
+    g_assert_true(test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty());
+    test->m_bidiMessages.clear();
+    test->goBackAndWait(webView.get());
+    test->waitUntil([&] {
+        return !g_strcmp0(webkit_web_view_get_title(webView.get()), "restored");
+    });
+    waitForEventsAlreadySentByUIProcess(*test);
+    g_assert_true(test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty());
+    g_assert_true(test->bidiEvents("browsingContext.contextCreated"_s).isEmpty());
+
+    // A page in the same context that automation does not control is not reported.
+    auto otherWebView = test->createWebView();
+    test->loadURIAndWait(otherWebView.get(), kServer->getURIForPath("/nested-frames").legacyCStringPointer());
+    test->m_bidiMessages.clear();
+    std::optional<bool> didRemoveFrame;
+    webkit_web_view_evaluate_javascript(otherWebView.get(), "document.getElementById('outer').remove(); !document.getElementById('outer')", -1, nullptr, nullptr, nullptr, [](GObject* webView, GAsyncResult* result, gpointer userData) {
+        GUniqueOutPtr<GError> error;
+        GRefPtr<JSCValue> value = adoptGRef(webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(webView), result, &error.outPtr()));
+        g_assert_no_error(error.get());
+        *static_cast<std::optional<bool>*>(userData) = jsc_value_to_boolean(value.get());
+    }, &didRemoveFrame);
+    test->waitUntil([&] {
+        return didRemoveFrame.has_value();
+    });
+    g_assert_true(*didRemoveFrame);
+    waitForEventsAlreadySentByUIProcess(*test);
+    g_assert_true(test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty());
+
+    // Closing a page reports the page once, with the frames of its current document inside that single event.
+    webView = nullptr;
+    test->waitUntil([&] {
+        return !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+    waitForEventsAlreadySentByUIProcess(*test);
+    destroyedEvents = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(destroyedEvents.size(), ==, 1);
+    g_assert_true(destroyedEvents[0]->getString("context"_s) == pageHandle);
+    auto parent = destroyedEvents[0]->getValue("parent"_s);
+    g_assert_nonnull(parent.get());
+    g_assert_true(parent->isNull());
+    auto outerFrame = onlyChild(destroyedEvents[0].get());
+    g_assert_true(outerFrame->getString("context"_s) == cachedFrames.outer);
+    g_assert_true(onlyChild(outerFrame.get())->getString("context"_s) == cachedFrames.inner);
+}
+
+static void testBidiContextDestroyedReportsClosedOriginalOpener(AutomationTest* test, gconstpointer)
+{
+    webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
+    auto sessionID = createVersion4UUIDString().utf8();
+    g_assert_nonnull(test->requestSession(sessionID));
+
+    auto openerWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(openerWebView.get()), TRUE);
+    g_assert_true(test->createTopLevelBrowsingContext(openerWebView.get()));
+    auto openerHandle = test->browsingContextHandleFromLastResponse();
+    subscribeToEvents(*test, 1, { "browsingContext.contextCreated"_s, "browsingContext.contextDestroyed"_s });
+    test->loadURIAndWait(openerWebView.get(), kServer->getURIForPath("/target").legacyCStringPointer());
+
+    struct Popup {
+        AutomationTest& test;
+        GRefPtr<WebKitWebView> webView;
+    } popup { *test, nullptr };
+    g_signal_connect(openerWebView.get(), "create", G_CALLBACK(+[](WebKitWebView* webView, WebKitNavigationAction*, Popup* popup) -> WebKitWebView* {
+        popup->webView = popup->test.createWebView("related-view", webView, nullptr);
+        return popup->webView.get();
+    }), &popup);
+    evaluateInContext(*test, 2, "window.open('/target'), 0"_s, openerHandle);
+    test->waitUntil([&] {
+        const char* uri = popup.webView ? webkit_web_view_get_uri(popup.webView.get()) : nullptr;
+        return uri && g_str_has_suffix(uri, "/target") && !webkit_web_view_is_loading(popup.webView.get());
+    });
+
+    // The opener closes first, yet the page it opened still reports it as its original opener.
+    openerWebView = nullptr;
+    test->waitUntil([&] {
+        for (auto& event : test->bidiEvents("browsingContext.contextDestroyed"_s)) {
+            if (event->getString("context"_s) == openerHandle)
+                return true;
+        }
+        return false;
+    });
+    test->m_bidiMessages.clear();
+    popup.webView = nullptr;
+    test->waitUntil([&] {
+        return !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+    auto destroyedEvents = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(destroyedEvents.size(), ==, 1);
+    g_assert_true(destroyedEvents[0]->getString("context"_s) != openerHandle);
+    g_assert_true(destroyedEvents[0]->getString("originalOpener"_s) == openerHandle);
+}
+
 #endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
@@ -1307,14 +1540,20 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     }
 
     const char* html = "<p>target</p>";
-    if (g_str_equal(path, "/iframe-realm-enumeration.html"))
+    if (g_str_equal(path, "/nested-frames"))
+        html = "<iframe id='outer' srcdoc=\"<iframe srcdoc='<p>inner</p>'></iframe>\"></iframe>";
+    else if (g_str_equal(path, "/cached-nested-frames"))
+        html = "<script>addEventListener('pageshow', event => { if (event.persisted) document.title = 'restored'; });</script><iframe id='outer' srcdoc=\"<iframe srcdoc='<p>inner</p>'></iframe>\"></iframe>";
+    else if (g_str_equal(path, "/iframe-realm-enumeration.html"))
         html = "<!doctype html><iframe src='/iframe.html'></iframe>";
     else if (g_str_equal(path, "/iframe-realm-lifecycle.html"))
         html = "<!doctype html><iframe src='/initial-iframe.html'></iframe>";
     else if (g_str_equal(path, "/iframe.html"))
         html = "<!doctype html><p>iframe document</p>";
-    else if (g_str_equal(path, "/initial-iframe.html") || g_str_equal(path, "/replacement-iframe.html"))
+    else if (g_str_equal(path, "/initial-iframe.html"))
         html = "<!doctype html><script>window.realmIsReady = true;</script><p>iframe document</p>";
+    else if (g_str_equal(path, "/replacement-iframe.html"))
+        html = "<!doctype html><script>window.realmIsReady = true;</script><iframe srcdoc=\"<iframe srcdoc='<p>inner</p>'></iframe>\"></iframe>";
     else if (g_str_equal(path, "/fragment-while-loading"))
         html = "<img src='/slow-image'><script>history.pushState(null, '', '#changed');</script>";
     else if (g_str_equal(path, "/anchor-while-parsing"))
@@ -1344,6 +1583,8 @@ void beforeAll()
 
 #if ENABLE(WEBDRIVER_BIDI)
     AutomationTest::add("WebKitAutomationSession", "bidi-call-function-navigation-cancels-pending-command", testBidiCallFunctionNavigationCancelsPendingCommand);
+    AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-subtree", testBidiContextDestroyedReportsSubtree);
+    AutomationTest::add("WebKitAutomationSession", "bidi-context-destroyed-reports-closed-original-opener", testBidiContextDestroyedReportsClosedOriginalOpener);
 #if OS(LINUX)
     AutomationTest::add("WebKitAutomationSession", "bidi-iframe-realm-destroyed-when-iframe-process-terminates", testBidiIframeRealmDestroyedWhenIframeProcessTerminates);
 #endif

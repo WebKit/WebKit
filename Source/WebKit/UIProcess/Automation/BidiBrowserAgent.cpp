@@ -128,8 +128,10 @@ bool BidiBrowserAgent::isValidUserContext(const String& userContextID) const
 
 String BidiBrowserAgent::userContextForPage(const WebPageProxy& page) const
 {
+    // A user context that is being removed stays the owner of its pages until the last one has closed,
+    // so that their browsingContext.contextDestroyed events still name it.
     String userContextID = toUserContextIDProtocolString(page.sessionID());
-    if (m_userContexts.contains(userContextID))
+    if (m_userContexts.contains(userContextID) || m_userContextsPendingDeletion.contains(userContextID))
         return userContextID;
     return defaultUserContextID();
 }
