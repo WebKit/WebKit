@@ -341,7 +341,7 @@ void InPlaceAbstractState::activateVariable(size_t variableIndex)
     m_activeVariables[variableIndex] = true;
 }
 
-bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
+bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to, NodeFlowProjection knownTruthy)
 {
     dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "   Merging from ", pointerDump(from), " to ", pointerDump(to));
     ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
@@ -384,8 +384,14 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
             ASSERT(valueCountInFromBlock == 1);
 #endif
 
-            if (!node->isTuple())
-                changed |= entry.value.merge(forNode(node));
+            if (!node->isTuple()) {
+                if (node == knownTruthy) {
+                    AbstractValue value = forNode(node);
+                    value.filter(~SpecOther);
+                    changed |= entry.value.merge(value);
+                } else
+                    changed |= entry.value.merge(forNode(node));
+            }
 
             dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "         Result: ", entry.value);
         }
@@ -421,8 +427,13 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
     case Branch: {
         ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
         bool changed = false;
-        if (basicBlock->cfaBranchDirection != TakeFalse)
-            changed |= merge(basicBlock, terminal->branchData()->taken.block);
+        if (basicBlock->cfaBranchDirection != TakeFalse) {
+            BasicBlock* taken = terminal->branchData()->taken.block;
+            NodeFlowProjection knownTruthy;
+            if (taken->predecessors.size() == 1)
+                knownTruthy = terminal->child1().node();
+            changed |= merge(basicBlock, taken, knownTruthy);
+        }
         if (basicBlock->cfaBranchDirection != TakeTrue)
             changed |= merge(basicBlock, terminal->branchData()->notTaken.block);
         return changed;
