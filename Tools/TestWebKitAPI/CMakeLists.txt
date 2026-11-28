@@ -366,6 +366,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/SerializedScriptValue.cpp
         Tests/WebCore/ServiceWorkerRoutines.cpp
         Tests/WebCore/ShareableBitmap.cpp
+        Tests/WebCore/SharedAudioDestinationTest.cpp
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp
         Tests/WebCore/SharedMemoryTests.cpp
