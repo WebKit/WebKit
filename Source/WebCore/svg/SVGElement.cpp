@@ -1071,6 +1071,15 @@ bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) c
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
+bool SVGElement::hasIndependentPresentationalHintForAttribute(const QualifiedName& name) const
+{
+    auto propertyID = cssPropertyIdForSVGAttributeName(name);
+    if (propertyID == CSSPropertyID::Invalid || isShorthand(propertyID))
+        return false;
+    // font-stretch and font-width map to the same property, and the later attribute wins.
+    return propertyID != CSSPropertyID::FontWidth;
+}
+
 void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);

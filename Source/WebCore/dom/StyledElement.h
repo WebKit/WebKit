@@ -69,10 +69,14 @@ public:
     StylePropertyMap& ensureAttributeStyleMap();
 
     // https://html.spec.whatwg.org/#presentational-hints
-    const ImmutableStyleProperties* presentationalHintStyle() const;
+    const StyleProperties* presentationalHintStyle() const;
     virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
+
+    // For presentational hints that change without the attribute changing through attributeChanged().
+    // Pass the attribute whose presentational hint changed when only that one did.
+    void invalidatePresentationalHintStyle(const QualifiedName& changedAttribute = nullQName());
 
 protected:
     StyledElement(const QualifiedName& name, Document& document, OptionSet<TypeFlag> type)
@@ -83,6 +87,10 @@ protected:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
 
     virtual bool hasPresentationalHintsForAttribute(const QualifiedName&) const { return false; }
+
+    // Whether the attribute's presentational hint is always a single property that no other attribute sets.
+    // When such an attribute changes, its property is replaced without collecting every attribute again.
+    virtual bool hasIndependentPresentationalHintForAttribute(const QualifiedName&) const { return false; }
 
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, CSSValueID identifier);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSUnitType);
@@ -108,6 +116,11 @@ private:
     Ref<MutableStyleProperties> ensureMutableInlineStyle();
 
     void rebuildPresentationalHintStyle();
+    void presentationalHintsChanged(const QualifiedName& changedAttribute);
+    void trackDirtyPresentationalHintAttribute(const QualifiedName&);
+    void clearDirtyPresentationalHintAttributes();
+    bool updatePresentationalHintStyleForDirtyAttributes();
+    bool replacePresentationalHintStyleProperties(const StyleProperties&);
 };
 
 } // namespace WebCore
