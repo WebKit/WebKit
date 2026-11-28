@@ -41,6 +41,11 @@
 		0F037AF325AEA91A0079B582 /* pas_medium_megapage_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F037AF125AEA9190079B582 /* pas_medium_megapage_cache.c */; };
 		0F037AF425AEA91A0079B582 /* pas_medium_megapage_cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */; };
 		0F04C21D2460DB6F001D31F0 /* pas_heap_config_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C20B2460DB6E001D31F0 /* pas_heap_config_inlines.h */; };
+		44889077F27C49C2AEE36B36 /* pas_condition.c in Sources */ = {isa = PBXBuildFile; fileRef = 663966068810446EA46A99CC /* pas_condition.c */; };
+		47F3B992A82740018BC71EEB /* pas_futex.c in Sources */ = {isa = PBXBuildFile; fileRef = 497443603B794298BC5C95FC /* pas_futex.c */; };
+		F8DC679B8ECF494A841DCB6C /* pas_condition.h in Headers */ = {isa = PBXBuildFile; fileRef = AFBB1B448D1D4EEFB2506930 /* pas_condition.h */; };
+		32949AFFEAEF463FA78640EF /* pas_futex.h in Headers */ = {isa = PBXBuildFile; fileRef = 87EC0EF6BC4949EF9B2910DC /* pas_futex.h */; };
+		663A9934BEDE4183ABD572A8 /* LockAndConditionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8DE2C48E5604C87BE4C9119 /* LockAndConditionTests.cpp */; };
 		0F04C21F2460DB6F001D31F0 /* pas_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F04C20D2460DB6E001D31F0 /* pas_lock.c */; };
 		0F04C2252460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04C2132460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h */; };
 		0F083F5A22C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F083F5822C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h */; };
@@ -777,6 +782,11 @@
 		0F037AF125AEA9190079B582 /* pas_medium_megapage_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_medium_megapage_cache.c; sourceTree = "<group>"; };
 		0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_medium_megapage_cache.h; sourceTree = "<group>"; };
 		0F04C20B2460DB6E001D31F0 /* pas_heap_config_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_heap_config_inlines.h; sourceTree = "<group>"; };
+		663966068810446EA46A99CC /* pas_condition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_condition.c; sourceTree = "<group>"; };
+		497443603B794298BC5C95FC /* pas_futex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_futex.c; sourceTree = "<group>"; };
+		AFBB1B448D1D4EEFB2506930 /* pas_condition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_condition.h; sourceTree = "<group>"; };
+		87EC0EF6BC4949EF9B2910DC /* pas_futex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_futex.h; sourceTree = "<group>"; };
+		E8DE2C48E5604C87BE4C9119 /* LockAndConditionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LockAndConditionTests.cpp; sourceTree = "<group>"; };
 		0F04C20D2460DB6E001D31F0 /* pas_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_lock.c; sourceTree = "<group>"; };
 		0F04C2132460DB6F001D31F0 /* pas_compact_atomic_page_sharing_pool_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_atomic_page_sharing_pool_ptr.h; sourceTree = "<group>"; };
 		0F083F5822C2979B00F3CDB3 /* pas_segregated_page_config_utils_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_config_utils_inlines.h; sourceTree = "<group>"; };
@@ -1490,6 +1500,7 @@
 				0FEB6666231C87BC009C001B /* LargeSharingPoolDump.cpp */,
 				0FEB6667231C87BC009C001B /* LargeSharingPoolDump.h */,
 				0FEB6669231DA86F009C001B /* LargeSharingPoolTests.cpp */,
+				E8DE2C48E5604C87BE4C9119 /* LockAndConditionTests.cpp */,
 				0FEA45BE236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp */,
 				2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */,
 				E2D1AF6BDB3D448CA5317B27 /* MallocLoggerTests.cpp */,
@@ -1677,6 +1688,8 @@
 				0F6D564F23CBD19B00F40DBB /* pas_compact_unsigned_ptr.h */,
 				0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */,
 				0FC4EC30234A91E200B710A3 /* pas_compute_summary_object_callbacks.h */,
+				663966068810446EA46A99CC /* pas_condition.c */,
+				AFBB1B448D1D4EEFB2506930 /* pas_condition.h */,
 				0FC681A22103917B003C6A13 /* pas_config.h */,
 				0F85EFD522E2BEC7003A362B /* pas_config_prefix.h */,
 				0F329A2623F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */,
@@ -1751,6 +1764,8 @@
 				0FD48B1323A9ABB10026C46D /* pas_free_range_kind.h */,
 				0FD48B1D23A9ABB20026C46D /* pas_full_alloc_bits.h */,
 				0FD48AFF23A9ABB00026C46D /* pas_full_alloc_bits_inlines.h */,
+				497443603B794298BC5C95FC /* pas_futex.c */,
+				87EC0EF6BC4949EF9B2910DC /* pas_futex.h */,
 				0FF08F3722A5B3E200386575 /* pas_generic_large_free_heap.h */,
 				0FE7EE58229E14F9004F4166 /* pas_get_allocation_size.h */,
 				0FE7EE5C229E14F9004F4166 /* pas_get_heap.h */,
@@ -2261,6 +2276,7 @@
 				0F6D567923CD705900F40DBB /* pas_compact_tagged_unsigned_ptr.h in Headers */,
 				0F6D566223CBD19D00F40DBB /* pas_compact_unsigned_ptr.h in Headers */,
 				0FC4EC39234A91E300B710A3 /* pas_compute_summary_object_callbacks.h in Headers */,
+				F8DC679B8ECF494A841DCB6C /* pas_condition.h in Headers */,
 				0FE7EE0A22960142004F4166 /* pas_config.h in Headers */,
 				0F85EFDA22E2BEC7003A362B /* pas_config_prefix.h in Headers */,
 				0F329A2B23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */,
@@ -2307,6 +2323,7 @@
 				0FD48B4E23A9ABB30026C46D /* pas_free_range_kind.h in Headers */,
 				0FD48B5823A9ABB30026C46D /* pas_full_alloc_bits.h in Headers */,
 				0FD48B3A23A9ABB30026C46D /* pas_full_alloc_bits_inlines.h in Headers */,
+				32949AFFEAEF463FA78640EF /* pas_futex.h in Headers */,
 				0FF08F3A22A5B40300386575 /* pas_generic_large_free_heap.h in Headers */,
 				0FE7EE60229E14FA004F4166 /* pas_get_allocation_size.h in Headers */,
 				0FE7EE64229E14FA004F4166 /* pas_get_heap.h in Headers */,
@@ -2804,6 +2821,7 @@
 				0FC64191213745FA0040CE5E /* LargeFreeHeapTests.cpp in Sources */,
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
+				663A9934BEDE4183ABD572A8 /* LockAndConditionTests.cpp in Sources */,
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
 				2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
 				B67C2F5E82594CE1B8AF7B81 /* MallocLoggerTests.cpp in Sources */,
@@ -2873,6 +2891,7 @@
 				0F6D566E23CBD19D00F40DBB /* pas_compact_heap_reservation.c in Sources */,
 				0F66D547248760A800FC7347 /* pas_compact_large_utility_free_heap.c in Sources */,
 				0FC4EC3E234A91E300B710A3 /* pas_compute_summary_object_callbacks.c in Sources */,
+				44889077F27C49C2AEE36B36 /* pas_condition.c in Sources */,
 				0F329A2C23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c in Sources */,
 				0FE7EE67229E14FA004F4166 /* pas_deallocate.c in Sources */,
 				0FBC62C2265F12A3005A5720 /* pas_debug_spectrum.c in Sources */,
@@ -2900,6 +2919,7 @@
 				0F9A1D49255E284200C8D11B /* pas_fast_megapage_table.c in Sources */,
 				0FC4EC38234A91E300B710A3 /* pas_fd_stream.c in Sources */,
 				0F9A1D002559961700C8D11B /* pas_free_granules.c in Sources */,
+				47F3B992A82740018BC71EEB /* pas_futex.c in Sources */,
 				0FE7EDC022960142004F4166 /* pas_heap.c in Sources */,
 				0F1BFD44266457F100CEC28D /* pas_heap_config.c in Sources */,
 				0F6D566623CBD19D00F40DBB /* pas_heap_config_kind.c in Sources */,

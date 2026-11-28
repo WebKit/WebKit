@@ -444,6 +444,7 @@
 #define BENABLE_MTE (BUSE(APPLE_INTERNAL_SDK) && BCPU(ARM64E) && !BASAN_ENABLED)
 #endif // !defined(BENABLE_MTE)
 #else // !BUSE_LIBPAS
+#undef BENABLE_MTE
 #define BENABLE_MTE 0
 #endif // BUSE_LIBPAS
 

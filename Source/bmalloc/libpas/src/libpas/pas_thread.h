@@ -55,13 +55,6 @@ typedef struct pthread_attr_t_internal * pthread_attr_t;
 struct pas_thread_t_internal { };
 typedef struct pas_thread_t_internal pas_thread_t;
 
-/* Mutexes, conditions */
-
-typedef SRWLOCK pthread_mutex_t;
-typedef CONDITION_VARIABLE pthread_cond_t;
-#define PTHREAD_MUTEX_INITIALIZER SRWLOCK_INIT
-#define PTHREAD_COND_INITIALIZER CONDITION_VARIABLE_INIT
-
 __PAS_BEGIN_EXTERN_C;
 
 __PAS_API int pthread_create(pthread_t *thread, const pthread_attr_t *attr, unsigned (*start_routine)(void*), void *arg);
@@ -72,17 +65,6 @@ __PAS_API pthread_t pthread_self(void);
 __PAS_API int sched_yield();
 
 __PAS_API int pthread_once(pthread_once_t *once_control, void (*init_routine)(void));
-
-__PAS_API int pthread_mutex_init(pthread_mutex_t *mutex, const void *unused_attr);
-__PAS_API int pthread_cond_init(pthread_cond_t *cond, const void *unused_attr);
-
-__PAS_API int pthread_cond_broadcast(pthread_cond_t *cond);
-
-__PAS_API int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);
-__PAS_API int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime);
-
-__PAS_API int pthread_mutex_lock(pthread_mutex_t *mutex);
-__PAS_API int pthread_mutex_unlock(pthread_mutex_t *mutex);
 
 __PAS_END_EXTERN_C;
 

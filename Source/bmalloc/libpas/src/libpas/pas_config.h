@@ -96,6 +96,11 @@
 #endif
 #endif /* PAS_ENABLE_MTE */
 
+#if !LIBPAS_ENABLED
+#undef PAS_ENABLE_MTE
+#define PAS_ENABLE_MTE 0
+#endif
+
 /* PAS_USE_SYMMETRIC_PAGE_ALLOCATION controls whether pas_page_malloc_commit /
  * pas_page_malloc_decommit use a strictly symmetric primitive pair. When set, the
  * strict "decommit" API is expected to be paired with a matching "commit" before

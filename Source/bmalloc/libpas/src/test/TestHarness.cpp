@@ -402,6 +402,7 @@ void addIsoHeapReservedMemoryTests();
 void addJITHeapTests();
 void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
+void addLockAndConditionTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
 void addMARTests();
@@ -905,6 +906,7 @@ int main(int argc, char** argv)
     ADD_SUITE(JITHeap);
     ADD_SUITE(LargeFreeHeap);
     ADD_SUITE(LargeSharingPool);
+    ADD_SUITE(LockAndCondition);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(LotsOfHeapsAndThreads);
     ADD_SUITE(MAR);

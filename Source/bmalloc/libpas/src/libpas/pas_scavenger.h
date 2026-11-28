@@ -44,6 +44,8 @@ typedef enum pas_scavenger_state pas_scavenger_state;
 
 PAS_END_EXTERN_C;
 
+#include "pas_condition.h"
+#include "pas_lock.h"
 #include "pas_thread.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -67,15 +69,15 @@ struct pas_scavenger_foreign_work_descriptor {
 };
 
 struct pas_scavenger_foreign_work_data {
-    pthread_mutex_t lock; /* Only guards writes. */
+    pas_lock lock; /* Only guards writes. */
     pas_scavenger_foreign_work_descriptor descriptors[PAS_SCAVENGER_MAX_FOREIGN_WORK_DESCRIPTORS];
     int next_open_descriptor;
 };
 
 /* Holds data that needs to be initialized somehow. */
 struct pas_scavenger_data {
-    pthread_mutex_t lock;
-    pthread_cond_t cond;
+    pas_lock lock;
+    pas_condition cond;
     pas_scavenger_foreign_work_data foreign_work;
 };
 

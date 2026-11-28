@@ -28,7 +28,7 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED && PAS_OS(WINDOWS)
+#if PAS_OS(WINDOWS)
 #include "pas_thread.h"
 #include "pas_log.h"
 #include "pas_utils.h"
@@ -122,73 +122,6 @@ int pthread_once(pthread_once_t* once_control, void (*init_routine)(void))
             pas_log("Failed to run pthread_once.\n");
         return 1;
     }
-    return 0;
-}
-
-/* Mutexes, conditions */
-
-int pthread_mutex_init(pthread_mutex_t* mutex, const void* unused_attr)
-{
-    PAS_UNUSED_PARAM(unused_attr);
-
-    InitializeSRWLock(mutex);
-    return 0;
-}
-
-int pthread_cond_init(pthread_cond_t* cond, const void* unused_attr)
-{
-    PAS_UNUSED_PARAM(unused_attr);
-
-    InitializeConditionVariable(cond);
-    return 0;
-}
-
-int pthread_cond_broadcast(pthread_cond_t* cond)
-{
-    WakeAllConditionVariable(cond);
-    return 0;
-}
-
-int pthread_cond_wait(pthread_cond_t* cond, pthread_mutex_t* mutex)
-{
-    SleepConditionVariableSRW(cond, mutex, INFINITE, 0);
-    return 0;
-}
-
-int pthread_cond_timedwait(pthread_cond_t* cond, pthread_mutex_t* mutex, const struct timespec* abstime)
-{
-    LARGE_INTEGER frequency, counter;
-    if (!QueryPerformanceFrequency(&frequency))
-        return 1;
-
-    if (!QueryPerformanceCounter(&counter))
-        return 1;
-
-    uint64_t current_ms = ((uint64_t)counter.QuadPart * 1000ULL) / (uint64_t)frequency.QuadPart;
-    uint64_t wait_until_ms = (uint64_t)abstime->tv_sec * 1000ULL + (uint64_t)abstime->tv_nsec / 1000000ULL;
-
-    DWORD wait_ms;
-    if (wait_until_ms <= current_ms)
-        wait_ms = 0;
-    else {
-        uint64_t remaining = wait_until_ms - current_ms;
-        wait_ms = remaining >= (uint64_t)(INFINITE - 1) ? (INFINITE - 1) : (DWORD)remaining;
-    }
-
-    if (!SleepConditionVariableSRW(cond, mutex, wait_ms, 0))
-        return 1;
-    return 0;
-}
-
-int pthread_mutex_lock(pthread_mutex_t* mutex)
-{
-    AcquireSRWLockExclusive(mutex);
-    return 0;
-}
-
-int pthread_mutex_unlock(pthread_mutex_t* mutex)
-{
-    ReleaseSRWLockExclusive(mutex);
     return 0;
 }
 

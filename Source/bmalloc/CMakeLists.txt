@@ -97,6 +97,7 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_compact_heap_reservation.c
     libpas/src/libpas/pas_compact_large_utility_free_heap.c
     libpas/src/libpas/pas_compute_summary_object_callbacks.c
+    libpas/src/libpas/pas_condition.c
     libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.c
     libpas/src/libpas/pas_deallocate.c
     libpas/src/libpas/pas_debug_spectrum.c
@@ -124,6 +125,7 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_fast_megapage_table.c
     libpas/src/libpas/pas_fd_stream.c
     libpas/src/libpas/pas_free_granules.c
+    libpas/src/libpas/pas_futex.c
     libpas/src/libpas/pas_heap.c
     libpas/src/libpas/pas_heap_config.c
     libpas/src/libpas/pas_heap_config_utils.c
@@ -338,6 +340,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_compact_tagged_unsigned_ptr.h
     libpas/src/libpas/pas_compact_thread_local_cache_layout_node.h
     libpas/src/libpas/pas_compute_summary_object_callbacks.h
+    libpas/src/libpas/pas_condition.h
     libpas/src/libpas/pas_config.h
     libpas/src/libpas/pas_config_prefix.h
     libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.h
@@ -347,6 +350,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_deallocator.h
     libpas/src/libpas/pas_deallocator_scavenge_action.h
     libpas/src/libpas/pas_decommit_exclusion_range.h
+    libpas/src/libpas/pas_futex.h
     libpas/src/libpas/pas_system_heap.h
     libpas/src/libpas/pas_debug_spectrum.h
     libpas/src/libpas/pas_deferred_decommit_log.h

@@ -59,6 +59,10 @@ PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
 #define PAS_END_EXTERN_C __PAS_END_EXTERN_C
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
+#include "BExport.h"
+#define PAS_BEXPORT BEXPORT
+#else
+#define PAS_BEXPORT PAS_API
 #endif // defined(PAS_BMALLOC) && PAS_BMALLOC
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
@@ -232,7 +236,7 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_reallocation_did_fail(const char
 PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 PAS_IGNORE_WARNINGS_BEGIN("return-type")
 
-#if (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
+#if (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
 
 #define PAS_VA_COUNT6(x, ...) + 1
 #define PAS_VA_COUNT5(x, ...) __VA_OPT__(PAS_VA_COUNT6(__VA_ARGS__)) + 1
@@ -253,19 +257,19 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed_inline(
 extern "C" {
 #endif
 
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl0(size_t reason);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl1(size_t reason, size_t);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl2(size_t reason, size_t, size_t);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl3(size_t reason, size_t, size_t, size_t);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl4(size_t reason, size_t, size_t, size_t, size_t);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl5(size_t reason, size_t, size_t, size_t, size_t, size_t);
-PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl6(size_t reason, size_t, size_t, size_t, size_t, size_t, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl0(size_t reason);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl1(size_t reason, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl2(size_t reason, size_t, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl3(size_t reason, size_t, size_t, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl4(size_t reason, size_t, size_t, size_t, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl5(size_t reason, size_t, size_t, size_t, size_t, size_t);
+PAS_BEXPORT PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl6(size_t reason, size_t, size_t, size_t, size_t, size_t, size_t);
 
 #ifdef __cplusplus
 }
 #endif
 
-#else /* (PAS_OS(DARWIN) || PAS_OS(LINUX)) */
+#else /* (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
 
 #if PAS_ENABLE_TESTING
 static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed_inline(const char* filename, int line, const char* function, const char* expression)
@@ -283,12 +287,12 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed_inline(
     __builtin_trap();
 }
 #endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
-#endif /* PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED */
+#endif /* (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
 
-PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
-PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, size_t extra);
+PAS_BEXPORT PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
+PAS_BEXPORT PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, size_t extra);
 
-#if (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
+#if (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
 
 /*
    FIXME: Also consider converting PAS_ASSERT_WITH_DETAIL and PAS_ASSERT_WITH_EXTRA_DETAIL
@@ -302,10 +306,10 @@ PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_
         PAS_UNUSED_PARAM(expression); \
     } while (0)
 
-PAS_NEVER_INLINE void pas_report_assertion_failed(
+#if PAS_ENABLE_TESTING
+PAS_BEXPORT PAS_NEVER_INLINE void pas_report_assertion_failed(
     const char* filename, int line, const char* function, const char* expression);
 
-#if PAS_ENABLE_TESTING
 #define PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression) \
     pas_report_assertion_failed(filename, line, function, expression)
 #else
@@ -431,7 +435,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 #define PAS_ASSERT_FAIL6(count, file, line, function, exp, misc1, misc2, misc3, misc4, misc5, misc6, ...) \
         pas_assertion_failed_noreturn_silencer6(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3, (uint64_t)misc4, (uint64_t)misc5, (uint64_t)misc6)
 
-#else /* !((PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED) */
+#else /* !((PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED) */
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     const char* filename, int line, const char* function, const char* expression)
@@ -439,12 +443,12 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     pas_assertion_failed_inline(filename, line, function, expression);
 }
 
-#endif /* (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
+#endif /* (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
 
 #define PAS_LIKELY(x) __PAS_LIKELY(x)
 #define PAS_UNLIKELY(x) __PAS_UNLIKELY(x)
 
-#if (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
+#if (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED
 
 #define PAS_ASSERT_IF(cond, exp, ...) \
     do { \
@@ -460,7 +464,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
 #define PAS_TESTING_ASSERT(exp, ...) \
     PAS_ASSERT_IF(PAS_ENABLE_TESTING, exp __VA_OPT__(,) __VA_ARGS__)
 
-#else /* not (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
+#else /* not (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
 
 #define PAS_ASSERT(exp, ...) \
     do { \
@@ -480,7 +484,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
         pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
-#endif /* (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
+#endif /* (PAS_X86_64 || PAS_ARM64) && (PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED */
 
 #define PAS_ASSERT_WITH_DETAIL(exp) \
     do { \
@@ -937,6 +941,25 @@ static inline uintptr_t pas_pair_low(pas_pair pair)
 static inline uintptr_t pas_pair_high(pas_pair pair)
 {
     return pair.high;
+}
+
+#elif !PAS_CPU(ADDRESS64)
+
+typedef uint64_t pas_pair;
+
+static inline pas_pair pas_pair_create(uintptr_t low, uintptr_t high)
+{
+    return ((pas_pair)low) | ((pas_pair)(high) << 32);
+}
+
+static inline uintptr_t pas_pair_low(pas_pair pair)
+{
+    return (uintptr_t)pair;
+}
+
+static inline uintptr_t pas_pair_high(pas_pair pair)
+{
+    return (uintptr_t)(pair >> 32);
 }
 
 #else

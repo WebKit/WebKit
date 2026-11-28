@@ -25,12 +25,11 @@
 
 #include "TestHarness.h"
 
+#include "pas_lock.h"
+#include "pas_scavenger.h"
 #include <atomic>
 #include <chrono>
-#include <pthread.h>
 #include <thread>
-
-#include "pas_scavenger.h"
 
 using namespace std;
 
@@ -48,17 +47,12 @@ extern "C" inline bool noopForeignWorkCallback(void*)
 
 inline void testForeignWorkCallbackInstallReleasesLockOnSaturation()
 {
-    // Saturate the descriptor table by installing until one fails. The last
-    // (failing) install exercises the saturated path that previously returned
-    // without releasing foreign_work.lock, leaving the mutex permanently held.
     while (pas_scavenger_try_install_foreign_work_callback(noopForeignWorkCallback, 1, nullptr)) { }
 
-    // pthread_mutex_trylock would return EBUSY if the mutex were still held.
-    // Avoid calling try_install_foreign_work_callback again here, since under
-    // the unfixed code that call would block forever on the leaked lock.
-    int rc = pthread_mutex_trylock(&pas_scavenger_data_instance->foreign_work.lock);
-    CHECK_EQUAL(rc, 0);
-    pthread_mutex_unlock(&pas_scavenger_data_instance->foreign_work.lock);
+    // Probe with try_lock rather than calling try_install_foreign_work_callback again,
+    // which would hang forever if the failing install leaked foreign_work.lock.
+    CHECK(pas_lock_try_lock(&pas_scavenger_data_instance->foreign_work.lock));
+    pas_lock_unlock(&pas_scavenger_data_instance->foreign_work.lock);
 }
 
 inline void testCallbacksAreCalledWhenExpected(int scavenger_on_ms, int scavenger_off_ms)
