@@ -1656,8 +1656,14 @@ if (APPLE AND USE_LIBWEBRTC)
     add_dependencies(WebKit webrtc)
 endif ()
 
-if (SWIFT_REQUIRED AND WEBKIT_PLATFORM_MAC)
-    WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmMac.swift)
+if (SWIFT_REQUIRED)
+    if (WEBKIT_PLATFORM_MAC)
+        WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmMac.swift
+            RESPONSE_FILES "${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp" "${_swift_tba_resp}")
+    elseif (WEBKIT_SDK_IS_IOS_FAMILY AND NOT WEBKIT_SDK_IS_MACCATALYST)
+        WEBKIT_ADD_SWIFT_PREWARM(WebKit SwiftPrewarmIOS.swift
+            RESPONSE_FILES "${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp" "${_swift_tba_resp}")
+    endif ()
 endif ()
 
 if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)

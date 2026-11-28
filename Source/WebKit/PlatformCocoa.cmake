@@ -1009,22 +1009,30 @@ execute_process(
         XROS_DEPLOYMENT_TARGET=9999
         BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
         SDKROOT=${CMAKE_OSX_SYSROOT}
-        SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}
+        SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}.tmp
         WK_LIBRARY_HEADERS_FOLDER_PATH=/usr/local/include
         WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH=${CMAKE_OSX_SYSROOT}/usr/local/include/WebKitAdditions
         bash ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros
     RESULT_VARIABLE _swift_tba_resp_result
     OUTPUT_VARIABLE _swift_tba_resp_stdout
     ERROR_VARIABLE _swift_tba_resp_stderr)
-if (NOT _swift_tba_resp_result EQUAL 0 OR NOT EXISTS "${_swift_tba_resp}")
+if (NOT _swift_tba_resp_result EQUAL 0 OR NOT EXISTS "${_swift_tba_resp}.tmp")
     message(FATAL_ERROR "generate-swift-availability-macros failed (exit ${_swift_tba_resp_result}).\nstdout:\n${_swift_tba_resp_stdout}\nstderr:\n${_swift_tba_resp_stderr}")
 endif ()
+# file(CONFIGURE) leaves the response file alone when its content is unchanged, so reconfiguring
+# doesn't recompile the Swift that reads it.
+file(READ "${_swift_tba_resp}.tmp" _availability_flags)
+file(CONFIGURE OUTPUT "${_swift_tba_resp}" CONTENT "@_availability_flags@" @ONLY)
+file(REMOVE "${_swift_tba_resp}.tmp")
+unset(_availability_flags)
 unset(_swift_tba_env)
 unset(_swift_tba_resp_stdout)
 unset(_swift_tba_resp_stderr)
 unset(_swift_tba_resp_result)
 
+set(_webkitswift_responses "${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp")
 if (WEBKIT_SDK_IS_IOS_FAMILY)
+    list(APPEND _webkitswift_responses "${_swift_tba_resp}")
     webkit_target_add_swift_options(WebKitSwift
         "@${_swift_tba_resp}"
     )
@@ -1060,6 +1068,9 @@ list(APPEND WebKit_CODE_SIGN_INPUTS $<TARGET_FILE:WebKitSwift>)
 
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKit)
 WEBKIT_RAISE_SWIFT_NINJA_PRIORITY(WebKitSwift)
+
+WEBKIT_ADD_SWIFT_PREWARM(WebKitSwift SwiftPrewarmObjC.swift RESPONSE_FILES ${_webkitswift_responses})
+unset(_webkitswift_responses)
 
 unset(_wks_dir)
 
@@ -2311,6 +2322,13 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
         WEBKIT_EMBED_ENTITLEMENTS(${_name} ${_entitlements})
 
         WEBKIT_EXECUTABLE(${_name})
+
+        # The extensions share flags, so they share one prewarm.
+        if (NOT TARGET SwiftPrewarmIOSExtensions)
+            WEBKIT_ADD_SWIFT_PREWARM(${_name} SwiftPrewarmIOSExtensions.swift EDGES 12)
+        else ()
+            add_dependencies(${_name} SwiftPrewarmIOSExtensions)
+        endif ()
     endfunction()
 
     WEBKIT_RESOLVE_ENTITLEMENTS(_webcontent_ext_ents "WebContentProcessExtension.entitlements")
