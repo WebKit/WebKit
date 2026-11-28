@@ -1,0 +1,134 @@
+
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLCanvasElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLVideoElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an HTMLVideoElement from a data URL with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a bitmap HTMLImageElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a vector HTMLImageElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a bitmap SVGImageElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a vector SVGImageElement with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an OffscreenCanvas with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an ImageData with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an ImageData with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an ImageBitmap with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from an ImageBitmap with a crop rect partially below and to the right of the source, premultiplyAlpha none
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, no options
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, resized up
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, resized non-uniformly
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, imageOrientation flipY
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a Blob with a crop rect partially above and to the left of the source, premultiplyAlpha none
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, no options
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, resized up
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, resized non-uniformly
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, imageOrientation flipY
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, imageOrientation flipY and resized up
+PASS createImageBitmap from a Blob with a crop rect partially below and to the right of the source, premultiplyAlpha none
+

@@ -1,0 +1,10 @@
+
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the right of the source, imageOrientation from-image
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the right of the source, imageOrientation flipY
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the right of the source, imageOrientation from-image and premultiplyAlpha none
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the right of the source, imageOrientation flipY and premultiplyAlpha none
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the left of the source, imageOrientation from-image
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the left of the source, imageOrientation flipY
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the left of the source, imageOrientation from-image and premultiplyAlpha none
+PASS createImageBitmap with EXIF rotation and a crop rect partially to the left of the source, imageOrientation flipY and premultiplyAlpha none
+
