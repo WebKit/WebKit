@@ -252,19 +252,19 @@ TestWebKitAPI.ObscuredContentInsets.ScrollPocketIgnoresFullScreenTitlebarHeightF
 TestWebKitAPI.PageVisibilityStateWithWindowChanges.WebKit
 TestWebKitAPI.PageVisibilityStateWithWindowChanges.WebKit2
 TestWebKitAPI.ParserYieldTokenTests.AsyncScriptRunsWhenFetched
-TestWebKitAPI.PasteHTML.SanitizerKeepsPresentationIntentAttributes
-TestWebKitAPI.PasteImage.PasteFileWhileNetworkProcessIsLaunching
-TestWebKitAPI.PasteImage.PasteGIFFile
-TestWebKitAPI.PasteImage.PasteJPEGFile
-TestWebKitAPI.PasteImage.PastePNGFile
-TestWebKitAPI.PasteImage.PasteTIFFFile
-TestWebKitAPI.PasteMixedContent.CopyAndPasteWithCustomPasteboardDataOnly
-TestWebKitAPI.PasteMixedContent.ImageFileAndHTML
-TestWebKitAPI.PasteMixedContent.ImageFileAndPlainText
-TestWebKitAPI.PasteMixedContent.ImageFileAndRTF
-TestWebKitAPI.PasteMixedContent.ImageFileAndURL
-TestWebKitAPI.PasteMixedContent.ImageFileAndWebArchive
-TestWebKitAPI.PasteMixedContent.ImageFileWithHTMLAndURL
+TestWebKitAPI.PasteHTMLTests/sanitizerKeepsPresentationIntentAttributes()
+TestWebKitAPI.PasteImageTests/pasteFileWhileNetworkProcessIsLaunching()
+TestWebKitAPI.PasteImageTests/pasteGIFFile()
+TestWebKitAPI.PasteImageTests/pasteJPEGFile()
+TestWebKitAPI.PasteImageTests/pastePNGFile()
+TestWebKitAPI.PasteImageTests/pasteTIFFFile()
+TestWebKitAPI.PasteMixedContentTests/copyAndPasteWithCustomPasteboardDataOnly()
+TestWebKitAPI.PasteMixedContentTests/imageFileAndHTML()
+TestWebKitAPI.PasteMixedContentTests/imageFileAndPlainText()
+TestWebKitAPI.PasteMixedContentTests/imageFileAndRTF()
+TestWebKitAPI.PasteMixedContentTests/imageFileAndURL()
+TestWebKitAPI.PasteMixedContentTests/imageFileAndWebArchive()
+TestWebKitAPI.PasteMixedContentTests/imageFileWithHTMLAndURL()
 TestWebKitAPI.PermissionsAPI.GeolocationFrameInfoOriginIgnoresWebProcessForgery
 TestWebKitAPI.PictureInPicture.WKPageUIClient
 TestWebKitAPI.PictureInPicture.WKUIDelegate
@@ -863,11 +863,11 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ ios ] TestWGSL.WebGPUUncapturedErrorCallback.IsOptional
 [ ios ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIs
 [ ios ] TestWebKitAPI.AdvancedPrivacyProtections.AddNoiseToWebAudioAPIsAfterMultiplePSON
-[ ios ] TestWebKitAPI.CopyHTML.EmojiImgWithNonSVGSourcePreserved
-[ ios ] TestWebKitAPI.PasteHTML.TransformColorsDependsOnUsedInlineStyle
-[ ios ] TestWebKitAPI.PasteHTML.TransformColorsOfDarkContent
-[ ios ] TestWebKitAPI.PasteHTML.TransformColorsOfDarkContentButNotSemanticColor
-[ ios ] TestWebKitAPI.PasteRTFD.DoesNotTransformColorsOfLightContent
+[ ios ] TestWebKitAPI.CopyHTMLTests/emojiImgWithNonSVGSourcePreserved()
+[ ios ] TestWebKitAPI.PasteHTMLTests/transformColorsDependsOnUsedInlineStyle()
+[ ios ] TestWebKitAPI.PasteHTMLTests/transformColorsOfDarkContent()
+[ ios ] TestWebKitAPI.PasteHTMLTests/transformColorsOfDarkContentButNotSemanticColor()
+[ ios ] TestWebKitAPI.PasteRTFDTests/doesNotTransformColorsOfLightContent()
 [ ios ] TestWebKitAPI.SiteIsolation.CrossSiteIframeReplaceKeepsItemURLBeforeCommit
 [ ios ] TestWebKitAPI.WebViewTests/overrideViewportArgumentsAffectsPageViewport()
 

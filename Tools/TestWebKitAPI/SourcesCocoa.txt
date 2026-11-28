@@ -123,9 +123,6 @@ Tests/WebKit/WKWebView/ContextMenus.mm @nonARC
 Tests/WebKit/WKWebView/CookieAcceptPolicy.mm @nonARC
 Tests/WebKit/WKWebView/CookiePrivateBrowsing.mm @nonARC
 Tests/WebKit/WKWebView/CookieStoreAPI.mm @nonARC
-Tests/WebKit/WKWebView/CopyHTML.mm @nonARC
-Tests/WebKit/WKWebView/CopyRTF.mm @nonARC
-Tests/WebKit/WKWebView/CopyURL.mm @nonARC
 Tests/WebKit/WKWebView/Copying.mm @nonARC
 Tests/WebKit/WKWebView/CreateWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/CustomUserAgent.mm @nonARC
@@ -264,11 +261,6 @@ Tests/WebKit/WKWebView/PDFLinkReferrer.mm @nonARC
 Tests/WebKit/WKWebView/PDFSnapshot.mm @nonARC
 Tests/WebKit/WKWebView/PageZoom.mm @nonARC
 Tests/WebKit/WKWebView/ParserYieldTokenTests.mm @nonARC
-Tests/WebKit/WKWebView/PasteHTML.mm @nonARC
-Tests/WebKit/WKWebView/PasteImage.mm @nonARC
-Tests/WebKit/WKWebView/PasteMixedContent.mm @nonARC
-Tests/WebKit/WKWebView/PasteRTFD.mm @nonARC
-Tests/WebKit/WKWebView/PasteWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/PermissionsAPI.mm @nonARC
 Tests/WebKit/WKWebView/PictureInPictureDelegate.mm @nonARC
 Tests/WebKit/WKWebView/PitchShiftAudioUnitTests.cpp

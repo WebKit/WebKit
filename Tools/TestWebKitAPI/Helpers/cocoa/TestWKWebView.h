@@ -65,6 +65,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)superscript:(nullable id)sender;
 - (void)subscript:(nullable id)sender;
 - (void)unscript:(nullable id)sender;
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray<NSPasteboardType> *)types;
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard;
 #endif
 @end
 
