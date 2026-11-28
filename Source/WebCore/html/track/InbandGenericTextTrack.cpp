@@ -265,6 +265,8 @@ void InbandGenericTextTrack::newCuesParsed()
 void InbandGenericTextTrack::newRegionsParsed()
 {
     RefPtr regions = this->regions();
+    if (!regions)
+        return;
     for (auto& region : parser().takeRegions())
         regions->add(WTF::move(region));
 }
