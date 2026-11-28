@@ -1,0 +1,10 @@
+Tests that the frame NetworkManager creates for an early subresource request has a loader identifier.
+
+
+== Running test suite: SiteIsolation.Network.StubFrameLoaderIdentifier
+-- Running test case: SiteIsolation.Network.StubFrameLoaderIdentifier.SubresourceBeforeFrame
+PASS: Should create a frame for the request.
+PASS: The frame should have the request's loader identifier when it is added.
+PASS: The request's resource should be added to the frame.
+PASS: No console.assert should fail.
+
