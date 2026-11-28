@@ -17,8 +17,8 @@
           assert_true(layer instanceof XREquirectLayer, "createEquirectLayer with textureType 'texture-array' must succeed on WebGL2.");
           assert_equals(layer.layout, 'stereo', "stereo + texture-array must preserve layer.layout as 'stereo'.");
         } else {
-          assert_throws_dom('InvalidStateError', () => binding.createEquirectLayer({ ...baseInit, textureType: 'texture-array' }),
-            "createEquirectLayer with textureType 'texture-array' must throw InvalidStateError on WebGL.");
+          assert_throws_js(TypeError, () => binding.createEquirectLayer({ ...baseInit, textureType: 'texture-array' }),
+            "createEquirectLayer with textureType 'texture-array' must throw TypeError on WebGL.");
         }
       });
     });

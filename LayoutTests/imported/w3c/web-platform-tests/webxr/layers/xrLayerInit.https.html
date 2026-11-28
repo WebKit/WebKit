@@ -10,10 +10,16 @@
 <canvas id="webgl-canvas"></canvas>
 
 <script>
-  function testCommonXRLayerInitErrors(createLayerFn, valid_init, t, gl) {
+  function testCommonXRLayerInitErrors(createLayerFn, valid_init, t, gl, is_cube) {
     const is_webgl2 = gl instanceof WebGL2RenderingContext;
     return new Promise((resolve, reject) => {
       const max_texture_size = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
+      if (!is_webgl2 && is_cube) {
+        assert_throws_dom('InvalidStateError', () => createLayerFn(valid_init), "cube layers for webgl2 onlyyyy");
+        return;
+      }
+
       if (!is_webgl2) {
         // Check an exception on webgl2 color formats.
         t.step(() => {
@@ -24,7 +30,7 @@
             0x8C43  // GL_SRGB8_ALPHA8
           ].forEach((colorFormat) => {
             let invalid_color_format = Object.assign({}, valid_init, { colorFormat });
-            assert_throws_js(TypeError, () => createLayerFn(invalid_color_format), "colorFormat for webgl2 only");
+            assert_throws_dom('NotSupportedError', () => createLayerFn(invalid_color_format), "colorFormat for webgl2 only");
           });
         });
       }
@@ -81,25 +87,39 @@
     });
   }
 
-  function testXRLayerInitLayoutErrors(createLayerFn, valid_init, t, is_cube) {
+  function testXRLayerInitLayoutErrors(createLayerFn, valid_init, t, gl, is_cube) {
+    const is_webgl2 = gl instanceof WebGL2RenderingContext;
     return new Promise((resolve, reject) => {
+      if (!is_webgl2 && is_cube) {
+        assert_throws_dom('InvalidStateError', () => createLayerFn(valid_init), "cube layers for webgl2 only");
+        return;
+      }
+
       t.step(() => {
         // 'default' is invalid for all layers.
         const default_layout = Object.assign({}, valid_init, { layout: 'default' });
         assert_throws_js(TypeError, () => createLayerFn(default_layout), "layout is 'default'");
+      });
 
-        const stereo_layout = Object.assign({}, valid_init, { layout: 'stereo' });
-        if (is_cube) {
-          // We don't support 'stereo' layout for cube layers.
-          assert_throws_js(TypeError, () => createLayerFn(stereo_layout), "layout is 'stereo'");
-        } else {
+      if (is_cube) {
+        t.step(() => {
+          const stereo_layout = Object.assign({}, valid_init, { layout: 'stereo-left-right' });
+          assert_throws_js(TypeError, () => createLayerFn(stereo_layout), "layout is 'stereo-left-right'");
+        });
+        t.step(() => {
+          const stereo_layout = Object.assign({}, valid_init, { layout: 'stereo-top-bottom' });
+          assert_throws_js(TypeError, () => createLayerFn(stereo_layout), "layout is 'stereo-top-bottom'");
+        });
+      } else {
+        t.step(() => {
+          const stereo_layout = Object.assign({}, valid_init, { layout: 'stereo' });
           // It should end up as 'stereo-left-right' when 'texture-array' is not used.
           const layer = createLayerFn(stereo_layout);
           const layout = layer.layout;
           assert_equals(layout, 'stereo-left-right', "layout is not expected");
-        }
-        resolve();
-      });
+          resolve();
+        });
+      }
     });
   };
 
@@ -116,23 +136,23 @@
 
     return Promise.resolve()
       // Quad layer.
-      .then(testCommonXRLayerInitErrors(create_quad_layer, valid_init, t, gl))
+      .then(testCommonXRLayerInitErrors(create_quad_layer, valid_init, t, gl, false /*is_cube*/))
       .then(testXRLayerInitTextureArrayErrors(create_quad_layer, valid_init, t, gl))
       .then(testXRLayerInitTransformErrors(create_quad_layer, valid_init, t))
-      .then(testXRLayerInitLayoutErrors(create_quad_layer, valid_init, t, false /*is_cube*/))
+      .then(testXRLayerInitLayoutErrors(create_quad_layer, valid_init, t, gl, false /*is_cube*/))
       // Cylinder layer.
-      .then(testCommonXRLayerInitErrors(create_cylinder_layer, valid_init, t, gl))
+      .then(testCommonXRLayerInitErrors(create_cylinder_layer, valid_init, t, gl, false /*is_cube*/))
       .then(testXRLayerInitTextureArrayErrors(create_cylinder_layer, valid_init, t, gl))
       .then(testXRLayerInitTransformErrors(create_cylinder_layer, valid_init, t))
-      .then(testXRLayerInitLayoutErrors(create_cylinder_layer, valid_init, t, false /*is_cube*/))
+      .then(testXRLayerInitLayoutErrors(create_cylinder_layer, valid_init, t, gl, false /*is_cube*/))
       // Equirect layer.
-      .then(testCommonXRLayerInitErrors(create_equirect_layer, valid_init, t, gl))
+      .then(testCommonXRLayerInitErrors(create_equirect_layer, valid_init, t, gl, false /*is_cube*/))
       .then(testXRLayerInitTextureArrayErrors(create_equirect_layer, valid_init, t, gl))
       .then(testXRLayerInitTransformErrors(create_equirect_layer, valid_init, t))
-      .then(testXRLayerInitLayoutErrors(create_equirect_layer, valid_init, t, false /*is_cube*/))
+      .then(testXRLayerInitLayoutErrors(create_equirect_layer, valid_init, t, gl, false /*is_cube*/))
       // Cube layer.
-      .then(testCommonXRLayerInitErrors(create_cube_layer, valid_init, t, gl))
-      .then(testXRLayerInitLayoutErrors(create_cube_layer, valid_init, t, true /*is_cube*/));
+      .then(testCommonXRLayerInitErrors(create_cube_layer, valid_init, t, gl, true /*is_cube*/))
+      .then(testXRLayerInitLayoutErrors(create_cube_layer, valid_init, t, gl, true /*is_cube*/));
   }
 
   // This method tests XRLayerInit parameters, which are common to the Quad,Cylinder and Equirect layers.

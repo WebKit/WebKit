@@ -17,8 +17,8 @@
           assert_true(layer instanceof XRQuadLayer, "createQuadLayer with textureType 'texture-array' must succeed on WebGL2.");
           assert_equals(layer.layout, 'stereo', "stereo + texture-array must preserve layer.layout as 'stereo'.");
         } else {
-          assert_throws_dom('InvalidStateError', () => binding.createQuadLayer({ ...baseInit, textureType: 'texture-array' }),
-            "createQuadLayer with textureType 'texture-array' must throw InvalidStateError on WebGL.");
+          assert_throws_js(TypeError, () => binding.createQuadLayer({ ...baseInit, textureType: 'texture-array' }),
+            "createQuadLayer with textureType 'texture-array' must throw TypeError on WebGL.");
         }
       });
     });
