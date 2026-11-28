@@ -1443,7 +1443,6 @@
 				WTF/MathExtras.cpp,
 				WTF/MediaTime.cpp,
 				WTF/MemoryDump.cpp,
-				WTF/MetaAllocator.cpp,
 				WTF/MoveOnlyLifecycleLogger.cpp,
 				WTF/NakedPtr.cpp,
 				WTF/NativePromise.cpp,

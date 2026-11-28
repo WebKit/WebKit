@@ -28,8 +28,11 @@
 
 namespace JSC {
 
-#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
+
+#if !ENABLE(JIT)
+// Without the JIT a handle is never created, but MacroAssemblerCodeRef still needs the destructor to link.
+ExecutableMemoryHandle::~ExecutableMemoryHandle() = default;
 #endif
 
 } // namespace JSC

@@ -270,7 +270,6 @@
 		A8A473D8151A825B004123FF /* HashTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472B8151A825A004123FF /* HashTable.cpp */; };
 		A8A473E4151A825B004123FF /* MainThreadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C5151A825A004123FF /* MainThreadCocoa.mm */; };
 		A8A473E5151A825B004123FF /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472C6151A825A004123FF /* MainThread.cpp */; };
-		A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472CD151A825B004123FF /* MetaAllocator.cpp */; };
 		A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472D5151A825B004123FF /* NumberOfCores.cpp */; };
 		A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472DA151A825B004123FF /* OSRandomSource.cpp */; };
 		A8A47402151A825B004123FF /* PageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472E3151A825B004123FF /* PageBlock.cpp */; };
@@ -341,7 +340,6 @@
 		DD3DC86D27A4BF8E007E5B61 /* ValueCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4736F151A825B004123FF /* ValueCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86E27A4BF8E007E5B61 /* InterferenceGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86F27A4BF8E007E5B61 /* JSValueMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC87027A4BF8E007E5B61 /* MetaAllocatorHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87127A4BF8E007E5B61 /* ByteOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = EB95E1EF161A72410089A2F5 /* ByteOrder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87227A4BF8E007E5B61 /* OSObjectPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87327A4BF8E007E5B61 /* ThreadGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E311FB161F0A568B003C08DE /* ThreadGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -356,7 +354,6 @@
 		DD3DC87D27A4BF8E007E5B61 /* GraphNodeWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87E27A4BF8E007E5B61 /* BumpPointerAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47267151A825A004123FF /* BumpPointerAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87F27A4BF8E007E5B61 /* Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 077CD86A1FD9CFD200828587 /* Logger.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC88127A4BF8E007E5B61 /* MetaAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472CE151A825B004123FF /* MetaAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88227A4BF8E007E5B61 /* CheckedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BB91F512648EA4D00A56217 /* CheckedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88327A4BF8E007E5B61 /* ObjectIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88427A4BF8E007E5B61 /* SystemFree.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E158251EADA53C004A079D /* SystemFree.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1686,9 +1683,6 @@
 		A8A472C7151A825B004123FF /* MainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThread.h; sourceTree = "<group>"; };
 		A8A472C9151A825B004123FF /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		A8A472CC151A825B004123FF /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
-		A8A472CD151A825B004123FF /* MetaAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetaAllocator.cpp; sourceTree = "<group>"; };
-		A8A472CE151A825B004123FF /* MetaAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocator.h; sourceTree = "<group>"; };
-		A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		A8A472D0151A825B004123FF /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
 		A8A472D5151A825B004123FF /* NumberOfCores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberOfCores.cpp; sourceTree = "<group>"; };
 		A8A472D6151A825B004123FF /* NumberOfCores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberOfCores.h; sourceTree = "<group>"; };
@@ -2649,9 +2643,6 @@
 				AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */,
 				AD89B6B61E6415080090707F /* MemoryPressureHandler.h */,
 				A8A472CC151A825B004123FF /* MessageQueue.h */,
-				A8A472CD151A825B004123FF /* MetaAllocator.cpp */,
-				A8A472CE151A825B004123FF /* MetaAllocator.h */,
-				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				46F071BA2CDEA45300074E61 /* MmapSpan.h */,
 				07AC4F0D2EF5A62500468BCB /* module.modulemap */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
@@ -3801,8 +3792,6 @@
 				DD3DC97727A4BF8E007E5B61 /* MemoryPressureHandler.h in Headers */,
 				E30362332F2D5F2A00AF6173 /* MemoryStatusSPI.h in Headers */,
 				DD3DC92427A4BF8E007E5B61 /* MessageQueue.h in Headers */,
-				DD3DC88127A4BF8E007E5B61 /* MetaAllocator.h in Headers */,
-				DD3DC87027A4BF8E007E5B61 /* MetaAllocatorHandle.h in Headers */,
 				DDF306DB27C08654006A526F /* MetadataSPI.h in Headers */,
 				46F071BB2CDEA45300074E61 /* MmapSpan.h in Headers */,
 				07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */,
@@ -4665,7 +4654,6 @@
 				ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */,
 				AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */,
 				AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */,
-				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,
 				0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */,
 				51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */,
 				5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */,

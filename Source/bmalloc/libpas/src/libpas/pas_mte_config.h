@@ -235,15 +235,15 @@ void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void);
     pas_mte_ensure_initialized()
 
 #if defined(PAS_BMALLOC)
-#if BENABLE(LIBPAS)
+#if BUSE(LIBPAS)
 #if BENABLE_MTE != PAS_ENABLE_MTE
 #error "cannot enable MTE in libpas without enabling it in bmalloc, or vice versa"
-#endif // BENABLE(LIBPAS)
-#endif // defined(PAS_BMALLOC)
+#endif // BENABLE_MTE != PAS_ENABLE_MTE
+#endif // BUSE(LIBPAS)
 
 #define BMALLOC_VM_MTE PAS_VM_MTE
 #define BMALLOC_USE_MTE PAS_USE_MTE
 
-#endif // defined(PAS_BMALLOC) && BENABLE(LIBPAS)
+#endif // defined(PAS_BMALLOC)
 #endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #endif // PAS_MTE_CONFIG_H

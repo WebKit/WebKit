@@ -116,7 +116,6 @@ set(TestWTF_SOURCES
     Tests/WTF/MathExtras.cpp
     Tests/WTF/MediaTime.cpp
     Tests/WTF/MemoryDump.cpp
-    Tests/WTF/MetaAllocator.cpp
     Tests/WTF/MoveOnlyLifecycleLogger.cpp
     Tests/WTF/NakedPtr.cpp
     Tests/WTF/NativePromise.cpp

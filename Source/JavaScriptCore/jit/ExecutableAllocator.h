@@ -40,10 +40,6 @@
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 
-#if !ENABLE(LIBPAS_JIT_HEAP)
-#include <wtf/MetaAllocator.h>
-#endif
-
 #if OS(DARWIN)
 #include <libkern/OSCacheControl.h>
 #include <sys/mman.h>
@@ -68,8 +64,6 @@ public:
     NODELETE static bool underMemoryPressure() { return false; }
 
     NODELETE static double memoryPressureMultiplier(size_t) { return 1.0; }
-
-    static void dumpProfile() { }
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t, JITCompilationEffort) { return nullptr; }
 
@@ -334,13 +328,7 @@ public:
     static bool underMemoryPressure();
     
     static double memoryPressureMultiplier(size_t addedMemoryUsage);
-    
-#if ENABLE(META_ALLOCATOR_PROFILE)
-    static void dumpProfile();
-#else
-    static void dumpProfile() { }
-#endif
-    
+
     JS_EXPORT_PRIVATE static void disableJIT();
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, JITCompilationEffort);

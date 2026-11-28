@@ -395,9 +395,10 @@
 #endif
 #endif
 
-/* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
+/* BENABLE(LIBPAS) builds libpas, whose JIT heap backs JSC's ExecutableAllocator. It does not mean bmalloc
+   itself is libpas; that is BUSE(LIBPAS). */
 #if !defined(BENABLE_LIBPAS)
-#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
+#if BCPU(ADDRESS64) && (BCPU(X86_64) || BCPU(ARM64))
 #define BENABLE_LIBPAS 1
 #ifndef PAS_BMALLOC
 #define PAS_BMALLOC 1
@@ -407,13 +408,16 @@
 #endif
 #endif
 
-/* BUSE(LIBPAS) is using libpas for bmalloc replacement. */
 #if !defined(BUSE_LIBPAS)
-#if defined(BENABLE_LIBPAS) && BENABLE_LIBPAS
+#if BENABLE(LIBPAS) && !BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)
 #define BUSE_LIBPAS 1
 #else
 #define BUSE_LIBPAS 0
 #endif
+#endif
+
+#if BUSE(LIBPAS) && !BENABLE(LIBPAS)
+#error "Using libpas for bmalloc requires building libpas"
 #endif
 
 #if BUSE(LIBPAS)

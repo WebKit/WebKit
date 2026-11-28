@@ -177,7 +177,8 @@ void scavengeThisThread()
 #if BENABLE(LIBPAS)
     pas_thread_local_cache_shrink(pas_thread_local_cache_try_get(),
                                   pas_lock_is_not_held);
-#elif BUSE(MIMALLOC)
+#endif
+#if BUSE(MIMALLOC)
     mi_theap_collect(mi_theap_get_default(), /* force */ true);
 #endif
 }
@@ -186,8 +187,9 @@ void scavenge()
 {
 #if BENABLE(LIBPAS)
     pas_scavenger_run_synchronously_now();
+#endif
     scavengeThisThread();
-#elif BUSE(MIMALLOC)
+#if BUSE(MIMALLOC)
     mi_collect(/* force */ true);
 #endif
     if (SystemHeap* systemHeap = SystemHeap::tryGetIfShouldSupplantBmalloc()) {

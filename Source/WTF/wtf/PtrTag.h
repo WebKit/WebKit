@@ -42,7 +42,6 @@ enum class PACKeyType {
     v(CFunctionPtrTag) \
 
 #define FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
-    v(FreeSpacePtrTag) \
     v(HandleMemoryPtrTag) \
     v(PlatformRegistersLRPtrTag) \
     v(PlatformRegistersPCPtrTag) \

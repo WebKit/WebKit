@@ -197,8 +197,6 @@ set(WTF_PUBLIC_HEADERS
     MemoryFootprint.h
     MemoryPressureHandler.h
     MessageQueue.h
-    MetaAllocator.h
-    MetaAllocatorHandle.h
     MmapSpan.h
     MonotonicObjectIdentifier.h
     MonotonicTime.h
@@ -586,7 +584,6 @@ set(WTF_SOURCES
     MallocCommon.cpp
     MediaTime.cpp
     MemoryPressureHandler.cpp
-    MetaAllocator.cpp
     MonotonicTime.cpp
     NativePromise.cpp
     NumberOfCores.cpp

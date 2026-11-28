@@ -26,24 +26,12 @@
 #pragma once
 
 #include <JavaScriptCore/JSExportMacros.h>
-#include <bmalloc/BPlatform.h>
 #include <wtf/CodePtr.h>
 #include <wtf/RawPointer.h>
-
-#if BENABLE(LIBPAS) && (OS(DARWIN) || OS(LINUX) || OS(WINDOWS))
-#define ENABLE_LIBPAS_JIT_HEAP 1
-#endif
-
-#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
-#include <wtf/CodePtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#else
-#include <wtf/MetaAllocatorHandle.h>
-#endif
 
 namespace JSC {
 
-#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
 class ExecutableMemoryHandle : public ThreadSafeRefCounted<ExecutableMemoryHandle> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle, ExecutableMemoryHandle);
@@ -51,9 +39,11 @@ class ExecutableMemoryHandle : public ThreadSafeRefCounted<ExecutableMemoryHandl
 public:
     using MemoryPtr = CodePtr<WTF::HandleMemoryPtrTag>;
 
+#if ENABLE(JIT)
     // Don't call this directly - for proper accounting it's necessary to call
     // ExecutableAllocator::allocate().
     JS_EXPORT_PRIVATE static RefPtr<ExecutableMemoryHandle> createImpl(size_t sizeInBytes);
+#endif
 
     JS_EXPORT_PRIVATE ~ExecutableMemoryHandle();
 
@@ -91,7 +81,9 @@ public:
         return containsIntegerAddress(reinterpret_cast<uintptr_t>(address));
     }
 
+#if ENABLE(JIT)
     JS_EXPORT_PRIVATE void shrink(size_t newSizeInBytes);
+#endif
 
     void* key() const
     {
@@ -114,9 +106,5 @@ private:
     unsigned m_sizeInBytes;
     MemoryPtr m_start;
 };
-#else // not (ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT))
-typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
-#endif // ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 
 } // namespace JSC
-
