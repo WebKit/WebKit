@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<body>
+<script src="full-screen-test.js"></script>
+<div id="target">
+    <iframe id="frame" srcdoc="
+        <style>
+            #inner { width: 10px; height: 10px; background-color: red; }
+            @media (display-mode: fullscreen) {
+                #inner { background-color: green; }
+            }
+        </style>
+        <div id='inner'></div>"></iframe>
+</div>
+<script>
+    var target = document.getElementById('target');
+    var frame = document.getElementById('frame');
+    var frameWindow;
+    var inner;
+
+    window.onload = () => {
+        frameWindow = frame.contentWindow;
+        inner = frame.contentDocument.getElementById('inner');
+
+        testExpected("frameWindow.matchMedia('(display-mode: fullscreen)').matches", false);
+        testExpected("frameWindow.getComputedStyle(inner).backgroundColor", "rgb(255, 0, 0)");
+
+        waitForEventOnce(document, 'fullscreenchange', () => {
+            testExpected("document.fullscreenElement", target);
+            testExpected("frame.contentDocument.fullscreenElement", null);
+            testExpected("frameWindow.matchMedia('(display-mode: fullscreen)').matches", true);
+            testExpected("frameWindow.getComputedStyle(inner).backgroundColor", "rgb(0, 128, 0)");
+
+            waitForEventOnce(document, 'fullscreenchange', () => {
+                testExpected("document.fullscreenElement", null);
+                testExpected("frameWindow.matchMedia('(display-mode: fullscreen)').matches", false);
+                testExpected("frameWindow.getComputedStyle(inner).backgroundColor", "rgb(255, 0, 0)");
+                endTest();
+            });
+            document.exitFullscreen();
+        });
+
+        runWithKeyDown(() => target.requestFullscreen());
+    };
+</script>
+</body>

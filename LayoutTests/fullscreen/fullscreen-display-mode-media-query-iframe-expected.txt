@@ -1,0 +1,13 @@
+EXPECTED (frameWindow.matchMedia('(display-mode: fullscreen)').matches == 'false') OK
+EXPECTED (frameWindow.getComputedStyle(inner).backgroundColor == 'rgb(255, 0, 0)') OK
+EVENT(fullscreenchange)
+EXPECTED (document.fullscreenElement == '[object HTMLDivElement]') OK
+EXPECTED (frame.contentDocument.fullscreenElement == 'null') OK
+EXPECTED (frameWindow.matchMedia('(display-mode: fullscreen)').matches == 'true') OK
+EXPECTED (frameWindow.getComputedStyle(inner).backgroundColor == 'rgb(0, 128, 0)') OK
+EVENT(fullscreenchange)
+EXPECTED (document.fullscreenElement == 'null') OK
+EXPECTED (frameWindow.matchMedia('(display-mode: fullscreen)').matches == 'false') OK
+EXPECTED (frameWindow.getComputedStyle(inner).backgroundColor == 'rgb(255, 0, 0)') OK
+END OF TEST
+

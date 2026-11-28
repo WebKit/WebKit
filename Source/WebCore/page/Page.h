@@ -776,6 +776,7 @@ public:
 
     WEBCORE_EXPORT void accessibilitySettingsDidChange();
     WEBCORE_EXPORT void appearanceDidChange();
+    void displayModeDidChange();
 
     void clearAXObjectCache();
     AXObjectCache* existingAXObjectCache();
