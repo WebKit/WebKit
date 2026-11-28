@@ -152,10 +152,6 @@ public:
 
     bool containsCurrentColor() const;
     NODELETE bool isCurrentColor() const;
-    NODELETE bool isColorMix() const;
-    NODELETE bool isContrastColor() const;
-    NODELETE bool isRelativeAlphaColor() const;
-    NODELETE bool isRelativeColor() const;
 
     NODELETE bool isResolvedColor() const;
     const WebCore::Color& resolvedColor() const;

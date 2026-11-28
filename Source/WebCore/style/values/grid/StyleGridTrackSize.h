@@ -209,10 +209,8 @@ struct GridTrackSize {
     bool hasMinOrMaxContentMinTrackBreadth() const { return m_minTrackBreadthIsMaxContent || m_minTrackBreadthIsMinContent; }
     bool hasAutoMinTrackBreadth() const { return m_minTrackBreadthIsAuto; }
     bool hasAutoMaxTrackBreadth() const { return m_maxTrackBreadthIsAuto; }
-    bool hasMaxContentMaxTrackBreadth() const { return m_maxTrackBreadthIsMaxContent; }
     bool hasMaxContentOrAutoMaxTrackBreadth() const { return m_maxTrackBreadthIsMaxContent || m_maxTrackBreadthIsAuto; }
     bool hasMinContentMaxTrackBreadth() const { return m_maxTrackBreadthIsMinContent; }
-    bool hasMinOrMaxContentMaxTrackBreadth() const { return m_maxTrackBreadthIsMaxContent || m_maxTrackBreadthIsMinContent; }
     bool hasMaxContentMinTrackBreadth() const { return m_minTrackBreadthIsMaxContent; }
     bool hasMinContentMinTrackBreadth() const { return m_minTrackBreadthIsMinContent; }
     bool hasMaxContentMinTrackBreadthAndMaxContentMaxTrackBreadth() const { return m_minTrackBreadthIsMaxContent && m_maxTrackBreadthIsMaxContent; }

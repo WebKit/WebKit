@@ -51,7 +51,6 @@ struct FontStyle {
 
     bool isNormal() const { return m_platformAxis == FontStyleAxis::normal; }
     bool isItalic() const { return m_platformSlope == italicValue() && m_platformAxis == FontStyleAxis::ital; }
-    bool isOblique() const { return m_platformAxis == FontStyleAxis::slnt; }
 
     std::optional<Angle> angle() const { return m_platformSlope ? std::make_optional(Angle { static_cast<float>(*m_platformSlope) }) : std::nullopt; }
 

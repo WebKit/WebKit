@@ -45,7 +45,6 @@ using PositionVisibilityValueEnumSet = SpaceSeparatedEnumSet<PositionVisibilityV
 
 struct PositionVisibility : EnumSetOrKeywordBase<PositionVisibility, PositionVisibilityValueEnumSet, CSS::Keyword::Always> {
     using Base::Base;
-    constexpr bool isAlways() const { return isKeyword(); }
 };
 
 } // namespace WebCore::Style

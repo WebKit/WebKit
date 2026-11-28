@@ -56,7 +56,6 @@ struct Quotes {
 
     bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
     bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(m_value); }
-    bool isQuotes() const { return WTF::holdsAlternative<Data>(m_value); }
 
     const WTF::String& openQuote(unsigned index) const;
     const WTF::String& closeQuote(unsigned index) const;

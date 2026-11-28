@@ -38,7 +38,6 @@ struct Widows : ValueOrKeyword<Integer<CSS::Range{1,CSS::Range::infinity}, unsig
 
     bool isAuto() const { return isKeyword(); }
     bool isInteger() const { return isValue(); }
-    std::optional<Integer> tryInteger() const { return tryValue(); }
 };
 
 // MARK: - Blending

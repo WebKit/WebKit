@@ -38,7 +38,6 @@ struct Orphans : ValueOrKeyword<Integer<CSS::Range{1,CSS::Range::infinity}, unsi
 
     bool isAuto() const { return isKeyword(); }
     bool isInteger() const { return isValue(); }
-    std::optional<Integer> tryInteger() const { return tryValue(); }
 };
 
 // MARK: - Blending

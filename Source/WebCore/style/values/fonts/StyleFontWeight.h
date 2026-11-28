@@ -43,7 +43,6 @@ struct FontWeight {
     FontWeight(FontSelectionValue platform) : m_platform { platform } { }
 
     bool isNormal() const { return m_platform == normalWeightValue(); }
-    bool isBold() const { return m_platform == boldWeightValue(); }
 
     Number number() const { return Number { static_cast<float>(m_platform) }; }
 

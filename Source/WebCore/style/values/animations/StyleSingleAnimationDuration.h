@@ -40,7 +40,6 @@ struct SingleAnimationDuration : ValueOrKeyword<Time<CSS::Nonnegative>, CSS::Key
     }
 
     bool isAuto() const { return isKeyword(); }
-    bool isTime() const { return isValue(); }
     std::optional<Time> tryTime() const { return tryValue(); }
 };
 

@@ -83,7 +83,6 @@ struct BackgroundSize {
     {
     }
 
-    bool isCover() const { return WTF::holdsAlternative<CSS::Keyword::Cover>(m_value); }
     bool isContain() const { return WTF::holdsAlternative<CSS::Keyword::Contain>(m_value); }
     bool isLengthSize() const { return WTF::holdsAlternative<LengthSize>(m_value); }
 
