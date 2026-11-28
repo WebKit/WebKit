@@ -2054,6 +2054,21 @@ private:
         nextWithoutClearingLineTerminator();
     }
 
+    bool hasFailedAssignmentPattern(unsigned offset) const
+    {
+        for (unsigned failedOffset : m_failedAssignmentPatternOffsets) {
+            if (failedOffset == offset)
+                return true;
+        }
+        return false;
+    }
+
+    void rememberFailedAssignmentPattern(unsigned offset)
+    {
+        if (!hasFailedAssignmentPattern(offset))
+            m_failedAssignmentPatternOffsets.append(offset);
+    }
+
     template <class TreeBuilder>
     ALWAYS_INLINE void internalSaveState(TreeBuilder& context, SavePoint& savePoint)
     {
@@ -2148,6 +2163,7 @@ private:
     // in the source. They hold only numbers and null, which are not cells, so the GC does not need to see them.
     Vector<JSValue> m_constantArrayValues;
     Vector<unsigned> m_constantArrayInt32DoubleLiteralIndices;
+    Vector<unsigned> m_failedAssignmentPatternOffsets;
 
     static void verifyLayout();
 };
