@@ -753,6 +753,19 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
     return { };
 }
 
+static inline void invalidateChildIndices(Node* firstSiblingWithAffectedIndex)
+{
+    CheckedPtr siblingWithAffectedIndex = firstSiblingWithAffectedIndex;
+    while (siblingWithAffectedIndex) {
+        if (CheckedPtr siblingElementWithAffectedIndex = dynamicDowncast<Element>(siblingWithAffectedIndex)) {
+            if (!siblingElementWithAffectedIndex->childIndex())
+                break;
+            siblingElementWithAffectedIndex->setChildIndex(0);
+        }
+        siblingWithAffectedIndex = siblingWithAffectedIndex->nextSibling();
+    }
+}
+
 void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -764,8 +777,8 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     ASSERT(!newChild.previousSibling());
     ASSERT(!newChild.isShadowRoot());
 
-    auto* previousSibling = nextChild.previousSibling();
-    ASSERT(m_lastChild != previousSibling);
+    RefPtr previousSibling = nextChild.previousSibling();
+    ASSERT(m_lastChild != previousSibling.get());
     nextChild.setPreviousSibling(&newChild);
     if (previousSibling) {
         ASSERT(m_firstChild != &nextChild);
@@ -776,8 +789,10 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
         m_firstChild = &newChild;
     }
     newChild.setParentNode(this);
-    newChild.setPreviousSibling(previousSibling);
+    newChild.setPreviousSibling(previousSibling.get());
     newChild.setNextSibling(&nextChild);
+
+    invalidateChildIndices(&nextChild);
 }
 
 void ContainerNode::appendChildCommon(Node& child)
@@ -966,6 +981,8 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     oldChild.setParentNode(nullptr);
 
     oldChild.setTreeScopeRecursivelyToDocument();
+
+    invalidateChildIndices(nextChild);
 }
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
