@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<title>Visited link styles are not shown when drawing canvas drawable elements</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+#boxLink {
+    display: block;
+    width: 80px;
+    height: 80px;
+    background-color: rgb(0, 128, 0);
+    color: rgb(0, 128, 0);
+}
+#boxLink:visited {
+    background-color: rgb(255, 0, 0);
+    color: rgb(255, 0, 0);
+}
+#decorLink {
+    display: block;
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+    line-height: 50px;
+    color: rgb(0, 128, 0);
+    text-decoration: underline 30px solid rgb(0, 128, 0);
+}
+#decorLink:visited {
+    color: rgb(255, 0, 0);
+    text-decoration-color: rgb(255, 0, 0);
+}
+#svgLink {
+    fill: rgb(0, 128, 0);
+}
+#svgLink:visited {
+    fill: rgb(255, 0, 0);
+}
+</style>
+<svg width="0" height="0">
+    <defs>
+        <a id="svgLink" href="">
+            <rect width="80" height="80" />
+        </a>
+    </defs>
+</svg>
+<canvas id="canvas" content="drawable" width="100" height="100">
+    <a id="boxLink" drawable href=""></a>
+    <div id="decorContainer" drawable style="width: 100px; height: 100px;">
+        <a id="decorLink" href=""><span>XXXX</span></a>
+    </div>
+    <svg id="svgDrawable" drawable width="80" height="80">
+        <use href="#svgLink" />
+    </svg>
+</canvas>
+<script>
+function waitForPaint() {
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+promise_test(async () => {
+    await waitForPaint();
+    await waitForPaint();
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    ctx.clearRect(0, 0, 100, 100);
+    ctx.drawElementImage(boxLink, 0, 0);
+    assert_array_equals(ctx.getImageData(20, 20, 1, 1).data, [0, 128, 0, 255], 'boxLink uses unvisited background-color');
+
+    ctx.clearRect(0, 0, 100, 100);
+    ctx.drawElementImage(decorContainer, 0, 0);
+    const decorPixels = ctx.getImageData(0, 0, 100, 100).data;
+    let sawRed = false;
+    let sawGreen = false;
+    for (let i = 0; i < decorPixels.length; i += 4) {
+        if (decorPixels[i] > 0)
+            sawRed = true;
+        if (decorPixels[i + 1] > 0)
+            sawGreen = true;
+    }
+    assert_false(sawRed, 'decorating box underline and text must never paint visited red');
+    assert_true(sawGreen, 'decorating box underline and text paint unvisited green');
+
+    ctx.clearRect(0, 0, 100, 100);
+    ctx.drawElementImage(svgDrawable, 0, 0);
+    assert_array_equals(ctx.getImageData(20, 20, 1, 1).data, [0, 128, 0, 255], 'SVG use referencing visited link uses unvisited fill');
+}, 'drawElementImage does not reveal visited link colors in HTML, decorating boxes, or SVG');
+</script>

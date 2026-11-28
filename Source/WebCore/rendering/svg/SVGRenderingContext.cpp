@@ -251,7 +251,10 @@ void SVGRenderingContext::renderSubtreeToContext(GraphicsContext& context, Rende
 {
     // Rendering into a buffer implies we're being used for masking, clipping, patterns or filters. In each of these
     // cases we don't want to paint the selection.
-    PaintInfo info(context, LayoutRect::infiniteRect(), PaintPhase::Foreground, PaintBehavior::SkipSelectionHighlight);
+    OptionSet<PaintBehavior> paintBehavior { PaintBehavior::SkipSelectionHighlight };
+    if (item.view().frameView().paintBehavior().contains(PaintBehavior::DontShowVisitedLinks))
+        paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
+    PaintInfo info(context, LayoutRect::infiniteRect(), PaintPhase::Foreground, paintBehavior);
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;

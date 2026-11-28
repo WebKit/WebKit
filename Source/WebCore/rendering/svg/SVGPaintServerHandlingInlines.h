@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include "RenderSVGResourceGradient.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
+#include "RenderSVGResourceGradient.h"
 #include "RenderView.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGRenderSupport.h"
@@ -75,8 +75,10 @@ bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject&
 template<SVGPaintServerHandling::Operation op, SVGPaintServerHandling::URIResolving allowPaintServerURIResolving>
 SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style)
 {
+    auto paintBehavior = targetRenderer.view().frameView().paintBehavior();
+
     // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
-    if (targetRenderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
+    if (paintBehavior.contains(PaintBehavior::RenderingSVGClipOrMask)) {
         if constexpr (op == Operation::Fill)
             return Style::ComputedStyle::initialFill().colorDisregardingType().resolvedColor();
         else
@@ -121,7 +123,7 @@ SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLay
     }
 
     // Color and SVGPaint::URLColor handling.
-    auto color = resolveColorFromStyle<op>(style);
+    auto color = resolveColorFromStyle<op>(style, paintBehavior);
     if (inheritColorFromParentStyleIfNeeded<op>(targetRenderer, color))
         return color;
     return { };
@@ -159,15 +161,15 @@ inline void SVGPaintServerHandling::prepareStrokeOperation(const RenderLayerMode
 }
 
 template<SVGPaintServerHandling::Operation op>
-Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style)
+Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style, OptionSet<PaintBehavior> paintBehavior)
 {
     if constexpr (op == Operation::Fill)
-        return resolveColorFromStyle(style, style.fill(), style.visitedLinkFill());
+        return resolveColorFromStyle(style, style.fill(), style.visitedLinkFill(), paintBehavior);
     else
-        return resolveColorFromStyle(style, style.stroke(), style.visitedLinkStroke());
+        return resolveColorFromStyle(style, style.stroke(), style.visitedLinkStroke(), paintBehavior);
 }
 
-inline Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint)
+inline Color SVGPaintServerHandling::resolveColorFromStyle(const Style::ComputedStyle& style, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint, OptionSet<PaintBehavior> paintBehavior)
 {
     // All paint types except `none` / `url` / `url none` handle solid colors.
     ASSERT(!paint.isNone());
@@ -177,7 +179,7 @@ inline Color SVGPaintServerHandling::resolveColorFromStyle(const Style::Computed
     Style::ColorResolver colorResolver { style };
 
     auto color = colorResolver.colorResolvingCurrentColor(paint.colorDisregardingType());
-    if (style.insideLink() == InsideLink::InsideVisited) {
+    if (style.insideLink() == InsideLink::InsideVisited && !paintBehavior.contains(PaintBehavior::DontShowVisitedLinks)) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
         if (auto visitedLinkPaintColor = visitedLinkPaint.tryColor()) {
             if (visitedLinkPaintColor->isCurrentColor())
