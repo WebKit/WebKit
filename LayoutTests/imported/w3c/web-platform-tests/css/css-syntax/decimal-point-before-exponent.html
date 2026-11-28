@@ -1,0 +1,49 @@
+<!doctype html>
+<title>decimal point immediately before an exponent is invalid in a number</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<link rel=help href="https://drafts.csswg.org/css-syntax/#consume-number">
+<link rel=help href="https://drafts.csswg.org/css-syntax/#starts-with-a-number">
+
+<div id="target"></div>
+<script>
+
+const style = document.getElementById("target").style;
+
+function setValue(property, fallback, input) {
+    style.setProperty(property, fallback);
+    style.setProperty(property, input);
+    return style.getPropertyValue(property);
+}
+
+const cases = [
+    ["width", "0px", "1.e2px", "1.0e2px"],
+    ["width", "0px", "1.E2px", "1.0E2px"],
+    ["width", "0px", "1.e+2px", "1.0e+2px"],
+    ["width", "0px", "1.e2%", "1.0e2%"],
+    ["margin-left", "0px", "-1.e2px", "-1.0e2px"],
+    ["opacity", "0", "1.e0", "1.0e0"],
+    ["opacity", "0", "5.e1%", "5.0e1%"],
+    ["transform", "none", "rotate(1.e1deg)", "rotate(1.0e1deg)"],
+    ["transform", "none", "translate(1.e1px, 0px)", "translate(1.0e1px, 0px)"],
+    ["transform", "none", "scale(1.e0)", "scale(1.0e0)"],
+    ["color", "rgb(0, 0, 0)", "hsl(1.e2 50% 50%)", "hsl(1.0e2 50% 50%)"],
+    ["color", "rgb(0, 0, 0)", "hsl(1.e2, 50%, 50%)", "hsl(1.0e2, 50%, 50%)"],
+];
+
+for (const [property, fallback, invalid, valid] of cases) {
+    test(() => {
+        assert_not_equals(setValue(property, fallback, valid), fallback);
+    }, `${property}: ${valid} is valid`);
+
+    test(() => {
+        assert_equals(setValue(property, fallback, invalid), fallback);
+    }, `${property}: ${invalid} is invalid via setProperty`);
+
+    test(() => {
+        assert_false(CSS.supports(property, invalid));
+    }, `${property}: ${invalid} is invalid via CSS.supports`);
+}
+
+</script>

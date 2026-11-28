@@ -1,0 +1,38 @@
+
+PASS width: 1.0e2px is valid
+PASS width: 1.e2px is invalid via setProperty
+PASS width: 1.e2px is invalid via CSS.supports
+PASS width: 1.0E2px is valid
+PASS width: 1.E2px is invalid via setProperty
+PASS width: 1.E2px is invalid via CSS.supports
+PASS width: 1.0e+2px is valid
+PASS width: 1.e+2px is invalid via setProperty
+PASS width: 1.e+2px is invalid via CSS.supports
+PASS width: 1.0e2% is valid
+PASS width: 1.e2% is invalid via setProperty
+PASS width: 1.e2% is invalid via CSS.supports
+PASS margin-left: -1.0e2px is valid
+PASS margin-left: -1.e2px is invalid via setProperty
+PASS margin-left: -1.e2px is invalid via CSS.supports
+PASS opacity: 1.0e0 is valid
+PASS opacity: 1.e0 is invalid via setProperty
+PASS opacity: 1.e0 is invalid via CSS.supports
+PASS opacity: 5.0e1% is valid
+PASS opacity: 5.e1% is invalid via setProperty
+PASS opacity: 5.e1% is invalid via CSS.supports
+PASS transform: rotate(1.0e1deg) is valid
+PASS transform: rotate(1.e1deg) is invalid via setProperty
+PASS transform: rotate(1.e1deg) is invalid via CSS.supports
+PASS transform: translate(1.0e1px, 0px) is valid
+PASS transform: translate(1.e1px, 0px) is invalid via setProperty
+PASS transform: translate(1.e1px, 0px) is invalid via CSS.supports
+PASS transform: scale(1.0e0) is valid
+PASS transform: scale(1.e0) is invalid via setProperty
+PASS transform: scale(1.e0) is invalid via CSS.supports
+PASS color: hsl(1.0e2 50% 50%) is valid
+PASS color: hsl(1.e2 50% 50%) is invalid via setProperty
+PASS color: hsl(1.e2 50% 50%) is invalid via CSS.supports
+PASS color: hsl(1.0e2, 50%, 50%) is valid
+PASS color: hsl(1.e2, 50%, 50%) is invalid via setProperty
+PASS color: hsl(1.e2, 50%, 50%) is invalid via CSS.supports
+

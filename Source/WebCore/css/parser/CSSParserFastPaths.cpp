@@ -50,6 +50,7 @@
 #include "FloatConversion.h"
 #include "HashTools.h"
 #include "StylePropertyShorthand.h"
+#include <wtf/dtoa.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -108,13 +109,17 @@ std::optional<CSS::Range> CSSParserFastPaths::lengthValueRangeForPropertiesSuppo
 
 template<typename CharacterType> static inline std::optional<double> parseCSSNumber(std::span<const CharacterType> characters)
 {
-    // The charactersToDouble() function allows a trailing '.' but that is not allowed in CSS number values.
-    if (!characters.empty() && characters.back() == '.')
-        return std::nullopt;
-    // FIXME: If we don't want to skip over leading spaces, we should use parseDouble, not charactersToDouble.
-    bool ok;
-    auto number = charactersToDouble(characters, &ok);
-    if (!ok)
+    skipWhile<isASCIIWhitespace>(characters);
+
+    // parseDouble() allows a '.' that is not followed by a digit (e.g. "1." or "1.e2"), but that is not allowed in CSS number values.
+    if (auto decimalPoint = find(characters, '.'); decimalPoint != notFound) {
+        if (decimalPoint + 1 >= characters.size() || !isASCIIDigit(characters[decimalPoint + 1]))
+            return std::nullopt;
+    }
+
+    size_t parsedLength;
+    auto number = parseDouble(characters, parsedLength);
+    if (!parsedLength || parsedLength != characters.size())
         return std::nullopt;
     return number;
 }

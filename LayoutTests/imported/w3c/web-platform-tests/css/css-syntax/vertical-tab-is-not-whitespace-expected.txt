@@ -1,0 +1,51 @@
+
+PASS width: U+0020 before 5px is valid
+PASS width: U+0009 before 5px is valid
+PASS width: U+000A before 5px is valid
+PASS width: U+000D before 5px is valid
+PASS width: U+000C before 5px is valid
+PASS width: U+000B before 5px is invalid via setProperty
+PASS width: U+000B before 5px is invalid via CSS.supports
+PASS width: U+0020 before 5% is valid
+PASS width: U+0009 before 5% is valid
+PASS width: U+000A before 5% is valid
+PASS width: U+000D before 5% is valid
+PASS width: U+000C before 5% is valid
+PASS width: U+000B before 5% is invalid via setProperty
+PASS width: U+000B before 5% is invalid via CSS.supports
+PASS margin-left: U+0020 before -5px is valid
+PASS margin-left: U+0009 before -5px is valid
+PASS margin-left: U+000A before -5px is valid
+PASS margin-left: U+000D before -5px is valid
+PASS margin-left: U+000C before -5px is valid
+PASS margin-left: U+000B before -5px is invalid via setProperty
+PASS margin-left: U+000B before -5px is invalid via CSS.supports
+PASS opacity: U+0020 before 0.5 is valid
+PASS opacity: U+0009 before 0.5 is valid
+PASS opacity: U+000A before 0.5 is valid
+PASS opacity: U+000D before 0.5 is valid
+PASS opacity: U+000C before 0.5 is valid
+PASS opacity: U+000B before 0.5 is invalid via setProperty
+PASS opacity: U+000B before 0.5 is invalid via CSS.supports
+PASS opacity: U+0020 before 50% is valid
+PASS opacity: U+0009 before 50% is valid
+PASS opacity: U+000A before 50% is valid
+PASS opacity: U+000D before 50% is valid
+PASS opacity: U+000C before 50% is valid
+PASS opacity: U+000B before 50% is invalid via setProperty
+PASS opacity: U+000B before 50% is invalid via CSS.supports
+PASS transform: U+0020 before rotate(10deg) is valid
+PASS transform: U+0009 before rotate(10deg) is valid
+PASS transform: U+000A before rotate(10deg) is valid
+PASS transform: U+000D before rotate(10deg) is valid
+PASS transform: U+000C before rotate(10deg) is valid
+PASS transform: U+000B before rotate(10deg) is invalid via setProperty
+PASS transform: U+000B before rotate(10deg) is invalid via CSS.supports
+PASS transform: U+0020 before translateX(10px) is valid
+PASS transform: U+0009 before translateX(10px) is valid
+PASS transform: U+000A before translateX(10px) is valid
+PASS transform: U+000D before translateX(10px) is valid
+PASS transform: U+000C before translateX(10px) is valid
+PASS transform: U+000B before translateX(10px) is invalid via setProperty
+PASS transform: U+000B before translateX(10px) is invalid via CSS.supports
+
