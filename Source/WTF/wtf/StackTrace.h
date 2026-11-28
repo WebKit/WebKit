@@ -65,7 +65,7 @@ class StackTrace {
 public:
     WTF_EXPORT_PRIVATE NEVER_INLINE static std::unique_ptr<StackTrace> captureStackTrace(size_t maxFrames, size_t framesToSkip = 0);
 
-    std::span<void* const> stack() const
+    std::span<void* const> stack() const LIFETIME_BOUND
     {
         return std::span<void* const> { m_stack + m_initialFrame, m_size };
     }
@@ -92,7 +92,7 @@ public:
         : m_stack(stack)
     {
     }
-    StackTraceSymbolResolver(const StackTrace& stack)
+    StackTraceSymbolResolver(const StackTrace& stack LIFETIME_BOUND)
         : m_stack(stack.stack())
     {
     }
@@ -169,7 +169,7 @@ public:
     {
     }
 
-    StackTracePrinter(const StackTrace& stack, const char* prefix = "")
+    StackTracePrinter(const StackTrace& stack LIFETIME_BOUND, const char* prefix = "")
         : m_stack(stack.stack())
         , m_prefix(prefix)
     {

@@ -39,6 +39,7 @@
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 #include "RegisterSet.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListDump.h>
 
@@ -225,7 +226,7 @@ void lowerAfterRegAlloc(Code& code)
                     });
 
                 if (AirLowerAfterRegAllocInternal::verbose)
-                    dataLog("Pre-call pairs for ", inst, ": ", listDump(pairs), "\n");
+                    dataLog("Pre-call pairs for ", inst, ": ", listDump(borrow(pairs)), "\n");
                 
                 insertionSet.insertInsts(
                     instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));

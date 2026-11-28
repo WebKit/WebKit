@@ -75,7 +75,7 @@ public:
     StringView(ASCIILiteral);
     StringView(const ASCIICString& string LIFETIME_BOUND);
 
-    ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
+    ALWAYS_INLINE static StringView fromLatin1(const char* characters LIFETIME_BOUND) { return StringView { characters }; }
 
     unsigned length() const;
     bool isEmpty() const;
@@ -216,7 +216,7 @@ public:
 
 private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
-    explicit StringView(const char*);
+    explicit StringView(const char* characters LIFETIME_BOUND);
 
     friend bool equal(StringView, StringView);
     friend bool equal(StringView, StringView, unsigned length);
@@ -440,7 +440,7 @@ inline StringView::StringView(std::span<const char16_t> characters LIFETIME_BOUN
     initialize(characters);
 }
 
-inline StringView::StringView(const char* characters)
+inline StringView::StringView(const char* characters LIFETIME_BOUND)
     : StringView { unsafeSpan(characters) }
 {
 }

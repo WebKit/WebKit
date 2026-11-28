@@ -41,7 +41,7 @@ namespace WTF {
 // Use dynamic_cf_cast<> instead of checked_cf_cast<> when actively checking CF types,
 // similar to dynamic_cast<> in C++. Be sure to include a nullptr check.
 
-template<typename T> T dynamic_cf_cast(CFTypeRef object)
+template<typename T> T dynamic_cf_cast(CFTypeRef object LIFETIME_BOUND)
 {
     if (!object)
         return nullptr;
@@ -65,7 +65,7 @@ template<typename T, typename U> RetainPtr<T> dynamic_cf_cast(RetainPtr<U>&& obj
 
 // Use checked_cf_cast<> instead of dynamic_cf_cast<> when a specific CF type is required.
 
-template<typename T> T checked_cf_cast(CFTypeRef object)
+template<typename T> T checked_cf_cast(CFTypeRef object LIFETIME_BOUND)
 {
     if (!object)
         return nullptr;

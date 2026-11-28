@@ -47,7 +47,7 @@ public:
     typedef typename Adapter::Thing Thing;
 
     template<typename... Arguments>
-    Liveness(CFG& cfg, Arguments&&... arguments)
+    Liveness(CFG& cfg LIFETIME_BOUND, Arguments&&... arguments)
         : Adapter(std::forward<Arguments>(arguments)...)
         , m_cfg(cfg)
     {
@@ -185,7 +185,7 @@ private:
     public:
         Iterator() = default;
 
-        static Iterator makeBegin(Liveness& liveness, std::span<const uint64_t> dense, const SparseBitVector<>* sparse, Storage storage)
+        static Iterator makeBegin(Liveness& liveness LIFETIME_BOUND, std::span<const uint64_t> dense LIFETIME_BOUND, const SparseBitVector<>* sparse LIFETIME_BOUND, Storage storage)
         {
             Iterator iter;
             iter.m_liveness = &liveness;
@@ -200,7 +200,7 @@ private:
             return iter;
         }
 
-        static Iterator makeEnd(Liveness& liveness, std::span<const uint64_t> dense, const SparseBitVector<>* sparse, Storage storage)
+        static Iterator makeEnd(Liveness& liveness LIFETIME_BOUND, std::span<const uint64_t> dense LIFETIME_BOUND, const SparseBitVector<>* sparse LIFETIME_BOUND, Storage storage)
         {
             Iterator iter;
             iter.m_liveness = &liveness;
@@ -263,7 +263,7 @@ public:
     class Iterable {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
     public:
-        Iterable(Liveness& liveness, std::span<const uint64_t> dense, const SparseBitVector<>* sparse, Storage storage)
+        Iterable(Liveness& liveness LIFETIME_BOUND, std::span<const uint64_t> dense LIFETIME_BOUND, const SparseBitVector<>* sparse LIFETIME_BOUND, Storage storage)
             : m_liveness(liveness)
             , m_dense(dense)
             , m_sparse(sparse)
@@ -297,7 +297,7 @@ public:
     class LocalCalc {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LocalCalc);
     public:
-        LocalCalc(Liveness& liveness, typename CFG::Node block)
+        LocalCalc(Liveness& liveness LIFETIME_BOUND, typename CFG::Node block)
             : m_liveness(liveness)
             , m_block(block)
         {
@@ -307,7 +307,7 @@ public:
         class Iterable {
             WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
         public:
-            Iterable(Liveness& liveness)
+            Iterable(Liveness& liveness LIFETIME_BOUND)
                 : m_liveness(liveness)
             {
             }
@@ -415,7 +415,7 @@ public:
     class LiveAtHead {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LiveAtHead);
     public:
-        LiveAtHead(Liveness& liveness)
+        LiveAtHead(Liveness& liveness LIFETIME_BOUND)
             : m_liveness(liveness)
         {
         }

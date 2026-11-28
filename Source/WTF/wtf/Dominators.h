@@ -55,7 +55,7 @@ public:
     // constant factors on real CFGs, but uses 16-bit DFS numbering, so it is also bounded by that.
     constexpr static unsigned maxNodesForSemiNCADominance = 20000;
 
-    Dominators(Graph& graph, bool selfCheck = false)
+    Dominators(Graph& graph LIFETIME_BOUND, bool selfCheck = false)
         : m_graph(graph)
         , m_data(graph.template newMap<BlockData>())
     {
@@ -376,7 +376,7 @@ private:
         // 0 is reserved as "no DFS number" / "no ancestor", so DFS numbers are 1-based.
         constexpr static uint16_t noDFSNumber = 0;
     public:
-        SemiNCA(Graph& graph)
+        SemiNCA(Graph& graph LIFETIME_BOUND)
             : m_graph(graph)
         {
             // We only use this for small-ish graphs (Lengauer-Tarjan handles the rest), so we can use
@@ -526,7 +526,7 @@ private:
     class LengauerTarjan {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LengauerTarjan);
     public:
-        LengauerTarjan(Graph& graph)
+        LengauerTarjan(Graph& graph LIFETIME_BOUND)
             : m_graph(graph)
             , m_data(graph.template newMap<BlockData>())
         {
@@ -721,7 +721,7 @@ private:
     class NaiveDominators {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NaiveDominators);
     public:
-        NaiveDominators(Graph& graph)
+        NaiveDominators(Graph& graph LIFETIME_BOUND)
             : m_graph(graph)
         {
             // This implements a naive dominator solver.
@@ -827,7 +827,7 @@ private:
     struct ValidationContext {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ValidationContext);
 
-        ValidationContext(Graph& graph, Dominators& dominators)
+        ValidationContext(Graph& graph LIFETIME_BOUND, Dominators& dominators LIFETIME_BOUND)
             : graph(graph)
             , dominators(dominators)
             , naiveDominators(graph)

@@ -282,7 +282,7 @@ public:
             return result;
         }
 
-        std::span<const char16_t> characters() const
+        std::span<const char16_t> characters() const LIFETIME_BOUND
         {
             return std::span<const char16_t>(m_priorContext).last(length());
         }
@@ -366,7 +366,7 @@ public:
 
     NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&&);
 
-    operator UBreakIterator*() const { return m_iterator.get(); }
+    operator UBreakIterator*() const LIFETIME_BOUND { return m_iterator.get(); }
 
 private:
     UBreakIteratorPtr m_iterator;
@@ -381,7 +381,7 @@ public:
 
     NonSharedSentenceBreakIterator(NonSharedSentenceBreakIterator&&);
 
-    operator UBreakIterator*() const { return m_iterator.get(); }
+    operator UBreakIterator*() const LIFETIME_BOUND { return m_iterator.get(); }
 
 private:
     UBreakIteratorPtr m_iterator;

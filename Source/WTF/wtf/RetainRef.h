@@ -345,6 +345,7 @@ template<typename P> struct HashTraits<RetainRef<P>> : GenericHashTraits<RetainR
     static bool isEmptyValue(const RetainRef<P>& value) { return value.isHashTableEmptyValue(); }
 
     using PeekType = RetainRef<P>::PtrType;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static PeekType peek(const RetainRef<P>& value) { return value.ptrAllowingHashTableEmptyValue(); }
     static PeekType peek(P* value) { return value; }
 

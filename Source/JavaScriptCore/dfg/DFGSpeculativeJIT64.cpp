@@ -1120,7 +1120,7 @@ void SpeculativeJIT::emitCall(Node* node)
             return;
         }
 
-        auto* callLinkInfo = jitCode()->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic, DirectCallLinkInfo::UseDataIC::No, m_graph.m_codeBlock, executable);
+        auto* callLinkInfo = m_jitCode->common.m_directCallLinkInfos.add(m_currentNode->origin.semantic, DirectCallLinkInfo::UseDataIC::No, m_graph.m_codeBlock, executable);
         callLinkInfo->setCallType(callType);
         callLinkInfo->setMaxArgumentCountIncludingThis(numAllocatedArgs);
 

@@ -87,7 +87,7 @@ public:
             FastBitVectorMalloc::free(m_words);
     }
     
-    FastBitVectorWordView view() const { return FastBitVectorWordView(m_words, m_numBits); }
+    FastBitVectorWordView view() const LIFETIME_BOUND { return FastBitVectorWordView(m_words, m_numBits); }
     
     FastBitVectorWordOwner& operator=(const FastBitVectorWordOwner& other)
     {
@@ -140,8 +140,8 @@ public:
     uint32_t word(size_t index) const { return words()[index]; }
     uint32_t& word(size_t index) LIFETIME_BOUND { return words()[index]; }
 
-    std::span<uint32_t> words() { return unsafeMakeSpan(m_words, arrayLength()); }
-    std::span<const uint32_t> words() const { return unsafeMakeSpan(m_words, arrayLength()); }
+    std::span<uint32_t> words() LIFETIME_BOUND { return unsafeMakeSpan(m_words, arrayLength()); }
+    std::span<const uint32_t> words() const LIFETIME_BOUND { return unsafeMakeSpan(m_words, arrayLength()); }
 
 private:
     WTF_EXPORT_PRIVATE void setEqualsSlow(const FastBitVectorWordOwner& other);
@@ -576,13 +576,13 @@ public:
         return atImpl(index);
     }
     
-    FastBitReference at(size_t index)
+    FastBitReference at(size_t index) LIFETIME_BOUND
     {
         RELEASE_ASSERT(index < numBits());
         return FastBitReference(&m_words.word(index >> 5), 1 << (index & 31));
     }
     
-    FastBitReference operator[](size_t index)
+    FastBitReference operator[](size_t index) LIFETIME_BOUND
     {
         return at(index);
     }

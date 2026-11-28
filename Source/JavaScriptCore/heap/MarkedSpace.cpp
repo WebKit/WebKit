@@ -27,6 +27,7 @@
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "WeakSetInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -132,7 +133,7 @@ static Vector<size_t> sizeClasses()
         result.shrinkCapacity(it - result.begin());
     }
 
-    dataLogLnIf(Options::dumpSizeClasses(), "JSC Heap MarkedSpace size class dump: ", listDump(result));
+    dataLogLnIf(Options::dumpSizeClasses(), "JSC Heap MarkedSpace size class dump: ", listDump(borrow(result)));
 
     // We have an optimization in MarkedSpace::optimalSizeFor() that assumes things about
     // the size class table. This checks our results against that function's assumptions.

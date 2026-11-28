@@ -36,6 +36,7 @@
 #include "InlineCallFrame.h"
 #include "PropertyInlineCache.h"
 #include "StructureInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -645,7 +646,7 @@ void PutByStatus::dump(PrintStream& out) const
         out.print("ObservedSlowPathAndMakesCalls");
         break;
     }
-    out.print(", ", listDump(m_variants), ")");
+    out.print(", ", listDump(borrow(m_variants)), ")");
 }
 
 } // namespace JSC

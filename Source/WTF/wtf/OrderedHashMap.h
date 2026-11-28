@@ -284,6 +284,7 @@ public:
 
 private:
     using MappedPeekType = typename MappedTraits::PeekType;
+    static constexpr bool hasLifetimeBoundPeek = HasLifetimeBoundPeek<MappedTraits>;
     using MappedTakeType = typename MappedTraits::TakeType;
 
     using HashFunctions = HashArg;
@@ -337,13 +338,8 @@ public:
     const_iterator find(const KeyType& key) const LIFETIME_BOUND { return m_impl.find(key); }
     bool contains(const KeyType& key) const { return m_impl.contains(key); }
 
-    MappedPeekType get(const KeyType& key) const
-    {
-        auto* entry = m_impl.lookup(key);
-        if (!entry)
-            return MappedTraits::peek(MappedTraits::emptyValue());
-        return MappedTraits::peek(entry->value);
-    }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const KeyType& key) const LIFETIME_BOUND requires (lifetimeBound) { return peekEntry(m_impl.lookup(key)); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const KeyType& key) const requires (!lifetimeBound) { return peekEntry(m_impl.lookup(key)); }
 
     std::optional<MappedType> getOptional(const KeyType& key) const
     {
@@ -353,7 +349,8 @@ public:
         return { entry->value };
     }
 
-    MappedPeekType inlineGet(const KeyType& key) const { return get(key); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(const KeyType& key) const LIFETIME_BOUND requires (lifetimeBound) { return get(key); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(const KeyType& key) const requires (!lifetimeBound) { return get(key); }
 
     template<typename V>
     AddResult set(const KeyType& key, V&& value) LIFETIME_BOUND
@@ -456,14 +453,10 @@ public:
         return m_impl.template contains<HashTranslator>(key);
     }
 
-    template<typename HashTranslator, typename T>
-    MappedPeekType get(const T& key) const
-    {
-        auto* entry = m_impl.template lookup<HashTranslator>(key);
-        if (!entry)
-            return MappedTraits::peek(MappedTraits::emptyValue());
-        return MappedTraits::peek(entry->value);
-    }
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek>
+    MappedPeekType get(const T& key) const LIFETIME_BOUND requires (lifetimeBound) { return peekEntry(m_impl.template lookup<HashTranslator>(key)); }
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek>
+    MappedPeekType get(const T& key) const requires (!lifetimeBound) { return peekEntry(m_impl.template lookup<HashTranslator>(key)); }
 
     static bool isValidKey(const KeyType& key)
     {
@@ -480,6 +473,13 @@ public:
     }
 
 private:
+    ALWAYS_INLINE static MappedPeekType peekEntry(const KeyValuePairType* entry)
+    {
+        if (!entry)
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        return MappedTraits::peek(entry->value);
+    }
+
     template<typename K, typename V>
     AddResult inlineSet(K&& key, V&& value)
     {

@@ -600,7 +600,7 @@ std::optional<int> Value::asInteger() const
     return std::nullopt;
 }
 
-const String& Value::asString() const
+const String& Value::asString() const LIFETIME_BOUND
 {
     if (auto* string = std::get_if<String>(&m_value))
         return *string;

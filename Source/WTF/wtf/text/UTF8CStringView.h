@@ -47,7 +47,7 @@ class PrintStream;
 class UTF8CStringView final {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static UTF8CStringView unsafeFromUTF8(const char* string)
+    static UTF8CStringView unsafeFromUTF8(const char* string LIFETIME_BOUND)
     {
         if (!string)
             return UTF8CStringView();
@@ -68,7 +68,7 @@ public:
     constexpr UTF8CStringView(std::nullptr_t)
         : UTF8CStringView()
     { }
-    UTF8CStringView(ASCIILiteral literal LIFETIME_BOUND)
+    UTF8CStringView(ASCIILiteral literal)
         : m_spanWithNullTerminator(byteCast<char8_t>(literal.spanIncludingNullTerminator()))
     { }
 

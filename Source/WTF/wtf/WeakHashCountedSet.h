@@ -41,13 +41,13 @@ public:
     using AddResult = typename ImplType::AddResult;
 
     // Iterators iterate over pairs of values and counts.
-    iterator begin() { return m_impl.begin(); }
-    iterator end() { return m_impl.end(); }
-    const_iterator begin() const { return m_impl.begin(); }
-    const_iterator end() const { return m_impl.end(); }
+    iterator begin() LIFETIME_BOUND { return m_impl.begin(); }
+    iterator end() LIFETIME_BOUND { return m_impl.end(); }
+    const_iterator begin() const LIFETIME_BOUND { return m_impl.begin(); }
+    const_iterator end() const LIFETIME_BOUND { return m_impl.end(); }
 
-    iterator find(const ValueType& value) { return m_impl.find(value); }
-    const_iterator find(const ValueType& value) const { return m_impl.find(value); }
+    iterator find(const ValueType& value) LIFETIME_BOUND { return m_impl.find(value); }
+    const_iterator find(const ValueType& value) const LIFETIME_BOUND { return m_impl.find(value); }
     bool contains(const ValueType& value) const { return m_impl.contains(value); }
 
     bool computeIsEmpty() const { return m_impl.computeIsEmpty(); }
@@ -63,8 +63,8 @@ public:
     // Increments the count if an equal value is already present.
     // The return value includes both an iterator to the value's location,
     // and an isNewEntry bool that indicates whether it is a new or existing entry.
-    AddResult add(const ValueType&);
-    AddResult add(ValueType&&);
+    AddResult add(const ValueType&) LIFETIME_BOUND;
+    AddResult add(ValueType&&) LIFETIME_BOUND;
 
     // Decrements the count of the value, and removes it if count goes down to zero.
     // Returns true if the value is removed.
@@ -84,7 +84,7 @@ private:
 };
 
 template<typename Value, typename WeakPtrImpl>
-inline auto WeakHashCountedSet<Value, WeakPtrImpl>::add(const ValueType &value) -> AddResult
+inline auto WeakHashCountedSet<Value, WeakPtrImpl>::add(const ValueType& value) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.add(value, 0);
     ++result.iterator->value;
@@ -92,7 +92,7 @@ inline auto WeakHashCountedSet<Value, WeakPtrImpl>::add(const ValueType &value) 
 }
 
 template<typename Value, typename WeakPtrImpl>
-inline auto WeakHashCountedSet<Value, WeakPtrImpl>::add(ValueType&& value) -> AddResult
+inline auto WeakHashCountedSet<Value, WeakPtrImpl>::add(ValueType&& value) LIFETIME_BOUND -> AddResult
 {
     auto result = m_impl.add(std::forward<Value>(value), 0);
     ++result.iterator->value;

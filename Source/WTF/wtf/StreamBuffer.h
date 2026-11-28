@@ -105,7 +105,7 @@ public:
         return m_buffer.first()->size() - m_readOffset;
     }
 
-    std::span<const T> firstBlockSpan() const { return std::span { firstBlockData(), firstBlockSize() }; }
+    std::span<const T> firstBlockSpan() const LIFETIME_BOUND { return std::span { firstBlockData(), firstBlockSize() }; }
 
 private:
     size_t m_size;

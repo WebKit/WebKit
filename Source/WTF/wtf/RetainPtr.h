@@ -363,6 +363,7 @@ template<typename P> struct HashTraits<RetainPtr<P>> : GenericHashTraits<RetainP
     static bool isEmptyValue(const RetainPtr<P>& value) { return !value; }
 
     using PeekType = RetainPtr<P>::PtrType;
+    static constexpr bool hasLifetimeBoundPeek = true;
     static PeekType peek(const RetainPtr<P>& value) { return value.get(); }
     static PeekType peek(P* value) { return value; }
 };

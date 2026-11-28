@@ -150,7 +150,7 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
     });
 }
 
-inline std::span<const char> CFStringGetASCIICStringSpan(CFStringRef string)
+inline std::span<const char> CFStringGetASCIICStringSpan(CFStringRef string LIFETIME_BOUND)
 {
     auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII);
     if (!characters)
@@ -158,7 +158,7 @@ inline std::span<const char> CFStringGetASCIICStringSpan(CFStringRef string)
     return unsafeMakeSpan(characters, CFStringGetLength(string));
 }
 
-inline std::span<const Latin1Character> CFStringGetLatin1CStringSpan(CFStringRef string)
+inline std::span<const Latin1Character> CFStringGetLatin1CStringSpan(CFStringRef string LIFETIME_BOUND)
 {
     auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1);
     if (!characters)
@@ -166,7 +166,7 @@ inline std::span<const Latin1Character> CFStringGetLatin1CStringSpan(CFStringRef
     return unsafeMakeSpan(reinterpret_cast<const Latin1Character*>(characters), CFStringGetLength(string));
 }
 
-inline std::span<const char16_t> CFStringGetCharactersSpan(CFStringRef string)
+inline std::span<const char16_t> CFStringGetCharactersSpan(CFStringRef string LIFETIME_BOUND)
 {
     auto* characters = CFStringGetCharactersPtr(string);
     if (!characters)
@@ -181,12 +181,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const uint8_t> span(CFDataRef data)
+inline std::span<const uint8_t> span(CFDataRef data LIFETIME_BOUND)
 {
     return unsafeMakeSpan(static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
 }
 
-inline std::span<uint8_t> mutableSpan(CFMutableDataRef data)
+inline std::span<uint8_t> mutableSpan(CFMutableDataRef data LIFETIME_BOUND)
 {
     return unsafeMakeSpan(static_cast<uint8_t*>(CFDataGetMutableBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
 }

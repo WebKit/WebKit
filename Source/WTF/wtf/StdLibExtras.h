@@ -151,8 +151,8 @@ static constexpr size_t MB = 1024 * 1024;
 static constexpr size_t GB = 1024 * 1024 * 1024;
 
 // std::min and std::max are not annotated NODELETE, but they run no destructors, so the suppression is safe.
-template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& min(const T& a, const T& b) { return std::min(a, b); }
-template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& max(const T& a, const T& b) { return std::max(a, b); }
+template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& min(const T& a LIFETIME_BOUND, const T& b LIFETIME_BOUND) { return std::min(a, b); }
+template<typename T> NODELETE SUPPRESS_NODELETE constexpr const T& max(const T& a LIFETIME_BOUND, const T& b LIFETIME_BOUND) { return std::max(a, b); }
 
 inline bool isPointerAligned(void* p)
 {
@@ -203,12 +203,12 @@ inline size_t alignedBytesCorrection(std::span<const std::byte> buffer, size_t a
     return reinterpret_cast<const std::byte*>((reinterpret_cast<uintptr_t>(buffer.data()) - 1u + alignment) & -alignment) - buffer.data();
 }
 
-inline std::span<std::byte> alignedBytes(std::span<std::byte> buffer, size_t alignment)
+inline std::span<std::byte> alignedBytes(std::span<std::byte> buffer LIFETIME_BOUND, size_t alignment)
 {
     return buffer.subspan(alignedBytesCorrection(buffer, alignment));
 }
 
-inline std::span<const std::byte> alignedBytes(std::span<const std::byte> buffer, size_t alignment)
+inline std::span<const std::byte> alignedBytes(std::span<const std::byte> buffer LIFETIME_BOUND, size_t alignment)
 {
     return buffer.subspan(alignedBytesCorrection(buffer, alignment));
 }
@@ -962,7 +962,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
 template<typename T, std::size_t Extent, typename U>
-constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
+constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span LIFETIME_BOUND)
 {
     static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanReinterpretCast will not remove constness from source");
 
@@ -978,63 +978,63 @@ constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (si
 #pragma GCC diagnostic pop
 
 template<typename U, typename T, std::size_t Extent>
-std::span<U, Extent> spanConstCast(std::span<T, Extent> span)
+std::span<U, Extent> spanConstCast(std::span<T, Extent> span LIFETIME_BOUND)
 {
     return std::span<U, Extent> { const_cast<U*>(span.data()), span.size() };
 }
 
 template<typename T, std::size_t Extent>
-std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span)
+std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asBytes(std::span<T, Extent> span LIFETIME_BOUND)
 {
     return std::span<const uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<const uint8_t*>(span.data()), span.size_bytes() };
 }
 
 template<typename T, std::size_t Extent>
-std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asWritableBytes(std::span<T, Extent> span)
+std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> asWritableBytes(std::span<T, Extent> span LIFETIME_BOUND)
 {
     return std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent * sizeof(T)> { reinterpret_cast<uint8_t*>(span.data()), span.size_bytes() };
 }
 
 template<typename T>
-std::span<T> singleElementSpan(T& object)
+std::span<T> singleElementSpan(T& object LIFETIME_BOUND)
 {
     return unsafeMakeSpan(std::addressof(object), 1);
 }
 
 template<typename T, std::size_t Extent = std::dynamic_extent>
-std::span<const uint8_t, Extent> asByteSpan(const T& input)
+std::span<const uint8_t, Extent> asByteSpan(const T& input LIFETIME_BOUND)
 {
     return unsafeMakeSpan<const uint8_t, Extent>(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>
-std::span<const uint8_t> asByteSpan(std::span<T, Extent> input)
+std::span<const uint8_t> asByteSpan(std::span<T, Extent> input LIFETIME_BOUND)
 {
     return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T, std::size_t Extent = std::dynamic_extent>
-std::span<uint8_t, Extent> asMutableByteSpan(T& input)
+std::span<uint8_t, Extent> asMutableByteSpan(T& input LIFETIME_BOUND)
 {
     static_assert(!std::is_const_v<T>);
     return unsafeMakeSpan<uint8_t, Extent>(reinterpret_cast<uint8_t*>(std::addressof(input)), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>
-std::span<uint8_t> asMutableByteSpan(std::span<T, Extent> input)
+std::span<uint8_t> asMutableByteSpan(std::span<T, Extent> input LIFETIME_BOUND)
 {
     static_assert(!std::is_const_v<T>);
     return unsafeMakeSpan(reinterpret_cast<uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T, typename U, std::size_t Extent>
-const T& reinterpretCastSpanStartTo(std::span<const U, Extent> span)
+const T& reinterpretCastSpanStartTo(std::span<const U, Extent> span LIFETIME_BOUND)
 {
     return spanReinterpretCast<const T>(asByteSpan(span).first(sizeof(T)))[0];
 }
 
 template<typename T, typename U, std::size_t Extent>
-T& reinterpretCastSpanStartTo(std::span<U, Extent> span)
+T& reinterpretCastSpanStartTo(std::span<U, Extent> span LIFETIME_BOUND)
 {
     return spanReinterpretCast<T>(asMutableByteSpan(span).first(sizeof(T)))[0];
 }

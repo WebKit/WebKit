@@ -46,7 +46,7 @@ public:
     {
     }
 
-    NaturalLoop(Graph& graph, typename Graph::Node header, unsigned index)
+    NaturalLoop(Graph& graph LIFETIME_BOUND, typename Graph::Node header, unsigned index)
         : m_graph(&graph)
         , m_header(header)
         , m_outerLoopIndex(UINT_MAX)
@@ -120,7 +120,7 @@ class NaturalLoops {
 public:
     typedef std::array<unsigned, 2> InnerMostLoopIndices;
 
-    NaturalLoops(Graph& graph, Dominators<Graph>& dominators, bool selfCheck = false)
+    NaturalLoops(Graph& graph LIFETIME_BOUND, Dominators<Graph>& dominators, bool selfCheck = false)
         : m_graph(graph)
         , m_innerMostLoopIndices(graph.template newMap<InnerMostLoopIndices>())
     {
@@ -271,20 +271,20 @@ public:
         dataLogLnIf(verbose, "Results: ", *this);
     }
     
-    Graph& graph() LIFETIME_BOUND { return m_graph; }
+    Graph& graph() { return m_graph; }
 
     unsigned numLoops() const
     {
         return m_loops.size();
     }
-    const NaturalLoop<Graph>& loop(unsigned i) const
+    const NaturalLoop<Graph>& loop(unsigned i) const LIFETIME_BOUND
     {
         return m_loops[i];
     }
     
     // Return either null if the block isn't a loop header, or the
     // loop it belongs to.
-    const NaturalLoop<Graph>* headerOf(typename Graph::Node block) const
+    const NaturalLoop<Graph>* headerOf(typename Graph::Node block) const LIFETIME_BOUND
     {
         const NaturalLoop<Graph>* loop = innerMostLoopOf(block);
         if (!loop)
@@ -298,7 +298,7 @@ public:
         return nullptr;
     }
     
-    const NaturalLoop<Graph>* innerMostLoopOf(typename Graph::Node block) const
+    const NaturalLoop<Graph>* innerMostLoopOf(typename Graph::Node block) const LIFETIME_BOUND
     {
         unsigned index = m_innerMostLoopIndices[block][0];
         if (index == UINT_MAX)
@@ -306,7 +306,7 @@ public:
         return &m_loops[index];
     }
     
-    const NaturalLoop<Graph>* innerMostOuterLoop(const NaturalLoop<Graph>& loop) const
+    const NaturalLoop<Graph>* innerMostOuterLoop(const NaturalLoop<Graph>& loop) const LIFETIME_BOUND
     {
         if (loop.m_outerLoopIndex == UINT_MAX)
             return nullptr;

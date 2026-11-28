@@ -52,7 +52,7 @@ public:
     // In general there is no need to fence in func the compareExchangeStrong will ensure any stores
     // to initialize the value will happen before the new pointer becomes visible.
     template<typename Func>
-    T& ensure(NOESCAPE const Func& func) const
+    T& ensure(NOESCAPE const Func& func) const LIFETIME_BOUND
     {
         T* oldValue;
         Dependency dependency = m_pointer.loadAndFence(oldValue);
@@ -70,7 +70,7 @@ public:
     // FIXME: This returns a plain T*, so a caller comparing it to a known pointer (e.g. get() == &object) lets
     // the compiler substitute that pointer and lose the dependency for later accesses. ensure() has the same
     // problem. We should return a wrapper that consumes the dependency on every dereference instead.
-    T* get() const
+    T* get() const LIFETIME_BOUND
     {
         T* value;
         Dependency dependency = m_pointer.loadAndFence(value);

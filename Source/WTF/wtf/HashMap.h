@@ -61,6 +61,7 @@ public:
 
 private:
     using MappedPeekType = typename MappedTraits::PeekType;
+    static constexpr bool hasLifetimeBoundPeek = HasLifetimeBoundPeek<MappedTraits>;
     using MappedTakeType = typename MappedTraits::TakeType;
 
     using HashFunctions = HashArg;
@@ -153,11 +154,13 @@ public:
     iterator find(const KeyType&) LIFETIME_BOUND;
     const_iterator find(const KeyType&) const LIFETIME_BOUND;
     bool contains(const KeyType&) const;
-    MappedPeekType get(const KeyType&) const;
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const KeyType& key) const LIFETIME_BOUND requires (lifetimeBound) { return getImpl<IdentityTranslatorType>(key); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const KeyType& key) const requires (!lifetimeBound) { return getImpl<IdentityTranslatorType>(key); }
     std::optional<MappedType> getOptional(const KeyType&) const;
 
     // Same as get(), but aggressively inlined.
-    MappedPeekType inlineGet(const KeyType&) const;
+    template<bool lifetimeBound = hasLifetimeBoundPeek> ALWAYS_INLINE MappedPeekType inlineGet(const KeyType& key) const LIFETIME_BOUND requires (lifetimeBound) { return peekEntry(const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key)); }
+    template<bool lifetimeBound = hasLifetimeBoundPeek> ALWAYS_INLINE MappedPeekType inlineGet(const KeyType& key) const requires (!lifetimeBound) { return peekEntry(const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key)); }
 
     ALWAYS_INLINE bool isNullStorage() const { return m_impl.isNullStorage(); }
 
@@ -206,8 +209,10 @@ public:
     template<typename HashTranslator, typename T> iterator find(const T&) LIFETIME_BOUND;
     template<typename HashTranslator, typename T> const_iterator find(const T&) const LIFETIME_BOUND;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
-    template<typename HashTranslator, typename T> MappedPeekType get(const T&) const;
-    template<typename HashTranslator, typename T> MappedPeekType inlineGet(const T&) const;
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const T& key) const LIFETIME_BOUND requires (lifetimeBound) { return getImpl<HashTranslator>(key); }
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(const T& key) const requires (!lifetimeBound) { return getImpl<HashTranslator>(key); }
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(const T& key) const LIFETIME_BOUND requires (lifetimeBound) { return inlineGetImpl<HashTranslator>(key); }
+    template<typename HashTranslator, typename T, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(const T& key) const requires (!lifetimeBound) { return inlineGetImpl<HashTranslator>(key); }
     template<typename HashTranslator, typename T> bool remove(const T&);
 
     // Alternate versions of add() / ensure() that find the object by hashing and comparing
@@ -223,8 +228,10 @@ public:
     template<SmartPtr K = KeyType> iterator find(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) LIFETIME_BOUND;
     template<SmartPtr K = KeyType> const_iterator find(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) const LIFETIME_BOUND;
     template<SmartPtr K = KeyType> bool contains(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) const;
-    template<SmartPtr K = KeyType> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) const;
-    template<SmartPtr K = KeyType> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) const;
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const LIFETIME_BOUND requires (lifetimeBound) { return inlineGetImpl<HashFunctions>(key); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const requires (!lifetimeBound) { return inlineGetImpl<HashFunctions>(key); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const LIFETIME_BOUND requires (lifetimeBound) { return inlineGetImpl<HashFunctions>(key); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const requires (!lifetimeBound) { return inlineGetImpl<HashFunctions>(key); }
     template<SmartPtr K = KeyType> std::optional<MappedType> getOptional(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*) const;
     template<SmartPtr K = KeyType> bool remove(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*);
     template<SmartPtr K = KeyType> MappedTakeType take(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>*);
@@ -233,8 +240,10 @@ public:
     template<SmartPtr K = KeyType> iterator find(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) LIFETIME_BOUND { return find(&ref); }
     template<SmartPtr K = KeyType> const_iterator find(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const LIFETIME_BOUND { return find(&ref); }
     template<SmartPtr K = KeyType> bool contains(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const { return contains(&ref); }
-    template<SmartPtr K = KeyType> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const { return inlineGet(&ref); }
-    template<SmartPtr K = KeyType> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const { return get(&ref); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const LIFETIME_BOUND requires (lifetimeBound) { return inlineGet(&ref); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const requires (!lifetimeBound) { return inlineGet(&ref); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const LIFETIME_BOUND requires (lifetimeBound) { return get(&ref); }
+    template<SmartPtr K = KeyType, bool lifetimeBound = hasLifetimeBoundPeek> MappedPeekType get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const requires (!lifetimeBound) { return get(&ref); }
     template<SmartPtr K = KeyType> std::optional<MappedType> getOptional(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) const { return getOptional(&ref); }
     template<SmartPtr K = KeyType> bool remove(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) { return remove(&ref); }
     template<SmartPtr K = KeyType> MappedTakeType take(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>& ref) { return take(&ref); }
@@ -244,6 +253,16 @@ public:
     static bool isValidKey(const KeyType& key) { return HashTableType::isValidKey(key); }
 
 private:
+    template<typename HashTranslator, typename T> MappedPeekType getImpl(const T&) const;
+    template<typename HashTranslator, typename T> MappedPeekType inlineGetImpl(const T&) const;
+
+    ALWAYS_INLINE static MappedPeekType peekEntry(KeyValuePairType* entry)
+    {
+        if (!entry)
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        return MappedTraits::peek(entry->value);
+    }
+
     template<typename K, typename V>
     AddResult inlineSet(K&&, V&&);
 
@@ -377,22 +396,16 @@ inline auto HashMap<T, U, V, W, X, Y, M>::find(const TYPE& value) const LIFETIME
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
 template<typename HashTranslator, typename TYPE>
-auto HashMap<T, U, V, W, X, Y, M>::get(const TYPE& value) const -> MappedPeekType
+auto HashMap<T, U, V, W, X, Y, M>::getImpl(const TYPE& value) const -> MappedPeekType
 {
-    auto* entry = const_cast<HashTableType&>(m_impl).template lookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
-    if (!entry)
-        return MappedTraits::peek(MappedTraits::emptyValue());
-    return MappedTraits::peek(entry->value);
+    return peekEntry(const_cast<HashTableType&>(m_impl).template lookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value));
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
 template<typename HashTranslator, typename TYPE>
-auto HashMap<T, U, V, W, X, Y, M>::inlineGet(const TYPE& value) const -> MappedPeekType
+auto HashMap<T, U, V, W, X, Y, M>::inlineGetImpl(const TYPE& value) const -> MappedPeekType
 {
-    auto* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
-    if (!entry)
-        return MappedTraits::peek(MappedTraits::emptyValue());
-    return MappedTraits::peek(entry->value);
+    return peekEntry(const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value));
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
@@ -508,27 +521,12 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTra
 }
     
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
-inline auto HashMap<T, U, V, W, X, Y, M>::get(const KeyType& key) const -> MappedPeekType
-{
-    return get<IdentityTranslatorType>(key);
-}
-
-template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
 inline auto HashMap<T, U, V, W, X, Y, M>::getOptional(const KeyType& key) const -> std::optional<MappedType>
 {
     auto* entry = const_cast<HashTableType&>(m_impl).template lookup<IdentityTranslatorType>(key);
     if (!entry)
         return { };
     return { entry->value };
-}
-
-template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y, typename M>
-ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits, Y, M>::inlineGet(const KeyType& key) const -> MappedPeekType
-{
-    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key);
-    if (!entry)
-        return MappedTraits::peek(MappedTraits::emptyValue());
-    return MappedTraits::peek(entry->value);
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
@@ -643,23 +641,6 @@ template<SmartPtr K>
 inline auto HashMap<T, U, V, W, X, Y, M>::contains(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const -> bool
 {
     return m_impl.template contains<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(key);
-}
-
-template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
-template<SmartPtr K>
-inline auto HashMap<T, U, V, W, X, Y, M>::inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const -> MappedPeekType
-{
-    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(key);
-    if (!entry)
-        return MappedTraits::peek(MappedTraits::emptyValue());
-    return MappedTraits::peek(entry->value);
-}
-
-template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>
-template<SmartPtr K>
-auto HashMap<T, U, V, W, X, Y, M>::get(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const -> MappedPeekType
-{
-    return inlineGet(key);
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, typename M>

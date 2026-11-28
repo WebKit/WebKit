@@ -39,7 +39,7 @@ public:
     using WeakValueType = typename WeakPtrFactoryType::ObjectType;
     using WeakPtrImplType = typename WeakPtrFactoryType::WeakPtrImplType;
 
-    WeakPtrImplType& weakImpl() const
+    WeakPtrImplType& weakImpl() const LIFETIME_BOUND
     {
         initializeWeakPtrFactory();
         return *m_weakPtrFactory.impl();
