@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AudioWorklet does not stall after WebAssembly.Memory.grow while idle</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async () => {
+    if (!window.AudioWorkletNode || !window.WebAssembly)
+        return;
+    assert_true(!!window.internals);
+    internals.useMockAudioDestinationCocoa();
+
+    const processor = `registerProcessor("probe", class extends AudioWorkletProcessor {
+        constructor() {
+            super();
+            this.memory = new WebAssembly.Memory({ initial: 17 });
+            this.memory.grow(17);
+            this.times = [];
+        }
+        process() {
+            if (this.times.length < 600) {
+                this.times.push(Date.now());
+                if (this.times.length === 600)
+                    this.port.postMessage(this.times);
+            }
+            return true;
+        }
+    });`;
+
+    const context = new AudioContext({ sampleRate: 48000 });
+    if (context.state === "running") {
+        await context.close();
+        return;
+    }
+
+    const gain = new GainNode(context, { gain: 0 });
+    gain.connect(context.destination);
+    const moduleURL = URL.createObjectURL(new Blob([processor], { type: "text/javascript" }));
+    try {
+        await context.audioWorklet.addModule(moduleURL);
+        const node = new AudioWorkletNode(context, "probe", { numberOfInputs: 0 });
+        node.connect(gain);
+        await new Promise(resolve => setTimeout(resolve, 5500));
+
+        const times = new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error("no process timestamps")), 8000);
+            node.port.onmessage = (event) => {
+                if (!Array.isArray(event.data))
+                    return;
+                clearTimeout(timer);
+                resolve(event.data);
+            };
+        });
+        internals.withUserGesture(() => {
+            context.resume();
+        });
+        const stamps = await times;
+        const gaps = stamps.slice(1).map((stamp, index) => stamp - stamps[index]);
+        assert_less_than(Math.max(...gaps), 250);
+    } finally {
+        URL.revokeObjectURL(moduleURL);
+        if (context.state !== "closed")
+            await context.close();
+    }
+}, "An AudioWorklet that grew a WebAssembly.Memory while idle does not stall the first render");
+</script>
+</body>
+</html>
