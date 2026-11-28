@@ -104,7 +104,8 @@ public:
             }
         }
 
-        for (InlineCallFrameSet::iterator iter = m_graph.m_plan.inlineCallFrames().unsafeGet()->begin(); !!iter; ++iter) {
+        RefPtr inlineCallFrames = m_graph.m_plan.inlineCallFrames();
+        for (InlineCallFrameSet::iterator iter = inlineCallFrames->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
             
             if (inlineCallFrame->isVarargs()) {

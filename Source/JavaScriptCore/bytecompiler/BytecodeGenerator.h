@@ -543,33 +543,33 @@ namespace JSC {
             emitNodeInTailPosition(nullptr, n);
         }
 
-        RegisterID* emitNode(RegisterID* dst, ExpressionNode* n)
+        RefPtr<RegisterID> emitNode(RegisterID* dst, ExpressionNode* n)
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
             SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, false);
             return emitNodeInTailPosition(dst, n);
         }
 
-        RegisterID* emitNodeInTailPositionFromReturnNode(RegisterID* dst, ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeInTailPositionFromReturnNode(RegisterID* dst, ExpressionNode* n)
         {
             SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, false);
             return emitNodeInTailPosition(dst, n);
         }
 
-        RegisterID* emitNodeInTailPositionFromExprStatementNode(RegisterID* dst, ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeInTailPositionFromExprStatementNode(RegisterID* dst, ExpressionNode* n)
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
             return emitNodeInTailPosition(dst, n);
         }
 
-        RegisterID* emitNodeInIgnoreResultPosition(ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeInIgnoreResultPosition(ExpressionNode* n)
         {
             SetForScope tailPositionPoisoner(m_allowTailCallOptimization, false);
             SetForScope callIgnoreResultPositionPoisoner(m_allowCallIgnoreResultOptimization, m_defaultAllowCallIgnoreResultOptimization); // Revert it to default value.
             return emitNodeInTailPosition(ignoredResult(), n);
         }
 
-        RegisterID* emitNodeInTailPosition(RegisterID* dst, ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeInTailPosition(RegisterID* dst, ExpressionNode* n)
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
@@ -580,12 +580,12 @@ namespace JSC {
             return n->emitBytecode(*this, dst);
         }
 
-        RegisterID* emitNode(ExpressionNode* n)
+        RefPtr<RegisterID> emitNode(ExpressionNode* n)
         {
             return emitNode(nullptr, n);
         }
 
-        RegisterID* emitNodeInTailPosition(ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeInTailPosition(ExpressionNode* n)
         {
             return emitNodeInTailPosition(nullptr, n);
         }
@@ -600,7 +600,7 @@ namespace JSC {
             return n->emitBytecode(*this, constructor, prototype, &instanceElementDefinitions, &staticElementDefinitions);
         }
 
-        RegisterID* emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
+        RefPtr<RegisterID> emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
         {
             if (node->isString()) {
                 if (std::optional<uint32_t> index = parseIndex(static_cast<StringNode*>(node)->value()))
@@ -609,7 +609,7 @@ namespace JSC {
             return emitNode(dst, node);
         }
 
-        RegisterID* emitNodeForProperty(ExpressionNode* n)
+        RefPtr<RegisterID> emitNodeForProperty(ExpressionNode* n)
         {
             return emitNodeForProperty(nullptr, n);
         }
@@ -934,6 +934,8 @@ namespace JSC {
         void emitJump(Label& target);
         void emitJumpIfTrue(RegisterID* cond, Label& target);
         void emitJumpIfFalse(RegisterID* cond, Label& target);
+        void emitJumpIfTrue(RefPtr<RegisterID>&& cond, Label& target);
+        void emitJumpIfFalse(RefPtr<RegisterID>&& cond, Label& target);
         void emitJumpIfNotFunctionCall(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
         void emitJumpIfNotReflectConstruct(RegisterID* cond, Label& target);

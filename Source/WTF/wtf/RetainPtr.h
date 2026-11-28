@@ -129,7 +129,6 @@ public:
 #endif
 
     constexpr PtrType get() const LIFETIME_BOUND { return static_cast<PtrType>(const_cast<std::remove_const_t<std::remove_pointer_t<StorageType>>*>(m_ptr)); }
-    constexpr PtrType unsafeGet() const { return static_cast<PtrType>(const_cast<std::remove_const_t<std::remove_pointer_t<StorageType>>*>(m_ptr)); } // FIXME: Replace with get() then remove.
     constexpr PtrType operator->() const LIFETIME_BOUND { return get(); }
     constexpr operator PtrType() const LIFETIME_BOUND { return get(); }
     constexpr explicit operator bool() const { return m_ptr; }

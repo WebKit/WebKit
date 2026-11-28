@@ -124,7 +124,7 @@ SpeculativeJIT::SpeculativeJIT(Graph& dfg)
     , m_compileOkay(true)
     , m_state(m_graph)
     , m_interpreter(m_graph, m_state)
-    , m_minifiedGraph(&jitCode().unsafeGet()->minifiedDFG)
+    , m_minifiedGraph(&m_jitCode->minifiedDFG)
 {
 }
 

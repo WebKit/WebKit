@@ -3243,32 +3243,6 @@ def check_construct_and_append(clean_lines, line_number, file_state, error):
               % (type_name, type_name, type_name, type_name))
 
 
-def check_unsafe_get(clean_lines, line_number, file_state, error):
-    """Looks for use of 'unsafeGet()' or 'unsafePtr()' which should be avoided.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    # This check doesn't apply to C implementation files.
-    if file_state.is_c():
-        return
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    using_unsafe_get = search(r'\bunsafeGet\s*\(\s*\)', line)
-    if using_unsafe_get:
-        error(line_number, 'runtime/unsafe_get_ptr', 5, "Avoid using 'unsafeGet()' by extending the lifetime of the RefPtr.")
-
-    using_unsafe_ptr = search(r'\bunsafePtr\s*\(\s*\)', line)
-    if using_unsafe_ptr:
-        error(line_number, 'runtime/unsafe_get_ptr', 5, "Avoid using 'unsafePtr()' by extending the lifetime of the Ref.")
-
-
 # A smart pointer, such as 'm_frame', 'weakThis', 'protectedThis->m_page', 'm_items[i]', or 'map.get(key)'.
 _SMART_POINTER_EXPRESSION = r'(?:\b\w+(?:\([^()]*\)|\[[^\[\]]*\])*(?:\.|->|::))*\b\w+(?:\([^()]*\)|\[[^\[\]]*\])*'
 _TEMPLATE_ARGUMENTS = r'<[^<>;]*(?:<[^<>;]*(?:<[^<>;]*>[^<>;]*)*>[^<>;]*)*>'
@@ -4973,7 +4947,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_wtf_to_array(clean_lines, line_number, file_state, error)
     check_utf8cstring_from_utf8(clean_lines, line_number, file_state, error)
     check_construct_and_append(clean_lines, line_number, file_state, error)
-    check_unsafe_get(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_wtf_os_object_ptr(clean_lines, line_number, file_state, error)
@@ -6321,7 +6294,6 @@ class CppChecker(object):
         'runtime/soft-linked-alloc',
         'runtime/string',
         'runtime/threadsafe_fn',
-        'runtime/unsafe_get_ptr',
         'runtime/unsigned',
         'runtime/utf8cstring_from_utf8',
         'runtime/virtual',

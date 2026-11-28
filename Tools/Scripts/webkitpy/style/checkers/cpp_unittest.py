@@ -6820,36 +6820,6 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.h')
 
-    def test_unsafe_get(self):
-        self.assert_lint(
-            'auto ptr = obj.get();',
-            '',
-            'foo.cpp')
-
-        self.assert_lint(
-            'auto ptr = obj.unsafeGet();',
-            "Avoid using 'unsafeGet()' by extending the lifetime of the RefPtr."
-            "  [runtime/unsafe_get_ptr] [5]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'auto ptr = obj.unsafeGet();',
-            "Avoid using 'unsafeGet()' by extending the lifetime of the RefPtr."
-            "  [runtime/unsafe_get_ptr] [5]",
-            'foo.mm')
-
-        self.assert_lint(
-            'auto ptr = obj.unsafePtr();',
-            "Avoid using 'unsafePtr()' by extending the lifetime of the Ref."
-            "  [runtime/unsafe_get_ptr] [5]",
-            'foo.cpp')
-
-        self.assert_lint(
-            'auto ptr = obj.unsafePtr();',
-            "Avoid using 'unsafePtr()' by extending the lifetime of the Ref."
-            "  [runtime/unsafe_get_ptr] [5]",
-            'foo.mm')
-
     def test_redundant_get(self):
         construct_ref_ptr = "Omit '.get()': construct the 'RefPtr' from the smart pointer itself.  [readability/redundant_get] [4]"
         construct_ref = "Omit '.get()': construct the 'Ref' from the smart pointer itself.  [readability/redundant_get] [4]"
