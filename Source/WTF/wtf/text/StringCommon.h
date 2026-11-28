@@ -1084,7 +1084,6 @@ NODELETE WTF_EXPORT_PRIVATE const char16_t* find16NonASCIIAlignedImpl(std::span<
 NODELETE WTF_EXPORT_PRIVATE bool isWellFormedUTF16(std::span<const char16_t>);
 NODELETE WTF_EXPORT_PRIVATE void toWellFormedUTF16(std::span<const char16_t> input, std::span<char16_t> output);
 
-#if CPU(ARM64)
 NODELETE SUPPRESS_NODELETE ALWAYS_INLINE const Latin1Character* find8NonASCII(std::span<const Latin1Character> data)
 {
     constexpr size_t thresholdLength = 16;
@@ -1126,7 +1125,6 @@ NODELETE SUPPRESS_NODELETE ALWAYS_INLINE const char16_t* find16NonASCII(std::spa
     ASSERT(index < length);
     return find16NonASCIIAlignedImpl({ pointer + index, length - index });
 }
-#endif
 
 template<typename T> concept IsFindableCharacter = std::is_integral_v<T> || std::same_as<T, Latin1Character>;
 
