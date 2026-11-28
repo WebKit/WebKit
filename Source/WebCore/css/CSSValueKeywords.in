@@ -627,6 +627,11 @@ ledger
 legal
 letter
 
+// @page page-orientation
+// upright
+rotate-left
+rotate-right
+
 //
 // Unordered rest
 //

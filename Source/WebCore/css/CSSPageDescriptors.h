@@ -54,6 +54,8 @@ public:
     ExceptionOr<void> setMarginLeft(const String&);
     String size() const;
     ExceptionOr<void> setSize(const String&);
+    String pageOrientation() const;
+    ExceptionOr<void> setPageOrientation(const String&);
 
 private:
     CSSPageDescriptors(MutableStyleProperties&, CSSPageRule&);

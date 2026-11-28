@@ -261,8 +261,8 @@ PASS CSSPageDescriptors interface: attribute margin-right
 PASS CSSPageDescriptors interface: attribute margin-bottom
 PASS CSSPageDescriptors interface: attribute margin-left
 PASS CSSPageDescriptors interface: attribute size
-FAIL CSSPageDescriptors interface: attribute pageOrientation assert_true: The prototype object must have a property "pageOrientation" expected true got false
-FAIL CSSPageDescriptors interface: attribute page-orientation assert_true: The prototype object must have a property "page-orientation" expected true got false
+PASS CSSPageDescriptors interface: attribute pageOrientation
+PASS CSSPageDescriptors interface: attribute page-orientation
 FAIL CSSPageDescriptors interface: attribute marks assert_true: The prototype object must have a property "marks" expected true got false
 FAIL CSSPageDescriptors interface: attribute bleed assert_true: The prototype object must have a property "bleed" expected true got false
 PASS CSSPageDescriptors must be primary interface of sheet.cssRules[2].style
@@ -277,8 +277,8 @@ PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property
 PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "margin-bottom" with the proper type
 PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "margin-left" with the proper type
 PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "size" with the proper type
-FAIL CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "pageOrientation" with the proper type assert_inherits: property "pageOrientation" not found in prototype chain
-FAIL CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "page-orientation" with the proper type assert_inherits: property "page-orientation" not found in prototype chain
+PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "pageOrientation" with the proper type
+PASS CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "page-orientation" with the proper type
 FAIL CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "marks" with the proper type assert_inherits: property "marks" not found in prototype chain
 FAIL CSSPageDescriptors interface: sheet.cssRules[2].style must inherit property "bleed" with the proper type assert_inherits: property "bleed" not found in prototype chain
 PASS CSSStyleDeclaration interface: sheet.cssRules[2].style must inherit property "cssText" with the proper type
