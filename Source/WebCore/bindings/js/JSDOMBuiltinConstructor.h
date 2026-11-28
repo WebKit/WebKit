@@ -88,10 +88,12 @@ template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClas
         return getDOMStructure<JSClass>(vm, *realm());
 
     auto scope = DECLARE_THROW_SCOPE(vm);
+    JSC::JSValue prototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
+    RETURN_IF_EXCEPTION(scope, nullptr);
     auto* newTargetGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
     auto* baseStructure = getDOMStructure<JSClass>(vm, *downcast<JSDOMGlobalObject>(newTargetGlobalObject));
-    RELEASE_AND_RETURN(scope, JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure));
+    RELEASE_AND_RETURN(scope, JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure, prototype));
 }
 
 template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMBuiltinConstructor<JSClass>::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
