@@ -123,12 +123,12 @@ struct TestWebKitAPI {
         let (googleTestsPassed, didRunGoogleTests) = try await instance.runGoogleTests(with: configuration)
 
         #if WTF_PLATFORM_MAC
-        // Some tests synthesize HID events that the system delivers only to the frontmost app, and
-        // delivery requires a running AppKit event loop. Only start it when we will actually run
-        // Swift tests: i.e. when running (not listing) tests and no GoogleTest tests have run.
+        // Some tests synthesize HID events, which requires a running AppKit event loop. Only start it
+        // when we will actually run Swift tests: i.e. when running (not listing) tests and no
+        // GoogleTest tests have run. Tests that need the app to be frontmost activate it themselves
+        // (see `NSApplication.waitForActivation()`), so that other tests do not steal focus.
         if !configuration.listTests && !didRunGoogleTests {
             let application = NSApplication.shared
-            application.setActivationPolicy(.regular)
 
             Task { @MainActor in
                 do {
@@ -138,7 +138,6 @@ struct TestWebKitAPI {
                 }
             }
 
-            application.activate(ignoringOtherApps: true)
             application.run()
             return
         }
