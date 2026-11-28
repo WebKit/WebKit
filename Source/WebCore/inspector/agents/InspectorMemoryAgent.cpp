@@ -57,6 +57,7 @@ void InspectorMemoryAgent::didCreateFrontendAndBackend()
 
 void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
+    std::ignore = stopTracking();
     std::ignore = disable();
 
     Ref { m_instrumentingAgents.get() }->setPersistentMemoryAgent(nullptr);
@@ -81,9 +82,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::disable()
 
     agents->setEnabledMemoryAgent(nullptr);
 
-    m_tracking = false;
-
-    ResourceUsageThread::removeObserver(this);
+    // Complete tracking so the frontend does not keep waiting for `trackingComplete`.
+    std::ignore = stopTracking();
 
     return { };
 }
