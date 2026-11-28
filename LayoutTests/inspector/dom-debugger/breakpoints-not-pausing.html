@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/pause-reasons.js"></script>
+<script src="../worker/resources/resource-utilities.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script src="resources/url-breakpoint-utilities.js"></script>
+<script>
+window.addEventListener("click", triggerBreakpoint);
+
+function triggerClick()
+{
+    document.body.click();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.BreakpointsNotPausing");
+
+    function addTestCase({name, description, addBreakpoint, trigger, allowPause, pauseReason, teardown})
+    {
+        suite.addTestCase({
+            name: suite.name + "." + name,
+            description,
+            async test() {
+                let breakpoint = await addBreakpoint();
+
+                let paused = false;
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    paused = true;
+                    WI.debuggerManager.resume();
+                });
+
+                await trigger();
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+                InspectorTest.expectFalse(paused, "Should not pause for the breakpoint.");
+
+                InspectorTest.log("Triggering debugger statement...");
+                InspectorTest.evaluateInPage("setTimeout(triggerDebuggerStatement)");
+                await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DebuggerStatement, "Pause reason should be debugger statement.");
+                InspectorTest.expectFalse(targetData.pauseData, "Pause should not have data.");
+
+                await WI.debuggerManager.resume();
+
+                allowPause(breakpoint);
+
+                trigger();
+                await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+                targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.expectEqual(targetData.pauseReason, pauseReason, `Pause reason should be ${pauseReason}.`);
+
+                await WI.debuggerManager.resume();
+            },
+            teardown,
+        });
+    }
+
+    function addURLTestCase({name, description, options, allowPause})
+    {
+        addTestCase({
+            name: "URL." + name,
+            description,
+            addBreakpoint() {
+                return InspectorTest.URLBreakpoint.addBreakpoint(new WI.URLBreakpoint(WI.URLBreakpoint.Type.Text, "dataDOM", options));
+            },
+            trigger() {
+                return InspectorTest.URLBreakpoint.request("DOM");
+            },
+            allowPause,
+            pauseReason: WI.DebuggerManager.PauseReason.URL,
+            teardown: InspectorTest.URLBreakpoint.teardown,
+        });
+    }
+
+    function addListenerBreakpoint()
+    {
+        return InspectorTest.EventBreakpoint.addBreakpoint(new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click", condition: "false"}));
+    }
+
+    function click()
+    {
+        InspectorTest.log("Firing \"click\" on body...");
+        return InspectorTest.evaluateInPage("triggerClick()");
+    }
+
+    addURLTestCase({
+        name: "Condition",
+        description: "Check that a URL breakpoint with a false condition does not change the reason of the next pause.",
+        options: {condition: "false"},
+        allowPause(breakpoint) {
+            InspectorTest.log("Setting condition to 'true'...");
+            breakpoint.condition = "true";
+        },
+    });
+
+    addURLTestCase({
+        name: "IgnoreCount",
+        description: "Check that a URL breakpoint within its ignore count does not change the reason of the next pause.",
+        options: {ignoreCount: 1},
+        allowPause() {
+            InspectorTest.log("Breakpoint was ignored once.");
+        },
+    });
+
+    addURLTestCase({
+        name: "AutoContinue",
+        description: "Check that an auto-continuing URL breakpoint does not change the reason of the next pause.",
+        options: {autoContinue: true},
+        allowPause(breakpoint) {
+            InspectorTest.log("Disabling auto-continue...");
+            breakpoint.autoContinue = false;
+        },
+    });
+
+    addTestCase({
+        name: "Listener.Condition",
+        description: "Check that an event listener breakpoint with a false condition does not change the reason of the next pause.",
+        addBreakpoint: addListenerBreakpoint,
+        trigger: click,
+        allowPause(breakpoint) {
+            InspectorTest.log("Setting condition to 'true'...");
+            breakpoint.condition = "true";
+        },
+        pauseReason: WI.DebuggerManager.PauseReason.Listener,
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: suite.name + ".Listener.Condition.JavaScriptBreakpoint",
+        description: "Check that an event listener breakpoint with a false condition does not change the reason of a JavaScript breakpoint pause at the start of the listener.",
+        async test() {
+            let script = WI.debuggerManager.dataForTarget(InspectorTest.mainFrameTarget).scripts.find((script) => /pause-reasons\.js$/.test(script.url));
+            let javaScriptBreakpoint = new WI.JavaScriptBreakpoint(script.createSourceCodeLocation(2, 0));
+            WI.debuggerManager.addBreakpoint(javaScriptBreakpoint);
+
+            await addListenerBreakpoint();
+
+            click();
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be breakpoint.");
+
+            await WI.debuggerManager.resume();
+
+            javaScriptBreakpoint.remove();
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a breakpoint that matches but does not pause does not change the reason of the next pause.</p>
+</body>
+</html>
