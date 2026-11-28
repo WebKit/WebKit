@@ -33,6 +33,9 @@ extension Task where Failure == Never {
     /// `Task.immediate` for a main-actor operation: it runs inline until its first suspension, so that
     /// generated dispatch handles a message in order with C++-handled messages. `Task.immediate` needs
     /// the OS 26 concurrency runtime; on older OSes the `startOnMainActor` SPI does the same thing.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses startOnMainActor until the OS 26 concurrency runtime is required")
+    #endif
     @MainActor
     @discardableResult
     static func immediateOnMainActor(_ operation: sending @escaping @MainActor () async -> Success) -> Task<Success, Never> {
