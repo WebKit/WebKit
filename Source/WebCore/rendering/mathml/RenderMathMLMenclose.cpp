@@ -181,6 +181,8 @@ void RenderMathMLMenclose::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -205,7 +207,7 @@ void RenderMathMLMenclose::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 // GraphicsContext::drawLine does not seem appropriate to draw menclose lines.

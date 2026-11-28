@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Size of absolutely positioned MathML elements relative to their containing block</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#layout-algorithms">
+<link rel="help" href="https://w3c.github.io/mathml-core/#css-styling">
+<link rel="help" href="https://drafts.csswg.org/css-position/#abspos-layout">
+<meta name="assert" content="Verify that percentage sizes, insets and min/max sizes of an absolutely positioned MathML element resolve against its MathML containing block.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  math {
+    font: 20px/1 sans-serif;
+  }
+</style>
+</head>
+<body>
+<div id="log"></div>
+<div id="container" style="position: absolute; left: 0; top: 200px;"></div>
+<script>
+  const containingBlockContent = `<mspace width="100px" height="40px" depth="20px"></mspace>`;
+
+  const tests = [
+    { title: "width: 100%; height: 100%; left: 0; top: 0", style: "left: 0; top: 0; width: 100%; height: 100%;", expected: [0, 0, 100, 60] },
+    { title: "width: 100%; height: 100%; left: 0; bottom: 0", style: "left: 0; bottom: 0; width: 100%; height: 100%;", expected: [0, 0, 100, 60] },
+    { title: "inset: 0", style: "inset: 0;", expected: [0, 0, 100, 60] },
+    { title: "width: 50%; height: 25%", style: "left: 0; top: 0; width: 50%; height: 25%;", expected: [0, 0, 50, 15] },
+    { title: "width: calc(100% - 20px)", style: "left: 0; top: 0; width: calc(100% - 20px); height: 100%;", expected: [0, 0, 80, 60] },
+    { title: "fixed insets on all sides", style: "left: 10px; right: 20px; top: 5px; bottom: 15px;", expected: [10, 5, 70, 40] },
+    { title: "percentage insets", style: "left: 10%; right: 10%; top: 0; bottom: 0;", expected: [10, 0, 80, 60] },
+    { title: "percentage insets and percentage size", style: "left: 25%; top: 50%; width: 50%; height: 50%;", expected: [25, 30, 50, 30] },
+    { title: "inset: 0 with horizontal margins", style: "inset: 0; margin-left: 10px; margin-right: 20px;", expected: [10, 0, 70, 60] },
+    { title: "width: 100% with padding and border", style: "left: 0; top: 0; width: 100%; height: 100%; padding: 5px; border: 2px solid;", expected: [0, 0, 114, 74] },
+    { title: "width: 100% with padding, border and box-sizing: border-box", style: "left: 0; top: 0; width: 100%; height: 100%; padding: 5px; border: 2px solid; box-sizing: border-box;", expected: [0, 0, 100, 60] },
+    { title: "inset: 0 with padding and border", style: "inset: 0; padding: 5px; border: 2px solid;", expected: [0, 0, 100, 60] },
+    { title: "percentage min-width", style: "left: 0; top: 0; width: 50%; min-width: 75%; height: 100%;", expected: [0, 0, 75, 60] },
+    { title: "percentage max-width", style: "left: 0; top: 0; width: 100%; max-width: 25%; height: 100%;", expected: [0, 0, 25, 60] },
+    { title: "inset: 0 with max-width", style: "inset: 0; max-width: 40px;", expected: [0, 0, 40, 60] },
+    { title: "inset: 0 with min-width", style: "inset: 0; min-width: 150px;", expected: [0, 0, 150, 60] },
+    { title: "percentage min-height and max-height", style: "left: 0; top: 0; width: 100%; height: 10%; min-height: 50%;", expected: [0, 0, 100, 30] },
+    { title: "inset: 0 relative to containing block padding box", containingBlockStyle: "padding: 10px; border: 3px solid;", style: "inset: 0;", expected: [3, 3, 120, 80] },
+    { title: "width: 100%; height: 100% relative to containing block padding box", containingBlockStyle: "padding: 10px; border: 3px solid;", style: "left: 0; top: 0; width: 100%; height: 100%;", expected: [3, 3, 120, 80] },
+    { title: "width: 100% relative to containing block with fixed width", containingBlockStyle: "width: 200px;", style: "left: 0; top: 0; width: 100%; height: 100%;", expected: [0, 0, 200, 60] },
+    { title: "auto size with content", style: "left: 0; top: 0;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 30, 10] },
+    { title: "inset: 0 with content", style: "inset: 0;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 0 },
+    { title: "width: 100% with content", style: "left: 0; top: 0; width: 100%; height: 100%;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 0 },
+    { title: "width: 100% with content wider than the containing block", style: "left: 0; top: 0; width: 100%; height: 100%;", content: `<mspace width="150px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 0 },
+    { title: "inset: 0, dir=rtl", dir: "rtl", style: "inset: 0;", expected: [0, 0, 100, 60] },
+    { title: "width: 100%; height: 100%; right: 0; bottom: 0, dir=rtl", dir: "rtl", style: "right: 0; bottom: 0; width: 100%; height: 100%;", expected: [0, 0, 100, 60] },
+    { title: "width: 50%; right: 0, dir=rtl", dir: "rtl", style: "right: 0; top: 0; width: 50%; height: 100%;", expected: [50, 0, 50, 60] },
+    { title: "percentage insets, dir=rtl", dir: "rtl", style: "left: 10%; right: 20%; top: 0; bottom: 0;", expected: [10, 0, 70, 60] },
+    { title: "inset: 0 with horizontal margins, dir=rtl", dir: "rtl", style: "inset: 0; margin-left: 10px; margin-right: 20px;", expected: [10, 0, 70, 60] },
+    { title: "inset: 0 with max-width, dir=rtl", dir: "rtl", style: "inset: 0; max-width: 40px;", expected: [60, 0, 40, 60] },
+    { title: "inset: 0 with min-width, dir=rtl", dir: "rtl", style: "inset: 0; min-width: 150px;", expected: [-50, 0, 150, 60] },
+    { title: "width: 100% with padding and border, dir=rtl", dir: "rtl", style: "right: 0; top: 0; width: 100%; height: 100%; padding: 5px; border: 2px solid;", expected: [-14, 0, 114, 74] },
+    { title: "inset: 0 relative to containing block padding box, dir=rtl", dir: "rtl", containingBlockStyle: "padding: 10px; border: 3px solid;", style: "inset: 0;", expected: [3, 3, 120, 80] },
+    { title: "auto size with content, right: 0, dir=rtl", dir: "rtl", style: "right: 0; top: 0;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [70, 0, 30, 10] },
+    { title: "inset: 0 with content, dir=rtl", dir: "rtl", style: "inset: 0;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 70 },
+    { title: "width: 100% with content, dir=rtl", dir: "rtl", style: "right: 0; top: 0; width: 100%; height: 100%;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 70 },
+    { title: "inset: 0 with content and padding, dir=rtl", dir: "rtl", style: "inset: 0; padding-left: 5px; padding-right: 15px;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 55 },
+    { title: "width: 100% with content wider than the containing block, dir=rtl", dir: "rtl", style: "right: 0; top: 0; width: 100%; height: 100%;", content: `<mspace width="150px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: -50 },
+    { title: "inset: 0 with content and padding", style: "inset: 0; padding-left: 5px; padding-right: 15px;", content: `<mspace width="30px" height="10px"></mspace>`, expected: [0, 0, 100, 60], expectedContentLeft: 5 },
+  ];
+
+  const epsilon = 1;
+
+  for (const t of tests) {
+    container.insertAdjacentHTML("beforeend", `<math${t.dir ? ` dir="${t.dir}"` : ""}><mrow style="position: relative; ${t.containingBlockStyle || ""}">${containingBlockContent}<mrow style="position: absolute; ${t.style}">${t.content || ""}</mrow></mrow></math>`);
+    const math = container.lastElementChild;
+    const containingBlock = math.firstElementChild;
+    const absolute = containingBlock.lastElementChild;
+
+    test(() => {
+      const containingBlockBox = containingBlock.getBoundingClientRect();
+      const box = absolute.getBoundingClientRect();
+      const [left, top, width, height] = t.expected;
+      assert_approx_equals(box.left - containingBlockBox.left, left, epsilon, "left");
+      assert_approx_equals(box.top - containingBlockBox.top, top, epsilon, "top");
+      assert_approx_equals(box.width, width, epsilon, "width");
+      assert_approx_equals(box.height, height, epsilon, "height");
+      if (t.expectedContentLeft !== undefined) {
+        const contentBox = absolute.firstElementChild.getBoundingClientRect();
+        assert_approx_equals(contentBox.left - box.left, t.expectedContentLeft, epsilon, "content left");
+      }
+    }, t.title);
+
+    math.style.display = "none";
+  }
+
+  test(() => {
+    container.insertAdjacentHTML("beforeend", `<math><mrow style="position: relative;">${containingBlockContent}<mrow style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></mrow></mrow></math>`);
+    const math = container.lastElementChild;
+    const containingBlock = math.firstElementChild;
+    const absolute = containingBlock.lastElementChild;
+    assert_approx_equals(absolute.getBoundingClientRect().width, 100, epsilon, "initial width");
+    containingBlock.firstElementChild.setAttribute("width", "150px");
+    containingBlock.firstElementChild.setAttribute("height", "60px");
+    const box = absolute.getBoundingClientRect();
+    assert_approx_equals(box.width, 150, epsilon, "width after containing block change");
+    assert_approx_equals(box.height, 80, epsilon, "height after containing block change");
+    absolute.style.width = "50%";
+    assert_approx_equals(absolute.getBoundingClientRect().width, 75, epsilon, "width after style change");
+    math.style.display = "none";
+  }, "Percentage size is updated when the containing block or the style changes");
+</script>
+</body>
+</html>

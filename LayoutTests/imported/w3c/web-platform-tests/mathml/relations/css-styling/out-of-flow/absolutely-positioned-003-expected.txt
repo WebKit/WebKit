@@ -1,0 +1,42 @@
+
+PASS width: 100%; height: 100%; left: 0; top: 0
+PASS width: 100%; height: 100%; left: 0; bottom: 0
+PASS inset: 0
+PASS width: 50%; height: 25%
+PASS width: calc(100% - 20px)
+PASS fixed insets on all sides
+PASS percentage insets
+PASS percentage insets and percentage size
+PASS inset: 0 with horizontal margins
+PASS width: 100% with padding and border
+PASS width: 100% with padding, border and box-sizing: border-box
+PASS inset: 0 with padding and border
+PASS percentage min-width
+PASS percentage max-width
+PASS inset: 0 with max-width
+PASS inset: 0 with min-width
+PASS percentage min-height and max-height
+PASS inset: 0 relative to containing block padding box
+PASS width: 100%; height: 100% relative to containing block padding box
+PASS width: 100% relative to containing block with fixed width
+PASS auto size with content
+PASS inset: 0 with content
+PASS width: 100% with content
+PASS width: 100% with content wider than the containing block
+PASS inset: 0, dir=rtl
+PASS width: 100%; height: 100%; right: 0; bottom: 0, dir=rtl
+PASS width: 50%; right: 0, dir=rtl
+PASS percentage insets, dir=rtl
+PASS inset: 0 with horizontal margins, dir=rtl
+PASS inset: 0 with max-width, dir=rtl
+PASS inset: 0 with min-width, dir=rtl
+PASS width: 100% with padding and border, dir=rtl
+PASS inset: 0 relative to containing block padding box, dir=rtl
+PASS auto size with content, right: 0, dir=rtl
+PASS inset: 0 with content, dir=rtl
+PASS width: 100% with content, dir=rtl
+PASS inset: 0 with content and padding, dir=rtl
+PASS width: 100% with content wider than the containing block, dir=rtl
+PASS inset: 0 with content and padding
+PASS Percentage size is updated when the containing block or the style changes
+

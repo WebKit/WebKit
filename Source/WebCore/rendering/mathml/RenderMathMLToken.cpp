@@ -168,6 +168,8 @@ void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     GlyphData mathVariantGlyph;
     if (m_mathVariantCodePoint)
         mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
@@ -187,7 +189,7 @@ void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 bool RenderMathMLToken::hasMathVariantGlyph() const

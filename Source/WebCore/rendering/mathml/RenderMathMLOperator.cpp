@@ -252,6 +252,8 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     LayoutUnit leadingSpaceValue = leadingSpace();
     LayoutUnit trailingSpaceValue = trailingSpace();
 
@@ -264,7 +266,7 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
         updateLogicalHeight();
 
-        layoutOutOfFlowBoxes(relayoutChildren);
+        layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
     } else {
         // We first do the normal layout without spacing.
         // No need to handle padding/border/margin here, RenderMathMLToken::layoutBlock takes care of them.

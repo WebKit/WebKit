@@ -113,6 +113,8 @@ void RenderMathMLPadded::layoutBlock(RelayoutChildren relayoutChildren, LayoutUn
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -144,7 +146,7 @@ void RenderMathMLPadded::layoutBlock(RelayoutChildren relayoutChildren, LayoutUn
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 std::optional<LayoutUnit> RenderMathMLPadded::firstLineBaseline() const

@@ -317,6 +317,8 @@ void RenderMathMLUnderOver::layoutBlock(RelayoutChildren relayoutChildren, Layou
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -389,7 +391,7 @@ void RenderMathMLUnderOver::layoutBlock(RelayoutChildren relayoutChildren, Layou
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 }

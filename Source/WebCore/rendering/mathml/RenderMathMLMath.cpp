@@ -80,6 +80,8 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -112,7 +114,7 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 
     computeInFlowOverflow(blockStartRelativeContentBoxRect(), { ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY });
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
     addOverflowFromOutOfFlowBoxes();
 }
 

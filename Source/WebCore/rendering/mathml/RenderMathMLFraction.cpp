@@ -251,6 +251,8 @@ void RenderMathMLFraction::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
 
     CheckedRef numerator = this->numerator();
@@ -289,7 +291,7 @@ void RenderMathMLFraction::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Absolutely positioned MathML element sized relative to its MathML containing block (reference)</title>
+<body>
+  <p>Test passes if you see four green squares and no red.</p>
+  <div style="position: absolute; left: 100px; top: 100px;">
+    <math>
+      <mrow style="position: relative;">
+        <mspace width="100px" height="50px" depth="50px" style="background: green"/>
+      </mrow>
+    </math>
+  </div>
+  <div style="position: absolute; left: 250px; top: 100px;">
+    <math>
+      <mrow style="position: relative;">
+        <mspace width="100px" height="50px" depth="50px" style="background: green"/>
+      </mrow>
+    </math>
+  </div>
+  <div style="position: absolute; left: 400px; top: 100px;">
+    <math>
+      <mrow style="position: relative;">
+        <mspace width="50px" height="50px" depth="50px" style="background: green"/>
+        <mspace width="50px" height="50px" depth="50px" style="background: green"/>
+      </mrow>
+    </math>
+  </div>
+  <div style="position: absolute; left: 550px; top: 100px;">
+    <math dir="rtl">
+      <mrow style="position: relative;">
+        <mspace width="50px" height="50px" depth="50px" style="background: green"/>
+        <mspace width="50px" height="50px" depth="50px" style="background: green"/>
+      </mrow>
+    </math>
+  </div>
+</body>
+</html>

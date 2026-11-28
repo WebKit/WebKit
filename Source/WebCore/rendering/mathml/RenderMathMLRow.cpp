@@ -190,6 +190,8 @@ void RenderMathMLRow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -208,7 +210,7 @@ void RenderMathMLRow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 }
