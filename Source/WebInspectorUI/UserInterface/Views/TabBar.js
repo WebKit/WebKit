@@ -42,6 +42,7 @@ WI.TabBar = class TabBar extends WI.View
         this._tabContainer.className = "tabs";
         this._tabContainer.setAttribute("role", "tablist");
         this._tabContainer.addEventListener("mousedown", this._handleTabContainerMouseDown.bind(this));
+        this._tabContainer.addEventListener("keydown", this._handleTabContainerKeyDown.bind(this));
         this._tabContainer.addEventListener("mouseleave", this._handleTabContainerMouseLeave.bind(this));
         this._tabContainer.addEventListener("contextmenu", this._handleTabContainerContextMenu.bind(this));
 
@@ -53,6 +54,7 @@ WI.TabBar = class TabBar extends WI.View
 
         this._tabBarItems = [];
         this._hiddenTabBarItems = [];
+        this._focusableTabBarItem = null;
 
         const showHiddenTabsRepresentedObject = null;
         const showHiddenTabsDisplayName = null;
@@ -128,6 +130,7 @@ WI.TabBar = class TabBar extends WI.View
             beforeTabSizesAndPositions = this._recordTabBarItemSizesAndPositions();
 
         this._tabBarItems.splice(index, 0, tabBarItem);
+        this._updateTabIndexes();
 
         let nextSibling = this._tabBarItems[index + 1] || this._tabBarItems.lastValue;
 
@@ -233,6 +236,7 @@ WI.TabBar = class TabBar extends WI.View
 
         this._tabBarItems.remove(tabBarItem);
         tabBarItem.element.remove();
+        this._updateTabIndexes();
 
         this._openClosedTabsTabBarItem.hidden = !this._closedTabClasses().length;
 
@@ -382,8 +386,11 @@ WI.TabBar = class TabBar extends WI.View
             tabBarItem = this._tabBarItems[this.normalTabCount - 1];
         }
 
-        if (this._selectedTabBarItem === tabBarItem)
+        if (this._selectedTabBarItem === tabBarItem) {
+            this._focusableTabBarItem = tabBarItem;
+            this._updateTabIndexes();
             return;
+        }
 
         let previousTabBarItem = this._selectedTabBarItem;
 
@@ -391,6 +398,8 @@ WI.TabBar = class TabBar extends WI.View
             this._selectedTabBarItem.selected = false;
 
         this._selectedTabBarItem = tabBarItem || null;
+        this._focusableTabBarItem = this._selectedTabBarItem;
+        this._updateTabIndexes();
 
         if (this._selectedTabBarItem) {
             this._selectedTabBarItem.selected = true;
@@ -503,6 +512,8 @@ WI.TabBar = class TabBar extends WI.View
         this._hiddenTabBarItems.reverse();
 
         this._tabContainer.classList.remove("calculate-width");
+
+        this._updateTabIndexes();
     }
 
     didLayoutSubtree()
@@ -514,6 +525,19 @@ WI.TabBar = class TabBar extends WI.View
     }
 
     // Private
+
+    _updateTabIndexes()
+    {
+        // Only one tab is in the tab order. The arrow keys move between the tabs.
+        let focusableTabBarItem = this._focusableTabBarItem;
+        if (!focusableTabBarItem || focusableTabBarItem.hidden || !this._tabBarItems.includes(focusableTabBarItem)) {
+            focusableTabBarItem = this._selectedTabBarItem || this._tabBarItems.find((tabBarItem) => !this._pinnedButtons().includes(tabBarItem) && !tabBarItem.hidden);
+            this._focusableTabBarItem = focusableTabBarItem || null;
+        }
+
+        for (let tabBarItem of this._tabBarItems)
+            tabBarItem.element.tabIndex = (this._pinnedButtons().includes(tabBarItem) || tabBarItem === focusableTabBarItem) ? 0 : -1;
+    }
 
     _pinnedButtons()
     {
@@ -722,6 +746,77 @@ WI.TabBar = class TabBar extends WI.View
 
         event.preventDefault();
         event.stopPropagation();
+    }
+
+    _handleTabContainerKeyDown(event)
+    {
+        if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)
+            return;
+
+        let itemElement = event.target.closest("." + WI.TabBarItem.StyleClassName);
+        let tabBarItem = itemElement?.[WI.TabBarItem.ElementReferenceSymbol];
+        if (!tabBarItem)
+            return;
+
+        switch (event.code) {
+        case "Enter":
+        case "Space":
+            if (tabBarItem.disabled)
+                return;
+
+            if (this._pinnedButtons().includes(tabBarItem)) {
+                // Show the menu where the item is, as a click would.
+                let {left, bottom} = itemElement.getBoundingClientRect();
+                itemElement.dispatchEvent(new MouseEvent("mousedown", {view: window, bubbles: true, cancelable: true, button: 0, clientX: left, clientY: bottom}));
+            } else {
+                this.selectTabBarItem(tabBarItem, {
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.KeyboardShortcut,
+                });
+
+                // Showing the tab can move focus into it. Keep focus on the tab bar.
+                itemElement.focus();
+            }
+            break;
+
+        case "ArrowLeft":
+        case "ArrowRight":
+        case "Home":
+        case "End":
+            if (this._pinnedButtons().includes(tabBarItem))
+                return;
+
+            this._focusTabBarItemForKey(tabBarItem, event.code);
+            break;
+
+        default:
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    _focusTabBarItemForKey(tabBarItem, code)
+    {
+        let tabBarItems = this._tabBarItems.filter((item) => !this._pinnedButtons().includes(item) && !item.hidden);
+        let index = tabBarItems.indexOf(tabBarItem);
+        if (index === -1)
+            return;
+
+        if (code === "Home")
+            index = 0;
+        else if (code === "End")
+            index = tabBarItems.length - 1;
+        else {
+            let delta = code === "ArrowRight" ? 1 : -1;
+            if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+                delta *= -1;
+            index = (index + delta + tabBarItems.length) % tabBarItems.length;
+        }
+
+        this._focusableTabBarItem = tabBarItems[index];
+        this._updateTabIndexes();
+        this._focusableTabBarItem.element.focus();
     }
 
     _handleShowHiddenTabsTabBarItemMouseDown(event)

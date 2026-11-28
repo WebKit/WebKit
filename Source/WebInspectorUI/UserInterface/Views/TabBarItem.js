@@ -39,6 +39,7 @@ WI.TabBarItem = class TabBarItem
         this._element = document.createElement("div");
         this._element.classList.add(WI.TabBarItem.StyleClassName);
         this._element.setAttribute("role", "tab");
+        this._element.setAttribute("aria-selected", "false");
         this._element.tabIndex = 0;
         this._element[WI.TabBarItem.ElementReferenceSymbol] = this;
 
@@ -75,10 +76,7 @@ WI.TabBarItem = class TabBarItem
     {
         this._element.classList.toggle("selected", selected);
 
-        if (selected)
-            this._element.setAttribute("aria-selected", "true");
-        else
-            this._element.removeAttribute("aria-selected");
+        this._element.setAttribute("aria-selected", selected ? "true" : "false");
     }
 
     get disabled()
