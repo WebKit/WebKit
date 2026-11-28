@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: overflow-x: clip with clip-path: url() does not clip an absolutely positioned child in the block axis</title>
+<link rel="author" title="Ahmad Saleem" href="mailto:ahmad.saleem792@gmail.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#valdef-overflow-clip">
+<link rel="help" href="https://drafts.fxtf.org/css-masking-1/#the-clip-path">
+<link rel="match" href="overflow-clip-x-clip-path-abspos-001-ref.html">
+<meta name="assert" content="An element with overflow-x: clip, overflow-y: visible and an SVG clip-path shows an absolutely positioned child that overflows in y where the clip path covers it.">
+<style>
+body { margin: 0; }
+.container { position: relative; width: 100px; height: 50px; overflow-x: clip; overflow-y: visible; clip-path: url(#c); }
+.child { position: absolute; top: 0; left: 0; width: 100px; height: 100px; background: green; }
+</style>
+<p>Test passes if there is a filled green square.</p>
+<svg width="0" height="0" style="position: absolute">
+  <clipPath id="c" clipPathUnits="userSpaceOnUse">
+    <rect x="0" y="0" width="100" height="60"/>
+    <rect x="0" y="40" width="100" height="60"/>
+  </clipPath>
+</svg>
+<div class="container">
+  <div class="child"></div>
+</div>

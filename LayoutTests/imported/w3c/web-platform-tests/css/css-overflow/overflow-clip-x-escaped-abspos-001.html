@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: overflow-x: clip on a composited element does not clip an absolutely positioned descendant whose containing block is an ancestor</title>
+<link rel="author" title="Ahmad Saleem" href="mailto:ahmad.saleem792@gmail.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#valdef-overflow-clip">
+<link rel="match" href="overflow-clip-x-escaped-abspos-001-ref.html">
+<meta name="assert" content="overflow-x: clip only clips descendants for which the element is in the containing block chain, so an absolutely positioned descendant whose containing block is an ancestor is not clipped in x.">
+<style>
+body { margin: 0; }
+.cb { position: relative; }
+.fail { position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background: red; z-index: -1; }
+.container { will-change: opacity; overflow-x: clip; overflow-y: visible; width: 100px; height: 100px; background: green; }
+.escaped { position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background: green; }
+</style>
+<p>Test passes if there is a filled green rectangle and <strong>no red</strong>.</p>
+<div class="cb">
+  <div class="fail"></div>
+  <div class="container">
+    <div class="escaped"></div>
+  </div>
+</div>

@@ -205,6 +205,7 @@ public:
     inline bool isFixedTableLayout() const;
     inline bool isInterCharacterRubyPosition() const;
     inline bool isOverflowVisible() const;
+    inline std::optional<BoxAxis> singleAxisOverflowClip() const;
     inline bool isSkippedRootOrSkippedContent() const;
 
     NODELETE bool isListItemType() const;

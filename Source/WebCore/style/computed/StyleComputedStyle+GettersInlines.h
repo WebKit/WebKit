@@ -366,6 +366,15 @@ inline bool ComputedStyle::isOverflowVisible() const
     return overflowX() == Overflow::Visible || overflowY() == Overflow::Visible;
 }
 
+inline std::optional<BoxAxis> ComputedStyle::singleAxisOverflowClip() const
+{
+    if (overflowX() == Overflow::Clip && overflowY() == Overflow::Visible)
+        return BoxAxis::Horizontal;
+    if (overflowY() == Overflow::Clip && overflowX() == Overflow::Visible)
+        return BoxAxis::Vertical;
+    return std::nullopt;
+}
+
 inline bool ComputedStyle::isSkippedRootOrSkippedContent() const
 {
     return usedContentVisibility() != ContentVisibility::Visible;

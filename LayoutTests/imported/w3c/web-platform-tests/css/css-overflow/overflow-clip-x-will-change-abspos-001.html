@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: overflow-x: clip on a will-change: transform element does not clip an absolutely positioned child in the block axis</title>
+<link rel="author" title="Ahmad Saleem" href="mailto:ahmad.saleem792@gmail.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#valdef-overflow-clip">
+<link rel="match" href="overflow-clip-x-will-change-abspos-001-ref.html">
+<meta name="assert" content="With overflow-x: clip and overflow-y: visible on a composited container, an absolutely positioned child overflowing in y is visible and content overflowing in x is clipped.">
+<style>
+body { margin: 0; }
+.fail { position: absolute; top: 0; left: 0; width: 100px; height: 100px; background: red; z-index: -1; }
+.container { will-change: transform; overflow-x: clip; overflow-y: visible; width: 100px; height: 0; }
+.green { position: absolute; top: 0; left: 0; width: 100px; height: 100px; background: green; }
+.red { position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background: red; }
+</style>
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div style="position: relative">
+  <div class="fail"></div>
+  <div class="container">
+    <div class="green"></div>
+    <div class="red"></div>
+  </div>
+</div>
