@@ -75,6 +75,8 @@ public:
 
     // InspectorInstrumentation
     void willApplyKeyframeEffect(const Styleable&, KeyframeEffect&, const ComputedEffectTiming&);
+    void didChangeStyleOriginatedAnimationPhase(StyleOriginatedAnimation&, AnimationEffectPhase);
+    void willDestroyStyleOriginatedAnimation(StyleOriginatedAnimation&);
     void didChangeWebAnimationName(WebAnimation&);
     void didSetWebAnimationEffect(WebAnimation&);
     void didChangeWebAnimationEffectTiming(WebAnimation&);

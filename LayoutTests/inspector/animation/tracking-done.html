@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+@keyframes grow {
+    from { width: 10px; }
+    to { width: 20px; }
+}
+@keyframes fade {
+    to { opacity: 0.5; }
+}
+@keyframes slide {
+    to { transform: translateX(10px); }
+}
+div {
+    width: 10px;
+    height: 10px;
+}
+#no-fill.run {
+    animation: grow 200ms linear;
+}
+#fill-forwards.run {
+    animation: grow 200ms linear forwards;
+}
+#delayed.run {
+    animation: grow 200ms linear 100ms;
+}
+#iterations.run {
+    animation: grow 100ms linear 3;
+}
+#transition {
+    transition: width 200ms linear;
+}
+#transition.run {
+    width: 20px;
+}
+#fill-forwards-iterations.run {
+    animation: grow 100ms linear 3 forwards;
+}
+#opacity-iterations.run {
+    animation: fade 100ms linear 3 forwards;
+}
+#transform-iterations.run {
+    animation: slide 100ms linear 3 forwards;
+}
+#repeated {
+    transition: width 50ms linear;
+}
+#canceled.run {
+    animation: grow 10s linear;
+}
+#canceled-before-tick.run {
+    animation: grow 10s linear;
+}
+</style>
+<script>
+function startAnimations(ids, stallMilliseconds = 0) {
+    let pending = ids.length;
+    for (let id of ids) {
+        let element = document.getElementById(id);
+        getComputedStyle(element).width;
+        element.addEventListener(element.id === "transition" ? "transitionend" : "animationend", () => {
+            if (!--pending)
+                TestPage.dispatchEventToFrontend("AnimationsEnded");
+        }, {once: true});
+        if (stallMilliseconds) {
+            // Block the main thread, so that the next animation frame comes after the end.
+            element.addEventListener("animationstart", () => {
+                for (let end = performance.now() + stallMilliseconds; performance.now() < end;) { }
+            }, {once: true});
+        }
+        element.classList.add("run");
+    }
+}
+
+function removeRun(ids) {
+    for (let id of ids) {
+        let element = document.getElementById(id);
+        element.classList.remove("run");
+        getComputedStyle(element).width;
+    }
+}
+
+function runRepeatedTransitions(count) {
+    let element = document.getElementById("repeated");
+    let remaining = count;
+    function next() {
+        if (!remaining--) {
+            TestPage.dispatchEventToFrontend("AnimationsEnded");
+            return;
+        }
+        element.addEventListener("transitionend", () => requestAnimationFrame(next), {once: true});
+        getComputedStyle(element).width;
+        element.style.width = element.style.width === "20px" ? "10px" : "20px";
+    }
+    next();
+}
+
+function startAnimationToCancel() {
+    let element = document.getElementById("canceled");
+    element.addEventListener("animationstart", () => {
+        TestPage.dispatchEventToFrontend("AnimationToCancelStarted");
+    }, {once: true});
+    element.classList.add("run");
+}
+
+function startAndCancelBeforeFirstTick() {
+    let element = document.getElementById("canceled-before-tick");
+    element.classList.add("run");
+    getComputedStyle(element).width;
+    element.classList.remove("run");
+    getComputedStyle(element).width;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.Tracking.Done");
+
+    let records = [];
+    let recordForTrackingAnimationId = new Map;
+
+    function recordsForElement(elementId) {
+        return records.filter((record) => record.elementId === elementId);
+    }
+
+    function expectEndedOnce(elementId, state) {
+        let elementRecords = recordsForElement(elementId);
+        InspectorTest.expectEqual(elementRecords.length, 1, `#${elementId} should have one record.`);
+        let states = elementRecords[0]?.states || [];
+        InspectorTest.expectEqual(states.filter((item) => item === state).length, 1, `#${elementId} should report "${state}" once.`);
+        InspectorTest.expectEqual(states.at(-1), state, `#${elementId} should report "${state}" last.`);
+    }
+
+    async function roundTrip() {
+        await InspectorTest.evaluateInPage(`0`);
+        await InspectorTest.evaluateInPage(`0`);
+    }
+
+    async function runUntilEnded(expression) {
+        await Promise.all([
+            InspectorTest.awaitEvent("AnimationsEnded"),
+            InspectorTest.evaluateInPage(expression),
+        ]);
+        await roundTrip();
+    }
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.Start",
+        description: "Start tracking animations.",
+        async test() {
+            await WI.domManager.requestDocument();
+
+            WI.timelineManager.animationTrackingStarted = () => {};
+            WI.timelineManager.animationTrackingCompleted = () => {};
+            WI.timelineManager.animationTrackingUpdated = (timestamp, event) => {
+                let record = recordForTrackingAnimationId.get(event.trackingAnimationId);
+                if (!record) {
+                    record = {
+                        elementId: WI.domManager.nodeForId(event.nodeId)?.getAttribute("id") ?? null,
+                        name: event.animationName ?? event.transitionProperty ?? null,
+                        states: [],
+                    };
+                    recordForTrackingAnimationId.set(event.trackingAnimationId, record);
+                    records.push(record);
+                }
+                record.states.push(event.animationState);
+            };
+
+            await WI.assumingMainTarget().AnimationAgent.startTracking();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.Ended",
+        description: "Every CSS animation and transition that ends should report \"done\" once, with or without a fill.",
+        async test() {
+            const ids = ["no-fill", "fill-forwards", "delayed", "iterations", "transition"];
+            await runUntilEnded(`startAnimations(${JSON.stringify(ids)})`);
+            for (let id of ids)
+                expectEndedOnce(id, "done");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.ForwardsWithIterationsAfterStall",
+        description: "A forwards-filled animation with several iterations should report \"done\" last, also when one frame crosses its end.",
+        async test() {
+            await runUntilEnded(`startAnimations(["fill-forwards-iterations"], 400)`);
+            expectEndedOnce("fill-forwards-iterations", "done");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.AcceleratedForwardsWithIterations",
+        description: "Forwards-filled opacity and transform animations with several iterations should report \"done\" last.",
+        async test() {
+            const ids = ["opacity-iterations", "transform-iterations"];
+            await runUntilEnded(`startAnimations(${JSON.stringify(ids)})`);
+            for (let id of ids)
+                expectEndedOnce(id, "done");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.DoneStaysLastAfterRemoval",
+        description: "Removing an animation that already ended should not report anything more.",
+        async test() {
+            const ids = ["no-fill", "fill-forwards", "fill-forwards-iterations", "opacity-iterations"];
+            await InspectorTest.evaluateInPage(`removeRun(${JSON.stringify(ids)})`);
+            await roundTrip();
+            for (let id of ids)
+                expectEndedOnce(id, "done");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.RepeatedTransitions",
+        description: "Each transition on the same element should have its own record that ends with \"done\".",
+        async test() {
+            const count = 6;
+            await runUntilEnded(`runRepeatedTransitions(${count})`);
+            let repeatedRecords = recordsForElement("repeated");
+            InspectorTest.expectEqual(repeatedRecords.length, count, `Should have ${count} records for #repeated.`);
+            InspectorTest.expectThat(repeatedRecords.every((record) => record.name === "width"), "Every record should name the \"width\" transition.");
+            InspectorTest.expectThat(repeatedRecords.every((record) => record.states.at(-1) === "done" && record.states.filter((state) => state === "done").length === 1), "Every record should report \"done\" once and last.");
+            InspectorTest.expectEqual(records.filter((record) => !record.elementId).length, 0, "No record should lack its element.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.Canceled",
+        description: "A CSS animation that is canceled by a style change should report \"canceled\" right away.",
+        async test() {
+            await Promise.all([
+                InspectorTest.awaitEvent("AnimationToCancelStarted"),
+                InspectorTest.evaluateInPage(`startAnimationToCancel()`),
+            ]);
+            await roundTrip();
+
+            await InspectorTest.evaluateInPage(`removeRun(["canceled"])`);
+            await roundTrip();
+
+            expectEndedOnce("canceled", "canceled");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.CanceledBeforeFirstTick",
+        description: "A CSS animation that is canceled before its first animation frame should report \"canceled\".",
+        async test() {
+            await InspectorTest.evaluateInPage(`startAndCancelBeforeFirstTick()`);
+            await roundTrip();
+
+            expectEndedOnce("canceled-before-tick", "canceled");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Tracking.Done.Stop",
+        description: "Stop tracking animations.",
+        async test() {
+            await WI.assumingMainTarget().AnimationAgent.stopTracking();
+
+            delete WI.timelineManager.animationTrackingStarted;
+            delete WI.timelineManager.animationTrackingCompleted;
+            delete WI.timelineManager.animationTrackingUpdated;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Animation.trackingUpdate reports when CSS animations and transitions end.</p>
+<div id="no-fill"></div>
+<div id="fill-forwards"></div>
+<div id="delayed"></div>
+<div id="iterations"></div>
+<div id="transition"></div>
+<div id="fill-forwards-iterations"></div>
+<div id="opacity-iterations"></div>
+<div id="transform-iterations"></div>
+<div id="repeated"></div>
+<div id="canceled"></div>
+<div id="canceled-before-tick"></div>
+</body>
+</html>

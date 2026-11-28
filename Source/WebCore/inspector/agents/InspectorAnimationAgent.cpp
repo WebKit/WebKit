@@ -450,7 +450,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
             animationAnimationState = Inspector::Protocol::Animation::AnimationState::Canceled;
             break;
         }
-    } else if (trackingData.lastComputedTiming.currentIteration != computedTiming.currentIteration) {
+    } else if (computedTiming.phase == AnimationEffectPhase::Active && trackingData.lastComputedTiming.currentIteration != computedTiming.currentIteration) {
         // Iterations are represented by sequential "active" state events.
         animationAnimationState = Inspector::Protocol::Animation::AnimationState::Active;
     }
@@ -478,6 +478,38 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
     }
 
     m_frontendDispatcher->trackingUpdate(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds(), WTF::move(event));
+}
+
+void InspectorAnimationAgent::didChangeStyleOriginatedAnimationPhase(StyleOriginatedAnimation& animation, AnimationEffectPhase phase)
+{
+    if (phase == AnimationEffectPhase::Idle) {
+        stopTrackingStyleOriginatedAnimation(animation);
+        return;
+    }
+
+    // willApplyKeyframeEffect() reports the other phases. An animation that ended without a fill is not applied.
+    if (phase != AnimationEffectPhase::After)
+        return;
+
+    auto iterator = m_trackedStyleOriginatedAnimationData.find(&animation);
+    if (iterator == m_trackedStyleOriginatedAnimationData.end())
+        return;
+
+    auto& trackingData = iterator->value.get();
+    if (std::exchange(trackingData.lastComputedTiming.phase, AnimationEffectPhase::After) == AnimationEffectPhase::After)
+        return;
+
+    auto event = Inspector::Protocol::Animation::TrackingUpdate::create()
+        .setTrackingAnimationId(trackingData.trackingAnimationId)
+        .setAnimationState(Inspector::Protocol::Animation::AnimationState::Done)
+        .release();
+    m_frontendDispatcher->trackingUpdate(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds(), WTF::move(event));
+}
+
+void InspectorAnimationAgent::willDestroyStyleOriginatedAnimation(StyleOriginatedAnimation& animation)
+{
+    // This can run during GC, so send nothing. An animation that ended or was canceled has already reported it.
+    m_trackedStyleOriginatedAnimationData.remove(&animation);
 }
 
 void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
