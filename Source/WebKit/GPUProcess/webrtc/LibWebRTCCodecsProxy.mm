@@ -471,6 +471,12 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
             callback(false);
             return;
         }
+    } else if (auto pixelFormat = PixelBufferConverter::pixelFormatWithoutAlpha(CVPixelBufferGetPixelFormatType(pixelBuffer))) {
+        pixelBuffer = encoder->pixelBufferConverter.convert(pixelBuffer, *pixelFormat);
+        if (!pixelBuffer) {
+            callback(false);
+            return;
+        }
     }
 
 #if !PLATFORM(MACCATALYST)

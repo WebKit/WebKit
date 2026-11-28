@@ -36,6 +36,7 @@
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/GPUVideoDecoder.h>
 #include <WebCore/GPUVideoEncoder.h>
+#include <WebCore/PixelBufferConverterCV.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
 #include <WebCore/VideoCodecType.h>
@@ -123,6 +124,7 @@ private:
         WebCore::VideoCodecType codecType { WebCore::VideoCodecType::H264 };
         bool useLowLatency { false };
         bool isInvalid { false };
+        WebCore::PixelBufferConverter pixelBufferConverter { WebCore::PixelBufferConverter::UseIOSurface::Yes };
     };
     NODELETE Encoder* findEncoder(VideoEncoderIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
 

@@ -1793,8 +1793,6 @@ webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.
 webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?vp9_p2 [ Pass Failure ]
 webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9 [ Pass Failure ]
 webkit.org/b/331641 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?vp9_p2 [ Pass Failure ]
-webkit.org/b/332142 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.html?h264 [ Failure ]
-webkit.org/b/332142 imported/w3c/web-platform-tests/webcodecs/video-encoder-hbd.https.any.worker.html?h264 [ Failure ]
 
 
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]

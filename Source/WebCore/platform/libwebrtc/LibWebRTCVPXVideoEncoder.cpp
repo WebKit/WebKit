@@ -357,9 +357,11 @@ webrtc::scoped_refptr<webrtc::VideoFrameBuffer> LibWebRTCVPXInternalVideoEncoder
     }
 
     auto bufferPixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
-    // Any alpha plane is discarded, as alpha "keep" is not supported yet.
-    if (auto description = PlanarImageConverter::pixelFormatDescription(bufferPixelFormat); isHighBitDepthEncoder && description && description->color.bitDepth > 8)
+    // Any alpha plane is discarded, as alpha "keep" is not supported yet (https://bugs.webkit.org/show_bug.cgi?id=333046).
+    if (auto description = PlanarImageConverter::pixelFormatDescription(bufferPixelFormat); isHighBitDepthEncoder && description && description->color.bitDepth > 8) {
+        colorSpace.fullRange = description->isFullRange;
         return createI010Buffer(pixelBuffer.get(), description->isFullRange, m_config.width, m_config.height);
+    }
 
     if (bufferPixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || bufferPixelFormat == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
         return scaledFrameBuffer(pixelBuffer.get(), m_config.width, m_config.height);
