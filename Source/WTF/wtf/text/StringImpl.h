@@ -379,8 +379,13 @@ public:
 
     SUPPRESS_TSAN bool isStatic() const { return m_refCount.load(std::memory_order_relaxed) & s_refCountFlagIsStaticString; }
 
+    // Relaxed, so only suitable for heuristics. Use hasOneRef() to decide whether the caller owns the string exclusively.
     uint32_t refCount() const { return m_refCount.load(std::memory_order_relaxed) / s_refCountIncrement; }
-    bool hasOneRef() const { return m_refCount.load(std::memory_order_relaxed) == s_refCountIncrement; }
+
+    // Acquire, pairing with the release decrement in deref(): if other threads accessed the string and then dropped
+    // their references, those accesses happen before whatever the caller does next with the string it now owns
+    // exclusively, such as writing its flags, mutating it in place (StringBuilder) or reallocating it.
+    bool hasOneRef() const { return m_refCount.load(std::memory_order_acquire) == s_refCountIncrement; }
     bool hasAtLeastOneRef() const { return m_refCount.load(std::memory_order_relaxed); } // For assertions.
 
     void ref();
@@ -1160,10 +1165,9 @@ ALWAYS_INLINE unsigned StringImpl::setMutableFlags(unsigned bits) const
     // can be mutating m_hashAndFlags, so a plain load and store cannot lose an update. Threads that read
     // the string without holding a ref (GC marking, concurrent JIT) never write these bits.
     //
-    // The refcount load must be an acquire, pairing with the release in deref(): a thread that wrote the
-    // flags and then dropped its reference must have its write visible to us before we read the flags,
-    // or our store could erase it.
-    if (m_refCount.load(std::memory_order_acquire) == s_refCountIncrement) {
+    // hasOneRef() is an acquire load, so a thread that wrote the flags and then dropped its reference has its
+    // write visible to us before we read the flags. Otherwise our store could erase it.
+    if (hasOneRef()) {
         unsigned oldFlags = mutableFlags();
         atomicStore<MemoryOrder::Relaxed>(&m_hashAndFlags, oldFlags | bits);
         return oldFlags;
