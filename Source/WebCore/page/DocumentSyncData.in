@@ -58,6 +58,8 @@
 #                    e.g: `Conditional=ENABLE(FEATURE_NAME)`
 #   - `Headers`: Comma-separated list of headers required to declare/define the type
 #                e.g: `Headers=<WebCore/Header.h>,<WebCore/AnotherHeader.h>`
+#   - `Default`: Initial value of the member, used instead of value-initialization
+#                e.g: `Default=true`
 
 AudioSessionType : WebCore::DOMAudioSessionType [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers=<WebCore/DOMAudioSession.h>]
 AudioSessionState : WebCore::DOMAudioSessionState [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers=<WebCore/DOMAudioSession.h>]
@@ -65,6 +67,7 @@ IsAutofocusProcessed : bool
 UserDidInteractWithPage : bool
 HasHadUserInteraction : bool
 IsClosing : bool
+LastNavigationWasAppInitiated : bool [Default=true]
 DocumentURL : URL [Headers=<wtf/URL.h>]
 DocumentSecurityOrigin : RefPtr<WebCore::SecurityOrigin> [Headers=<WebCore/SecurityOrigin.h>]
 DocumentClasses : OptionSet<WebCore::DocumentClass> [Headers=<WebCore/DocumentClasses.h>]

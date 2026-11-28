@@ -7402,6 +7402,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         auto topDocumentSyncData = DocumentSyncData::create();
         topDocumentSyncData->documentURL = request.url();
         topDocumentSyncData->documentSecurityOrigin = SecurityOrigin::create(request.url());
+        topDocumentSyncData->lastNavigationWasAppInitiated = m_lastNavigationWasAppInitiated;
         setTopDocumentSyncData(topDocumentSyncData.copyRef());
         protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(*oldMainFrameID, provisionalPage->process().coreProcessIdentifier(), std::nullopt, WTF::move(topDocumentSyncData), cacheIdentifiers), [weakThis = WeakPtr { *this }, cacheIdentifiers](DidCacheOutgoingDocument didCache) {
             RefPtr protectedThis = weakThis;

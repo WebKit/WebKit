@@ -24,5 +24,6 @@ MainFrameURLChange : URL [Headers=<wtf/URL.h>]
 AudioSessionType : WebCore::DOMAudioSessionType [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers="DOMAudioSession.h"]
 IsAutofocusProcessed : bool
 UserDidInteractWithPage : bool
+DefaultsToTrue : bool [Default=true]
 AnotherOne : StringifyThis [Headers="StringifyThis"]
 MultipleHeaders : HashSet<URL> [Headers=<wtf/HashSet.h>,<wtf/URL.h>]

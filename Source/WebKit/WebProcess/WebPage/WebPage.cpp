@@ -3101,8 +3101,8 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters, Co
     m_sandboxExtensionTracker.beginLoad(WTF::move(parameters.sandboxExtensionHandle));
 
     m_lastNavigationWasAppInitiated = parameters.lastNavigationWasAppInitiated;
-    if (auto* localMainFrame = corePage()->localMainFrame()) {
-        if (auto* documentLoader = localMainFrame->loader().documentLoader())
+    if (RefPtr localMainFrame = corePage()->localMainFrame()) {
+        if (RefPtr documentLoader = localMainFrame->loader().documentLoader())
             documentLoader->setLastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated);
     }
 

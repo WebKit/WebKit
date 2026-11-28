@@ -365,6 +365,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
             os.path.join('WebDriverTests', 'foo.py'),
             # Generated web extension bindings.
             os.path.join('Source', 'WebKit', 'WebProcess', 'Extensions', 'Bindings', 'Scripts', 'Tests', 'Expected', 'JSWebExtensionAPITestCPP.h'),
+            # Generated process sync data.
+            os.path.join('Source', 'WebCore', 'Scripts', 'tests', 'TestSyncData.h'),
             # Imported markup and non-markup LayoutTests files stay skipped.
             os.path.join('LayoutTests', 'imported', 'w3c', 'foo.html'),
             os.path.join('LayoutTests', 'fast', 'foo.js'),

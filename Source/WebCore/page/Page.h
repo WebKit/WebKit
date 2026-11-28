@@ -487,6 +487,9 @@ public:
     NODELETE bool hasInjectedUserScript();
     WEBCORE_EXPORT void setHasInjectedUserScript();
 
+    void setTopDocumentLastNavigationWasAppInitiated(bool);
+    NODELETE WEBCORE_EXPORT bool topDocumentLastNavigationWasAppInitiated() const;
+
     WEBCORE_EXPORT void updateTopDocumentSyncData(const DocumentSyncSerializationData&);
     WEBCORE_EXPORT void updateTopDocumentSyncData(Ref<DocumentSyncData>&&);
 

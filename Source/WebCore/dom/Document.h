@@ -2424,7 +2424,7 @@ private:
     bool computeHasUnpartitionedStorageAccess(const DocumentLoader*) const;
 
     inline Ref<DocumentSyncData> syncData();
-    NODELETE void populateDocumentSyncDataForNewlyConstructedDocument(DocumentSyncDataType);
+    void populateDocumentSyncDataForNewlyConstructedDocument(DocumentSyncDataType);
 
     RegionFixedPair absoluteEventRegionForNode(Node&);
 

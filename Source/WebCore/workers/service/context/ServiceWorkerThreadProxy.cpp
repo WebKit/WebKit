@@ -107,8 +107,8 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
 
 void ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated(bool wasAppInitiated)
 {
-    if (m_document->loader())
-        m_document->loader()->setLastNavigationWasAppInitiated(wasAppInitiated);
+    if (RefPtr documentLoader = m_document->loader())
+        documentLoader->setLastNavigationWasAppInitiated(wasAppInitiated);
 }
 
 bool ServiceWorkerThreadProxy::lastNavigationWasAppInitiated()
