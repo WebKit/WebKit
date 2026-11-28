@@ -619,6 +619,7 @@ fast/events/keyboardevent-modifier.html [ Pass ]
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12679
 media/video-with-alpha-10bit.html [ Failure ]
 media/video-with-alpha-10bit-full-range.html [ Failure ]
+media/video-with-alpha-10bit-encode-decode.html [ Failure ]
 
 # Playback of a VP9 4:2:2 colour stream with a separate alpha stream times out.
 media/video-with-alpha-422.html [ Timeout ]

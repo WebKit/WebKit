@@ -33,9 +33,11 @@
 #import <WebCore/AudioSampleFormat.h>
 #import <WebCore/CMUtilities.h>
 #import <WebCore/MediaSamplesBlock.h>
+#import <WebCore/PlanarImageConverterCV.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TrackInfo.h>
 #import <WebCore/VideoPixelFormat.h>
+#import <pal/spi/cf/CoreVideoSPI.h>
 #import <wtf/Scope.h>
 #import <wtf/Vector.h>
 
@@ -536,7 +538,7 @@ static void checkI420AFrame(size_t width, size_t height, bool isFullRange)
     ASSERT_NE(nullptr, imageBuffer);
     EXPECT_EQ(width, CVPixelBufferGetWidth(imageBuffer));
     EXPECT_EQ(height, CVPixelBufferGetHeight(imageBuffer));
-    EXPECT_EQ(isFullRange ? static_cast<OSType>('x0a8') : static_cast<OSType>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), CVPixelBufferGetPixelFormatType(imageBuffer));
+    EXPECT_EQ(isFullRange ? pixelFormatWK420YpCbCr8FullRange8ATriPlanar : static_cast<OSType>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), CVPixelBufferGetPixelFormatType(imageBuffer));
     EXPECT_TRUE(CFEqual(kCVImageBufferAlphaChannelMode_StraightAlpha, CVBufferGetAttachment(imageBuffer, kCVImageBufferAlphaChannelModeKey, nullptr)));
 
     CMVideoFormatDescriptionRef description = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get());
@@ -557,20 +559,12 @@ static void checkI420AFrame(size_t width, size_t height, bool isFullRange)
     size_t chromaWidth = (width + 1) / 2;
     size_t chromaHeight = (height + 1) / 2;
     for (size_t row = 0; row < height; ++row) {
-        for (size_t column = 0; column < width; ++column) {
-            if (isFullRange)
-                ASSERT_EQ(940, tenBitSample(luma + row * lumaStride, column));
-            else
-                ASSERT_EQ(255, luma[row * lumaStride + column]);
-        }
+        for (size_t column = 0; column < width; ++column)
+            ASSERT_EQ(255, luma[row * lumaStride + column]);
     }
     for (size_t row = 0; row < chromaHeight; ++row) {
-        for (size_t column = 0; column < 2 * chromaWidth; ++column) {
-            if (isFullRange)
-                ASSERT_EQ(512, tenBitSample(chroma + row * chromaStride, column));
-            else
-                ASSERT_EQ(128, chroma[row * chromaStride + column]);
-        }
+        for (size_t column = 0; column < 2 * chromaWidth; ++column)
+            ASSERT_EQ(128, chroma[row * chromaStride + column]);
     }
 
     auto* alpha = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 2));
@@ -593,6 +587,8 @@ TEST(DecodedMediaSamplesBlock, VideoWithAlphaFullRangeToCMSampleBuffer)
     checkI420AFrame(33, 17, true);
 }
 
+enum class AlphaSamples : uint8_t { EightBit, TenBitMSB, SixteenBit };
+
 struct PlanarAlphaFrame {
     VideoPixelFormat format;
     bool isFullRange;
@@ -602,6 +598,7 @@ struct PlanarAlphaFrame {
     uint16_t expectedY;
     uint16_t chroma;
     uint16_t expectedChroma;
+    AlphaSamples alphaSamples { AlphaSamples::EightBit };
 };
 
 // Luma is y, both chroma planes are chroma and the alpha follows alphaPattern() at the format's bit depth.
@@ -665,19 +662,29 @@ static void checkPlanarAlphaFrame(const PlanarAlphaFrame& frame, size_t width, s
     auto* alpha = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 2));
     size_t alphaStride = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 2);
     for (size_t row = 0; row < height; ++row) {
-        for (size_t column = 0; column < width; ++column)
-            ASSERT_EQ(alphaPattern(column, row), alpha[row * alphaStride + column]);
+        for (size_t column = 0; column < width; ++column) {
+            if (frame.alphaSamples == AlphaSamples::EightBit) {
+                ASSERT_EQ(alphaPattern(column, row), alpha[row * alphaStride + column]);
+                continue;
+            }
+            uint16_t tenBitAlpha = static_cast<uint16_t>(alphaPattern(column, row) << 2);
+            auto expectedAlpha = static_cast<uint16_t>(tenBitAlpha << 6);
+            // 16-bit alpha is widened from 10 bits by bit replication.
+            if (frame.alphaSamples == AlphaSamples::SixteenBit)
+                expectedAlpha = static_cast<uint16_t>(expectedAlpha | tenBitAlpha >> 4);
+            auto* alphaRow = alpha + row * alphaStride;
+            ASSERT_EQ(expectedAlpha, static_cast<uint16_t>(alphaRow[2 * column] | alphaRow[2 * column + 1] << 8));
+        }
     }
 }
 
-// 10-bit video range samples are copied unchanged and 8-bit full range ones widened to 10-bit video range.
 TEST(DecodedMediaSamplesBlock, PlanarAlphaFormatsToCMSampleBuffer)
 {
     static constexpr std::array frames {
-        PlanarAlphaFrame { VideoPixelFormat::I420AP10, false, 'x0a8', true, 700, 700, 300, 300 },
-        PlanarAlphaFrame { VideoPixelFormat::I422A, false, 'v2a8', false, 200, 200, 100, 100 },
-        PlanarAlphaFrame { VideoPixelFormat::I422A, true, 'x2a8', true, 255, 940, 128, 512 },
-        PlanarAlphaFrame { VideoPixelFormat::I422AP10, false, 'x2a8', true, 700, 700, 300, 300 },
+        PlanarAlphaFrame { VideoPixelFormat::I420AP10, false, pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, true, 700, 700, 300, 300, AlphaSamples::TenBitMSB },
+        PlanarAlphaFrame { VideoPixelFormat::I422A, false, kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar, false, 200, 200, 100, 100 },
+        PlanarAlphaFrame { VideoPixelFormat::I422A, true, pixelFormatWK422YpCbCr8FullRange8ATriPlanar, false, 255, 255, 128, 128 },
+        PlanarAlphaFrame { VideoPixelFormat::I422AP10, false, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar, true, 700, 700, 300, 300, AlphaSamples::SixteenBit },
     };
     for (auto& frame : frames) {
         checkPlanarAlphaFrame(frame, 64, 48);
@@ -723,11 +730,10 @@ TEST(DecodedMediaSamplesBlock, VideoWithAlphaFormatDescriptionFromTrackInfo)
     for (bool isFullRange : { false, true }) {
         RetainPtr description = createFormatDescriptionFromTrackInfo(makeDecodedVideoInfo(FloatSize(64, 48), VideoPixelFormat::I420A, isFullRange).get());
         ASSERT_NE(nullptr, description.get());
-        EXPECT_EQ(isFullRange ? static_cast<FourCharCode>('x0a8') : static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), PAL::CMFormatDescriptionGetMediaSubType(description.get()));
+        EXPECT_EQ(isFullRange ? pixelFormatWK420YpCbCr8FullRange8ATriPlanar : static_cast<FourCharCode>(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), PAL::CMFormatDescriptionGetMediaSubType(description.get()));
         EXPECT_EQ(kCFBooleanTrue, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel));
         EXPECT_TRUE(CFEqual(PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_AlphaChannelMode)));
-        // The pixel data is always video range.
-        EXPECT_EQ(nullptr, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo));
+        EXPECT_EQ(isFullRange ? kCFBooleanTrue : nullptr, PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo));
     }
 }
 

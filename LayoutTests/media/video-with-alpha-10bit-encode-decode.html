@@ -1,0 +1,92 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsHighBitDepthEnabled=true ] -->
+<html>
+<head>
+<title>A VideoFrame from a 10-bit video with alpha keeps its colour when encoded</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// All the videos are the same colour, whose 10-bit Y'CbCr samples are these in each range.
+const videoRangeSamples = [403, 724, 394];
+const fullRangeSamples = [396, 754, 377];
+const tolerance = 2;
+const hevcMain10Codec = 'hvc1.2.4.L93.B0';
+
+function waitFor(video, eventName)
+{
+    return new Promise((resolve, reject) => {
+        video.addEventListener(eventName, resolve, { once: true });
+        video.addEventListener('error', () => reject(video.error), { once: true });
+    });
+}
+
+async function videoFrameFromVideo(t, file)
+{
+    const video = document.createElement('video');
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = `content/${file}.webm`;
+    await waitFor(video, 'canplaythrough');
+    video.currentTime = 0.5;
+    await waitFor(video, 'seeked');
+    return new VideoFrame(video, { timestamp: 0 });
+}
+
+async function encodeDecode(t, frame)
+{
+    const config = { codec: hevcMain10Codec, width: frame.displayWidth, height: frame.displayHeight, bitrate: 2000000, framerate: 30 };
+    const support = await VideoEncoder.isConfigSupported(config);
+    assert_implements_optional(support.supported, `${hevcMain10Codec} encoding is not supported`);
+
+    const chunks = [];
+    let decoderConfig;
+    const encoder = new VideoEncoder({
+        output: (chunk, metadata) => {
+            chunks.push(chunk);
+            if (metadata?.decoderConfig)
+                decoderConfig = metadata.decoderConfig;
+        },
+        error: t.unreached_func('encoder error'),
+    });
+    encoder.configure(config);
+    encoder.encode(frame, { keyFrame: true });
+    await encoder.flush();
+    encoder.close();
+    assert_equals(chunks.length, 1, 'chunk count');
+    assert_not_equals(decoderConfig, undefined, 'decoderConfig');
+
+    const decoded = [];
+    const decoder = new VideoDecoder({
+        output: frame => decoded.push(frame),
+        error: t.unreached_func('decoder error'),
+    });
+    decoder.configure(decoderConfig);
+    decoder.decode(chunks[0]);
+    await decoder.flush();
+    decoder.close();
+    assert_equals(decoded.length, 1, 'decoded frame count');
+    return decoded[0];
+}
+
+for (const file of ['video-with-alpha-10bit', 'video-with-alpha-10bit-full-range', 'video-with-alpha-422-10bit']) {
+    promise_test(async t => {
+        const frame = await videoFrameFromVideo(t, file);
+        t.add_cleanup(() => frame.close());
+        const decoded = await encodeDecode(t, frame);
+        t.add_cleanup(() => decoded.close());
+        assert_equals(decoded.format, 'I420P10', 'decoded format');
+
+        const buffer = new ArrayBuffer(decoded.allocationSize());
+        const layout = await decoded.copyTo(buffer);
+        const sample = (plane, x, y) => new DataView(buffer).getUint16(layout[plane].offset + y * layout[plane].stride + 2 * x, true);
+        // In the opaque stripe.
+        const samples = [sample(0, 175, 100), sample(1, 87, 50), sample(2, 87, 50)];
+        const expected = decoded.colorSpace.fullRange ? fullRangeSamples : videoRangeSamples;
+        for (let plane = 0; plane < 3; ++plane)
+            assert_approx_equals(samples[plane], expected[plane], tolerance, `plane ${plane}`);
+    }, `${file}: a VideoFrame from the video element keeps its colour when encoded with ${hevcMain10Codec}`);
+}
+</script>
+</body>
+</html>

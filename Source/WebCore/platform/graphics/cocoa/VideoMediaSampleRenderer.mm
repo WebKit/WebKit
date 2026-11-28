@@ -26,11 +26,14 @@
 #import "config.h"
 #import "VideoMediaSampleRenderer.h"
 
+#import "CMUtilities.h"
 #import "EffectiveRateChangedListener.h"
 #import "FourCC.h"
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
+#import "PixelBufferConverterCV.h"
+#import "PlanarImageConverterCV.h"
 #import "VP9UtilitiesCocoa.h"
 #import "VideoDecodeWindow.h"
 #import "WebCoreDecompressionSession.h"
@@ -771,15 +774,40 @@ void VideoMediaSampleRenderer::enqueueAlreadyDecodedSample(const MediaSample& sa
         }
 
         ++protectedThis->m_totalVideoFrames;
+        Ref displayableSample = protectedThis->sampleWithCoreVideoPixelFormat(WTF::move(sample));
         if (protectedThis->decompressionSession() && (!protectedThis->m_compressedSampleQueue.isEmpty() || protectedThis->m_isDecodingSample)) {
             // Compressed samples are still waiting to be decoded; the decoded sample goes through the same queue to stay behind them.
-            protectedThis->m_compressedSampleQueue.append({ WTF::move(sample), std::optional<MediaTime> { }, flushId, true });
+            protectedThis->m_compressedSampleQueue.append({ WTF::move(displayableSample), std::optional<MediaTime> { }, flushId, true });
             protectedThis->m_compressedSamplesCount = protectedThis->m_compressedSampleQueue.size();
             return;
         }
-        protectedThis->decodedFrameAvailable(WTF::move(sample), flushId);
+        protectedThis->decodedFrameAvailable(WTF::move(displayableSample), flushId);
         protectedThis->maybeBecomeReadyForMoreMediaData();
     });
+}
+
+Ref<const MediaSample> VideoMediaSampleRenderer::sampleWithCoreVideoPixelFormat(Ref<const MediaSample>&& sample)
+{
+    assertIsCurrent(dispatcher().get());
+
+    RetainPtr sampleBuffer = sample->platformSample().cmSampleBuffer();
+    RetainPtr pixelBuffer = dynamic_cf_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sampleBuffer));
+    auto pixelFormat = pixelBuffer ? CVPixelBufferGetPixelFormatType(pixelBuffer) : 0;
+    if (!PlanarImageConverter::isRegisteredPixelFormat(pixelFormat))
+        return WTF::move(sample);
+
+    if (!m_pixelBufferConverter)
+        m_pixelBufferConverter = makeUnique<PixelBufferConverter>(PixelBufferConverter::UseIOSurface::Yes);
+    RetainPtr<CMSampleBufferRef> convertedSampleBuffer;
+    if (RetainPtr convertedPixelBuffer = m_pixelBufferConverter->convert(pixelBuffer, PixelBufferConverter::nearestCVPixelFormat(pixelFormat))) {
+        RetainPtr formatDescription = createFormatDescriptionWithAlpha(convertedPixelBuffer);
+        convertedSampleBuffer = createSampleBufferWithPixelBuffer(convertedPixelBuffer, sampleBuffer, formatDescription);
+    }
+    if (!convertedSampleBuffer) {
+        RELEASE_LOG_ERROR(Media, "VideoMediaSampleRenderer: converting %" PUBLIC_LOG_STRING " to a CoreVideo format failed", FourCC(pixelFormat).string().data());
+        return WTF::move(sample);
+    }
+    return MediaSampleAVFObjC::create(convertedSampleBuffer, sample->trackID());
 }
 
 void VideoMediaSampleRenderer::decodedFrameAvailable(Ref<const MediaSample>&& sample, FlushId flushId)

@@ -1,0 +1,5 @@
+
+PASS video-with-alpha-10bit: a VideoFrame from the video element keeps its colour when encoded with hvc1.2.4.L93.B0
+PASS video-with-alpha-10bit-full-range: a VideoFrame from the video element keeps its colour when encoded with hvc1.2.4.L93.B0
+PASS video-with-alpha-422-10bit: a VideoFrame from the video element keeps its colour when encoded with hvc1.2.4.L93.B0
+

@@ -37,6 +37,7 @@
 #import "MediaSampleAVFObjC.h"
 #import "MediaSamplesBlock.h"
 #import "MediaUtilities.h"
+#import "PixelBufferConverterCV.h"
 #import "PlanarImageConverterCV.h"
 #import "SharedBuffer.h"
 #import "WebMAudioUtilitiesCocoa.h"
@@ -435,7 +436,7 @@ static std::optional<OSType> pixelFormatTypeForDecodedVideo(const VideoInfo& inf
     auto colorFormat = PlanarImageConverter::pixelFormat(layout->subsampling, *sampleFormat, info.colorSpace().fullRange.value_or(false));
     if (!colorFormat || !hasAlpha)
         return colorFormat;
-    return pixelFormatWithAlpha(*colorFormat);
+    return PixelBufferConverter::pixelFormatWithAlpha(*colorFormat);
 }
 
 // Calls add() with every property that can be expressed both as a CMFormatDescription extension and
@@ -589,11 +590,10 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
         codecType = *pixelFormatType;
     }
 
-    // The pixel formats with an alpha plane are video range only.
-    auto alphaPlaneBitDepth = bitDepthOfPixelFormatWithAlphaPlane(codecType);
-    if (videoInfo.colorSpace().fullRange.value_or(false) && !alphaPlaneBitDepth)
+    if (videoInfo.colorSpace().fullRange.value_or(false))
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo, kCFBooleanTrue);
 
+    auto alphaPlaneBitDepth = bitDepthOfPixelFormatWithAlphaPlane(codecType);
     if (alphaPlaneBitDepth) {
         CFDictionaryAddValue(extensions, PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel, kCFBooleanTrue);
         CFDictionaryAddValue(extensions, PAL::kCMFormatDescriptionExtension_AlphaChannelMode, PAL::kCMFormatDescriptionAlphaChannelMode_StraightAlpha);
@@ -807,6 +807,35 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBuffer
     if (PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, CVPixelBufferGetPixelFormatType(pixelBuffer), CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), extensions, &rawDescription) != noErr)
         return description;
     return adoptCF(rawDescription);
+}
+
+RetainPtr<CMSampleBufferRef> createSampleBufferWithPixelBuffer(CVPixelBufferRef pixelBuffer, CMSampleBufferRef sourceSampleBuffer, CMFormatDescriptionRef description)
+{
+    if (!description)
+        return nullptr;
+
+    CMSampleTimingInfo timing {
+        PAL::CMSampleBufferGetOutputDuration(sourceSampleBuffer),
+        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
+        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
+    };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, description, &timing, &rawSampleBuffer) != noErr)
+        return nullptr;
+    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
+
+    if (RetainPtr sourceAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sourceSampleBuffer, false); sourceAttachments && CFArrayGetCount(sourceAttachments)) {
+        RetainPtr destAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
+        if (destAttachments && CFArrayGetCount(destAttachments)) {
+            RetainPtr sourceDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(sourceAttachments, 0));
+            RetainPtr destDict = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(destAttachments, 0));
+            CFDictionaryApplyFunction(sourceDict, [](const void* key, const void* value, void* context) {
+                CFDictionarySetValue(static_cast<CFMutableDictionaryRef>(context), key, value);
+            }, destDict);
+        }
+    }
+
+    return sampleBuffer;
 }
 
 // A CMSampleBuffer holds a single image buffer, so the block must hold exactly one frame.

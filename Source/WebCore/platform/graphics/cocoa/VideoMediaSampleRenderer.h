@@ -59,6 +59,7 @@ namespace WebCore {
 
 class EffectiveRateChangedListener;
 class MediaSample;
+class PixelBufferConverter;
 class WebCoreDecompressionSession;
 
 class VideoMediaSampleRenderer final
@@ -145,6 +146,7 @@ private:
     void resolveRequestMediaDataIfNeeded();
     void initializeDecompressionSession();
     void enqueueAlreadyDecodedSample(const MediaSample&);
+    Ref<const MediaSample> sampleWithCoreVideoPixelFormat(Ref<const MediaSample>&&);
     void decodeNextSampleIfNeeded();
     using FlushId = int;
     void decodedFrameAvailable(Ref<const MediaSample>&&, FlushId);
@@ -217,6 +219,7 @@ private:
     std::atomic<uint32_t> m_compressedSamplesCount { 0 };
     std::atomic<uint32_t> m_pendingSamplesCount { 0 };
     MediaSampleReorderQueue m_decodedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
+    std::unique_ptr<PixelBufferConverter> m_pixelBufferConverter WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
     RefPtr<WebCoreDecompressionSession> m_decompressionSession WTF_GUARDED_BY_LOCK(m_lock);
     bool m_decompressionSessionBlocked WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_decompressionSessionWasBlocked { false };

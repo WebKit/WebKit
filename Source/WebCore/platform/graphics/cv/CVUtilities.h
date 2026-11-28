@@ -63,7 +63,6 @@ void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef, CGImageAlphaInfo);
 std::span<const OSType> pixelFormatsWithAlphaPlane();
 WEBCORE_EXPORT bool isPixelFormatWithAlphaPlane(OSType);
 std::optional<int> bitDepthOfPixelFormatWithAlphaPlane(OSType);
-std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat);
 std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CVPixelBufferPoolRef);
 bool copyAlphaIntoAlphaPlane(CVPixelBufferRef destination, CVPixelBufferRef alphaBuffer);
 bool copyAlphaFromLumaPlane(CVPixelBufferRef alphaBuffer, std::span<uint8_t> destination, PlanarImageConverter::SampleFormat);

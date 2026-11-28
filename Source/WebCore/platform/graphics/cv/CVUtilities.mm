@@ -31,6 +31,7 @@
 #import "IOSurface.h"
 #import "ImageUtilities.h"
 #import "Logging.h"
+#import "PixelBufferConverterCV.h"
 #import "PlanarImageConverterCV.h"
 #import "RealtimeVideoUtilities.h"
 #import "VideoFrame.h"
@@ -223,11 +224,9 @@ void setAlphaInfoForCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGImageAlphaInfo
 }
 
 // The formats with alpha that decoders are asked to output.
-static constexpr std::array<OSType, 4> alphaPlanePixelFormats {
+static constexpr std::array<OSType, 2> alphaPlanePixelFormats {
     kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar,
-    kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar,
     kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar,
-    kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar,
 };
 
 // VideoToolbox tags the frames it decodes into these formats as opaque.
@@ -235,16 +234,6 @@ static void setStraightAlpha(CVPixelBufferRef pixelBuffer)
 {
     CVBufferSetAttachment(pixelBuffer, kCVImageBufferAlphaChannelModeKey, kCVImageBufferAlphaChannelMode_StraightAlpha, kCVAttachmentMode_ShouldPropagate);
     CVBufferRemoveAttachment(pixelBuffer, kCVImageBufferAlphaChannelIsOpaque);
-}
-
-std::optional<OSType> pixelFormatWithAlpha(OSType colorFormat)
-{
-    auto description = PlanarImageConverter::pixelFormatDescription(colorFormat);
-    if (!description || description->alpha || description->subsampling == PlanarImageConverter::ChromaSubsampling::None)
-        return { };
-    // These formats are video range only; 8-bit full range is widened to 10 bits to keep every level distinct.
-    bool isTenBitOutput = description->color.bitDepth > 8 || description->isFullRange;
-    return PlanarImageConverter::pixelFormat(description->subsampling, isTenBitOutput ? PlanarImageConverter::tenBitMSB : PlanarImageConverter::eightBit, false, PlanarImageConverter::eightBit);
 }
 
 std::span<const OSType> pixelFormatsWithAlphaPlane()
@@ -272,7 +261,7 @@ std::expected<RetainPtr<CVPixelBufferRef>, CVReturn> createPixelBufferWithAlpha(
         return RetainPtr<CVPixelBufferRef> { };
 
     auto colorFormat = CVPixelBufferGetPixelFormatType(colorBuffer);
-    if (!pixelFormatWithAlpha(colorFormat)) {
+    if (!PixelBufferConverter::pixelFormatWithAlpha(colorFormat)) {
         RELEASE_LOG_ERROR(Media, "createPixelBufferWithAlpha: unsupported colour format %" PUBLIC_LOG_STRING, FourCC(colorFormat).string().data());
         return RetainPtr<CVPixelBufferRef> { };
     }

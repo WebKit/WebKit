@@ -50,6 +50,7 @@ typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
 namespace WebCore {
 
+class PixelBufferConverter;
 class VideoDecoder;
 class VideoDecoderVTBSession;
 struct PlatformVideoColorSpace;
@@ -128,6 +129,7 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_alphaSourceFormatDescription WTF_GUARDED_BY_LOCK(m_lock);
     bool m_alphaDecoderIsFullRange WTF_GUARDED_BY_LOCK(m_lock) { false };
     RetainPtr<CVPixelBufferPoolRef> m_mergedPixelBufferPool WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    std::unique_ptr<PixelBufferConverter> m_mergedPixelBufferConverter WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     RetainPtr<CMFormatDescriptionRef> m_mergedFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     RetainPtr<CMFormatDescriptionRef> m_mergedSourceFormatDescription WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
 

@@ -35,6 +35,8 @@
 #import "MediaSampleAVFObjC.h"
 #import "MediaSamplesDecoder.h"
 #import "PixelBufferConformerCV.h"
+#import "PixelBufferConverterCV.h"
+#import "PlanarImageConverterCV.h"
 #import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
 #import "VideoDecoder.h"
@@ -122,35 +124,6 @@ static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaData
                 continue;
             RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, index));
             CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
-        }
-    }
-
-    return sampleBuffer;
-}
-
-static RetainPtr<CMSampleBufferRef> createSampleBufferWithPixelBuffer(CVPixelBufferRef pixelBuffer, CMSampleBufferRef sourceSampleBuffer, CMFormatDescriptionRef description)
-{
-    if (!description)
-        return nullptr;
-
-    CMSampleTimingInfo timing {
-        PAL::CMSampleBufferGetOutputDuration(sourceSampleBuffer),
-        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
-        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
-    };
-    CMSampleBufferRef rawSampleBuffer = nullptr;
-    if (PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, description, &timing, &rawSampleBuffer) != noErr)
-        return nullptr;
-    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
-
-    if (RetainPtr sourceAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sourceSampleBuffer, false); sourceAttachments && CFArrayGetCount(sourceAttachments)) {
-        RetainPtr destAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
-        if (destAttachments && CFArrayGetCount(destAttachments)) {
-            RetainPtr sourceDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(sourceAttachments, 0));
-            RetainPtr destDict = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(destAttachments, 0));
-            CFDictionaryApplyFunction(sourceDict, [](const void* key, const void* value, void* context) {
-                CFDictionarySetValue(static_cast<CFMutableDictionaryRef>(context), key, value);
-            }, destDict);
         }
     }
 
@@ -258,14 +231,18 @@ static RetainPtr<NSDictionary> alphaDecoderPixelBufferAttributes(bool isFullRang
     return pixelBufferAttributesWithFormats(@[ @(isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) ]);
 }
 
-// VideoToolbox fails to convert '420f' into 'x0a8' at some sizes (rdar://192565918), so 8-bit full range is merged on the CPU.
+static bool hasSameSubsampling(OSType format, OSType otherFormat)
+{
+    auto description = PlanarImageConverter::pixelFormatDescription(format);
+    auto otherDescription = PlanarImageConverter::pixelFormatDescription(otherFormat);
+    return description && otherDescription && description->subsampling == otherDescription->subsampling;
+}
+
 static NSDictionary *colorDecoderPixelBufferAttributesWithAlpha(CMFormatDescriptionRef description)
 {
     if (auto format = decodedPixelFormat(description)) {
-        if (format->isFullRange && !format->isTenBit)
-            return pixelBufferAttributesWithFormats(@[ @(format->format) ]);
-        if (auto formatWithAlpha = pixelFormatWithAlpha(format->format))
-            return pixelBufferAttributesWithFormats(@[ @(*formatWithAlpha) ]);
+        if (auto formatWithAlpha = PixelBufferConverter::pixelFormatWithAlpha(format->format))
+            return pixelBufferAttributesWithFormats(@[ @(PixelBufferConverter::nearestCVPixelFormat(*formatWithAlpha)) ]);
     }
     return pixelBufferAttributesWithFormats(createNSArray(pixelFormatsWithAlphaPlane(), [](OSType format) {
         return @(format);
@@ -904,25 +881,37 @@ std::expected<Vector<RetainPtr<CMSampleBufferRef>>, OSStatus> WebCoreDecompressi
             RetainPtr colorFormatDescription = PAL::CMSampleBufferGetFormatDescription(colorFrame);
             if (!colorFormatDescription || !m_mergedSourceFormatDescription || !PAL::CMFormatDescriptionEqual(colorFormatDescription, m_mergedSourceFormatDescription)) {
                 m_mergedPixelBufferPool = nullptr;
-                if (!hasAlphaPlane && !pixelFormatWithAlpha(colorFormat))
+                if (!hasAlphaPlane && !PixelBufferConverter::pixelFormatWithAlpha(colorFormat))
                     RELEASE_LOG_ERROR(Media, "WebM alpha merge: unsupported colour format %" PUBLIC_LOG_STRING ", playing without alpha", FourCC(colorFormat).string().data());
                 m_mergedFormatDescription = nullptr;
                 m_mergedSourceFormatDescription = WTF::move(colorFormatDescription);
             }
-            if (!hasAlphaPlane && !m_mergedPixelBufferPool) {
-                if (auto mergedFormat = pixelFormatWithAlpha(colorFormat)) {
-                    auto pool = createIOSurfaceCVPixelBufferPool(CVPixelBufferGetWidth(colorPixelBuffer), CVPixelBufferGetHeight(colorPixelBuffer), *mergedFormat, 4);
-                    if (!pool) {
-                        RELEASE_LOG_ERROR(Media, "WebM alpha merge: CVPixelBufferPool creation failed (status=%d)", int(pool.error()));
-                        return makeUnexpected(kVTAllocationFailedErr);
-                    }
-                    m_mergedPixelBufferPool = WTF::move(*pool);
+            std::optional<OSType> mergedFormat;
+            if (!hasAlphaPlane) {
+                if (auto formatWithAlpha = PixelBufferConverter::pixelFormatWithAlpha(colorFormat))
+                    mergedFormat = PixelBufferConverter::nearestCVPixelFormat(*formatWithAlpha);
+            }
+            bool mergeChangesSubsampling = mergedFormat && !hasSameSubsampling(colorFormat, *mergedFormat);
+            if (mergedFormat && !mergeChangesSubsampling && !m_mergedPixelBufferPool) {
+                auto pool = createIOSurfaceCVPixelBufferPool(CVPixelBufferGetWidth(colorPixelBuffer), CVPixelBufferGetHeight(colorPixelBuffer), *mergedFormat, 4);
+                if (!pool) {
+                    RELEASE_LOG_ERROR(Media, "WebM alpha merge: CVPixelBufferPool creation failed (status=%d)", int(pool.error()));
+                    return makeUnexpected(kVTAllocationFailedErr);
                 }
+                m_mergedPixelBufferPool = WTF::move(*pool);
             }
             RetainPtr<CVPixelBufferRef> merged;
             if (hasAlphaPlane) {
                 if (copyAlphaIntoAlphaPlane(colorPixelBuffer, alphaPixelBuffer))
                     merged = colorPixelBuffer;
+            } else if (mergeChangesSubsampling) {
+                if (!m_mergedPixelBufferConverter)
+                    m_mergedPixelBufferConverter = makeUnique<PixelBufferConverter>(PixelBufferConverter::UseIOSurface::Yes);
+                if (RetainPtr converted = m_mergedPixelBufferConverter->convert(colorPixelBuffer, *mergedFormat)) {
+                    CVBufferPropagateAttachments(colorPixelBuffer, converted);
+                    if (copyAlphaIntoAlphaPlane(converted, alphaPixelBuffer))
+                        merged = WTF::move(converted);
+                }
             } else if (m_mergedPixelBufferPool) {
                 auto mergedBuffer = createPixelBufferWithAlpha(colorPixelBuffer, alphaPixelBuffer, m_mergedPixelBufferPool);
                 if (!mergedBuffer)
