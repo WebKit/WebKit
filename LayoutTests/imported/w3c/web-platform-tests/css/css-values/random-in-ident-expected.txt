@@ -1,0 +1,7 @@
+
+PASS random() in ident() is indexed across all the ident() functions in a property
+PASS random() in ident() is indexed across all the ident() functions in a shorthand
+PASS random() in ident() is indexed separately from the other random() functions in a property
+PASS random() in ident() is indexed separately from the other random() functions in a shorthand
+PASS random() in ident() shares its value with an explicit ua-early- <random-ua-ident>
+

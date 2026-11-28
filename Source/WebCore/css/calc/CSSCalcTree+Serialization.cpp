@@ -395,11 +395,37 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<P
     serializeCalculationTree(builder, fn, state);
 }
 
+// Early scopes have no keyword, so they serialize as their <random-ua-ident>.
+static void serializeEarlyRandomUAIdent(StringBuilder& builder, const RandomScopedProperty& scopedProperty, std::optional<unsigned> index)
+{
+    ASSERT(scopedProperty.early);
+    auto propertyName = WTF::switchOn(scopedProperty.property,
+        [](CSSPropertyID property) -> StringView {
+            ASSERT(property != CSSPropertyID::Invalid && property != CSSPropertyID::Custom);
+            return nameLiteral(property);
+        },
+        [](const AtomString& customPropertyName) -> StringView {
+            ASSERT(!customPropertyName.isEmpty());
+            return customPropertyName;
+        }
+    );
+    if (index)
+        serializeIdentifier(builder, makeString("ua-early-"_s, propertyName, '-', *index + 1));
+    else
+        serializeIdentifier(builder, makeString("ua-early-"_s, propertyName));
+}
+
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Random>& fn, SerializationState& state)
 {
     WTF::switchOn(fn->sharing,
-        [&](const Random::SharingAuto&) {
-            // `auto` serializes as omitted.
+        [&](const Random::SharingAuto& sharingAuto) {
+            // `auto` serializes as omitted, unless it is early.
+            if (!sharingAuto.property.early)
+                return;
+            if (sharingAuto.elementScoped)
+                builder.append(nameLiteralForSerialization(CSSValueID::ElementScoped), ' ');
+            serializeEarlyRandomUAIdent(builder, sharingAuto.property, sharingAuto.index);
+            builder.append(", "_s);
         },
         [&](const Random::Key& key) {
             bool wroteSomething = false;
@@ -419,11 +445,17 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
             if (key.propertyScoped) {
                 separate();
                 WTF::switchOn(*key.propertyScoped,
-                    [&](const Random::Key::PropertyScoped&) {
-                        builder.append(nameLiteralForSerialization(CSSValueID::PropertyScoped));
+                    [&](const Random::Key::PropertyScoped& scoped) {
+                        if (scoped.property.early)
+                            serializeEarlyRandomUAIdent(builder, scoped.property, std::nullopt);
+                        else
+                            builder.append(nameLiteralForSerialization(CSSValueID::PropertyScoped));
                     },
-                    [&](const Random::Key::PropertyIndexScoped&) {
-                        builder.append(nameLiteralForSerialization(CSSValueID::PropertyIndexScoped));
+                    [&](const Random::Key::PropertyIndexScoped& scoped) {
+                        if (scoped.property.early)
+                            serializeEarlyRandomUAIdent(builder, scoped.property, scoped.index);
+                        else
+                            builder.append(nameLiteralForSerialization(CSSValueID::PropertyIndexScoped));
                     }
                 );
             }

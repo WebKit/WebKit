@@ -44,20 +44,27 @@ namespace CSSCalc {
 // https://github.com/w3c/csswg-drafts/issues/14330
 enum class RandomFunction : bool { Random, RandomItem };
 
-// The property a random key is scoped to. Every custom property shares CSSPropertyID::Custom, so the name
-// is what tells them apart and is empty for everything else.
+// The property a random key is scoped to, or the name of a custom property.
 // FIXME: Same concept as AssociatedProperty and AnimatableCSSProperty.
 struct RandomScopedProperty {
-    CSSPropertyID property { CSSPropertyID::Invalid };
-    AtomString customPropertyName { };
+    Variant<CSSPropertyID, AtomString> property { CSSPropertyID::Invalid };
     RandomFunction function { RandomFunction::Random };
+    // For a random() evaluated during substitution: ua-early-PROPERTY[-INDEX].
+    bool early { false };
 
     bool operator==(const RandomScopedProperty&) const = default;
 };
 
 inline void add(Hasher& hasher, const RandomScopedProperty& scopedProperty)
 {
-    add(hasher, scopedProperty.property, scopedProperty.customPropertyName, scopedProperty.function);
+    add(hasher, scopedProperty.property, scopedProperty.function, scopedProperty.early);
+}
+
+inline Variant<CSSPropertyID, AtomString> propertyOrCustomPropertyName(CSSPropertyID property, const AtomString& customPropertyName)
+{
+    if (property == CSSPropertyID::Custom)
+        return customPropertyName;
+    return property;
 }
 
 // `auto` is a top-level <random-key> alternative; its scoping is chosen per-usage by the caller.

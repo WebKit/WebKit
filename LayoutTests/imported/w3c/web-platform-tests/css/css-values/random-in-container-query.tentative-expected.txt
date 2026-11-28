@@ -8,4 +8,8 @@ PASS comparing custom property with random() value should be disallowed in @cont
 PASS comparing two random() values should be disallowed in @container style() query range
 PASS comparing three random() values should be disallowed in @container style() query range
 PASS comparing custom properties to random() should be disallowed in @container style() query range
+PASS random() in typed attr() should be disallowed in @container style() query
+PASS random() in ident() should be disallowed in @container style() query
+PASS typed attr() without random() should be allowed in @container style() query
+PASS ident() without random() should be allowed in @container style() query
 

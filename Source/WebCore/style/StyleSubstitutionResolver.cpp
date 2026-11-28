@@ -926,7 +926,9 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
 
         // Parse against the syntax and re-tokenize from the normalized serialization.
         CSSParserTokenRange substitutedRange(*substitutedTokens);
-        auto parsedValue = CSSPropertyParser::parseWithSyntax(parsedAttrType->syntax, substitutedRange, context);
+        auto parserState = earlyParserState(context, CSSPropertyID::Custom);
+        auto parsedValue = CSSPropertyParser::parseWithSyntax(parsedAttrType->syntax, substitutedRange, parserState);
+        m_earlyRandomFunctionCount = parserState.cssRandomFunctionCount;
         if (!parsedValue)
             return substituteFailure();
 
@@ -1024,7 +1026,7 @@ bool SubstitutionResolver::substituteIdentFunction(CSSParserTokenRange range, Ve
         return false;
 
     StringBuilder builder;
-    auto parserState = CSS::PropertyParserState { .context = context, .currentProperty = m_styleBuilder.state().cssPropertyID() };
+    auto parserState = earlyParserState(context, m_styleBuilder.state().cssPropertyID());
 
     auto argumentRange = CSSParserTokenRange { *substitutedArgument };
     argumentRange.consumeWhitespace();
@@ -1040,6 +1042,7 @@ bool SubstitutionResolver::substituteIdentFunction(CSSParserTokenRange range, Ve
 
         // <integer> covers math functions too, so ident("--prop" calc(1 + 2)) names --prop3.
         auto integer = CSSPropertyParserHelpers::MetaConsumer<CSS::Integer<>>::consume(argumentRange, parserState);
+        m_earlyRandomFunctionCount = parserState.cssRandomFunctionCount;
         if (!integer)
             return false;
         builder.append(toStyle(*integer, protect(m_styleBuilder.state())).value);
@@ -1112,7 +1115,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     // This index is counted in its own space, separate from random()'s parse-time
     // cssRandomFunctionCount, which is why the key records which function it came from.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = { randomKeyProperty(), protect(m_styleBuilder.state())->customPropertyName(), CSSCalc::RandomFunction::RandomItem },
+        .property = { randomKeyProperty(), CSSCalc::RandomFunction::RandomItem },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
@@ -1124,11 +1127,26 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     return CSSCalc::resolveRandomBaseValue(*sharing, protect(m_styleBuilder.state()));
 }
 
-CSSPropertyID SubstitutionResolver::randomKeyProperty() const
+Variant<CSSPropertyID, AtomString> SubstitutionResolver::randomKeyProperty() const
 {
     // https://drafts.csswg.org/css-values-5/#random-caching
     // "Note that shorthand declarations will apply the shorthand property's name."
-    return m_shorthandProperty.value_or(m_styleBuilder.state().cssPropertyID());
+    if (m_shorthandProperty)
+        return *m_shorthandProperty;
+    return CSSCalc::propertyOrCustomPropertyName(m_styleBuilder.state().cssPropertyID(), protect(m_styleBuilder.state())->customPropertyName());
+}
+
+// https://drafts.csswg.org/css-values-5/#random-caching
+// Callers store cssRandomFunctionCount back into m_earlyRandomFunctionCount after parsing.
+CSS::PropertyParserState SubstitutionResolver::earlyParserState(const CSSParserContext& context, CSSPropertyID parsedAsProperty)
+{
+    return {
+        .context = context,
+        .currentProperty = parsedAsProperty,
+        .cssRandomFunctionCount = m_earlyRandomFunctionCount,
+        .earlyRandomProperty = randomKeyProperty(),
+        .randomFunctionsDisallowed = m_styleBuilder.state().isResolvingContainerQueries(),
+    };
 }
 
 auto SubstitutionResolver::substituteIfArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<Vector<IfBranch>>
@@ -1346,6 +1364,7 @@ RefPtr<CSSVariableData> SubstitutionResolver::substitute(const CSSSubstitutionVa
     m_isAttrTainted = IsAttrTainted::No;
     m_hasTaintedURL = false;
     m_randomItemAutoIndex = 0;
+    m_earlyRandomFunctionCount = 0;
     m_substitutionValue = &value;
     m_varSubstitutions.clear();
     m_didSubstituteFunctionOtherThanVar = false;

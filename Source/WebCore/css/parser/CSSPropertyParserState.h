@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
 #include "StyleRuleType.h"
+#include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -48,6 +49,9 @@ struct PropertyParserState {
 
     // Count of CSS random() functions seen so far for the current property.
     unsigned cssRandomFunctionCount { 0 };
+
+    // Set during substitution, where random() gets an early random cache name for this property.
+    std::optional<Variant<CSSPropertyID, AtomString>> earlyRandomProperty { };
 
     // Set where there is no element to key a random draw to: a @container style() query value or an @property initial value.
     // FIXME: Which of the functions needing an element context are allowed in which context is still

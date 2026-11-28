@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<title>CSS Values: random() in ident() gets an early random cache name</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#random-caching">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#ident">
+<meta name="assert" content="A random() evaluated inside an arbitrary substitution function gets a ua-early- random cache name, indexed separately from the rest of the declaration and across all the substitutions in it.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  @property --integer {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 0;
+  }
+</style>
+<div id="holder"></div>
+<script>
+// ident() is an arbitrary substitution function, so the random() in it gets an early random cache name.
+
+// Enough elements to rule out random values agreeing on all of them by chance.
+const ELEMENT_COUNT = 12;
+
+// assert_equals() would put the random values in the failure message, which needs to be stable.
+function assert_random_values_equal(actual, expected, description) {
+  assert_true(actual == expected, description);
+}
+
+function computedStylesFor(declarations, properties) {
+  const holder = document.getElementById('holder');
+  try {
+    const results = [];
+    for (let i = 0; i < ELEMENT_COUNT; ++i) {
+      const element = document.createElement('div');
+      element.style.cssText = declarations;
+      holder.appendChild(element);
+      const style = getComputedStyle(element);
+      const values = {};
+      for (const property of properties)
+        values[property] = style.getPropertyValue(property);
+      results.push(values);
+    }
+    return results;
+  } finally {
+    holder.replaceChildren();
+  }
+}
+
+const GRID_LINES = ['grid-row-start', 'grid-column-start', 'grid-row-end', 'grid-column-end'];
+
+test(() => {
+  const results = computedStylesFor('animation-name: ident("a" random(1, 1000000)), ident("b" random(1, 1000000))', ['animation-name']);
+  for (const values of results)
+    assert_regexp_match(values['animation-name'], /^a[0-9]+, b[0-9]+$/);
+  // The random cache names are ua-early-animation-name-1 and ua-early-animation-name-2.
+  assert_true(results.some(values => {
+    const [first, second] = values['animation-name'].split(', ');
+    return first.substring(1) != second.substring(1);
+  }), 'the two ident() functions should not always get the same number');
+}, 'random() in ident() is indexed across all the ident() functions in a property');
+
+test(() => {
+  const results = computedStylesFor('grid-area: ident("a" random(1, 1000000)) / ident("b" random(1, 1000000))', GRID_LINES);
+  for (const values of results) {
+    assert_regexp_match(values['grid-row-start'], /^a[0-9]+$/);
+    assert_regexp_match(values['grid-column-start'], /^b[0-9]+$/);
+    assert_random_values_equal(values['grid-row-end'], values['grid-row-start'], 'grid-row-end matches grid-row-start');
+    assert_random_values_equal(values['grid-column-end'], values['grid-column-start'], 'grid-column-end matches grid-column-start');
+  }
+  // The random cache names are ua-early-grid-area-1 and ua-early-grid-area-2.
+  assert_true(results.some(values => values['grid-row-start'].substring(1) != values['grid-column-start'].substring(1)),
+    'the two ident() functions should not always get the same number');
+}, 'random() in ident() is indexed across all the ident() functions in a shorthand');
+
+test(() => {
+  const results = computedStylesFor('grid-row-start: random(1, 1000000) ident("a" random(1, 1000000))', ['grid-row-start']);
+  for (const values of results)
+    assert_regexp_match(values['grid-row-start'], /^[0-9]+ a[0-9]+$/);
+  // The random cache names are ua-grid-row-start-1 and ua-early-grid-row-start-1.
+  assert_true(results.some(values => {
+    const [number, ident] = values['grid-row-start'].split(' ');
+    return number != ident.substring(1);
+  }), 'random() and the random() in ident() should not always get the same number');
+}, 'random() in ident() is indexed separately from the other random() functions in a property');
+
+test(() => {
+  const results = computedStylesFor('grid-area: ident("a" random(1, 1000000)) / random(1, 1000000)', GRID_LINES);
+  for (const values of results) {
+    assert_regexp_match(values['grid-row-start'], /^a[0-9]+$/);
+    assert_regexp_match(values['grid-column-start'], /^[0-9]+$/);
+  }
+  // The random cache names are ua-early-grid-area-1 and ua-grid-area-1.
+  assert_true(results.some(values => values['grid-row-start'].substring(1) != values['grid-column-start']),
+    'random() and the random() in ident() should not always get the same number');
+}, 'random() in ident() is indexed separately from the other random() functions in a shorthand');
+
+test(() => {
+  // A step of 1 makes both values integers without rounding.
+  const results = computedStylesFor('view-transition-name: ident("a" random(1, 1000000, 1)); --integer: random(element-scoped ua-early-view-transition-name-1, 1, 1000000, 1)', ['view-transition-name', '--integer']);
+  for (const values of results) {
+    assert_regexp_match(values['view-transition-name'], /^a[0-9]+$/);
+    assert_random_values_equal(values['view-transition-name'], 'a' + values['--integer'], 'view-transition-name matches --integer');
+  }
+}, 'random() in ident() shares its value with an explicit ua-early- <random-ua-ident>');
+</script>

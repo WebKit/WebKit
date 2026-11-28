@@ -62,7 +62,7 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
 
 // Builds the sharing `auto` resolves to. Shared with callers that need it for an omitted <random-key>,
 // which means the same thing as `auto`.
-NODELETE CSSCalc::RandomSharingAuto randomSharingAuto(const RandomKeySource&, unsigned index);
+CSSCalc::RandomSharingAuto randomSharingAuto(const RandomKeySource&, unsigned index);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

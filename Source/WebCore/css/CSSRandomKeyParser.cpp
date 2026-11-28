@@ -39,7 +39,7 @@
 
 namespace WebCore::CSSPropertyParserHelpers {
 
-// <random-ua-ident> = ua- PROPERTY [ - INDEX ]?, where INDEX is 1-based. Returns nullopt when the
+// <random-ua-ident> = ua- [ early- ]? PROPERTY [ - INDEX ]?, where INDEX is 1-based. Returns nullopt when the
 // ident does not name a known property, which makes the whole <random-key> invalid.
 // FIXME: § 9.4.1 also spells an in-custom-function form, ua-FUNCTIONNAME-PROPERTY[-INDEX]. Both names
 // can contain hyphens, so splitting it is ambiguous; see https://github.com/w3c/csswg-drafts/issues/14330
@@ -47,19 +47,32 @@ static std::optional<Variant<CSSCalc::Random::Key::PropertyScoped, CSSCalc::Rand
 {
     auto body = ident.substring(3);
 
+    bool early = startsWithLettersIgnoringASCIICase(body, "early-"_s);
+    if (early)
+        body = body.substring(6);
+
+    auto scopedProperty = [&](StringView name) -> std::optional<CSSCalc::RandomScopedProperty> {
+        if (isCustomPropertyName(name))
+            return CSSCalc::RandomScopedProperty { name.toAtomString(), CSSCalc::RandomFunction::Random, early };
+        auto property = cssPropertyID(name);
+        if (property == CSSPropertyID::Invalid)
+            return std::nullopt;
+        return CSSCalc::RandomScopedProperty { property, CSSCalc::RandomFunction::Random, early };
+    };
+
     if (auto lastHyphen = body.reverseFind('-'); lastHyphen != notFound) {
         if (auto index = parseInteger<unsigned>(body.substring(lastHyphen + 1)); index >= 1) {
-            auto property = cssPropertyID(body.left(lastHyphen));
-            if (property == CSSPropertyID::Invalid)
+            auto property = scopedProperty(body.left(lastHyphen));
+            if (!property)
                 return { };
-            return { CSSCalc::Random::Key::PropertyIndexScoped { CSSCalc::RandomScopedProperty { property, nullAtom() }, *index - 1 } };
+            return { CSSCalc::Random::Key::PropertyIndexScoped { WTF::move(*property), *index - 1 } };
         }
     }
 
-    auto property = cssPropertyID(body);
-    if (property == CSSPropertyID::Invalid)
+    auto property = scopedProperty(body);
+    if (!property)
         return { };
-    return { CSSCalc::Random::Key::PropertyScoped { CSSCalc::RandomScopedProperty { property, nullAtom() } } };
+    return { CSSCalc::Random::Key::PropertyScoped { WTF::move(*property) } };
 }
 
 std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserTokenRange& tokens, CSS::PropertyParserState& state, const RandomKeySource& source, NOESCAPE const Function<unsigned()>& consumeIndex)

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<title>CSS Values: a &lt;random-ua-ident&gt; can name a custom property</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#random-caching">
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#attr-notation">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  @property --a {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 0;
+  }
+  @property --b {
+    syntax: "<integer>";
+    inherits: false;
+    initial-value: 0;
+  }
+  @property --c {
+    syntax: "<number> | <length>";
+    inherits: false;
+    initial-value: 0;
+  }
+  @property --d {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+</style>
+<div id="target"></div>
+<script>
+// assert_equals() would put the random values in the failure message, which needs to be stable.
+function assert_random_values_equal(actual, expected, description) {
+  assert_true(actual == expected, description);
+}
+
+// A step of 1 keeps the values integers without rounding.
+
+test(() => {
+  const target = document.getElementById('target');
+  target.style.cssText = '--a: random(property-index-scoped, 1, 1000000, 1); --b: random(ua---a-1, 1, 1000000, 1)';
+  const style = getComputedStyle(target);
+  assert_not_equals(style.getPropertyValue('--a'), '0', '--a is a random value');
+  assert_random_values_equal(style.getPropertyValue('--b'), style.getPropertyValue('--a'), '--b matches --a');
+}, 'ua---a-1 names the random cache name of the 1st random() in --a');
+
+test(() => {
+  const target = document.getElementById('target');
+  target.setAttribute('data-value', 'random(property-index-scoped, 1, 1000000, 1)');
+  target.style.cssText = '--a: attr(data-value type(<integer>)); --b: random(ua-early---a-1, 1, 1000000, 1)';
+  const style = getComputedStyle(target);
+  assert_not_equals(style.getPropertyValue('--a'), '0', '--a is a random value');
+  assert_random_values_equal(style.getPropertyValue('--b'), style.getPropertyValue('--a'), '--b matches --a');
+}, 'random() in a typed attr() in a custom property is named ua-early---a-1');
+
+// The failed <number> alternative must not use up an index.
+
+test(() => {
+  const target = document.getElementById('target');
+  target.style.cssText = '--c: random(property-index-scoped, 1px, 1000000px, 1px); --d: random(ua---c-1, 1px, 1000000px, 1px)';
+  const style = getComputedStyle(target);
+  assert_not_equals(style.getPropertyValue('--c'), '0px', '--c is a random value');
+  assert_random_values_equal(style.getPropertyValue('--d'), style.getPropertyValue('--c'), '--d matches --c');
+}, 'ua---c-1 names the 1st random() in --c when its syntax has several types');
+
+test(() => {
+  const target = document.getElementById('target');
+  target.setAttribute('data-value', 'random(property-index-scoped, 1px, 1000000px, 1px)');
+  target.style.cssText = '--c: attr(data-value type(<number> | <length>)); --d: random(ua-early---c-1, 1px, 1000000px, 1px)';
+  const style = getComputedStyle(target);
+  assert_not_equals(style.getPropertyValue('--c'), '0px', '--c is a random value');
+  assert_random_values_equal(style.getPropertyValue('--d'), style.getPropertyValue('--c'), '--d matches --c');
+}, 'ua-early---c-1 names the 1st random() in a typed attr() whose syntax has several types');
+</script>

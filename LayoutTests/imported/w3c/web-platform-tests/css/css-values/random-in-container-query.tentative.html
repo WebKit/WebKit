@@ -16,6 +16,10 @@
     container-type: size;
     --length: 30px;
     --unregistered: random(--foo, 30px, 10px);
+    --attr: attr(data-random type(<length>));
+    --attr-control: attr(data-length type(<length>));
+    --ident: ident("a" random(--foo, 30, 10));
+    --ident-control: ident("a" 30);
   }
   #target {
     --test1: true;
@@ -25,6 +29,10 @@
     --test5: true;
     --test6: true;
     --test7: true;
+    --test8: true;
+    --test9: true;
+    --test10: true;
+    --test11: true;
   }
   @container style(--length: random(--foo, 30px, 10px)) {
     #target { --test1: false; }
@@ -47,11 +55,23 @@
   @container style(--length <= --length <= random(--foo, 30px, 10px)) {
     #target { --test7: false; }
   }
+  @container style(--attr: attr(data-random type(<length>))) {
+    #target { --test8: false; }
+  }
+  @container style(--ident: ident("a" random(--foo, 30, 10))) {
+    #target { --test9: false; }
+  }
+  @container style(--attr-control: attr(data-length type(<length>))) {
+    #target { --test10: false; }
+  }
+  @container style(--ident-control: ident("a" 30)) {
+    #target { --test11: false; }
+  }
 </style>
 <div style="container-name:name">
   <main id="cq-main"></main>
 </div>
-<div id="container">
+<div id="container" data-random="random(--foo, 30px, 10px)" data-length="30px">
   <div id="target"></div>
 </div>
 <script>
@@ -79,4 +99,16 @@
   test(() => {
     assert_equals(getComputedStyle(target).getPropertyValue("--test7"), "true");
   }, "comparing custom properties to random() should be disallowed in @container style() query range");
+  test(() => {
+    assert_equals(getComputedStyle(target).getPropertyValue("--test8"), "true");
+  }, "random() in typed attr() should be disallowed in @container style() query");
+  test(() => {
+    assert_equals(getComputedStyle(target).getPropertyValue("--test9"), "true");
+  }, "random() in ident() should be disallowed in @container style() query");
+  test(() => {
+    assert_equals(getComputedStyle(target).getPropertyValue("--test10"), "false");
+  }, "typed attr() without random() should be allowed in @container style() query");
+  test(() => {
+    assert_equals(getComputedStyle(target).getPropertyValue("--test11"), "false");
+  }, "ident() without random() should be allowed in @container style() query");
 </script>

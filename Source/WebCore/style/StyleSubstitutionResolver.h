@@ -43,6 +43,10 @@ enum class CSSValueID : uint16_t;
 
 class MutableStyleProperties;
 
+namespace CSS {
+struct PropertyParserState;
+}
+
 namespace Style {
 
 class Builder;
@@ -80,7 +84,8 @@ private:
     bool substituteRandomItemFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteIdentFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     std::optional<double> randomItemBaseValue(Vector<CSSParserToken> randomKey);
-    CSSPropertyID randomKeyProperty() const;
+    Variant<CSSPropertyID, AtomString> randomKeyProperty() const;
+    CSS::PropertyParserState earlyParserState(const CSSParserContext&, CSSPropertyID parsedAsProperty);
 
     struct VarArgumentGrammarSubstitution {
         // An unset name failed to parse as a <custom-property-name> after substitution.
@@ -121,7 +126,7 @@ private:
     const CSSRegisteredCustomProperty* m_registration { nullptr };
     RefPtr<const CSSSubstitutionValue> m_substitutionValue;
     // Set while substituting a shorthand's value. The value is substituted once for each longhand, but
-    // random-item() in it is keyed to the shorthand.
+    // random functions in it are keyed to the shorthand.
     std::optional<CSSPropertyID> m_shorthandProperty;
     // The scope to look up a <dashed-function> name in, while resolving the parameter defaults of a
     // custom function: names there refer to the scope the function was defined in, not the calling
@@ -136,6 +141,7 @@ private:
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;
     unsigned m_urlContextDepth { 0 };
     unsigned m_randomItemAutoIndex { 0 };
+    unsigned m_earlyRandomFunctionCount { 0 };
     IsAttrTainted m_isAttrTainted { IsAttrTainted::No };
     bool m_hasTaintedURL { false };
     // The custom properties var() substituted, in order. The result can be cached if no other function

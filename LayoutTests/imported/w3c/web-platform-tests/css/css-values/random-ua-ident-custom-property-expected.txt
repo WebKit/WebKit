@@ -1,0 +1,6 @@
+
+PASS ua---a-1 names the random cache name of the 1st random() in --a
+PASS random() in a typed attr() in a custom property is named ua-early---a-1
+PASS ua---c-1 names the 1st random() in --c when its syntax has several types
+PASS ua-early---c-1 names the 1st random() in a typed attr() whose syntax has several types
+

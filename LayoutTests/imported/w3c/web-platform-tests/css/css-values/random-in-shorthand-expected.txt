@@ -3,7 +3,7 @@ PASS random() functions in a shorthand are indexed before the shorthand is expan
 PASS random() in a longhand is not shared with random() in its shorthand
 PASS random(property-scoped) in a longhand is not shared with random(property-scoped) in its shorthand
 PASS random() functions in a shorthand with var() are indexed before the shorthand is expanded
-FAIL random(auto, ...) in ident() in a shorthand gives every longhand the same value assert_true: grid-column-start matches grid-row-start expected true got false
-FAIL random(property-scoped, ...) in ident() in a shorthand gives every longhand the same value assert_true: grid-column-start matches grid-row-start expected true got false
-FAIL random(element-scoped property-index-scoped, ...) in ident() in a shorthand gives every longhand the same value assert_true: grid-column-start matches grid-row-start expected true got false
+PASS random(auto, ...) in ident() in a shorthand gives every longhand the same value
+PASS random(property-scoped, ...) in ident() in a shorthand gives every longhand the same value
+PASS random(element-scoped property-index-scoped, ...) in ident() in a shorthand gives every longhand the same value
 

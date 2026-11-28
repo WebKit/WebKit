@@ -447,18 +447,11 @@ bool CSSPropertyParser::isValidCustomPropertyValueForSyntax(const CSSCustomPrope
 }
 
 // https://drafts.csswg.org/css-values-5/#parse-with-a-syntax
-RefPtr<CSSValue> CSSPropertyParser::parseWithSyntax(const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseWithSyntax(const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, CSS::PropertyParserState& state)
 {
     ASSERT(!syntax.isUniversal());
 
     range.consumeWhitespace();
-
-    auto state = CSS::PropertyParserState {
-        .context = context,
-        .currentRule = StyleRuleType::Style,
-        .currentProperty = CSSPropertyID::Custom,
-        .important = IsImportant::No,
-    };
 
     auto [value, syntaxType] = consumeCustomPropertyValueWithSyntax(range, state, syntax);
     if (!value || !range.atEnd())
@@ -532,12 +525,15 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomProperty
         return nullptr;
     };
 
+    // A failed alternative must not use up random() indexes.
+    auto randomFunctionCount = state.cssRandomFunctionCount;
     for (auto& component : syntax.definition) {
         if (RefPtr value = consumeComponent(range, component)) {
             if (range.atEnd())
                 return { value, component.type };
         }
         range = rangeCopy;
+        state.cssRandomFunctionCount = randomFunctionCount;
     }
     return { nullptr, CSSCustomPropertySyntax::Type::Unknown };
 }
