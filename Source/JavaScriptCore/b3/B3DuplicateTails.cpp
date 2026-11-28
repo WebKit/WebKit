@@ -34,6 +34,7 @@
 #include "B3InsertionSet.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
+#include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include <wtf/IndexSet.h>
 
@@ -43,6 +44,8 @@ namespace {
 
 namespace B3DuplicateTailsInternal {
 static constexpr bool verbose = false;
+static constexpr unsigned maxThreadableBlockSize = 12;
+static constexpr unsigned maxThreadableBlockSuccessors = 4;
 }
 
 class DuplicateTails {
@@ -61,18 +64,50 @@ public:
         // become candidates for tail duplication. Prior to critical edge breaking, some of those
         // Jumps would have been Branches, and so no tail duplication would have happened.
         breakCriticalEdges(m_proc);
-        
-        // Find blocks that would be candidates for tail duplication. They must be small enough
-        // and they much not have too many successors.
 
         m_proc.resetValueOwners();
 
+        // Every predecessor knows the value of a Phi whose inputs are all constants, so each copy of a
+        // block branching on it can fold the branch. Polymorphic calls switch on such a Phi of the callee.
+        IndexSet<Value*> phisWithConstantInputs;
+        IndexSet<Value*> phisWithNonConstantInputs;
+        for (BasicBlock* block : m_proc) {
+            for (Value* value : *block) {
+                if (value->opcode() != Upsilon)
+                    continue;
+                Value* phi = value->as<UpsilonValue>()->phi();
+                if (value->child(0)->isConstant())
+                    phisWithConstantInputs.add(phi);
+                else
+                    phisWithNonConstantInputs.add(phi);
+            }
+        }
+        auto branchesOnConstantPhi = [&](BasicBlock* block) {
+            Value* terminal = block->last();
+            if (terminal->opcode() != Branch && terminal->opcode() != Switch)
+                return false;
+            auto isConstantPhi = [&](Value* value) {
+                return value->opcode() == Phi && value->owner == block
+                    && phisWithConstantInputs.contains(value) && !phisWithNonConstantInputs.contains(value);
+            };
+            Value* condition = terminal->child(0);
+            if (isConstantPhi(condition))
+                return true;
+            if (condition->numChildren() != 2)
+                return false;
+            return (isConstantPhi(condition->child(0)) && condition->child(1)->isConstant())
+                || (isConstantPhi(condition->child(1)) && condition->child(0)->isConstant());
+        };
+
+        // Find blocks that would be candidates for tail duplication. They must be small enough
+        // and they must not have too many successors.
         IndexSet<BasicBlock*> candidates;
 
         for (BasicBlock* block : m_proc) {
-            if (block->size() > m_maxSize)
+            bool threadable = branchesOnConstantPhi(block);
+            if (block->size() > (threadable ? B3DuplicateTailsInternal::maxThreadableBlockSize : m_maxSize))
                 continue;
-            if (block->numSuccessors() > m_maxSuccessors)
+            if (block->numSuccessors() > (threadable ? B3DuplicateTailsInternal::maxThreadableBlockSuccessors : m_maxSuccessors))
                 continue;
             if (block->last()->type() != Void) // Demoting doesn't handle terminals with values.
                 continue;
