@@ -39,6 +39,7 @@
 #include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "MediaSession.h"
+#include "MediaSessionActionDetails.h"
 #include "Navigator.h"
 #include "NavigatorAudioSession.h"
 #include "NavigatorMediaSession.h"
@@ -48,11 +49,13 @@
 #include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 #include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -850,30 +853,130 @@ void AudioContext::suspendPlayback()
     });
 }
 
+static bool hasPlayBackAudioSession(Document*);
+
 bool AudioContext::canReceiveRemoteControlCommands() const
 {
 #if ENABLE(DOM_AUDIO_SESSION)
-    return isNowPlayingEligible();
+    if (isClosed() || m_wasSuspendedByScript || !protect(destination())->isConnected())
+        return false;
+
+    RefPtr document = this->document();
+    if (!document || !document->isFullyActive())
+        return false;
+
+    if (state() == State::Running)
+        return true;
+
+    return hasPlayBackAudioSession(document.get());
 #else
     return false;
 #endif
 }
 
-void AudioContext::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument&)
+#if ENABLE(MEDIA_SESSION)
+static std::optional<MediaSessionAction> mediaSessionActionForRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, AudioContextState state)
 {
+    switch (command) {
+    case PlatformMediaSession::RemoteControlCommandType::PlayCommand:
+        return MediaSessionAction::Play;
+    case PlatformMediaSession::RemoteControlCommandType::PauseCommand:
+        return MediaSessionAction::Pause;
+    case PlatformMediaSession::RemoteControlCommandType::StopCommand:
+        return MediaSessionAction::Stop;
+    case PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand:
+        if (state == AudioContextState::Interrupted || state == AudioContextState::Suspended)
+            return MediaSessionAction::Play;
+        return MediaSessionAction::Pause;
+    case PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand:
+        return MediaSessionAction::Seekforward;
+    case PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand:
+        return MediaSessionAction::Seekbackward;
+    case PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand:
+        return MediaSessionAction::Seekto;
+    case PlatformMediaSession::RemoteControlCommandType::NextTrackCommand:
+        return MediaSessionAction::Nexttrack;
+    case PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand:
+        return MediaSessionAction::Previoustrack;
+    case PlatformMediaSession::RemoteControlCommandType::NoCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndSeekingBackwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndSeekingForwardCommand:
+    case PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand:
+    case PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand:
+        return std::nullopt;
+    }
+    return std::nullopt;
+}
+
+static RefPtr<MediaSession> mediaSessionForDocument(Document& document)
+{
+    RefPtr window = document.window();
+    if (!window)
+        return nullptr;
+
+    RefPtr navigator = window->optionalNavigator();
+    if (!navigator)
+        return nullptr;
+
+    return NavigatorMediaSession::mediaSessionIfExists(*navigator);
+}
+
+static bool handleMediaSessionAction(AudioContext& context, PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    auto action = mediaSessionActionForRemoteControlCommand(command, context.state());
+    if (!action)
+        return false;
+
+    RefPtr document = context.document();
+    if (!document)
+        return false;
+
+    RefPtr session = mediaSessionForDocument(*document);
+    if (!session || !session->hasActionHandler(*action))
+        return false;
+
+    MediaSessionActionDetails details;
+    details.action = *action;
+    if (*action == MediaSessionAction::Seekto)
+        details.seekTime = argument.time;
+    else if (*action == MediaSessionAction::Seekbackward || *action == MediaSessionAction::Seekforward)
+        details.seekOffset = argument.time;
+    details.fastSeek = argument.fastSeek;
+    return session->callActionHandler(details);
+}
+#endif
+
+void AudioContext::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)
+{
+    std::unique_ptr<UserGestureIndicator> remoteControlUserGesture;
+    if (RefPtr document = this->document())
+        remoteControlUserGesture = makeUnique<UserGestureIndicator>(IsProcessingUserGesture::Yes, document.get());
+
+#if ENABLE(MEDIA_SESSION)
+    if (handleMediaSessionAction(*this, command, argument))
+        return;
+#else
+    UNUSED_PARAM(argument);
+#endif
+
     switch (command) {
     case PlatformMediaSession::RemoteControlCommandType::PlayCommand:
         mayResumePlayback(true);
         break;
     case PlatformMediaSession::RemoteControlCommandType::StopCommand:
     case PlatformMediaSession::RemoteControlCommandType::PauseCommand:
+        m_mediaSession->clientWillPausePlayback();
         suspendPlayback();
         break;
     case PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand:
         if (state() == State::Interrupted || state() == State::Suspended)
             mayResumePlayback(true);
-        else
+        else {
+            m_mediaSession->clientWillPausePlayback();
             suspendPlayback();
+        }
         break;
     case PlatformMediaSession::RemoteControlCommandType::BeginSeekingBackwardCommand:
     case PlatformMediaSession::RemoteControlCommandType::BeginSeekingForwardCommand:
@@ -914,18 +1017,15 @@ static bool hasPlayBackAudioSession(Document* document)
 
 bool AudioContext::isNowPlayingEligible() const
 {
-    if (!protect(destination())->isConnected() || m_wasSuspendedByScript)
+    if (isClosed() || m_wasSuspendedByScript || !protect(destination())->isConnected())
         return false;
 
     RefPtr document = this->document();
-    if (!document)
+    if (!document || !document->isFullyActive() || !hasPlayBackAudioSession(document.get()))
         return false;
 
     RefPtr page = document->page();
-    if (page && page->mediaPlaybackIsSuspended())
-        return false;
-
-    return hasPlayBackAudioSession(document.get());
+    return !page || !page->mediaPlaybackIsSuspended();
 }
 
 std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const

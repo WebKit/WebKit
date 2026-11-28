@@ -1142,7 +1142,7 @@ private:
     void suspendPlayback() override;
     void resumeAutoplaying() override;
     void mayResumePlayback(bool shouldResume) override;
-    bool canReceiveRemoteControlCommands() const override { return true; }
+    bool canReceiveRemoteControlCommands() const override { return inActiveDocument(); }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
