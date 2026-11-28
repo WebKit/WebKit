@@ -4685,7 +4685,6 @@ webkit.org/b/333271 imported/w3c/web-platform-tests/css/css-values/calc-backgrou
 
 # wpt css-sizing failures
 webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html [ Pass Failure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/max-content-input-001.html [ ImageOnlyFailure ]
 # These references give min-height: min-content the initial value (min-height: 0), but in the block axis it is the automatic size
 # (https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content), and the compressed min-content contribution of a percentage-sized
@@ -8691,8 +8690,6 @@ imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-007.htm
 fast/shadow-dom/svg-multiple-references-in-multiple-shadows-pattern.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-dynamic-update-href-in-shadow-tree.html [ ImageOnlyFailure ]
 fast/shadow-dom/svg-pattern-href-in-shadow-tree.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/svg/as-image/sprite-sheet-fractional-size.html [ ImageOnlyFailure ]
 
 # Media controls context menus are only implemented on WK2 Cocoa platforms.
 http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Skip ]
