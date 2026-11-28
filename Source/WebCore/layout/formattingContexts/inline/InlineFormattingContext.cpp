@@ -344,6 +344,8 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
         auto lineLogicalRect = createDisplayContentForInlineContent(lineBox, lineLayoutResult, constraints, layoutResult->displayContent, canUseSimplifiedDisplayContentBuild);
         if (!canUseSimplifiedDisplayContentBuild) {
             updateBoxGeometryForPlacedFloats(lineLayoutResult.floatContent.placedFloats);
+            if (isFirstFormattedLineCandidate)
+                moveFirstLetterWithFirstLine(lineLayoutResult);
             updateLayoutStateWithLineLayoutResult(lineLayoutResult, lineLogicalRect, floatingContext);
         }
         if (hasContentfulInFlowContent) {
@@ -427,7 +429,23 @@ void InlineFormattingContext::updateLayoutStateWithLineLayoutResult(const LineLa
     }
 
     lineLayoutResult.endsWithHyphen() ? layoutState.incrementSuccessiveHyphenatedLineCount() : layoutState.resetSuccessiveHyphenatedLineCount();
-    layoutState.setFirstLineStartTrimForInitialLetter(lineLayoutResult.firstLineStartTrim);
+}
+
+void InlineFormattingContext::moveFirstLetterWithFirstLine(const LineLayoutResult& firstLineLayoutResult)
+{
+    // text-box-trim moved the first formatted line's content up (see LineBoxBuilder::applyTextBoxTrimOnLineBoxIfNeeded()), and the first letter goes with it.
+    // A first letter that the content after it does not fit next to is on a line of its own, before the first formatted line.
+    auto trim = LayoutUnit { firstLineLayoutResult.firstLineStartTrim };
+    if (!trim)
+        return;
+    auto& placedFloats = layoutState().placedFloats();
+    for (size_t index = 0; index < placedFloats.list().size(); ++index) {
+        auto& floatItem = placedFloats.list()[index];
+        if (!floatItem.isInFormattingContextOf(root()) || floatItem.layoutBox().style().pseudoElementType() != PseudoElementType::FirstLetter)
+            continue;
+        geometryForBox(protect(floatItem.layoutBox())).moveVertically(-trim);
+        placedFloats.moveOnBlockAxis(index, -trim);
+    }
 }
 
 void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)

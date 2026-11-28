@@ -33,16 +33,11 @@ namespace WebCore::Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlockFormattingState);
 
-BlockFormattingState::BlockFormattingState(const ElementBox& blockFormattingContextRoot)
-    : m_placedFloats(blockFormattingContextRoot)
+BlockFormattingState::BlockFormattingState(PlacedFloats& placedFloats)
+    : m_placedFloats(placedFloats)
 {
 }
 
 BlockFormattingState::~BlockFormattingState() = default;
-
-void BlockFormattingState::shrinkToFit()
-{
-    m_placedFloats.shrinkToFit();
-}
 
 }

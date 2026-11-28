@@ -32,6 +32,7 @@ namespace WebCore {
 class FloatingObject;
 class FloatingObjects;
 class RenderMultiColumnFlow;
+struct OffsetForPositioningFloat;
 enum FloatingObjectType : uint8_t;
 struct FloatingObjectHashFunctions;
 
@@ -312,7 +313,9 @@ public:
     inline const FloatingObjectSet* floatingObjectSet() const LIFETIME_BOUND; // Defined in RenderBlockFlowInlines.h
 
     FloatingObject& insertFloatingBox(RenderBox&);
+    // For a float inline layout placed, which put it in placedFloats() already.
     void placeFloatingBox(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
+    Layout::PlacedFloats& placedFloats();
 
     inline LayoutUnit logicalTopForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
     inline LayoutUnit logicalBottomForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
@@ -478,8 +481,8 @@ private:
     // The logical right edge of the left floats and the logical left edge of the right floats.
     std::pair<std::optional<LayoutUnit>, std::optional<LayoutUnit>> floatEdgesFromFloatingContext(LayoutUnit logicalTop, LayoutUnit logicalHeight) const;
 
-    LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
-    LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
+    OffsetForPositioningFloat logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const;
+    OffsetForPositioningFloat logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const;
     
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;
     
