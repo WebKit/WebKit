@@ -123,6 +123,7 @@ protected:
     bool platformInitializeContext() final;
     bool platformInitializeExtensions() final;
     bool platformInitialize() final;
+    void platformDidLoseDisplay() final;
     void invalidateKnownTextureContent(GCGLuint) final;
     void invalidateKnownTextureContentForTarget(GCGLenum) final;
     bool reshapeDrawingBuffer() final;
