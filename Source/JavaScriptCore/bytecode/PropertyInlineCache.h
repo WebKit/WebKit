@@ -326,6 +326,7 @@ public:
     bool propertyIsInt32 : 1 { false };
     bool propertyIsSymbol : 1 { false };
     bool canBeMegamorphic : 1 { false };
+    bool throwIfNotFound : 1 { false };
     const PropertyInlineCacheType m_icType : 1;
 };
 
@@ -794,6 +795,7 @@ struct UnlinkedPropertyInlineCache {
     bool propertyIsSymbol : 1 { false };
     bool prototypeIsKnownObject : 1 { false };
     bool canBeMegamorphic : 1 { false };
+    bool throwIfNotFound : 1 { false };
 };
 
 struct BaselineUnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {

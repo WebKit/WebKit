@@ -812,6 +812,7 @@ void HandlerPropertyInlineCache::initializeFromDFGUnlinkedPropertyInlineCache(Co
     propertyIsString = unlinkedPropertyCache.propertyIsString;
     prototypeIsKnownObject = unlinkedPropertyCache.prototypeIsKnownObject;
     canBeMegamorphic = unlinkedPropertyCache.canBeMegamorphic;
+    throwIfNotFound = unlinkedPropertyCache.throwIfNotFound;
 
     m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
 }

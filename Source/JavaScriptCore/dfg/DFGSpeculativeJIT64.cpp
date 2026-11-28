@@ -160,11 +160,15 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 
 void SpeculativeJIT::cachedGetById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, CacheableIdentifier identifier, bool needsBaseCellCheck, AccessType type, CacheType cacheType)
 {
-    UNUSED_PARAM(node);
     CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
     auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
+    if (node->hasGetByIdData() && node->getByIdData().m_throwIfNotFound) {
+        WTF::visit([](auto* cache) {
+            cache->throwIfNotFound = true;
+        }, propertyCache);
+    }
     shuffleRegisters<GPRReg, 1>(
         {
             baseGPR,

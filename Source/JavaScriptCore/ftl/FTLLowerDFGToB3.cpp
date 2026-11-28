@@ -21340,6 +21340,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         Node* node = m_node;
         CacheableIdentifier identifier = node->cacheableIdentifier();
+        bool throwIfNotFound = node->getByIdData().m_throwIfNotFound;
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
@@ -21390,6 +21391,7 @@ IGNORE_CLANG_WARNINGS_END
                     jit.codeBlock(), propertyCache, JITType::FTLJIT, semanticNodeOrigin, callSiteIndex,
                     params.unavailableRegisters(), identifier, params[1].gpr(),
                     params[0].gpr(), propertyCacheGPR, type, CacheType::GetByIdSelf);
+                generator->propertyCache()->throwIfNotFound = throwIfNotFound;
 
                 generator->generateFastPath(jit);
                 CCallHelpers::Label done = jit.label();
