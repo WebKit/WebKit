@@ -105,6 +105,54 @@ private struct ScrollPositionTestView: View {
     }
 }
 
+private final class WebViewGeometry {
+    struct Placement: Equatable {
+        var size: CGSize = .zero
+        var safeAreaInsets = EdgeInsets()
+    }
+
+    var placement = Placement()
+    var containerSize: CGSize = .zero
+}
+
+extension View {
+    fileprivate func recordingGeometry(in geometry: WebViewGeometry) -> some View {
+        self
+            .webViewOnScrollGeometryChange(for: CGSize.self, of: \.containerSize) { _, containerSize in
+                geometry.containerSize = containerSize
+            }
+            .onGeometryChange(for: WebViewGeometry.Placement.self) { proxy in
+                .init(size: proxy.size, safeAreaInsets: proxy.safeAreaInsets)
+            } action: { placement in
+                geometry.placement = placement
+            }
+    }
+}
+
+#if WTF_PLATFORM_IOS_FAMILY
+private struct SafeAreaInsetTestView: View {
+    let page: WebPage
+    let padding: CGFloat
+    let layoutDirection: LayoutDirection
+    let geometry: WebViewGeometry
+
+    var body: some View {
+        WebView(page)
+            .recordingGeometry(in: geometry)
+            .padding([.top, .leading], padding)
+            .safeAreaInset(edge: .trailing, spacing: 0) {
+                Color.clear
+                    .frame(width: 84)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                Color.clear
+                    .frame(height: 84)
+            }
+            .environment(\.layoutDirection, layoutDirection)
+    }
+}
+#endif // WTF_PLATFORM_IOS_FAMILY
+
 @MainActor
 struct WebViewTests {
     @Test
@@ -308,7 +356,55 @@ struct WebViewTests {
         model.viewportInitialScale = 1
         try await #expect(bodyWidth() == 20)
     }
+
+    // A fractional padding gives the web view a fractional size, which it rounds down to whole points.
+    @Test(arguments: [120, 120.5], [LayoutDirection.leftToRight, .rightToLeft])
+    func webViewBorderingSafeAreaInsetsContentOnce(padding: CGFloat, layoutDirection: LayoutDirection) async throws {
+        let page = WebPage()
+        let geometry = WebViewGeometry()
+
+        render {
+            SafeAreaInsetTestView(page: page, padding: padding, layoutDirection: layoutDirection, geometry: geometry)
+        }
+
+        try await page.load(html: "<meta name='viewport' content='width=device-width, initial-scale=1'>").wait()
+        await page.waitForNextPresentationUpdate()
+
+        let size = geometry.placement.size
+        let safeAreaInsets = geometry.placement.safeAreaInsets
+        try #require(safeAreaInsets.trailing > 0 && safeAreaInsets.bottom > 0, "The web view should border the safe area.")
+
+        #expect(geometry.containerSize.width == (size.width + safeAreaInsets.trailing).rounded(.down))
+        #expect(geometry.containerSize.height == (size.height + safeAreaInsets.bottom).rounded(.down))
+
+        let (viewportWidth, viewportHeight) = try await page.callJavaScript(returning: (CGFloat, CGFloat).self) {
+            "return [innerWidth, innerHeight];"
+        }
+        #expect(viewportWidth == size.width.rounded(.down))
+        #expect(viewportHeight == size.height.rounded(.down))
+    }
     #endif // WTF_PLATFORM_IOS_FAMILY
+
+    // A fractional height gives the web view a fractional size, which it rounds down to whole points.
+    @Test(arguments: [300, 300.5])
+    func shortPageDoesNotOverflowWebView(height: CGFloat) async throws {
+        let page = WebPage()
+        let geometry = WebViewGeometry()
+
+        render {
+            WebView(page)
+                .frame(width: 300, height: height)
+                .recordingGeometry(in: geometry)
+        }
+
+        try await page.load(html: "<meta name='viewport' content='width=device-width, initial-scale=1'>").wait()
+        await page.waitForNextPresentationUpdate()
+
+        #expect(geometry.containerSize.height == geometry.placement.size.height.rounded(.down))
+
+        let pageHeight = try await page.callJavaScript(returning: CGFloat.self) { "return document.scrollingElement.scrollHeight;" }
+        #expect(pageHeight <= geometry.containerSize.height)
+    }
 }
 
 #endif // ENABLE_SWIFTUI && !WTF_PLATFORM_WATCHOS && !WTF_PLATFORM_APPLETV

@@ -76,7 +76,10 @@ public struct WebView: View {
     private var representable: some View {
         #if WTF_PLATFORM_IOS_FAMILY
         GeometryReader { proxy in
+            // `ignoresSafeArea` only extends a view into the safe area on the edges that it touches, which the representable may
+            // fall short of since it rounds its size down to whole points, so fill the proposed size with a frame that touches them.
             WebViewRepresentable(page: storage.webPage, safeAreaInsets: proxy.safeAreaInsets)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .ignoresSafeArea()
         }
         #else
