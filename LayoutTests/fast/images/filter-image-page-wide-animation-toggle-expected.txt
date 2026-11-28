@@ -1,0 +1,3 @@
+
+PASS Page-wide animation control pauses and resumes an animated image shown through filter()
+

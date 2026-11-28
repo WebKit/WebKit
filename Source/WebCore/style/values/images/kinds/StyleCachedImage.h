@@ -26,6 +26,7 @@
 
 #include "CSSLinkParameter.h"
 #include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 #include <wtf/CheckedPtr.h>
@@ -52,7 +53,7 @@ enum class SVGReferencingMode : uint8_t {
     ResourceDocument = 1 << 1,
 };
 
-class CachedImage final : public Image {
+class CachedImage final : public Image, private CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED(CachedImage);
 public:
     NODELETE static Ref<CachedImage> create(URL&&, Ref<CSSImageValue>&&, Resolution<> = 1);
@@ -66,8 +67,6 @@ public:
 
     NODELETE WebCore::CachedImage* cachedImage() const final;
 
-    NODELETE WrappedImagePtr data() const final { return m_cachedImage.get(); }
-
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
@@ -78,9 +77,12 @@ public:
     NODELETE bool errorOccurred() const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const final;
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    void didAddFirstClient() override final;
+    void didRemoveLastClient() override final;
+    void sendInitialNotifications(ImageClient&, const Image& shownImage) const override final;
+    void addClientWaitingForAsyncDecoding(ImageClient&) override final;
+    bool isClientWaitingForAsyncDecoding(const ImageClient&) const override final;
+    void removeAllClientsWaitingForAsyncDecoding() override final;
     bool hasImage() const final;
     bool hasDecodedImage() const final;
     ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
@@ -97,6 +99,7 @@ public:
     bool containsCurrentColor() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
+    bool hasHDRContent() const override final;
     WTF::String accessibilityDescription() const final;
     bool isAnimated() const final;
     void startAnimation() final;
@@ -110,6 +113,14 @@ public:
 
     URL url() const final;
 
+    // CachedResourceClient.
+    void ref() const override final { Image::ref(); }
+    void deref() const override final { Image::deref(); }
+
+    using WeakValueType = Image::WeakValueType;
+    using WeakPtrImplType = Image::WeakPtrImplType;
+    using Image::weakImpl;
+
 private:
     CachedImage(URL&&, Ref<CSSImageValue>&&, Resolution<>);
     CachedImage(URL&&, Ref<CSSImageValue>&&, Resolution<>, OptionSet<SVGReferencingMode>);
@@ -119,6 +130,19 @@ private:
     ConcreteObjectSize concreteSizeToDrawAt(const WebCore::Image&, const RenderElement&, ConcreteObjectSize, WebCore::ImageOrientation) const;
     NaturalDimensions tileNaturalDimensions(const WebCore::Image&) const;
     Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragmentDirective) const;
+
+    // CachedResourceClient.
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override final;
+
+    // CachedImageClient.
+    void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) override final;
+    bool allowsAnimation() const override final;
+    bool canDestroyDecodedData() const override final;
+    VisibleInViewportState imageFrameAvailable(WebCore::CachedImage&, ImageAnimatingState, const IntRect*) override final;
+    VisibleInViewportState imageVisibleInViewport(const Document&) const override final;
+    void imageContentChanged(WebCore::CachedImage&) override final;
+    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) override final;
+    bool showsImage() const override final { return true; }
 
     struct ReferencedSVGResource {
         SingleThreadWeakPtr<RenderSVGResourceContainer> resource;

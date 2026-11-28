@@ -29,6 +29,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/StyleImageClientSet.h>
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -73,9 +74,6 @@ public:
     virtual Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const = 0;
     virtual Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const = 0;
 
-    // Opaque representation.
-    NODELETE virtual WrappedImagePtr data() const = 0;
-
     // Loading.
     virtual bool isPending() const = 0;
     virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
@@ -87,9 +85,16 @@ public:
     virtual URL url() const { return { }; }
 
     // Clients.
-    virtual void addClient(RenderElement&) = 0;
-    virtual void removeClient(RenderElement&) = 0;
-    virtual bool hasClient(RenderElement&) const = 0;
+    void addClient(ImageClient&);
+    void removeClient(ImageClient&);
+    bool hasClient(const ImageClient& client) const { return m_clients.contains(client); }
+    const ImageClientSet& clients() const LIFETIME_BOUND { return m_clients; }
+
+    virtual void sendInitialNotifications(ImageClient&, const Image& /* shownImage */) const { }
+
+    virtual void addClientWaitingForAsyncDecoding(ImageClient&) { }
+    virtual bool isClientWaitingForAsyncDecoding(const ImageClient&) const { return false; }
+    virtual void removeAllClientsWaitingForAsyncDecoding() { }
 
     // Size / scale.
     virtual Resolution<> imageResolution() const { return 1; }
@@ -116,8 +121,10 @@ public:
     virtual bool containsCurrentColor() const = 0;
     virtual bool canDrawAtSize(const RenderElement&, const FloatSize& size) const { return !size.isEmpty(); }
     virtual bool drawsSVGImage() const { return false; }
+    virtual bool hasHDRContent() const { return false; }
     virtual WTF::String accessibilityDescription() const { return { }; }
     virtual bool isAnimated() const { return false; }
+    virtual bool hasAnimation() const { return isAnimated() || drawsSVGImage(); }
     virtual void startAnimation() { }
     virtual void stopAnimation() { }
     virtual void clearAnimationOverride() { }
@@ -179,6 +186,12 @@ protected:
     {
     }
 
+    virtual void didAddFirstClient() { }
+    virtual void didRemoveLastClient() { }
+
+    virtual void didAddClient(ImageClient&) { }
+    virtual void didRemoveClient(ImageClient&) { }
+
     static FloatRect mapSourceToSize(const FloatRect&, ConcreteObjectSize, const FloatSize&);
     static FloatRect mapSizeToSource(const FloatRect&, const FloatSize&, ConcreteObjectSize);
 
@@ -235,6 +248,9 @@ private:
 
 protected:
     Type m_type;
+
+private:
+    ImageClientSet m_clients;
 };
 
 } // namespace Style

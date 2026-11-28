@@ -140,7 +140,7 @@ protected:
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
     void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&) override final;
 
     ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
@@ -148,10 +148,7 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() override;
 
-    void intrinsicSizeChanged() override
-    {
-        imageChanged(imageResource().imagePtr());
-    }
+    void intrinsicSizeChanged() override;
 
     NaturalDimensions zoomedNaturalDimensions() const override;
 
@@ -176,7 +173,7 @@ private:
 
     LayoutUnit minimumReplacedHeight() const override;
 
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    void imageFinishedLoading(const Style::Image&) override final;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
     IntSize imageSizeForError(CachedImage*) const;

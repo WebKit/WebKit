@@ -95,8 +95,14 @@ IntSize RenderVideo::defaultSize()
 
 void RenderVideo::intrinsicSizeChanged()
 {
-    if (protect(videoElement())->shouldDisplayPosterImage())
+    if (protect(videoElement())->shouldDisplayPosterImage()) {
         RenderMedia::intrinsicSizeChanged();
+        if (!imageResource().hasStyleImage()) {
+            m_cachedImageSize = intrinsicSize();
+            if (updateIntrinsicSize() || selfNeedsLayout())
+                invalidateLineLayout();
+        }
+    }
     if (updateIntrinsicSize())
         invalidateLineLayout();
 }
@@ -183,9 +189,9 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     return calculatedIntrinsicSize;
 }
 
-void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderVideo::imageChanged(const Style::Image& image, const IntRect* rect)
 {
-    RenderMedia::imageChanged(newImage, rect);
+    RenderMedia::imageChanged(image, rect);
 
     // Cache the image intrinsic size so we can continue to use it to draw the image correctly
     // even if we know the video intrinsic size but aren't able to draw video frames yet

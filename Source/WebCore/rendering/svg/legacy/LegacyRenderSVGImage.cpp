@@ -63,15 +63,15 @@ LegacyRenderSVGImage::LegacyRenderSVGImage(SVGImageElement& element, UniqueRef<S
 
 LegacyRenderSVGImage::~LegacyRenderSVGImage() = default;
 
-void LegacyRenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void LegacyRenderSVGImage::imageFinishedLoading(const Style::Image& image)
 {
     if (renderTreeBeingDestroyed())
         return;
 
-    if (RefPtr image = dynamicDowncast<SVGImageElement>(LegacyRenderSVGModelObject::element()))
-        protect(page())->didFinishLoadingImageForSVGImage(*image);
+    if (RefPtr imageElement = dynamicDowncast<SVGImageElement>(LegacyRenderSVGModelObject::element()))
+        protect(page())->didFinishLoadingImageForSVGImage(*imageElement);
 
-    LegacyRenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+    LegacyRenderSVGModelObject::imageFinishedLoading(image);
 }
 
 void LegacyRenderSVGImage::willBeDestroyed()
@@ -239,7 +239,7 @@ void LegacyRenderSVGImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(St
         function(*image);
 }
 
-void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
+void LegacyRenderSVGImage::imageChanged(const Style::Image&, const IntRect*)
 {
     if (!parent())
         return;

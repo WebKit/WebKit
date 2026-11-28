@@ -102,7 +102,11 @@ Vector<CSS::ParamFunction> CachedImage::urlLinkParameters(const CSSParserContext
     return parameters;
 }
 
-CachedImage::~CachedImage() = default;
+CachedImage::~CachedImage()
+{
+    if (m_cachedImage && !clients().isEmpty())
+        protect(m_cachedImage)->removeClient(*this);
+}
 
 bool CachedImage::operator==(const Image& other) const
 {
@@ -213,6 +217,8 @@ void CachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions
     ASSERT(m_isPending);
     m_isPending = false;
     m_cachedImage = m_cssValue->loadImage(loader, options);
+    if (RefPtr resource = m_cachedImage; resource && !clients().isEmpty())
+        resource->addClient(*this);
 }
 
 WebCore::CachedImage* CachedImage::cachedImage() const
@@ -290,28 +296,88 @@ ImageRenditionOptions CachedImage::renditionOptionsForRenderer(const RenderEleme
     return rendition;
 }
 
-void CachedImage::addClient(RenderElement& renderer)
+void CachedImage::didAddFirstClient()
 {
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return;
-    protect(m_cachedImage)->addClient(protect(renderer.cachedImageClient()));
+    if (RefPtr resource = m_cachedImage)
+        resource->addClient(*this);
 }
 
-void CachedImage::removeClient(RenderElement& renderer)
+void CachedImage::didRemoveLastClient()
 {
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return;
-    protect(m_cachedImage)->removeClient(protect(renderer.cachedImageClient()));
+    if (RefPtr resource = m_cachedImage)
+        resource->removeClient(*this);
 }
 
-bool CachedImage::hasClient(RenderElement& renderer) const
+void CachedImage::sendInitialNotifications(ImageClient& client, const Image& shownImage) const
 {
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->hasClient(renderer.cachedImageClient());
+    RefPtr resource = m_cachedImage;
+    if (!resource)
+        return;
+    if (RefPtr image = resource->hasImage() ? resource->image() : nullptr) {
+        if (image->hasSomethingToDraw())
+            client.imageChanged(shownImage);
+        image->startAnimationAsynchronously();
+    }
+    if (!resource->isLoading() && !resource->stillNeedsLoad())
+        client.imageFinishedLoading(shownImage);
+}
+
+void CachedImage::addClientWaitingForAsyncDecoding(ImageClient&)
+{
+    if (m_cachedImage)
+        protect(m_cachedImage)->addClientWaitingForAsyncDecoding(*this);
+}
+
+bool CachedImage::isClientWaitingForAsyncDecoding(const ImageClient&) const
+{
+    return m_cachedImage && m_cachedImage->isClientWaitingForAsyncDecoding(*this);
+}
+
+void CachedImage::removeAllClientsWaitingForAsyncDecoding()
+{
+    if (m_cachedImage)
+        protect(m_cachedImage)->removeAllClientsWaitingForAsyncDecoding();
+}
+
+void CachedImage::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+{
+    clients().imageFinishedLoading(*this);
+}
+
+void CachedImage::imageChanged(WebCore::CachedImage*, const IntRect* changedRect)
+{
+    clients().imageChanged(*this, changedRect);
+}
+
+bool CachedImage::allowsAnimation() const
+{
+    return clients().allowsImageAnimation(*this);
+}
+
+bool CachedImage::canDestroyDecodedData() const
+{
+    return !clients().isShowingImageVisibly(*this);
+}
+
+VisibleInViewportState CachedImage::imageFrameAvailable(WebCore::CachedImage&, ImageAnimatingState animatingState, const IntRect* changedRect)
+{
+    bool isVisible = clients().frameAvailable(*this, animatingState == ImageAnimatingState::Yes, changedRect);
+    return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+}
+
+VisibleInViewportState CachedImage::imageVisibleInViewport(const Document& document) const
+{
+    return clients().isShowingImageVisiblyInDocument(*this, document) ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+}
+
+void CachedImage::imageContentChanged(WebCore::CachedImage&)
+{
+    clients().imageContentChanged(*this);
+}
+
+void CachedImage::scheduleRenderingUpdateForImage(WebCore::CachedImage&)
+{
+    clients().scheduleRenderingUpdateForImage(*this);
 }
 
 bool CachedImage::hasImage() const
@@ -544,6 +610,11 @@ bool CachedImage::drawsSVGImage() const
 {
     RefPtr image = m_cachedImage ? protect(m_cachedImage)->image() : nullptr;
     return image && image->drawsSVGImage();
+}
+
+bool CachedImage::hasHDRContent() const
+{
+    return m_cachedImage && protect(m_cachedImage)->hasHDRContent();
 }
 
 WTF::String CachedImage::accessibilityDescription() const

@@ -29,6 +29,7 @@
 #include <WebCore/RenderPtr.h>
 #include <WebCore/StyleComputedStyle.h>
 #include <WebCore/StyleDifference.h>
+#include <WebCore/VisibleInViewportState.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Packed.h>
@@ -303,6 +304,8 @@ public:
 
     virtual void forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>&);
 
+    void didStartShowingImage(const Style::Image&);
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool hasHDRImages() const { return m_hasHDRImages; }
     void setHasHDRImages(bool b) { m_hasHDRImages = b; }
@@ -411,7 +414,7 @@ public:
 
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
 
-    void scheduleRenderingUpdateForImage(CachedImage&) final;
+    void scheduleRenderingUpdateForImage(const Style::Image&) override final;
 
 protected:
     RenderElement(Type, Element&, UniqueRef<Style::ComputedStyle>&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -435,7 +438,7 @@ protected:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
+    void imageFinishedLoading(const Style::Image&) override;
 
     void pushOntoGeometryMap(RenderGeometryMap&, const RenderLayerModelObject* repaintContainer, RenderElement* container, bool containerSkipped) const;
 
@@ -493,11 +496,11 @@ private:
 
     Style::Difference adjustStyleDifference(Style::Difference) const;
 
-    bool canDestroyDecodedData() const final { return !isVisibleInViewport(); }
-    VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
-    VisibleInViewportState imageVisibleInViewport(const Document&) const final;
-    void didRemoveCachedImageClient(CachedImage&) final;
-    void imageContentChanged(CachedImage&) final;
+    void imageFrameAvailable(const Style::Image&) override final;
+    void imageContentChanged(const Style::Image&) override final;
+    void imageAnimationPaused(const Style::Image&) override final;
+    bool isShowingImageVisibly() const override final { return isVisibleInViewport(); }
+    bool isShowingImageVisiblyInDocument(const Document&) const override final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;

@@ -53,8 +53,6 @@ private:
     ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool containsCurrentColor() const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
     WebCore::Color resolvedColor(const RenderElement&) const;
 

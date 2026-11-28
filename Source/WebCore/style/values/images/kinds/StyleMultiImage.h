@@ -29,6 +29,7 @@
 #include "StyleInvalidImage.h"
 #include "StylePrimitiveNumeric.h"
 #include "StyleString.h"
+#include "StyleWrappingImageClient.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -48,10 +49,14 @@ struct ImageWithResolution {
     }
 };
 
-class MultiImage : public Image {
+class MultiImage : public Image, private WrappingImageClient<MultiImage> {
     WTF_MAKE_TZONE_ALLOCATED(MultiImage);
 public:
     virtual ~MultiImage();
+
+    // ImageClient.
+    void ref() const override final { Image::ref(); }
+    void deref() const override final { Image::deref(); }
 
 protected:
     MultiImage(Type);
@@ -62,7 +67,6 @@ protected:
     NODELETE WebCore::CachedImage* cachedImage() const final;
 
 private:
-    NODELETE WrappedImagePtr data() const final;
 
     bool canRender(const RenderElement*) const final;
     bool isPending() const final { return m_isPending; }
@@ -72,9 +76,12 @@ private:
     bool hasDecodedImage() const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
     ImageRenditionOptions renditionOptionsForRenderer(const RenderElement&, ImageRenditionOptions) const override;
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    void didAddFirstClient() override final;
+    void didRemoveLastClient() override final;
+    void sendInitialNotifications(ImageClient&, const Image& shownImage) const override final;
+    void addClientWaitingForAsyncDecoding(ImageClient&) override final;
+    bool isClientWaitingForAsyncDecoding(const ImageClient&) const override final;
+    void removeAllClientsWaitingForAsyncDecoding() override final;
     ImageDrawResult draw(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& source, bool isForFirstLine) const final;
     ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
     ImageDrawResult drawTiled(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatPoint& phase, const FloatSize& tileSize, const FloatSize& spacing, bool isForFirstLine) const final;
@@ -88,6 +95,7 @@ private:
     bool containsCurrentColor() const final;
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     bool drawsSVGImage() const final;
+    bool hasHDRContent() const override final;
     WTF::String accessibilityDescription() const final;
     bool isAnimated() const final;
     void startAnimation() final;
@@ -99,6 +107,9 @@ private:
     FloatRect mapChangedRectToSource(const RenderElement&, ConcreteObjectSize, const FloatRect& changedRect) const final;
     const Image* selectedImage() const final { return m_selectedImage.get(); }
     Image* selectedImage() final { return m_selectedImage.get(); }
+
+    friend class WrappingImageClient<MultiImage>;
+    static constexpr bool wrapsImageUnchanged = true;
 
     RefPtr<Image> m_selectedImage;
     bool m_isPending { true };

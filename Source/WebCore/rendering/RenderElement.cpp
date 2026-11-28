@@ -429,7 +429,7 @@ static void forEachRegisteredImageInStyle(const Style::ComputedStyle& style, NOE
         callFunction(maskLayer.image().tryStyleImage());
     callFunction(style.borderImageSource().tryStyleImage());
     callFunction(style.maskBorderSource().tryStyleImage());
-    callFunction(style.shapeOutside().image());
+    callFunction(style.shapeOutside().tryStyleImage());
 }
 
 void RenderElement::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
@@ -462,7 +462,7 @@ template<typename FillLayers> void RenderElement::updateFillImages(const FillLay
         if (!newLayers)
             return true;
         for (auto& layer : newLayers->usedValues()) {
-            if (RefPtr image = layer.image().tryStyleImage(); image && !image->hasClient(*this))
+            if (RefPtr image = layer.image().tryStyleImage(); image && !image->hasClient(styleImageClient()))
                 return false;
         }
         return true;
@@ -473,17 +473,28 @@ template<typename FillLayers> void RenderElement::updateFillImages(const FillLay
     if (fillImagesAreIdentical(oldLayers, newLayers) && isRegisteredWithNewFillImages())
         return;
 
+    // A rebuilt style holds new images equal to the old ones.
+    auto oldLayersHaveEqualImage = [&](const Style::Image& image) {
+        return oldLayers && std::ranges::any_of(oldLayers->usedValues(), [&](auto& layer) {
+            RefPtr oldImage = layer.image().tryStyleImage();
+            return oldImage && *oldImage == image;
+        });
+    };
+
     // Add before removing, to avoid removing all clients of an image that is in both sets.
     if (newLayers) {
         for (auto& layer : newLayers->usedValues()) {
-            if (RefPtr image = layer.image().tryStyleImage())
-                image->addClient(*this);
+            if (RefPtr image = layer.image().tryStyleImage()) {
+                image->addClient(styleImageClient());
+                if (!oldLayersHaveEqualImage(*image))
+                    didStartShowingImage(*image);
+            }
         }
     }
     if (oldLayers) {
         for (auto& layer : oldLayers->usedValues()) {
             if (RefPtr image = layer.image().tryStyleImage())
-                image->removeClient(*this);
+                image->removeClient(styleImageClient());
         }
     }
 }
@@ -493,15 +504,23 @@ void RenderElement::updateImage(Style::Image* oldImage, Style::Image* newImage)
     if (oldImage == newImage)
         return;
     if (oldImage)
-        oldImage->removeClient(*this);
-    if (newImage)
-        newImage->addClient(*this);
+        oldImage->removeClient(styleImageClient());
+    if (newImage) {
+        newImage->addClient(styleImageClient());
+        if (!oldImage || !(*oldImage == *newImage))
+            didStartShowingImage(*newImage);
+    }
+}
+
+void RenderElement::didStartShowingImage(const Style::Image& image)
+{
+    image.sendInitialNotifications(protect(styleImageClient()), image);
 }
 
 void RenderElement::updateShapeImage(const Style::ShapeOutside* oldShapeValue, const Style::ShapeOutside* newShapeValue)
 {
     if (oldShapeValue || newShapeValue)
-        updateImage(oldShapeValue ? oldShapeValue->image().get() : nullptr, newShapeValue ? newShapeValue->image().get() : nullptr);
+        updateImage(oldShapeValue ? oldShapeValue->tryStyleImage().get() : nullptr, newShapeValue ? newShapeValue->tryStyleImage().get() : nullptr);
 }
 
 bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
@@ -1405,7 +1424,7 @@ void RenderElement::willBeDestroyed()
 
     auto unregisterImages = [&](auto& style) {
         forEachRegisteredImageInStyle(style, [&](Style::Image& image) {
-            image.removeClient(*this);
+            image.removeClient(styleImageClient());
         });
     };
 
@@ -1941,36 +1960,25 @@ bool RenderElement::isVisibleInViewport() const
     return isVisibleInDocumentRect(visibleRect);
 }
 
-VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+void RenderElement::imageFrameAvailable(const Style::Image& image)
 {
-    bool isVisible = isVisibleInViewport();
-
-    if (!isVisible && animatingState == ImageAnimatingState::Yes)
-        protect(view())->addRendererWithPausedImageAnimations(*this);
-
-    // Static images should repaint even if they are outside the viewport rectangle
-    // because they should be inside the TileCoverageRect.
-    if (isVisible || animatingState == ImageAnimatingState::No)
-        imageChanged(&image, changeRect);
-
-    if (element() && protect(image)->image()->isBitmapImage())
+    if (RefPtr cachedImage = image.cachedImage(); cachedImage && element() && protect(cachedImage->image())->isBitmapImage())
         protect(element())->dispatchWebKitImageReadyEventForTesting();
-
-    return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
-VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& document) const
+void RenderElement::imageAnimationPaused(const Style::Image&)
 {
-    if (&this->document() != &document)
-        return VisibleInViewportState::No;
-
-    return isVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
+    protect(view())->addRendererWithPausedImageAnimations(*this);
 }
 
-void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+bool RenderElement::isShowingImageVisiblyInDocument(const Document& document) const
 {
-    if (auto* cachedImage = dynamicDowncast<CachedImage>(resource))
-        imageContentChanged(*cachedImage);
+    return &this->document() == &document && isVisibleInViewport();
+}
+
+void RenderElement::imageFinishedLoading(const Style::Image& image)
+{
+    imageContentChanged(image);
 }
 
 bool RenderElement::allowsAnimation() const
@@ -1987,54 +1995,50 @@ Ref<ImageAnimationTimeline> RenderElement::imageAnimationTimeline() const
     return page().imageAnimationTimeline();
 }
 
-void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
-{
-    if (!hasPausedImageAnimations())
-        return;
-
-    bool hasAnimation = false;
-    forEachStyleImage([&, cachedImage = protect(cachedImage)](Style::Image& image) {
-        if (image.cachedImage() != cachedImage.ptr() && (image.isAnimated() || image.drawsSVGImage()))
-            hasAnimation = true;
-    });
-
-    if (!hasAnimation)
-        protect(view())->removeRendererWithPausedImageAnimations(*this);
-}
-
-void RenderElement::imageContentChanged(CachedImage& cachedImage)
+void RenderElement::imageContentChanged(const Style::Image& image)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
+    bool hasHDRContent = image.hasHDRContent();
+
     if (!document().hasHDRContent()) {
-        if (cachedImage.hasHDRContent())
+        if (hasHDRContent)
             protect(document())->setHasHDRContent();
     }
 
     if (document().hasHDRContent()) {
-        if (cachedImage.hasHDRContent()) {
+        if (hasHDRContent) {
             RefPtr element = this->element();
             if (element)
                 element->invalidateStyleAndLayerComposition();
         }
 
         if (CheckedPtr layer = enclosingLayer()) {
-            auto changeType = cachedImage.hasHDRContent() ? ContentChangeType::HDRImage : ContentChangeType::Image;
+            auto changeType = hasHDRContent ? ContentChangeType::HDRImage : ContentChangeType::Image;
             layer->contentChanged(changeType);
         }
     }
 #else
-    UNUSED_PARAM(cachedImage);
+    UNUSED_PARAM(image);
 #endif
 }
 
-void RenderElement::scheduleRenderingUpdateForImage(CachedImage& cachedImage)
+void RenderElement::scheduleRenderingUpdateForImage(const Style::Image& image)
 {
-    protect(protect(document())->cachedResourceLoader())->scheduleRenderingUpdateForImage(cachedImage);
+    if (RefPtr cachedImage = image.cachedImage())
+        protect(protect(document())->cachedResourceLoader())->scheduleRenderingUpdateForImage(*cachedImage);
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
     ASSERT(m_hasPausedImageAnimations);
+
+    bool hasAnimation = false;
+    forEachStyleImage([&](Style::Image& image) {
+        hasAnimation = hasAnimation || image.hasAnimation();
+    });
+    if (!hasAnimation)
+        return true;
+
     if (!allowsAnimation() || !isVisibleInDocumentRect(visibleRect))
         return false;
 

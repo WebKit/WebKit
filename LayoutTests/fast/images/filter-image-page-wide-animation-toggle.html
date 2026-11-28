@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#target {
+    width: 100px;
+    height: 100px;
+    background-image: filter(url(resources/animation.gif), opacity(1));
+}
+</style>
+</head>
+<body>
+<div id="target"></div>
+<!-- To make this test able to pass in WK1, use this <div style="..."> to setAutodisplay:YES (rdar://42625657 has more details). -->
+<div style="will-change: transform"></div>
+<script>
+function becomes(condition, description)
+{
+    return new Promise((resolve, reject) => {
+        let framesLeft = 300;
+        const check = () => {
+            if (condition())
+                resolve();
+            else if (!--framesLeft)
+                reject(new Error(`Timed out waiting until ${description}`));
+            else
+                requestAnimationFrame(check);
+        };
+        check();
+    });
+}
+
+promise_test(async () => {
+    assert_true(!!window.internals, "This test requires internals.");
+
+    // Shares the animated image the background shows through filter().
+    const image = new Image();
+    image.src = "resources/animation.gif";
+    await image.decode();
+    await becomes(() => internals.isImageAnimating(image), "the animation starts");
+
+    const target = document.getElementById("target");
+    internals.setImageAnimationEnabled(false);
+    await becomes(() => !internals.isImageAnimating(image), "the animation pauses");
+    await becomes(() => internals.hasPausedImageAnimations(target), "the element is recorded as having a paused animation");
+
+    internals.setImageAnimationEnabled(true);
+    await becomes(() => internals.isImageAnimating(image), "the animation resumes");
+    await becomes(() => !internals.hasPausedImageAnimations(target), "the element is no longer recorded as having a paused animation");
+}, "Page-wide animation control pauses and resumes an animated image shown through filter()");
+</script>
+</body>
+</html>

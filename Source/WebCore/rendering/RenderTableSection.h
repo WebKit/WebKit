@@ -194,7 +194,7 @@ private:
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override { return { }; }
 
-    void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

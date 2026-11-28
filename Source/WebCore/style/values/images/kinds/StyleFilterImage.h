@@ -27,10 +27,9 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
 #include "StyleFilter.h"
 #include "StyleGeneratedImage.h"
+#include "StyleWrappingImageClient.h"
 
 namespace WebCore {
 
@@ -38,7 +37,7 @@ class ImageBuffer;
 
 namespace Style {
 
-class FilterImage final : public GeneratedImage, private CachedImageClient {
+class FilterImage final : public GeneratedImage, private WrappingImageClient<FilterImage> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FilterImage);
 public:
     static Ref<FilterImage> create(RefPtr<Image> image, Filter filter)
@@ -47,9 +46,9 @@ public:
     }
     virtual ~FilterImage();
 
-    // CachedResourceClient.
-    void ref() const final { GeneratedImage::ref(); }
-    void deref() const final { GeneratedImage::deref(); }
+    // ImageClient.
+    void ref() const override final { GeneratedImage::ref(); }
+    void deref() const override final { GeneratedImage::deref(); }
 
     bool operator==(const Image& other) const final;
     bool equals(const FilterImage&) const;
@@ -75,24 +74,26 @@ private:
     DecodingMode decodingModeForImageDraw(const RenderBoxModelObject&, const PaintInfo&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void* layer, const LayoutSize&) const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    bool isAnimated() const override final;
+    bool hasAnimation() const override final;
+    void startAnimation() override final;
+    void stopAnimation() override final;
+    void clearAnimationOverride() override final;
+    void resetAnimation() override final;
+    bool hasHDRContent() const override final;
+    void sendInitialNotifications(ImageClient&, const Image& shownImage) const override final;
+    void didAddClient(ImageClient&) override final { updateIsClientOfInput(); }
+    void didRemoveClient(ImageClient&) override final { updateIsClientOfInput(); }
+    void updateIsClientOfInput();
 
-    // CachedImageClient.
-    void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) final;
-    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) final;
+    friend class WrappingImageClient<FilterImage>;
+    static constexpr bool wrapsImageUnchanged = false;
 
     RefPtr<ImageBuffer> resolvedImage(const RenderElement&, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const;
 
     const RefPtr<Image> m_image;
     Filter m_filter;
-
-    // FIXME: Rather than caching and tracking the input image via WebCore::CachedImages, we should
-    // instead use a new, Style::Image specific notification, to allow correct tracking of
-    // nested images (e.g. the input image for a Style::FilterImage is a Style::CrossfadeImage
-    // where one of the inputs to the Style::CrossfadeImage is a Style::CachedImage).
-    CachedResourceHandle<WebCore::CachedImage> m_cachedImage;
-    bool m_inputImageIsReady;
+    bool m_isClientOfInput { false };
 };
 
 } // namespace Style

@@ -156,7 +156,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     auto descriptor = calculateSVGImageDrawDescriptor(*styleImage, *this, paintInfo.context(), imageRenderingSize, rect.size(), paintInfo.paintBehavior);
     auto drawResult = styleImage->draw(paintInfo.context(), *this, descriptor, rect, sourceRect);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
+        protect(imageResource().styleImage())->addClientWaitingForAsyncDecoding(protect(styleImageClient()));
 
     return drawResult;
 }
@@ -165,8 +165,8 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 {
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
-            protect(cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (RefPtr styleImage = imageResource().styleImage(); styleImage && styleImage->isClientWaitingForAsyncDecoding(protect(styleImageClient())))
+            styleImage->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -279,21 +279,21 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
         protect(layer())->contentChanged(ContentChangeType::Image);
 }
 
-void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void RenderSVGImage::imageFinishedLoading(const Style::Image& image)
 {
     if (renderTreeBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();
 
-    if (&newImage == cachedImage()) {
+    if (&image == imageResource().styleImage()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         if (hasLayer())
             protect(layer())->contentChanged(ContentChangeType::Image);
     }
 
-    RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+    RenderSVGModelObject::imageFinishedLoading(image);
 }
 
 void RenderSVGImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Image&)>& function)
@@ -303,7 +303,7 @@ void RenderSVGImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::I
         function(*image);
 }
 
-void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderSVGImage::imageChanged(const Style::Image& image, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed() || !parent())
         return;
@@ -311,9 +311,9 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     repaintClientsOfReferencedSVGResources();
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
-        RenderSVGModelObject::imageChanged(newImage, rect);
+        RenderSVGModelObject::imageChanged(image, rect);
 
-    if (newImage != imageResource().imagePtr() || !newImage)
+    if (&image != imageResource().styleImage())
         return;
 
     repaintOrMarkForLayout(rect);

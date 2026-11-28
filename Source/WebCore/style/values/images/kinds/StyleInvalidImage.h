@@ -41,8 +41,6 @@ public:
     bool canRender(const RenderElement*) const final { return false; }
 
 protected:
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
 private:
     InvalidImage();

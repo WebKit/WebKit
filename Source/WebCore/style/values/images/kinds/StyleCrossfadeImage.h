@@ -28,11 +28,10 @@
 #pragma once
 
 #include "CSSNormalizedMixPercentages.h"
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
 #include "StyleCrossfade.h"
 #include "StyleGeneratedImage.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StyleWrappingImageClient.h"
 
 namespace WebCore {
 
@@ -40,16 +39,16 @@ struct BlendingContext;
 
 namespace Style {
 
-class CrossfadeImage final : public GeneratedImage, private CachedImageClient {
+class CrossfadeImage final : public GeneratedImage, private WrappingImageClient<CrossfadeImage> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CrossfadeImage);
 public:
     static Ref<CrossfadeImage> create(CrossfadeFunction&&);
     static Ref<CrossfadeImage> create(WebkitCrossfadeFunction&&);
     virtual ~CrossfadeImage();
 
-    // CachedResourceClient.
-    void ref() const final { GeneratedImage::ref(); }
-    void deref() const final { GeneratedImage::deref(); }
+    // ImageClient.
+    void ref() const override final { GeneratedImage::ref(); }
+    void deref() const override final { GeneratedImage::deref(); }
 
     RefPtr<CrossfadeImage> blend(const CrossfadeImage&, const BlendingContext&) const;
 
@@ -73,26 +72,30 @@ private:
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void* layer, const LayoutSize&) const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    bool isAnimated() const override final;
+    bool hasAnimation() const override final;
+    void startAnimation() override final;
+    void stopAnimation() override final;
+    void clearAnimationOverride() override final;
+    void resetAnimation() override final;
+    bool hasHDRContent() const override final;
+    void sendInitialNotifications(ImageClient&, const Image& shownImage) const override final;
+    void didAddClient(ImageClient&) override final { updateIsClientOfInputs(); }
+    void didRemoveClient(ImageClient&) override final { updateIsClientOfInputs(); }
+    void updateIsClientOfInputs();
 
-    // CachedImageClient.
-    void imageChanged(WebCore::CachedImage*, const IntRect*) final;
-    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) final;
+    friend class WrappingImageClient<CrossfadeImage>;
+    static constexpr bool wrapsImageUnchanged = false;
 
     void drawCrossfade(GraphicsContext&, const RenderElement&, ConcreteObjectSize, bool isForFirstLine) const;
     void normalizePercentages();
 
     decltype(auto) withInputs(NOESCAPE auto&&) const;
+    void forEachInput(NOESCAPE const auto&);
 
     Variant<CrossfadeFunction, WebkitCrossfadeFunction> m_function;
     CSS::NormalizedMixPercentages<Vector<double, 2>> m_normalizedPercentages;
-    // FIXME: Rather than caching and tracking the input image via WebCore::CachedImages, we should
-    // instead use a new, Style::Image specific notification, to allow correct tracking of
-    // nested images (e.g. one of the input images for a Style::CrossfadeImage is a Style::FilterImage
-    // where its input image is a Style::CachedImage).
-    Vector<CachedResourceHandle<WebCore::CachedImage>> m_cachedImages;
-    bool m_inputImagesAreReady;
+    bool m_isClientOfInputs { false };
 };
 
 } // namespace Style

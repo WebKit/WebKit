@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 100px;
+    height: 100px;
+    background-image: -webkit-cross-fade(filter(url(/resources/slow-image.py), opacity(1)), filter(url(/resources/slow-image.py), opacity(1)), 50%);
+}
+</style>
+</head>
+<body>
+<div></div>
+<pre id="result"></pre>
+<script>
+// An image nested inside two images that wrap it repaints the element when it arrives.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+document.body.offsetHeight;
+if (window.internals)
+    internals.startTrackingRepaints();
+
+window.addEventListener("load", () => requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!window.internals) {
+        document.getElementById("result").textContent = "This test requires internals.";
+        return;
+    }
+
+    const repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+
+    document.getElementById("result").textContent = repaintRects.includes("rect 8 8 100 100") ? "PASS" : "FAIL: " + repaintRects;
+    testRunner.notifyDone();
+})));
+</script>
+</body>
+</html>

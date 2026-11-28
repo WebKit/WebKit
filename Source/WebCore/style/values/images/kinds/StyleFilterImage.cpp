@@ -53,14 +53,12 @@ FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
     : GeneratedImage { Type::FilterImage }
     , m_image { WTF::move(image) }
     , m_filter { WTF::move(filter) }
-    , m_inputImageIsReady { false }
 {
 }
 
 FilterImage::~FilterImage()
 {
-    if (RefPtr cachedImage = m_cachedImage)
-        cachedImage->removeClient(*this);
+    ASSERT(!m_isClientOfInput);
 }
 
 bool FilterImage::operator==(const Image& other) const
@@ -101,20 +99,8 @@ bool FilterImage::isPending() const
 
 void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    RefPtr oldCachedImage = m_cachedImage;
-
-    if (RefPtr image = m_image) {
+    if (RefPtr image = m_image)
         image->load(cachedResourceLoader, options);
-        m_cachedImage = image->cachedImage();
-    } else
-        m_cachedImage = nullptr;
-
-    if (m_cachedImage != oldCachedImage) {
-        if (oldCachedImage)
-            oldCachedImage->removeClient(*this);
-        if (RefPtr cachedImage = m_cachedImage)
-            cachedImage->addClient(*this);
-    }
 
     for (auto& value : m_filter) {
         WTF::switchOn(value,
@@ -125,7 +111,71 @@ void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const Resourc
         );
     }
 
-    m_inputImageIsReady = true;
+    updateIsClientOfInput();
+}
+
+void FilterImage::updateIsClientOfInput()
+{
+    bool shouldBeClientOfInput = !clients().isEmpty() && !isPending();
+    if (shouldBeClientOfInput == m_isClientOfInput)
+        return;
+    m_isClientOfInput = shouldBeClientOfInput;
+
+    RefPtr image = m_image;
+    if (!image)
+        return;
+    if (shouldBeClientOfInput)
+        image->addClient(*this);
+    else
+        image->removeClient(*this);
+}
+
+void FilterImage::sendInitialNotifications(ImageClient& client, const Image& shownImage) const
+{
+    if (RefPtr image = m_image)
+        image->sendInitialNotifications(client, shownImage);
+}
+
+bool FilterImage::isAnimated() const
+{
+    RefPtr image = m_image;
+    return image && image->isAnimated();
+}
+
+bool FilterImage::hasAnimation() const
+{
+    RefPtr image = m_image;
+    return image && image->hasAnimation();
+}
+
+void FilterImage::startAnimation()
+{
+    if (RefPtr image = m_image)
+        image->startAnimation();
+}
+
+void FilterImage::stopAnimation()
+{
+    if (RefPtr image = m_image)
+        image->stopAnimation();
+}
+
+void FilterImage::clearAnimationOverride()
+{
+    if (RefPtr image = m_image)
+        image->clearAnimationOverride();
+}
+
+void FilterImage::resetAnimation()
+{
+    if (RefPtr image = m_image)
+        image->resetAnimation();
+}
+
+bool FilterImage::hasHDRContent() const
+{
+    RefPtr image = m_image;
+    return image && image->hasHDRContent();
 }
 
 RefPtr<ImageBuffer> FilterImage::resolvedImage(const RenderElement& renderElement, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
@@ -253,25 +303,6 @@ NaturalDimensions FilterImage::naturalDimensions(const RenderElement& renderer, 
     if (RefPtr image = m_image)
         return image->naturalDimensions(renderer, context);
     return NaturalDimensions::zero();
-}
-
-void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
-{
-    if (!m_inputImageIsReady)
-        return;
-
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-    }
-}
-
-void FilterImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
-{
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->scheduleRenderingUpdateForImage(cachedImage);
-    }
 }
 
 } // namespace WebCore::Style

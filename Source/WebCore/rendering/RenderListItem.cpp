@@ -527,7 +527,7 @@ static RefPtr<Style::Image> outsideMarkerImage(const Style::ComputedStyle& style
 void RenderListItem::willBeDestroyed()
 {
     if (RefPtr image = outsideMarkerImage(style()))
-        image->removeClient(*this);
+        image->removeClient(protect(styleImageClient()));
     RenderBlockFlow::willBeDestroyed();
 }
 
@@ -546,9 +546,12 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     RefPtr newImage = outsideMarkerImage(style());
     if (oldImage != newImage) {
         if (oldImage)
-            oldImage->removeClient(*this);
-        if (newImage)
-            newImage->addClient(*this);
+            oldImage->removeClient(protect(styleImageClient()));
+        if (newImage) {
+            newImage->addClient(protect(styleImageClient()));
+            if (!oldImage || !(*oldImage == *newImage))
+                didStartShowingImage(*newImage);
+        }
     }
 }
 
@@ -559,10 +562,10 @@ void RenderListItem::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::I
         function(*image);
 }
 
-void RenderListItem::imageChanged(WrappedImagePtr changedImage, const IntRect* rect)
+void RenderListItem::imageChanged(const Style::Image& changedImage, const IntRect* rect)
 {
     RefPtr image = outsideMarkerImage(style());
-    if (CheckedPtr marker = markerBox(); marker && image && changedImage == image->data()) {
+    if (CheckedPtr marker = markerBox(); marker && image.get() == &changedImage) {
         if (image->errorOccurred()) {
             // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
             RefPtr element = this->element();

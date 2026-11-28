@@ -66,8 +66,6 @@ public:
     LayoutSize intrinsicSize(float multiplier) const;
     std::optional<FloatSize> usedImageSize(FloatSize containerSize) const;
 
-    WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : nullptr; }
-
 private:
     NODELETE float density() const;
 

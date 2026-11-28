@@ -84,7 +84,7 @@ private:
     std::optional<LayoutRect> objectFitContentsRectForFullscreenCompositing(const LayoutRect&) const;
     LayoutSize posterAwareIntrinsicSize() const;
 
-    void imageChanged(WrappedImagePtr, const IntRect*) final;
+    void imageChanged(const Style::Image&, const IntRect*) override final;
 
     ASCIILiteral renderName() const final { return "RenderVideo"_s; }
 

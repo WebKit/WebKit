@@ -59,8 +59,6 @@ private:
     bool canDraw(const RenderElement&) const final;
     bool containsCurrentColor() const final { return false; }
     bool canDrawAtSize(const RenderElement&, const FloatSize&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
     Vector<WTF::String> paintArguments() const;
     ImageDrawResult paint(GraphicsContext&, const RenderElement&, FloatSize) const;

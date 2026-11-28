@@ -1869,6 +1869,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/cache/KeepaliveRequestTracker.h
     loader/cache/MemoryCache.h
     loader/cache/TrustedFonts.h
+    loader/cache/VisibleInViewportState.h
 
     loader/images/Image.h
     loader/images/ImageAdapter.h
@@ -3331,6 +3332,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/images/StyleObjectViewBox.h
 
     style/values/images/kinds/StyleImage.h
+    style/values/images/kinds/StyleImageClient.h
+    style/values/images/kinds/StyleImageClientSet.h
 
     style/values/inline/StyleLineFitEdge.h
     style/values/inline/StyleLineHeight.h

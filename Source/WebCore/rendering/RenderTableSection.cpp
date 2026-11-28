@@ -1170,7 +1170,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
     Paint::TablePainter::paintObject(*this, paintInfo, paintOffset);
 }
 
-void RenderTableSection::imageChanged(WrappedImagePtr, const IntRect*)
+void RenderTableSection::imageChanged(const Style::Image&, const IntRect*)
 {
     // FIXME: Examine cells and repaint only the rect the image paints in.
     if (!parent())

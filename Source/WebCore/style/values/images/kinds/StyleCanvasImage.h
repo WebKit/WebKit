@@ -76,8 +76,9 @@ private:
     InterpolationQuality interpolationQualityForImageDraw(GraphicsContext&, const RenderElement&, ConcreteObjectSize, const void* layer, const LayoutSize&) const final;
     FloatRect mapChangedRectToSource(const RenderElement&, ConcreteObjectSize, const FloatRect& changedRect) const final;
     NaturalDimensions naturalDimensions(const RenderElement&, const ImageSizingContext&) const final;
-    void didAddClient(RenderElement&) final;
-    void didRemoveClient(RenderElement&) final;
+    void didAddClient(ImageClient&) override final;
+    void didRemoveClient(ImageClient&) override final;
+    void didChangeClients(ImageClient&);
 
     // CanvasObserver.
     bool isStyleCanvasImage() const final { return true; }

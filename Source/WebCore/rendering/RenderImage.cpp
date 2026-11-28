@@ -324,20 +324,20 @@ void RenderImage::forEachStyleImage(NOESCAPE const ScopedLambda<void(Style::Imag
         function(*image);
 }
 
-void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderImage::imageChanged(const Style::Image& image, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
         return;
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
-        RenderReplaced::imageChanged(newImage, rect);
+        RenderReplaced::imageChanged(image, rect);
 
     if (imageRepresentsNothing()) {
         // Image might need resizing when we are at the final state.
         setNeedsLayout();
     }
 
-    if (newImage != imageResource().imagePtr() || !newImage)
+    if (&image != imageResource().styleImage())
         return;
 
     auto paintedSize = imageResource().hasDecodedImage() ? ReplacedElementIntrinsicSizing { }.resolve(imageResource().naturalDimensions()).size() : FloatSize { };
@@ -358,9 +358,9 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(element()));
 
-    if (RefPtr image = cachedImage(); image && image->currentFrameIsComplete()) {
+    if (RefPtr cachedImage = this->cachedImage(); cachedImage && cachedImage->currentFrameIsComplete()) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(styleable->element, image);
+            protect(document())->didLoadImage(styleable->element, cachedImage);
     }
 }
 
@@ -592,23 +592,33 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     contentChanged(ContentChangeType::Image);
 }
 
-void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void RenderImage::imageFinishedLoading(const Style::Image& image)
 {
     if (renderTreeBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();
 
-    if (&newImage == cachedImage()) {
+    if (&image == imageResource().styleImage()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         contentChanged(ContentChangeType::Image);
     }
 
-    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element()))
-        protect(page())->didFinishLoadingImageForElement(*image);
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        protect(page())->didFinishLoadingImageForElement(*imageElement);
 
-    RenderReplaced::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+    RenderReplaced::imageFinishedLoading(image);
+}
+
+void RenderImage::intrinsicSizeChanged()
+{
+    if (RefPtr image = imageResource().styleImage()) {
+        imageChanged(*image);
+        return;
+    }
+    if (!renderTreeBeingDestroyed() && imageRepresentsNothing())
+        setNeedsLayout();
 }
 
 void RenderImage::setCurrentPixelDensity(float density)
@@ -788,8 +798,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
-            protect(cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (RefPtr styleImage = imageResource().styleImage(); styleImage && styleImage->isClientWaitingForAsyncDecoding(protect(styleImageClient())))
+            styleImage->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -1006,7 +1016,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = styleImage->draw(paintInfo.context(), *this, descriptor, rect, FloatRect { { }, concreteObjectSize.size() });
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
+        protect(imageResource().styleImage())->addClientWaitingForAsyncDecoding(protect(styleImageClient()));
 
 #if USE(SYSTEM_PREVIEW)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());

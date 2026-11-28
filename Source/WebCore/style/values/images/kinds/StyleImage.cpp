@@ -37,6 +37,26 @@
 
 namespace WebCore::Style {
 
+void Image::addClient(ImageClient& client)
+{
+    if (m_clients.isEmpty())
+        didAddFirstClient();
+    m_clients.add(client);
+    didAddClient(client);
+}
+
+void Image::removeClient(ImageClient& client)
+{
+    if (!m_clients.remove(client))
+        return;
+
+    // didRemoveLastClient() can release the last reference.
+    Ref protectedThis { *this };
+    didRemoveClient(client);
+    if (m_clients.isEmpty())
+        didRemoveLastClient();
+}
+
 static std::optional<SourceImage> convertToLuminanceMask(GraphicsContext& context, SourceImage&& image)
 {
     if (RefPtr imageBuffer = image.imageBufferIfExists()) {

@@ -54,8 +54,6 @@ private:
     ImageDrawResult drawAsPattern(GraphicsContext&, const RenderElement&, const ImageDrawDescriptor&, const FloatRect& destination, const FloatRect& tile, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool containsCurrentColor() const final { return false; }
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
 
     CustomIdent m_name;
 };
