@@ -347,7 +347,7 @@ RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeSco
     CheckedRef extensions = document->svgExtensions();
     if (auto externalDocument = extensions->externalResourceDocument(markerResource)) {
         RefPtr resolvedDocument = *externalDocument;
-        auto resourceID = markerResource.resolved.fragmentIdentifier().toAtomString();
+        auto resourceID = markerResource.fragment();
         if (resourceID.isEmpty() || !resolvedDocument)
             return nullptr;
         return downcast<SVGMarkerElement>(elementForResourceID(*resolvedDocument, resourceID, SVGNames::markerTag));
@@ -380,7 +380,7 @@ RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScop
     CheckedRef extensions = document->svgExtensions();
     if (auto externalDocument = extensions->externalResourceDocument(uri)) {
         RefPtr resolvedDocument = *externalDocument;
-        auto resourceID = uri.resolved.fragmentIdentifier().toAtomString();
+        auto resourceID = uri.fragment();
         if (resourceID.isEmpty() || !resolvedDocument)
             return nullptr;
         return elementForResourceIDs(*resolvedDocument, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag });

@@ -55,12 +55,12 @@ namespace WebCore::Style {
 AtomString URL::fragment() const
 {
     if (resolved.hasFragmentIdentifier())
-        return resolved.fragmentIdentifier().toAtomString();
+        return AtomString(WTF::URL::decodeFragmentIdentifier(resolved.fragmentIdentifier()));
 
     // A bare "#id" same-document reference is stored unresolved (an invalid URL), so WTF::URL can't
     // report its fragment; read it directly from the string.
     auto string = resolved.string();
-    return string.startsWith('#') ? StringView(string).substring(1).toAtomString() : nullAtom();
+    return string.startsWith('#') ? AtomString(WTF::URL::decodeFragmentIdentifier(StringView(string).substring(1))) : nullAtom();
 }
 
 auto toStyleWithScriptExecutionContext(const CSS::URL& url, const ScriptExecutionContext& context) -> URL

@@ -209,7 +209,7 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
     Ref document = treeScope.documentScope();
 
     if (auto externalDocument = protect(document->svgExtensions())->externalResourceDocument(*paintURL)) {
-        id = paintURL->resolved.fragmentIdentifier().toAtomString();
+        id = paintURL->fragment();
         RefPtr resolvedDocument = *externalDocument;
         if (id.isEmpty() || !resolvedDocument)
             return nullptr;
@@ -300,7 +300,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             if (auto markerURL = markerResource.tryURL()) {
                 if (auto externalDocument = protect(document->svgExtensions())->externalResourceDocument(*markerURL)) {
                     if (RefPtr resolvedDocument = *externalDocument) {
-                        auto markerId = markerURL->resolved.fragmentIdentifier().toAtomString();
+                        auto markerId = markerURL->fragment();
                         if (CheckedPtr marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(*resolvedDocument, markerId))
                             (ensureResources(foundResources).*setMarker)(marker);
                     }

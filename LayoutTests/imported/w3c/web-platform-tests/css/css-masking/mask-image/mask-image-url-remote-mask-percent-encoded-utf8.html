@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>mask-image: url() to a remote SVG document finds a mask element whose id is non-ASCII and written percent-encoded (UTF-8)</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#mask-layer-image">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#processingURL-target">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-percent-encode-set">
+<link rel="match" href="reference/mask-image-url-remote-mask-percent-encoded-utf8-ref.html">
+<meta name="assert" content="url(support/mask-utf8-id.svg#m%C3%A1scara) and url(support/mask-utf8-id.svg#máscara) in mask-image both resolve to the mask with id máscara (U+00E1) in the remote document. A mask that is not found is a transparent black layer, which would hide the front box and show the red centre of the back box.">
+<style>
+#container {
+  position: relative;
+  height: 200px;
+}
+.back, .front {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+}
+.back {
+  border: 60px solid green;
+  background: red;
+}
+.front {
+  border: 40px solid red;
+  background: green;
+}
+.right {
+  left: 220px;
+}
+#escaped {
+  mask-image: url(support/mask-utf8-id.svg#m%C3%A1scara);
+}
+#typed {
+  mask-image: url(support/mask-utf8-id.svg#máscara);
+}
+</style>
+<p>The test passes if there are two green squares and no red below.</p>
+<div id="container">
+  <div class="back"></div><div class="front" id="escaped"></div>
+  <div class="back right"></div><div class="front right" id="typed"></div>
+</div>

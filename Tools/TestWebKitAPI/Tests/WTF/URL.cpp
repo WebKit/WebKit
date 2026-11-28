@@ -267,6 +267,92 @@ TEST_F(WTF_URL, EqualIgnoringFragmentIdentifier)
     }
 }
 
+TEST_F(WTF_URL, DecodeFragmentIdentifier)
+{
+    struct TestCase {
+        String url;
+        String fragment;
+        String decoded;
+    } cases[] = {
+        { "http://example.com/#tgt"_s, "tgt"_s, "tgt"_s },
+        { "http://example.com/#%74gt"_s, "%74gt"_s, "tgt"_s },
+        { "http://example.com/#%74%67%74"_s, "%74%67%74"_s, "tgt"_s },
+        { "http://example.com/#caf%C3%A9"_s, "caf%C3%A9"_s, utf16String(u"caf\u00E9") },
+        { "http://example.com/#caf%c3%a9"_s, "caf%c3%a9"_s, utf16String(u"caf\u00E9") },
+        { utf16String(u"http://example.com/#caf\u00E9"), "caf%C3%A9"_s, utf16String(u"caf\u00E9") },
+        { "http://example.com/#se%F0%9F%98%8Fcond"_s, "se%F0%9F%98%8Fcond"_s, utf16String(u"se\U0001F60Fcond") },
+        { "http://example.com/#a b"_s, "a%20b"_s, "a b"_s },
+        { "http://example.com/#a<b\"c"_s, "a%3Cb%22c"_s, "a<b\"c"_s },
+        { "http://example.com/#%20tgt%20"_s, "%20tgt%20"_s, " tgt "_s },
+        { "http://example.com/#a+b"_s, "a+b"_s, "a+b"_s },
+        // Bytes that are not valid UTF-8 become U+FFFD, one per maximal subpart, as in
+        // https://encoding.spec.whatwg.org/#utf-8-decoder.
+        { "http://example.com/#%E9"_s, "%E9"_s, utf16String<2>({ 0xFFFD, '\0' }) },
+        { "http://example.com/#%FF"_s, "%FF"_s, utf16String<2>({ 0xFFFD, '\0' }) },
+        { "http://example.com/#%E2%99%A1%FF"_s, "%E2%99%A1%FF"_s, utf16String<3>({ 0x2661, 0xFFFD, '\0' }) },
+        { "http://example.com/#%C3x"_s, "%C3x"_s, utf16String<3>({ 0xFFFD, 'x', '\0' }) },
+        { "http://example.com/#%F0%9F%98"_s, "%F0%9F%98"_s, utf16String<2>({ 0xFFFD, '\0' }) },
+        { "http://example.com/#%ED%A0%80"_s, "%ED%A0%80"_s, utf16String<4>({ 0xFFFD, 0xFFFD, 0xFFFD, '\0' }) },
+        { "http://example.com/#%C0%AF"_s, "%C0%AF"_s, utf16String<3>({ 0xFFFD, 0xFFFD, '\0' }) },
+        { "http://example.com/#%EF%BB%BFa"_s, "%EF%BB%BFa"_s, utf16String<3>({ 0xFEFF, 'a', '\0' }) },
+        { "http://example.com/#%00"_s, "%00"_s, String::fromUTF8({ "\0", 1 }) },
+        { "http://example.com/#100%"_s, "100%"_s, "100%"_s },
+        { "http://example.com/#%"_s, "%"_s, "%"_s },
+        { "http://example.com/#%4"_s, "%4"_s, "%4"_s },
+        { "http://example.com/#%zz"_s, "%zz"_s, "%zz"_s },
+        { "http://example.com/#%%41"_s, "%%41"_s, "%A"_s },
+        { "http://example.com/#%2574gt"_s, "%2574gt"_s, "%74gt"_s },
+        { "http://example.com/#%252541"_s, "%252541"_s, "%2541"_s },
+        { "http://example.com/#%25"_s, "%25"_s, "%"_s },
+        { "http://example.com/#tgt:~:text=x"_s, "tgt:~:text=x"_s, "tgt:~:text=x"_s },
+    };
+
+    for (const auto& test : cases) {
+        URL url { test.url };
+        EXPECT_EQ(test.fragment, url.fragmentIdentifier()) << "Fragment of " << test.url.utf8().toStdString();
+        EXPECT_EQ(test.decoded, URL::decodeFragmentIdentifier(url.fragmentIdentifier())) << "Decoded fragment of " << test.url.utf8().toStdString();
+        EXPECT_EQ(test.decoded, URL::decodeFragmentIdentifier(test.fragment)) << "Decoded text " << test.fragment.utf8().toStdString();
+    }
+
+    auto emptyFragment = createURL("http://example.com/#"_s);
+    EXPECT_TRUE(emptyFragment.fragmentIdentifier().isEmpty());
+    EXPECT_FALSE(emptyFragment.fragmentIdentifier().isNull());
+    EXPECT_TRUE(URL::decodeFragmentIdentifier(emptyFragment.fragmentIdentifier()).isEmpty());
+    EXPECT_FALSE(URL::decodeFragmentIdentifier(emptyFragment.fragmentIdentifier()).isNull());
+
+    auto noFragment = createURL("http://example.com/"_s);
+    EXPECT_TRUE(noFragment.fragmentIdentifier().isNull());
+    EXPECT_TRUE(URL::decodeFragmentIdentifier(noFragment.fragmentIdentifier()).isNull());
+
+    // CSS stores a bare url(#id) as an invalid URL, which has no fragment, so callers decode the text after '#'.
+    auto bareFragment = createURL("#%74gt"_s);
+    EXPECT_FALSE(bareFragment.isValid());
+    EXPECT_TRUE(bareFragment.fragmentIdentifier().isNull());
+    EXPECT_TRUE(URL::decodeFragmentIdentifier(bareFragment.fragmentIdentifier()).isNull());
+
+    EXPECT_TRUE(URL::decodeFragmentIdentifier({ }).isNull());
+    EXPECT_TRUE(URL::decodeFragmentIdentifier(""_s).isEmpty());
+    EXPECT_FALSE(URL::decodeFragmentIdentifier(""_s).isNull());
+    EXPECT_EQ(URL::decodeFragmentIdentifier("%74gt"_s), "tgt"_s);
+    EXPECT_EQ(URL::decodeFragmentIdentifier(utf16String(u"caf\u00E9")), utf16String(u"caf\u00E9"));
+    EXPECT_EQ(URL::decodeFragmentIdentifier("caf%C3%A9"_s), utf16String(u"caf\u00E9"));
+    EXPECT_EQ(URL::decodeFragmentIdentifier(utf16String(u"\u00E9%C3%A9")), utf16String(u"\u00E9\u00E9"));
+    EXPECT_EQ(URL::decodeFragmentIdentifier(" tgt"_s), " tgt"_s);
+
+    // An unpaired surrogate can only come from script, through setAttribute(). Without '%' the text
+    // is returned as it is; with '%' it is encoded as UTF-8 first, which turns it into U+FFFD.
+    auto loneSurrogate = utf16String<2>({ 0xD800, '\0' });
+    EXPECT_EQ(URL::decodeFragmentIdentifier(loneSurrogate), loneSurrogate);
+    EXPECT_EQ(URL::decodeFragmentIdentifier(utf16String<5>({ 0xD800, '%', '4', '1', '\0' })), utf16String<3>({ 0xFFFD, 'A', '\0' }));
+
+    // Decoding can produce the fragment directive delimiter ":~:", but only the encoded fragment is
+    // searched for it, so an escaped delimiter is not a fragment directive.
+    EXPECT_EQ(URL::decodeFragmentIdentifier("m%3A~%3Ax"_s), "m:~:x"_s);
+    auto escapedDirective = createURL("http://a/#m%3A~%3Atext=x"_s);
+    EXPECT_TRUE(escapedDirective.consumeFragmentDirective().isNull());
+    EXPECT_EQ(String("m%3A~%3Atext=x"_s), escapedDirective.fragmentIdentifier());
+}
+
 TEST_F(WTF_URL, ProtocolIsInHTTPFamily)
 {
     EXPECT_FALSE(WTF::protocolIsInHTTPFamily({ }));

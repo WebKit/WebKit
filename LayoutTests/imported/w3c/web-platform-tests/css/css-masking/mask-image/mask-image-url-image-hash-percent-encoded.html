@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<title>mask-image: url() whose percent-encoded fragment names a non-mask element still draws the SVG file as an image</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#mask-layer-image">
+<link rel="help" href="https://url.spec.whatwg.org/#fragment-percent-encode-set">
+<link rel="match" href="reference/mask-image-ref.html">
+<meta name="assert" content="url(support/image-with-ref.svg#%72ef) in mask-image names a g element with id ref, not a mask element, so the SVG file is used as an image and its g:target rule shows the group, as for #ref.">
+<style>
+#back {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 60px solid green;
+  background: red;
+}
+#front {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 40px solid red;
+  background: green;
+  mask-image: url(support/image-with-ref.svg#%72ef);
+}
+</style>
+<p>The test passes if there is a green square and no red below.</p>
+<div id="back"></div><div id="front"></div>

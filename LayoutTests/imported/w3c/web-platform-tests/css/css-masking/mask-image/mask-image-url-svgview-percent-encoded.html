@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<title>mask-image: url() with a percent-encoded svgView() fragment draws the SVG file as an image with that view</title>
+<link rel="author" title="Karl Dubost" href="mailto:k_dubost@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-masking-1/#mask-layer-image">
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiers">
+<link rel="match" href="reference/mask-image-ref.html">
+<meta name="assert" content="url(&quot;support/mask-with-view.svg#svgView(viewBox(100%2C100%2C200%2C200))&quot;) in mask-image names no mask element, so the SVG file is used as an image, and the view with its percent-encoded commas is applied. Without the view the square would be half as big and the red centre of #back would show.">
+<style>
+#back {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 60px solid green;
+  background: red;
+}
+#front {
+  position: absolute;
+  box-sizing: border-box;
+  width: 200px;
+  height: 200px;
+  border: 40px solid red;
+  background: green;
+  /* Quoted: an unquoted url() cannot contain "(" (https://drafts.csswg.org/css-syntax-3/#consume-url-token). */
+  mask-image: url("support/mask-with-view.svg#svgView(viewBox(100%2C100%2C200%2C200))");
+}
+</style>
+<p>The test passes if there is a green square and no red below.</p>
+<div id="back"></div><div id="front"></div>
