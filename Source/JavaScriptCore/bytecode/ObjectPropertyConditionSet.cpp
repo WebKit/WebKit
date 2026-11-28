@@ -27,6 +27,7 @@
 #include "ObjectPropertyConditionSet.h"
 
 #include "JSCInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -351,7 +352,7 @@ ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Stru
     }
 
     if (ObjectPropertyConditionSetInternal::verbose)
-        dataLog("Returning conditions: ", listDump(conditions), "\n");
+        dataLog("Returning conditions: ", listDump(borrow(conditions)), "\n");
     return ObjectPropertyConditionSet::create(WTF::move(conditions));
 }
 

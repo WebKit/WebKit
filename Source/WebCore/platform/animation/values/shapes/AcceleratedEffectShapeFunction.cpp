@@ -38,6 +38,7 @@
 #include "SVGPathByteStreamSource.h"
 #include "SVGPathParser.h"
 #include "SVGPathSource.h"
+#include <wtf/Borrow.h>
 #include <wtf/ZippedRange.h>
 
 namespace WebCore {
@@ -939,7 +940,9 @@ auto AcceleratedEffectInterpolation<AcceleratedEffectShapeFunction>::blend(const
 
     auto blendedCommands = [&] {
         Vector<AcceleratedEffectShapeFunction::Command> commands(ReserveCapacityTag { }, from.commands.size());
-        for (auto&& [commandFrom, commandTo] : zippedRange(from.commands, to.commands))
+        Borrow fromCommands = from.commands;
+        Borrow toCommands = to.commands;
+        for (auto&& [commandFrom, commandTo] : zippedRange(fromCommands, toCommands))
             commands.append(WebCore::blendForAcceleratedEffect(commandFrom, commandTo, context));
         return commands;
     };

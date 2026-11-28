@@ -103,7 +103,7 @@ public:
         }
     }
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
     public:
         iterator() = default;
 

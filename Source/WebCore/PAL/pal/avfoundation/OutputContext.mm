@@ -31,6 +31,7 @@
 #include "OutputDevice.h"
 #include <mutex>
 #include <pal/spi/cocoa/AVFoundationSPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -70,7 +71,8 @@ String OutputContext::deviceName()
     if (!supportsMultipleOutputDevices())
         return [m_context deviceName];
 
-    return makeString(interleave(outputDevices(), [](auto& device) {
+    auto devices = outputDevices();
+    return makeString(interleave(borrow(devices), [](auto& device) {
         return device.name();
     }, " + "_s));
 }

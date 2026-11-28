@@ -30,6 +30,7 @@
 
 #include "AcceleratedEffectAnimationUtilities.h"
 #include "Path.h"
+#include <wtf/Borrow.h>
 #include <wtf/Lock.h>
 #include <wtf/TinyLRUCache.h>
 #include <wtf/ZippedRange.h>
@@ -85,7 +86,9 @@ static Vector<FloatPoint> blendVertices(const Vector<FloatPoint>& from, const Ve
     ASSERT(from.size() == to.size());
 
     Vector<FloatPoint> result(ReserveCapacityTag { }, from.size());
-    for (auto&& [fromVertex, toVertex] : zippedRange(from, to))
+    Borrow borrowedFrom = from;
+    Borrow borrowedTo = to;
+    for (auto&& [fromVertex, toVertex] : zippedRange(borrowedFrom, borrowedTo))
         result.append(WebCore::blendForAcceleratedEffect(fromVertex, toVertex, context));
     return result;
 }

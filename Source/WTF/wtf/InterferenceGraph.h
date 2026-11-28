@@ -110,8 +110,8 @@ public:
 
     void dumpMemoryUseInKB() const { dataLog(memoryUse() / 1024); }
 
-    struct Iterable {
-        struct iterator {
+    struct WTF_VIEW_TYPE Iterable {
+        struct WTF_VIEW_TYPE iterator {
             iterator& operator++()
             {
                 m_index = m_iterable.m_bitVector.findBit(m_index + 1, true);
@@ -222,7 +222,7 @@ public:
 
     void dumpMemoryUseInKB() const { dataLog(memoryUse() / 1024); }
 
-    struct Iterable {
+    struct WTF_VIEW_TYPE Iterable {
         using iterator = typename T::iterator;
         iterator begin() const { return m_set.begin(); }
         iterator end() const { return m_set.end(); }

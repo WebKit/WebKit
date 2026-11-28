@@ -32,6 +32,7 @@
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes+CSSValueConversion.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore::Style {
 
@@ -206,7 +207,7 @@ void Serialize<FontVariantAlternates>::operator()(StringBuilder& builder, const 
 
             serializationForCSS(builder, context, style, name);
             builder.append('(');
-            builder.append(interleave(value, [&](auto& builder, const auto& argument) {
+            builder.append(interleave(borrow(value), [&](auto& builder, const auto& argument) {
                 serializationForCSS(builder, context, style, CustomIdent { AtomString { argument } });
             }, ", "_s));
             builder.append(')');

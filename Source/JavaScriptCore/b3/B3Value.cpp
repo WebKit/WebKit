@@ -52,6 +52,7 @@
 #include "B3WasmStructSetValue.h"
 #include <array>
 #include <optional>
+#include <wtf/Borrow.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StackTrace.h>
@@ -272,7 +273,7 @@ void Value::dumpChildren(CommaPrinter& comma, PrintStream& out) const
 void Value::deepDump(const Procedure* proc, PrintStream& out) const
 {
     if (proc && m_type.isTuple())
-        out.print(listDump(proc->tupleForType(m_type)));
+        out.print(listDump(borrow(proc->tupleForType(m_type))));
     else
         out.print(m_type);
     out.print(" "_s, dumpPrefix, m_index, " = "_s, m_kind);

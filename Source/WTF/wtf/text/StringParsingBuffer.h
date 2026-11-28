@@ -30,7 +30,7 @@
 namespace WTF {
 
 template<typename T>
-class StringParsingBuffer final {
+class WTF_VIEW_TYPE StringParsingBuffer final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StringParsingBuffer);
 public:
     using CharacterType = T;

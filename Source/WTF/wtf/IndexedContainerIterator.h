@@ -31,7 +31,7 @@
 namespace WTF {
 
 template<class Container>
-class IndexedContainerIterator {
+class WTF_VIEW_TYPE IndexedContainerIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IndexedContainerIterator);
 public:
     IndexedContainerIterator()

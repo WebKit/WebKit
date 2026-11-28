@@ -81,7 +81,7 @@ public:
     }
 
     template<typename CollectionType>
-    class Iterable {
+    class WTF_VIEW_TYPE Iterable {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
     public:
         Iterable(const CollectionType& collection, const BitVector& set)
@@ -90,7 +90,7 @@ public:
         {
         }
 
-        class iterator {
+        class WTF_VIEW_TYPE iterator {
             WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
         public:
             iterator()

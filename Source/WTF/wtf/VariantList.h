@@ -130,7 +130,7 @@ private:
     void clear();
 };
 
-template<typename V, size_t inlineCapacity> struct VariantListConstIterator {
+template<typename V, size_t inlineCapacity> struct WTF_VIEW_TYPE VariantListConstIterator {
     using List = VariantList<V, inlineCapacity>;
     using Operations = typename List::Operations;
     using Variant = V;

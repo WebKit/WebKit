@@ -32,6 +32,7 @@
 #include "ICStatusUtils.h"
 #include "InlineCacheCompiler.h"
 #include "PropertyInlineCache.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -274,7 +275,7 @@ void SetPrivateBrandStatus::dump(PrintStream& out) const
         out.print("ObservedTakesSlowPath");
         break;
     }
-    out.print(", ", listDump(m_variants), ")");
+    out.print(", ", listDump(borrow(m_variants)), ")");
 }
 
 } // namespace JSC

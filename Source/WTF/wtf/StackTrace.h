@@ -86,7 +86,7 @@ private:
     void* m_stack[1];
 };
 
-class StackTraceSymbolResolver {
+class WTF_VIEW_TYPE StackTraceSymbolResolver {
 public:
     StackTraceSymbolResolver(std::span<void* const> stack)
         : m_stack(stack)
@@ -161,7 +161,7 @@ private:
     std::span<void* const> m_stack;
 };
 
-class StackTracePrinter {
+class WTF_VIEW_TYPE StackTracePrinter {
 public:
     StackTracePrinter(std::span<void* const> stack, const char* prefix = "")
         : m_stack(stack)

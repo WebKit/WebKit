@@ -27,6 +27,7 @@
 #include "SVGStringList.h"
 
 #include "SVGParserUtilities.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -87,7 +88,7 @@ void SVGStringList::parseSpaceSeparatedTokens(StringView data)
 String SVGStringList::valueAsString() const
 {
     auto delimiter = m_delimiter == ',' ? ", "_s : " "_s;
-    return makeString(interleave(m_items, delimiter));
+    return makeString(interleave(borrow(m_items), delimiter));
 }
 
 }

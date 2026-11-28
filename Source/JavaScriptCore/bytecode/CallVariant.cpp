@@ -27,6 +27,7 @@
 #include "CallVariant.h"
 
 #include "JSCInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -121,7 +122,7 @@ CallVariantList variantListWithVariant(const CallVariantList& list, CallVariant 
                 if (result[i] != result[j])
                     continue;
                 
-                dataLog("variantListWithVariant(", listDump(list), ", ", variantToAdd, ") failed: got duplicates in result: ", listDump(result), "\n");
+                dataLog("variantListWithVariant(", listDump(borrow(list)), ", ", variantToAdd, ") failed: got duplicates in result: ", listDump(borrow(result)), "\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }

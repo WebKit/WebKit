@@ -39,6 +39,7 @@
 #include "JSMediaKeySessionType.h"
 #include "JSMediaKeyStatusMap.h"
 #include "JSMediaKeysRequirement.h"
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -164,7 +165,7 @@ String LogArgument<WebCore::CDMKeyID>::toString(const WebCore::CDMKeyID& keyID)
 String LogArgument<WebCore::CDMKeyIDs>::toString(const WebCore::CDMKeyIDs& keys)
 {
     StringBuilder builder;
-    builder.append('[', interleave(keys, LogArgument<WebCore::CDMKeyID>::toString, ", "_s), ']');
+    builder.append('[', interleave(borrow(keys), LogArgument<WebCore::CDMKeyID>::toString, ", "_s), ']');
     return builder.toString();
 }
 

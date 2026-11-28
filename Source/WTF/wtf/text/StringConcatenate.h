@@ -424,7 +424,7 @@ private:
     Indentation<N> m_indentation;
 };
 
-struct ASCIICaseConverter {
+struct WTF_VIEW_TYPE ASCIICaseConverter {
     StringView::CaseConvertType type;
     StringView string;
 };
@@ -457,7 +457,7 @@ private:
     const ASCIICaseConverter& m_converter;
 };
 
-template<typename C, typename E, typename B> class Interleave {
+template<typename C, typename E, typename B> class WTF_VIEW_TYPE Interleave {
 public:
     Interleave(const C& container, E each, const B& between)
         : container { container }

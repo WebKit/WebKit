@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "GenericMediaQuerySerialization.h"
 #include "MediaQueryFeatures.h"
+#include <wtf/Borrow.h>
 
 namespace WebCore::MQ {
 
@@ -217,7 +218,7 @@ const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& na
 
 void serialize(StringBuilder& builder, const MediaQueryList& list)
 {
-    builder.append(interleave(list, serialize, ", "_s));
+    builder.append(interleave(borrow(list), serialize, ", "_s));
 }
 
 void serialize(StringBuilder& builder, const MediaQuery& query)

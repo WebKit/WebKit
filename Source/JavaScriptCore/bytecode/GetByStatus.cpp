@@ -38,6 +38,7 @@
 #include "ModuleNamespaceAccessCase.h"
 #include "PropertyInlineCache.h"
 #include "PropertyNameInlines.h"
+#include <wtf/Borrow.h>
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -862,7 +863,7 @@ void GetByStatus::dump(PrintStream& out) const
         out.print("ObservedSlowPathAndMakesCalls");
         break;
     }
-    out.print(", ", listDump(m_variants), ", seenInJIT = ", m_wasSeenInJIT, ")");
+    out.print(", ", listDump(borrow(m_variants)), ", seenInJIT = ", m_wasSeenInJIT, ")");
 }
 
 } // namespace JSC

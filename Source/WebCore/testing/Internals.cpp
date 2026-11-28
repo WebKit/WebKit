@@ -317,6 +317,7 @@
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/MarkedSpaceInlines.h>
 #include <JavaScriptCore/SourceTaintedness.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
@@ -6810,7 +6811,7 @@ static void serializeOffset(StringBuilder& builder, const SnapOffset<LayoutUnit>
 
 static void serializeOffsets(StringBuilder& builder, const Vector<SnapOffset<LayoutUnit>>& snapOffsets)
 {
-    builder.append("{ "_s, interleave(snapOffsets, serializeOffset, ", "_s), " }"_s);
+    builder.append("{ "_s, interleave(borrow(snapOffsets), serializeOffset, ", "_s), " }"_s);
 }
 
 void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)

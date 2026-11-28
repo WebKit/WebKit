@@ -30,7 +30,7 @@
 namespace WTF {
 
 template<typename T>
-class ReferenceWrapperVectorIterator {
+class WTF_VIEW_TYPE ReferenceWrapperVectorIterator {
     using Iterator = ReferenceWrapperVectorIterator<T>;
 
 public:
@@ -71,7 +71,7 @@ private:
 };
 
 template<typename T>
-class ReferenceWrapperVectorConstIterator {
+class WTF_VIEW_TYPE ReferenceWrapperVectorConstIterator {
     using Iterator = ReferenceWrapperVectorConstIterator<T>;
 
 public:

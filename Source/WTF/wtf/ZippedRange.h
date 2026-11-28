@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-template<typename IteratorA, typename IteratorB> class ZippedRangeIterator {
+template<typename IteratorA, typename IteratorB> class WTF_VIEW_TYPE ZippedRangeIterator {
 public:
     ZippedRangeIterator(IteratorA&& iteratorA, IteratorB&& iteratorB)
         : m_iteratorA(WTF::move(iteratorA))
@@ -65,7 +65,7 @@ private:
 };
 
 template<typename Iterator>
-class ZippedRange {
+class WTF_VIEW_TYPE ZippedRange {
 public:
     template<typename CollectionA, typename CollectionB>
     ZippedRange(CollectionA&& collectionA, CollectionB&& collectionB)

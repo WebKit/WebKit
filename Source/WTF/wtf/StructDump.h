@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WTF {
 
 template<typename T>
-class StructDump {
+class WTF_VIEW_TYPE StructDump {
 public:
     StructDump(const T& data)
         : m_data(data)

@@ -101,7 +101,7 @@ private:
 static_assert(sizeof(StatusWord) == sizeof(uint64_t));
 
 // Table sizes are powers of two and at least wordSize, so the status bytes are a whole number of words.
-class StatusBytes {
+class WTF_VIEW_TYPE StatusBytes {
 public:
     static constexpr unsigned wordSize = sizeof(StatusWord);
 

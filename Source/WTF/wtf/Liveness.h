@@ -180,7 +180,7 @@ public:
     }
 
 private:
-    class Iterator {
+    class WTF_VIEW_TYPE Iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterator);
     public:
         Iterator() = default;
@@ -260,7 +260,7 @@ private:
     };
 
 public:
-    class Iterable {
+    class WTF_VIEW_TYPE Iterable {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
     public:
         Iterable(Liveness& liveness, std::span<const uint64_t> dense, const SparseBitVector<>* sparse, Storage storage)
@@ -304,7 +304,7 @@ public:
             liveness.copyLiveAtTailInto(liveness.m_workset, block);
         }
 
-        class Iterable {
+        class WTF_VIEW_TYPE Iterable {
             WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Iterable);
         public:
             Iterable(Liveness& liveness)

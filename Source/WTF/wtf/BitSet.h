@@ -86,7 +86,7 @@ public:
 
     constexpr size_t findBit(size_t startIndex, bool value) const;
 
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(iterator);
     public:
         constexpr iterator()

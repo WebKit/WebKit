@@ -106,7 +106,7 @@ public:
         return &newNode->m_item;
     }
     
-    class iterator {
+    class WTF_VIEW_TYPE iterator {
         WTF_MAKE_CONFIGURABLE_ALLOCATED(Malloc);
     public:
         iterator()

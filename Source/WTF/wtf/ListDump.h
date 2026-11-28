@@ -33,7 +33,7 @@
 namespace WTF {
 
 template<typename T>
-class ListDump {
+class WTF_VIEW_TYPE ListDump {
 public:
     ListDump(const T& list, ASCIILiteral comma)
         : m_list(list)
@@ -53,7 +53,7 @@ private:
 };
 
 template<typename T>
-class PointerListDump {
+class WTF_VIEW_TYPE PointerListDump {
 public:
     PointerListDump(const T& list, ASCIILiteral comma)
         : m_list(list)
@@ -73,7 +73,7 @@ private:
 };
 
 template<typename T>
-class MapDump {
+class WTF_VIEW_TYPE MapDump {
 public:
     MapDump(const T& map, ASCIILiteral arrow, ASCIILiteral comma)
         : m_map(map)
@@ -146,7 +146,7 @@ UTF8CString sortedMapDump(const T& map, NOESCAPE const Comparator& comparator, A
 }
 
 template<typename T, typename U>
-class ListDumpInContext {
+class WTF_VIEW_TYPE ListDumpInContext {
 public:
     ListDumpInContext(const T& list, U* context, ASCIILiteral comma)
         : m_list(list)
