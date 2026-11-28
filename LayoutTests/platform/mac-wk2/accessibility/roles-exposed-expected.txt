@@ -1304,7 +1304,7 @@ div[role=spinbutton]
 div[role=status]
       AXRole: AXGroup
       AXSubrole: AXApplicationStatus
-      AXRoleDescription: application status
+      AXRoleDescription: status
 
 div[role=subscript]
       AXRole: AXGroup

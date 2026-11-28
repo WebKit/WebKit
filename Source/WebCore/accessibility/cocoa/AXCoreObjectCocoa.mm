@@ -371,9 +371,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr axRole = rolePlatformString().createNSString();
 
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
-        if (isOutput())
-            return AXOutputText();
-
         String ariaLandmarkRoleDescription = this->ariaLandmarkRoleDescription();
         if (!ariaLandmarkRoleDescription.isEmpty())
             return ariaLandmarkRoleDescription;

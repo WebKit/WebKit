@@ -61,7 +61,7 @@ PASS obj.childAtIndex(k).subrole is "AXSubrole: AXLandmarkSearch"
 PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: search"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXApplicationStatus"
-PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: application status"
+PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: status"
 PASS obj.childAtIndex(k).role is 'AXRole: AXGroup'
 PASS obj.childAtIndex(k).subrole is "AXSubrole: AXUserInterfaceTooltip"
 PASS obj.childAtIndex(k).roleDescription is "AXRoleDescription: tooltip"
