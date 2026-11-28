@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/ColorMatrix.h>
-#include <WebCore/ColorTypes.h>
+#include <WebCore/ColorWhitePoint.h>
 
 namespace WebCore {
 

@@ -2427,6 +2427,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorInterpolation.h
     platform/graphics/ColorInterpolationMethod.h
     platform/graphics/ColorMatrix.h
+    platform/graphics/ColorMissingComponents.h
     platform/graphics/ColorModels.h
     platform/graphics/ColorNormalization.h
     platform/graphics/ColorSerialization.h
@@ -2435,6 +2436,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorTransferFunctions.h
     platform/graphics/ColorTypes.h
     platform/graphics/ColorUtilities.h
+    platform/graphics/ColorWhitePoint.h
     platform/graphics/ComplexTextController.h
     platform/graphics/ContentTypeUtilities.h
     platform/graphics/ContentsFormat.h

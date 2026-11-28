@@ -29,6 +29,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorGamutMapping.h>
+#include <WebCore/ColorMissingComponents.h>
 #include <WebCore/ColorSerialization.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/ColorTypes.h>

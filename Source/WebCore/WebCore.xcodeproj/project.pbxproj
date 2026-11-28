@@ -524,6 +524,7 @@
 		0FEA3E84191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E82191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9A3E242F1B4C0D00A1B2C3 /* ColorWhitePoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9A3E232F1B4C0D00A1B2C3 /* ColorWhitePoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEC120C22BF2CD2004E9D35 /* LayerAncestorClippingStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC120922BF2CC7004E9D35 /* LayerAncestorClippingStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF3B9291EE3B6DE00B84144 /* JSDOMQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF3B9251EE3B6DE00B84144 /* JSDOMQuad.h */; };
 		0FF3B92B1EE3B6DE00B84144 /* JSDOMQuadInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF3B9271EE3B6DE00B84144 /* JSDOMQuadInit.h */; };
@@ -3292,6 +3293,7 @@
 		7C9ACAC21F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
 		7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CAC6AE8247F082000E61D59 /* ColorMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9A3E222F1B4C0D00A1B2C3 /* ColorMissingComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9A3E202F1B4C0D00A1B2C3 /* ColorMissingComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CAC6AF0247F411000E61D59 /* ColorComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CAC6AEC247F1C5100E61D59 /* ColorComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */; };
 		7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */; };
@@ -8709,6 +8711,7 @@
 		76F134E025F1C9CE782D57BF /* DisplayListResourceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayListResourceCache.h; sourceTree = "<group>"; };
 		0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorUtilities.cpp; sourceTree = "<group>"; };
 		0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorUtilities.h; sourceTree = "<group>"; };
+		7C9A3E232F1B4C0D00A1B2C3 /* ColorWhitePoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorWhitePoint.h; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -15220,6 +15223,8 @@
 		7C9A3E1B2F1B4C0D00A1B2C3 /* ColorGamutMapping.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorGamutMapping.cpp; sourceTree = "<group>"; };
 		7C9A3E1D2F1B4C0D00A1B2C3 /* ColorChromaticAdaptation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorChromaticAdaptation.h; sourceTree = "<group>"; };
 		7C9A3E1A2F1B4C0D00A1B2C3 /* ColorGamutMapping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorGamutMapping.h; sourceTree = "<group>"; };
+		7C9A3E212F1B4C0D00A1B2C3 /* ColorMissingComponents.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorMissingComponents.cpp; sourceTree = "<group>"; };
+		7C9A3E202F1B4C0D00A1B2C3 /* ColorMissingComponents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorMissingComponents.h; sourceTree = "<group>"; };
 		7C516AD21F3525200034B6BF /* DOMPromiseProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPromiseProxy.h; sourceTree = "<group>"; };
 		7C51FCCE25002BFB00BA0F2F /* MathMLElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MathMLElement.idl; sourceTree = "<group>"; };
 		7C5222951E1DADF8002CB8F7 /* IDLTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDLTypes.h; sourceTree = "<group>"; };
@@ -36965,6 +36970,8 @@
 				BC6EB84526266B61003225A7 /* ColorLuminance.cpp */,
 				BC4A23EB25EC160200AAC630 /* ColorLuminance.h */,
 				7CAC6AE8247F082000E61D59 /* ColorMatrix.h */,
+				7C9A3E212F1B4C0D00A1B2C3 /* ColorMissingComponents.cpp */,
+				7C9A3E202F1B4C0D00A1B2C3 /* ColorMissingComponents.h */,
 				BC10137B25C3624B00DC773C /* ColorModels.h */,
 				BCB2F88D275BEE57007231BF /* ColorNormalization.h */,
 				7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */,
@@ -36977,6 +36984,7 @@
 				7C029C6D2493C8F800268204 /* ColorTypes.h */,
 				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,
 				0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */,
+				7C9A3E232F1B4C0D00A1B2C3 /* ColorWhitePoint.h */,
 				C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */,
 				C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */,
 				1C84BE4126D3939F002D61FC /* ComposedCharacterClusterTextIterator.h */,
@@ -45178,6 +45186,7 @@
 				BC4A23EC25EC160200AAC630 /* ColorLuminance.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
 				7CAC6AE9247F082F00E61D59 /* ColorMatrix.h in Headers */,
+				7C9A3E222F1B4C0D00A1B2C3 /* ColorMissingComponents.h in Headers */,
 				BC10137C25C3624B00DC773C /* ColorModels.h in Headers */,
 				BCB2F88E275BEE58007231BF /* ColorNormalization.h in Headers */,
 				7CD1E69324ABF6240089C419 /* ColorSerialization.h in Headers */,
@@ -45188,6 +45197,7 @@
 				7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */,
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,
 				721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */,
+				7C9A3E242F1B4C0D00A1B2C3 /* ColorWhitePoint.h in Headers */,
 				43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */,
 				26E944D91AC4B2DD007B85B5 /* CombinedURLFilters.h in Headers */,
 				A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */,

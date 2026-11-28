@@ -217,19 +217,19 @@ XYZA<float, WhitePoint::D50> ColorConversion<XYZA<float, WhitePoint::D50>, Lab<f
 
     auto computeXAndZ = [](float t, float linear) {
         float tCubed = t * t * t;
-        if (tCubed > LABe)
+        if (tCubed > LabConstants::epsilon)
             return tCubed;
 
-        return linear * (116.0f / LABk);
+        return linear * (116.0f / LabConstants::kappa);
     };
 
     auto computeY = [](float t) {
-        if (t > (LABk * LABe)) {
+        if (t > (LabConstants::kappa * LabConstants::epsilon)) {
             float value = (t + 16.0) / 116.0;
             return value * value * value;
         }
 
-        return t / LABk;
+        return t / LabConstants::kappa;
     };
 
     float x = D50WhitePoint[0] * computeXAndZ(f0, lightness116 + a500);
@@ -248,7 +248,7 @@ Lab<float> ColorConversion<Lab<float>, XYZA<float, WhitePoint::D50>>::convert(co
     float adjustedZ = z / D50WhitePoint[2];
 
     auto fTransform = [](float value) {
-        return value > LABe ? std::cbrt(value) : (LABk * value + 16.0f) / 116.0f;
+        return value > LabConstants::epsilon ? std::cbrt(value) : (LabConstants::kappa * value + 16.0f) / 116.0f;
     };
 
     float f0 = fTransform(adjustedX);
@@ -287,13 +287,13 @@ XYZA<float, WhitePoint::D65> ColorConversion<XYZA<float, WhitePoint::D65>, OKLab
     auto components = ColorComponents<float, 3> { lightness, a, b };
 
     // 1. Transform from Lab-coordinates into non-linear LMS "approximate cone responses".
-    auto nonLinearLMS = OKLabToNonLinearLMS.transformedColorComponents(components);
+    auto nonLinearLMS = OKLabConstants::okLabToNonLinearLMS.transformedColorComponents(components);
 
     // 2. Apply linearity.
     auto linearLMS = nonLinearLMS.map([] (float v) { return v * v * v; });
 
     // 3. Convert to XYZ.
-    auto [x, y, z] = LinearLMSToXYZD65.transformedColorComponents(linearLMS);
+    auto [x, y, z] = OKLabConstants::linearLMSToXYZD65.transformedColorComponents(linearLMS);
 
     return { x, y, z, alpha };
 }
@@ -307,13 +307,13 @@ OKLab<float> ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>>::conver
     auto [x, y, z, alpha] = color.resolved();
 
     // 1. Convert XYZ into LMS "approximate cone responses".
-    auto linearLMS = XYZD65ToLinearLMS.transformedColorComponents(ColorComponents<float, 3> { x, y, z });
+    auto linearLMS = OKLabConstants::xyzD65ToLinearLMS.transformedColorComponents(ColorComponents<float, 3> { x, y, z });
 
     // 2. Apply non-linearity.
     auto nonLinearLMS = linearLMS.map([] (float v) { return std::cbrt(v); });
 
     // 3. Transform into Lab-coordinates.
-    auto [lightness, a, b] = NonLinearLMSToOKLab.transformedColorComponents(nonLinearLMS);
+    auto [lightness, a, b] = OKLabConstants::nonLinearLMSToOKLab.transformedColorComponents(nonLinearLMS);
 
     return makeFromComponentsClampingExceptAlpha<OKLab<float>>(lightness, a, b, alpha);
 }
@@ -331,49 +331,6 @@ OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<
 }
 
 // MARK: Conversion functions for raw color components with associated color spaces.
-
-// MARK: Conversions for color types known only at runtime.
-
-// The index of the component of `outputCategories` analogous to component `index` of `inputCategories`, or 3 for alpha.
-static std::optional<unsigned> analogousComponentIndexForCategories(const ColorComponentCategories& outputCategories, const ColorComponentCategories& inputCategories, unsigned index)
-{
-    if (index == 3)
-        return 3;
-    if (!inputCategories[index])
-        return std::nullopt;
-    for (unsigned outputIndex = 0; outputIndex < 3; ++outputIndex) {
-        if (inputCategories[index] == outputCategories[outputIndex])
-            return outputIndex;
-    }
-    return std::nullopt;
-}
-
-void carryForwardMissingComponents(const ColorComponentCategories& inputCategories, const ColorComponents<float, 4>& input, const ColorComponentCategories& outputCategories, ColorComponents<float, 4>& output)
-{
-    // https://drafts.csswg.org/css-color-4/#interpolation-missing
-
-    bool hasAnalogousSet = false;
-    bool allAnalogousSetComponentsAreMissing = true;
-    for (unsigned index = 0; index < 4; ++index) {
-        if (analogousComponentIndexForCategories(outputCategories, inputCategories, index))
-            continue;
-        hasAnalogousSet = true;
-        if (!std::isnan(input[index]))
-            allAnalogousSetComponentsAreMissing = false;
-    }
-
-    if (hasAnalogousSet && allAnalogousSetComponentsAreMissing) {
-        for (unsigned index = 0; index < 4; ++index) {
-            if (!analogousComponentIndexForCategories(inputCategories, outputCategories, index))
-                output[index] = std::numeric_limits<float>::quiet_NaN();
-        }
-    }
-
-    for (unsigned index = 0; index < 4; ++index) {
-        if (auto outputIndex = analogousComponentIndexForCategories(outputCategories, inputCategories, index); outputIndex && std::isnan(input[index]))
-            output[*outputIndex] = std::numeric_limits<float>::quiet_NaN();
-    }
-}
 
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace)
 {

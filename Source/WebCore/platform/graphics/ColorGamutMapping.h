@@ -30,6 +30,7 @@
 #include <WebCore/ColorMatrix.h>
 #include <WebCore/ColorTypes.h>
 #include <WebCore/PlatformExportMacros.h>
+#include <concepts>
 
 namespace WebCore {
 
@@ -43,6 +44,11 @@ struct RGBGamut {
 };
 
 // Gamut mapping algorithms map the linear-light components of a color in an RGB color space into its gamut.
+template<typename T>
+concept GamutMappingAlgorithm = requires(const RGBGamut& gamut, const ColorComponents<float, 3>& linearRGB)
+{
+    { T::map(gamut, linearRGB) } -> std::same_as<ColorComponents<float, 3>>;
+};
 
 struct ClipGamutMapping {
     static constexpr ColorComponents<float, 3> map(const RGBGamut&, const ColorComponents<float, 3>& linearRGB)

@@ -2694,6 +2694,7 @@ platform/graphics/ColorGamutMapping.cpp
 platform/graphics/ColorInterpolation.cpp
 platform/graphics/ColorInterpolationMethod.cpp
 platform/graphics/ColorLuminance.cpp
+platform/graphics/ColorMissingComponents.cpp
 platform/graphics/ColorSerialization.cpp
 platform/graphics/ColorSpace.cpp
 platform/graphics/ColorSpaceName.cpp

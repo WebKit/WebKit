@@ -231,7 +231,7 @@ template<typename ColorType> static MetalColorSource metalColorSource()
         return { model, toXYZD65(WhitePoint::D50), linearTransferFunction };
     } else if constexpr (std::same_as<ColorType, OKLab<float>> || std::same_as<ColorType, OKLCHA<float>>) {
         auto model = std::same_as<ColorType, OKLab<float>> ? colorModelOKLab : colorModelOKLCH;
-        return { model, toMetal(LinearLMSToXYZD65), linearTransferFunction };
+        return { model, toMetal(OKLabConstants::linearLMSToXYZD65), linearTransferFunction };
     } else {
         static_assert(std::same_as<ColorType, XYZA<float, WhitePoint::D50>> || std::same_as<ColorType, XYZA<float, WhitePoint::D65>>);
         return { colorModelRGB, toXYZD65(ColorType::whitePoint), linearTransferFunction };
@@ -284,14 +284,14 @@ std::optional<MetalColorConversionUniforms> makeMetalColorConversionUniforms(Col
         return {
             source.toXYZD65,
             destination->fromXYZD65,
-            toMetal(OKLabToNonLinearLMS),
+            toMetal(OKLabConstants::okLabToNonLinearLMS),
             { componentInfo[0].min, componentInfo[1].min, componentInfo[2].min },
             { componentInfo[0].max, componentInfo[1].max, componentInfo[2].max },
             { D50WhitePoint[0], D50WhitePoint[1], D50WhitePoint[2] },
             source.transferFunction,
             destination->transferFunction,
-            LABe,
-            LABk,
+            LabConstants::epsilon,
+            LabConstants::kappa,
             hueIndex,
             source.model,
         };

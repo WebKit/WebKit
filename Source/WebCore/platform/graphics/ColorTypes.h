@@ -29,12 +29,11 @@
 #include <WebCore/ColorMatrix.h>
 #include <WebCore/ColorModels.h>
 #include <WebCore/ColorTransferFunctions.h>
+#include <WebCore/ColorWhitePoint.h>
 #include <optional>
 #include <type_traits>
 
 namespace WebCore {
-
-enum class WhitePoint { D50, D65 };
 
 template<typename, typename> struct BoundedGammaEncoded;
 template<typename, typename> struct BoundedLinearEncoded;
@@ -478,6 +477,12 @@ template<typename T> using ExtendedLinearRec2020 = ExtendedLinearEncoded<T, Rec2
 
 // MARK: - Lab Color Type.
 
+struct LabConstants {
+    // http://www.brucelindbloom.com/index.html?Eqn_Lab_to_XYZ.html
+    static constexpr float epsilon = 216.0 / 24389.0;
+    static constexpr float kappa = 24389.0 / 27.0;
+};
+
 template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     using ComponentType = T;
     using Model = LabModel<T>;
@@ -545,6 +550,33 @@ protected:
 template<typename ColorType> inline constexpr bool IsLCHA = std::is_same_v<LCHA<typename ColorType::ComponentType>, ColorType>;
 
 // MARK: - OKLab Color Type.
+
+struct OKLabConstants {
+    // https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
+    static constexpr ColorMatrix<3, 3> linearLMSToXYZD65 {
+         1.2268798758459243, -0.5578149944602171,  0.2813910456659647,
+        -0.0405757452148008,  1.1122868032803170, -0.0717110580655164,
+        -0.0763729366746601, -0.4214933324022432,  1.5869240198367816,
+    };
+
+    static constexpr ColorMatrix<3, 3> okLabToNonLinearLMS {
+         1.0000000000000000,  0.3963377773761749,  0.2158037573099136,
+         1.0000000000000000, -0.1055613458156586, -0.0638541728258133,
+         1.0000000000000000, -0.0894841775298119, -1.2914855480194092,
+    };
+
+    static constexpr ColorMatrix<3, 3> xyzD65ToLinearLMS {
+        0.8190224379967030,  0.3619062600528904, -0.1288737815209879,
+        0.0329836539323885,  0.9292868615863434,  0.0361446663506424,
+        0.0481771893596242,  0.2642395317527308,  0.6335478284694309,
+    };
+
+    static constexpr ColorMatrix<3, 3> nonLinearLMSToOKLab {
+        0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
+        1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
+        0.0259040424655478,  0.7827717124575296, -0.8086757549230774,
+    };
+};
 
 template<typename T> struct OKLab : ColorWithAlphaHelper<OKLab<T>> {
     using ComponentType = T;

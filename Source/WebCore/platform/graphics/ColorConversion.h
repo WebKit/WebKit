@@ -42,11 +42,7 @@ class ColorSpace;
 
 // Conversion function for typed colors. Conversions to a bounded RGB type bring the color
 // into its gamut with `GamutMapping`, such as ClipGamutMapping or RayTraceGamutMapping.
-template<typename Output, typename GamutMapping = ClipGamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color);
-
-// Conversion function for typed colors that carries forward missing component values
-// from analogous components in the input type.
-template<typename Output, typename GamutMapping = ClipGamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color);
+template<UnpremultipliedColorType Output, GamutMappingAlgorithm GamutMapping = ClipGamutMapping, UnpremultipliedColorType Input> Output convertColor(const Input& color);
 
 // Conversion function for changing the component type of a premultiplied color, which,
 // unlike the other conversions, is safe as it only rescales the components.
@@ -55,8 +51,7 @@ template<typename ComponentType, typename T> ResolvedPremultiplied<ColorComponen
 
 // Conversion functions for raw color components with associated color spaces. Conversions to a bounded
 // RGB type bring the color into its gamut with `GamutMapping`, such as ClipGamutMapping or RayTraceGamutMapping.
-template<typename Output, typename GamutMapping = ClipGamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
-template<typename Output, typename GamutMapping = ClipGamutMapping> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
+template<typename Output, GamutMappingAlgorithm GamutMapping = ClipGamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const ColorSpace& outputColorSpace);
 
@@ -73,189 +68,6 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputC
 //
 
 template<typename Output, typename Input, typename = void> struct ColorConversion;
-
-template<typename Output, typename GamutMapping, typename Input> Output convertColorMappingToGamut(const Input&);
-
-template<typename Output, typename GamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColor(const Input& color)
-{
-    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>)
-        return convertColorMappingToGamut<Output, GamutMapping>(color);
-    else
-        return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
-}
-
-template<typename ComponentType, typename ColorType> ResolvedPremultiplied<ColorTypeWithReplacementComponent<ColorType, ComponentType>> convertComponentType(const ResolvedPremultiplied<ColorType>& color)
-{
-    return Premultiplied { convertColor<ColorTypeWithReplacementComponent<ColorType, ComponentType>>(makeFromComponents<ColorType>(asColorComponents(color.resolved()))).resolved() };
-}
-
-template<typename ComponentType, typename T> ResolvedPremultiplied<ColorComponents<ComponentType, 4>> convertComponentType(const ResolvedPremultiplied<ColorComponents<T, 4>>& color)
-{
-    if constexpr (std::is_same_v<ComponentType, T>)
-        return color;
-    else if constexpr (std::is_same_v<ComponentType, uint8_t> && std::is_same_v<T, float>)
-        return Premultiplied { resolvedColor(color.resolved().map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); })) };
-    else {
-        static_assert(std::is_same_v<ComponentType, float> && std::is_same_v<T, uint8_t>);
-        return Premultiplied { resolvedColor(color.resolved().map([](uint8_t value) -> float { return value / 255.0f; })) };
-    }
-}
-
-// MARK: Specialized converters
-
-// Looks for a an analogous component in `Output` of `Input[IndexInInput]`.
-// For example, take the following:
-//
-//   auto result = analogousComponentIndex<LCHA<float>, HSLA<float>, 0>;
-//
-// This returns "2", because the input component specified (the hue in HSLA)
-// is analogous to component "2" in the output (the hue in LCHA).
-//
-// If there is no analogous component, `std::nullopt` is returned.
-template<typename Output, typename Input, unsigned IndexInInput>
-consteval std::optional<unsigned> analogousComponentIndex()
-{
-    if constexpr (IndexInInput == 3)
-        return 3; // Special case alpha, it always should carry forward.
-    else if constexpr (constexpr auto inputCategory = Input::Model::componentInfo[IndexInInput].category) {
-        if constexpr (*inputCategory == Output::Model::componentInfo[0].category)
-            return 0;
-        else if constexpr (*inputCategory == Output::Model::componentInfo[1].category)
-            return 1;
-        else if constexpr (*inputCategory == Output::Model::componentInfo[2].category)
-            return 2;
-        else
-            return std::nullopt;
-    } else
-        return std::nullopt;
-}
-
-// Determines if an analogous set exists between Output and Input. An analogous set
-// is comprised of any components that don't have analogous components. So, for there
-// to be an analogous set, at least one component must not have an analogous component.
-template<typename Output, typename Input>
-consteval bool hasAnalogousSet()
-{
-    return !analogousComponentIndex<Output, Input, 0>()
-        || !analogousComponentIndex<Output, Input, 1>()
-        || !analogousComponentIndex<Output, Input, 2>()
-        || !analogousComponentIndex<Output, Input, 3>();
-}
-
-// Utility to check whether if all analogous set components are missing. When this is
-// true, the analogous set components will all be forwarded as missing.
-template<typename Output, typename Input>
-    requires (hasAnalogousSet<Output, Input>())
-constexpr bool areAllAnalogousSetComponentsMissing(ColorComponents<float, 4>& input)
-{
-    if constexpr (!analogousComponentIndex<Output, Input, 0>()) {
-        if (!std::isnan(input[0]))
-            return false;
-    }
-    if constexpr (!analogousComponentIndex<Output, Input, 1>()) {
-        if (!std::isnan(input[1]))
-            return false;
-    }
-    if constexpr (!analogousComponentIndex<Output, Input, 2>()) {
-        if (!std::isnan(input[2]))
-            return false;
-    }
-    if constexpr (!analogousComponentIndex<Output, Input, 3>()) {
-        if (!std::isnan(input[3]))
-            return false;
-    }
-    return true;
-}
-
-
-// Utility to update appropriate component in `output` if an analogous component
-// in `input` is missing (which is encoded as NaN in color types).
-template<typename Output, typename Input, unsigned IndexInInput>
-constexpr void tryToCarryForwardMissingForAnalogousComponent(const ColorComponents<float, 4>& input, ColorComponents<float, 4>& output)
-{
-    if constexpr (constexpr auto analogousComponentIndexInOutput = analogousComponentIndex<Output, Input, IndexInInput>()) {
-        if (std::isnan(input[IndexInInput]))
-            output[*analogousComponentIndexInOutput] = std::numeric_limits<float>::quiet_NaN();
-    }
-}
-
-// Utility to update appropriate component in `output` if all analogous set components
-// in `input` are missing  (which is encoded as NaN in color types) and this component
-// in `output` is part of the analogous set.
-template<typename Output, typename Input, unsigned IndexInOutput>
-constexpr void tryToCarryForwardMissingForAnalogousSetComponent(ColorComponents<float, 4>& output)
-{
-    if constexpr (!analogousComponentIndex<Input, Output, IndexInOutput>())
-        output[IndexInOutput] = std::numeric_limits<float>::quiet_NaN();
-}
-
-// Performs color space conversion followed by carrying forward missing components
-// from `Input` for analogous components in `Output` as described by CSS Color 4
-// § 12. Color Interpolation, https://drafts.csswg.org/css-color-4/#interpolation.
-template<typename Output, typename GamutMapping, typename Input> requires (!IsPremultiplied<Output> && !IsPremultiplied<Input>) Output convertColorCarryingForwardMissing(const Input& color)
-{
-    if constexpr (std::is_same_v<Input, Output>)
-        return convertColor<Output, GamutMapping>(color);
-    else if constexpr (std::is_same_v<typename Input::ComponentType, uint8_t> || std::is_same_v<typename Output::ComponentType, uint8_t>)
-        return convertColor<Output, GamutMapping>(color);
-    else {
-        auto input = asColorComponents(color.unresolved());
-        auto output = asColorComponents(convertColor<Output, GamutMapping>(color).unresolved());
-
-        if constexpr (hasAnalogousSet<Output, Input>()) {
-            if (areAllAnalogousSetComponentsMissing<Output, Input>(input)) {
-                tryToCarryForwardMissingForAnalogousSetComponent<Output, Input, 0>(output);
-                tryToCarryForwardMissingForAnalogousSetComponent<Output, Input, 1>(output);
-                tryToCarryForwardMissingForAnalogousSetComponent<Output, Input, 2>(output);
-                tryToCarryForwardMissingForAnalogousSetComponent<Output, Input, 3>(output);
-            }
-        }
-
-        tryToCarryForwardMissingForAnalogousComponent<Output, Input, 0>(input, output);
-        tryToCarryForwardMissingForAnalogousComponent<Output, Input, 1>(input, output);
-        tryToCarryForwardMissingForAnalogousComponent<Output, Input, 2>(input, output);
-        tryToCarryForwardMissingForAnalogousComponent<Output, Input, 3>(input, output);
-
-        return makeFromComponents<Output>(output);
-    }
-}
-
-// MARK: White Point.
-
-constexpr std::array<float, 3> D50WhitePoint { 0.3457 / 0.3585, 1.0, (1.0 - 0.3457 - 0.3585) / 0.3585 };
-constexpr std::array<float, 3> D65WhitePoint { 0.3127 / 0.3290, 1.0, (1.0 - 0.3127 - 0.3290) / 0.3290 };
-
-// MARK: Lab.
-
-constexpr float LABe = 216.0 / 24389.0;
-constexpr float LABk = 24389.0 / 27.0;
-
-// MARK: OKLab.
-
-// https://bottosson.github.io/posts/oklab/ with XYZ <-> LMS matrices recalculated for consistent reference white in https://github.com/w3c/csswg-drafts/issues/6642#issuecomment-943521484
-constexpr ColorMatrix<3, 3> LinearLMSToXYZD65 {
-     1.2268798758459243, -0.5578149944602171,  0.2813910456659647,
-    -0.0405757452148008,  1.1122868032803170, -0.0717110580655164,
-    -0.0763729366746601, -0.4214933324022432,  1.5869240198367816,
-};
-
-constexpr ColorMatrix<3, 3> OKLabToNonLinearLMS {
-     1.0000000000000000,  0.3963377773761749,  0.2158037573099136,
-     1.0000000000000000, -0.1055613458156586, -0.0638541728258133,
-     1.0000000000000000, -0.0894841775298119, -1.2914855480194092,
-};
-
-constexpr ColorMatrix<3, 3> XYZD65ToLinearLMS {
-    0.8190224379967030,  0.3619062600528904, -0.1288737815209879,
-    0.0329836539323885,  0.9292868615863434,  0.0361446663506424,
-    0.0481771893596242,  0.2642395317527308,  0.6335478284694309,
-};
-
-constexpr ColorMatrix<3, 3> NonLinearLMSToOKLab {
-    0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
-    1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
-    0.0259040424655478,  0.7827717124575296, -0.8086757549230774,
-};
 
 // MARK: HSLA
 template<> struct ColorConversion<ExtendedSRGBA<float>, HSLA<float>> {
@@ -313,22 +125,6 @@ template<typename ColorType> struct ColorConversion<ColorType, ColorType> {
         return color;
     }
 };
-
-// MARK: DeltaE color difference algorithms.
-
-template<typename ColorType1, typename ColorType2> constexpr float computeDeltaEOK(ColorType1 color1, ColorType2 color2)
-{
-    // https://drafts.csswg.org/css-color/#color-difference-OK
-
-    auto [L1, a1, b1, alpha1] = convertColor<OKLab<float>>(color1).resolved();
-    auto [L2, a2, b2, alpha2] = convertColor<OKLab<float>>(color2).resolved();
-
-    auto deltaL = (L1 / 100.0f) - (L2 / 100.0f);
-    auto deltaA = a1 - a2;
-    auto deltaB = b1 - b2;
-
-    return std::hypot(deltaL, deltaA, deltaB);
-}
 
 // Main conversion.
 
@@ -540,16 +336,7 @@ private:
     }
 };
 
-// MARK: Conversions for color types known only at runtime.
-
-// Conversions from a color whose type is only known at runtime, as a ColorSpaceName. Converting
-// directly would instantiate a conversion for every pair of input and output types, so instead,
-// conversions are split at XYZ, into one conversion to XYZ per input type and one from XYZ per
-// output type. Each color type converts to the XYZ of its own white point, and adapts between white
-// points only when the input and output differ, so the steps are the same as converting directly.
-//
-// Pairs whose direct conversion does not go through XYZ, such as from HSL to sRGB or from LCH to Lab,
-// still convert directly, as splitting them at XYZ would do more work and lose precision.
+// MARK: Conversion paths.
 
 // The last color type before XYZ in the conversions of a color type, or XYZ itself. Two color types
 // with the same one convert to each other without going through XYZ.
@@ -596,6 +383,83 @@ template<typename ColorType> using XYZForColorType = typename XYZForColorTypeHel
 // through XYZ. Those that do not, such as sRGB and Display P3, have their conversions split at XYZ instead.
 template<typename ColorType1, typename ColorType2> concept ConvertsWithoutXYZ = std::same_as<LastColorTypeBeforeXYZ<ColorType1>, LastColorTypeBeforeXYZ<ColorType2>>;
 
+// MARK: Gamut mapping.
+
+// Whether converting to `Output` applies `GamutMapping`, as clipping is already part of converting to a bounded RGB type.
+template<typename Output, typename GamutMapping> concept MapsToGamut = IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>;
+
+// Not inlined, so that there is one copy per output type.
+template<typename Output, GamutMappingAlgorithm GamutMapping> requires IsRGBBoundedType<Output> NEVER_INLINE Output mapToGamut(const LastColorTypeBeforeXYZ<Output>& color)
+{
+    using LinearExtended = LastColorTypeBeforeXYZ<Output>;
+
+    ColorComponents<float, 4> components = asColorComponents(color.resolved());
+    if (!inGamut<typename LinearExtended::BoundedCounterpart>(components)) {
+        static constexpr auto gamut = RGBGamut::of<LinearExtended>();
+        auto [r, g, b] = GamutMapping::map(gamut, { components[0], components[1], components[2] });
+        components = { r, g, b, components[3] };
+    }
+    return convertColor<Output>(makeFromComponents<LinearExtended>(components));
+}
+
+// MARK: Conversion functions for typed colors.
+
+template<UnpremultipliedColorType Output, GamutMappingAlgorithm GamutMapping, UnpremultipliedColorType Input> Output convertColor(const Input& color)
+{
+    if constexpr (MapsToGamut<Output, GamutMapping>) {
+        if constexpr (std::same_as<typename Output::ComponentType, uint8_t>)
+            return convertColor<Output>(convertColor<ColorTypeWithReplacementComponent<Output, float>, GamutMapping>(color));
+        else
+            return mapToGamut<Output, GamutMapping>(convertColor<LastColorTypeBeforeXYZ<Output>>(color));
+    } else {
+        return ColorConversion<CanonicalColorType<Output>, CanonicalColorType<Input>>::convert(color);
+    }
+}
+
+template<typename ComponentType, typename ColorType> ResolvedPremultiplied<ColorTypeWithReplacementComponent<ColorType, ComponentType>> convertComponentType(const ResolvedPremultiplied<ColorType>& color)
+{
+    return Premultiplied { convertColor<ColorTypeWithReplacementComponent<ColorType, ComponentType>>(makeFromComponents<ColorType>(asColorComponents(color.resolved()))).resolved() };
+}
+
+template<typename ComponentType, typename T> ResolvedPremultiplied<ColorComponents<ComponentType, 4>> convertComponentType(const ResolvedPremultiplied<ColorComponents<T, 4>>& color)
+{
+    if constexpr (std::is_same_v<ComponentType, T>)
+        return color;
+    else if constexpr (std::is_same_v<ComponentType, uint8_t> && std::is_same_v<T, float>)
+        return Premultiplied { resolvedColor(color.resolved().map([](float value) -> uint8_t { return std::clamp(std::lround(value * 255.0f), 0l, 255l); })) };
+    else {
+        static_assert(std::is_same_v<ComponentType, float> && std::is_same_v<T, uint8_t>);
+        return Premultiplied { resolvedColor(color.resolved().map([](uint8_t value) -> float { return value / 255.0f; })) };
+    }
+}
+
+// MARK: DeltaE color difference algorithms.
+
+template<typename ColorType1, typename ColorType2> constexpr float computeDeltaEOK(ColorType1 color1, ColorType2 color2)
+{
+    // https://drafts.csswg.org/css-color/#color-difference-OK
+
+    auto [L1, a1, b1, alpha1] = convertColor<OKLab<float>>(color1).resolved();
+    auto [L2, a2, b2, alpha2] = convertColor<OKLab<float>>(color2).resolved();
+
+    auto deltaL = (L1 / 100.0f) - (L2 / 100.0f);
+    auto deltaA = a1 - a2;
+    auto deltaB = b1 - b2;
+
+    return std::hypot(deltaL, deltaA, deltaB);
+}
+
+// MARK: Conversions for color types known only at runtime.
+
+// Conversions from a color whose type is only known at runtime, as a ColorSpaceName. Converting
+// directly would instantiate a conversion for every pair of input and output types, so instead,
+// conversions are split at XYZ, into one conversion to XYZ per input type and one from XYZ per
+// output type. Each color type converts to the XYZ of its own white point, and adapts between white
+// points only when the input and output differ, so the steps are the same as converting directly.
+//
+// Pairs whose direct conversion does not go through XYZ, such as from HSL to sRGB or from LCH to Lab,
+// still convert directly, as splitting them at XYZ would do more work and lose precision.
+
 // Not inlined, so that there is one copy per input type.
 template<typename ColorType> NEVER_INLINE XYZForColorType<ColorType> convertColorComponentsToXYZ(const ColorComponents<float, 4>& components)
 {
@@ -621,33 +485,9 @@ template<typename Input, typename Output> Output convertColorComponentsSplitAtXY
         return convertColorFromXYZ<Output>(convertColorComponentsToXYZ<Input>(input));
 }
 
-// Not inlined, so that there is one copy per output type.
-template<typename Output, typename GamutMapping> NEVER_INLINE Output mapToGamut(const LastColorTypeBeforeXYZ<Output>& color)
+template<typename Output, GamutMappingAlgorithm GamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
 {
-    static_assert(IsRGBBoundedType<Output>);
-
-    using LinearExtended = LastColorTypeBeforeXYZ<Output>;
-
-    ColorComponents<float, 4> components = asColorComponents(color.resolved());
-    if (!inGamut<typename LinearExtended::BoundedCounterpart>(components)) {
-        static constexpr auto gamut = RGBGamut::of<LinearExtended>();
-        auto [r, g, b] = GamutMapping::map(gamut, { components[0], components[1], components[2] });
-        components = { r, g, b, components[3] };
-    }
-    return convertColor<Output>(makeFromComponents<LinearExtended>(components));
-}
-
-template<typename Output, typename GamutMapping, typename Input> Output convertColorMappingToGamut(const Input& color)
-{
-    if constexpr (std::same_as<typename Output::ComponentType, uint8_t>)
-        return convertColor<Output>(convertColor<ColorTypeWithReplacementComponent<Output, float>, GamutMapping>(color));
-    else
-        return mapToGamut<Output, GamutMapping>(convertColor<LastColorTypeBeforeXYZ<Output>>(color));
-}
-
-template<typename Output, typename GamutMapping> Output convertColorComponents(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
-{
-    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>) {
+    if constexpr (MapsToGamut<Output, GamutMapping>) {
         if constexpr (std::same_as<typename Output::ComponentType, uint8_t>)
             return convertColor<Output>(convertColorComponents<ColorTypeWithReplacementComponent<Output, float>, GamutMapping>(inputColorSpace, input));
         else
@@ -658,57 +498,6 @@ template<typename Output, typename GamutMapping> Output convertColorComponents(C
                 return convertColor<Output>(makeFromComponents<Input>(input));
             else
                 return convertColorComponentsSplitAtXYZ<Input, Output>(input);
-        });
-    }
-}
-
-// MARK: Carrying forward missing components.
-
-// The category of each component, used to find analogous components at runtime, as
-// analogousComponentIndex() does for color types known at compile time.
-using ColorComponentCategories = std::array<std::optional<ColorComponentCategory>, 3>;
-
-template<typename ColorType> consteval ColorComponentCategories colorComponentCategories()
-{
-    return { ColorType::Model::componentInfo[0].category, ColorType::Model::componentInfo[1].category, ColorType::Model::componentInfo[2].category };
-}
-
-// Does what convertColorCarryingForwardMissing() does after converting, for color types known only at runtime.
-WEBCORE_EXPORT void carryForwardMissingComponents(const ColorComponentCategories& inputCategories, const ColorComponents<float, 4>& input, const ColorComponentCategories& outputCategories, ColorComponents<float, 4>& output);
-
-// Not inlined, so that the dispatch in convertColorComponentsCarryingForwardMissing() calls one copy per output type, rather than inlining one for every input type.
-template<typename Output> NEVER_INLINE Output withMissingComponentsCarriedForward(const ColorComponentCategories& inputCategories, const ColorComponents<float, 4>& input, const Output& output)
-{
-    auto outputComponents = asColorComponents(output.unresolved());
-    carryForwardMissingComponents(inputCategories, input, colorComponentCategories<Output>(), outputComponents);
-    return makeFromComponents<Output>(outputComponents);
-}
-
-template<typename Output, typename GamutMapping> Output convertColorComponentsCarryingForwardMissing(ColorSpaceName inputColorSpace, const ColorComponents<float, 4>& input)
-{
-    if constexpr (IsRGBBoundedType<Output> && !std::same_as<GamutMapping, ClipGamutMapping>) {
-        auto output = convertColorComponents<Output, GamutMapping>(inputColorSpace, input);
-        if constexpr (!std::same_as<typename Output::ComponentType, uint8_t>) {
-            if (unresolvedColor(input).anyComponentIsNone()) {
-                auto inputCategories = callWithColorType<float>(inputColorSpace, []<typename Input> {
-                    return colorComponentCategories<Input>();
-                });
-                return withMissingComponentsCarriedForward<Output>(inputCategories, input, output);
-            }
-        }
-        return output;
-    } else {
-        return callWithColorType<float>(inputColorSpace, [&]<typename Input> -> Output {
-            if constexpr (ConvertsWithoutXYZ<Input, Output>)
-                return convertColorCarryingForwardMissing<Output>(makeFromComponents<Input>(input));
-            else {
-                auto output = convertColorComponentsSplitAtXYZ<Input, Output>(input);
-                if constexpr (!std::same_as<typename Output::ComponentType, uint8_t>) {
-                    if (unresolvedColor(input).anyComponentIsNone())
-                        return withMissingComponentsCarriedForward<Output>(colorComponentCategories<Input>(), input, output);
-                }
-                return output;
-            }
         });
     }
 }

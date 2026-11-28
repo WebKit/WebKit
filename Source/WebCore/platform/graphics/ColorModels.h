@@ -534,6 +534,7 @@ template<size_t I, typename ColorType> constexpr typename ColorType::ComponentTy
 
 template<typename> inline constexpr bool IsPremultiplied = false;
 template<typename ColorType> inline constexpr bool IsPremultiplied<Premultiplied<ColorType>> = true;
+template<typename ColorType> concept UnpremultipliedColorType = !IsPremultiplied<ColorType>;
 
 }
 
