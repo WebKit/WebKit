@@ -16,7 +16,7 @@ function verifyStack(stack, e) {
     let trace = e.stack.toString().split('\n');
     let expected = ["*"];
     for (let i of stack)
-        expected.push(`${i}@wasm-function[${i}]`);
+        expected.push(`wasm-function[${i}]`);
     expected.push("*");
 
     if (trace.length != expected.length)

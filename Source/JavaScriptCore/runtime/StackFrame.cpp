@@ -31,6 +31,8 @@
 #include "FunctionExecutable.h"
 #include "JSCellInlines.h"
 #include "JSFunctionInlines.h"
+#include "Options.h"
+#include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -74,12 +76,12 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, CodeBlock* codeBlock, BytecodeInde
 }
 
 StackFrame::StackFrame(Wasm::IndexOrName indexOrName)
-    : m_frameData(WasmFrameData { WTF::move(indexOrName), 0 })
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), 0, std::nullopt })
 {
 }
 
-StackFrame::StackFrame(Wasm::IndexOrName indexOrName, size_t functionIndex)
-    : m_frameData(WasmFrameData { WTF::move(indexOrName), functionIndex })
+StackFrame::StackFrame(Wasm::IndexOrName indexOrName, size_t functionIndex, std::optional<uint32_t> bytecodeOffset)
+    : m_frameData(WasmFrameData { WTF::move(indexOrName), functionIndex, bytecodeOffset })
 {
 }
 
@@ -155,6 +157,24 @@ static String processSourceURL(VM& vm, const JSC::StackFrame& frame, const Strin
     return emptyString();
 }
 
+static String wasmStackLocation(const WasmFrameData& wasmFrame)
+{
+    std::span<const char8_t> moduleName;
+    if (wasmFrame.functionIndexOrName.nameSection())
+        moduleName = wasmFrame.functionIndexOrName.moduleName();
+
+    if (Options::enableWasmDebugger() && wasmFrame.bytecodeOffset) {
+        auto offset = hex(*wasmFrame.bytecodeOffset, Lowercase);
+        if (!moduleName.empty())
+            return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, "]:0x"_s, offset);
+        return makeString("wasm-function["_s, wasmFrame.functionIndex, "]:0x"_s, offset);
+    }
+
+    if (!moduleName.empty())
+        return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+    return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
+}
+
 String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
 {
     return WTF::switchOn(m_frameData,
@@ -171,10 +191,7 @@ String StackFrame::sourceURL(VM& vm, AllowURLOverride allowOverride) const
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURL(), allowOverride);
         },
         [](const WasmFrameData& wasmFrame) -> String {
-            auto moduleName = wasmFrame.functionIndexOrName.moduleName();
-            if (moduleName.empty())
-                return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
-            return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+            return wasmStackLocation(wasmFrame);
         }
     );
 }
@@ -195,10 +212,7 @@ String StackFrame::sourceURLStripped(VM& vm) const
             return processSourceURL(vm, *this, jsFrame.codeBlock->ownerExecutable()->sourceURLStripped());
         },
         [](const WasmFrameData& wasmFrame) -> String {
-            auto moduleName = wasmFrame.functionIndexOrName.moduleName();
-            if (moduleName.empty())
-                return makeString("wasm-function["_s, wasmFrame.functionIndex, ']');
-            return makeString(moduleName, ":wasm-function["_s, wasmFrame.functionIndex, ']');
+            return wasmStackLocation(wasmFrame);
         }
     );
 }
@@ -237,9 +251,9 @@ String StackFrame::functionName(VM& vm) const
         },
         [](const WasmFrameData& wasmFrame) -> String {
             if (wasmFrame.functionIndexOrName.isEmpty() || !wasmFrame.functionIndexOrName.nameSection())
-                return "wasm-stub"_s;
+                return emptyString();
             if (wasmFrame.functionIndexOrName.isIndex())
-                return WTF::toString(wasmFrame.functionIndexOrName.index());
+                return emptyString();
             return WTF::toString(wasmFrame.functionIndexOrName.name()->span());
         }
     );
@@ -288,6 +302,14 @@ void StackFrame::appendTo(VM& vm, StringBuilder& builder) const
     // sourceURL points into fullSourceURL, so keep fullSourceURL around.
     String fullSourceURL = this->sourceURLStripped(vm);
     auto sourceURL = truncateLongDataURL(fullSourceURL);
+
+    if (std::holds_alternative<WasmFrameData>(m_frameData)) {
+        if (functionName.isEmpty())
+            builder.append(sourceURL);
+        else
+            builder.append(functionName, '@', sourceURL);
+        return;
+    }
 
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo()) {
         builder.append(functionName, '@', sourceURL);
