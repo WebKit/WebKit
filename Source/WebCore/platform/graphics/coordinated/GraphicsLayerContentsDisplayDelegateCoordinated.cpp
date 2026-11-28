@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayer.h"
 #include "CoordinatedPlatformLayerBuffer.h"
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ GraphicsLayerContentsDisplayDelegateCoordinated::~GraphicsLayerContentsDisplayDe
 
 void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& displayBuffer)
 {
+    Locker locker { m_displayBufferLock };
     m_displayBuffer = WTF::move(displayBuffer);
 }
 
@@ -48,8 +50,13 @@ void GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatfor
     assertIsHeld(layer.lock());
 #endif
 
-    if (m_displayBuffer)
-        layer.setContentsBuffer(WTF::move(m_displayBuffer), WTF::move(dirtyRegion));
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> displayBuffer;
+    {
+        Locker locker { m_displayBufferLock };
+        displayBuffer = WTF::move(m_displayBuffer);
+    }
+    if (displayBuffer)
+        layer.setContentsBuffer(WTF::move(displayBuffer), WTF::move(dirtyRegion));
 }
 
 } // namespace WebCore

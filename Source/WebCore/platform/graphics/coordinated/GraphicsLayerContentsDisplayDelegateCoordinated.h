@@ -27,6 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "GraphicsLayerContentsDisplayDelegate.h"
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -46,7 +47,9 @@ private:
 protected:
     GraphicsLayerContentsDisplayDelegateCoordinated();
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_displayBuffer;
+private:
+    Lock m_displayBufferLock;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_displayBuffer WTF_GUARDED_BY_LOCK(m_displayBufferLock);
 };
 
 } // namespace WebCore
