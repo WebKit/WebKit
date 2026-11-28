@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Size of absolutely positioned MathML elements relative to their containing block, all MathML elements</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#layout-algorithms">
+<link rel="help" href="https://w3c.github.io/mathml-core/#css-styling">
+<link rel="help" href="https://drafts.csswg.org/css-position/#abspos-layout">
+<meta name="assert" content="Verify that an absolutely positioned MathML element of any type sized with percentages or insets fills its containing block, and that any MathML element can be the containing block of such an element.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/mathml/support/feature-detection.js"></script>
+<script src="/mathml/support/mathml-fragments.js"></script>
+<style>
+  maction > *, semantics > * {
+    display: math;
+  }
+  math {
+    font: 20px/1 sans-serif;
+  }
+</style>
+<script>
+  setup({ explicit_done: true });
+  window.addEventListener("load", runTests);
+
+  const epsilon = 1;
+  const sizingStyles = {
+    "percentage size": "left: 0; top: 0; width: 100%; height: 100%; box-sizing: border-box;",
+    "inset: 0": "inset: 0;",
+  };
+
+  function paddingBox(element) {
+    const box = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const borderLeft = parseFloat(style.borderLeftWidth);
+    const borderRight = parseFloat(style.borderRightWidth);
+    const borderTop = parseFloat(style.borderTopWidth);
+    const borderBottom = parseFloat(style.borderBottomWidth);
+    return {
+      left: box.left + borderLeft,
+      top: box.top + borderTop,
+      width: box.width - borderLeft - borderRight,
+      height: box.height - borderTop - borderBottom,
+    };
+  }
+
+  function assertBoxMatches(box, referenceBox) {
+    assert_approx_equals(box.left, referenceBox.left, epsilon, "left");
+    assert_approx_equals(box.top, referenceBox.top, epsilon, "top");
+    assert_approx_equals(box.width, referenceBox.width, epsilon, "width");
+    assert_approx_equals(box.height, referenceBox.height, epsilon, "height");
+  }
+
+  function testAbsolutelyPositionedElements(dir) {
+    for (const tag in MathMLFragments) {
+      if (!FragmentHelper.isValidChildOfMrow(tag))
+        continue;
+
+      for (const sizing in sizingStyles) {
+        if (tag === "mtable" && sizing === "inset: 0")
+          continue;
+        for (const withContent of [false, true]) {
+          if (withContent && FragmentHelper.isEmpty(tag))
+            continue;
+          document.body.insertAdjacentHTML("beforeend", `<div style="position: absolute; left: 0; top: 0;"><math dir="${dir}"><mrow style="position: relative;"><mspace width="100px" height="40px" depth="20px"></mspace>${MathMLFragments[tag]}</mrow></math></div>`);
+          const div = document.body.lastElementChild;
+          const containingBlock = div.firstElementChild.firstElementChild;
+          const element = FragmentHelper.element(containingBlock);
+          if (withContent)
+            FragmentHelper.forceNonEmptyElement(element);
+          element.setAttribute("style", `position: absolute; ${sizingStyles[sizing]}`);
+
+          test(() => {
+            assert_true(MathMLFeatureDetection[`has_${tag}`](), `${tag} is supported`);
+            assertBoxMatches(element.getBoundingClientRect(), paddingBox(containingBlock));
+          }, `absolutely positioned ${tag}${withContent ? " with content" : ""}, ${sizing}, dir=${dir}`);
+
+          div.style.display = "none";
+        }
+      }
+    }
+  }
+
+  function testContainingBlocks(dir) {
+    for (const tag in MathMLFragments) {
+      if (!FragmentHelper.isValidChildOfMrow(tag) || FragmentHelper.isEmpty(tag) || tag === "mtable")
+        continue;
+
+      for (const sizing in sizingStyles) {
+        document.body.insertAdjacentHTML("beforeend", `<div style="position: absolute; left: 0; top: 0;"><math dir="${dir}">${MathMLFragments[tag]}</math></div>`);
+        const div = document.body.lastElementChild;
+        const containingBlock = FragmentHelper.element(div.firstElementChild);
+        FragmentHelper.forceNonEmptyDescendants(containingBlock);
+        containingBlock.style.position = "relative";
+        const absolute = FragmentHelper.appendChild(containingBlock, true);
+        absolute.textContent = "";
+        absolute.setAttribute("style", `position: absolute; ${sizingStyles[sizing]}`);
+
+        test(() => {
+          assert_true(MathMLFeatureDetection[`has_${tag}`](), `${tag} is supported`);
+          const containingBlockBox = paddingBox(containingBlock);
+          assert_greater_than(containingBlockBox.width, 0, "containing block width");
+          assert_greater_than(containingBlockBox.height, 0, "containing block height");
+          assertBoxMatches(absolute.getBoundingClientRect(), containingBlockBox);
+        }, `absolutely positioned child of ${tag}, ${sizing}, dir=${dir}`);
+
+        div.style.display = "none";
+      }
+    }
+  }
+
+  function runTests() {
+    for (const dir of ["ltr", "rtl"]) {
+      testAbsolutelyPositionedElements(dir);
+      testContainingBlocks(dir);
+    }
+    done();
+  }
+</script>
+</head>
+<body>
+  <div id="log"></div>
+</body>
+</html>

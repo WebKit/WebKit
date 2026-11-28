@@ -373,6 +373,8 @@ void RenderMathMLScripts::layoutBlock(RelayoutChildren relayoutChildren, LayoutU
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();
 
@@ -501,7 +503,7 @@ void RenderMathMLScripts::layoutBlock(RelayoutChildren relayoutChildren, LayoutU
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const

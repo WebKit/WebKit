@@ -205,6 +205,8 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     // We layout the children, determine the vertical metrics of the base and set the logical width.
     // Note: Per the MathML specification, the children of <msqrt> are wrapped in an inferred <mrow>, which is the desired base.
     LayoutUnit baseAscent, baseDescent;
@@ -287,7 +289,7 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 }
 
 std::optional<LayoutUnit> RenderMathMLRoot::firstLineBaseline() const

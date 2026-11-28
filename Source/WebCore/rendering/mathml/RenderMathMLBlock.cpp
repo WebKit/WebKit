@@ -209,6 +209,8 @@ void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     layoutFloatingChildren();
 
+    auto previousSize = borderBoxSize();
+
     LayoutRepainter repainter(*this);
 
     if (recomputeLogicalWidth())
@@ -220,7 +222,7 @@ void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     updateLogicalHeight();
 
-    layoutOutOfFlowBoxes(relayoutChildren);
+    layoutOutOfFlowBoxes(borderBoxSize() != previousSize ? RelayoutChildren::Yes : relayoutChildren);
 
     repainter.repaintAfterLayout();
 
@@ -282,6 +284,19 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     SizeAppliedToMathContent sizes;
     CheckedRef style = this->style();
     auto usedZoom = style->usedZoomForLength();
+
+    // The used width of an absolutely positioned box comes from https://drafts.csswg.org/css-position/#abspos-auto-size,
+    // which already resolves percentages, insets and min/max-width against the containing block.
+    if (phase == LayoutPhase::Layout && isOutOfFlowPositioned()) {
+        LogicalExtentComputedValues computedValues;
+        computeLogicalWidth(computedValues);
+        sizes.logicalWidth = std::max(0_lu, computedValues.extent - borderAndPaddingLogicalWidth());
+        if (shouldApplySizeContainment()) {
+            if (auto intrinsicHeight = explicitIntrinsicInnerLogicalHeight())
+                sizes.logicalHeight = intrinsicHeight.value();
+        }
+        return sizes;
+    }
 
     // The intrinsic width contributions apply min-width and max-width when they are read (see constrainIntrinsicLogicalWidthContributionsByMinMax()).
     if (phase == LayoutPhase::Layout) {
