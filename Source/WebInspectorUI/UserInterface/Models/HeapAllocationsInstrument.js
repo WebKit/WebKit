@@ -30,6 +30,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         super();
 
         this._snapshotIntervalIdentifier = undefined;
+        this._shouldStartTrackingForTargets = false;
     }
 
     // Protected
@@ -39,14 +40,22 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         return WI.TimelineRecord.Type.HeapAllocations;
     }
 
-    startInstrumentation(initiatingTarget)
+    startInstrumentation(initiatingTarget, {autoCapture} = {})
     {
         // FIXME: Include a "track allocations" option for this instrument.
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
-        for (let target of this.#allSupportedTargets()) {
-            if (target !== initiatingTarget)
-                this.#startTrackingForTarget(target);
+        // An auto-capture starts when the main frame starts loading. Starting Heap takes a snapshot, which runs a full
+        // garbage collection, so don't start it on other targets during the auto-capture, including targets created
+        // during it (e.g. a new frame's load waits until its target is set up). The target that started the
+        // auto-capture starts its own Heap once the new document is committed.
+        this._shouldStartTrackingForTargets = !autoCapture;
+
+        if (this._shouldStartTrackingForTargets) {
+            for (let target of this.#allSupportedTargets()) {
+                if (target !== initiatingTarget)
+                    this.#startTrackingForTarget(target);
+            }
         }
 
         // Periodic snapshots.
@@ -56,7 +65,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
     startInstrumentationForTarget(target)
     {
-        if (this.#isSupportedTarget(target))
+        if (this._shouldStartTrackingForTargets && this.#isSupportedTarget(target))
             this.#startTrackingForTarget(target);
     }
 
