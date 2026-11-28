@@ -1,0 +1,8 @@
+2d.path.ellipse.angle.large.anticlockwise
+ellipse() draws a full ellipse when anticlockwise and start - end is very large
+Actual output:
+Expected output:
+
+
+PASS ellipse() draws a full ellipse when anticlockwise and start - end is very large
+

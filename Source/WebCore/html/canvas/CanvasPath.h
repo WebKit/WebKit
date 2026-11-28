@@ -47,8 +47,8 @@ public:
     void quadraticCurveTo(float cpx, float cpy, float x, float y);
     void bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
     ExceptionOr<void> arcTo(float x0, float y0, float x1, float y1, float radius);
-    ExceptionOr<void> arc(float x, float y, float r, float sa, float ea, bool anticlockwise);
-    ExceptionOr<void> ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngled, bool anticlockwise);
+    ExceptionOr<void> arc(double x, double y, double radius, double startAngle, double endAngle, bool anticlockwise);
+    ExceptionOr<void> ellipse(double x, double y, double radiusX, double radiusY, double rotation, double startAngle, double endAngle, bool anticlockwise);
     void rect(float x, float y, float width, float height);
     ExceptionOr<void> roundRect(float x, float y, float width, float height, const RadiusVariant& radii);
     ExceptionOr<void> roundRect(float x, float y, float width, float height, std::span<const RadiusVariant> radii);

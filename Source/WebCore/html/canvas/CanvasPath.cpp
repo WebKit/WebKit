@@ -160,10 +160,16 @@ static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwi
         endAngle = startAngle + twoPiFloat;
 }
 
-ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise)
+ExceptionOr<void> CanvasPath::arc(double xDouble, double yDouble, double radiusDouble, double startAngleDouble, double endAngleDouble, bool anticlockwise)
 {
-    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+    if (!std::isfinite(xDouble) || !std::isfinite(yDouble) || !std::isfinite(radiusDouble) || !std::isfinite(startAngleDouble) || !std::isfinite(endAngleDouble))
         return { };
+
+    float x = clampTo<float>(xDouble);
+    float y = clampTo<float>(yDouble);
+    float radius = clampTo<float>(radiusDouble);
+    float startAngle = clampTo<float>(startAngleDouble);
+    float endAngle = clampTo<float>(endAngleDouble);
 
     if (radius < 0)
         return Exception { ExceptionCode::IndexSizeError };
@@ -183,10 +189,18 @@ ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAng
     return { };
 }
     
-ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
+ExceptionOr<void> CanvasPath::ellipse(double xDouble, double yDouble, double radiusXDouble, double radiusYDouble, double rotationDouble, double startAngleDouble, double endAngleDouble, bool anticlockwise)
 {
-    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radiusX) || !std::isfinite(radiusY) || !std::isfinite(rotation) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+    if (!std::isfinite(xDouble) || !std::isfinite(yDouble) || !std::isfinite(radiusXDouble) || !std::isfinite(radiusYDouble) || !std::isfinite(rotationDouble) || !std::isfinite(startAngleDouble) || !std::isfinite(endAngleDouble))
         return { };
+
+    float x = clampTo<float>(xDouble);
+    float y = clampTo<float>(yDouble);
+    float radiusX = clampTo<float>(radiusXDouble);
+    float radiusY = clampTo<float>(radiusYDouble);
+    float rotation = clampTo<float>(rotationDouble);
+    float startAngle = clampTo<float>(startAngleDouble);
+    float endAngle = clampTo<float>(endAngleDouble);
 
     if (radiusX < 0 || radiusY < 0)
         return Exception { ExceptionCode::IndexSizeError };

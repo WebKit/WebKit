@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-FAIL arc() draws a full circle when anticlockwise and start - end is very large assert_equals: Red channel of the pixel at (1, 1) expected 0 but got 255
+PASS arc() draws a full circle when anticlockwise and start - end is very large
 

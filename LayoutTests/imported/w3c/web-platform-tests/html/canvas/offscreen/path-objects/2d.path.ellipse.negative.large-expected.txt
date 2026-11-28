@@ -1,0 +1,7 @@
+2d.path.ellipse.negative.large
+
+ellipse() with a large finite negative radius throws INDEX_SIZE_ERR
+
+
+PASS ellipse() with a large finite negative radius throws INDEX_SIZE_ERR
+
