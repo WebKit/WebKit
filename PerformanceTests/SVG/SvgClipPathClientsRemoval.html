@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const clientCount = 8000;
+let svg;
+
+function setup()
+{
+    svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "600");
+    svg.setAttribute("height", "600");
+
+    const clipPath = document.createElementNS(svgNS, "clipPath");
+    clipPath.id = "clip";
+    const rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("width", "500");
+    rect.setAttribute("height", "500");
+    clipPath.appendChild(rect);
+    svg.appendChild(clipPath);
+
+    for (let i = 0; i < clientCount; ++i) {
+        const path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", `M${i % 500},${(i * 7) % 500}l5,5`);
+        path.setAttribute("stroke", "black");
+        path.setAttribute("clip-path", "url(#clip)");
+        svg.appendChild(path);
+    }
+
+    document.body.appendChild(svg);
+    document.body.offsetHeight;
+}
+
+PerfTestRunner.measureTime({
+    description: `Measures the time to remove an SVG whose ${clientCount} paths all use the same clipPath.`,
+    setup: setup,
+    run: function() {
+        svg.remove();
+    }
+});
+</script>
+</body>
+</html>

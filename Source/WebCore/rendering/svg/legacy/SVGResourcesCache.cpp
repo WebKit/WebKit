@@ -281,14 +281,24 @@ void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& reso
     // rather than every renderer in the cache (which is quadratic when tearing down many resources).
     // Snapshot the clients since notifying them can invalidate and mutate the client set.
     auto clients = copyToVectorOf<SingleThreadWeakPtr<RenderElement>>(resource.m_clients);
+
+    bool clientsInvalidated = false;
     for (auto& weakClient : borrow(clients)) {
         CheckedPtr client = weakClient.get();
         if (!client)
             continue;
 
         auto* resources = cache.m_cache.get(*client);
-        if (!resources || !resources->resourceDestroyed(resource))
+        if (!resources || !resources->referencesResource(resource))
             continue;
+
+        // This invalidates every client of the resource, so it only needs to run once, not once per client
+        // (which is quadratic when one resource has many clients).
+        if (!clientsInvalidated) {
+            resource.removeAllClientsFromCacheAndMarkForInvalidation();
+            clientsInvalidated = true;
+        }
+        resources->resourceDestroyed(resource);
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
         Ref clientElement = *client->element();

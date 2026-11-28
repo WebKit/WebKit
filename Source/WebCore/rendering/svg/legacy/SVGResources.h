@@ -25,6 +25,7 @@
 #include "LegacyRenderSVGResourceMasker.h"
 #include <memory>
 #include <wtf/HashSet.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -74,8 +75,8 @@ public:
 
     // Methods operating on all cached resources
     void removeClientFromCacheAndMarkForInvalidation(RenderElement&, bool markForInvalidation = true) const;
-    // Returns true if the resource-to-be-destroyed is one of our resources.
-    bool resourceDestroyed(LegacyRenderSVGResourceContainer&);
+    bool referencesResource(const LegacyRenderSVGResourceContainer&) const;
+    void resourceDestroyed(LegacyRenderSVGResourceContainer&);
 
 #if ENABLE(TREE_DEBUGGING)
     void dump(const RenderObject*);
@@ -105,6 +106,8 @@ private:
     bool setFill(LegacyRenderSVGResourceContainer*);
     bool setStroke(LegacyRenderSVGResourceContainer*);
     NODELETE bool setLinkedResource(LegacyRenderSVGResourceContainer*);
+
+    template<typename Callback> IterationStatus forEachResource(NOESCAPE const Callback&) const;
 
     bool isEmpty() const { return !m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource; }
 
