@@ -1,0 +1,10 @@
+WebAssembly.namespaceInstance is hidden when WebAssemblyESMIntegrationEnabled is off.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof WebAssembly.namespaceInstance is "undefined"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
