@@ -1,0 +1,44 @@
+Testing the keywords of the projection attribute. auto is both the missing value default and the invalid value default, so an absent, empty or unrecognized attribute all defer to the container's own declaration, while rectilinear overrides it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Each keyword names a projection:
+PASS resolve('equirectangular') is "equirect360"
+PASS resolve('half-equirectangular') is "equirect180"
+PASS resolve('fisheye') is "fisheye"
+PASS resolve('parametric') is "wideFOV"
+PASS resolve('equiangular-cubemap') is "equiAngularCubemap"
+
+Keywords are matched ASCII case-insensitively, ignoring surrounding whitespace:
+PASS resolve('  EquiRectangular ') is "equirect360"
+PASS resolve('EQUIANGULAR-CUBEMAP') is "equiAngularCubemap"
+
+rectilinear presents the frames flat even when the container declares a projection:
+PASS resolve('rectilinear') is null
+PASS resolve('rectilinear', 'Equirectangular') is null
+
+auto, an absent attribute, an empty attribute and an unrecognized keyword all defer to the container:
+PASS resolve('auto', 'Equirectangular') is "equirect360"
+PASS resolve(null, 'Equirectangular') is "equirect360"
+PASS resolve('', 'Equirectangular') is "equirect360"
+PASS resolve('not-a-projection', 'Equirectangular') is "equirect360"
+
+...and a container that declares nothing is presented flat:
+PASS resolve('auto') is null
+PASS resolve(null) is null
+PASS resolve('') is null
+PASS resolve('not-a-projection') is null
+
+The short aliases are not keywords, so they defer to the container rather than naming a projection:
+PASS resolve('360', 'Equirectangular') is "equirect360"
+PASS resolve('360') is null
+PASS resolve('180') is null
+PASS resolve('wfov') is null
+PASS resolve('eac') is null
+PASS resolve('halfequirectangular') is null
+PASS resolve('equiangularcubemap') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
