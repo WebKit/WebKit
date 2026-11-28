@@ -327,12 +327,32 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     //    Otherwise let sourceRectangle be a rectangle whose corners are the four points
     //    (0,0), (width of input, 0), (width of input, height of input), (0, height of
     //    input).
-    auto sourceRectangle = rect.value_or(IntRect { 0, 0, inputSize.width(), inputSize.height() });
+    return rect.value_or(IntRect { 0, 0, inputSize.width(), inputSize.height() });
+}
 
-    // 4. Clip sourceRectangle to the dimensions of input.
-    sourceRectangle.intersect(IntRect { 0, 0, inputSize.width(), inputSize.height() });
+struct ClippedDrawRects {
+    FloatRect source;
+    FloatRect destination;
+};
 
-    return { WTF::move(sourceRectangle) };
+// Input sits on an infinite transparent black plane, so the part of sourceRectangle outside
+// input stays transparent. Graphics contexts don't guarantee that for a source rect outside the image,
+// so draw only the part that overlaps input, into the matching part of the output.
+static std::optional<ClippedDrawRects> clippedDrawRects(const IntRect& sourceRectangle, const FloatSize& inputSize, const FloatSize& outputSize, const ImageBitmapOptions& options)
+{
+    auto source = intersection(FloatRect { sourceRectangle }, FloatRect { { }, inputSize });
+    if (source.isEmpty())
+        return std::nullopt;
+
+    auto scale = outputSize / FloatSize { sourceRectangle.size() };
+    FloatRect destination { toFloatPoint((source.location() - FloatPoint { sourceRectangle.location() }) * scale), source.size() * scale };
+    // A flipY orientation is applied to the image before the source rect selects from it, and then
+    // the result is flipped within the destination rect, so mirror both rects vertically.
+    if (options.orientation == ImageBitmapOptions::Orientation::FlipY) {
+        source.setY(inputSize.height() - source.maxY());
+        destination.setY(outputSize.height() - destination.maxY());
+    }
+    return ClippedDrawRects { source, destination };
 }
 
 static IntSize outputSizeForSourceRectangle(IntRect sourceRectangle, ImageBitmapOptions& options)
@@ -498,6 +518,8 @@ RefPtr<ImageBuffer> ImageBitmap::unpremultipliedImageBuffer(ScriptExecutionConte
     // channels, the other broadcasts alpha into them as if it were a gray level. Both resample under
     // the same transform, so recombining RGB from the first with A from the second reproduces the
     // resampled image with its unpremultiplied channels intact.
+    auto orientedSize = orientation.usesWidthAsHeight() ? storedSize.transposedSize() : storedSize;
+    auto drawRects = clippedDrawRects(sourceRectangle, orientedSize, outputSize, options);
     auto drawOpaque = [&](std::optional<size_t> broadcastChannel) -> RefPtr<PixelBuffer> {
         RefPtr channelImage = opaqueChannelImage(scriptExecutionContext, decoded.pixels.span(), storedSize, colorSpace, decoded.format, bufferFormat, drawsHDRContent, broadcastChannel);
         if (!channelImage)
@@ -505,7 +527,8 @@ RefPtr<ImageBuffer> ImageBitmap::unpremultipliedImageBuffer(ScriptExecutionConte
         auto buffer = createBuffer();
         if (!buffer)
             return nullptr;
-        buffer->context().drawNativeImage(*channelImage, FloatRect { { }, outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+        if (drawRects)
+            buffer->context().drawNativeImage(*channelImage, drawRects->destination, drawRects->source, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
         // Buffer is opaque so unpremultiplied is free
         return buffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, { { }, outputIntSize });
@@ -534,20 +557,9 @@ RefPtr<ImageBuffer> ImageBitmap::unpremultipliedImageBuffer(ScriptExecutionConte
     return bitmapData;
 }
 
-Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scriptExecutionContext, bool originClean)
+static Exception bufferAllocationFailure()
 {
-    // Source rectangle likely doesn't intersect the source image.
-    // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
-    // Resolve Promise with a blank 1x1 ImageBitmap.
-    auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), bufferRenderingMode(scriptExecutionContext), ColorSpace::SRGB());
-    RELEASE_ASSERT(bitmapData);
-    // 7. Create a new ImageBitmap object.
-    // 9. If the origin of image's image is not the same origin as the origin specified by the
-    //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
-    //    bitmap to false.
-    // 10. Return a new promise, but continue running these steps in parallel.
-    // 11. Resolve the promise with the new ImageBitmap object as the value.
-    return create(bitmapData.releaseNonNull(), originClean);
+    return Exception { ExceptionCode::InvalidStateError, "Cannot allocate the bitmap for the ImageBitmap"_s };
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
@@ -704,11 +716,10 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
         bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), sourceImage->colorSpace(), 1, drawsHDRContent);
         if (!bitmapData) {
-            completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+            completionHandler(bufferAllocationFailure());
             return;
         }
         auto concreteSize = ConcreteObjectSize::fixed(imageSize);
-        FloatRect destRect(FloatPoint(), outputSize);
         ImageDrawDescriptor descriptor {
             concreteSize,
             interpolationQualityForResizeQuality(options.resizeQuality),
@@ -719,7 +730,8 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
             InvertContent::No,
 #endif
         };
-        sourceImage->draw(bitmapData->context(), descriptor, destRect, sourceRect);
+        if (auto drawRects = clippedDrawRects(sourceRect, imageSize, outputSize, options))
+            sourceImage->draw(bitmapData->context(), descriptor, drawRects->destination, drawRects->source);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -776,7 +788,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     const bool originClean = true;
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
@@ -819,16 +831,15 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     const bool originClean = canvas.originClean();
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
-    FloatRect destRect(FloatPoint(), outputSize);
     auto& context = bitmapData->context();
     // drawNativeImage() uses the interpolation quality of the context, not the one from the paint options.
-    {
+    if (auto drawRects = clippedDrawRects(sourceRectangle.returnValue(), size, outputSize, options)) {
         InterpolationQualityMaintainer interpolationQualityForThisScope(context, interpolationQualityForResizeQuality(options.resizeQuality));
-        context.drawNativeImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+        context.drawNativeImage(*imageForRender, drawRects->destination, drawRects->source, { options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
     }
 
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
@@ -889,7 +900,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // FIXME: Add support for pixel formats to ImageBitmap.
     auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode(scriptExecutionContext), *colorSpace, { PixelFormat::BGRA8 });
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
@@ -901,7 +912,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         auto scaleY = float(outputSize.height()) / float(sourceRectangle.height());
         if (options.orientation == ImageBitmapOptions::Orientation::FlipY) {
             c.scale(FloatSize(scaleX, -scaleY));
-            c.translate(IntPoint(-sourceRectangle.location().x(), sourceRectangle.location().y() - outputSize.height()));
+            c.translate(IntPoint(-sourceRectangle.x(), -sourceRectangle.maxY()));
         } else {
             c.scale(FloatSize(scaleX, scaleY));
             c.translate(-sourceRectangle.location());
@@ -947,18 +958,19 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), protect(existingImageBitmap->buffer())->colorSpace());
 
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
     RefPtr imageForRender = protect(existingImageBitmap->buffer())->copyNativeImage();
     if (!imageForRender) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawNativeImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    auto inputSize = protect(existingImageBitmap->buffer())->truncatedLogicalSize();
+    if (auto drawRects = clippedDrawRects(sourceRectangle.returnValue(), inputSize, outputSize, options))
+        bitmapData->context().drawNativeImage(*imageForRender, drawRects->destination, drawRects->source, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     const bool originClean = existingImageBitmap->originClean();
     bool forciblyPremultiplyAlpha = false;
@@ -1141,7 +1153,6 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
             return;
         }
-        FloatRect destRect(FloatPoint(), outputSize);
         ImageDrawDescriptor descriptor {
             ConcreteObjectSize::fixed(image->size()),
             interpolationQualityForResizeQuality(options.resizeQuality),
@@ -1149,7 +1160,8 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
             drawsHDRContent,
             scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No
         };
-        image->draw(bitmapData->context(), descriptor, destRect, sourceRect);
+        if (auto drawRects = clippedDrawRects(sourceRect, image->size(), outputSize, options))
+            image->draw(bitmapData->context(), descriptor, drawRects->destination, drawRects->source);
     }
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
@@ -1188,7 +1200,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     const bool originClean = true;
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+        completionHandler(bufferAllocationFailure());
         return;
     }
 
@@ -1208,12 +1220,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //      source rectangle with formatting.
     RefPtr tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode(scriptExecutionContext), imageDataColorSpace);
     if (!tempBitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
+        completionHandler(bufferAllocationFailure());
         return;
     }
     tempBitmapData->putPixelBuffer(pixelBufferForImageData(imageData.get()).get(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
+    if (auto drawRects = clippedDrawRects(sourceRectangle.returnValue(), imageData->size(), outputSize, options))
+        bitmapData->context().drawImageBuffer(*tempBitmapData, drawRects->destination, drawRects->source, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
     // The draw above resampled the bytes the temporary buffer was given, in whichever mode they were

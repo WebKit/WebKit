@@ -172,7 +172,6 @@ private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
     ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat);
-    static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
 
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
     static void createCompletionHandler(ScriptExecutionContext&, Ref<SVGImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);

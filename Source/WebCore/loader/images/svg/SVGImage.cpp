@@ -274,12 +274,16 @@ ImageDrawResult SVGImage::drawImage(GraphicsContext& context, const ImageDrawDes
     context.scale(scale);
 
     // Apply orientation transformation if needed.
+    // adjustedSrcRect is in oriented coordinates, but the frame paints in unoriented ones.
+    auto paintRect = adjustedSrcRect;
     if (orientation != ImageOrientation::Orientation::None) {
         auto orientationTransform = ImageOrientation(orientation).transformFromDefault(FloatSize(containerSize));
         context.concatCTM(orientationTransform);
+        if (auto inverse = orientationTransform.inverse())
+            paintRect = inverse->mapRect(paintRect);
     }
 
-    instance->paint(context, adjustedSrcRect);
+    instance->paint(context, paintRect);
 
     if (compositingRequiresTransparencyLayer)
         context.endTransparencyLayer();

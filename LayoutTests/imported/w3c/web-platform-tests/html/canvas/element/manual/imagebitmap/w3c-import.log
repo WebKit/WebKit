@@ -20,7 +20,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-blob-invalidtype.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-colorSpaceConversion.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-crop-inside-source-flipY.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-crop-outside-source.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-crop-partially-outside-source-exif-orientation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-crop-partially-outside-source.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage-closed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html

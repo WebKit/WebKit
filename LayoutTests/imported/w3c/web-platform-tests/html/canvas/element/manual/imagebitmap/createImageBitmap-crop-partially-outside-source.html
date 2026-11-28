@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<title>createImageBitmap: the part of a crop rect outside the source is transparent black</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/canvas-tests.js"></script>
+<script src="/common/media.js"></script>
+<script src="common.sub.js"></script>
+<body>
+<script>
+const kPatternColors = {
+    red: [255, 0, 0, 255],
+    green: [0, 255, 0, 255],
+    blue: [0, 0, 255, 255],
+    black: [0, 0, 0, 255],
+    transparent: [0, 0, 0, 0],
+};
+
+function nearestPatternColor(pixel) {
+    let nearest, nearestDistance = Infinity;
+    for (const [name, color] of Object.entries(kPatternColors)) {
+        const distance = color.reduce((sum, component, i) => sum + (component - pixel[i]) ** 2, 0);
+        if (distance < nearestDistance)
+            [nearest, nearestDistance] = [name, distance];
+    }
+    return nearest;
+}
+
+function checkPixel(canvas, x, y, expected, sourceIsVideo) {
+    if (sourceIsVideo) {
+        const pixel = Array.from(canvas.getContext("2d").getImageData(x, y, 1, 1).data);
+        assert_equals(nearestPatternColor(pixel), expected, `nearest pattern color of the pixel at (${x}, ${y}), which is ${pixel}`);
+        return;
+    }
+    const [r, g, b, a] = kPatternColors[expected];
+    _assertPixelApprox(canvas, x, y, r, g, b, a, 3);
+}
+
+const kCrops = [
+    {
+        name: "above and to the left of",
+        rect: [-10, -10, 20, 20],
+        expected: ["transparent", "transparent", "transparent", "red"],
+    },
+    {
+        name: "below and to the right of",
+        rect: [10, 10, 20, 20],
+        expected: ["black", "transparent", "transparent", "transparent"],
+    },
+];
+
+const kVariants = [
+    { name: "no options", options: {}, width: 20, height: 20 },
+    { name: "resized up", options: { resizeWidth: 40, resizeHeight: 40 }, width: 40, height: 40 },
+    { name: "resized non-uniformly", options: { resizeWidth: 40, resizeHeight: 12 }, width: 40, height: 12 },
+    { name: "imageOrientation flipY", options: { imageOrientation: "flipY" }, width: 20, height: 20, flipped: true },
+    { name: "imageOrientation flipY and resized up", options: { imageOrientation: "flipY", resizeWidth: 40, resizeHeight: 40 }, width: 40, height: 40, flipped: true },
+    { name: "premultiplyAlpha none", options: { premultiplyAlpha: "none" }, width: 20, height: 20 },
+];
+
+function checkQuadrants(canvas, width, height, [topLeft, topRight, bottomLeft, bottomRight], flipped, sourceIsVideo) {
+    if (flipped)
+        [topLeft, topRight, bottomLeft, bottomRight] = [bottomLeft, bottomRight, topLeft, topRight];
+    const check = (x, y, expected) => checkPixel(canvas, x, y, expected, sourceIsVideo);
+    check(Math.floor(width / 4), Math.floor(height / 4), topLeft);
+    check(Math.floor(3 * width / 4), Math.floor(height / 4), topRight);
+    check(Math.floor(width / 4), Math.floor(3 * height / 4), bottomLeft);
+    check(Math.floor(3 * width / 4), Math.floor(3 * height / 4), bottomRight);
+}
+
+for (const { name, factory } of imageSourceTypes) {
+    for (const crop of kCrops) {
+        for (const variant of kVariants) {
+            promise_test(async t => {
+                const source = await factory();
+                const bitmap = await createImageBitmap(source, ...crop.rect, variant.options);
+                t.add_cleanup(() => bitmap.close());
+                assert_equals(bitmap.width, variant.width, "width");
+                assert_equals(bitmap.height, variant.height, "height");
+
+                const canvas = document.createElement("canvas");
+                canvas.width = variant.width;
+                canvas.height = variant.height;
+                canvas.getContext("2d").drawImage(bitmap, 0, 0);
+
+                checkQuadrants(canvas, variant.width, variant.height, crop.expected, variant.flipped, source instanceof HTMLVideoElement);
+            }, `createImageBitmap from ${name} with a crop rect partially ${crop.name} the source, ${variant.name}`);
+        }
+    }
+}
+</script>
+</body>
+</html>

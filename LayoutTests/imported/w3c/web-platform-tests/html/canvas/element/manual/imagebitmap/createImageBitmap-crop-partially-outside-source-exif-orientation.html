@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<title>createImageBitmap: a crop rect partially outside an EXIF-rotated source is clipped in oriented coordinates</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const kTransparent = [0, 0, 0, 0];
+const kBlack = [0, 0, 0, 255];
+const kGray = [128, 128, 128, 255];
+const kRed = [255, 0, 0, 255];
+const kPink = [255, 128, 128, 255];
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = src;
+    });
+}
+
+function checkTiles(ctx, size, tileSize, expectedTiles) {
+    const data = ctx.getImageData(0, 0, size, size).data;
+    for (const [row, col, expected] of expectedTiles) {
+        const x = col * tileSize + tileSize / 2;
+        const y = row * tileSize + tileSize / 2;
+        const i = (x + y * size) * 4;
+        const actual = Array.from(data.subarray(i, i + 4));
+        assert_array_approx_equals(actual, expected, 2, `pixel at (${x},${y})`);
+    }
+}
+
+const kCases = [
+    {
+        name: "to the right of",
+        rect: [240, 0, 160, 160],
+        tiles: [[0, 0, kBlack], [1, 0, kGray], [0, 1, kTransparent], [1, 1, kTransparent]],
+    },
+    {
+        name: "to the left of",
+        rect: [-80, 0, 160, 160],
+        tiles: [[0, 0, kTransparent], [1, 0, kTransparent], [0, 1, kRed], [1, 1, kPink]],
+    },
+];
+
+const kVariants = [
+    { name: "imageOrientation from-image", options: {} },
+    { name: "imageOrientation flipY", options: { imageOrientation: "flipY" }, flipped: true },
+    { name: "imageOrientation from-image and premultiplyAlpha none", options: { premultiplyAlpha: "none" } },
+    { name: "imageOrientation flipY and premultiplyAlpha none", options: { imageOrientation: "flipY", premultiplyAlpha: "none" }, flipped: true },
+];
+
+for (const testCase of kCases) {
+    for (const variant of kVariants) {
+        promise_test(async t => {
+            const image = await loadImage("resources/squares_6.jpg");
+            const bitmap = await createImageBitmap(image, ...testCase.rect, variant.options);
+            t.add_cleanup(() => bitmap.close());
+            assert_equals(bitmap.width, 160, "width");
+            assert_equals(bitmap.height, 160, "height");
+
+            const canvas = document.createElement("canvas");
+            canvas.width = 160;
+            canvas.height = 160;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(bitmap, 0, 0);
+
+            const tiles = testCase.tiles.map(([row, col, color]) => [variant.flipped ? 1 - row : row, col, color]);
+            checkTiles(ctx, 160, 80, tiles);
+        }, `createImageBitmap with EXIF rotation and a crop rect partially ${testCase.name} the source, ${variant.name}`);
+    }
+}
+</script>
+</body>
+</html>
