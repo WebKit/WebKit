@@ -50,6 +50,7 @@ static const long WKBridgeMaximumTextureDimension = 16384;
 
 #ifdef __OBJC__
 
+#include <CoreGraphics/CoreGraphics.h>
 #include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
 #include <simd/simd.h>
@@ -530,7 +531,7 @@ NS_SWIFT_SENDABLE
 - (void)setCurrentTime:(double)newTime;
 - (double)duration;
 - (simd_float4x4)anchorPlacementNamed:(NSString *)name;
-- (BOOL)loadModel:(NSData *)data mimeType:(NSString *)mimeType;
+- (BOOL)loadModel:(NSData *)data mimeType:(NSString *)mimeType surfaceColor:(nullable CGColorRef)surfaceColor;
 - (nullable WKBridgeUpdateTexture *)loadEnvironmentMap:(NSData *)data;
 - (void)update:(double)deltaTime;
 - (void)setLoop:(BOOL)loop;
