@@ -27,11 +27,56 @@
             "contextsAllowed": ["attribute"],
             "values": ["*"]
         },
+        "CustomType": {
+            "contextsAllowed": ["argument", "dictionary-member", "operation"],
+            "values": ["*"]
+        },
+        "Alias": {
+            "contextsAllowed": ["dictionary-member"],
+            "values": ["*"]
+        },
+        "AtLeastOneOf": {
+            "contextsAllowed": ["dictionary"],
+            "values": ["*"]
+        },
+        "AtMostOneOf": {
+            "contextsAllowed": ["dictionary-member"],
+            "values": ["*"]
+        },
+        "Minimum": {
+            "contextsAllowed": ["argument", "dictionary-member"],
+            "values": ["*"]
+        },
+        "Maximum": {
+            "contextsAllowed": ["argument", "dictionary-member"],
+            "values": ["*"]
+        },
+        "MaxLength": {
+            "contextsAllowed": ["dictionary-member"],
+            "values": ["*"]
+        },
+        "RequiresMember": {
+            "contextsAllowed": ["dictionary-member"],
+            "values": ["*"]
+        },
         "CallbackHandler": {
             "contextsAllowed": ["argument"]
         },
+        "PreserveNull": {
+            "contextsAllowed": ["dictionary-member"]
+        },
+        "EnumObject": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
+        "ExistingType": {
+            "contextsAllowed": ["enum"]
+        },
+        "FalseIsDefault": {
+            "contextsAllowed": ["dictionary-member"]
+        },
         "CannotBeEmpty": {
-            "contextsAllowed": ["argument"]
+            "contextsAllowed": ["argument", "dictionary-member"]
         },
         "ConvertNullStringTo": {
             "contextsAllowed": ["argument", "attribute", "operation"],

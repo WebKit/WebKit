@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum WebExtensionTestMode {
+    "FAST",
+    "slow-mode"
+};
+
+dictionary WebExtensionTestBase {
+    DOMString label;
+};
+
+[
+    AtLeastOneOf=(first, second, third)
+] dictionary WebExtensionTestOptions : WebExtensionTestBase {
+    boolean active = true;
+    sequence<WebExtensionTestBase> bases;
+    [CannotBeEmpty] sequence<DOMString> files;
+    [Conditional=WK_WEB_EXTENSIONS_TEST_FEATURE] boolean experimental;
+    any extra;
+    [AtMostOneOf=pair] double first;
+    [Alias=function] function func;
+    unsigned long limit = 5;
+    WebExtensionTestMode mode = "FAST";
+    [MaxLength=16] DOMString name;
+    [Minimum=0, Maximum=100] long quality;
+    [RequiresMember=func] sequence<any> args;
+    [AtMostOneOf=pair] double second;
+    double third;
+};
+
+// Two separate groups of members that conflict.
+dictionary WebExtensionTestTwoGroups {
+    [FalseIsDefault, AtMostOneOf=scope] boolean allFrames;
+    [AtMostOneOf=source] DOMString file;
+    [AtMostOneOf=source] DOMString code;
+    [AtMostOneOf=scope] double frameId;
+    [AtMostOneOf=scope] DOMString documentId;
+};
+
+// Without FalseIsDefault, a boolean that is present conflicts even when it is false.
+dictionary WebExtensionTestExclusiveBooleans {
+    [AtMostOneOf=audio] boolean muted;
+    [AtMostOneOf=audio] boolean audible;
+};
+
+// A boolean counts as specified when present, even when false, unless it is marked FalseIsDefault.
+[
+    AtLeastOneOf=(path, enabled)
+] dictionary WebExtensionTestToggle {
+    DOMString path;
+    boolean enabled;
+};
+
+// A dictionary that holds more of itself, like a tree of nodes.
+dictionary WebExtensionTestNode {
+    sequence<WebExtensionTestNode> children;
+    required DOMString id;
+};
+
+// Not used by this interface, but by the interface in TestImport.idl, so the code for it is generated here.
+dictionary WebExtensionTestReport {
+    required DOMString title;
+    WebExtensionTestMode mode;
+};
+
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    MainWorldOnly,
+    ReturnsPromiseWhenCallbackIsOmitted
+] interface WebExtensionAPITestDictionaries {
+    void toggle(WebExtensionTestToggle options, [Optional, CallbackHandler] function callback);
+    void mute(WebExtensionTestExclusiveBooleans options, [Optional, CallbackHandler] function callback);
+    void inject(WebExtensionTestTwoGroups details, [Optional, CallbackHandler] function callback);
+    void open(WebExtensionTestOptions options, [Optional, CallbackHandler] function callback);
+    void query([Optional] WebExtensionTestOptions info, [Optional, CallbackHandler] function callback);
+    void inspect(double id, [Optional] WebExtensionTestOptions options, [Optional, CallbackHandler] function callback);
+    void visit([Optional] double tab, [Optional] WebExtensionTestOptions options, [Optional, CallbackHandler] function callback);
+    void set(sequence<WebExtensionTestBase> items, [Optional, CallbackHandler] function callback);
+    void choose(WebExtensionTestMode mode, [Optional, CallbackHandler] function callback);
+    void build(WebExtensionTestNode root, [Optional, CallbackHandler] function callback);
+    void seek([Minimum=0, Maximum=100] double position, [Optional, CallbackHandler] function callback);
+};

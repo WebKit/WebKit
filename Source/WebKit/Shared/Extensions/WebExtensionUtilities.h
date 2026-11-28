@@ -63,6 +63,12 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object>, RefPtr<JSON::Object>);
 /// Returns a concatenated error string that combines the provided information into a single, descriptive message.
 String toErrorString(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString);
 
+/// Returns "'a'", "'a' and 'b'" or "'a', 'b' and 'c'" for a list of keys.
+String formatList(const Vector<String>&);
+
+/// Returns a message like "'key' is expected to be a number, but a string was provided".
+String constructExpectedMessage(const String& key, const String& expected, const String& found, bool inArray = false);
+
 /// Returns an error for Expected results in CompletionHandler.
 inline std::unexpected<WebExtensionError> toWebExtensionError(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
 {

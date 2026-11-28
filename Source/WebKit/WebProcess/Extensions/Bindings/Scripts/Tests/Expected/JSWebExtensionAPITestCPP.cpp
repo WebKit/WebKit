@@ -46,6 +46,65 @@ WebExtensionAPITestCPP* toWebExtensionAPITestCPP(JSContextRef context, JSValueRe
     return downcast<WebExtensionAPITestCPP>(JSWebExtensionWrapper::unwrap(context, value));
 }
 
+std::expected<WebExtensionTestCPPOptions, WebExtensionValueError> parseWebExtensionTestCPPOptions(JSContextRef context, JSValueRef value, const String& path)
+{
+    if (!isDictionary(context, value))
+        return makeUnexpected(WebExtensionValueError { constructExpectedMessage(path, "an object"_s, describeValueType(context, value)) });
+
+    auto object = JSValueToObject(context, value, nullptr);
+    Vector<String> missingRequiredKeys;
+
+    auto nameRead = readDictionaryMember<String>(context, object, "name"_s, path);
+    if (!nameRead)
+        return makeUnexpected(WTF::move(nameRead.error()));
+
+    std::optional<String> nameValue = WTF::move(*nameRead);
+
+    if (!nameValue)
+        missingRequiredKeys.append("name"_s);
+
+    auto countRead = readDictionaryMember<double>(context, object, "count"_s, path);
+    if (!countRead)
+        return makeUnexpected(WTF::move(countRead.error()));
+
+    std::optional<double> countValue = WTF::move(*countRead);
+
+    auto enabledRead = readDictionaryMember<bool>(context, object, "enabled"_s, path);
+    if (!enabledRead)
+        return makeUnexpected(WTF::move(enabledRead.error()));
+
+    std::optional<bool> enabledValue = WTF::move(*enabledRead);
+
+    auto tagsRead = readDictionaryMember<Vector<String>>(context, object, "tags"_s, path);
+    if (!tagsRead)
+        return makeUnexpected(WTF::move(tagsRead.error()));
+
+    std::optional<Vector<String>> tagsValue = WTF::move(*tagsRead);
+
+    auto urlsRead = readDictionaryMember<Variant<String, Vector<String>>>(context, object, "urls"_s, path);
+    if (!urlsRead)
+        return makeUnexpected(WTF::move(urlsRead.error()));
+
+    std::optional<Variant<String, Vector<String>>> urlsValue = WTF::move(*urlsRead);
+
+    auto indexRead = readDictionaryNullableMember<double>(context, object, "index"_s, path);
+    if (!indexRead)
+        return makeUnexpected(WTF::move(indexRead.error()));
+
+    std::optional<std::optional<double>> indexValue = WTF::move(*indexRead);
+
+    auto headersRead = readDictionaryMember<HashMap<String, String>>(context, object, "headers"_s, path);
+    if (!headersRead)
+        return makeUnexpected(WTF::move(headersRead.error()));
+
+    std::optional<HashMap<String, String>> headersValue = WTF::move(*headersRead);
+
+    if (!missingRequiredKeys.isEmpty())
+        return makeUnexpected(WebExtensionValueError { valuePathLeaf(path), makeString("it is missing required keys: "_s, formatList(missingRequiredKeys)) });
+
+    return WebExtensionTestCPPOptions { .name = WTF::move(*nameValue), .count = WTF::move(countValue), .enabled = enabledValue.value_or(false), .tags = WTF::move(tagsValue), .urls = WTF::move(urlsValue), .index = WTF::move(indexValue), .headers = WTF::move(headersValue) };
+}
+
 JSClassRef JSWebExtensionAPITestCPP::testCPPClassSingleton()
 {
     SUPPRESS_UNCOUNTED_LOCAL static JSClassRef jsClass;
@@ -99,6 +158,8 @@ const JSStaticFunction* JSWebExtensionAPITestCPP::staticFunctions()
         { "getURL", getURL, kJSPropertyAttributeNone },
         { "getManifest", getManifest, kJSPropertyAttributeNone },
         { "sendRuntimeMessage", sendRuntimeMessage, kJSPropertyAttributeNone },
+        { "configure", configure, kJSPropertyAttributeNone },
+        { "select", select, kJSPropertyAttributeNone },
         { nullptr, nullptr, kJSPropertyAttributeNone },
     };
 
@@ -1113,6 +1174,131 @@ JSValueRef JSWebExtensionAPITestCPP::sendRuntimeMessage(JSContextRef context, JS
 
     if (!exceptionString.isEmpty()) [[unlikely]] {
         *exception = toJSError(context, "testCPP.sendRuntimeMessage()"_s, nullString(), exceptionString);
+        return JSValueMakeUndefined(context);
+    }
+
+    return promiseResult ?: JSValueMakeUndefined(context);
+}
+
+JSValueRef JSWebExtensionAPITestCPP::configure(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef unsafeArguments[], JSValueRef* exception)
+{
+    RefPtr impl = toWebExtensionAPITestCPP(context, thisObject);
+    if (!impl) [[unlikely]]
+        return JSValueMakeUndefined(context);
+
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.configure() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
+
+    auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
+
+    constexpr size_t requiredArgumentCount = 1;
+    if (argumentCount < requiredArgumentCount) [[unlikely]] {
+        *exception = toJSError(context, "testCPP.configure()"_s, nullString(), "a required argument is missing"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    std::expected<WebExtensionTestCPPOptions, WebExtensionValueError> options = makeUnexpected(WebExtensionValueError { "a required argument is missing"_s });
+    RefPtr<WebExtensionCallbackHandler> callback;
+
+    if (argumentCount == 2) {
+        if (!((JSValueIsObject(context, arguments[1]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[1], nullptr))) || JSValueIsNull(context, arguments[1]) || JSValueIsUndefined(context, arguments[1]))) [[unlikely]] {
+            *exception = toJSError(context, "testCPP.configure()"_s, "callback"_s, "a function is expected"_s);
+            return JSValueMakeUndefined(context);
+        }
+
+        options = WebExtensionValueParser<WebExtensionTestCPPOptions>::parse(context, arguments[0], { });
+        callback = toJSCallbackHandler(context, arguments[1], protect(impl->runtime()));
+    } else if (argumentCount == 1) {
+        options = WebExtensionValueParser<WebExtensionTestCPPOptions>::parse(context, arguments[0], { });
+    }
+
+    if (!options) [[unlikely]] {
+        *exception = toJSError(context, "testCPP.configure()"_s, "options"_s, options.error());
+        return JSValueMakeUndefined(context);
+    }
+
+    JSObjectRef promiseResult = nullptr;
+    if (!callback) {
+        JSObjectRef resolveFunction, rejectFunction = nullptr;
+        promiseResult = JSObjectMakeDeferredPromise(context, &resolveFunction, &rejectFunction, nullptr);
+        callback = toJSPromiseCallbackHandler(context, resolveFunction, rejectFunction);
+    }
+
+    RefPtr page = toWebPage(context);
+    if (!page) [[unlikely]] {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+        if (promiseResult)
+            promiseResult = toJSRejectedPromise(context, "testCPP.configure()"_s, nullString(), "an unknown error occurred"_s);
+        return promiseResult ?: JSValueMakeUndefined(context);
+    }
+
+    String exceptionString;
+    impl->configure(page->webPageProxyIdentifier(), *options, callback.releaseNonNull(), exceptionString);
+
+    if (!exceptionString.isEmpty()) [[unlikely]] {
+        *exception = toJSError(context, "testCPP.configure()"_s, nullString(), exceptionString);
+        return JSValueMakeUndefined(context);
+    }
+
+    return promiseResult ?: JSValueMakeUndefined(context);
+}
+
+JSValueRef JSWebExtensionAPITestCPP::select(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef unsafeArguments[], JSValueRef* exception)
+{
+    RefPtr impl = toWebExtensionAPITestCPP(context, thisObject);
+    if (!impl) [[unlikely]]
+        return JSValueMakeUndefined(context);
+
+    RELEASE_LOG_DEBUG(Extensions, "Called function testCPP.select() (%" PUBLIC_LOG "lu %" PUBLIC_LOG_STRING ") in %" PUBLIC_LOG_STRING " world", argumentCount, argumentCount == 1 ? "argument" : "arguments", makeUTF8CString(toDebugString(impl->contentWorldType())));
+
+    auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);
+
+    std::expected<std::optional<WebExtensionTabIdentifier>, WebExtensionValueError> tabId;
+    RefPtr<WebExtensionCallbackHandler> callback;
+
+    if (argumentCount == 2) {
+        if (!((JSValueIsObject(context, arguments[1]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[1], nullptr))) || JSValueIsNull(context, arguments[1]) || JSValueIsUndefined(context, arguments[1]))) [[unlikely]] {
+            *exception = toJSError(context, "testCPP.select()"_s, "callback"_s, "a function is expected"_s);
+            return JSValueMakeUndefined(context);
+        }
+
+        tabId = parseOptionalWebExtensionValue<WebExtensionTabIdentifier>(context, arguments[0]);
+        callback = toJSCallbackHandler(context, arguments[1], protect(impl->runtime()));
+    } else if (argumentCount == 1 && !((JSValueIsObject(context, arguments[0]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[0], nullptr))) || JSValueIsNull(context, arguments[0]) || JSValueIsUndefined(context, arguments[0]))) {
+        tabId = parseOptionalWebExtensionValue<WebExtensionTabIdentifier>(context, arguments[0]);
+    } else if (argumentCount == 1) {
+        if (!((JSValueIsObject(context, arguments[0]) && JSObjectIsFunction(context, JSValueToObject(context, arguments[0], nullptr))) || JSValueIsNull(context, arguments[0]) || JSValueIsUndefined(context, arguments[0]))) [[unlikely]] {
+            *exception = toJSError(context, "testCPP.select()"_s, "callback"_s, "a function is expected"_s);
+            return JSValueMakeUndefined(context);
+        }
+
+        callback = toJSCallbackHandler(context, arguments[0], protect(impl->runtime()));
+    }
+
+    if (!tabId) [[unlikely]] {
+        *exception = toJSError(context, "testCPP.select()"_s, "tabId"_s, tabId.error());
+        return JSValueMakeUndefined(context);
+    }
+
+    JSObjectRef promiseResult = nullptr;
+    if (!callback) {
+        JSObjectRef resolveFunction, rejectFunction = nullptr;
+        promiseResult = JSObjectMakeDeferredPromise(context, &resolveFunction, &rejectFunction, nullptr);
+        callback = toJSPromiseCallbackHandler(context, resolveFunction, rejectFunction);
+    }
+
+    RefPtr page = toWebPage(context);
+    if (!page) [[unlikely]] {
+        RELEASE_LOG_ERROR(Extensions, "Page could not be found for JSContextRef");
+        if (promiseResult)
+            promiseResult = toJSRejectedPromise(context, "testCPP.select()"_s, nullString(), "an unknown error occurred"_s);
+        return promiseResult ?: JSValueMakeUndefined(context);
+    }
+
+    String exceptionString;
+    impl->select(page->webPageProxyIdentifier(), *tabId, callback.releaseNonNull(), exceptionString);
+
+    if (!exceptionString.isEmpty()) [[unlikely]] {
+        *exception = toJSError(context, "testCPP.select()"_s, nullString(), exceptionString);
         return JSValueMakeUndefined(context);
     }
 
