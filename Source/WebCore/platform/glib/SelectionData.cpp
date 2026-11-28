@@ -32,21 +32,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionData);
 
-SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, RefPtr<ShareableBitmap>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
+SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, Vector<String>&& filenames, RefPtr<ShareableBitmap>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
+    : m_text(text)
+    , m_markup(markup)
+    , m_url(url)
+    , m_uriList(uriList)
+    , m_filenames(WTF::move(filenames))
+    , m_image(WTF::move(image))
+    , m_canSmartReplace(canSmartReplace)
+    , m_customData(WTF::move(buffer))
 {
-    if (!text.isEmpty())
-        setText(text);
-    if (!markup.isEmpty())
-        setMarkup(markup);
-    if (!url.isEmpty())
-        setURL(url, String());
-    if (!uriList.isEmpty())
-        setURIList(uriList);
-    if (image)
-        setImage(WTF::move(image));
-    if (buffer)
-        setCustomData(buffer.releaseNonNull());
-    setCanSmartReplace(canSmartReplace);
 }
 
 static void replaceNonBreakingSpaceWithSpace(String& string)
@@ -142,7 +137,7 @@ void SelectionData::clearAllExceptFilenames()
 void SelectionData::clearAll()
 {
     clearAllExceptFilenames();
-    m_filenames.clear();
+    clearFilenames();
 }
 
 } // namespace WebCore

@@ -59,6 +59,12 @@ public:
 
     void begin(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&&, WebCore::IntPoint&& imageHotspot);
 
+#if USE(GTK4)
+    static bool isWebViewDrag(GdkDrag*);
+#else
+    static bool isWebViewDrag(GdkDragContext*);
+#endif
+
 private:
     GRefPtr<GdkPixbuf> selectionImage() const;
 

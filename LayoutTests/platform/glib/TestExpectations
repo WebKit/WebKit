@@ -4635,7 +4635,6 @@ webkit.org/b/157179 fast/events/drag-in-frames.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-select-when-zoomed.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-select-when-zoomed-with-header.html [ Failure ]
 webkit.org/b/157179 fast/events/dropzone-001.html [ Failure ]
-webkit.org/b/157179 fast/events/dropzone-003.html [ Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
 webkit.org/b/157179 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 
