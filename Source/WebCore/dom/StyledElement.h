@@ -74,6 +74,9 @@ public:
     virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
+    // For presentational hints that change without the attribute changing through attributeChanged().
+    void invalidatePresentationalHintStyle();
+
 protected:
     StyledElement(const QualifiedName& name, Document& document, OptionSet<TypeFlag> type)
         : Element(name, document, type)
@@ -108,6 +111,7 @@ private:
     Ref<MutableStyleProperties> ensureMutableInlineStyle();
 
     void rebuildPresentationalHintStyle();
+    void presentationalHintsChanged();
 };
 
 } // namespace WebCore
