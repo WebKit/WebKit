@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// "encapsulateKey", "encapsulateBits", "decapsulateKey" and "decapsulateBits" are valid KeyUsage
+// values, but no algorithm we implement supports them. They must be rejected with a SyntaxError
+// rather than a TypeError (unknown enum value) and must never be silently accepted.
+const newUsages = ["encapsulateKey", "encapsulateBits", "decapsulateKey", "decapsulateBits"];
+
+for (const usage of newUsages) {
+    promise_test(t => promise_rejects_dom(t, "SyntaxError",
+        crypto.subtle.generateKey({ name: "AES-CBC", length: 128 }, true, [usage])),
+        `generateKey AES-CBC with ${usage}`);
+
+    promise_test(t => promise_rejects_dom(t, "SyntaxError",
+        crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits", usage])),
+        `generateKey ECDH with deriveBits and ${usage}`);
+
+    promise_test(t => promise_rejects_dom(t, "SyntaxError",
+        crypto.subtle.importKey("raw", new Uint8Array(16), "HKDF", false, [usage])),
+        `importKey HKDF with ${usage}`);
+
+    promise_test(t => promise_rejects_dom(t, "SyntaxError",
+        crypto.subtle.importKey("raw", new Uint8Array(16), "PBKDF2", false, [usage])),
+        `importKey PBKDF2 with ${usage}`);
+
+    promise_test(t => promise_rejects_dom(t, "SyntaxError",
+        crypto.subtle.importKey("raw", new Uint8Array(16), "AES-GCM", true, ["encrypt", usage])),
+        `importKey AES-GCM with encrypt and ${usage}`);
+
+    promise_test(async t => {
+        const baseKey = await crypto.subtle.importKey("raw", new Uint8Array(16), "PBKDF2", false, ["deriveKey"]);
+        await promise_rejects_dom(t, "SyntaxError",
+            crypto.subtle.deriveKey({ name: "PBKDF2", salt: new Uint8Array(8), iterations: 1, hash: "SHA-256" },
+                baseKey, { name: "AES-GCM", length: 128 }, true, [usage]));
+    }, `deriveKey with ${usage}`);
+
+    promise_test(async t => {
+        const wrappingKey = await crypto.subtle.generateKey({ name: "AES-KW", length: 128 }, true, ["wrapKey", "unwrapKey"]);
+        const wrapped = await crypto.subtle.wrapKey("raw",
+            await crypto.subtle.generateKey({ name: "AES-GCM", length: 128 }, true, ["encrypt"]), wrappingKey, "AES-KW");
+        await promise_rejects_dom(t, "SyntaxError",
+            crypto.subtle.unwrapKey("raw", wrapped, wrappingKey, "AES-KW", "AES-GCM", true, [usage]));
+    }, `unwrapKey with ${usage}`);
+}
+
+promise_test(t => promise_rejects_js(t, TypeError,
+    crypto.subtle.generateKey({ name: "AES-CBC", length: 128 }, true, ["bogus"])),
+    "A string that is not a KeyUsage is still a TypeError");
+
+promise_test(async () => {
+    const key = await crypto.subtle.generateKey({ name: "AES-CBC", length: 128 }, true, ["encrypt", "decrypt"]);
+    assert_array_equals([...key.usages].sort(), ["decrypt", "encrypt"]);
+}, "Valid usages are unaffected");
+
+promise_test(async () => {
+    const jwk = await crypto.subtle.exportKey("jwk", await crypto.subtle.generateKey({ name: "AES-GCM", length: 128 }, true, ["encrypt", "decrypt"]));
+    jwk.key_ops = ["encrypt", "encapsulateKey"];
+    const key = await crypto.subtle.importKey("jwk", jwk, "AES-GCM", true, ["encrypt"]);
+    assert_array_equals(key.usages, ["encrypt"]);
+}, "A JWK key_ops that lists a KEM usage does not leak it into the imported key");
+</script>

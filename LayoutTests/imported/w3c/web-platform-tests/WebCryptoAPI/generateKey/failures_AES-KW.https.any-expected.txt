@@ -29,26 +29,26 @@ PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, derive
 PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, deriveBits])
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [encapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [encapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [decapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [decapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [unwrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 128, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits])
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [encrypt])
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, encrypt])
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, encrypt])
@@ -79,26 +79,26 @@ PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, derive
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, deriveBits])
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [encapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [encapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [decapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [decapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [unwrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 192, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits])
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [encrypt])
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, encrypt])
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, encrypt])
@@ -129,26 +129,26 @@ PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, derive
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, deriveBits])
 PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, deriveBits])
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [encapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [encapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, encapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [decapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateKey])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [decapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, wrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [unwrapKey, decapsulateBits])
+PASS Bad usages: generateKey({length: 256, name: AES-KW}, true, [wrapKey, unwrapKey, wrapKey, unwrapKey, decapsulateBits])
 PASS Bad algorithm property: generateKey({length: 64, name: AES-KW}, false, [wrapKey])
 PASS Bad algorithm property: generateKey({length: 64, name: AES-KW}, true, [wrapKey])
 PASS Bad algorithm property: generateKey({length: 64, name: AES-KW}, false, [unwrapKey, wrapKey])

@@ -7091,7 +7091,11 @@ enum class WebCore::CryptoKeyUsage : uint8_t {
     DeriveKey,
     DeriveBits,
     WrapKey,
-    UnwrapKey
+    UnwrapKey,
+    EncapsulateKey,
+    EncapsulateBits,
+    DecapsulateKey,
+    DecapsulateBits
 };
 
 struct WebCore::JsonWebKey {

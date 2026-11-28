@@ -29,26 +29,26 @@ PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign
 PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, length: 160, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, encrypt])
@@ -79,26 +79,26 @@ PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [si
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, length: 256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, encrypt])
@@ -129,26 +129,26 @@ PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [si
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, length: 384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, encrypt])
@@ -179,26 +179,26 @@ PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [si
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, length: 512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, encrypt])
@@ -229,26 +229,26 @@ PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, deriveBits]
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-1, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, encrypt])
@@ -279,26 +279,26 @@ PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, deriveBit
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-256, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, encrypt])
@@ -329,26 +329,26 @@ PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, deriveBit
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-384, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [encrypt])
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, encrypt])
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, encrypt])
@@ -379,26 +379,26 @@ PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, deriveBit
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, deriveBits])
 PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, deriveBits])
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
-FAIL Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits]) assert_equals: Bad usages not supported expected "SyntaxError" but got "TypeError"
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, encapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateKey])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, sign, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [verify, decapsulateBits])
+PASS Bad usages: generateKey({hash: SHA-512, name: HMAC}, true, [sign, verify, sign, verify, decapsulateBits])
 PASS Bad algorithm property: generateKey({hash: SHA-256, length: 4294967424, name: HMAC}, false, [sign])
 PASS Bad algorithm property: generateKey({hash: SHA-256, length: 4294967424, name: HMAC}, true, [sign])
 PASS Bad algorithm property: generateKey({hash: SHA-256, length: 4294967424, name: HMAC}, false, [verify, sign])
