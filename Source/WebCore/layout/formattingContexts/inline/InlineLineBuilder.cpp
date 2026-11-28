@@ -697,7 +697,20 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                         ASSERT_NOT_REACHED();
                         return lineContent->range.end.index;
                     };
-                    lineContent->range.end.index = lineEndIndex();
+                    auto dropFloatsFromWrappedContent = [&](auto newLineEndIndex) {
+                        // These floats go to the next line with the rest of the content, and that line places them again.
+                        for (auto index = newLineEndIndex; index < lineContent->range.end.index; ++index) {
+                            auto& inlineItem = m_inlineItemList[index];
+                            if (!inlineItem.isFloat())
+                                continue;
+                            CheckedRef floatBox = inlineItem.layoutBox();
+                            if (!m_suspendedFloats.removeFirst(floatBox.ptr()))
+                                unplaceFloatBox(floatBox);
+                        }
+                    };
+                    auto newLineEndIndex = lineEndIndex();
+                    dropFloatsFromWrappedContent(newLineEndIndex);
+                    lineContent->range.end.index = newLineEndIndex;
                 }
             }
         };

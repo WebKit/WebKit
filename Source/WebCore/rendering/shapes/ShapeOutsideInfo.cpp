@@ -32,7 +32,6 @@
 
 #include "BoxLayoutShape.h"
 #include "DocumentPage.h"
-#include "FloatingObjects.h"
 #include "LocalFrameViewInlines.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
@@ -49,7 +48,6 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutsideDeltas);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShapeOutsideInfo);
 
 static LayoutUnit logicalLeftOffset(const RenderBox&);
@@ -392,54 +390,6 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
         [](const Style::ShapeOutside::ShapeAndShapeBox&) { return true; },
         [&](const Style::ShapeOutside::Image& image) { return image.isValid() && checkShapeImageOrigin(protect(box.document()), image.image.value); }
     );
-}
-
-ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const RenderBlockFlow& containingBlock, const FloatingObject& floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
-{
-    // If we never constructed this shape during layout, we propably don't need to know about it outside of layout in the context of "containing block line".
-    if (!m_shape && !containingBlock.view().frameView().layoutContext().isInLayout())
-        return { };
-
-    ASSERT(lineHeight >= 0);
-    CheckedRef renderer = m_renderer;
-    LayoutUnit borderBoxTop = containingBlock.logicalTopForFloat(floatingObject) + containingBlock.marginBeforeForChild(renderer);
-    LayoutUnit borderBoxLineTop = lineTop - borderBoxTop;
-
-    if (isShapeDirty() || !m_shapeOutsideDeltas.isForLine(borderBoxLineTop, lineHeight)) {
-        LayoutUnit floatMarginBoxWidth = std::max<LayoutUnit>(0_lu, containingBlock.logicalWidthForFloat(floatingObject));
-
-        if (protect(computedShape())->lineOverlapsShapeMarginBounds(borderBoxLineTop, lineHeight)) {
-            // A polygon finds no excluded interval for a zero-height line at a vertex, so such a line is measured 1px tall, the way
-            // FloatingContext does (see computeShapeEdge()).
-            auto excludedIntervalHeight = lineHeight ? std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop) : 1_lu;
-            LineSegment segment = protect(computedShape())->getExcludedInterval(borderBoxLineTop, excludedIntervalHeight);
-            if (segment.isValid) {
-                // The segment is relative to the inline start edge of the border box (see FloatingContext's computeShapeEdge()),
-                // the deltas to its logical left edge.
-                if (!protect(renderer->containingBlock())->writingMode().isLogicalLeftInlineStart()) {
-                    auto borderBoxLogicalWidth = containingBlock.logicalWidthForChild(renderer);
-                    segment = { borderBoxLogicalWidth - segment.logicalRight, borderBoxLogicalWidth - segment.logicalLeft };
-                }
-                LayoutUnit logicalLeftMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginStartForChild(renderer) : containingBlock.marginEndForChild(renderer);
-                LayoutUnit rawLeftMarginBoxDelta { segment.logicalLeft + logicalLeftMargin };
-                LayoutUnit leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, 0_lu, floatMarginBoxWidth);
-
-                LayoutUnit logicalRightMargin = containingBlock.writingMode().isLogicalLeftInlineStart() ? containingBlock.marginEndForChild(renderer) : containingBlock.marginStartForChild(renderer);
-                LayoutUnit rawRightMarginBoxDelta { segment.logicalRight - containingBlock.logicalWidthForChild(renderer) - logicalRightMargin };
-                LayoutUnit rightMarginBoxDelta = clampTo<LayoutUnit>(rawRightMarginBoxDelta, -floatMarginBoxWidth, 0_lu);
-
-                m_shapeOutsideDeltas = ShapeOutsideDeltas(leftMarginBoxDelta, rightMarginBoxDelta, true, borderBoxLineTop, lineHeight);
-                return m_shapeOutsideDeltas;
-            }
-        }
-
-        // Lines that do not overlap the shape should act as if the float
-        // wasn't there for layout purposes. So we set the deltas to remove the
-        // entire width of the float
-        m_shapeOutsideDeltas = ShapeOutsideDeltas(floatMarginBoxWidth, -floatMarginBoxWidth, false, borderBoxLineTop, lineHeight);
-    }
-
-    return m_shapeOutsideDeltas;
 }
 
 }
