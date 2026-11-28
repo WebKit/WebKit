@@ -122,10 +122,20 @@
 @end
 
 @interface SiteIsolationCoreLocationProvider : NSObject<_WKGeolocationCoreLocationProvider>
+@property (nonatomic) double latitude;
 @end
 
 @implementation SiteIsolationCoreLocationProvider {
     __unsafe_unretained id<_WKGeolocationCoreLocationListener> _listener;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    // TestWKWebViewForGeolocation uses these same coordinates (Cupertino's latitude)
+    _latitude = 37.3348;
+    return self;
 }
 
 - (void)setListener:(id<_WKGeolocationCoreLocationListener>)listener
@@ -140,7 +150,7 @@
 
 - (void)start
 {
-    RetainPtr location = adoptNS([[CLLocation alloc] initWithLatitude:37.3348 longitude:-122.009]);
+    RetainPtr location = adoptNS([[CLLocation alloc] initWithLatitude:_latitude longitude:-122.009]);
     [_listener positionChanged:[_WKGeolocationPosition positionWithLocation:location.get()]];
 }
 
@@ -150,6 +160,11 @@
 
 - (void)setEnableHighAccuracy:(BOOL)flag
 {
+}
+
+- (void)resetGeolocation
+{
+    [_listener resetGeolocation];
 }
 @end
 
@@ -19016,6 +19031,42 @@ TEST(SiteIsolation, ClearGeolocationWatchInCrossOriginIframe)
         return !!uiDelegate.get().alertMessage;
     });
     EXPECT_WK_STREQ(uiDelegate.get().alertMessage, "CLEARED");
+}
+
+TEST(SiteIsolation, ResetGeolocationPermissionInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<script>onmessage = (event) => alert(event.data);</script><iframe allow='geolocation' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>"
+            "navigator.geolocation.watchPosition("
+            "(position) => parent.postMessage('position ' + position.coords.latitude, '*'),"
+            "(error) => parent.postMessage('error ' + error.code, '*'));"
+            "</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr coreLocationProvider = adoptNS([SiteIsolationCoreLocationProvider new]);
+    RetainPtr processPool = adoptNS([WKProcessPool new]);
+    processPool.get()._coreLocationProvider = coreLocationProvider.get();
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().processPool = processPool.get();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+
+    RetainPtr uiDelegate = adoptNS([SiteIsolationGeolocationUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [uiDelegate.get().alertMessage isEqualToString:@"position 37.3348"];
+    }));
+    EXPECT_NE([webView mainFrame].info._processIdentifier, [webView firstChildFrame]._processIdentifier);
+
+    coreLocationProvider.get().latitude = 40;
+    [coreLocationProvider resetGeolocation];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [uiDelegate.get().alertMessage isEqualToString:@"position 40"];
+    }));
 }
 
 #endif // PLATFORM(IOS_FAMILY)

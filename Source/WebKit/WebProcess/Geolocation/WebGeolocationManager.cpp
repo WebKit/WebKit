@@ -203,8 +203,11 @@ void WebGeolocationManager::resetPermissions(const WebCore::RegistrableDomain& r
         return;
 
     for (auto& page : copyToVector(it->value.pageSet)) {
-        if (RefPtr mainFrame = page->localMainFrame())
-            mainFrame->resetAllGeolocationPermission();
+        RefPtr corePage = page->corePage();
+        if (!corePage)
+            continue;
+        for (Ref rootFrame : copyToVectorOf<Ref<WebCore::LocalFrame>>(corePage->rootFrames()))
+            rootFrame->resetAllGeolocationPermission();
     }
 }
 #endif // PLATFORM(IOS_FAMILY)
