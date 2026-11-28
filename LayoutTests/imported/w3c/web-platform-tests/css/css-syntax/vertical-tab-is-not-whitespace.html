@@ -1,0 +1,48 @@
+<!doctype html>
+<title>U+000B LINE TABULATION is not whitespace before a number</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<link rel=help href="https://drafts.csswg.org/css-syntax/#whitespace">
+<link rel=help href="https://drafts.csswg.org/css-syntax/#input-preprocessing">
+
+<div id="target"></div>
+<script>
+
+const style = document.getElementById("target").style;
+
+function setValue(property, fallback, input) {
+    style.setProperty(property, fallback);
+    style.setProperty(property, input);
+    return style.getPropertyValue(property);
+}
+
+const cases = [
+    ["width", "0px", "5px", "5px"],
+    ["width", "0px", "5%", "5%"],
+    ["margin-left", "0px", "-5px", "-5px"],
+    ["opacity", "0", "0.5", "0.5"],
+    ["opacity", "0", "50%", "0.5"],
+    ["transform", "none", "rotate(10deg)", "rotate(10deg)"],
+    ["transform", "none", "translateX(10px)", "translateX(10px)"],
+];
+
+const whitespace = [["U+0020", " "], ["U+0009", "\t"], ["U+000A", "\n"], ["U+000D", "\r"], ["U+000C", "\f"]];
+
+for (const [property, fallback, value, serialized] of cases) {
+    for (const [name, character] of whitespace) {
+        test(() => {
+            assert_equals(setValue(property, fallback, character + value), serialized);
+        }, `${property}: ${name} before ${value} is valid`);
+    }
+
+    test(() => {
+        assert_equals(setValue(property, fallback, "\u000b" + value), fallback);
+    }, `${property}: U+000B before ${value} is invalid via setProperty`);
+
+    test(() => {
+        assert_false(CSS.supports(property, "\u000b" + value));
+    }, `${property}: U+000B before ${value} is invalid via CSS.supports`);
+}
+
+</script>
