@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>color: inherit inside a visited link uses the visited color</title>
+<link rel="match" href="visited-inheritance-explicit-inherit-ref.html">
+<link rel="help" href="https://drafts.csswg.org/selectors/#link">
+<link rel="help" href="https://drafts.csswg.org/css-cascade/#inherit">
+<style>
+  a { color: red; }
+  a:visited { color: green; }
+  span { color: inherit; }
+</style>
+<a href=""><span>This text should be green</span></a>

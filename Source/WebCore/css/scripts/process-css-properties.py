@@ -4752,7 +4752,7 @@ class GenerateStyleBuilderGenerated:
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue({source_style}{property.codegen_properties.computed_style_getter}()));")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.computed_style_name_for_methods}(forwardInheritedValue({source_style}{property.codegen_properties.computed_style_getter}()));")
+        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.computed_style_name_for_methods}(forwardInheritedValue({source_style}visitedLink{property.codegen_properties.computed_style_name_for_methods}()));")
 
     def _generate_visited_link_color_supporting_property_value_setter(self, to, property):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
