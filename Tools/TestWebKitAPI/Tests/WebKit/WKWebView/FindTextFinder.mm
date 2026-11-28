@@ -34,6 +34,7 @@
 #import "Helpers/cocoa/PDFTestHelpers.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/TextFinderTester.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 
 namespace TestWebKitAPI {
@@ -98,6 +99,65 @@ TEST_P(FindTextFinder, StepWithoutWrapFindsNothingAtEnd)
     EXPECT_EQ([find.findMatches(@"hello", caseInsensitive, 1).matches count], 0u);
 }
 
+// NSTextFinder beeps when a step returns no match.
+TEST_P(FindTextFinder, StepWithoutPlatformFindUIReturnsMatch)
+{
+    FindTestPage page { FindTestFixtures::singleFrame("<p>hello hello</p>"_s), GetParam() };
+    [page.webView() _setUsePlatformFindUI:NO];
+    TextFinderTester find { page.webView() };
+
+    for (bool expectWrap : { false, false, true }) {
+        auto result = find.findMatches(@"hello", caseInsensitiveWrap, 1);
+        EXPECT_EQ([result.matches count], 1u);
+        EXPECT_EQ(result.didWrap, expectWrap);
+    }
+}
+
+TEST_P(FindTextFinder, StepWithoutPlatformFindUIHighlightsAllMatches)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    FindTestPage page { FindTestFixtures::singleFrame("<p id='p'>hello hello hello</p>"_s), GetParam(), configuration };
+    [page.webView() _setUsePlatformFindUI:NO];
+    TextFinderTester find { page.webView() };
+
+    find.findMatches(@"hello", caseInsensitive, 1);
+    EXPECT_EQ([[page.webView() objectByEvaluatingJavaScript:@"internals.markerCountForNode(p.firstChild, 'textmatch')"] intValue], 3);
+}
+
+// After a step, NSTextFinder selects the match it got back, then scrolls it into view.
+TEST_P(FindTextFinder, SelectSteppedMatchAfterFindAll)
+{
+    for (bool usePlatformFindUI : { true, false }) {
+        FindTestPage page { FindTestFixtures::singleFrame("<p>one hello two hello</p>"_s), GetParam() };
+        [page.webView() _setUsePlatformFindUI:usePlatformFindUI];
+        TextFinderTester find { page.webView() };
+
+        find.findMatches(@"hello", caseInsensitive);
+        find.findMatches(@"hello", caseInsensitive, 1);
+        auto result = find.findMatches(@"hello", caseInsensitive, 1);
+        ASSERT_EQ([result.matches count], 1u) << "usePlatformFindUI: " << usePlatformFindUI;
+        find.selectMatch([result.matches firstObject]);
+        find.scrollMatchToVisible([result.matches firstObject]);
+        EXPECT_EQ([[page.webView() objectByEvaluatingJavaScript:@"getSelection().anchorOffset"] intValue], 14) << "usePlatformFindUI: " << usePlatformFindUI;
+    }
+}
+
+TEST_P(FindTextFinder, ReplaceSteppedMatchAfterFindAll)
+{
+    for (bool usePlatformFindUI : { true, false }) {
+        FindTestPage page { FindTestFixtures::singleFrame("<div id='editor' contenteditable>hello hello</div>"_s), GetParam() };
+        [page.webView() _setUsePlatformFindUI:usePlatformFindUI];
+        TextFinderTester find { page.webView() };
+
+        find.findMatches(@"hello", caseInsensitive);
+        find.findMatches(@"hello", caseInsensitive, 1);
+        auto result = find.findMatches(@"hello", caseInsensitive, 1);
+        ASSERT_EQ([result.matches count], 1u) << "usePlatformFindUI: " << usePlatformFindUI;
+        EXPECT_EQ(find.replaceMatches(result.matches.get(), @"goodbye"), 1u) << "usePlatformFindUI: " << usePlatformFindUI;
+        EXPECT_WK_STREQ([page.webView() objectByEvaluatingJavaScript:@"editor.textContent"], "hello goodbye") << "usePlatformFindUI: " << usePlatformFindUI;
+    }
+}
+
 TEST_P(FindTextFinder, StartsWith)
 {
     FindTestPage page { FindTestFixtures::singleFrame("<p>hello othello</p>"_s), GetParam() };
@@ -153,6 +213,25 @@ TEST_P(FindTextFinder, StepAcrossCrossOriginFrames)
     for (size_t i = 0; i < expectedFrames.size(); ++i) {
         find.findMatches(@"hello", caseInsensitiveWrap, 1);
         EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { expectedFrames[i] }) << "step " << i;
+    }
+}
+
+TEST_P(FindTextFinder, StepWithoutPlatformFindUIAcrossCrossOriginFrames)
+{
+    FindTestPage page { { .body = "<p>hello hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello hello</p>"_s } } }, GetParam() };
+    [page.webView() _setUsePlatformFindUI:NO];
+    TextFinderTester find { page.webView() };
+
+    find.findMatches(@"hello", caseInsensitive);
+    Vector<Vector<unsigned>> expectedFrames { { }, { }, { 0 }, { 0 }, { } };
+    for (size_t i = 0; i < expectedFrames.size(); ++i) {
+        auto result = find.findMatches(@"hello", caseInsensitiveWrap, 1);
+        ASSERT_EQ([result.matches count], 1u) << "step " << i;
+        find.selectMatch([result.matches firstObject]);
+        find.scrollMatchToVisible([result.matches firstObject]);
+        auto snapshot = FindStateSnapshot::capture(page.webView());
+        EXPECT_EQ(snapshot.framesWithSelection(), Vector<Vector<unsigned>> { expectedFrames[i] }) << "step " << i;
+        EXPECT_FALSE(CGRectIsNull(snapshot.textIndicatorRect)) << "step " << i;
     }
 }
 

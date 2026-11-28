@@ -30,7 +30,6 @@
 
 #import "APIFindClient.h"
 #import "APIFindMatchesClient.h"
-#import "WKPageFindMatchesClient.h"
 #import "WebFindOptions.h"
 #import "WebImage.h"
 #import "WebPageProxy.h"
@@ -38,7 +37,6 @@
 #import <algorithm>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/Borrow.h>
 #import <wtf/CheckedPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
@@ -54,6 +52,7 @@ static const NSUInteger maximumFindMatches = 1000;
 @interface WKTextFinderClient ()
 
 - (void)didFindStringMatchesWithRects:(const Vector<Vector<WebCore::IntRect>>&)rects didWrapAround:(BOOL)didWrapAround;
+- (void)didFindSelectedMatchWithRects:(const Vector<WebCore::IntRect>&)rects didWrapAround:(BOOL)didWrapAround;
 
 - (void)getImageForMatchResult:(id <NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(NSImage *generatedImage))completionHandler;
 - (void)didGetImageForMatchResult:(WebKit::WebImage *)string;
@@ -82,21 +81,11 @@ private:
         [m_textFinderClient didGetImageForMatchResult:image];
     }
 
-    void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrapAround) override
+    void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>& matchRects, uint32_t, int32_t, bool didWrapAround) override
     {
-        Vector<Vector<WebCore::IntRect>> allMatches;
-        if (matchCount != static_cast<unsigned>(kWKMoreThanMaximumMatchCount)) {
-            // Synthesize a vector of match rects for all `matchCount` matches,
-            // filling in the actual rects for the one that we received.
-            // The rest will remain empty, but it's important to NSTextFinder
-            // that they at least exist.
-            allMatches.grow(matchCount);
-            // FIXME: Clean this up and figure out why we are getting a -1 index
-            if (matchIndex >= 0 && static_cast<uint32_t>(matchIndex) < matchCount)
-                borrow(allMatches)[matchIndex].appendVector(matchRects);
-        }
-
-        [m_textFinderClient didFindStringMatchesWithRects:allMatches didWrapAround:didWrapAround];
+        // NSTextFinder asked for one match and only looks at the first one, so return just the match
+        // that was found, however many there are.
+        [m_textFinderClient didFindSelectedMatchWithRects:matchRects didWrapAround:didWrapAround];
     }
 
     void didFailToFindString(WebPageProxy*, const String& string) override
@@ -112,6 +101,9 @@ private:
 @interface WKTextFinderMatch : NSObject <NSTextFinderAsynchronousDocumentFindMatch>
 
 @property (nonatomic, readonly) unsigned index;
+// The match found by stepping to the next or previous match. WebKit has already selected and revealed it,
+// and its index doesn't refer to the results of finding all matches.
+@property (nonatomic, readonly) BOOL representsSelection;
 
 @end
 
@@ -120,9 +112,10 @@ private:
     WeakObjCPtr<NSView> _view;
     RetainPtr<NSArray> _rects;
     unsigned _index;
+    BOOL _representsSelection;
 }
 
-- (instancetype)initWithClient:(WKTextFinderClient *)client view:(NSView *)view index:(unsigned)index rects:(NSArray *)rects
+- (instancetype)initWithClient:(WKTextFinderClient *)client view:(NSView *)view index:(unsigned)index rects:(NSArray *)rects representsSelection:(BOOL)representsSelection
 {
     self = [super init];
 
@@ -133,6 +126,7 @@ private:
     _view = view;
     _rects = rects;
     _index = index;
+    _representsSelection = representsSelection;
 
     return self;
 }
@@ -160,6 +154,11 @@ private:
 - (unsigned)index
 {
     return _index;
+}
+
+- (BOOL)representsSelection
+{
+    return _representsSelection;
 }
 
 @end
@@ -205,7 +204,8 @@ private:
 {
     Vector<uint32_t> matchIndices(ReserveCapacityTag { }, matches.count);
     for (id match in matches) {
-        if ([match isKindOfClass:WKTextFinderMatch.class])
+        // Replacing no matches replaces the selection, which is where a step's match is.
+        if ([match isKindOfClass:WKTextFinderMatch.class] && ![(WKTextFinderMatch *)match representsSelection])
             matchIndices.append([(WKTextFinderMatch *)match index]);
     }
     protect(_page)->replaceMatches(WTF::move(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements) {
@@ -245,8 +245,9 @@ private:
         Block_release(copiedResultCollector);
     });
 
+    // NSTextFinder asks for one match when stepping, but WebKit's find UI still counts and highlights the others.
     if (maxResults == 1)
-        protect(_page)->findString(targetString, kitFindOptions, maxResults);
+        protect(_page)->findString(targetString, kitFindOptions, _usePlatformFindUI ? maxResults : maximumFindMatches);
     else
         protect(_page)->findStringMatches(targetString, kitFindOptions, maxResults);
 }
@@ -267,6 +268,8 @@ private:
     ASSERT(!completionHandler);
 
     WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
+    if (textFinderMatch.representsSelection)
+        return;
     protect(_page)->selectFindMatch(textFinderMatch.index);
 }
 
@@ -278,10 +281,23 @@ private:
     ASSERT([findMatch isKindOfClass:[WKTextFinderMatch class]]);
 
     WKTextFinderMatch *textFinderMatch = static_cast<WKTextFinderMatch *>(findMatch);
+    if (textFinderMatch.representsSelection)
+        return;
     protect(_page)->indicateFindMatch(textFinderMatch.index);
 }
 
 #pragma mark - FindMatchesClient
+
+- (RetainPtr<WKTextFinderMatch>)_matchWithIndex:(unsigned)index rects:(const Vector<WebCore::IntRect>&)rects representsSelection:(BOOL)representsSelection
+{
+    RetainPtr<NSArray> rectsArray;
+    if (_usePlatformFindUI)
+        rectsArray = createNSArray(rects);
+    else
+        rectsArray = @[];
+    RetainPtr strongView = _view.get();
+    return adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:strongView.get() index:index rects:rectsArray.get() representsSelection:representsSelection]);
+}
 
 - (void)didFindStringMatchesWithRects:(const Vector<Vector<WebCore::IntRect>>&)rectsForMatches didWrapAround:(BOOL)didWrapAround
 {
@@ -290,16 +306,19 @@ private:
 
     unsigned index = 0;
     auto matchObjects = createNSArray(rectsForMatches, [&] (auto& rects) {
-        RetainPtr<NSArray> rectsArray;
-        if (_usePlatformFindUI)
-            rectsArray = createNSArray(rects);
-        else
-            rectsArray = @[];
-        RetainPtr strongView = _view.get();
-        return adoptNS([[WKTextFinderMatch alloc] initWithClient:self view:strongView.get() index:index++ rects:rectsArray.get()]);
+        return [self _matchWithIndex:index++ rects:rects representsSelection:NO];
     });
 
     _findReplyCallbacks.takeFirst()(matchObjects.get(), didWrapAround);
+}
+
+- (void)didFindSelectedMatchWithRects:(const Vector<WebCore::IntRect>&)rects didWrapAround:(BOOL)didWrapAround
+{
+    if (_findReplyCallbacks.isEmpty())
+        return;
+
+    RetainPtr match = [self _matchWithIndex:0 rects:rects representsSelection:YES];
+    _findReplyCallbacks.takeFirst()(@[ match.get() ], didWrapAround);
 }
 
 - (void)didGetImageForMatchResult:(WebKit::WebImage *)image
@@ -340,6 +359,8 @@ private:
     // FIXME: There is no guarantee that this will ever result in didGetImageForMatchResult
     // being called (and thus us calling our completion handler); we should harden this
     // against all of the early returns in FindController::getImageForFindMatch.
+    // FIXME: A match that represents the selection has no index of its own, so this snapshots the first
+    // match from the last find-all, if there was one, instead of the selection.
     protect(_page)->getImageForFindMatch([textFinderMatch index]);
 }
 
