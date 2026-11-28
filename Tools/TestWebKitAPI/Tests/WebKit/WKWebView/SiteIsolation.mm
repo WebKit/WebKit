@@ -12112,6 +12112,53 @@ TEST(SiteIsolation, MediaCapturePermissionUsesRemoteFrameOrigin)
     EXPECT_WK_STREQ([delegate lastRequestFrameHost], "webkit.org");
 }
 
+#if ENABLE(MEDIA_SESSION)
+TEST(SiteIsolation, VoiceActivityDetectedInCrossOriginIframe)
+{
+    auto mainFrameHTML = "<iframe allow='microphone *' src='https://webkit.org/subframe'></iframe>"_s;
+    auto subFrameHTML = "<script>"
+        "window.voiceActivityCount = 0;"
+        "async function startCaptureAndMute() {"
+        "    window.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });"
+        "    navigator.mediaSession.setActionHandler('voiceactivity', () => window.voiceActivityCount++);"
+        "    await navigator.mediaSession.setMicrophoneActive(false);"
+        "}"
+        "</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html"_s } }, mainFrameHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, subFrameHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration _setMediaCaptureEnabled:YES];
+
+    RetainPtr preferences = [configuration preferences];
+    [preferences _setMediaCaptureRequiresSecureConnection:NO];
+    [preferences _setMockCaptureDevicesEnabled:YES];
+    [preferences _setGetUserMediaRequiresFocus:NO];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"return startCaptureAndMute()" arguments:nil inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.voiceActivityCount" inFrame:childFrame.get()] intValue] > 0;
+    }));
+}
+#endif // ENABLE(MEDIA_SESSION)
+
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)

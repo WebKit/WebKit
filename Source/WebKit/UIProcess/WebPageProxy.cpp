@@ -18347,7 +18347,7 @@ void WebPageProxy::setShouldListenToVoiceActivity(bool value)
 
 void WebPageProxy::voiceActivityDetected()
 {
-    send(Messages::WebPage::VoiceActivityDetected { });
+    sendToEveryWebContentProcess<Messages::WebPage::VoiceActivityDetected>();
 }
 
 void WebPageProxy::startMonitoringCaptureDeviceRotation(const String& persistentId, RotationMonitoringReason reason)
