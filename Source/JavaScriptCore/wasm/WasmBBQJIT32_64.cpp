@@ -1228,7 +1228,7 @@ void BBQJIT::truncInBounds(TruncationKind truncationKind, Location operandLocati
 
     LOG_INSTRUCTION("RefI31", value, RESULT(result));
 
-    m_jit.lshift32(TrustedImm32(1), resultLocation.asGPRlo());
+    m_jit.lshift32(initialValue.asGPR(), TrustedImm32(1), resultLocation.asGPRlo());
     m_jit.rshift32(TrustedImm32(1), resultLocation.asGPRlo());
     m_jit.move(TrustedImm32(JSValue::Int32Tag), resultLocation.asGPRhi());
     return { };
