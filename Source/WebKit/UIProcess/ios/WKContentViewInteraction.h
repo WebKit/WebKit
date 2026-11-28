@@ -48,6 +48,7 @@
 #import "WKBrowserEngineDefinitions.h"
 #import "WKClickHighlightController.h"
 #import "WKMouseInteraction.h"
+#import "WKPointerInteractionController.h"
 #import "WKTextAnimationManagerIOS.h"
 #import "WKTextSelectionRect.h"
 #import <WebKit/WKActionSheetAssistant.h>
@@ -164,8 +165,6 @@ enum class PickerDismissalReason : uint8_t;
 @class WKDateTimeInputControl;
 #endif
 
-@class UIPointerInteraction;
-@class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
 
@@ -399,9 +398,7 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 
 #if HAVE(UI_POINTER_INTERACTION)
-    RetainPtr<UIPointerInteraction> _pointerInteraction;
-    RetainPtr<UIPointerRegion> _lastPointerRegion;
-    BOOL _pointerInteractionRegionNeedsUpdate;
+    RetainPtr<WKPointerInteractionController> _pointerInteractionController;
 #endif
 
 #if HAVE(UITOOLTIPINTERACTION)
@@ -677,6 +674,9 @@ struct ImageAnalysisContextMenuActionData {
 #endif
     , WKTouchActionGestureRecognizerDelegate
     , WKClickHighlightControllerDelegate
+#if HAVE(UI_POINTER_INTERACTION)
+    , WKPointerInteractionControllerDelegate
+#endif
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     , WKMouseInteractionDelegate
 #endif

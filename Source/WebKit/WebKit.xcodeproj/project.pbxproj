@@ -1679,6 +1679,7 @@
 		5EEC72542DC1B32500D012DD /* BidiEventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EEC72532DC1B32400D012DD /* BidiEventNames.h */; };
 		5F4D67D682584880B7E5A569 /* RemoteLayerTreeCommitBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = A6EB76B251B844C7BCAAAF04 /* RemoteLayerTreeCommitBundle.h */; };
 		5FB3272483A5491ABB6EC294 /* WKPickerPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F68FB4F5788E475F846F6434 /* WKPickerPresenter.h */; };
+		4DD6EAD93210B76EB84EDA44 /* WKPointerInteractionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 95ED90EB1A9C689489CAD763 /* WKPointerInteractionController.h */; };
 		63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */; };
 		634842511FB26E7100946E3C /* APIApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6348424F1FB26E7100946E3C /* APIApplicationManifest.h */; };
@@ -9338,6 +9339,8 @@
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F63855BEB2200C51A99E3053 /* GeneratedSerializersWebProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersWebProcess.mm; sourceTree = "<group>"; };
 		F68FB4F5788E475F846F6434 /* WKPickerPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPickerPresenter.h; sourceTree = "<group>"; };
+		95ED90EB1A9C689489CAD763 /* WKPointerInteractionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPointerInteractionController.h; sourceTree = "<group>"; };
+		EEA582A297ADE20948932C67 /* WKPointerInteractionController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPointerInteractionController.mm; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerCocoa.mm; sourceTree = "<group>"; };
 		F98D069BBFD9CAA8FCDA2943 /* GeneratedSerializersUIProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersUIProcess.mm; sourceTree = "<group>"; };
 		FA0657F62FAE6D9C00CB5D45 /* WKPageResourceLoadClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPageResourceLoadClient.h; sourceTree = "<group>"; };
@@ -12854,6 +12857,8 @@
 				A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */,
 				F68FB4F5788E475F846F6434 /* WKPickerPresenter.h */,
 				CCF59CA985D344FBB56EE1E2 /* WKPickerPresenter.mm */,
+				95ED90EB1A9C689489CAD763 /* WKPointerInteractionController.h */,
+				EEA582A297ADE20948932C67 /* WKPointerInteractionController.mm */,
 				4C8E2A1D3D5F60718293A4D3 /* WKPortalVolumetricSceneController.h */,
 				4C8E2A1E3D5F60718293A4D4 /* WKPortalVolumetricSceneController.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
@@ -20019,6 +20024,7 @@
 				5FB3272483A5491ABB6EC294 /* WKPickerPresenter.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */,
+				4DD6EAD93210B76EB84EDA44 /* WKPointerInteractionController.h in Headers */,
 				33E3DFBC3074B5240088E1B2 /* WKPointerTrackingGestureRecognizer.h in Headers */,
 				4C8E2A213D5F60718293A4D7 /* WKPortalVolumetricGestureController.h in Headers */,
 				1AFDD3171891C94700153970 /* WKPreferences.h in Headers */,

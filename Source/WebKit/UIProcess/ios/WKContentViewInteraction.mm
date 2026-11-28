@@ -238,14 +238,6 @@
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 #endif
 
-#if HAVE(UI_POINTER_INTERACTION)
-static NSString * const pointerRegionIdentifier = @"WKPointerRegion";
-static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerRegion";
-
-@interface WKContentView (WKUIPointerInteractionDelegate) <UIPointerInteractionDelegate>
-@end
-#endif
-
 #if HAVE(PENCILKIT_TEXT_INPUT)
 @interface WKContentView (WKUIIndirectScribbleInteractionDelegate) <UIIndirectScribbleInteractionDelegate>
 @end
@@ -955,7 +947,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #endif
 
 #if HAVE(UI_POINTER_INTERACTION)
-    [self setUpPointerInteraction];
+    if (!_pointerInteractionController)
+        _pointerInteractionController = adoptNS([[WKPointerInteractionController alloc] initWithContentView:self]);
+    [_pointerInteractionController setUpPointerInteraction];
+    [self addInteraction:[_pointerInteractionController pointerInteraction]];
 #endif
 
 #if HAVE(PENCILKIT_TEXT_INPUT)
@@ -1183,9 +1178,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if HAVE(UI_POINTER_INTERACTION)
-    [self removeInteraction:_pointerInteraction.get()];
-    _pointerInteraction = nil;
-    _pointerInteractionRegionNeedsUpdate = NO;
+    [self removeInteraction:[_pointerInteractionController pointerInteraction]];
+    [_pointerInteractionController cleanUp];
 #endif
 
     _revealFocusedElementDeferrer = nullptr;
@@ -11930,126 +11924,14 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 #if HAVE(UI_POINTER_INTERACTION)
 
-- (void)setUpPointerInteraction
-{
-    _pointerInteraction = adoptNS([[UIPointerInteraction alloc] initWithDelegate:self]);
-    [self addInteraction:_pointerInteraction.get()];
-}
-
 - (UIPointerRegion *)pointerInteraction:(UIPointerInteraction *)interaction regionForRequest:(UIPointerRegionRequest *)request defaultRegion:(UIPointerRegion *)defaultRegion
 {
-    [self _updateLastPointerRegionIfNeeded:request];
-    return _lastPointerRegion.get();
-}
-
-- (void)_updateLastPointerRegionIfNeeded:(UIPointerRegionRequest *)request
-{
-    WebKit::InteractionInformationRequest interactionInformationRequest;
-    interactionInformationRequest.point = WebCore::roundedIntPoint(request.location);
-    interactionInformationRequest.includeCursorContext = true;
-    interactionInformationRequest.includeHasDoubleClickHandler = false;
-
-    if ([self _currentPositionInformationIsValidForRequest:interactionInformationRequest]) {
-        _lastPointerRegion = [self pointerRegionForPositionInformation:_positionInformation point:request.location];
-        [_webView.get() _setPointerTouchCompatibilitySimulatorEnabled:_positionInformation.needsPointerTouchCompatibilityQuirk];
-        _pointerInteractionRegionNeedsUpdate = NO;
-        return;
-    }
-
-    // Note: In this case where position information is not up-to-date, checking the last cached
-    // position information may not yield expected results, since the client (or any other code in
-    // WebKit) may have queried position information at a totally different location, for unrelated
-    // reasons. However, this seems to work well in practice, since pointer updates are very frequent,
-    // so any invalid state would only persist for a single frame.
-    if (self.webView._editable && !_positionInformation.cursorContext.shouldNotUseIBeamInEditableContent) {
-        auto lastRegionRect = _lastPointerRegion ? [_lastPointerRegion rect] : self.bounds;
-        _lastPointerRegion = [UIPointerRegion regionWithRect:lastRegionRect identifier:editablePointerRegionIdentifier];
-    }
-
-    if (_pointerInteractionRegionNeedsUpdate)
-        return;
-
-    _pointerInteractionRegionNeedsUpdate = YES;
-
-    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), location = request.location](WebKit::InteractionInformationAtPosition information) {
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-
-        strongSelf->_pointerInteractionRegionNeedsUpdate = NO;
-        strongSelf->_lastPointerRegion = [strongSelf pointerRegionForPositionInformation:information point:location];
-        [strongSelf->_webView.get() _setPointerTouchCompatibilitySimulatorEnabled:information.needsPointerTouchCompatibilityQuirk];
-        [strongSelf->_pointerInteraction invalidate];
-    } forRequest:interactionInformationRequest];
-}
-
-- (UIPointerRegion *)pointerRegionForPositionInformation:(const WebKit::InteractionInformationAtPosition&)interactionInformation point:(CGPoint)location
-{
-    WebCore::FloatRect expandedLineRect = enclosingIntRect(interactionInformation.cursorContext.lineCaretExtent);
-
-    // Pad lines of text in order to avoid switching back to the dot cursor between lines.
-    // This matches the value that UIKit uses.
-    // FIXME: Should this account for vertical writing mode?
-    expandedLineRect.inflateY(10);
-
-    if (auto cursor = interactionInformation.cursorContext.cursor) {
-        auto cursorType = cursor->type();
-        if (cursorType == WebCore::Cursor::Type::Hand)
-            return [UIPointerRegion regionWithRect:interactionInformation.bounds identifier:pointerRegionIdentifier];
-
-        if (cursorType == WebCore::Cursor::Type::IBeam && expandedLineRect.contains(location))
-            return [UIPointerRegion regionWithRect:expandedLineRect identifier:pointerRegionIdentifier];
-    }
-
-    if (self.webView._editable) {
-        if (expandedLineRect.contains(location))
-            return [UIPointerRegion regionWithRect:expandedLineRect identifier:pointerRegionIdentifier];
-        return [UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier];
-    }
-
-    return [UIPointerRegion regionWithRect:self.bounds identifier:pointerRegionIdentifier];
+    return [_pointerInteractionController regionForRequest:request];
 }
 
 - (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region
 {
-    double scaleFactor = self._contentZoomScale;
-
-    auto lineCaretExtent = _positionInformation.cursorContext.lineCaretExtent;
-    UIPointerStyle *(^iBeamCursor)(void) = ^{
-        bool isVertical = _positionInformation.cursorContext.isVerticalWritingMode;
-        float beamLength = (isVertical ? lineCaretExtent.width() : lineCaretExtent.height()) * scaleFactor;
-        auto axisOrientation = isVertical ? UIAxisHorizontal : UIAxisVertical;
-        auto iBeamConstraintAxes = isVertical ? UIAxisHorizontal : UIAxisVertical;
-        auto regionLengthInBlockAxis = isVertical ? CGRectGetWidth(region.rect) : CGRectGetHeight(region.rect);
-
-        // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
-        static constexpr auto maximumBeamSnappingLength = 100;
-        if (beamLength > maximumBeamSnappingLength || regionLengthInBlockAxis > maximumBeamSnappingLength)
-            iBeamConstraintAxes = UIAxisNeither;
-
-        // If the region is the size of the view, we should not apply any magnetism.
-        if ([region.identifier isEqual:editablePointerRegionIdentifier])
-            iBeamConstraintAxes = UIAxisNeither;
-
-        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:axisOrientation] constrainedAxes:iBeamConstraintAxes];
-    };
-
-    if (self.webView._editable) {
-        if (_positionInformation.cursorContext.shouldNotUseIBeamInEditableContent)
-            return [UIPointerStyle systemPointerStyle];
-        return iBeamCursor();
-    }
-
-    if (auto cursor = _positionInformation.cursorContext.cursor; cursor && [region.identifier isEqual:pointerRegionIdentifier]) {
-        auto cursorType = cursor->type();
-        if (cursorType == WebCore::Cursor::Type::Hand)
-            return [UIPointerStyle systemPointerStyle];
-
-        if (cursorType == WebCore::Cursor::Type::IBeam && lineCaretExtent.contains(_positionInformation.request.point))
-            return iBeamCursor();
-    }
-
-    return [UIPointerStyle systemPointerStyle];
+    return [_pointerInteractionController styleForRegion:region];
 }
 
 #endif // HAVE(UI_POINTER_INTERACTION)
