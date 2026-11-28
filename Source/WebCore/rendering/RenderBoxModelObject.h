@@ -86,9 +86,8 @@ public:
 
     LayoutSize relativePositionOffset() const;
 
-    FloatRect constrainingRectForStickyPosition() const;
-    NODELETE std::pair<const RenderBox&, const RenderLayer*> enclosingClippingBoxForStickyPosition() const;
-    void computeStickyPositionConstraints(StickyPositionViewportConstraints&, const FloatRect& constrainingRect) const;
+    NODELETE std::pair<const RenderBox&, const RenderLayer*> enclosingClippingBoxForStickyPosition(BoxAxis) const;
+    StickyPositionViewportConstraints computeStickyPositionConstraints() const;
     LayoutSize stickyPositionOffset() const;
 
     LayoutSize offsetForInFlowPosition() const;
@@ -283,6 +282,9 @@ protected:
 
 private:
     RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
+
+    FloatRect constrainingRectForStickyPosition(const RenderBox& scrollContainer, const RenderLayer* scrollContainerLayer) const;
+    void computeStickyPositionConstraints(StickyPositionViewportConstraints&, const RenderBox& scrollContainer, const RenderLayer* scrollContainerLayer) const;
 };
 
 NODELETE bool isEmptyInline(const RenderBoxModelObject&);

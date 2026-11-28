@@ -1,0 +1,4 @@
+
+FAIL Constraints apply independently across nested single-axis scrollers assert_true: named-feature() detects support correctly expected true got false
+PASS Constraints correctly skip axes that are overflow: clip
+

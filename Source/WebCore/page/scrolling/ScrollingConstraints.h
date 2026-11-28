@@ -183,6 +183,12 @@ public:
     // the sticky box at every permissible position during its sticky travel.
     NODELETE FloatRect computeStickyExtent() const;
 
+    // When the nearest scroll containers in the two axes differ, the horizontal parts of the rects above
+    // (x and width) are in the coordinate space of the horizontal one and the vertical parts (y and height)
+    // are in that of the vertical one. Each axis of the sticky offset only depends on its own parts.
+    // This replaces the vertical parts with those of constraints computed for the vertical scroll container.
+    void setVerticalConstraints(const StickyPositionViewportConstraints&);
+
     friend bool operator==(const StickyPositionViewportConstraints&, const StickyPositionViewportConstraints&) = default;
 
 private:

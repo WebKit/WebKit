@@ -115,6 +115,23 @@ FloatPoint StickyPositionViewportConstraints::anchorLayerPositionAtLastLayout() 
     return m_layerPositionAtLastLayout + m_anchorLayerOffsetAtLastLayout;
 }
 
+void StickyPositionViewportConstraints::setVerticalConstraints(const StickyPositionViewportConstraints& other)
+{
+    auto replaceVerticalParts = [](FloatRect& rect, const FloatRect& other) {
+        rect.setY(other.y());
+        rect.setHeight(other.height());
+    };
+    replaceVerticalParts(m_constrainingRectAtLastLayout, other.m_constrainingRectAtLastLayout);
+    replaceVerticalParts(m_containingBlockRect, other.m_containingBlockRect);
+    replaceVerticalParts(m_stickyBoxRect, other.m_stickyBoxRect);
+
+    m_topOffset = other.m_topOffset;
+    m_bottomOffset = other.m_bottomOffset;
+
+    AnchorEdges verticalEdges = AnchorEdgeTop | AnchorEdgeBottom;
+    setAnchorEdges((anchorEdges() & ~verticalEdges) | (other.anchorEdges() & verticalEdges));
+}
+
 FloatRect StickyPositionViewportConstraints::computeStickyExtent() const
 {
     float minShiftX = 0;
