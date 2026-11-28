@@ -1775,8 +1775,8 @@ macro functionInitialization(profileArgSkip)
         loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t1
         loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
         storeJSValueConcurrent(
-            macro (val, offset)
-                storei val, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + offset[t3]
+            macro (tagReg, payloadReg)
+                store2ia payloadReg, tagReg, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
             end,
             t1,
             t2

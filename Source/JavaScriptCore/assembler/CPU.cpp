@@ -31,6 +31,14 @@
 #include <sys/sysctl.h>
 #endif
 
+#if CPU(ARM_THUMB2) && OS(LINUX) && __has_include(<sys/auxv.h>)
+#include <asm/hwcap.h>
+#include <sys/auxv.h>
+#ifndef HWCAP_LPAE
+#define HWCAP_LPAE (1 << 20)
+#endif
+#endif
+
 #if ENABLE(ASSEMBLER)
 #include "MacroAssembler.h"
 #endif
@@ -142,6 +150,14 @@ bool isX86_64_AVX()
 #else
     return false;
 #endif
+}
+#endif
+
+#if CPU(ARM_THUMB2) && OS(LINUX) && __has_include(<sys/auxv.h>)
+bool isARMv7_LPAE()
+{
+    static const bool result = getauxval(AT_HWCAP) & HWCAP_LPAE;
+    return result;
 }
 #endif
 
