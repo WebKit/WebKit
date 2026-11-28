@@ -34,6 +34,7 @@ CachedResourceRequestInitiatorTypes::CachedResourceRequestInitiatorTypes()
     , fetch("fetch"_s)
     , icon("icon"_s)
     , navigation("navigation"_s)
+    , ping("ping"_s)
     , xmlhttprequest("xmlhttprequest"_s)
 {
 }
