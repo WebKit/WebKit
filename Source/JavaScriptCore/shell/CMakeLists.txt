@@ -1,4 +1,10 @@
-set(jsc_SOURCES ../jsc.cpp)
+set(jsc_SOURCES
+    StructuredClone.cpp
+    Worker.cpp
+    WorkerChannel.cpp
+
+    ../jsc.cpp
+)
 set(jsc_LIBRARIES ${CMAKE_DL_LIBS})
 set(jsc_FRAMEWORKS
     JavaScriptCore

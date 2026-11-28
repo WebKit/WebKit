@@ -998,6 +998,9 @@
 		4443AE3316E188D90076F110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		4469970B2AFEF6CF008B930C /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		4487DB832AF825C800AFECAE /* Fuzzilli.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4487DB812AF825C700AFECAE /* Fuzzilli.cpp */; };
+		9B5288317408BC93DA1E01C5 /* Worker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF06F341E88213A768D77D41 /* Worker.cpp */; };
+		C5C410E73D7ACDA6D844482D /* StructuredClone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E82F969292AFD4E744913F3 /* StructuredClone.cpp */; };
+		CE8397B767497D4A23EE6BE7 /* WorkerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A07841624DBDF9DC2D0FDB /* WorkerChannel.cpp */; };
 		44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */; };
 		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4615E4682B5833FB001D4D53 /* WasmBBQJIT64.cpp */; };
@@ -4508,6 +4511,13 @@
 		4441F2FFCBEB4FCF957B3606 /* B3WasmArrayLengthValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmArrayLengthValue.cpp; path = b3/B3WasmArrayLengthValue.cpp; sourceTree = "<group>"; };
 		4487DB812AF825C700AFECAE /* Fuzzilli.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fuzzilli.cpp; sourceTree = "<group>"; };
 		4487DB822AF825C800AFECAE /* Fuzzilli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fuzzilli.h; sourceTree = "<group>"; };
+		AAAC4420C8E25A4A65698839 /* Worker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Worker.h; sourceTree = "<group>"; };
+		CF06F341E88213A768D77D41 /* Worker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Worker.cpp; sourceTree = "<group>"; };
+		5BB090E5D7D19C45C64DE45D /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		9E82F969292AFD4E744913F3 /* StructuredClone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructuredClone.cpp; sourceTree = "<group>"; };
+		35412D6BB23FB6C73DDEACFF /* StructuredClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructuredClone.h; sourceTree = "<group>"; };
+		41A07841624DBDF9DC2D0FDB /* WorkerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerChannel.cpp; sourceTree = "<group>"; };
+		1FFCE3E123F9315E4E12655A /* WorkerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerChannel.h; sourceTree = "<group>"; };
 		44F93DFD2AE71EBD00FFA37C /* libJavaScriptCore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libJavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		44F93E022AE71F5400FFA37C /* libJavaScriptCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libJavaScriptCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CCFE0660BE540320EF4777 /* libJavaScriptCoreTools.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libJavaScriptCoreTools.xcconfig; sourceTree = "<group>"; };
@@ -7099,6 +7109,7 @@
 				7EF6E0BB0EB7A1EC0079AFAF /* runtime */,
 				79281C0020B62BBD002E2A60 /* testmem */,
 				9959E9251BD17F1E001AA413 /* Scripts */,
+				E9BE15A0C270FE7B69E4053F /* shell */,
 				141211000A48772600480255 /* tests */,
 				8603CEF014C753EF00AE59E3 /* tools */,
 				7B98D1331B60CD1E0023B1A4 /* wasm */,
@@ -8278,6 +8289,20 @@
 				4487DB822AF825C800AFECAE /* Fuzzilli.h */,
 			);
 			path = fuzzilli;
+			sourceTree = "<group>";
+		};
+		E9BE15A0C270FE7B69E4053F /* shell */ = {
+			isa = PBXGroup;
+			children = (
+				5BB090E5D7D19C45C64DE45D /* Message.h */,
+				9E82F969292AFD4E744913F3 /* StructuredClone.cpp */,
+				35412D6BB23FB6C73DDEACFF /* StructuredClone.h */,
+				CF06F341E88213A768D77D41 /* Worker.cpp */,
+				AAAC4420C8E25A4A65698839 /* Worker.h */,
+				41A07841624DBDF9DC2D0FDB /* WorkerChannel.cpp */,
+				1FFCE3E123F9315E4E12655A /* WorkerChannel.h */,
+			);
+			path = shell;
 			sourceTree = "<group>";
 		};
 		534E03521E53BBA900213F64 /* accessCase */ = {
@@ -14765,6 +14790,9 @@
 			files = (
 				4487DB832AF825C800AFECAE /* Fuzzilli.cpp in Sources */,
 				932F5BDD0822A1C700736975 /* jsc.cpp in Sources */,
+				C5C410E73D7ACDA6D844482D /* StructuredClone.cpp in Sources */,
+				9B5288317408BC93DA1E01C5 /* Worker.cpp in Sources */,
+				CE8397B767497D4A23EE6BE7 /* WorkerChannel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

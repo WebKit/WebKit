@@ -27,8 +27,6 @@
 #include "AtomicsObject.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
-#include "CloneDeserializerBase.h"
-#include "CloneSerializerBase.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CompilerTimingScope.h"
@@ -90,6 +88,10 @@
 #include "WasmDebugServer.h"
 #include "WasmFaultSignalHandler.h"
 #include "WebAssemblyMemoryConstructor.h"
+#include "shell/Message.h"
+#include "shell/StructuredClone.h"
+#include "shell/Worker.h"
+#include "shell/WorkerChannel.h"
 #include <span>
 #include <stdio.h>
 #include <stdlib.h>
@@ -201,6 +203,12 @@ struct MemoryFootprint {
 #endif
 
 using namespace JSC;
+using JSCShell::JSCCloneDeserializer;
+using JSCShell::JSCCloneSerializer;
+using JSCShell::Message;
+using JSCShell::WorkerChannel;
+using JSCShell::serializeMessage;
+using JSCShell::throwSerializationError;
 
 namespace {
 
@@ -216,6 +224,7 @@ namespace {
 
 static unsigned asyncTestPasses { 0 };
 static unsigned asyncTestExpectedPasses { 0 };
+static bool didCheckUncaughtException { false };
 
 }
 
@@ -223,49 +232,12 @@ static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName);
 
 class CommandLine;
 class GlobalObject;
+class Worker;
 class Workers;
 
-template<typename Func>
-int runJSC(const CommandLine&, bool isWorker, NOESCAPE const Func&);
+int runJSC(const CommandLine&, bool isWorker, NOESCAPE const WTF::Invocable<void(VM&, GlobalObject*, bool& success)> auto&);
+int runJSC(const CommandLine&, bool isWorker, UniqueRef<Worker>&& adoptedWorker, NOESCAPE const WTF::Invocable<void(VM&, GlobalObject*, bool& success)> auto&);
 static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, const CommandLine&, bool& success);
-
-class Message : public ThreadSafeRefCounted<Message> {
-public:
-    static Ref<Message> create(Vector<uint8_t>&& data, CloneSerializationSideChannels&& sideChannels, int32_t index)
-    {
-        return adoptRef(*new Message(WTF::move(data), WTF::move(sideChannels), index));
-    }
-
-    std::span<const uint8_t> data() const { return m_data.span(); }
-    NODELETE int32_t index() const { return m_index; }
-
-    // Every recipient worker gets this same Message and deserializes from it concurrently, which
-    // is safe because the side channels (other than arrayBufferContents) are read-only.
-    CloneDeserializationSideChannels sideChannels()
-    {
-        return {
-            // Broadcast never transfers buffers, so there is no transferred-buffer channel.
-            .arrayBufferContents = nullptr,
-            .sharedBuffers = &m_sideChannels.sharedBuffers,
-#if ENABLE(WEBASSEMBLY)
-            .wasmModules = &m_sideChannels.wasmModules,
-            .wasmMemoryHandles = &m_sideChannels.wasmMemoryHandles,
-#endif
-        };
-    }
-
-private:
-    Message(Vector<uint8_t>&& data, CloneSerializationSideChannels&& sideChannels, int32_t index)
-        : m_data(WTF::move(data))
-        , m_sideChannels(WTF::move(sideChannels))
-        , m_index(index)
-    {
-    }
-
-    const Vector<uint8_t> m_data;
-    CloneSerializationSideChannels m_sideChannels;
-    int32_t m_index { 0 };
-};
 
 class Worker : public BasicRawSentinelNode<Worker> {
 public:
@@ -276,6 +248,10 @@ public:
     RefPtr<Message> dequeue();
     NODELETE bool isMain() const { return m_isMain; }
 
+    // Registration happens in the constructor, on whichever thread creates the Worker, so a
+    // broadcast can reach an agent whose thread has not started yet. The thread that will
+    // dequeue claims it separately.
+    void bindToCurrentThread();
     static Worker& current();
 
 private:
@@ -313,81 +289,6 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Workers);
 
-class JSCCloneSerializer final : public CloneSerializerBase<JSCCloneSerializer> {
-    using Base = CloneSerializerBase<JSCCloneSerializer>;
-public:
-    struct Result {
-        SerializationReturnCode code;
-        SideChannels sideChannels;
-    };
-
-    static Result serialize(JSGlobalObject* globalObject, JSValue value, Vector<uint8_t>& out, const ArgList& transferList = ArgList())
-    {
-        JSCCloneSerializer serializer(globalObject, out);
-        for (unsigned i = 0; i < transferList.size(); ++i)
-            serializer.m_transferredArrayBuffers.add(asObject(transferList.at(i)), i);
-        auto code = serializer.Base::serialize(value);
-        return { code, serializer.takeSideChannels() };
-    }
-
-    bool dumpDerivedTerminal(JSObject*, SerializationReturnCode&) { return false; }
-
-private:
-    JSCCloneSerializer(JSGlobalObject* globalObject, Vector<uint8_t>& out)
-        : Base(globalObject, out)
-    {
-        write(currentVersion());
-    }
-};
-static_assert(StructuredCloneSerializerHandler<JSCCloneSerializer>);
-
-class JSCCloneDeserializer final : public CloneDeserializerBase<JSCCloneDeserializer> {
-    using Base = CloneDeserializerBase<JSCCloneDeserializer>;
-public:
-    static DeserializationResult deserialize(JSGlobalObject* globalObject, std::span<const uint8_t> data,
-        CloneDeserializationSideChannels sideChannels)
-    {
-        JSCCloneDeserializer deserializer(globalObject, data, sideChannels);
-        if (!deserializer.isValid())
-            return { JSValue(), SerializationReturnCode::ValidationError };
-        return deserializer.Base::deserialize();
-    }
-
-    bool isTagExposed(SerializationTag) const { return true; }
-    // An empty JSValue tells CloneDeserializerBase::readTerminal() that the tag it just consumed
-    // isn't a terminal after all, so it should rewind and let the walker re-read the tag as the
-    // start of an Array/Object/Map/Set.
-    JSValue readDerivedTerminal(SerializationTag) { return { }; }
-
-private:
-    JSCCloneDeserializer(JSGlobalObject* globalObject, std::span<const uint8_t> data, CloneDeserializationSideChannels sideChannels)
-        : Base(globalObject, globalObject, data, sideChannels)
-    {
-        readAndStoreVersion();
-    }
-};
-static_assert(StructuredCloneDeserializerHandler<JSCCloneDeserializer>);
-
-static EncodedJSValue throwSerializationError(JSGlobalObject* globalObject, ThrowScope& scope, SerializationReturnCode code)
-{
-    switch (code) {
-    case SerializationReturnCode::SuccessfullyCompleted:
-        RELEASE_ASSERT_NOT_REACHED();
-    case SerializationReturnCode::StackOverflowError:
-        return throwVMException(globalObject, scope, createStackOverflowError(globalObject));
-    case SerializationReturnCode::ValidationError:
-    case SerializationReturnCode::DataCloneError:
-        return throwVMTypeError(globalObject, scope, "Value could not be cloned."_s);
-    case SerializationReturnCode::ExistingExceptionError:
-        ASSERT(scope.exception());
-        return encodedJSValue();
-    case SerializationReturnCode::InterruptedExecutionError:
-    case SerializationReturnCode::UnspecifiedError:
-        break;
-    }
-    return throwVMException(globalObject, scope, createError(globalObject, "Value could not be cloned."_s));
-}
-
 
 static JSC_DECLARE_HOST_FUNCTION(functionAtob);
 static JSC_DECLARE_HOST_FUNCTION(functionBtoa);
@@ -424,6 +325,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionRun);
 static JSC_DECLARE_HOST_FUNCTION(functionRunString);
 static JSC_DECLARE_HOST_FUNCTION(functionLoad);
 static JSC_DECLARE_HOST_FUNCTION(functionLoadString);
+static JSC_DECLARE_HOST_FUNCTION(functionWorkerImportScripts);
+static JSC_DECLARE_HOST_FUNCTION(functionModuleWorkerImportScripts);
 static JSC_DECLARE_HOST_FUNCTION(functionReadFile);
 static JSC_DECLARE_HOST_FUNCTION(functionWriteFile);
 static JSC_DECLARE_HOST_FUNCTION(functionCheckSyntax);
@@ -659,6 +562,17 @@ public:
     }
 
     NODELETE static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags::createAllEnabled(); }
+
+    void addWorkerScopeProperties(VM& vm, bool isModuleWorker)
+    {
+        auto& filter = ensurePropertyFilter();
+        putDirectImpl(filter, vm, Identifier::fromString(vm, "self"_s), globalThis(), DontEnum);
+        putDirectImpl(filter, vm, Identifier::fromString(vm, "onmessage"_s), jsNull(), DontEnum);
+        addFunctionImpl(filter, vm, "postMessage"_s, JSCShell::functionWorkerScopePostMessage, 1);
+        addFunctionImpl(filter, vm, "close"_s, JSCShell::functionWorkerScopeClose, 0);
+        // A module worker has importScripts too, but HTML has it throw rather than load anything.
+        addFunctionImpl(filter, vm, "importScripts"_s, isModuleWorker ? functionModuleWorkerImportScripts : functionWorkerImportScripts, 1);
+    }
 
     static void getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode)
     {
@@ -905,6 +819,14 @@ private:
         addFunctionToObject(vm, agent, "getReport"_s, functionDollarAgentGetReport, 0);
         addFunctionToObject(vm, agent, "leaving"_s, functionDollarAgentLeaving, 0);
         addFunctionToObject(vm, agent, "monotonicNow"_s, functionDollarAgentMonotonicNow, 0);
+
+        // Nested workers are unsupported: a channel holds a raw VM pointer for its parent side,
+        // which would dangle once an outer worker's VM is torn down.
+        // FIXME: Support them by giving each parent a registry of the channels it owns,
+        // terminated before its VM goes away, as WorkerMessagingProxy does for a worker whose
+        // ScriptExecutionContext is destroyed.
+        if (isMainThread())
+            putDirect(vm, Identifier::fromString(vm, "Worker"_s), JSCShell::createWorkerConstructor(vm, this), DontEnum);
 
         addFunction(vm, "waiterListSize"_s, functionWaiterListSize, 2);
 
@@ -1783,65 +1705,21 @@ JSC_DEFINE_HOST_FUNCTION(functionStructuredClone, (JSGlobalObject* globalObject,
     if (!callFrame->argumentCount())
         return throwVMError(globalObject, scope, createNotEnoughArgumentsError(globalObject));
 
-    MarkedArgumentBuffer transferredObjects;
-    Vector<Ref<ArrayBuffer>> transferredBuffers;
-
+    JSValue transfer = jsUndefined();
     JSValue optionsValue = callFrame->argument(1);
     if (!optionsValue.isUndefinedOrNull()) {
         JSObject* options = optionsValue.getObject();
         if (!options)
             return throwVMTypeError(globalObject, scope, "structuredClone options must be an object."_s);
 
-        JSValue transfer = options->get(globalObject, Identifier::fromString(vm, "transfer"_s));
+        transfer = options->get(globalObject, Identifier::fromString(vm, "transfer"_s));
         RETURN_IF_EXCEPTION(scope, { });
-
-        if (!transfer.isUndefined()) {
-            HashSet<ArrayBuffer*> visited;
-            forEachInIterable(globalObject, transfer, [&](VM& vm, JSGlobalObject* globalObject, JSValue value) {
-                auto scope = DECLARE_THROW_SCOPE(vm);
-                RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, value);
-                if (!arrayBuffer) {
-                    throwTypeError(globalObject, scope, "structuredClone transfer list can only contain ArrayBuffers"_s);
-                    return;
-                }
-                if (!visited.add(arrayBuffer.get()).isNewEntry) {
-                    throwTypeError(globalObject, scope, "Duplicate transferable for structured clone"_s);
-                    return;
-                }
-                transferredObjects.appendWithCrashOnOverflow(value);
-                transferredBuffers.append(arrayBuffer.releaseNonNull());
-            });
-            RETURN_IF_EXCEPTION(scope, { });
-        }
     }
 
-    Vector<uint8_t> data;
-    auto [code, sideChannels] = JSCCloneSerializer::serialize(globalObject, callFrame->argument(0), data, ArgList(transferredObjects));
+    RefPtr message = serializeMessage(globalObject, callFrame->argument(0), transfer, "structuredClone"_s);
     RETURN_IF_EXCEPTION(scope, { });
-    if (code != SerializationReturnCode::SuccessfullyCompleted)
-        return throwSerializationError(globalObject, scope, code);
 
-    for (auto& arrayBuffer : transferredBuffers) {
-        if (arrayBuffer->isDetached() || arrayBuffer->isShared() || !arrayBuffer->isDetachable())
-            return throwSerializationError(globalObject, scope, SerializationReturnCode::DataCloneError);
-    }
-
-    ArrayBufferContentsArray transferredContents(transferredBuffers.size());
-    for (size_t i = 0; i < transferredBuffers.size(); ++i) {
-        if (!transferredBuffers[i]->transferTo(vm, transferredContents[i]))
-            return throwSerializationError(globalObject, scope, SerializationReturnCode::DataCloneError);
-    }
-
-    CloneDeserializationSideChannels deserializationSideChannels {
-        .arrayBufferContents = &transferredContents,
-        .sharedBuffers = &sideChannels.sharedBuffers,
-#if ENABLE(WEBASSEMBLY)
-        .wasmModules = &sideChannels.wasmModules,
-        .wasmMemoryHandles = &sideChannels.wasmMemoryHandles,
-#endif
-    };
-
-    auto result = JSCCloneDeserializer::deserialize(globalObject, data.span(), deserializationSideChannels);
+    auto result = JSCCloneDeserializer::deserialize(globalObject, message->data(), message->sideChannels());
     RETURN_IF_EXCEPTION(scope, { });
     if (result.code != SerializationReturnCode::SuccessfullyCompleted)
         return throwSerializationError(globalObject, scope, result.code);
@@ -2300,6 +2178,49 @@ JSC_DEFINE_HOST_FUNCTION(functionLoadString, (JSGlobalObject* globalObject, Call
     return JSValue::encode(result);
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionWorkerImportScripts, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Resolve every URL against the importing script before fetching any of them, as
+    // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries does,
+    // so one bad argument imports nothing.
+    URL base = callFrame->callerSourceOrigin(vm).url();
+    Vector<URL> urls(ReserveCapacityTag { }, callFrame->argumentCount());
+    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+        String urlString = callFrame->uncheckedArgument(i).toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        URL url(base, urlString);
+        if (!url.protocolIsFile())
+            return throwVMError(globalObject, scope, createURIError(globalObject, makeString("importScripts URL is not a local file: "_s, url.string())));
+        urls.append(WTF::move(url));
+    }
+
+    for (auto& url : urls) {
+        Vector<char> script;
+        if (!fetchScriptFromLocalFileSystem(url.fileSystemPath(), script))
+            return throwVMError(globalObject, scope, createError(globalObject, makeString("Could not open file: "_s, url.fileSystemPath())));
+
+        NakedPtr<Exception> evaluationException;
+        evaluate(globalObject, jscSource(script, SourceOrigin { url }, url.fileSystemPath()), JSValue(), evaluationException);
+        if (evaluationException) {
+            if (vm.isTerminationException(evaluationException.get()))
+                vm.setExecutionForbidden();
+            throwException(globalObject, scope, evaluationException);
+            return { };
+        }
+    }
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionModuleWorkerImportScripts, (JSGlobalObject* globalObject, CallFrame*))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return throwVMTypeError(globalObject, scope, "importScripts cannot be used if worker type is \"module\""_s);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -2626,7 +2547,10 @@ Worker::Worker(Workers& workers, bool isMain)
 {
     Locker locker { m_workers.m_lock };
     m_workers.m_workers.append(this);
-    
+}
+
+void Worker::bindToCurrentThread()
+{
     *currentWorker() = this;
 }
 
@@ -2786,17 +2710,10 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
 constexpr unsigned maxLiveAgentsInFuzzerMode = 64;
 static std::atomic<unsigned> numLiveAgents;
 
-JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
+static void startAgentThread(JSGlobalObject* globalObject, ASCIILiteral threadName, Function<void()>&& body)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    String sourceCode = callFrame->argument(0).toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    Lock didStartLock;
-    Condition didStartCondition;
-    bool didStart = false;
 
     auto isGigacageMemoryExhausted = [&](Gigacage::Kind kind) {
         if (!Gigacage::isEnabled(kind))
@@ -2806,8 +2723,35 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         return true;
     };
 
-    if (isGigacageMemoryExhausted(Gigacage::Primitive))
-        return JSValue::encode(throwOutOfMemoryError(globalObject, scope, "Gigacage is exhausted"_s));
+    if (isGigacageMemoryExhausted(Gigacage::Primitive)) {
+        throwOutOfMemoryError(globalObject, scope, "Gigacage is exhausted"_s);
+        return;
+    }
+
+    unsigned previousLiveAgents = numLiveAgents.fetch_add(1);
+    if (Options::useFuzzerMode() && previousLiveAgents >= maxLiveAgentsInFuzzerMode) {
+        numLiveAgents.fetch_sub(1);
+        throwException(globalObject, scope, createError(globalObject, "Too many live agents"_s));
+        return;
+    }
+
+    bool started = JSCShell::Worker::start(threadName, [body = WTF::move(body)] {
+        body();
+        numLiveAgents.fetch_sub(1);
+    });
+    if (!started) [[unlikely]] {
+        numLiveAgents.fetch_sub(1);
+        throwOutOfMemoryError(globalObject, scope, "Failed to create agent thread"_s);
+    }
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String sourceCode = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     String workerPath = "worker"_s;
     if (!callFrame->argument(1).isUndefined()) {
@@ -2815,52 +2759,139 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    unsigned previousLiveAgents = numLiveAgents.fetch_add(1);
-    if (Options::useFuzzerMode() && previousLiveAgents >= maxLiveAgentsInFuzzerMode) {
-        numLiveAgents.fetch_sub(1);
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Too many live agents"_s)));
-    }
+    // Register the agent here, on the starting thread, so a broadcast that happens before its
+    // thread runs is queued for it rather than lost. That is what lets the agent start detached.
+    auto agentWorker = makeUniqueRef<Worker>(Workers::singleton(), false);
+    startAgentThread(globalObject, "JSC Agent"_s, [sourceCode = WTF::move(sourceCode).isolatedCopy(), workerPath = WTF::move(workerPath).isolatedCopy(), agentWorker = WTF::move(agentWorker)] mutable {
+        CommandLine commandLine(CommandLine::CommandLineForWorkers);
+        commandLine.m_interactive = false;
+        runJSC(
+            commandLine, true, WTF::move(agentWorker),
+            [&](VM&, GlobalObject* globalObject, bool& success) {
+                NakedPtr<Exception> evaluationException;
+                JSValue result;
+                result = evaluate(globalObject, jscSource(sourceCode, SourceOrigin(URL({ }, workerPath))), JSValue(), evaluationException);
+                if (evaluationException)
+                    result = evaluationException->value();
+                checkException(globalObject, true, evaluationException, result, commandLine, success);
+                if (!success)
+                    exitProcess(EXIT_FAILURE);
+            });
+    });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    RefPtr thread = Thread::tryCreate(
-        "JSC Agent"_s,
-        [sourceCode = WTF::move(sourceCode).isolatedCopy(), workerPath = WTF::move(workerPath).isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
-            CommandLine commandLine(CommandLine::CommandLineForWorkers);
-            commandLine.m_interactive = false;
-            runJSC(
-                commandLine, true,
-                [&] (VM&, GlobalObject* globalObject, bool& success) {
-                    // Notify the thread that started us that we have registered a worker.
-                    {
-                        Locker locker { didStartLock };
-                        didStart = true;
-                        didStartCondition.notifyOne();
-                    }
-                    
-                    NakedPtr<Exception> evaluationException;
-                    JSValue result;
-                    result = evaluate(globalObject, jscSource(sourceCode, SourceOrigin(URL({ }, workerPath))), JSValue(), evaluationException);
-                    if (evaluationException)
-                        result = evaluationException->value();
-                    checkException(globalObject, true, evaluationException, result, commandLine, success);
-                    if (!success)
-                        exitProcess(EXIT_FAILURE);
-                });
-            numLiveAgents.fetch_sub(1);
-        });
-    if (!thread) [[unlikely]] {
-        numLiveAgents.fetch_sub(1);
-        return JSValue::encode(throwOutOfMemoryError(globalObject, scope, "Failed to create agent thread"_s));
-    }
-    thread->detach();
-
-    {
-        Locker locker { didStartLock };
-        while (!didStart)
-            didStartCondition.wait(didStartLock);
-    }
-    
     return JSValue::encode(jsUndefined());
 }
+
+// A null source means we should load from sourceURL.
+static void runWorker(const String& source, const URL& sourceURL, bool isModule, Ref<WorkerChannel>&& channel)
+{
+    CommandLine commandLine(CommandLine::CommandLineForWorkers);
+    commandLine.m_interactive = false;
+    RefPtr<VM> protectedVM;
+    runJSC(
+        commandLine, true,
+        [&](VM& vm, GlobalObject* globalObject, bool& success) {
+            // runJSC drops its reference to a worker's VM before returning, but the channel
+            // points at the VM until workerDidExit().
+            protectedVM = &vm;
+            vm.ensureTerminationException();
+            vm.forbidExecutionOnTermination();
+            globalObject->addWorkerScopeProperties(vm, isModule);
+            channel->open(WorkerChannel::Side::Worker, vm, globalObject);
+
+            // The settle handlers below copy this lambda and run from runJSC's run loop, after
+            // this one has returned. Capturing by reference is safe only because `commandLine`
+            // and `success` both outlive that run loop.
+            auto checkResult = [globalObject, &commandLine, &success](bool isException, JSValue result) {
+                checkException(globalObject, true, isException, result, commandLine, success);
+                if (!success)
+                    exitProcess(EXIT_FAILURE);
+            };
+
+            if (!isModule) {
+                String scriptSource = source;
+                if (scriptSource.isNull()) {
+                    Vector<char> buffer;
+                    if (!fetchScriptFromLocalFileSystem(sourceURL.fileSystemPath(), buffer)) {
+                        checkResult(true, createError(globalObject, makeString("Could not open file: "_s, sourceURL.fileSystemPath())));
+                        return;
+                    }
+                    scriptSource = stringFromUTF(buffer);
+                }
+
+                NakedPtr<Exception> evaluationException;
+                JSValue result = evaluate(globalObject, jscSource(scriptSource, SourceOrigin { sourceURL }, sourceURL.string()), JSValue(), evaluationException);
+                if (evaluationException) {
+                    if (vm.isTerminationException(evaluationException.get()))
+                        return;
+                    result = evaluationException->value();
+                }
+                checkResult(!!evaluationException, result);
+                return;
+            }
+
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+            JSPromise* promise = source.isNull()
+                ? loadAndEvaluateModule(globalObject, sourceURL.fileSystemPath(), nullptr, nullptr)
+                : loadAndEvaluateModule(globalObject, jscSource(source, SourceOrigin { sourceURL }, sourceURL.string(), TextPosition(), SourceProviderSourceType::Module), nullptr);
+            if (Exception* exception = scope.exception()) {
+                if (vm.isTerminationException(exception))
+                    return;
+                scope.clearException();
+                checkResult(true, exception->value());
+                return;
+            }
+
+            auto createSettleHandler = [&](bool isRejection) {
+                return JSNativeStdFunction::create(vm, globalObject, 1, String(), [checkResult, isRejection](JSGlobalObject*, CallFrame* callFrame) {
+                    checkResult(isRejection, callFrame->argument(0));
+                    return JSValue::encode(jsUndefined());
+                });
+            };
+            promise->then(globalObject, createSettleHandler(false), createSettleHandler(true));
+            scope.releaseAssertNoExceptionExceptTermination();
+        });
+    channel->workerDidExit();
+
+    JSLockHolder locker(*protectedVM);
+    protectedVM = nullptr;
+}
+
+namespace JSCShell {
+
+void startWorkerThread(JSGlobalObject* globalObject, WorkerScript&& script, Ref<WorkerChannel>&& channel)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String source;
+    URL sourceURL;
+    WTF::switchOn(script.script,
+        [&](InlineSource& inlineSource) {
+            source = WTF::move(inlineSource.text);
+            sourceURL = WTF::move(script.callerURL);
+        },
+        [&](ScriptPath& scriptPath) {
+            sourceURL = URL(script.callerURL, scriptPath.path);
+            if (!sourceURL.protocolIsFile())
+                sourceURL = absoluteFileURL(scriptPath.path);
+            // Check here so that a bad path is a synchronous throw, but leave `source` null and
+            // let the worker read the file on its own thread, which keeps the I/O off the
+            // critical path when many workers start at once.
+            String path = sourceURL.fileSystemPath();
+            if (!FileSystem::fileExists(path))
+                throwException(globalObject, scope, createError(globalObject, makeString("Could not open file: "_s, path)));
+        });
+    RETURN_IF_EXCEPTION(scope, void());
+
+    scope.release();
+    startAgentThread(globalObject, "JSC Worker"_s, [source = WTF::move(source).isolatedCopy(), sourceURL = WTF::move(sourceURL).isolatedCopy(), isModule = script.isModule, channel = WTF::move(channel)] mutable {
+        runWorker(source, sourceURL, isModule, WTF::move(channel));
+    });
+}
+
+} // namespace JSCShell
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -4007,8 +4038,10 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
         success = success && (!hasException || options.m_ignoreUncaughtExceptions);
         if (hasException && !options.m_ignoreUncaughtExceptions)
             dumpException(globalObject, value);
-    } else
+    } else {
+        didCheckUncaughtException = true;
         success = success && (checkUncaughtException(vm, globalObject, (hasException) ? value : JSValue(), options) || options.m_ignoreUncaughtExceptions);
+    }
 }
 
 void GlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
@@ -4591,10 +4624,14 @@ CommandLine::CommandLine(CommandLineForWorkersTag)
 {
 }
 
-template<typename Func>
-int runJSC(const CommandLine& options, bool isWorker, NOESCAPE const Func& func)
+int runJSC(const CommandLine& options, bool isWorker, NOESCAPE const WTF::Invocable<void(VM&, GlobalObject*, bool& success)> auto& func)
 {
-    Worker worker(Workers::singleton(), !isWorker);
+    return runJSC(options, isWorker, makeUniqueRef<Worker>(Workers::singleton(), !isWorker), func);
+}
+
+int runJSC(const CommandLine& options, bool isWorker, UniqueRef<Worker>&& worker, NOESCAPE const WTF::Invocable<void(VM&, GlobalObject*, bool& success)> auto& func)
+{
+    worker->bindToCurrentThread();
     
     VM& vm = VM::create(HeapType::Large).leakRef();
     if (!isWorker && options.m_canBlockIsFalse)
@@ -4636,12 +4673,18 @@ int runJSC(const CommandLine& options, bool isWorker, NOESCAPE const Func& func)
 
             func(vm, globalObject, success);
             vm.drainMicrotasks();
+            if (isWorker) {
+                if (RefPtr channel = JSCShell::WorkerChannel::currentWorkerSide())
+                    channel->closeWorkerIfItCannotReceive(globalObject);
+            }
         }
         if (vm.hasPendingTerminationException()) {
             vm.setExecutionForbidden();
             if (!options.m_treatWatchdogExceptionAsSuccess)
                 success = false;
-        } else {
+        } else if (success && (options.m_uncaughtExceptionName.isNull() || !didCheckUncaughtException)) {
+            // Once a script has failed or --exception has been checked the result is decided, so
+            // don't wait on keep-alives such as a live Worker.
             vm.deferredWorkTimer->runRunLoop();
             {
                 JSLockHolder locker(vm);
