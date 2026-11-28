@@ -196,10 +196,8 @@ Tests/WebKit/WKWebView/IPCTestingAPI.mm @nonARC
 Tests/WebKit/WKWebView/IconLoadingDelegate.mm @nonARC
 Tests/WebKit/WKWebView/ImageAnalysisTests.mm @nonARC
 Tests/WebKit/WKWebView/InAppBrowserPrivacy.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBDatabaseProcessKill.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBFileName.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBInPageCache.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBMultiProcess.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBPersistence.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBStructuredCloneBackwardCompatibility.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBSuspendImminently.mm @nonARC
@@ -420,7 +418,6 @@ Tests/WebKit/WKWebView/WebContentProcessDidTerminate.mm @nonARC
 Tests/WebKit/WKWebView/WebContentRestrictions.mm @nonARC
 Tests/WebKit/WKWebView/WebCryptoMasterKey.mm @nonARC
 Tests/WebKit/WKWebView/WebLocks.mm @nonARC
-Tests/WebKit/WKWebView/WebProcessKillIDBCleanup.mm @nonARC
 Tests/WebKit/WKWebView/WebProcessTerminate.mm @nonARC
 Tests/WebKit/WKWebView/WebPushDaemon.mm @nonARC
 Tests/WebKit/WKWebView/WebSQLBasics.mm @nonARC
