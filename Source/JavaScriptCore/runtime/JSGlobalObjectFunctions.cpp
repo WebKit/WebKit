@@ -26,6 +26,7 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
+#include "DecimalNumberScanner.h"
 #include "GlobalObjectMethodTable.h"
 #include "ImportMap.h"
 #include "IndirectEvalExecutable.h"
@@ -44,6 +45,7 @@
 #include <stdio.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastFloat.h>
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/ASCIIFastPath.h>
@@ -387,6 +389,37 @@ static double toDouble(std::span<const CharacterType> characters)
     return number;
 }
 
+// Continues after the digits at the start of unsignedCharacters, rather than having the double parser scan them again.
+template<typename CharacterType>
+static NEVER_INLINE double toDoubleAfterInteger(std::span<const CharacterType> characters, std::span<const CharacterType> unsignedCharacters, size_t integerLength, uint64_t integer)
+{
+    auto rest = unsignedCharacters.subspan(integerLength);
+    auto decimal = scanDecimalNumber<DecimalFractionSyntax::AllowsEmpty>(unsignedCharacters.data(), rest.data(), std::to_address(rest.end()), integer);
+    if (!decimal)
+        return toDouble(characters);
+
+    skip(rest, decimal->end - rest.data());
+    skipWhile<isStrWhiteSpace>(rest);
+    if (!rest.empty())
+        return PNaN;
+
+    double number = WTF::parseDoubleFromDecimalDigits(decimal->mantissa, decimal->exponent, decimal->digitCount);
+    return unsignedCharacters.size() == characters.size() ? number : -number;
+}
+
+template<typename CharacterType>
+static ALWAYS_INLINE bool canScanAsDecimal(std::span<const CharacterType> characters)
+{
+    // This many characters cannot have too many digits for uint64_t or scanDecimalNumber.
+    if (characters.size() < 2 || characters.size() > maxMantissaDigitsForDecimalNumber)
+        return false;
+    auto first = characters.front();
+    if (first == '-')
+        return isASCIIDigit(characters[1]);
+    // "0x", "0o" and "0b" are not decimal.
+    return isASCIIDigit(first) && !(first == '0' && isASCIIAlpha(characters[1]));
+}
+
 // See ecma-262 6th 11.8.3
 template<typename CharacterType>
 static ALWAYS_INLINE double jsToNumber(std::span<const CharacterType> characters)
@@ -408,6 +441,28 @@ static ALWAYS_INLINE double jsToNumber(std::span<const CharacterType> characters
             return -static_cast<int32_t>(c - '0');
         return PNaN;
     }
+
+    if (characters.empty())
+        return 0;
+
+    if (canScanAsDecimal(characters)) {
+        auto unsignedCharacters = characters;
+        if (characters.front() == '-')
+            skip(unsignedCharacters, 1);
+
+        size_t length = 0;
+        uint64_t integer = 0;
+        while (length < unsignedCharacters.size() && isASCIIDigit(unsignedCharacters[length]))
+            integer = integer * 10 + (unsignedCharacters[length++] - '0');
+        if (length < unsignedCharacters.size())
+            return toDoubleAfterInteger(characters, unsignedCharacters, length, integer);
+        double number = static_cast<double>(integer);
+        return unsignedCharacters.size() == characters.size() ? number : -number;
+    }
+
+    // Infinity is the only StrNumericLiteral that starts with a letter.
+    if (isASCIIAlpha(characters.front()) && characters.front() != 'I')
+        return PNaN;
 
     return toDouble(characters);
 }
