@@ -214,14 +214,26 @@ void WebSocketServer::disconnect()
     m_soupServer = nullptr;
 }
 
-void WebSocketServer::disconnectSession(const String& sessionId)
+void WebSocketServer::closeSessionConnection(const WebSocketMessageHandler::Connection& connection)
 {
-    auto connection = this->connection(sessionId);
-    if (!connection || !connection->get())
+    auto* webSocket = connection.get();
+    if (!webSocket)
         return;
 
-    soup_websocket_connection_close(connection->get(), SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
-    g_signal_handlers_disconnect_by_data(connection->get(), this);
+    g_signal_handlers_disconnect_by_data(webSocket, this);
+    if (soup_websocket_connection_get_state(webSocket) == SOUP_WEBSOCKET_STATE_CLOSED)
+        return;
+
+    // The server holds the only reference to the connection, and dropping it closes the stream
+    // at once, without the closing handshake. Keep a reference until the connection is closed.
+    g_object_ref(webSocket);
+    g_signal_connect(webSocket, "closed", G_CALLBACK(+[](SoupWebsocketConnection* closedWebSocket, gpointer) {
+        g_object_unref(closedWebSocket);
+    }), nullptr);
+
+    // The closing handshake has started already if the client began it.
+    if (soup_websocket_connection_get_state(webSocket) == SOUP_WEBSOCKET_STATE_OPEN)
+        soup_websocket_connection_close(webSocket, SOUP_WEBSOCKET_CLOSE_NORMAL, nullptr);
 }
 
 } // namespace WebDriver
