@@ -797,6 +797,10 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
     if (iterationMode != IterationMode::Generic && !canUseFastIterationMode(metadata.m_iterationMetadata.seenModes, iterationMode)) [[unlikely]]
         iterationMode = IterationMode::Generic;
 
+    // For-of and spread run no user code between opening the iterator and its first step, so an empty collection's
+    // iterator is never observed. Destructuring evaluates targets in between, and so can a debugger pause.
+    bool canShareExhaustedIterator = bytecode.m_isImmediatelyStepped && !codeBlock->wasCompiledWithDebuggingOpcodes();
+
     switch (iterationMode) {
     case IterationMode::FastArray: {
         // We should be good to go.
@@ -831,7 +835,10 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastMap;
         GET(bytecode.m_next) = vm.fastMapEntriesSentinel();
         auto* map = uncheckedDowncast<JSMap>(iterable);
-        iterator = JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, IterationKind::Entries);
+        if (canShareExhaustedIterator && !map->storage())
+            iterator = globalObject->exhaustedMapIterator();
+        else
+            iterator = JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, IterationKind::Entries);
         PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastMap)));
     }
@@ -858,7 +865,10 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastSet;
         GET(bytecode.m_next) = vm.fastSetValuesSentinel();
         auto* set = uncheckedDowncast<JSSet>(iterable);
-        iterator = JSSetIterator::create(vm, globalObject->setIteratorStructure(), set, IterationKind::Values);
+        if (canShareExhaustedIterator && !set->storage())
+            iterator = globalObject->exhaustedSetIterator();
+        else
+            iterator = JSSetIterator::create(vm, globalObject->setIteratorStructure(), set, IterationKind::Values);
         PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastSet)));
     }

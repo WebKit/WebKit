@@ -5127,7 +5127,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         RefPtr<RegisterID> iteratorSymbol = emitGetById(newTemporary(), iterable.get(), propertyNames().iteratorSymbol.impl());
         CallArguments args(*this, nullptr, 0);
         move(args.thisRegister(), iterable.get());
-        emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, node);
+        emitIteratorOpen(iterator.get(), nextOrIndex.get(), iteratorSymbol.get(), args, node, /* isImmediatelyStepped */ true);
     }
 
     Ref<Label> loopDone = newLabel();
@@ -5520,7 +5520,7 @@ RegisterID* BytecodeGenerator::emitCallIterator(RegisterID* iterator, RegisterID
     return iterator;
 }
 
-void BytecodeGenerator::emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData* node)
+void BytecodeGenerator::emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData* node, bool isImmediatelyStepped)
 {
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, CallFrame::headerSizeInRegisters, UnsafeVectorOverflow> callFrame;
@@ -5531,7 +5531,7 @@ void BytecodeGenerator::emitIteratorOpen(RegisterID* iterator, RegisterID* nextO
         emitDebugHook(WillExecuteExpression, node->divotStart());
 
     emitExpressionInfo(node->divot(), node->divotStart(), node->divotEnd());
-    OpIteratorOpen::emit(this, iterator, nextOrIndex, symbolIterator, iterable.thisRegister(), iterable.stackOffset(), nextValueProfileIndex(), nextValueProfileIndex(), nextValueProfileIndex());
+    OpIteratorOpen::emit(this, iterator, nextOrIndex, symbolIterator, iterable.thisRegister(), iterable.stackOffset(), nextValueProfileIndex(), nextValueProfileIndex(), nextValueProfileIndex(), isImmediatelyStepped);
 }
 
 void BytecodeGenerator::emitIteratorNext(RegisterID* done, RegisterID* value, RegisterID* iterable, RegisterID* nextOrIndex, CallArguments& iterator, const ThrowableExpressionData* node)
