@@ -126,6 +126,8 @@ void Pasteboard::writeString(const String& type, const String& data)
     switch (selectionDataTypeFromHTMLClipboardType(type)) {
     case ClipboardDataTypeURIList:
     case ClipboardDataTypeURL:
+        if (URL { data }.protocolIsFile())
+            break;
         m_selectionData->setURIList(data);
         break;
     case ClipboardDataTypeMarkup:
