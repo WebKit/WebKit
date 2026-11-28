@@ -34,6 +34,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"
+#include "MacroAssembler.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
@@ -1206,6 +1207,26 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmUnwind, void*, (JSWebAssemblyInst
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
     return vm.targetMachinePCForThrow;
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopStopCheck, void*, (JSWebAssemblyInstance* instance))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
+    if (vm.traps().handleTrapsIfNeeded() && vm.hasPendingTerminationException())
+        return throwWasmToJSException(callFrame, ExceptionType::Termination, instance);
+    return nullptr;
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRestoreTrapPatchPoint, void, (void* callee))
+{
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+    static_cast<OptimizingJITCallee*>(callee)->restoreTrapPatchPoints();
+#else
+    UNUSED_PARAM(callee);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
 }
 
 JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance* instance, EncodedJSValue v))

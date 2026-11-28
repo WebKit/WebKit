@@ -35,6 +35,7 @@
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "LLIntThunks.h"
+#include "MacroAssembler.h"
 #include "NativeCalleeRegistry.h"
 #include "PCToCodeOriginMap.h"
 #include "VMManager.h"
@@ -424,6 +425,105 @@ unsigned IPIntCallee::computeCodeHashImpl() const
     m_codeHash = hash;
     return hash;
 }
+
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+
+static Lock trapPatchPointLock;
+
+static UncheckedKeyHashMap<void*, void*>& trapPatchPoints() WTF_REQUIRES_LOCK(trapPatchPointLock)
+{
+    static LazyNeverDestroyed<UncheckedKeyHashMap<void*, void*>> points;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        points.construct();
+    });
+    return points;
+}
+
+OptimizingJITCallee::~OptimizingJITCallee()
+{
+    if (!m_hasInstalledTrapPatchPoints)
+        return;
+    Locker locker { trapPatchPointLock };
+    for (auto& patch : m_trapPatchPoints)
+        trapPatchPoints().remove(patch.source.dataLocation());
+}
+
+void OptimizingJITCallee::addTrapPatchPoint(CodeLocationLabel<JSInternalPtrTag> source, CodeLocationLabel<JSInternalPtrTag> destination)
+{
+    m_trapPatchPoints.append({ source, destination });
+}
+
+void OptimizingJITCallee::installTrapPatchPoints()
+{
+    if (m_trapPatchPoints.isEmpty())
+        return;
+
+    Locker locker { trapPatchPointLock };
+    if (m_hasInstalledTrapPatchPoints)
+        return;
+    m_hasInstalledTrapPatchPoints = true;
+    for (auto& patch : m_trapPatchPoints) {
+        trapPatchPoints().add(patch.source.dataLocation(), patch.destination.dataLocation());
+        MacroAssembler::replaceWithVMHalt(patch.source);
+    }
+}
+
+void OptimizingJITCallee::restoreTrapPatchPoints()
+{
+    Locker locker { trapPatchPointLock };
+    if (!m_hasInstalledTrapPatchPoints)
+        return;
+    for (auto& patch : m_trapPatchPoints) {
+        trapPatchPoints().remove(patch.source.dataLocation());
+        MacroAssembler::replaceWithNops(patch.source, MacroAssembler::maxJumpReplacementSize());
+    }
+    m_hasInstalledTrapPatchPoints = false;
+}
+
+bool OptimizingJITCallee::tryFireTrapPatchPoint(void* pc)
+{
+    Locker locker { trapPatchPointLock };
+    auto iterator = trapPatchPoints().find(pc);
+    if (iterator == trapPatchPoints().end())
+        return false;
+    MacroAssembler::replaceWithJump(CodeLocationLabel<JSInternalPtrTag>(iterator->key), CodeLocationLabel<JSInternalPtrTag>(iterator->value));
+    return true;
+}
+
+bool OptimizingJITCallee::tryInstallTrapPatchPoints(void* framePointer, void* pc, const StackBounds& stackBounds)
+{
+    auto* frame = std::bit_cast<CallFrame*>(framePointer);
+    if (!frame || !stackBounds.contains(frame))
+        return false;
+
+    CalleeBits bits = frame->unsafeCallee();
+    if (!bits.isNativeCallee())
+        return false;
+
+    auto& registry = NativeCalleeRegistry::singleton();
+    if (!registry.getLock().tryLock())
+        return false;
+    Locker registryLocker { AdoptLock, registry.getLock() };
+
+    // A registered callee can already have a zero ref count while its destructor is still running.
+    SUPPRESS_UNCOUNTED_LOCAL NativeCallee* nativeCallee = bits.asNativeCallee();
+    if (!registry.isValidCallee(nativeCallee) || !is<Callee>(*nativeCallee))
+        return false;
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& callee = uncheckedDowncast<Callee>(*nativeCallee);
+    if (!is<OptimizingJITCallee>(callee))
+        return false;
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& optimizingCallee = uncheckedDowncast<OptimizingJITCallee>(callee);
+    auto [start, end] = optimizingCallee.range();
+    if (pc < start || pc >= end || !optimizingCallee.hasTrapPatchPoints())
+        return false;
+    optimizingCallee.installTrapPatchPoints();
+    return true;
+}
+
+#endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex)

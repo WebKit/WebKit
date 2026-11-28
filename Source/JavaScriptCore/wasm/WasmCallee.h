@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
+#include <wtf/StackBounds.h>
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -296,6 +297,15 @@ public:
 
     unsigned computeCodeHashImpl() const;
 
+    ~OptimizingJITCallee();
+
+    void addTrapPatchPoint(CodeLocationLabel<JSInternalPtrTag> source, CodeLocationLabel<JSInternalPtrTag> destination);
+    bool hasTrapPatchPoints() const { return !m_trapPatchPoints.isEmpty(); }
+    void installTrapPatchPoints();
+    void restoreTrapPatchPoints();
+    static bool tryFireTrapPatchPoint(void* pc);
+    static bool tryInstallTrapPatchPoints(void* framePointer, void* pc, const StackBounds&);
+
 protected:
     OptimizingJITCallee(Wasm::CompilationMode mode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
         : JITCallee(mode, index, WTF::move(name))
@@ -315,7 +325,14 @@ protected:
 private:
     void linkExceptionHandlers(Vector<UnlinkedHandlerInfo>, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>);
 
+    struct TrapPatchPoint {
+        CodeLocationLabel<JSInternalPtrTag> source;
+        CodeLocationLabel<JSInternalPtrTag> destination;
+    };
+
     StackMaps m_stackmaps;
+    Vector<TrapPatchPoint> m_trapPatchPoints;
+    bool m_hasInstalledTrapPatchPoints { false };
     Vector<WasmCodeOrigin, 0> codeOrigins;
     Vector<Ref<NameSection>, 0> nameSections;
     Box<PCToCodeOriginMap> m_callSiteIndexMap;

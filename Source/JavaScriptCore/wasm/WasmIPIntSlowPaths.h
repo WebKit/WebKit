@@ -85,6 +85,7 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, IPIntStackEntry* sp, TableFillMeta
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int64_t, uint8_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_size, uint8_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(check_traps);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, IPIntStackEntry*, uint8_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(data_drop, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_copy, IPIntStackEntry*);
