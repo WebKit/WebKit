@@ -22,6 +22,7 @@
 #include "CSSFilterRenderer.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "LocalFrameViewInlines.h"
 #include "PaintClipPathScope.h"
 #include "PaintTransformScope.h"
 #include "ReferencedSVGResources.h"
@@ -49,6 +50,7 @@
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
+#include "RenderView.h"
 #include "SVGFilterElement.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
@@ -180,7 +182,8 @@ void RenderLayer::paintResourceLayerForSVG(GraphicsContext& context, const Affin
 
     auto localPaintDirtyRect = LayoutRect::infiniteRect();
 
-    LayerPaintingInfo paintingInfo(this, localPaintDirtyRect, PaintBehavior::Normal, LayoutSize());
+    OptionSet<PaintBehavior> paintBehavior = renderer().view().frameView().paintBehavior() & PaintBehavior::DontShowVisitedLinks;
+    LayerPaintingInfo paintingInfo(this, localPaintDirtyRect, paintBehavior, LayoutSize());
 
     OptionSet<PaintLayerFlag> flags { PaintLayerFlag::TemporaryClipRects };
     if (!renderer().hasNonVisibleOverflow())

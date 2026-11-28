@@ -5985,6 +5985,7 @@ void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&,
         static constexpr OptionSet flagsToCopy {
             PaintBehavior::FlattenCompositingLayers,
             PaintBehavior::Snapshotting,
+            PaintBehavior::DontShowVisitedLinks,
             PaintBehavior::DefaultAsynchronousImageDecode,
             PaintBehavior::ForceSynchronousImageDecode,
             PaintBehavior::ExcludeReplacedContentExceptForIFrames,

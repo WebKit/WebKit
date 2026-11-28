@@ -52,8 +52,10 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
 {
     bool applyToFill = mode == RenderSVGResourceMode::ApplyToFill;
 
+    auto paintBehavior = renderer.view().frameView().paintBehavior();
+
     // When rendering the mask for a LegacyRenderSVGResourceClipper, always use the initial fill paint server.
-    if (renderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
+    if (paintBehavior.contains(PaintBehavior::RenderingSVGClipOrMask)) {
         // Ignore stroke.
         if (!applyToFill)
             return nullptr;
@@ -76,7 +78,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     if (auto paintColor = paint.tryAnyColor())
         color = colorResolver.colorResolvingCurrentColor(*paintColor);
 
-    if (style.insideLink() == InsideLink::InsideVisited) {
+    if (style.insideLink() == InsideLink::InsideVisited && !paintBehavior.contains(PaintBehavior::DontShowVisitedLinks)) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
         auto& visitedPaint = applyToFill ? style.visitedLinkFill() : style.visitedLinkStroke();
 

@@ -20,8 +20,10 @@
 
 #pragma once
 
+#include "PaintPhase.h"
 #include "RenderSVGResourcePaintServer.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -59,9 +61,9 @@ private:
     inline void prepareFillOperation(const RenderLayerModelObject&, const Style::ComputedStyle&, const Color& fillColor) const;
     inline void prepareStrokeOperation(const RenderLayerModelObject&, const Style::ComputedStyle&, const Color& strokeColor) const;
 
-    static inline Color resolveColorFromStyle(const Style::ComputedStyle&, const Style::SVGPaint& paint, const Style::SVGPaint& visitedLinkPaint);
+    static inline Color resolveColorFromStyle(const Style::ComputedStyle&, const Style::SVGPaint&, const Style::SVGPaint& visitedLinkPaint, OptionSet<PaintBehavior>);
     template<Operation op>
-    static Color resolveColorFromStyle(const Style::ComputedStyle&);
+    static Color resolveColorFromStyle(const Style::ComputedStyle&, OptionSet<PaintBehavior>);
 
     template<Operation op>
     static bool inheritColorFromParentStyleIfNeeded(const RenderLayerModelObject&, Color&);

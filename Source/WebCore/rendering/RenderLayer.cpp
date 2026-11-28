@@ -3570,7 +3570,13 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
     }
 
     if (RefPtr recorder = canvasDrawableRecorder(*this, context, paintingInfo.rootLayer)) {
-        paintLayerWithEffects(*recorder, paintingInfo, paintFlags);
+        auto drawablePaintingInfo = paintingInfo;
+        drawablePaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
+        Ref frameView = renderer().view().frameView();
+        auto oldBehavior = frameView->paintBehavior();
+        frameView->setPaintBehavior(oldBehavior | PaintBehavior::DontShowVisitedLinks);
+        paintLayerWithEffects(*recorder, drawablePaintingInfo, paintFlags);
+        frameView->setPaintBehavior(oldBehavior);
         return;
     }
 

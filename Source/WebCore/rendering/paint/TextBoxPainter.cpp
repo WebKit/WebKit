@@ -978,7 +978,7 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
         CheckedRef rootStyle = decoratingBoxStyleForInlineBox(*parentInlineBox, m_isFirstLine);
         decoratingBoxList.append({ parentInlineBox, rootStyle, overrideDecorationStyle, textBoxLocation, decorationWidth });
         // The highlight overlay's decoration layers over the originating box's own decoration rather than replacing it.
-        auto rootDecorationStyle = TextDecorationPainter::stylesForRenderer(parentInlineBox->renderer(), rootStyle->textDecorationLineInEffect(), m_isFirstLine);
+        auto rootDecorationStyle = TextDecorationPainter::stylesForRenderer(parentInlineBox->renderer(), rootStyle->textDecorationLineInEffect(), m_isFirstLine, m_paintInfo.paintBehavior);
         if (!rootStyle->textDecorationLineInEffect().isNone() && overrideDecorationStyle != rootDecorationStyle)
             decoratingBoxList.append({ parentInlineBox, rootStyle, rootDecorationStyle, textBoxLocation, decorationWidth });
         return;
@@ -992,7 +992,7 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
 
     auto appendIfIsDecoratingBoxForBackground = [&](auto& inlineBox) {
         CheckedRef style = decoratingBoxStyleForInlineBox(*inlineBox, m_isFirstLine);
-        auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine);
+        auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine, m_paintInfo.paintBehavior);
         auto isParentInlineBox = &inlineBox == &parentInlineBox;
 
         if (inlineBox->isRubyBase()) {
@@ -1220,7 +1220,7 @@ void TextBoxPainter::collectDecoratingBoxesForForegroundPainting(DecoratingBoxLi
         CheckedRef rootStyle = decoratingBoxStyleForInlineBox(*parentInlineBox, m_isFirstLine);
         decoratingBoxList.append({ parentInlineBox, rootStyle, overrideDecorationStyle, textBoxLocation, decorationWidth });
         // The highlight overlay's decoration layers over the originating box's own decoration rather than replacing it.
-        auto rootDecorationStyle = TextDecorationPainter::stylesForRenderer(parentInlineBox->renderer(), rootStyle->textDecorationLineInEffect(), m_isFirstLine);
+        auto rootDecorationStyle = TextDecorationPainter::stylesForRenderer(parentInlineBox->renderer(), rootStyle->textDecorationLineInEffect(), m_isFirstLine, m_paintInfo.paintBehavior);
         if (!rootStyle->textDecorationLineInEffect().isNone() && overrideDecorationStyle != rootDecorationStyle)
             decoratingBoxList.append({ parentInlineBox, rootStyle, rootDecorationStyle, textBoxLocation, decorationWidth });
         return;
@@ -1228,7 +1228,7 @@ void TextBoxPainter::collectDecoratingBoxesForForegroundPainting(DecoratingBoxLi
 
     auto appendIfIsDecoratingBoxForForeground = [&](auto& inlineBox) {
         CheckedRef style = decoratingBoxStyleForInlineBox(*inlineBox, m_isFirstLine);
-        auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine);
+        auto computedDecorationStyle = TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style->textDecorationLineInEffect(), m_isFirstLine, m_paintInfo.paintBehavior);
         auto isParentInlineBox = &inlineBox == &parentInlineBox;
 
         if (!isDecoratingBoxForForeground(*inlineBox, style) && (!isParentInlineBox || overrideDecorationStyle == computedDecorationStyle))

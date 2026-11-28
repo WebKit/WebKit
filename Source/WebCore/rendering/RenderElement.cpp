@@ -2135,15 +2135,16 @@ Color RenderElement::selectionColor() const
 {
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
+    auto paintBehavior = view().frameView().paintBehavior();
     if (style().usedUserSelect() == UserSelect::None
-        || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
+        || paintBehavior.containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly }))
         return Color();
 
     if (CheckedPtr pseudoStyle = selectionPseudoStyle(); pseudoStyle && pseudoStyle->hasAuthorHighlightColors()) {
         Style::ColorPropertyResolver<Style::ColorPropertyTraits<Property>> colorPropertyResolver { *pseudoStyle };
-        auto color = colorPropertyResolver.visitedDependentColorApplyingColorFilter();
+        auto color = colorPropertyResolver.visitedDependentColorApplyingColorFilter(paintBehavior);
         if (!color.isValid())
-            color = pseudoStyle->visitedDependentColorApplyingColorFilter();
+            color = pseudoStyle->visitedDependentColorApplyingColorFilter(paintBehavior);
         return color;
     }
 
@@ -2174,10 +2175,11 @@ Color RenderElement::selectionBackgroundColor() const
     if (style().usedUserSelect() == UserSelect::None)
         return Color();
 
+    auto paintBehavior = view().frameView().paintBehavior();
     auto styleColorOptions = this->styleColorOptions(StyleColorOptionsPurpose::Rendering);
 
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
-        return theme().transformSelectionBackgroundColor(protect(style())->visitedDependentColorApplyingColorFilter(), styleColorOptions);
+        return theme().transformSelectionBackgroundColor(protect(style())->visitedDependentColorApplyingColorFilter(paintBehavior), styleColorOptions);
 
     auto pseudoStyleCandidate = this;
     if (pseudoStyleCandidate->isAnonymous())
@@ -2185,8 +2187,11 @@ Color RenderElement::selectionBackgroundColor() const
 
     if (pseudoStyleCandidate) {
         CheckedPtr pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
-        if (pseudoStyle && pseudoStyle->hasAuthorHighlightColors() && pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter().isValid())
-            return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(), styleColorOptions);
+        if (pseudoStyle && pseudoStyle->hasAuthorHighlightColors()) {
+            auto backgroundColor = pseudoStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(paintBehavior);
+            if (backgroundColor.isValid())
+                return theme().transformSelectionBackgroundColor(backgroundColor, styleColorOptions);
+        }
     }
 
     if (frame().selection().isFocusedAndActive())
