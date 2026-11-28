@@ -1,0 +1,5 @@
+
+PASS load() resolves when a loading face is deleted from the set and then loads successfully
+PASS load() rejects when a loading face is deleted from the set and then fails to load
+PASS load() resolves when the set is cleared while a matching face is loading
+

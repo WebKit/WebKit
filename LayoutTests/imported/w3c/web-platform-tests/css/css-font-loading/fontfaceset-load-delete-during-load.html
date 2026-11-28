@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-load">
+<meta name="assert" content="A FontFaceSet.load() promise settles when a matching face is removed from the set while it is loading.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function track(promise) {
+    const state = { settled: false };
+    state.promise = promise.then(value => {
+        state.settled = true;
+        state.value = value;
+    }, error => {
+        state.settled = true;
+        state.error = error;
+    });
+    return state;
+}
+
+async function waitForFaceThenTask(t, face) {
+    await face.loaded.catch(() => {});
+    await new Promise(resolve => t.step_timeout(resolve, 0));
+}
+
+promise_test(async t => {
+    const face = new FontFace("DeleteDuringLoadSuccess", "url('/fonts/Ahem.ttf?delete-success&pipe=trickle(d1)')");
+    document.fonts.add(face);
+    t.add_cleanup(() => { document.fonts.delete(face); });
+    const load = track(document.fonts.load("10px DeleteDuringLoadSuccess"));
+    assert_equals(face.status, "loading");
+    assert_true(document.fonts.delete(face));
+    await waitForFaceThenTask(t, face);
+    assert_equals(face.status, "loaded");
+    assert_true(load.settled, "load() promise settled");
+    assert_equals(load.error, undefined);
+    assert_array_equals(load.value, [face]);
+}, "load() resolves when a loading face is deleted from the set and then loads successfully");
+
+promise_test(async t => {
+    const face = new FontFace("DeleteDuringLoadFailure", "url('/common/blank.html?delete-failure&pipe=trickle(d1)')");
+    document.fonts.add(face);
+    t.add_cleanup(() => { document.fonts.delete(face); });
+    const load = track(document.fonts.load("10px DeleteDuringLoadFailure"));
+    assert_equals(face.status, "loading");
+    assert_true(document.fonts.delete(face));
+    await waitForFaceThenTask(t, face);
+    assert_equals(face.status, "error");
+    assert_true(load.settled, "load() promise settled");
+    assert_true(load.error instanceof DOMException);
+    assert_equals(load.error.name, "NetworkError");
+}, "load() rejects when a loading face is deleted from the set and then fails to load");
+
+promise_test(async t => {
+    const face = new FontFace("ClearDuringLoad", "url('/fonts/Ahem.ttf?clear&pipe=trickle(d1)')");
+    document.fonts.add(face);
+    t.add_cleanup(() => { document.fonts.delete(face); });
+    const load = track(document.fonts.load("10px ClearDuringLoad"));
+    assert_equals(face.status, "loading");
+    document.fonts.clear();
+    await waitForFaceThenTask(t, face);
+    assert_equals(face.status, "loaded");
+    assert_true(load.settled, "load() promise settled");
+    assert_equals(load.error, undefined);
+    assert_array_equals(load.value, [face]);
+}, "load() resolves when the set is cleared while a matching face is loading");
+</script>

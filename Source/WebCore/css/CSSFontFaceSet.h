@@ -132,6 +132,7 @@ private:
     FontFamilyCache m_cache;
     FontFamilyCache m_smallCapsCache;
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
+    HashSet<Ref<CSSFontFace>> m_removedLoadingFaces;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
     WeakHashSet<FontModifiedObserver> m_fontModifiedObservers;

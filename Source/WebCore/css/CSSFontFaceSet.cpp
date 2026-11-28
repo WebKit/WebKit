@@ -56,6 +56,9 @@ CSSFontFaceSet::~CSSFontFaceSet()
     for (Ref face : borrow(m_faces).get())
         face->removeClient(*this);
 
+    for (auto& face : std::exchange(m_removedLoadingFaces, { }))
+        face->removeClient(*this);
+
     for (auto& pair : m_locallyInstalledFacesLookupTable) {
         for (auto& face : pair.value)
             face->removeClient(*this);
@@ -208,7 +211,8 @@ void CSSFontFaceSet::add(CSSFontFace& face)
         observer();
     });
 
-    face.addClient(*this);
+    if (!m_removedLoadingFaces.remove(face))
+        face.addClient(*this);
     emptyCaches();
 
     if (face.cssConnection())
@@ -275,10 +279,13 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
         if (m_faces[i].ptr() == &face) {
             if (i < m_facesPartitionIndex)
                 --m_facesPartitionIndex;
-            Ref { m_faces[i] }->removeClient(*this);
+            Ref removedFace = m_faces[i];
             m_faces.removeAt(i);
-            if (face.status() == CSSFontFace::Status::Loading || face.status() == CSSFontFace::Status::TimedOut)
+            if (face.status() == CSSFontFace::Status::Loading || face.status() == CSSFontFace::Status::TimedOut) {
+                m_removedLoadingFaces.add(WTF::move(removedFace));
                 decrementActiveCount();
+            } else
+                removedFace->removeClient(*this);
             return;
         }
     }
@@ -570,6 +577,19 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, Fon
 
 void CSSFontFaceSet::fontStateChanged(CSSFontFace& face, CSSFontFace::Status oldState, CSSFontFace::Status newState)
 {
+    if (m_removedLoadingFaces.contains(face)) {
+        ASSERT(!hasFace(face));
+        if (newState != CSSFontFace::Status::Success && newState != CSSFontFace::Status::Failure)
+            return;
+        Ref protectedFace { face };
+        m_removedLoadingFaces.remove(face);
+        face.removeClient(*this);
+        m_fontEventClients.forEach([&](auto& client) {
+            client.faceFinished(face, newState);
+        });
+        return;
+    }
+
     ASSERT(hasFace(face));
     if (oldState == CSSFontFace::Status::Pending) {
         ASSERT(newState == CSSFontFace::Status::Loading);
