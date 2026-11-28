@@ -298,6 +298,7 @@ void SVGSMILElement::removingSteps(RemovalType removalType, ContainerNode& oldPa
         setTargetElement(nullptr);
         setAttributeName(anyQName());
         animationAttributeChanged();
+        m_activeState = Inactive;
         m_timeContainer = nullptr;
     }
 
@@ -567,20 +568,24 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
         break;
     case AttributeNames::attributeNameAttr:
         updateAttributeName();
+        m_activeState = Inactive;
         break;
     case AttributeNames::hrefAttr:
     case AttributeNames::XLink::hrefAttr: {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();
+        m_activeState = Inactive;
         break;
     }
     case AttributeNames::beginAttr:
         if (isConnected())
             listChanged(Begin, elapsed());
+        m_activeState = Inactive;
         break;
     case AttributeNames::endAttr:
         if (isConnected())
             listChanged(End, elapsed());
+        m_activeState = Inactive;
         break;
     default:
         break;
@@ -1223,6 +1228,8 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         if (isFrozen) {
             if (this == &firstAnimation)
                 startAnimation();
+            if (std::exchange(m_needsAnimationRevalidation, false))
+                startedActiveInterval();
             updateAnimation(m_lastPercent, m_lastRepeat);
         }
         m_nextProgressTime = m_intervalBegin;
@@ -1253,7 +1260,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         if (this == &firstAnimation)
             startAnimation();
 
-        if (oldActiveState == Inactive)
+        if (std::exchange(m_needsAnimationRevalidation, false) || oldActiveState == Inactive)
             startedActiveInterval();
 
         // Only send repeat events here during normal animation run.

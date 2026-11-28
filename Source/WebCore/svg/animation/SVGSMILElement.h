@@ -114,7 +114,7 @@ public:
 protected:
     enum ActiveState { Inactive, Active, Frozen };
     ActiveState activeState() const { return m_activeState; }
-    void setInactive() { m_activeState = Inactive; }
+    void setNeedsAnimationRevalidation() { m_needsAnimationRevalidation = true; }
 
     bool rendererIsNeeded(const Style::ComputedStyle&) override { return false; }
 
@@ -208,6 +208,7 @@ private:
     SMILTime m_previousIntervalBegin { SMILTime::unresolved() };
 
     ActiveState m_activeState { Inactive };
+    bool m_needsAnimationRevalidation { false };
     float m_lastPercent { 0 };
     unsigned m_lastRepeat { 0 };
     unsigned m_documentOrderIndex { 0 };

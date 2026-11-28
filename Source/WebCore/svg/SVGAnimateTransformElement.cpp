@@ -56,6 +56,7 @@ bool SVGAnimateTransformElement::hasValidAttributeType() const
 
 void SVGAnimateTransformElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    auto oldType = m_type;
     if (name == SVGNames::typeAttr) {
         m_type = SVGTransformList::parseTransformType(newValue).value_or(SVGTransformValue::SVG_TRANSFORM_UNKNOWN);
         if (m_type == SVGTransformValue::SVG_TRANSFORM_MATRIX)
@@ -63,6 +64,9 @@ void SVGAnimateTransformElement::attributeChanged(const QualifiedName& name, con
     }
 
     SVGAnimateElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
+    if (m_type != oldType)
+        invalidateAnimator();
 }
 
 String SVGAnimateTransformElement::animateRangeString(const String& string) const

@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<meta charset="utf-8">
+<title>Dynamic updates of calcMode, additive, accumulate, animateTransform type and animation mode</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#AdditionAttributes">
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#ValueAttributes">
+<link rel="help" href="https://w3c.github.io/svgwg/specs/animations/#AnimateTransformElement">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+function createAnimation(markup) {
+    const container = document.createElement("div");
+    container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${markup}</svg>`;
+    document.body.appendChild(container);
+    const svg = container.firstElementChild;
+    svg.pauseAnimations();
+    return { svg, target: svg.querySelector("#target"), animation: svg.querySelector("#animation") };
+}
+
+function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
+}
+
+async function seek(svg, time) {
+    svg.setCurrentTime(time);
+    await nextFrame();
+    await nextFrame();
+}
+
+function createRunningAnimation(markup) {
+    const container = document.createElement("div");
+    container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">${markup}</svg>`;
+    document.body.appendChild(container);
+    const svg = container.firstElementChild;
+    const animation = svg.querySelector("#animation");
+    const counts = { begin: 0, end: 0 };
+    animation.addEventListener("beginEvent", () => counts.begin++);
+    animation.addEventListener("endEvent", () => counts.end++);
+    return { svg, target: svg.querySelector("#target"), animation, counts };
+}
+
+async function waitFrames(count) {
+    for (let i = 0; i < count; ++i)
+        await nextFrame();
+}
+
+function transformMatrix(element) {
+    const list = element.transform.animVal;
+    let matrix = new DOMMatrix();
+    for (let i = 0; i < list.numberOfItems; ++i) {
+        const { a, b, c, d, e, f } = list.getItem(i).matrix;
+        matrix = matrix.multiply(new DOMMatrix([a, b, c, d, e, f]));
+    }
+    return [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f];
+}
+
+function assertMatrixApproxEquals(actual, expected, description) {
+    for (let i = 0; i < 6; ++i)
+        assert_approx_equals(actual[i], expected[i], 0.01, `${description} (component ${i})`);
+}
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="10s" fill="freeze" additive="replace"/>
+        </rect>`);
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 50, 0.1, "before change");
+    animation.setAttribute("additive", "sum");
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 100, 0.1, "after change");
+}, "Changing additive from replace to sum is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="10s" fill="freeze" additive="sum"/>
+        </rect>`);
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 100, 0.1, "before change");
+    animation.setAttribute("additive", "replace");
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 50, 0.1, "after change");
+}, "Changing additive from sum to replace is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" values="0;100" dur="1s" repeatCount="3" fill="freeze" accumulate="none"/>
+        </rect>`);
+    await seek(svg, 1.5);
+    assert_approx_equals(target.width.animVal.value, 50, 0.1, "before change");
+    animation.setAttribute("accumulate", "sum");
+    await seek(svg, 1.5);
+    assert_approx_equals(target.width.animVal.value, 150, 0.1, "after change");
+}, "Changing accumulate from none to sum is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" values="0;100" dur="1s" repeatCount="3" fill="freeze" accumulate="sum"/>
+        </rect>`);
+    await seek(svg, 1.5);
+    assert_approx_equals(target.width.animVal.value, 150, 0.1, "before change");
+    animation.setAttribute("accumulate", "none");
+    await seek(svg, 1.5);
+    assert_approx_equals(target.width.animVal.value, 50, 0.1, "after change");
+}, "Changing accumulate from sum to none is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="10s" fill="freeze" calcMode="discrete"/>
+        </rect>`);
+    await seek(svg, 2);
+    assert_approx_equals(target.width.animVal.value, 0, 0.1, "before change");
+    animation.setAttribute("calcMode", "linear");
+    await seek(svg, 2);
+    assert_approx_equals(target.width.animVal.value, 20, 0.1, "after change");
+}, "Changing calcMode from discrete to linear is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="10s" fill="freeze" calcMode="linear"/>
+        </rect>`);
+    await seek(svg, 2);
+    assert_approx_equals(target.width.animVal.value, 20, 0.1, "before change");
+    animation.setAttribute("calcMode", "discrete");
+    await seek(svg, 2);
+    assert_approx_equals(target.width.animVal.value, 0, 0.1, "after change");
+}, "Changing calcMode from linear to discrete is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="10" height="10">
+            <animateTransform id="animation" attributeName="transform" type="translate" from="1" to="3" dur="10s" fill="freeze"/>
+        </rect>`);
+    await seek(svg, 5);
+    assertMatrixApproxEquals(transformMatrix(target), [1, 0, 0, 1, 2, 0], "before change");
+    animation.setAttribute("type", "scale");
+    await seek(svg, 5);
+    assertMatrixApproxEquals(transformMatrix(target), [2, 0, 0, 2, 0, 0], "after change");
+}, "Changing animateTransform type from translate to scale is applied");
+
+promise_test(async () => {
+    const { svg, target, animation } = createAnimation(`
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="10s" fill="freeze"/>
+        </rect>`);
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 50, 0.1, "before change");
+    animation.removeAttribute("from");
+    await seek(svg, 5);
+    assert_approx_equals(target.width.animVal.value, 75, 0.1, "after change");
+}, "Removing from (from-to animation becomes to animation) is applied");
+
+const eventTestCases = [
+    { attribute: "additive", value: "sum", markup: `
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="100s" fill="freeze"/>
+        </rect>`,
+        check: target => assert_greater_than(target.width.animVal.value, 40, "additive change is applied without seeking") },
+    { attribute: "accumulate", value: "sum", markup: `
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="100s" fill="freeze"/>
+        </rect>` },
+    { attribute: "calcMode", value: "discrete", markup: `
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="100s" fill="freeze"/>
+        </rect>` },
+    { attribute: "dur", value: "200s", markup: `
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="100s" fill="freeze"/>
+        </rect>` },
+    { attribute: "fill", value: "remove", markup: `
+        <rect id="target" width="50" height="10">
+            <animate id="animation" attributeName="width" from="0" to="100" dur="100s" fill="freeze"/>
+        </rect>` },
+    { attribute: "type", value: "scale", markup: `
+        <rect id="target" width="10" height="10">
+            <animateTransform id="animation" attributeName="transform" type="translate" from="1" to="3" dur="100s" fill="freeze"/>
+        </rect>`,
+        check: target => assert_approx_equals(transformMatrix(target)[4], 0, 0.01, "type change is applied without seeking") },
+];
+
+for (const { attribute, value, markup, check } of eventTestCases) {
+    promise_test(async () => {
+        const { svg, target, animation, counts } = createRunningAnimation(markup);
+        await waitFrames(10);
+        assert_equals(counts.begin, 1, "beginEvent count before change");
+        animation.setAttribute(attribute, value);
+        await waitFrames(10);
+        assert_equals(counts.begin, 1, "beginEvent count after change");
+        assert_equals(counts.end, 0, "endEvent count after change");
+        if (check)
+            check(target);
+        svg.parentNode.remove();
+    }, `Changing ${attribute} mid-interval does not dispatch extra events`);
+}
+
+</script>
+</body>
+</html>

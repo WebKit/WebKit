@@ -1,0 +1,16 @@
+
+PASS Changing additive from replace to sum is applied
+PASS Changing additive from sum to replace is applied
+PASS Changing accumulate from none to sum is applied
+PASS Changing accumulate from sum to none is applied
+PASS Changing calcMode from discrete to linear is applied
+PASS Changing calcMode from linear to discrete is applied
+PASS Changing animateTransform type from translate to scale is applied
+PASS Removing from (from-to animation becomes to animation) is applied
+PASS Changing additive mid-interval does not dispatch extra events
+PASS Changing accumulate mid-interval does not dispatch extra events
+PASS Changing calcMode mid-interval does not dispatch extra events
+PASS Changing dur mid-interval does not dispatch extra events
+PASS Changing fill mid-interval does not dispatch extra events
+PASS Changing type mid-interval does not dispatch extra events
+

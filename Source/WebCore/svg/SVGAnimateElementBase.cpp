@@ -93,6 +93,26 @@ void SVGAnimateElementBase::setAttributeName(const QualifiedName& attributeName)
     resetAnimation();
 }
 
+void SVGAnimateElementBase::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+{
+    auto oldAnimationMode = animationMode();
+    auto oldCalcMode = calcMode();
+
+    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
+    bool additionAttributeChanged = (name == SVGNames::additiveAttr || name == SVGNames::accumulateAttr) && oldValue != newValue;
+    if (additionAttributeChanged || animationMode() != oldAnimationMode || calcMode() != oldCalcMode)
+        invalidateAnimator();
+}
+
+void SVGAnimateElementBase::invalidateAnimator()
+{
+    if (RefPtr target = targetElement())
+        stopAnimation(target.get());
+    resetAnimation();
+    animationAttributeChanged();
+}
+
 void SVGAnimateElementBase::resetAnimation()
 {
     SVGAnimationElement::resetAnimation();

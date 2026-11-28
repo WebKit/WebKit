@@ -113,8 +113,9 @@ protected:
     void setAnimationMode(AnimationMode animationMode) { m_animationMode = animationMode; }
     void setCalcMode(CalcMode calcMode) { m_calcMode = calcMode; }
 
-private:
     void animationAttributeChanged() override;
+
+private:
     void setAttributeType(const AtomString&);
 
     bool isSVGAnimationElement() const final { return true; }

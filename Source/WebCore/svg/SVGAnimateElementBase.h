@@ -42,6 +42,9 @@ protected:
     bool hasValidAttributeType() const override;
     virtual String animateRangeString(const String& string) const { return string; }
 
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
+    void invalidateAnimator();
+
 private:
     SVGAttributeAnimator* animator() const;
     SVGAttributeAnimator* animatorIfExists() const { return m_animator; }
