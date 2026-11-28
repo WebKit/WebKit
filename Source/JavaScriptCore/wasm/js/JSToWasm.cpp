@@ -31,7 +31,9 @@
 
 #include "CCallHelpers.h"
 #include "JSCJSValueInlines.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyStruct.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
@@ -39,6 +41,7 @@
 #include "WasmThunks.h"
 #include "WasmToJS.h"
 #include "WebAssemblyFunctionBase.h"
+#include "WebAssemblyGCStructure.h"
 
 namespace JSC {
 namespace Wasm {
@@ -597,9 +600,40 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
                 slowPath.append(jit.branch32(CCallHelpers::LessThan, scratchGPR, CCallHelpers::TrustedImm32(Wasm::minI31ref)));
                 if (type.isNullable())
                     isNull.link(&jit);
-            } else if (!Wasm::isExternref(type)) {
+            } else if (Wasm::isArrayref(type) || Wasm::isStructref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::isInternalref(type) && !Wasm::isEqref(type) && !Wasm::isAnyref(type))) {
+                // Exact RTT match. A subtype falls through to the slow path, which accepts it.
+                const ClassInfo* info = nullptr;
+                RefPtr<const RTT> expectedRTT;
+                if (Wasm::isArrayref(type))
+                    info = JSWebAssemblyArray::info();
+                else if (Wasm::isStructref(type))
+                    info = JSWebAssemblyStruct::info();
+                else if (RefPtr<const RTT> rtt = TypeInformation::tryGetRTT(type.index())) {
+                    if (rtt->kind() == RTTKind::Array)
+                        info = JSWebAssemblyArray::info();
+                    else if (rtt->kind() == RTTKind::Struct)
+                        info = JSWebAssemblyStruct::info();
+                    if (info)
+                        expectedRTT = WTF::move(rtt);
+                }
+
+                if (!info)
+                    slowPath.append(jit.jump());
+                else {
+                    jit.loadValue(jsParam, scratchGPR);
+                    auto isNull = jit.branchIfNull(scratchGPR);
+                    if (!type.isNullable())
+                        slowPath.append(isNull);
+                    slowPath.append(jit.branchIfNotCell(scratchGPR, DoNotHaveTagRegisters));
+                    jit.emitLoadStructure(scratchGPR, scratchGPR);
+                    slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, CCallHelpers::Address(scratchGPR, Structure::classInfoOffset()), CCallHelpers::TrustedImmPtr(info)));
+                    if (expectedRTT)
+                        slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, CCallHelpers::Address(scratchGPR, WebAssemblyGCStructure::offsetOfRTT()), CCallHelpers::TrustedImmPtr(expectedRTT.get())));
+                    if (type.isNullable())
+                        isNull.link(&jit);
+                }
+            } else if (!Wasm::isExternref(type))
                 slowPath.append(jit.jump());
-            }
 
             if (isStack) {
                 jit.loadValue(jsParam, scratchGPR);
