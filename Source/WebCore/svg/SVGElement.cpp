@@ -602,6 +602,13 @@ void SVGElement::synchronizeAllAttributes()
         setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
 }
 
+void SVGElement::invalidateStyleForPresentationAttributeChangedWithoutNotification()
+{
+    // The attribute changes without Element::attributeChanged(), so nothing has invalidated selectors that depend on it.
+    if (elementData() && elementData()->presentationalHintStyleIsDirty())
+        invalidateStyle();
+}
+
 void SVGElement::commitPropertyChange(SVGProperty* property)
 {
     // We want to dirty the top-level property when a descendant changes. For example
@@ -610,7 +617,9 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
     property->setDirty();
 
     setAnimatedSVGAttributesAreDirty();
-    svgAttributeChanged(propertyRegistry().propertyAttributeName(*this, *property));
+    auto attributeName = propertyRegistry().propertyAttributeName(*this, *property);
+    svgAttributeChanged(attributeName);
+    invalidateStyleForPresentationAttributeChangedWithoutNotification();
 }
 
 void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
@@ -632,6 +641,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedPropertyBase& animatedProperty)
 
     setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);
+    invalidateStyleForPresentationAttributeChangedWithoutNotification();
 }
 
 bool SVGElement::isAnimatedPropertyAttribute(const QualifiedName& attributeName) const
@@ -680,7 +690,7 @@ std::optional<Style::UnadjustedStyle> SVGElement::resolveCustomStyle(const Style
         return styleElement->resolveStyle(styleElementResolutionContext);
     }
 
-    return resolveStyle(resolutionContext);
+    return std::nullopt;
 }
 
 MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const

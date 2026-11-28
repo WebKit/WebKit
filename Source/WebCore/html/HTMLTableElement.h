@@ -67,9 +67,9 @@ public:
     NODELETE const AtomString& rules() const;
     NODELETE const AtomString& summary() const;
 
-    const MutableStyleProperties* additionalCellStyle() const;
-    const MutableStyleProperties* additionalGroupStyle(bool rows) const;
-    const MutableStyleProperties* additionalRowStyle() const;
+    const ImmutableStyleProperties* additionalCellStyle() const;
+    const ImmutableStyleProperties* additionalGroupStyle(bool rows) const;
+    const ImmutableStyleProperties* additionalRowStyle() const;
 
 private:
     HTMLTableElement(const QualifiedName&, Document&);
@@ -80,7 +80,7 @@ private:
     NODELETE bool isURLAttribute(const Attribute&) const final;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    const MutableStyleProperties* additionalPresentationalHintStyle() const final;
+    const ImmutableStyleProperties* additionalPresentationalHintStyle() const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
@@ -89,7 +89,7 @@ private:
 
     NODELETE CellBorders cellBorders() const;
 
-    Ref<MutableStyleProperties> createSharedCellStyle() const;
+    Ref<ImmutableStyleProperties> createSharedCellStyle() const;
 
     NODELETE HTMLTableSectionElement* lastBody() const;
 
@@ -97,7 +97,7 @@ private:
     bool m_frameAttr { false }; // Implies a thin border width if no border is set and then a certain set of solid/hidden borders based off the value.
     TableRules m_rulesAttr { TableRules::Unset }; // Implies a thin border width, a collapsing border model, and all borders on the table becoming set to hidden (if frame/border are present, to none otherwise).
     unsigned short m_padding { 1 };
-    mutable RefPtr<const MutableStyleProperties> m_sharedCellStyle;
+    mutable RefPtr<const ImmutableStyleProperties> m_sharedCellStyle;
 };
 
 } //namespace

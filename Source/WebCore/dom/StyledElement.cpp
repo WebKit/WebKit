@@ -111,11 +111,22 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
     if (oldValue != newValue) {
         if (name == styleAttr)
             styleAttributeChanged(newValue, reason);
-        else if (hasPresentationalHintsForAttribute(name)) {
-            elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
-        }
+        else if (hasPresentationalHintsForAttribute(name))
+            presentationalHintsChanged();
     }
+}
+
+void StyledElement::invalidatePresentationalHintStyle()
+{
+    ensureUniqueElementData();
+    presentationalHintsChanged();
+}
+
+void StyledElement::presentationalHintsChanged()
+{
+    elementData()->setPresentationalHintStyleIsDirty(true);
+    // Selectors that depend on a changed attribute are invalidated separately, by Style::AttributeChangeInvalidation.
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
 }
 
 CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
@@ -171,7 +182,7 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
+    Node::invalidateStyle(Style::Validity::InlineOrPresentationalHintStyleInvalid);
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
@@ -205,7 +216,7 @@ void StyledElement::invalidateStyleAttribute()
     // Inline style invalidation optimization does not work if there are selectors targeting the style attribute
     // as some rule may start or stop matching.
     auto selectorsForStyleAttribute = styleResolver().ruleSets().selectorsForStyleAttribute();
-    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleInvalid : Style::Validity::ElementInvalid;
+    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineOrPresentationalHintStyleInvalid : Style::Validity::ElementInvalid;
 
     Node::invalidateStyle(validity);
 
@@ -323,7 +334,7 @@ Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute,
     return Attribute { styleAttr, properties->asTextAtom(serializationContext) };
 }
 
-const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
+const StyleProperties* StyledElement::presentationalHintStyle() const
 {
     if (!elementData())
         return nullptr;
@@ -335,18 +346,29 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 
 void StyledElement::rebuildPresentationalHintStyle()
 {
+    // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
+    Ref elementData = ensureUniqueElementData();
+
+    // A style that changes after it was first built becomes mutable and keeps its identity (like inline style does).
+    bool hadStyle = !!elementData->m_presentationalHintStyle;
+    RefPtr existingMutableStyle = dynamicDowncast<MutableStyleProperties>(elementData->m_presentationalHintStyle);
+    if (existingMutableStyle)
+        existingMutableStyle->clear();
+
     bool isSVG = isSVGElement();
-    auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
+    Ref style = existingMutableStyle ? existingMutableStyle.releaseNonNull() : MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
     for (auto& attribute : attributes())
         collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
     collectExtraStyleForPresentationalHints(style);
 
-    // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
-    Ref elementData = ensureUniqueElementData();
-
     elementData->setPresentationalHintStyleIsDirty(false);
     if (style->isEmpty()) {
         elementData->m_presentationalHintStyle = nullptr;
+        return;
+    }
+
+    if (hadStyle) {
+        elementData->m_presentationalHintStyle = WTF::move(style);
         return;
     }
 

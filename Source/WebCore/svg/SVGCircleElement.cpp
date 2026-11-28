@@ -93,7 +93,7 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        setPresentationalHintStyleIsDirty();
+        invalidatePresentationalHintStyle();
         invalidateResourceImageBuffersIfNeeded();
         return;
     }

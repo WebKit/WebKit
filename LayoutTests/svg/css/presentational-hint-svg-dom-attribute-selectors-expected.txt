@@ -1,0 +1,5 @@
+
+PASS Changing width on a nested svg through the SVG DOM updates attribute selectors
+PASS Changing transform on the outermost svg through the SVG DOM updates attribute selectors
+PASS Changing x on a rect through the SVG DOM updates attribute selectors
+

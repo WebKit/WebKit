@@ -69,10 +69,13 @@ public:
     StylePropertyMap& ensureAttributeStyleMap();
 
     // https://html.spec.whatwg.org/#presentational-hints
-    const ImmutableStyleProperties* presentationalHintStyle() const;
+    const StyleProperties* presentationalHintStyle() const;
     virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
-    virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
+    virtual const ImmutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
+
+    // For presentational hints that change without the attribute changing through attributeChanged().
+    void invalidatePresentationalHintStyle();
 
 protected:
     StyledElement(const QualifiedName& name, Document& document, OptionSet<TypeFlag> type)
@@ -108,6 +111,7 @@ private:
     Ref<MutableStyleProperties> ensureMutableInlineStyle();
 
     void rebuildPresentationalHintStyle();
+    void presentationalHintsChanged();
 };
 
 } // namespace WebCore

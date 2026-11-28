@@ -172,7 +172,7 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     switch (element.styleValidity()) {
     case Validity::Valid:
     case Validity::AnimationInvalid:
-    case Validity::InlineStyleInvalid: {
+    case Validity::InlineOrPresentationalHintStyleInvalid: {
         for (auto& ruleSet : m_ruleSets) {
             ElementRuleCollector ruleCollector(element, *ruleSet.ruleSet, selectorMatchingState, SelectorChecker::Mode::StyleInvalidation);
 

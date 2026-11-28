@@ -43,6 +43,7 @@
 #include "ElementTextDirection.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
+#include "ImmutableStyleProperties.h"
 #include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"
@@ -1004,7 +1005,9 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
             // Presentation attributes in SVG elements tend to be unique and not restyled often. Avoid bloating the cache.
             // FIXME: Refcount is an imperfect proxy for sharing within a single document.
             static constexpr auto matchedDeclarationsCacheSharingThreshold = 4;
-            bool allowFullCaching = !styledElement->isSVGElement() || presentationalHintStyle->refCount() > matchedDeclarationsCacheSharingThreshold;
+            // A mutable style changes in place, so its properties are always applied.
+            bool allowFullCaching = !presentationalHintStyle->isMutable()
+                && (!styledElement->isSVGElement() || presentationalHintStyle->refCount() > matchedDeclarationsCacheSharingThreshold);
 
             auto isCacheable = allowFullCaching ? IsCacheable::Yes : IsCacheable::Partially;
             addElementStyleProperties(presentationalHintStyle, RuleSet::cascadeLayerPriorityForPresentationalHints, isCacheable);
