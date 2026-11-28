@@ -602,6 +602,15 @@ static bool permuteChannelsWithPlatformFrameworks(const SourcePlane&, const Dest
 
 #endif // USE(ACCELERATE)
 
+// Fills the unused low bits of MSB aligned samples with their top bits, so the largest sourceBitDepth value becomes 0xFFFF.
+static void replicateTopBits(const DestinationPlane& plane, unsigned sourceBitDepth)
+{
+    for (size_t row = 0; row < plane.height; ++row) {
+        for (auto& sample : spanReinterpretCast<uint16_t>(plane.row(row)))
+            sample |= sample >> sourceBitDepth;
+    }
+}
+
 #if USE(LIBWEBRTC)
 
 static const uint16_t* sixteenBitSamples(const SourcePlane& plane)
@@ -623,15 +632,6 @@ static int sampleStride(const auto& plane)
 static int samplesPerRow(const auto& plane)
 {
     return static_cast<int>(plane.width * plane.channels);
-}
-
-// Fills the unused low bits of MSB aligned samples with their top bits, so the largest sourceBitDepth value becomes 0xFFFF.
-static void replicateTopBits(const DestinationPlane& plane, unsigned sourceBitDepth)
-{
-    for (size_t row = 0; row < plane.height; ++row) {
-        for (auto& sample : spanReinterpretCast<uint16_t>(plane.row(row)))
-            sample |= sample >> sourceBitDepth;
-    }
 }
 
 static bool copyPlaneWithLibYUV(const SourcePlane& source, const DestinationPlane& destination, RangeConversion conversion)
@@ -776,6 +776,8 @@ bool copyPlane(const SourcePlane& source, const DestinationPlane& destination, R
         copy, preferredBackend);
     if (!succeeded)
         return false;
+    if (conversion == RangeConversion::None && source.format.isMSBAligned && source.format.bitDepth < 16 && destination.format == sixteenBit)
+        replicateTopBits(alignedDestination.plane(), source.format.bitDepth);
     alignedDestination.commit();
     return true;
 }

@@ -2979,6 +2979,7 @@
 		7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6623D686C600CC6883 /* RenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C3A1E2F4B5D6A7081920006 /* PlanarImageConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A1E2F4B5D6A7081920001 /* PlanarImageConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C3A1E2F4B5D6A7081920012 /* PixelBufferConverterCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A1E2F4B5D6A7081920010 /* PixelBufferConverterCV.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C3A1E2F4B5D6A7081920007 /* PlanarImageConverterCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		729D05302531424300422098 /* RenderingResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 729D052E25313E2600422098 /* RenderingResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A5D192275E8FFE0065833E /* SVGFilterExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 726CDE25275B489700A445B2 /* SVGFilterExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14579,6 +14580,8 @@
 		7C3A1E2F4B5D6A7081920001 /* PlanarImageConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlanarImageConverter.h; sourceTree = "<group>"; };
 		7C3A1E2F4B5D6A7081920002 /* PlanarImageConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlanarImageConverter.cpp; sourceTree = "<group>"; };
 		7C3A1E2F4B5D6A7081920003 /* libYUV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libYUV.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920010 /* PixelBufferConverterCV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelBufferConverterCV.h; sourceTree = "<group>"; };
+		7C3A1E2F4B5D6A7081920011 /* PixelBufferConverterCV.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PixelBufferConverterCV.mm; sourceTree = "<group>"; };
 		7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlanarImageConverterCV.h; sourceTree = "<group>"; };
 		7C3A1E2F4B5D6A7081920005 /* PlanarImageConverterCV.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlanarImageConverterCV.mm; sourceTree = "<group>"; };
 		729D052E25313E2600422098 /* RenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingResourceIdentifier.h; sourceTree = "<group>"; };
@@ -40653,6 +40656,8 @@
 				CD7D33411C7A123F00041293 /* PixelBufferConformerCV.cpp */,
 				CD7D33421C7A123F00041293 /* PixelBufferConformerCV.h */,
 				41B71FFB2DE076DD00467A31 /* PixelBufferConformerCV.mm */,
+				7C3A1E2F4B5D6A7081920010 /* PixelBufferConverterCV.h */,
+				7C3A1E2F4B5D6A7081920011 /* PixelBufferConverterCV.mm */,
 				7C3A1E2F4B5D6A7081920004 /* PlanarImageConverterCV.h */,
 				7C3A1E2F4B5D6A7081920005 /* PlanarImageConverterCV.mm */,
 				7BE37F8627BBB6FF007A6CD3 /* VideoFrameCV.h */,
@@ -48550,6 +48555,7 @@
 				BCE691E5264637FC00EBDC3A /* PixelBuffer.h in Headers */,
 				CD7D33441C7A123F00041293 /* PixelBufferConformerCV.h in Headers */,
 				BC635E8E264C2CE7000EF33A /* PixelBufferConversion.h in Headers */,
+				7C3A1E2F4B5D6A7081920012 /* PixelBufferConverterCV.h in Headers */,
 				BC635E8C264C2CAE000EF33A /* PixelBufferFormat.h in Headers */,
 				BCA55914263DBD79007F19B3 /* PixelFormat.h in Headers */,
 				115CFA82208B8EDA001E6991 /* PlacedFloats.h in Headers */,

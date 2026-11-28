@@ -378,6 +378,23 @@ bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef destination)
         && copyPlane(sourcePlanes->uv(), destinationPlanes->uv(), conversion, Component::Chroma);
 }
 
+bool copyAlphaPlane(CVPixelBufferRef source, CVPixelBufferRef destination)
+{
+    ReadOnlyYUVPixelBufferPlanes lockedSourcePlanes { source };
+    WritableYUVPixelBufferPlanes lockedDestinationPlanes { destination };
+    if (!lockedSourcePlanes || !lockedDestinationPlanes)
+        return false;
+    Borrow sourcePlanes = lockedSourcePlanes;
+    Borrow destinationPlanes = lockedDestinationPlanes;
+    ASSERT(sourcePlanes->alpha() && destinationPlanes->alpha());
+    ASSERT(CVPixelBufferGetWidth(source) == CVPixelBufferGetWidth(destination) && CVPixelBufferGetHeight(source) == CVPixelBufferGetHeight(destination));
+    if (!sourcePlanes->alpha() || !destinationPlanes->alpha() || !copyPlane(*sourcePlanes->alpha(), *destinationPlanes->alpha()))
+        return false;
+    CVBufferSetAttachment(destination, kCVImageBufferAlphaChannelModeKey, kCVImageBufferAlphaChannelMode_StraightAlpha, kCVAttachmentMode_ShouldPropagate);
+    CVBufferRemoveAttachment(destination, kCVImageBufferAlphaChannelIsOpaque);
+    return true;
+}
+
 bool copyLumaToAlpha(CVPixelBufferRef alphaSource, const DestinationPlane& destination)
 {
     ReadOnlyYUVPixelBufferPlanes lockedPlanes { alphaSource };

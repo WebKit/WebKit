@@ -176,6 +176,10 @@ WEBCORE_EXPORT bool copyFromPixelBuffer(CVPixelBufferRef source, size_t left, si
 // The pixel buffers have the same size and chroma subsampling. Alpha planes are not copied.
 WEBCORE_EXPORT bool copyColorPlanes(CVPixelBufferRef source, CVPixelBufferRef destination);
 
+// The pixel buffers have the same size and an alpha plane each, of any sample format. The destination is tagged as
+// straight alpha.
+WEBCORE_EXPORT bool copyAlphaPlane(CVPixelBufferRef source, CVPixelBufferRef destination);
+
 // The luma of alphaSource becomes the alpha. Alpha spans the whole sample range whatever range the luma is tagged with.
 WEBCORE_EXPORT bool copyLumaToAlphaPlane(CVPixelBufferRef alphaSource, CVPixelBufferRef destination);
 WEBCORE_EXPORT bool copyLumaToAlpha(CVPixelBufferRef alphaSource, const DestinationPlane&);

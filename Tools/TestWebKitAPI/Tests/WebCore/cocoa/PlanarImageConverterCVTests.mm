@@ -28,6 +28,7 @@
 #if PLATFORM(COCOA)
 
 #import <CoreVideo/CoreVideo.h>
+#import <WebCore/PixelBufferConverterCV.h>
 #import <WebCore/PlanarImageConverterCV.h>
 #import <WebCore/VideoFrameCV.h>
 #import <pal/spi/cf/CoreVideoSPI.h>
@@ -623,6 +624,101 @@ TEST(PlanarImageConverterCV, CopyAlphaPlaneToAlphaChannel)
     EXPECT_FALSE(copyAlphaPlaneToAlphaChannel(source, rgba));
 }
 
+static void testCopyAlphaPlane(OSType sourceFormat, OSType destinationFormat, uint16_t (*expectedAlpha)(uint16_t))
+{
+    auto description = pixelFormatDescription(sourceFormat);
+    ASSERT_TRUE(description && description->alpha);
+    RetainPtr source = createPixelBuffer(sourceFormat);
+    FrameStorage sourceStorage;
+    auto color = description->color.bitDepth > 8 ? tenBitLSB : eightBit;
+    auto frame = allocateFrame(sourceStorage, description->subsampling, color, description->isFullRange, description->alpha);
+    fillFrame(frame);
+    if (description->alpha->isMSBAligned) {
+        for (size_t y = 0; y < testHeight; ++y) {
+            for (size_t x = 0; x < testWidth; ++x)
+                setSampleAt(*frame.alpha, x, y, ((x * 7 + y * 13) % (1u << description->alpha->bitDepth)) << (16 - description->alpha->bitDepth));
+        }
+    }
+    ASSERT_TRUE(copyFrame(asSource(frame), source));
+
+    RetainPtr destination = createPixelBuffer(destinationFormat);
+    ASSERT_TRUE(copyAlphaPlane(source, destination));
+    EXPECT_TRUE(CFEqual(kCVImageBufferAlphaChannelMode_StraightAlpha, CVBufferGetAttachment(destination, kCVImageBufferAlphaChannelModeKey, nullptr)));
+
+    ReadOnlyYUVPixelBufferPlanes lockedPlanes { destination };
+    ASSERT_TRUE(lockedPlanes);
+    Borrow planes = lockedPlanes;
+    for (size_t y = 0; y < testHeight; ++y) {
+        for (size_t x = 0; x < testWidth; ++x)
+            EXPECT_EQ(sampleAt(*planes->alpha(), x, y), expectedAlpha(sampleAt(PlanarImageConverter::asSource(*frame.alpha), x, y))) << "at " << x << "," << y;
+    }
+}
+
+TEST(PlanarImageConverterCV, CopyAlphaPlane)
+{
+    testCopyAlphaPlane(pixelFormatWK420YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar, [](uint16_t sample) {
+        return sample;
+    });
+    // 10-bit MSB alpha has its top bits replicated into 16 bits, so opaque stays opaque.
+    testCopyAlphaPlane(pixelFormatWK422YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar, [](uint16_t sample) {
+        return static_cast<uint16_t>(sample | sample >> 10);
+    });
+    testCopyAlphaPlane(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar, [](uint16_t sample) {
+        return static_cast<uint16_t>(sample >> 8);
+    });
+}
+
+TEST(PixelBufferConverterCV, ConvertToNearestCVPixelFormat)
+{
+    static constexpr std::array<OSType, 7> registeredFormats {
+        pixelFormatWK420YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK422YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK444YpCbCr8FullRange8ATriPlanar,
+        pixelFormatWK420YpCbCr10VideoRange16ATriPlanar,
+        pixelFormatWK420YpCbCr10FullRange16ATriPlanar,
+        pixelFormatWK422YpCbCr10FullRange16ATriPlanar,
+        pixelFormatWK444YpCbCr10FullRange16ATriPlanar,
+    };
+    PixelBufferConverter converter { PixelBufferConverter::UseIOSurface::No };
+    for (auto format : registeredFormats) {
+        auto description = pixelFormatDescription(format);
+        ASSERT_TRUE(description) << "pixel format " << format;
+        RetainPtr source = createPixelBuffer(format);
+        FrameStorage sourceStorage;
+        auto color = description->color.bitDepth > 8 ? tenBitLSB : eightBit;
+        auto frame = allocateFrame(sourceStorage, description->subsampling, color, description->isFullRange, description->alpha);
+        unsigned shift = color.bitDepth - 8;
+        uint16_t black = description->isFullRange ? 0 : 16 << shift;
+        uint16_t white = description->isFullRange ? (1 << color.bitDepth) - 1 : 235 << shift;
+        for (size_t y = 0; y < frame.u.height; ++y) {
+            for (size_t x = 0; x < frame.u.width; ++x) {
+                setSampleAt(frame.u, x, y, 128 << shift);
+                setSampleAt(frame.v, x, y, 128 << shift);
+            }
+        }
+        setSampleAt(frame.y, 0, 0, black);
+        setSampleAt(frame.y, 1, 0, white);
+        ASSERT_TRUE(copyFrame(asSource(frame), source)) << "pixel format " << format;
+
+        auto destinationFormat = PixelBufferConverter::nearestCVPixelFormat(format);
+        RetainPtr destination = converter.convert(source, destinationFormat);
+        ASSERT_TRUE(destination) << "pixel format " << format;
+        EXPECT_EQ(CVPixelBufferGetPixelFormatType(destination), destinationFormat) << "pixel format " << format;
+
+        ReadOnlyYUVPixelBufferPlanes lockedPlanes { destination };
+        ASSERT_TRUE(lockedPlanes) << "pixel format " << format;
+        Borrow planes = lockedPlanes;
+        EXPECT_EQ(sampleAt(planes->y(), 0, 0), 64 << 6) << "pixel format " << format;
+        EXPECT_EQ(sampleAt(planes->y(), 1, 0), 940 << 6) << "pixel format " << format;
+        // VideoToolbox, which changes the subsampling, shifts full-range chroma (rdar://193766181).
+        auto destinationDescription = pixelFormatDescription(destinationFormat);
+        ASSERT_TRUE(destinationDescription) << "pixel format " << format;
+        int chromaTolerance = destinationDescription->subsampling == description->subsampling ? 0 : 1;
+        EXPECT_NEAR(sampleAt(planes->uv(), 0, 0, 0) >> 6, 512, chromaTolerance) << "pixel format " << format;
+        EXPECT_NEAR(sampleAt(planes->uv(), 0, 0, 1) >> 6, 512, chromaTolerance) << "pixel format " << format;
+    }
+}
+
 TEST(PlanarImageConverterCV, CopyBiPlanarFrame)
 {
     constexpr auto subsampling = ChromaSubsampling::HorizontalAndVertical;
@@ -703,6 +799,144 @@ TEST(PlanarImageConverterCV, CopyPackedPixelBuffer)
     EXPECT_FALSE(copyFromPixelBuffer(argb.get(), 25, 2, rect, argbToRGBA));
     RetainPtr biPlanar = createPixelBuffer(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
     EXPECT_FALSE(copyToPixelBuffer(PlanarImageConverter::asSource(rgba), biPlanar.get(), rgbaToARGB));
+}
+
+TEST(PixelBufferConverterCV, NearestCVPixelFormat)
+{
+    static constexpr std::array<std::pair<OSType, OSType>, 15> cases { {
+        { pixelFormatWK420YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK422YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK444YpCbCr8FullRange8ATriPlanar, kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK420YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK422YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { pixelFormatWK444YpCbCr10FullRange16ATriPlanar, kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar },
+        { kCVPixelFormatType_420YpCbCr10VideoRange_8A_TriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { kCVPixelFormatType_422YpCbCr10VideoRange_8A_TriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { kCVPixelFormatType_444YpCbCr10VideoRange_8A_TriPlanar, kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar },
+        { kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar },
+        { kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar, kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar },
+        { kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar, kCVPixelFormatType_422YpCbCr8VideoRange_8A_TriPlanar },
+        { kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange },
+        { kCVPixelFormatType_32BGRA, kCVPixelFormatType_32BGRA },
+    } };
+    for (auto [format, expectedFormat] : cases)
+        EXPECT_EQ(PixelBufferConverter::nearestCVPixelFormat(format), expectedFormat) << "pixel format " << format;
+}
+
+TEST(PixelBufferConverterCV, PixelFormatWithAlpha)
+{
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange), kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange), pixelFormatWK420YpCbCr8FullRange8ATriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange), pixelFormatWK420YpCbCr10VideoRange16ATriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_420YpCbCr10BiPlanarFullRange), pixelFormatWK420YpCbCr10FullRange16ATriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_422YpCbCr10BiPlanarVideoRange), kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_422YpCbCr10BiPlanarFullRange), pixelFormatWK422YpCbCr10FullRange16ATriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_444YpCbCr8BiPlanarVideoRange), kCVPixelFormatType_444YpCbCr8VideoRange_8A_TriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange), kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar);
+    EXPECT_FALSE(PixelBufferConverter::pixelFormatWithAlpha(kCVPixelFormatType_32BGRA));
+}
+
+TEST(PixelBufferConverterCV, PixelFormatWithoutAlpha)
+{
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithoutAlpha(pixelFormatWK420YpCbCr10FullRange16ATriPlanar), kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithoutAlpha(pixelFormatWK422YpCbCr8FullRange8ATriPlanar), kCVPixelFormatType_422YpCbCr8BiPlanarFullRange);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithoutAlpha(kCVPixelFormatType_420YpCbCr8VideoRange_8A_TriPlanar), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithoutAlpha(kCVPixelFormatType_444YpCbCr10VideoRange_16A_TriPlanar), kCVPixelFormatType_444YpCbCr10BiPlanarVideoRange);
+    EXPECT_EQ(PixelBufferConverter::pixelFormatWithoutAlpha(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+    EXPECT_FALSE(PixelBufferConverter::pixelFormatWithoutAlpha(kCVPixelFormatType_32BGRA));
+}
+
+TEST(PixelBufferConverterCV, ConvertReturnsSourceAlreadyInFormatAndColorSpace)
+{
+    RetainPtr source = createPixelBuffer(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+    ASSERT_TRUE(source);
+    PixelBufferConverter converter { PixelBufferConverter::UseIOSurface::No, PixelBufferConverter::UsePixelBufferPool::No };
+    EXPECT_TRUE(converter.convert(source, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) == source);
+
+    CVBufferSetAttachment(source, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(source, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(source, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    PlatformVideoColorSpace bt709ColorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Bt709, .matrix = PlatformVideoMatrixCoefficients::Bt709 };
+    EXPECT_TRUE(converter.convert(source, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, bt709ColorSpace) == source);
+
+    RetainPtr converted = converter.convert(source, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, srgbColorSpace());
+    ASSERT_TRUE(converted);
+    EXPECT_FALSE(converted == source);
+    EXPECT_EQ(CVPixelBufferGetPixelFormatType(converted), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
+}
+
+TEST(PixelBufferConverterCV, ConvertRegisteredFormatToNearestCVPixelFormat)
+{
+    constexpr size_t width = 64;
+    constexpr size_t height = 48;
+    RetainPtr source = createPixelBuffer(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar, width, height);
+    ASSERT_TRUE(source);
+
+    auto alphaAt = [](size_t x, size_t y) {
+        return static_cast<uint16_t>((x * 7 + y * 13) % 1024);
+    };
+    FrameStorage storage;
+    auto frame = allocateFrame(storage, ChromaSubsampling::HorizontalAndVertical, tenBitLSB, false, tenBitLSB, width, height);
+    for (size_t y = 0; y < height; ++y) {
+        for (size_t x = 0; x < width; ++x) {
+            setSampleAt(frame.y, x, y, 403);
+            setSampleAt(*frame.alpha, x, y, alphaAt(x, y));
+        }
+    }
+    for (size_t y = 0; y < frame.u.height; ++y) {
+        for (size_t x = 0; x < frame.u.width; ++x) {
+            setSampleAt(frame.u, x, y, 507);
+            setSampleAt(frame.v, x, y, 516);
+        }
+    }
+    ASSERT_TRUE(copyFrame(asSource(frame), source));
+
+    auto destinationFormat = PixelBufferConverter::nearestCVPixelFormat(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar);
+    EXPECT_EQ(destinationFormat, kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar);
+    RetainPtr converted = PixelBufferConverter(PixelBufferConverter::UseIOSurface::No, PixelBufferConverter::UsePixelBufferPool::No).convert(source, destinationFormat);
+    ASSERT_TRUE(converted);
+    EXPECT_EQ(CVPixelBufferGetPixelFormatType(converted), kCVPixelFormatType_422YpCbCr10VideoRange_16A_TriPlanar);
+    EXPECT_TRUE(CFEqual(kCVImageBufferAlphaChannelMode_StraightAlpha, CVBufferGetAttachment(converted, kCVImageBufferAlphaChannelModeKey, nullptr)));
+
+    ReadOnlyYUVPixelBufferPlanes lockedPlanes { converted };
+    ASSERT_TRUE(lockedPlanes);
+    Borrow planes = lockedPlanes;
+    for (size_t y = 0; y < height; ++y) {
+        for (size_t x = 0; x < width; ++x) {
+            ASSERT_EQ(sampleAt(planes->y(), x, y) >> 6, 403) << "luma at " << x << "," << y;
+            uint16_t alpha = alphaAt(x, y);
+            ASSERT_EQ(sampleAt(*planes->alpha(), x, y), static_cast<uint16_t>(alpha << 6 | alpha >> 4)) << "alpha at " << x << "," << y;
+        }
+    }
+    ASSERT_EQ(planes->uv().height, height);
+    for (size_t y = 0; y < planes->uv().height; ++y) {
+        for (size_t x = 0; x < planes->uv().width; ++x) {
+            ASSERT_EQ(sampleAt(planes->uv(), x, y, 0) >> 6, 507) << "Cb at " << x << "," << y;
+            ASSERT_EQ(sampleAt(planes->uv(), x, y, 1) >> 6, 516) << "Cr at " << x << "," << y;
+        }
+    }
+}
+
+TEST(PixelBufferConverterCV, UseIOSurface)
+{
+    using UsePixelBufferPool = PixelBufferConverter::UsePixelBufferPool;
+    using UseIOSurface = PixelBufferConverter::UseIOSurface;
+
+    RetainPtr registeredSource = createPixelBuffer(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar);
+    ASSERT_TRUE(registeredSource);
+    auto nearestFormat = PixelBufferConverter::nearestCVPixelFormat(pixelFormatWK420YpCbCr10VideoRange16ATriPlanar);
+
+    auto usesIOSurface = [&](UseIOSurface useIOSurface, UsePixelBufferPool usePixelBufferPool) {
+        RetainPtr destination = PixelBufferConverter(useIOSurface, usePixelBufferPool).convert(registeredSource, nearestFormat);
+        EXPECT_TRUE(destination);
+        return destination && CVPixelBufferGetIOSurface(destination);
+    };
+    for (auto usePixelBufferPool : { UsePixelBufferPool::No, UsePixelBufferPool::Yes }) {
+        EXPECT_TRUE(usesIOSurface(UseIOSurface::Yes, usePixelBufferPool));
+        EXPECT_FALSE(usesIOSurface(UseIOSurface::No, usePixelBufferPool));
+    }
 }
 
 } // namespace TestWebKitAPI
