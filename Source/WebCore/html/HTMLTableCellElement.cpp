@@ -120,7 +120,7 @@ void HTMLTableCellElement::attributeChanged(const QualifiedName& name, const Ato
     }
 }
 
-const MutableStyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const
+const ImmutableStyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const
 {
     if (auto table = findParentTable())
         return table->additionalCellStyle();
