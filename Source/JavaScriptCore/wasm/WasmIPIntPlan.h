@@ -29,7 +29,6 @@
 
 #include "WasmCallee.h"
 #include "WasmEntryPlan.h"
-#include "WasmIPIntGenerator.h"
 
 namespace JSC {
 
@@ -72,7 +71,6 @@ private:
     bool prepareImpl() final;
     void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
-    Vector<std::unique_ptr<FunctionIPIntMetadataGenerator>> m_wasmInternalFunctions;
     RefPtr<IPIntCallees> m_ipintCallees;
     bool m_calleesAlreadyRegistered { false };
 };
