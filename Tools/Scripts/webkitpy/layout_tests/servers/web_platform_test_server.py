@@ -21,6 +21,7 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import errno
 import json
 import logging
 import os
@@ -36,6 +37,8 @@ except ImportError:
     print("Error importing DNSLogger, DNSServer, Resolver")
 
 _log = logging.getLogger(__name__)
+
+DNS_SERVER_PORT = 8053
 
 
 def doc_root(port_obj):
@@ -157,8 +160,17 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
 
         if use_local_dns_resolver:
             logger = DNSLogger(logf=suppress_dns_resolver_logs)
-            self._dns_server = DNSServer(Resolver(
-                allowed_hosts=port_obj.localhost_aliases()), port=8053, address="127.0.0.1", logger=logger)
+            try:
+                self._dns_server = DNSServer(Resolver(
+                    allowed_hosts=port_obj.localhost_aliases()), port=DNS_SERVER_PORT,
+                    address="127.0.0.1", logger=logger)
+            except OSError as failure:
+                if failure.errno not in (errno.EADDRINUSE, errno.EALREADY):
+                    raise
+                raise http_server_base.ServerError(
+                    'The layout tests\' DNS server could not start. {}'.format(
+                        http_server_base.HttpServerBase.port_in_use_message(DNS_SERVER_PORT,
+                                                                            is_udp=True)))
 
         self._pid_file = pidfile
         if not self._pid_file:
