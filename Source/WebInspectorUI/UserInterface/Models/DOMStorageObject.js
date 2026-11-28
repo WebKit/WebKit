@@ -25,15 +25,13 @@
 
 WI.DOMStorageObject = class DOMStorageObject extends WI.Object
 {
-    constructor(id, host, isLocalStorage, {target} = {})
+    constructor(id, host, isLocalStorage)
     {
         super();
 
         this._id = id;
         this._host = host;
         this._isLocalStorage = isLocalStorage;
-
-        this._target = target ?? null;
 
         this._entries = new Map;
     }
@@ -46,17 +44,17 @@ WI.DOMStorageObject = class DOMStorageObject extends WI.Object
 
     get target()
     {
-        // The frame target dies with its frame; fall back rather than use a dead connection.
-        if (this._target && !this._target.isDestroyed)
-            return this._target;
+        // Every frame has its own frame target, and all frames of an origin share its storage, so use any live one.
+        for (let frame of WI.networkManager.frames) {
+            if (frame.securityOrigin !== this._id.securityOrigin)
+                continue;
+
+            let target = frame.pageExecutionContext?.target;
+            if (target instanceof WI.FrameTarget && !target.isDestroyed && !target.isProvisional && target.hasDomain("DOMStorage"))
+                return target;
+        }
+
         return WI.assumingMainTarget();
-    }
-
-    set target(target)
-    {
-        console.assert(!target || target instanceof WI.FrameTarget, target);
-
-        this._target = target ?? null;
     }
 
     saveIdentityToCookie(cookie)

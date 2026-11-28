@@ -198,33 +198,18 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
         // FIXME: Consider passing the other parts of the origin along.
 
-        let target = this._frameTargetForFrame(frame);
-
         let addDOMStorage = (isLocalStorage) => {
             let identifier = {securityOrigin: frame.securityOrigin, isLocalStorage};
             if (this._domStorageForIdentifier(identifier))
                 return;
 
-            let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage, {target});
+            let domStorage = new WI.DOMStorageObject(identifier, frame.mainResource.urlComponents.host, identifier.isLocalStorage);
             let domStorageObjects = identifier.isLocalStorage ? this._localStorageObjects : this._sessionStorageObjects;
             domStorageObjects.set(identifier.securityOrigin, domStorage);
             this.dispatchEventToListeners(DOMStorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
         };
         addDOMStorage(true);
         addDOMStorage(false);
-    }
-
-    _frameTargetForFrame(frame)
-    {
-        for (let target of WI.targets) {
-            if (!(target instanceof WI.FrameTarget))
-                continue;
-
-            if (target.executionContext?.frame === frame)
-                return target;
-        }
-
-        return null;
     }
 
     _addCookieStorageIfNeeded(frame)
@@ -276,23 +261,7 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
         if (!(target instanceof WI.FrameTarget) || !frame.securityOrigin)
             return;
 
-        this._setTargetForOrigin(frame.securityOrigin, target);
         this._addDOMStorageIfNeeded(frame);
-    }
-
-    _setTargetForOrigin(securityOrigin, target)
-    {
-        for (let isLocalStorage of [true, false]) {
-            let domStorage = this._domStorageForIdentifier({securityOrigin, isLocalStorage});
-            if (!domStorage)
-                continue;
-
-            // Objects are keyed by origin, targets by frame; two frames in different processes
-            // sharing an origin would rebind the same object.
-            console.assert(!domStorage.target || domStorage.target === target || domStorage.target === WI.assumingMainTarget(), domStorage.target, target);
-
-            domStorage.target = target;
-        }
     }
 };
 
