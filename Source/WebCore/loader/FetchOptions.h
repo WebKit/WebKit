@@ -101,6 +101,9 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
 {
 }
 
+// https://fetch.spec.whatwg.org/#http-redirect-fetch step 7: "If request's redirect count is 20, then return a network error."
+constexpr unsigned maxRedirectCount = 20;
+
 inline bool isPotentialNavigationOrSubresourceRequest(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Object

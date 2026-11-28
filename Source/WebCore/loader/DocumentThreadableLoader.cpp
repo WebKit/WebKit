@@ -314,7 +314,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     Ref protectedThis { *this };
-    --m_options.maxRedirectCount;
+    --m_options.remainingRedirectCount;
 
     m_responseURL = request.url();
 

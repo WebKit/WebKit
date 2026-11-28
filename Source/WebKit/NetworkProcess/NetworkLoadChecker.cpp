@@ -163,8 +163,8 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
         }
     }
 
-    if (++m_redirectCount > 20) {
-        handler(redirectionError(redirectResponse, "Load cannot follow more than 20 redirections"_s));
+    if (++m_redirectCount > maxRedirectCount) {
+        handler(redirectionError(redirectResponse, makeString("Load cannot follow more than "_s, maxRedirectCount, " redirections"_s)));
         return;
     }
 

@@ -98,7 +98,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.initiatorContext = this->initiatorContext;
     copy.initiator = this->initiator;
     copy.clientCredentialPolicy = this->clientCredentialPolicy;
-    copy.maxRedirectCount = this->maxRedirectCount;
+    copy.remainingRedirectCount = this->remainingRedirectCount;
     copy.preflightPolicy = this->preflightPolicy;
     copy.navigationPreloadIdentifier = this->navigationPreloadIdentifier;
     copy.priority = this->priority;

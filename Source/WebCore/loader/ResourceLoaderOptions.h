@@ -227,7 +227,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
     // https://fetch.spec.whatwg.org/#concept-request-redirect-count
-    uint8_t maxRedirectCount { 20 };
+    uint8_t remainingRedirectCount { maxRedirectCount };
 
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 

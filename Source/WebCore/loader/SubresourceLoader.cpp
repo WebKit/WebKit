@@ -286,7 +286,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTF::move(newRequest));
         }
 
-        if (m_redirectCount++ >= options().maxRedirectCount) {
+        if (m_redirectCount++ >= options().remainingRedirectCount) {
             SUBRESOURCELOADER_RELEASE_LOG(SubResourceLoaderWillSendRequestInternalResourceLoadCancelledTooManyRedirects);
             cancel(ResourceError(String(), 0, request().url(), "Too many redirections"_s, ResourceError::Type::General));
             return completionHandler(WTF::move(newRequest));
