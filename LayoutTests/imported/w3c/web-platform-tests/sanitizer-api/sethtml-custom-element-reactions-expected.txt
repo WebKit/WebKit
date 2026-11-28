@@ -1,0 +1,10 @@
+
+FAIL Element.setHTML with a sanitizer runs custom element reactions before returning target.setHTML is not a function. (In 'target.setHTML("<x-reaction></x-reaction>", allow)', 'target.setHTML' is undefined)
+FAIL Element.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning target.setHTML is not a function. (In 'target.setHTML("<x-reaction></x-reaction>", allow)', 'target.setHTML' is undefined)
+PASS Element.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+PASS Element.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning
+FAIL ShadowRoot.setHTML with a sanitizer runs custom element reactions before returning target.shadowRoot.setHTML is not a function. (In 'target.shadowRoot.setHTML("<x-reaction></x-reaction>", allow)', 'target.shadowRoot.setHTML' is undefined)
+FAIL ShadowRoot.setHTML with a sanitizer runs disconnectedCallback for the replaced children before returning target.shadowRoot.setHTML is not a function. (In 'target.shadowRoot.setHTML("<x-reaction></x-reaction>", allow)', 'target.shadowRoot.setHTML' is undefined)
+PASS ShadowRoot.setHTMLUnsafe with a sanitizer runs custom element reactions before returning
+PASS ShadowRoot.setHTMLUnsafe with a sanitizer runs disconnectedCallback for the replaced children before returning
+

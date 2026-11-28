@@ -1,0 +1,261 @@
+
+FAIL ShadowRoot.setHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.setHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running createHTML should not be called when sanitizer is present
+FAIL ShadowRoot.setHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running createHTML should not be called when default policy provides createParserOptions
+FAIL ShadowRoot.setHTMLUnsafe: default policy createParserOptions can override runScripts from false to true assert_true: Default policy createParserOptions can enable runScripts even if caller passed false expected true got false
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions can override runScripts from true to false
+FAIL ShadowRoot.appendHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL ShadowRoot.appendHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.appendHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL ShadowRoot.prependHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL ShadowRoot.prependHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL Element.setHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.setHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.setHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.setHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.setHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" did not throw
+FAIL Element.setHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running createHTML should not be called when sanitizer is present
+FAIL Element.setHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running createHTML should not be called when default policy provides createParserOptions
+FAIL Element.setHTMLUnsafe: default policy createParserOptions can override runScripts from false to true assert_true: Default policy createParserOptions can enable runScripts even if caller passed false expected true got false
+PASS Element.setHTMLUnsafe: default policy createParserOptions can override runScripts from true to false
+FAIL Element.appendHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.appendHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.appendHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.appendHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.appendHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL Element.appendHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.appendHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.appendHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL Element.appendHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.prependHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.prependHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.prependHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.prependHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL Element.prependHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL Element.prependHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL Element.beforeHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.beforeHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.beforeHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.beforeHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.beforeHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL Element.beforeHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.beforeHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.beforeHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL Element.beforeHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL Element.afterHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.afterHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.afterHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.afterHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.afterHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL Element.afterHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.afterHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.afterHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL Element.afterHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: passing a TrustedHTMLParserOptions overrides default policy passthrough.createParserOptions is not a function. (In 'passthrough.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'passthrough.createParserOptions' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: policy with only createParserOptions allows raw strings when sanitizer is present noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({
+                sanitizer: { removeElements: ["span"] },
+              })', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: policy with only createParserOptions allows raw strings without sanitizer noCreateHTMLPolicy.createParserOptions is not a function. (In 'noCreateHTMLPolicy.createParserOptions({})', 'noCreateHTMLPolicy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: exception in default createParserOptions prevents createHTML from running assert_throws_js: function "() => {
+              receiver[method]("<div id='allowed'></div>");
+            }" threw object "TypeError: receiver[method] is not a function. (In 'receiver[method]("<div id='allowed'></div>")', 'receiver[method]' is undefined)" ("TypeError") expected instance of function "function Error() {
+    [native code]
+}" ("Error")
+FAIL Element.replaceWithHTMLUnsafe: default policy createParserOptions with sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id=forbidden></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><span id='allowed-child'></span></div>",
+            )', 'receiver[method]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: default policy createParserOptions can override runScripts from false to true receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: false },
+            )', 'receiver[method]' is undefined)
+FAIL Element.replaceWithHTMLUnsafe: default policy createParserOptions can override runScripts from true to false receiver[method] is not a function. (In 'receiver[method](
+              "<div id='allowed'><script>window.did_run = true;<" +
+                "/script></div>",
+              { runScripts: true },
+            )', 'receiver[method]' is undefined)
+FAIL TrustedTypePolicy.createParserOptions forwards extra arguments to callback policy.createParserOptions is not a function. (In 'policy.createParserOptions({}, "arg1", 42, { extra: true })', 'policy.createParserOptions' is undefined)
+FAIL TrustedTypePolicy.createParserOptions callback receives converted options dictionary Can't find variable: Sanitizer
+FAIL TrustedHTMLParserOptions applies runScripts option without exposing public members policy.createParserOptions is not a function. (In 'policy.createParserOptions({})', 'policy.createParserOptions' is undefined)
+PASS TrustedTypePolicy.createParserOptions returning something other than an object (number: 0) throws a TypeError
+FAIL Element.setHTMLUnsafe: default policy createParserOptions returning something other than an object (number: 0) throws a TypeError assert_throws_js: function "() => {
+            node.setHTMLUnsafe("<div id='allowed'></div>");
+          }" did not throw
+PASS TrustedTypePolicy.createParserOptions returning something other than an object (number: 123) throws a TypeError
+FAIL Element.setHTMLUnsafe: default policy createParserOptions returning something other than an object (number: 123) throws a TypeError assert_throws_js: function "() => {
+            node.setHTMLUnsafe("<div id='allowed'></div>");
+          }" did not throw
+PASS TrustedTypePolicy.createParserOptions returning something other than an object (boolean: true) throws a TypeError
+FAIL Element.setHTMLUnsafe: default policy createParserOptions returning something other than an object (boolean: true) throws a TypeError assert_throws_js: function "() => {
+            node.setHTMLUnsafe("<div id='allowed'></div>");
+          }" did not throw
+PASS TrustedTypePolicy.createParserOptions returning something other than an object (boolean: false) throws a TypeError
+FAIL Element.setHTMLUnsafe: default policy createParserOptions returning something other than an object (boolean: false) throws a TypeError assert_throws_js: function "() => {
+            node.setHTMLUnsafe("<div id='allowed'></div>");
+          }" did not throw
+PASS TrustedTypePolicy.createParserOptions returning something other than an object (string: "string") throws a TypeError
+FAIL Element.setHTMLUnsafe: default policy createParserOptions returning something other than an object (string: "string") throws a TypeError assert_throws_js: function "() => {
+            node.setHTMLUnsafe("<div id='allowed'></div>");
+          }" did not throw
+FAIL Document.parseHTMLUnsafe: TrustedHTMLParserOptions without sanitizer satisfies Trusted Types and does not require createHTML noSanitizerPolicy.createParserOptions is not a function. (In 'noSanitizerPolicy.createParserOptions({})', 'noSanitizerPolicy.createParserOptions' is undefined)
+FAIL Document.parseHTMLUnsafe: default policy createParserOptions without sanitizer prevents createHTML from running createHTML should not be called when default policy provides createParserOptions
+PASS Element.setHTMLUnsafe: default policy without createParserOptions falls back to createHTML
+

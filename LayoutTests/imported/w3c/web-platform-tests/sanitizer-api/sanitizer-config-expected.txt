@@ -1,0 +1,216 @@
+
+FAIL Sanitizer constructor without config. Can't find variable: Sanitizer
+FAIL Sanitizer constructor with empty config. Can't find variable: Sanitizer
+FAIL Sanitizer constructor with null as config. Can't find variable: Sanitizer
+FAIL Sanitizer constructor with undefined as config. Can't find variable: Sanitizer
+FAIL Sanitizer constructor with config ignore unknown values. Can't find variable: Sanitizer
+FAIL SanitizerConfig comments field. Can't find variable: Sanitizer
+FAIL SanitizerConfig dataAttributes field. Can't find variable: Sanitizer
+FAIL SanitizerConfig javascriptURLs field. Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: ["div"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: [{"name":"b"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: [{"name":"b","namespace":null}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: [{"name":"b","namespace":""}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: [{"name":"p","namespace":"http://www.w3.org/1999/xhtml"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: elements: [{"name":"bla","namespace":"http://fantasy.org/namespace"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: ["div"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: [{"name":"b"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: [{"name":"b","namespace":null}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: [{"name":"b","namespace":""}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: [{"name":"p","namespace":"http://www.w3.org/1999/xhtml"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeElements: [{"name":"bla","namespace":"http://fantasy.org/namespace"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: ["div"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: [{"name":"b"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: [{"name":"b","namespace":null}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: [{"name":"b","namespace":""}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: [{"name":"p","namespace":"http://www.w3.org/1999/xhtml"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: replaceWithChildrenElements: [{"name":"bla","namespace":"http://fantasy.org/namespace"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: processingInstructions: ["target-1"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: processingInstructions: [{"target":"target-1"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeProcessingInstructions: ["target-1"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeProcessingInstructions: [{"target":"target-1"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: attributes: ["href"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: attributes: [{"name":"href","namespace":null}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: attributes: [{"name":"href","namespace":""}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: attributes: [{"name":"href","namespace":"https://www.w3.org/1999/xlink"}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeAttributes: ["href"] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeAttributes: [{"name":"href","namespace":null}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeAttributes: [{"name":"href","namespace":""}] Can't find variable: Sanitizer
+FAIL SanitizerConfig, normalization: removeAttributes: [{"name":"href","namespace":"https://www.w3.org/1999/xlink"}] Can't find variable: Sanitizer
+FAIL Test elements addition. Can't find variable: Sanitizer
+FAIL Test elements removal. Can't find variable: Sanitizer
+FAIL Test elements replacewithchildren. Can't find variable: Sanitizer
+FAIL Test processingInstructions addition. Can't find variable: Sanitizer
+FAIL Test processingInstructions removal. Can't find variable: Sanitizer
+FAIL Test attribute addition. Can't find variable: Sanitizer
+FAIL Test attribute removal. Can't find variable: Sanitizer
+FAIL Test attribute-per-element sets (i.e. overwrites). Can't find variable: Sanitizer
+FAIL Test removeAttribute-per-element sets (i.e. overwrites). Can't find variable: Sanitizer
+FAIL Both elements and removeElements should not be allowed. assert_throws_js: function "() => {
+    new Sanitizer({ elements: [], removeElements: [] });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Both attributes and removeAttributes should not be allowed. assert_throws_js: function "() => {
+    new Sanitizer({ attributes: [], removeAttributes: [] });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Both processingInstructions and removeProcessingInstructions should not be allowed. assert_throws_js: function "() => {
+    new Sanitizer({ processingInstructions: [], removeProcessingInstructions: [] });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[elements] should not allow duplicates assert_throws_js: function "() => {
+      new Sanitizer({ elements: names });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeElements] should not allow duplicates assert_throws_js: function "() => {
+      new Sanitizer({ removeElements: names });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[replaceWithChildrenElements] should not allow duplicates assert_throws_js: function "() => {
+      new Sanitizer({ replaceWithChildrenElements: names });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[attributes] should not allow duplicates assert_throws_js: function "() => {
+      new Sanitizer({ attributes: names });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeAttributes] should not allow duplicates assert_throws_js: function "() => {
+      new Sanitizer({ removeAttributes: names });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[processingInstructions] should not allow duplicate targets assert_throws_js: function "() => {
+      new Sanitizer({ processingInstructions: targets });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeProcessingInstructions] should not allow duplicate targets assert_throws_js: function "() => {
+      new Sanitizer({ removeProcessingInstructions: targets });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[replaceWithChildrenElements] should not allow non-replaceable elements assert_throws_js: function "() => {
+      new Sanitizer({
+        replaceWithChildrenElements: [element],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[elements] and config[replaceWithChildrenElements] should not intersect assert_throws_js: function "() => {
+      new Sanitizer({
+        elements: [a],
+        replaceWithChildrenElements: [b],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeElements] and config[replaceWithChildrenElements] should not intersect assert_throws_js: function "() => {
+      new Sanitizer({
+        removeElements: [a],
+        replaceWithChildrenElements: [b],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Duplicates in element[attributes] with config[attributes] should not be allowed. assert_throws_js: function "() => {
+      new Sanitizer({
+        attributes: [],
+        elements: [{ name: "div", attributes: names }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Duplicates in element[removeAttributes] with config[attributes] should not be allowed. assert_throws_js: function "() => {
+      new Sanitizer({
+        attributes: [],
+        elements: [{ name: "div", removeAttributes: names }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[attributes] and element[attributes] should not intersect. assert_throws_js: function "() => {
+      new Sanitizer({
+        attributes: [a],
+        elements: [{ name: "div", attributes: [b] }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL element[removeAttributes] should be a subset of config[attributes] assert_throws_js: function "() => {
+    new Sanitizer({
+      attributes: ["class"],
+      elements: [{ name: "div", removeAttributes: ["title"] }],
+    });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL element[attributes] with a data attribute must not co-exist with config[dataAttributes] set to true. assert_throws_js: function "() => {
+    new Sanitizer({
+      attributes: [],
+      dataAttributes: true,
+      elements: [{ name: "div", attributes: ["data-foo"] }],
+    });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[attributes] with a data attribute must not co-exist with config[dataAttributes] set to true. assert_throws_js: function "() => {
+    new Sanitizer({
+      attributes: ["data-bar"],
+      dataAttributes: true,
+    });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL element[attributes] and element[removeAttributes] should not both exist with config[removeAttributes]. assert_throws_js: function "() => {
+    new Sanitizer({
+      removeAttributes: [],
+      elements: [{ name: "div", attributes: [], removeAttributes: [] }],
+    });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Duplicates in element[attributes] with config[removeAttributes] should not be allowed. assert_throws_js: function "() => {
+      new Sanitizer({
+        removeAttributes: [],
+        elements: [{ name: "div", attributes: names }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Duplicates in element[removeAttributes] with config[removeAttributes] should not be allowed. assert_throws_js: function "() => {
+      new Sanitizer({
+        removeAttributes: [],
+        elements: [{ name: "div", removeAttributes: names }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeAttributes] and element[attributes] should not intersect. assert_throws_js: function "() => {
+      new Sanitizer({
+        removeAttributes: [a],
+        elements: [{ name: "div", attributes: [b] }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL config[removeAttributes] and element[removeAttributes] should not intersect. assert_throws_js: function "() => {
+      new Sanitizer({
+        removeAttributes: [a],
+        elements: [{ name: "div", removeAttributes: [b] }],
+      });
+    }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Can not use config[dataAttributes] and config[removeAttributes] together. assert_throws_js: function "() => {
+    new Sanitizer({ removeAttributes: [], dataAttributes: true });
+  }" threw object "ReferenceError: Can't find variable: Sanitizer" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

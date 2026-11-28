@@ -1,0 +1,12 @@
+
+PASS Top-level template and script testcases from sub.dat
+PASS Top-level <script> parsed through setHTMLUnsafe() without runScripts does not execute
+FAIL Top-level <script> parsed through setHTMLUnsafe() with runScripts: true executes assert_true: Script should execute with runScripts: true expected true got false
+PASS Testcase #0 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{}"
+PASS Testcase #1 [setHTMLUnsafe], "<template shadowrootmode="open"><span>Inside</span></template>", config: "{}"
+FAIL Testcase #2 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{ "replaceWithChildrenElements": ["template"] }" assert_true: [object HTMLTemplateElement].isEqual(null) fails. Path: <DIV> / <TEMPLATE>. expected true got false
+FAIL Testcase #3 [setHTMLUnsafe], "<template><b>Hello</b></template>", config: "{ "removeElements": ["template"] }" assert_true: [object HTMLTemplateElement].isEqual(null) fails. Path: <DIV> / <TEMPLATE>. expected true got false
+PASS Testcase #4 [setHTMLUnsafe], "<script>alert(1);</script>", config: "{}"
+FAIL Testcase #5 [setHTMLUnsafe], "<script><b>Hello</b></script>", config: "{ "replaceWithChildrenElements": ["script"] }" assert_true: [object HTMLScriptElement].isEqual([object Text]) fails. Path: <DIV> / <SCRIPT>. expected true got false
+PASS Testcase #6 [setHTMLUnsafe], "<template><p>Text</p><div>More</div></template>", config: "{}"
+

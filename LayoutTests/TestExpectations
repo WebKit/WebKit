@@ -2009,6 +2009,7 @@ webkit.org/b/279412 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button.html [ ImageOnlyFailure ]
 
 # grid-lanes
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/grid-lanes-grid-template-columns-computed-withcontent.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/animation/grid-template-rows-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-fill-reverse-align-content-001.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/alignment/column-fill-reverse-justify-content-001.tentative.html [ ImageOnlyFailure ]
@@ -2109,7 +2110,10 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/grid-lane
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/item-placement/row-negative-margin-004.html [ ImageOnlyFailure ]
 # Grid lanes does not use the limited min-content contribution for items spanning flexible tracks under a min-content constraint.
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-flex-spanning-items.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-minimum-contribution-baseline-shim-vertical-lr.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/column-minimum-contribution-baseline-shim-vertical-rl.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/row-item-minmax-img-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/items/row-minimum-contribution-baseline-shim.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-003.html [ ImageOnlyFailure ]
@@ -2265,6 +2269,7 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/column-subgrid-extra-margin-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-subgrid-extra-margin-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-subgrid-extra-margin-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-006.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-baseline-alignment-affects-intrinsic-size-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/column-fill-reverse-indefinite-size-001.html [ ImageOnlyFailure ]
@@ -2446,6 +2451,8 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-
 
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-with-margin-left-auto.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html [ Failure ]
 
 # Flaky tests at import time
 imported/w3c/web-platform-tests/css/css-shadow/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
@@ -2545,6 +2552,7 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/presentational-hint
 
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-lspace-rspace-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/painting-stretchy-operator-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/mathml/relations/css-styling/display-with-overflow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/overflow/computed-value-001.html [ Failure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/floats/floating-inside-mathml-with-block-display.html [ ImageOnlyFailure ]
 mathml/non-core/mathvariant/mathvariant-basic-transforms-with-default-font.html [ ImageOnlyFailure ]
@@ -2759,6 +2767,12 @@ imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.h
 
 # application-xml.xml doesn't dispatch load event
 imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html [ Skip ]
+
+# beginEvent is not dispatched for a SMIL element without a valid target attribute
+webkit.org/b/333317 imported/w3c/web-platform-tests/sanitizer-api/sanitizer-svg-animate.html [ Skip ]
+
+# Rejection-handler timing makes this flake while the Sanitizer API is unimplemented.
+webkit.org/b/333317 imported/w3c/web-platform-tests/sanitizer-api/sanitizer-inert-document.html [ Pass Failure ]
 
 # Imported W3C SVG failed tests
 imported/w3c/web-platform-tests/svg/animations/beginelement-instance-time-1.html [ Skip ]
@@ -8285,6 +8299,15 @@ webkit.org/b/294105 webanimations/document-teardown-due-to-last-reference-crash.
 
 # Passes on WPT dashboard while fails locally
 imported/w3c/web-platform-tests/html/obsolete/requirements-for-implementations/the-marquee-element-0/marquee-with-trusted-types.html [ ImageOnlyFailure ]
+
+# Skip WPT tests that rely on the deprecated block-all-mixed-content CSP directive
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/img-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/audio-tag.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/beacon.https.html [ Skip ]
+imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/video-tag.https.html [ Skip ]
 
 webkit.org/b/297505 ipc/LocalSampleBufferDisplayLayer-LogIdentifier-data-race-uaf.html [ Skip ]
 

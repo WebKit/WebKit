@@ -1,0 +1,8 @@
+
+PASS setHTMLUnsafe() parses noscript as raw text (no options)
+PASS setHTMLUnsafe() parses noscript as raw text (empty options)
+PASS setHTMLUnsafe() parses noscript as raw text (sanitizer: undefined)
+PASS setHTMLUnsafe() parses noscript as raw text (empty sanitizer config)
+FAIL setHTML() parses noscript as raw text when noscript is allowed div.setHTML is not a function. (In 'div.setHTML(input, { sanitizer: { elements: ["noscript"] } })', 'div.setHTML' is undefined)
+FAIL setHTML() removes noscript with its raw text content by default div.setHTML is not a function. (In 'div.setHTML(input)', 'div.setHTML' is undefined)
+

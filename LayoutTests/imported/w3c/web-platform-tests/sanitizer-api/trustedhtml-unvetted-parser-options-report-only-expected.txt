@@ -1,0 +1,41 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL Element.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+FAIL Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.appendHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Element.appendHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.prependHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Element.prependHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL ShadowRoot.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL ShadowRoot.appendHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL ShadowRoot.prependHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.beforeHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.beforeHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.beforeHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.afterHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.afterHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.afterHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+FAIL Node.replaceWithHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Node.replaceWithHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: no exception thrown expected null but got object "TypeError: target[method] is not a function. (In 'target[method](html, options)', 'target[method]' is undefined)"
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed assert_equals: a single violation reported expected 1 but got 0
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+FAIL Document.parseHTMLUnsafe: string with a sanitizer config is reported twice and allowed assert_equals: two violations reported (one for parser options, one for string) expected 2 but got 1
+

@@ -1,0 +1,12 @@
+
+PASS Sanitizer script and raw text tokenizer testcases from sub.dat
+FAIL Testcase #0 [setHTML], "<script><img src=x onerror='window.scriptRan=true;'><div>content</div></script>", config: "{}" context[method] is not a function. (In 'context[method](testcase.data, config)', 'context[method]' is undefined)
+FAIL Testcase #1 [setHTML], "<script><img src=x onerror='window.scriptRan=true;'><div>content</div></script>", config: "{ "removeElements": ["script"] }" context[method] is not a function. (In 'context[method](testcase.data, config)', 'context[method]' is undefined)
+FAIL Testcase #2 [setHTMLUnsafe], "<script><b>bold text</b><img src=x></script>", config: "{ "replaceWithChildrenElements": ["script"] }" assert_true: [object HTMLScriptElement].isEqual([object Text]) fails. Path: <DIV> / <SCRIPT>. expected true got false
+FAIL Testcase #3 [setHTMLUnsafe], "<style><img src=x><div>test</div></style>", config: "{ "replaceWithChildrenElements": ["style"] }" assert_true: [object HTMLStyleElement].isEqual([object Text]) fails. Path: <DIV> / <STYLE>. expected true got false
+FAIL Testcase #4 [setHTMLUnsafe], "<textarea><img src=x><div>test</div></textarea>", config: "{ "replaceWithChildrenElements": ["textarea"] }" assert_true: [object HTMLTextAreaElement].isEqual([object Text]) fails. Path: <DIV> / <TEXTAREA>. expected true got false
+FAIL Testcase #5 [setHTML], "<script><b>Hello</b></script>", config: "{ "replaceWithChildrenElements": ["script"] }" context[method] is not a function. (In 'context[method](testcase.data, config)', 'context[method]' is undefined)
+FAIL Testcase #6 [setHTMLUnsafe], "<script><b>Hello</b></script>", config: "{ "removeElements": ["script"] }" assert_true: [object HTMLScriptElement].isEqual(null) fails. Path: <DIV> / <SCRIPT>. expected true got false
+FAIL Testcase #7 [setHTMLUnsafe], "<p>before</p><script><b>bold text</b><img src=x></script><p>after</p>", config: "{ "replaceWithChildrenElements": ["script"] }" assert_true: [object HTMLScriptElement].isEqual([object Text]) fails. Path: <DIV> / <SCRIPT>. expected true got false
+FAIL Testcase #8 [setHTML], "<p>before</p><script><b>bold text</b><img src=x></script><p>after</p>", config: "{}" context[method] is not a function. (In 'context[method](testcase.data, config)', 'context[method]' is undefined)
+
