@@ -1238,8 +1238,13 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
         CheckedPtr renderer = walker.current();
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && box->needsLayout() && !box->isOutOfFlowPositioned())
             box->layout();
-        else if (isAnyOf<RenderText, RenderLineBreak>(renderer) || renderer->isInlineBox())
+        else if (isAnyOf<RenderText, RenderLineBreak>(renderer) || renderer->isInlineBox()) {
+            if (renderer->isInlineBox() && renderer->outOfFlowChildNeedsLayout()) {
+                if (CheckedPtr lineLayout = inlineLayout())
+                    lineLayout->layoutOutOfFlowBoxes(downcast<RenderBoxModelObject>(*renderer), RelayoutChildren::No);
+            }
             renderer->clearNeedsLayout();
+        }
     }
 
     if (auto* lineLayout = inlineLayout()) {
@@ -4543,6 +4548,8 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     if (mayRunSimpleBlockContentInInlineLayout) {
         auto marginInfo = MarginInfo { *this, MarginInfo::IgnoreScrollbarForAfterMargin::No };
         if (layoutSimpleBlockContentInInline(marginInfo)) {
+            // Line layout, which lays out the out-of-flow boxes of the inline boxes, didn't run, and the block content may have moved their static position.
+            inlineLayout()->layoutOutOfFlowBoxes(relayoutChildren);
             setLogicalHeight(previousHeight);
             handleAfterSideOfBlock(marginInfo, previousHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
             // Pass empty rect as partialRepaintRect because child blocks issue their own repaints if needed.
