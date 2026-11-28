@@ -1570,6 +1570,20 @@ function(webkit_target_add_swift_objc_importer_options _target _resp_path)
     webkit_target_add_swift_options(${_target} ${_opts})
 endfunction()
 
+# Recompiles <target>'s Swift when one of the given @-response files changes. Its
+# Swift compile only tracks its sources, so add an empty generated source that is
+# touched whenever one of the files changes.
+function(webkit_target_add_swift_response_file_dependencies _target)
+    set(_source "${CMAKE_CURRENT_BINARY_DIR}/${_target}_SwiftResponseFiles.swift")
+    add_custom_command(
+        OUTPUT "${_source}"
+        COMMAND ${CMAKE_COMMAND} -E touch "${_source}"
+        DEPENDS ${ARGN}
+        VERBATIM
+    )
+    target_sources(${_target} PRIVATE "${_source}")
+endfunction()
+
 # Generates ${_resp_path}, a swiftc @-response file with the platform-derived
 # flags. Mirrors the Xcode "Generate Swift platform args" build phase.
 # Format (one token per line): -DNAME for truthy HAVE_/USE_/ENABLE_/
@@ -1919,7 +1933,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # declaring it runs, and swiftc-wrapper.py writes it after the module
         # compiles. rebuild_trigger.py leaves the trigger's mtime alone on those
         # runs, so the module does not recompile for nothing.
-        set(_trigger_touch_deps "${_resp_path}")
+        # ${_target}_SWIFT_RESPONSE_FILES lists the other @-response files the
+        # module's compile reads.
+        set(_trigger_touch_deps "${_resp_path}" ${${_target}_SWIFT_RESPONSE_FILES})
         if (NOT (DEFINED ${_target}_SWIFT_INTEROP_SOURCES OR
             _skip_swift_cxx_header))
             list(APPEND _trigger_touch_deps "${_header_stamp_path}")

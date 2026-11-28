@@ -1007,30 +1007,69 @@ foreach (_swift_tba_platform IN ITEMS MACOSX IPHONEOS TVOS WATCHOS XROS)
 endforeach ()
 unset(_swift_tba_platform)
 unset(_swift_tba_target_platform)
-execute_process(
+set(_swift_tba_headers_folder_path /usr/local/include)
+set(_swift_tba_webkitadditions_dir ${CMAKE_OSX_SYSROOT}${_swift_tba_headers_folder_path}/WebKitAdditions)
+list(APPEND _swift_tba_env
+    BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
+    SDKROOT=${CMAKE_OSX_SYSROOT}
+    WK_LIBRARY_HEADERS_FOLDER_PATH=${_swift_tba_headers_folder_path}
+    WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH=${_swift_tba_webkitadditions_dir}
+)
+
+# The script sources the first of these WebKitAdditions definitions it finds, and
+# they read branch_config.json. Regenerate when any of them change, and record
+# which ones exist so that a reconfigure notices one appearing or going away.
+set(_swift_tba_inputs "${CMAKE_CURRENT_BINARY_DIR}/swift-tba-availability-macros.inputs")
+set(_swift_tba_depends
+    ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros
+    ${_swift_tba_inputs}
+)
+string(JOIN "\n" _swift_tba_inputs_content ${_swift_tba_env})
+foreach (_swift_tba_input IN ITEMS
+    ${CMAKE_BINARY_DIR}${_swift_tba_headers_folder_path}/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
+    ${_swift_tba_webkitadditions_dir}/Scripts/postprocess-framework-headers-definitions
+    ${_swift_tba_webkitadditions_dir}/Scripts/branch_config.json
+)
+    if (EXISTS "${_swift_tba_input}")
+        list(APPEND _swift_tba_depends ${_swift_tba_input})
+        string(APPEND _swift_tba_inputs_content "\n${_swift_tba_input}")
+    endif ()
+endforeach ()
+# Left untouched when the content is the same, so an unchanged configure
+# regenerates nothing.
+file(CONFIGURE OUTPUT "${_swift_tba_inputs}" CONTENT "@_swift_tba_inputs_content@\n" @ONLY)
+
+# Write through a temporary file, so that an unchanged result keeps its timestamp
+# and does not recompile the Swift that reads it.
+add_custom_command(
+    OUTPUT "${_swift_tba_resp}"
     COMMAND ${CMAKE_COMMAND} -E env
         ${_swift_tba_env}
-        BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
-        SDKROOT=${CMAKE_OSX_SYSROOT}
-        SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}
-        WK_LIBRARY_HEADERS_FOLDER_PATH=/usr/local/include
-        WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH=${CMAKE_OSX_SYSROOT}/usr/local/include/WebKitAdditions
-        bash ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros
-    RESULT_VARIABLE _swift_tba_resp_result
-    OUTPUT_VARIABLE _swift_tba_resp_stdout
-    ERROR_VARIABLE _swift_tba_resp_stderr)
-if (NOT _swift_tba_resp_result EQUAL 0 OR NOT EXISTS "${_swift_tba_resp}")
-    message(FATAL_ERROR "generate-swift-availability-macros failed (exit ${_swift_tba_resp_result}).\nstdout:\n${_swift_tba_resp_stdout}\nstderr:\n${_swift_tba_resp_stderr}")
-endif ()
+        SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}.tmp
+        bash ${WEBKIT_DIR}/Scripts/generate-swift-availability-macros > /dev/null
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_swift_tba_resp}.tmp" "${_swift_tba_resp}"
+    COMMAND ${CMAKE_COMMAND} -E rm -f "${_swift_tba_resp}.tmp"
+    DEPENDS ${_swift_tba_depends}
+    COMMENT "Generating swift-tba-availability-macros.resp"
+    VERBATIM
+)
+# For _WebKit_SwiftUI, which is in another directory.
+add_custom_target(WebKit_SwiftAvailabilityMacros DEPENDS "${_swift_tba_resp}")
+# Read by WebKit's rebuild trigger and its prewarm.
+list(APPEND WebKit_SWIFT_RESPONSE_FILES "${_swift_tba_resp}")
 unset(_swift_tba_env)
-unset(_swift_tba_resp_stdout)
-unset(_swift_tba_resp_stderr)
-unset(_swift_tba_resp_result)
+unset(_swift_tba_headers_folder_path)
+unset(_swift_tba_webkitadditions_dir)
+unset(_swift_tba_inputs)
+unset(_swift_tba_inputs_content)
+unset(_swift_tba_input)
+unset(_swift_tba_depends)
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     webkit_target_add_swift_options(WebKitSwift
         "@${_swift_tba_resp}"
     )
+    webkit_target_add_swift_response_file_dependencies(WebKitSwift "${_swift_tba_resp}")
 endif ()
 
 target_compile_options(WebKitSwift PRIVATE

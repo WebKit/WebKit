@@ -70,6 +70,8 @@ target_link_options(_WebKit_SwiftUI PRIVATE
 # The overlay's @available annotations use the same custom macros as WebKit's.
 set(_swift_tba_resp "${_webkit_binary_dir}/swift-tba-availability-macros.resp")
 webkit_target_add_swift_options(_WebKit_SwiftUI "@${_swift_tba_resp}")
+webkit_target_add_swift_response_file_dependencies(_WebKit_SwiftUI "${_swift_tba_resp}")
+add_dependencies(_WebKit_SwiftUI WebKit_SwiftAvailabilityMacros)
 
 if (WEBKIT_SDK_IS_IOS_FAMILY)
     webkit_target_add_swift_options(_WebKit_SwiftUI -I${WEBKIT_DIR}/Platform/spi/ios)
