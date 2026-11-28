@@ -28,10 +28,27 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionWrapper.h"
+#include "JSWebExtensionValueParser.h"
 
 namespace WebKit {
 
 using namespace WTF;
+
+struct WebExtensionTestCPPOptions {
+    String name;
+    std::optional<double> count;
+    bool enabled;
+    std::optional<Vector<String>> tags;
+    std::optional<Variant<String, Vector<String>>> urls;
+    std::optional<std::optional<double>> index;
+    std::optional<HashMap<String, String>> headers;
+};
+
+std::expected<WebExtensionTestCPPOptions, WebExtensionValueError> parseWebExtensionTestCPPOptions(JSContextRef, JSValueRef, const String& path = { });
+
+template<> struct WebExtensionValueParser<WebExtensionTestCPPOptions> : WebExtensionObjectParserBase {
+    static std::expected<WebExtensionTestCPPOptions, WebExtensionValueError> parse(JSContextRef context, JSValueRef value, const String& path) { return parseWebExtensionTestCPPOptions(context, value, path); }
+};
 
 class WebExtensionAPITestCPP;
 
@@ -65,6 +82,8 @@ private:
     static JSValueRef getURL(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef getManifest(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
     static JSValueRef sendRuntimeMessage(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    static JSValueRef configure(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
+    static JSValueRef select(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);
 
     // Attributes
 

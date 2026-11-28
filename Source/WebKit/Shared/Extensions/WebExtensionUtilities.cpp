@@ -271,13 +271,13 @@ static String valueToTypeString(RefPtr<JSON::Value> value)
     return classToClassString(value->type());
 }
 
-static String constructExpectedMessage(const String& key, const String& expected, const String& found, bool inArray = false)
+String constructExpectedMessage(const String& key, const String& expected, const String& found, bool inArray)
 {
     ASSERT(expected);
     ASSERT(found);
 
     if (inArray && !key.isEmpty())
-        return makeString("'"_s, key, "' is expected to be "_s, expected, " but "_s, found, " was provided in the array"_s);
+        return makeString("'"_s, key, "' is expected to be "_s, expected, ", but "_s, found, " was provided in the array"_s);
     if (inArray)
         return makeString(expected, " is expected, but "_s, found, " was provided in the array"_s);
 
@@ -313,7 +313,7 @@ static bool validate(const String& key, RefPtr<JSON::Value> value, JSON::Value::
     return true;
 }
 
-static String formatList(Vector<String>& list)
+String formatList(const Vector<String>& list)
 {
     auto count = list.size();
     if (!count)
