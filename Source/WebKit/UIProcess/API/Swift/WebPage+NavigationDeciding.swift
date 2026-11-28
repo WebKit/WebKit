@@ -156,8 +156,6 @@ extension WebPage {
         ///
         /// - Parameter formInfo: The form values that will be submitted for this navigation
         @available(anyAppleOSAndDownlevels 27.0, *)
-        @_spi_available(watchOSAndOpenSourceTBA, *)
-        @_spi_available(tvOSAndOpenSourceTBA, *)
         @MainActor
         mutating func willSubmit(formInfo: WebPage.FormInfo) async
     }
