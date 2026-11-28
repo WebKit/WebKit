@@ -55,6 +55,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
@@ -381,14 +382,50 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     return result;
 }
     
+// The reverse solidus escapes the next character within Id-values and Event-symbols, so an escaped '.', '+' or
+// '-' is an ordinary token character rather than a separator or offset sign.
+static size_t findUnescapedCharacter(StringView string, char16_t target)
+{
+    size_t start = 0;
+    while (true) {
+        auto targetPosition = string.find(target, start);
+        if (targetPosition == notFound)
+            return notFound;
+        auto backslash = string.find('\\', start);
+        if (backslash == notFound || backslash > targetPosition)
+            return targetPosition;
+        start = backslash + 2;
+    }
+}
+
+static String removeBackslashEscapes(StringView string)
+{
+    auto backslash = string.find('\\');
+    if (backslash == notFound)
+        return string.toString();
+
+    StringBuilder result;
+    result.reserveCapacity(string.length());
+
+    size_t runStart = 0;
+    while (backslash != notFound) {
+        result.append(string.substring(runStart, backslash - runStart));
+        runStart = backslash + 1;
+        backslash = string.find('\\', runStart + 1);
+    }
+
+    result.append(string.substring(runStart));
+    return result.toString();
+}
+
 bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 {
     auto parseString = value.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
     
     double sign = 1.;
-    size_t pos = parseString.find('+');
+    size_t pos = findUnescapedCharacter(parseString, '+');
     if (pos == notFound) {
-        pos = parseString.find('-');
+        pos = findUnescapedCharacter(parseString, '-');
         if (pos != notFound)
             sign = -1.;
     }
@@ -412,15 +449,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (conditionString.startsWithIgnoringASCIICase("accesskey("_s))
         return false;
 
-    // Find the first dot not preceded by a backslash. Per the SMIL specification,
-    // dots in element IDs can be escaped with a backslash (e.g., "my\.anim.end").
-    size_t dotPosition = 0;
-    while (dotPosition != notFound) {
-        dotPosition = conditionString.find('.', dotPosition);
-        if (dotPosition == notFound || !dotPosition || conditionString[dotPosition - 1] != '\\')
-            break;
-        ++dotPosition;
-    }
+    // Find the first dot not escaped by a backslash (e.g., "my\.anim.end").
+    size_t dotPosition = findUnescapedCharacter(conditionString, '.');
 
     StringView baseID;
     StringView nameView;
@@ -452,13 +482,15 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         nameString = nameView.toAtomString();
     } else {
         type = Condition::Type::EventBase;
-        nameString = nameView.toAtomString();
+        nameString = AtomString { removeBackslashEscapes(nameView) };
     }
     
-    // Remove backslash escapes from the element ID (e.g., "my\.anim" → "my.anim").
-    auto resolvedBaseID = baseID.toString();
-    if (resolvedBaseID.contains('\\'))
-        resolvedBaseID = resolvedBaseID.impl()->replace("\\."_s, "."_s);
+    // Remove backslash escapes from the element ID (e.g., "my\.anim" → "my.anim", "my\-anim" → "my-anim").
+    auto resolvedBaseID = removeBackslashEscapes(baseID);
+    // An Id-value must be a legal XML identifier, so an escaped character that cannot appear in one (e.g. "a\+b")
+    // makes the value invalid. Unescaped Id-values are not checked, to keep accepting existing content.
+    if (baseID.contains('\\') && !NameValidation::isValidXMLName(resolvedBaseID))
+        return false;
 
     m_conditions.append(Condition(type, beginOrEnd, WTF::move(resolvedBaseID), WTF::move(nameString), offset, repeats));
 

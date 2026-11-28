@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<title>Backslash escapes in Id-values and Event-symbols of timing specifiers</title>
+<link rel="help" href="https://www.w3.org/TR/SMIL3/smil-timing.html#q21">
+<link rel="help" href="https://www.w3.org/TR/smil-animation/">
+<meta name="assert" content="The reverse solidus '\' escapes full stop '.' and hyphen-minus '-' characters within Id-values and Event-symbols, so they are not read as the separator or the offset sign. Escape characters are removed from Id-values (SMIL3 § Parsing timing specifiers) and from event values after the '.' separator (SMIL Animation § 3.6.7 Parsing timing specifiers), which also allows reserved names such as 'begin' and 'end' to be referenced as event names. An Id-value must be a legal XML identifier once escapes are removed (SMIL Animation § 3.6.7 ID-Reference values), so escaping a character that is not an XML NameChar makes the value invalid.">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg>
+  <!-- Test 1: Hyphen in ID, no offset -->
+  <rect width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="my-anim" fill="freeze"/>
+  </rect>
+  <rect x="10" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-anim.begin" id="dep1"/>
+  </rect>
+
+  <!-- Test 2: Hyphen in ID with a positive offset -->
+  <rect x="20" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="my-other-anim" fill="freeze"/>
+  </rect>
+  <rect x="30" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-other\-anim.begin+10ms" id="dep2"/>
+  </rect>
+  <!-- Test 3: Escaped hyphen with the end time symbol -->
+  <rect x="40" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="end-anim" fill="freeze"/>
+  </rect>
+  <rect x="50" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="end\-anim.end" id="dep3"/>
+  </rect>
+
+  <!-- Test 4: Escaped dot and escaped hyphen in the same ID -->
+  <rect x="60" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="a.b-c" fill="freeze"/>
+  </rect>
+  <rect x="70" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="a\.b\-c.begin" id="dep4"/>
+  </rect>
+
+  <!-- Test 5: Event-base value with an escaped hyphen in the element ID -->
+  <rect x="100" width="10" height="10" fill="blue" id="my-btn"/>
+  <rect x="110" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="my\-btn.click" id="dep6"/>
+  </rect>
+
+  <!-- Test 6: Escaped hyphen in a semicolon-separated list of values -->
+  <rect x="120" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="list-anim" fill="freeze"/>
+  </rect>
+  <rect x="130" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="other\-missing.begin; list\-anim.begin" id="dep7"/>
+  </rect>
+  <!-- Control for Test 5: event-base value with no hyphen in the element ID -->
+  <rect x="140" width="10" height="10" fill="blue" id="btn"/>
+  <rect x="150" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="btn.click" id="dep8"/>
+  </rect>
+
+  <!-- Test 7: Escaped ordinary character in the ID -->
+  <rect x="160" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="ab" fill="freeze"/>
+  </rect>
+  <rect x="170" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="a\b.begin" id="dep9"/>
+  </rect>
+
+  <!-- Test 8: Escaped hyphen in the event name -->
+  <rect x="180" width="10" height="10" fill="blue" id="evt-target"/>
+  <rect x="190" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt\-target.my\-event" id="dep10"/>
+  </rect>
+
+  <!-- Test 9: Escaped dot in the event name -->
+  <rect x="200" width="10" height="10" fill="blue" id="evt2"/>
+  <rect x="210" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt2.my\.event" id="dep11"/>
+  </rect>
+
+  <!-- Test 10: Escaped reserved symbol "begin" is an event name, not a syncbase -->
+  <rect x="220" width="10" height="10" fill="blue" id="evt3"/>
+  <rect x="230" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt3.\begin" id="dep12"/>
+  </rect>
+
+  <!-- Test 11: Escaped reserved symbol "end" is an event name, not a syncbase -->
+  <rect x="240" width="10" height="10" fill="blue" id="evt4"/>
+  <rect x="250" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt4.\end" id="dep13"/>
+  </rect>
+
+  <!-- Test 12: Escaped hyphen in the event name with the default event base -->
+  <rect x="260" width="10" height="10" fill="blue" id="evt5">
+    <set attributeName="fill" to="green" begin="my\-default\-event" id="dep14"/>
+  </rect>
+
+  <!-- Test 13: Escaped hyphen in the event name followed by an offset -->
+  <rect x="270" width="10" height="10" fill="blue" id="evt6"/>
+  <rect x="280" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt6.my\-event+10ms" id="dep15"/>
+  </rect>
+
+  <!-- Test 14: Escaped plus is not a valid escape -->
+  <rect x="290" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="a+b" fill="freeze"/>
+  </rect>
+  <rect x="300" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="a\+b.begin" id="dep16"/>
+  </rect>
+
+  <!-- Test 15: Escaped reverse solidus is not a valid escape -->
+  <rect x="310" width="10" height="10" fill="blue">
+    <animate attributeName="fill" from="yellow" to="red"
+             begin="indefinite" dur="10ms" id="c\" fill="freeze"/>
+  </rect>
+  <rect x="320" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="c\\.begin" id="dep17"/>
+  </rect>
+
+  <!-- Test 16: Trailing reverse solidus is removed from the event name -->
+  <rect x="330" width="10" height="10" fill="blue" id="evt7"/>
+  <rect x="340" width="10" height="10" fill="blue">
+    <set attributeName="fill" to="green" begin="evt7.foo\" id="dep18"/>
+  </rect>
+</svg>
+
+<script>
+  async_test(t => {
+    const trigger = document.getElementById('my-anim');
+    const dep = document.getElementById('dep1');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID (begin="my\\-anim.begin")');
+
+  async_test(t => {
+    const trigger = document.getElementById('my-other-anim');
+    const dep = document.getElementById('dep2');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID with positive offset (begin="my\\-other\\-anim.begin+10ms")');
+
+  async_test(t => {
+    const trigger = document.getElementById('end-anim');
+    const dep = document.getElementById('dep3');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in syncbase ID with the end time symbol (begin="end\\-anim.end")');
+
+  async_test(t => {
+    const trigger = document.getElementById('a.b-c');
+    const dep = document.getElementById('dep4');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped dot and escaped hyphen in the same syncbase ID (begin="a\\.b\\-c.begin")');
+
+  // Event listeners for event-base values are connected once the document has loaded and the
+  // timeline has started, so wait for that before dispatching the event.
+  const loaded = new Promise(resolve => window.addEventListener('load', () => requestAnimationFrame(resolve)));
+
+  async_test(t => {
+    const dep = document.getElementById('dep6');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('my-btn').dispatchEvent(new MouseEvent('click'))));
+  }, 'Escaped hyphen in event-base element ID (begin="my\\-btn.click")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep8');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('btn').dispatchEvent(new MouseEvent('click'))));
+  }, 'Control: event-base element ID with no hyphen (begin="btn.click")');
+
+  async_test(t => {
+    const trigger = document.getElementById('list-anim');
+    const dep = document.getElementById('dep7');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped hyphen in a semicolon-separated value list (begin="other\\-missing.begin; list\\-anim.begin")');
+
+  async_test(t => {
+    const trigger = document.getElementById('ab');
+    const dep = document.getElementById('dep9');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    trigger.beginElement();
+  }, 'Escaped ordinary character in syncbase ID (begin="a\\b.begin")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep10');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt-target').dispatchEvent(new Event('my-event'))));
+  }, 'Escaped hyphen in event name (begin="evt\\-target.my\\-event")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep11');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt2').dispatchEvent(new Event('my.event'))));
+  }, 'Escaped dot in event name (begin="evt2.my\\.event")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep12');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt3').dispatchEvent(new Event('begin'))));
+  }, 'Escaped reserved symbol as event name (begin="evt3.\\begin")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep13');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt4').dispatchEvent(new Event('end'))));
+  }, 'Escaped reserved symbol as event name (begin="evt4.\\end")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep14');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt5').dispatchEvent(new Event('my-default-event'))));
+  }, 'Escaped hyphens in event name with the default event base (begin="my\\-default\\-event")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep15');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt6').dispatchEvent(new Event('my-event'))));
+  }, 'Escaped hyphen in event name with positive offset (begin="evt6.my\\-event+10ms")');
+
+  function assertSyncbaseIgnored(t, triggerId, depId) {
+    const trigger = document.getElementById(triggerId);
+    const dep = document.getElementById(depId);
+    dep.addEventListener('beginEvent', t.unreached_func('dependent animation began'));
+    trigger.addEventListener('endEvent', t.step_func(() => {
+        requestAnimationFrame(t.step_func_done(() => {
+            assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 0, 255)');
+        }));
+    }));
+    trigger.beginElement();
+  }
+
+  async_test(t => {
+    assertSyncbaseIgnored(t, 'a+b', 'dep16');
+  }, 'Escaped plus is not a valid escape (begin="a\\+b.begin")');
+
+  async_test(t => {
+    assertSyncbaseIgnored(t, 'c\\', 'dep17');
+  }, 'Escaped reverse solidus is not a valid escape (begin="c\\\\.begin")');
+
+  async_test(t => {
+    const dep = document.getElementById('dep18');
+    dep.addEventListener('beginEvent', t.step_func_done(() => {
+        assert_equals(getComputedStyle(dep.parentElement).fill, 'rgb(0, 128, 0)');
+    }));
+    loaded.then(t.step_func(() => document.getElementById('evt7').dispatchEvent(new Event('foo'))));
+  }, 'Trailing reverse solidus is removed from the event name (begin="evt7.foo\\")');
+</script>
