@@ -28,6 +28,7 @@
 
 #include "RenderStyleConstants.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleComputedStyleBase+GettersInlines.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore::Style {
@@ -42,6 +43,8 @@ OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::
         result.add(Change::Inherited);
     if (!s1.fastPathInheritedEqual(s2))
         result.add(Change::FastPathInherited);
+    if (s1.effectiveInert() != s2.effectiveInert())
+        result.add(Change::InertInherited);
 
     if (!s1.descendantAffectingNonInheritedPropertiesEqual(s2))
         result.add(Change::Inherited);
@@ -82,6 +85,19 @@ OptionSet<Change> determineChanges(const Style::ComputedStyle& s1, const Style::
     return result;
 }
 
+OptionSet<Change> determineFastPathChanges(const Style::ComputedStyle& s1, const Style::ComputedStyle& s2)
+{
+    OptionSet<Change> result;
+
+    if (!s1.fastPathInheritedEqual(s2))
+        result.add(Change::FastPathInherited);
+    if (s1.effectiveInert() != s2.effectiveInert())
+        result.add(Change::InertInherited);
+
+    ASSERT(result == determineChanges(s1, s2));
+    return result;
+}
+
 TextStream& operator<<(TextStream& ts, Change change)
 {
     switch (change) {
@@ -90,6 +106,7 @@ TextStream& operator<<(TextStream& ts, Change change)
     case Change::Inherited: ts << "Inherited"_s; break;
     case Change::Container: ts << "Container"_s; break;
     case Change::Renderer: ts << "Renderer"_s; break;
+    case Change::InertInherited: ts << "InertInherited"_s; break;
     }
     return ts;
 }

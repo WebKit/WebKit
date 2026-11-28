@@ -275,6 +275,11 @@ InheritedRareData::~InheritedRareData() = default;
 
 bool InheritedRareData::operator==(const InheritedRareData& o) const
 {
+    return effectiveInert == o.effectiveInert && nonFastPathInheritedEqual(o);
+}
+
+bool InheritedRareData::nonFastPathInheritedEqual(const InheritedRareData& o) const
+{
     return usedZoom == o.usedZoom
         && deviceScaleFactor == o.deviceScaleFactor
         && textStrokeWidth == o.textStrokeWidth
@@ -363,7 +368,6 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && autoRevealsWhenFound == o.autoRevealsWhenFound
         && usedTouchAction == o.usedTouchAction
         && eventListenerRegionTypes == o.eventListenerRegionTypes
-        && effectiveInert == o.effectiveInert
         && effectivelyTransparent == o.effectivelyTransparent
         && effectiveWrapInsideAvoid == o.effectiveWrapInsideAvoid
         && usedContentVisibility == o.usedContentVisibility

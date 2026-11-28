@@ -95,6 +95,8 @@ public:
     ~InheritedRareData();
 
     bool operator==(const InheritedRareData&) const;
+    // Equality ignoring effectiveInert, which propagates via the fast path (Change::InertInherited).
+    bool nonFastPathInheritedEqual(const InheritedRareData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const InheritedRareData&) const;

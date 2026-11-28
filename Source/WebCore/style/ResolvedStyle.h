@@ -35,6 +35,7 @@ struct ResolvedStyle {
     std::unique_ptr<Style::ComputedStyle> style;
     std::unique_ptr<Relations> relations { };
     RefPtr<const MatchResult> matchResult { };
+    bool isFastPathInherit { false };
 };
 
 } // namespace WebCore::Style

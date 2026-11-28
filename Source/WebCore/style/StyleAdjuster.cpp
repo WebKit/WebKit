@@ -952,6 +952,22 @@ static bool considerUnprefixedUserSelect()
 #endif
 }
 
+// Elements for which adjust() computes effectiveInert from element state rather than plain inheritance.
+bool Adjuster::mayOverrideEffectiveInert(const Document& document, const Element& element)
+{
+    if (is<HTMLElement>(element) && element.hasAttributeWithoutSynchronization(HTMLNames::inertAttr))
+        return true;
+    if (&element == document.documentElement())
+        return true;
+    if (&element == document.activeModalDialog())
+        return true;
+#if ENABLE(FULLSCREEN_API)
+    if (RefPtr documentFullscreen = document.fullscreenIfExists(); documentFullscreen && &element == documentFullscreen->fullscreenElement())
+        return true;
+#endif
+    return false;
+}
+
 void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
 {
     if (!m_document->settings().cssUserSelectEnabled() || !considerUnprefixedUserSelect()) {
