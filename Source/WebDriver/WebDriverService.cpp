@@ -46,6 +46,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "HTTPServer.h"
+#include "WebDriverBidiCommandNames.h"
 #include "WebSocketServer.h"
 #include <algorithm>
 #include <array>
@@ -368,8 +369,12 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
 };
 
 #if ENABLE(WEBDRIVER_BIDI)
-const WebDriverService::BidiCommand WebDriverService::s_bidiCommands[] = {
+const WebDriverService::BidiCommand WebDriverService::s_staticBidiCommands[] = {
     { "session.status"_s, &WebDriverService::bidiSessionStatus },
+};
+
+const WebDriverService::BidiCommand WebDriverService::s_sessionBoundBidiCommands[] = {
+    { "session.end"_s, &WebDriverService::bidiSessionEnd },
 };
 #endif
 
@@ -576,9 +581,12 @@ bool WebDriverService::acceptHandshake(HTTPRequestHandler::Request&& request)
     }
 
     if (*foundResource == "/session"_s) {
-        // FIXME Add support for bidi-only sessions
-        RELEASE_LOG(WebDriverBiDi, "BiDi-only sessions are not supported yet. Rejecting handshake.");
-        return false;
+        // FIXME: Add support for session.new and BiDi-only sessions.
+        // https://bugs.webkit.org/show_bug.cgi?id=281722
+        // Browsers don't apply CORS to WebSockets, so any page can reach this resource. Before
+        // session.new is exposed here, handshake validation must keep rejecting untrusted Origin
+        // headers (validateHandshakeHeaders()).
+        return true;
     }
 
     auto sessionID = m_bidiServer->getSessionID(resourceName);
@@ -588,7 +596,7 @@ bool WebDriverService::acceptHandshake(HTTPRequestHandler::Request&& request)
     }
 
     // FIXME Properly support multiple sessions in the future
-    if (sessionID != m_session->id()) {
+    if (!m_session || sessionID != m_session->id()) {
         RELEASE_LOG(WebDriverBiDi, "No active session found for session ID %s. Rejecting handshake.", makeUTF8CString(sessionID));
         return false;
     }
@@ -607,11 +615,6 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
     }
 
     auto connection = message.connection;
-    if (m_bidiServer->sessionID(connection) != m_session->id()) {
-        // FIXME Remove once we support checking static vs non-static methods https://bugs.webkit.org/show_bug.cgi?id=281721
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidSessionID, connection));
-        return;
-    }
 
     auto parsedMessageValue = JSON::Value::parseJSON(String { message.payload });
     if (!parsedMessageValue) {
@@ -619,6 +622,11 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
         completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, message.connection));
         return;
     }
+
+    auto sessionID = m_bidiServer->sessionID(connection);
+    // Step 5 ignores messages associated with a session that has ended.
+    if (!sessionID.isNull() && (!m_session || sessionID != m_session->id()))
+        return;
 
     const auto& messageObject = parsedMessageValue->asObject();
     if (!messageObject) {
@@ -634,50 +642,72 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
         return;
     }
 
-    BidiCommandHandler handler;
-    RefPtr<JSON::Object> parameters;
-    // FIXME Maybe replace manual method dispatch with generated dispatchers for static methods, like we do in WebDriverBidiProcessor-related classes in the UIProcess
-    // https://bugs.webkit.org/show_bug.cgi?id=281721
-    if (!findBidiCommand(messageObject, &handler, parameters)) {
-        RELEASE_LOG(WebDriverBiDi, "Failed to find appropriate BiDi command on WebDriver service. Relaying to the browser.");
-        auto sessionID = m_session->id();
-        m_session->relayBidiCommand(makeString(message.payload), *commandId, [completionHandler = WTF::move(completionHandler), sessionID, this](WebSocketMessageHandler::Message&& resultMessage) {
-            auto connection = m_bidiServer->connection(sessionID);
-            if (!connection) {
-                RELEASE_LOG(WebDriverBiDi, "Failed to find connection for session ID %s. Ignoring message.", makeUTF8CString(sessionID));
-                return;
-            }
-            resultMessage.connection = *connection;
+    auto method = messageObject->getString("method"_s);
+    if (!method) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Missing command method.");
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command method"_s, commandId));
+        return;
+    }
+
+    const auto* staticCommand = findBidiCommand(s_staticBidiCommands, method);
+    const auto* localSessionBoundCommand = findBidiCommand(s_sessionBoundBidiCommands, method);
+    bool isRemoteSessionBoundCommand = bidiSessionBoundCommandNames.contains(method);
+    if (!staticCommand && !localSessionBoundCommand && !isRemoteSessionBoundCommand) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Unknown BiDi command: %s", makeUTF8CString(method));
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::UnknownCommand, connection, makeString("Unknown command: "_s, method), commandId));
+        return;
+    }
+
+    auto parameters = messageObject->getObject("params"_s);
+    if (!parameters) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Missing command parameters.");
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, connection, "Missing command parameters"_s, commandId));
+        return;
+    }
+
+    if (staticCommand) {
+        ((*this).*staticCommand->handler)(*commandId, WTF::move(parameters), [completionHandler = WTF::move(completionHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
+            // 6.7.5 If method is "session.new", let session be the entry in the list of active sessions whose session ID is equal to the "sessionId" property of value, append connection to session’s session WebSocket connections, and remove connection from the WebSocket connections not associated with a session.
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=281722
+            resultMessage.connection = connection;
             completionHandler(WTF::move(resultMessage));
         });
         return;
     }
 
-    ((*this).*handler)(*commandId, WTF::move(parameters), [completionHandler = WTF::move(completionHandler), message](WebSocketMessageHandler::Message&& resultMessage) {
-        // 6.7.5 If method is "session.new", let session be the entry in the list of active sessions whose session ID is equal to the "sessionId" property of value, append connection to session’s session WebSocket connections, and remove connection from the WebSocket connections not associated with a session.
-        // FIXME https://bugs.webkit.org/show_bug.cgi?id=281722
-        resultMessage.connection = message.connection;
+    ASSERT(localSessionBoundCommand || isRemoteSessionBoundCommand);
+    if (sessionID.isNull()) {
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidSessionID, connection, "No active session associated with this connection"_s, commandId));
+        return;
+    }
+
+    if (localSessionBoundCommand) {
+        ((*this).*localSessionBoundCommand->handler)(*commandId, WTF::move(parameters), [completionHandler = WTF::move(completionHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
+            resultMessage.connection = connection;
+            completionHandler(WTF::move(resultMessage));
+        });
+        return;
+    }
+
+    ASSERT(isRemoteSessionBoundCommand);
+    RELEASE_LOG(WebDriverBiDi, "Relaying BiDi command to the browser: %s", makeUTF8CString(method));
+    m_session->relayBidiCommand(makeString(message.payload), *commandId, [completionHandler = WTF::move(completionHandler), connection](WebSocketMessageHandler::Message&& resultMessage) mutable {
+        resultMessage.connection = connection;
         completionHandler(WTF::move(resultMessage));
     });
 }
 
-bool WebDriverService::findBidiCommand(const RefPtr<JSON::Object>& parameters, BidiCommandHandler* handler, RefPtr<JSON::Object>& parsedParams)
+const WebDriverService::BidiCommand* WebDriverService::findBidiCommand(std::span<const BidiCommand> commands, const String& method)
 {
-    const String& method = parameters->getString("method"_s);
-    if (!method)
-        return false;
-
-    auto candidate = std::find_if(std::begin(s_bidiCommands), std::end(s_bidiCommands),
+    auto candidate = std::find_if(commands.begin(), commands.end(),
         [method](const BidiCommand& command) {
             return method == command.method;
     });
 
-    if (candidate == std::end(s_bidiCommands))
-        return false;
+    if (candidate == commands.end())
+        return nullptr;
 
-    parsedParams = parameters->getObject("params"_s);
-    *handler = candidate->handler;
-    return true;
+    return &*candidate;
 }
 
 #endif // ENABLE(WEBDRIVER_BIDI)
@@ -1269,6 +1299,21 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     return matchedCapabilitiesList;
 }
 
+void WebDriverService::closeSession(Ref<Session>&& session, Function<void(CommandResult&&)>&& completionHandler)
+{
+    session->close([
+#if ENABLE(WEBDRIVER_BIDI)
+        protectedBidiServer = m_bidiServer.copyRef(),
+#endif
+        session = WTF::move(session), completionHandler = WTF::move(completionHandler)
+    ](CommandResult&& result) mutable {
+#if ENABLE(WEBDRIVER_BIDI)
+        protectedBidiServer->disconnectSession(session->id());
+#endif
+        completionHandler(WTF::move(result));
+    });
+}
+
 void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §8.1 New Session.
@@ -1287,13 +1332,11 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
 
     if (m_replaceOnNewSession) {
         RELEASE_LOG(WebDriverClassic, "WebDriverService::newSession: Replacing existing session.");
-        auto session = std::exchange(m_session, nullptr);
-        session->close([this, session, matchedCapabilitiesList, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
-#if ENABLE(WEBDRIVER_BIDI)
-            m_bidiServer->disconnectSession(session->id());
-#endif
+        auto session = std::exchange(m_session, nullptr).releaseNonNull();
+        auto protectedSession = session.copyRef();
+        closeSession(WTF::move(session), [this, protectedSession = WTF::move(protectedSession), matchedCapabilitiesList, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
             // Ignore unknown errors when closing the session if the session has abeen actually closed.
-            if ((!result.isError()) || (result.errorCode() == CommandResult::ErrorCode::UnknownError && !session->isConnected())) {
+            if ((!result.isError()) || (result.errorCode() == CommandResult::ErrorCode::UnknownError && !protectedSession->isConnected())) {
                 matchedCapabilitiesList.reverse();
                 connectToBrowser(WTF::move(matchedCapabilitiesList), WTF::move(completionHandler));
             } else
@@ -1417,14 +1460,11 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
         return;
     }
 
-    auto session = std::exchange(m_session, nullptr);
-    session->close([this, session, completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
-        UNUSED_VARIABLE(this); // Conditionally used in ENABLE(WEBDRIVER_BIDI) block.
-#if ENABLE(WEBDRIVER_BIDI)
-        m_bidiServer->disconnectSession(session->id());
-#endif
+    auto session = std::exchange(m_session, nullptr).releaseNonNull();
+    auto protectedSession = session.copyRef();
+    closeSession(WTF::move(session), [protectedSession = WTF::move(protectedSession), completionHandler = WTF::move(completionHandler)](CommandResult&& result) mutable {
         // Ignore unknown errors when closing the session if the session has abeen actually closed.
-        if (result.isError() && result.errorCode() == CommandResult::ErrorCode::UnknownError && !session->isConnected())
+        if (result.isError() && result.errorCode() == CommandResult::ErrorCode::UnknownError && !protectedSession->isConnected())
             completionHandler(CommandResult::success());
         else
             completionHandler(WTF::move(result));
@@ -3045,24 +3085,44 @@ void WebDriverService::bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Fu
     completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, WTF::move(result)));
 }
 
+void WebDriverService::bidiSessionEnd(unsigned id, RefPtr<JSON::Object>&&, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)
+{
+    if (!m_session) {
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidSessionID, std::nullopt, "No active session associated with this connection"_s, id));
+        return;
+    }
+
+    auto session = std::exchange(m_session, nullptr).releaseNonNull();
+
+    // The reply is queued before the close handshake starts.
+    completionHandler(WebSocketMessageHandler::Message::reply("success"_s, id, JSON::Object::create()));
+
+    auto protectedBidiServer = m_bidiServer.copyRef();
+    protectedBidiServer->disconnectSession(session->id());
+
+    // The Session destructor uses the server to remove the session's WebSocket resource.
+    session->close([protectedBidiServer = WTF::move(protectedBidiServer), protectedSession = session.copyRef()](CommandResult&& result) {
+        if (result.isError()) {
+            auto errorMessage = result.errorMessage().value_or(emptyString());
+            RELEASE_LOG_ERROR(WebDriverBiDi, "Failed to clean up session %s after session.end: %s (%s)", makeUTF8CString(protectedSession->id()), makeUTF8CString(result.errorString()), makeUTF8CString(errorMessage));
+        }
+    });
+}
+
 void WebDriverService::clientDisconnected(const WebSocketMessageHandler::Connection& connection)
 {
     // https://w3c.github.io/webdriver-bidi/#handle-a-connection-closing
-    if (m_bidiServer->sessionID(connection) == m_session->id())
-        m_bidiServer->removeConnection(connection);
-    else if (m_bidiServer->isStaticConnection(connection))
+    if (m_bidiServer->isStaticConnection(connection))
         m_bidiServer->removeStaticConnection(connection);
+    else
+        m_bidiServer->removeConnection(connection);
     // Note from spec: This does not end any session.
 }
 
 void WebDriverService::onBrowserTerminated(const String& sessionID)
 {
-    if (m_session && m_session->id() == sessionID) {
-        auto connection = m_bidiServer->connection(sessionID);
+    if (m_session && m_session->id() == sessionID)
         m_bidiServer->disconnectSession(sessionID);
-        if (connection)
-            clientDisconnected(*connection);
-    }
 }
 
 #endif // ENABLE(WEBDRIVER_BIDI)
