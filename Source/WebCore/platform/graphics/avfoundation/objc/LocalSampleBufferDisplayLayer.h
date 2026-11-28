@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include <WebCore/FrameRateMonitor.h>
+#include <WebCore/PixelBufferConverterCV.h>
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <WebCore/VideoFrame.h>
 #include <wtf/Deque.h>
@@ -121,6 +122,7 @@ private:
     bool m_paused { false };
     bool m_didFail { false };
     Seconds m_lastMetricsSampleTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+    PixelBufferConverter m_converter WTF_GUARDED_BY_CAPABILITY(workQueue()) { PixelBufferConverter::UseIOSurface::Yes };
 #if !RELEASE_LOG_DISABLED
     uint64_t m_logIdentifier;
     FrameRateMonitor m_frameRateMonitor WTF_GUARDED_BY_CAPABILITY(workQueue());

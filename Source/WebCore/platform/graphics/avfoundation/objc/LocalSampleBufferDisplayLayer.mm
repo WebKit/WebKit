@@ -29,11 +29,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "Color.h"
-#import "ImageTransferSessionVT.h"
+#import "FourCC.h"
 #import "IntSize.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
-#import "PlanarImageConverterCV.h"
+#import "PixelBufferConverterCV.h"
 #import "VideoFrame.h"
 #import "VideoFrameMetadata.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
@@ -444,12 +444,11 @@ void LocalSampleBufferDisplayLayer::enqueueBufferInternal(CVPixelBufferRef pixel
 {
     assertIsCurrent(workQueue());
 
-    // AVSampleBufferDisplayLayer doesn't support the pixel formats WebKit registers; 32BGRA keeps their alpha.
-    RetainPtr<CVPixelBufferRef> displayedBuffer = pixelBuffer;
-    if (PlanarImageConverter::isRegisteredPixelFormat(CVPixelBufferGetPixelFormatType(pixelBuffer))) {
-        displayedBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified);
-        if (!displayedBuffer)
-            return;
+    auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    RetainPtr displayedBuffer = m_converter.convert(pixelBuffer, PixelBufferConverter::nearestCVPixelFormat(pixelFormat));
+    if (!displayedBuffer) {
+        RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::enqueueBufferInternal (%llu) converting %" PUBLIC_LOG_STRING " failed", m_logIdentifier, FourCC(pixelFormat).string().data());
+        return;
     }
 
     auto sampleBuffer = createVideoSampleBuffer(displayedBuffer, PAL::toCMTime(presentationTime));
