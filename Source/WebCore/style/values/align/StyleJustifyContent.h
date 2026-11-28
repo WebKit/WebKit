@@ -48,17 +48,7 @@ struct JustifyContent {
      constexpr JustifyContent(CSS::Keyword::Right, std::optional<OverflowPosition> = std::nullopt);
 
     constexpr bool isNormal() const { return primary() == PrimaryKind::Normal; }
-    constexpr bool isSpaceBetween() const { return primary() == PrimaryKind::SpaceBetween; }
-    constexpr bool isSpaceAround() const { return primary() == PrimaryKind::SpaceAround; }
-    constexpr bool isSpaceEvenly() const { return primary() == PrimaryKind::SpaceEvenly; }
     constexpr bool isStretch() const { return primary() == PrimaryKind::Stretch; }
-    constexpr bool isCenter() const { return primary() == PrimaryKind::Center; }
-    constexpr bool isStart() const { return primary() == PrimaryKind::Start; }
-    constexpr bool isEnd() const { return primary() == PrimaryKind::End; }
-    constexpr bool isFlexStart() const { return primary() == PrimaryKind::FlexStart; }
-    constexpr bool isFlexEnd() const { return primary() == PrimaryKind::FlexEnd; }
-    constexpr bool isLeft() const { return primary() == PrimaryKind::Left; }
-    constexpr bool isRight() const { return primary() == PrimaryKind::Right; }
 
     template<typename... F> constexpr decltype(auto) switchOn(NOESCAPE F&&...) const;
 

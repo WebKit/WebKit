@@ -48,15 +48,6 @@ struct VerticalAlign {
     VerticalAlign(CSS::Keyword::WebkitBaselineMiddle keyword) : m_value { keyword } { }
     VerticalAlign(LengthPercentage&& length) : m_value { WTF::move(length) } { }
 
-    bool isBaseline() const { return WTF::holdsAlternative<CSS::Keyword::Baseline>(m_value); }
-    bool isSub() const { return WTF::holdsAlternative<CSS::Keyword::Sub>(m_value); }
-    bool isSuper() const { return WTF::holdsAlternative<CSS::Keyword::Super>(m_value); }
-    bool isTop() const { return WTF::holdsAlternative<CSS::Keyword::Top>(m_value); }
-    bool isTextTop() const { return WTF::holdsAlternative<CSS::Keyword::TextTop>(m_value); }
-    bool isMiddle() const { return WTF::holdsAlternative<CSS::Keyword::Middle>(m_value); }
-    bool isBottom() const { return WTF::holdsAlternative<CSS::Keyword::Bottom>(m_value); }
-    bool isTextBottom() const { return WTF::holdsAlternative<CSS::Keyword::TextBottom>(m_value); }
-    bool isWebkitBaselineMiddle() const { return WTF::holdsAlternative<CSS::Keyword::WebkitBaselineMiddle>(m_value); }
     bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
     std::optional<LengthPercentage> tryLengthPercentage() const { return isLengthPercentage() ? std::make_optional(std::get<LengthPercentage>(m_value)) : std::nullopt; }
 
