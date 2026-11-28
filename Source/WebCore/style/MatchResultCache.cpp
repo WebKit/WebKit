@@ -107,6 +107,18 @@ bool MatchResultCache::isUsableAfterInlineStyleChange(const MatchResultCache::En
     return true;
 }
 
+bool MatchResultCache::canApplyPartially(CSSPropertyID propertyID)
+{
+    // FIXME: Support custom properties.
+    if (propertyID == CSSPropertyID::Custom)
+        return false;
+
+    // Only use partial applying with low-priority properties since we know changes to them can't
+    // affect values of other properties.
+    // FIXME: CSSPropertyID::LineHeight shouldn't be a low-priority property as others can depend on it via `lh` unit.
+    return propertyID >= firstLowPriorityProperty && propertyID != CSSPropertyID::LineHeight;
+}
+
 PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedProperties(MatchResultCache::Entry& entry)
 {
     auto& originalProperties = entry.originalInlineProperties;
@@ -128,14 +140,7 @@ PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedPro
         // Assume that if a value or priority changes once then it will change more. Don't track changes anymore.
         originalProperties[index].valueIfUnchanged = nullptr;
 
-        // FIXME: Support custom properties.
-        if (propertyID == CSSPropertyID::Custom)
-            return PropertyCascade::normalProperties();
-
-        // Only use partial applying with low-priority properties since we know changes to them can't
-        // affect values of other properties.
-        // FIXME: CSSPropertyID::LineHeight shouldn't be a low-priority property as others can depend on it via `lh` unit.
-        if (propertyID < firstLowPriorityProperty || propertyID == CSSPropertyID::LineHeight)
+        if (!canApplyPartially(propertyID))
             return PropertyCascade::normalProperties();
 
         result.ids.append(cascadeAliasProperty(propertyID));
