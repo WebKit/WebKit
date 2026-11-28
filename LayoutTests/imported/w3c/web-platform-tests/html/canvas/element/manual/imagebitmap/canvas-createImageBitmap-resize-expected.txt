@@ -1,7 +1,8 @@
 
-FAIL createImageBitmap from a Blob with resize option. assert_false: expected false got true
-FAIL createImageBitmap from a HTMLCanvasElement with resize option. assert_false: expected false got true
-FAIL createImageBitmap from a HTMLImageElement with resize option. assert_false: expected false got true
-FAIL createImageBitmap from an ImageBitmap with resize option. assert_false: expected false got true
-FAIL createImageBitmap from an ImageData with resize option. assert_false: expected false got true
+PASS createImageBitmap from a Blob with resize option.
+PASS createImageBitmap from a HTMLCanvasElement with resize option.
+PASS createImageBitmap from a HTMLImageElement with resize option.
+FAIL createImageBitmap from a HTMLImageElement of svg with no specified size with resize option. assert_false: expected false got true
+PASS createImageBitmap from an ImageBitmap with resize option.
+PASS createImageBitmap from an ImageData with resize option.
 
