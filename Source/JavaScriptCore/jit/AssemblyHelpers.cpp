@@ -540,11 +540,19 @@ AssemblyHelpers::JumpList AssemblyHelpers::findMegamorphicCacheEntry(VM& vm, GPR
 
 AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
+    return loadMegamorphicProperty(vm, baseGPR, baseGPR, uidGPR, uid, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR);
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg lookupBaseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+{
+    ASSERT(noOverlap(baseGPR, uidGPR, scratch1GPR, scratch2GPR, scratch3GPR));
+    ASSERT(noOverlap(lookupBaseGPR, uidGPR, scratch2GPR, scratch3GPR));
+
     using Entry = MegamorphicCache::LoadEntry;
     JumpList slowCases = findMegamorphicCacheEntry<
         MegamorphicCache::loadCachePrimaryMask, MegamorphicCache::offsetOfLoadCachePrimaryEntries(),
         MegamorphicCache::loadCacheSecondaryMask, MegamorphicCache::offsetOfLoadCacheSecondaryEntries()>(
-            vm, baseGPR, uidGPR, uid, scratch1GPR, scratch2GPR, scratch3GPR);
+            vm, lookupBaseGPR, uidGPR, uid, scratch1GPR, scratch2GPR, scratch3GPR);
 
     loadPtr(Address(scratch3GPR, Entry::offsetOfHolder()), scratch2GPR);
     auto missed = branchTestPtr(Zero, scratch2GPR);

@@ -891,7 +891,8 @@ private:
 
             case GetByVal:
             case GetByValMegamorphic: {
-                if (m_graph.child(node, 0).useKind() == ObjectUse && node->arrayMode().type() == Array::Generic) {
+                UseKind baseUseKind = m_graph.child(node, 0).useKind();
+                if ((baseUseKind == ObjectUse || (node->op() == GetByValMegamorphic && baseUseKind == CellUse)) && node->arrayMode().type() == Array::Generic) {
                     AbstractValue& property = m_state.forNode(m_graph.child(node, 1));
                     if (JSValue constant = property.value()) {
                         if (constant.isString()) {

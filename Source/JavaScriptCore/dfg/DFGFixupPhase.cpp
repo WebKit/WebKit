@@ -1207,7 +1207,7 @@ private:
                 break;
             case Array::Generic:
                 if (node->op() == GetByValMegamorphic) {
-                    fixEdge<ObjectUse>(m_graph.child(node, 0));
+                    fixEdge<CellUse>(m_graph.child(node, 0));
                     if (m_graph.child(node, 1)->shouldSpeculateString())
                         fixEdge<StringUse>(m_graph.child(node, 1));
                     else if (m_graph.child(node, 1)->shouldSpeculateSymbol())

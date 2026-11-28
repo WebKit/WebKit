@@ -494,7 +494,7 @@ void Node::convertToGetByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier id
     ASSERT(op() == GetByVal || op() == GetByValMegamorphic);
     bool isMegamorphic = op() == GetByValMegamorphic && canUseMegamorphicGetById(graph.m_vm, identifier.uid());
     Edge base = graph.varArgChild(this, 0);
-    ASSERT(base.useKind() == ObjectUse);
+    ASSERT(base.useKind() == ObjectUse || (op() == GetByValMegamorphic && base.useKind() == CellUse));
     for (unsigned i = 0; i < numChildren(); ++i) {
         Edge& edge = graph.varArgChild(this, i);
         edge = Edge();

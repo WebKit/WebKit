@@ -236,6 +236,11 @@ public:
             uint32_t secondaryIndex = MegamorphicCache::secondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
             m_loadCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
+        // String bases look up through String.prototype's StructureID but keep the string as the base, so its own
+        // properties must name their holder. This is sound since only String.prototype has DerivedStringObjectType,
+        // and no other object shares its Structure.
+        if (holder->type() == DerivedStringObjectType)
+            ownProperty = false;
         m_loadCachePrimaryEntries[primaryIndex].initAsHit(structureID, uid, m_epoch, holder, offset, ownProperty);
     }
 

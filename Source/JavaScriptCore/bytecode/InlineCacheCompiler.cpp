@@ -2888,8 +2888,17 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         if (isPrivate)
             slowCases.append(jit.loadMegamorphicPrivateProperty(vm, baseGPR, scratch4GPR, nullptr, valueGPR, scratchGPR, scratch2GPR, scratch3GPR));
-        else
-            slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueGPR, scratchGPR, scratch2GPR, scratch3GPR));
+        else {
+            jit.move(baseGPR, scratchGPR);
+            auto notString = jit.branchIfNotString(baseGPR);
+            if (useHandlerIC()) {
+                jit.loadPtr(CCallHelpers::Address(m_propertyCache.propertyCacheGPR(), PropertyInlineCache::offsetOfGlobalObject()), scratchGPR);
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, JSGlobalObject::offsetOfStringPrototype()), scratchGPR);
+            } else
+                jit.move(CCallHelpers::TrustedImmPtr(m_globalObject->stringPrototype()), scratchGPR);
+            notString.link(jit);
+            slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratchGPR, scratch4GPR, nullptr, valueGPR, scratchGPR, scratch2GPR, scratch3GPR));
+        }
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();

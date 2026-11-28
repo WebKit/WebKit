@@ -8295,7 +8295,6 @@ void SpeculativeJIT::compileGetByValMegamorphic(Node* node)
     GPRReg scratch3GPR = scratch3.gpr();
     GPRReg scratch4GPR = scratch4.gpr();
 
-    speculateObject(m_graph.child(node, 0), baseGPR);
     bool propertyIsString = subscriptUseKind == StringUse;
     bool propertyIsSymbol = subscriptUseKind == SymbolUse;
     if (propertyIsString)
@@ -8312,7 +8311,12 @@ void SpeculativeJIT::compileGetByValMegamorphic(Node* node)
 
     JumpList slowCases = loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, !propertyIsSymbol && canBeRope(m_graph.child(node, 1)));
 
-    slowCases.append(loadMegamorphicProperty(vm(), baseGPR, scratch4GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR));
+    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+    move(baseGPR, scratch1GPR);
+    auto notString = branchIfNotString(baseGPR);
+    loadLinkableConstant(LinkableConstant(*this, globalObject->stringPrototype()), scratch1GPR);
+    notString.link(this);
+    slowCases.append(loadMegamorphicProperty(vm(), baseGPR, scratch1GPR, scratch4GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR));
     addSlowPathGenerator(slowPathCall(slowCases, this, operationGetByValMegamorphicGeneric, scratch3GPR, LinkableConstant::globalObject(*this, node), baseGPR, subscriptGPR));
     jsValueResult(scratch3GPR, node);
 }

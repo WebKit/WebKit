@@ -1709,7 +1709,7 @@ private:
         case GetByValMegamorphic: {
             Edge& baseEdge = m_graph.child(m_node, 0);
             Edge& keyEdge = m_graph.child(m_node, 1);
-            if (baseEdge.useKind() == ObjectUse && m_node->arrayMode().type() == Array::Generic) {
+            if ((baseEdge.useKind() == ObjectUse || (m_node->op() == GetByValMegamorphic && baseEdge.useKind() == CellUse)) && m_node->arrayMode().type() == Array::Generic) {
                 if (keyEdge->op() == MakeRope) {
                     keyEdge->setOp(MakeAtomString);
                     m_changed = true;
