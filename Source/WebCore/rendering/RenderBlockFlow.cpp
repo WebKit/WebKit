@@ -3315,11 +3315,10 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     if (!m_floatingObjects)
         return { };
     auto lowestFloatBottom = std::optional<LayoutUnit> { };
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().initialLetter().drop() > 0)
-            lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), logicalBottomForFloat(*floatingObject));
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        CheckedRef floatStyle = floatItem.layoutBox().style();
+        if (floatStyle->pseudoElementType() == PseudoElementType::FirstLetter && floatStyle->initialLetter().drop() > 0)
+            lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), floatItem.marginBoxBottom().value());
     }
     return lowestFloatBottom;
 }

@@ -398,7 +398,7 @@ public:
 
     LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
 
-    NODELETE std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
+    std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
 
     std::optional<LayoutUnit> firstLineBaseline() const override;

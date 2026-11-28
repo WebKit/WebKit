@@ -619,7 +619,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
     ASSERT(m_inlineContentConstraints);
     auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {
-        if (auto lowestInitialLetterLogicalBottom = flow().lowestInitialLetterLogicalBottom())
+        if (auto lowestInitialLetterLogicalBottom = protect(flow())->lowestInitialLetterLogicalBottom())
             return { *lowestInitialLetterLogicalBottom - m_inlineContentConstraints->logicalTop() };
         return { };
     };
