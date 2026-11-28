@@ -334,7 +334,7 @@ void NetworkLoad::updateRequestAfterRedirection(WebCore::ResourceRequest& newReq
 
 void NetworkLoad::reprioritizeRequest(ResourceLoadPriority priority)
 {
-    m_currentRequest.setPriority(priority);
+    m_currentRequest.setInternalPriority(priority);
     if (RefPtr task = m_task)
         task->setPriority(priority);
 }

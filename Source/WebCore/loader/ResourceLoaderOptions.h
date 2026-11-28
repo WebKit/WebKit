@@ -187,7 +187,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
         , loadedFromFetch(LoadedFromFetch::No)
-        , fetchPriority(RequestPriority::Auto)
+        , priority(RequestPriority::Auto)
         , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     { }
 
@@ -211,7 +211,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
         , loadedFromFetch(LoadedFromFetch::No)
-        , fetchPriority(RequestPriority::Auto)
+        , priority(RequestPriority::Auto)
         , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     {
         this->credentials = credentials;
@@ -219,10 +219,16 @@ struct ResourceLoaderOptions : public FetchOptions {
     }
 
     Markable<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+
+    // https://html.spec.whatwg.org/multipage/browsers.html#policy-container-csp-list of the request's policy container
     Markable<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+
+    // https://html.spec.whatwg.org/multipage/browsers.html#policy-container-embedder-policy of the request's policy container
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
+    // https://fetch.spec.whatwg.org/#concept-request-redirect-count
     uint8_t maxRedirectCount { 20 };
+
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 
     SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;
@@ -237,18 +243,32 @@ struct ResourceLoaderOptions : public FetchOptions {
     CachingPolicy cachingPolicy : bitWidthOfCachingPolicy;
     SameOriginDataURLFlag sameOriginDataURLFlag : bitWidthOfSameOriginDataURLFlag;
     InitiatorContext initiatorContext : bitWidthOfInitiatorContext;
+
+    // https://fetch.spec.whatwg.org/#concept-request-initiator
     Initiator initiator : bitWidthOfInitiator;
+
+    // https://fetch.spec.whatwg.org/#request-service-workers-mode (ServiceWorkersMode::Only is WebKit's)
     ServiceWorkersMode serviceWorkersMode : bitWidthOfServiceWorkersMode;
+
     ClientCredentialPolicy clientCredentialPolicy : bitWidthOfClientCredentialPolicy;
+
+    // PreflightPolicy::Force sets https://fetch.spec.whatwg.org/#use-cors-preflight-flag
     PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
+
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
     LoadedFromPluginElement loadedFromPluginElement : bitWidthOfLoadedFromPluginElement;
     LoadedFromFetch loadedFromFetch : bitWidthOfLoadedFromFetch;
-    RequestPriority fetchPriority : bitWidthOfRequestPriority;
+
+    // https://fetch.spec.whatwg.org/#request-priority
+    RequestPriority priority : bitWidthOfRequestPriority;
+
     ShouldEnableContentExtensionsCheck shouldEnableContentExtensionsCheck : bitWidthOfShouldEnableContentExtensionsCheck;
 
     Markable<FetchIdentifier> navigationPreloadIdentifier;
+
+    // https://fetch.spec.whatwg.org/#concept-request-nonce-metadata
     String nonce;
+
     FetchingWorkerIdentifier workerIdentifier;
     URL workerURL;
 };

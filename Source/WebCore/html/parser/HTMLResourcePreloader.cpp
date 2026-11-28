@@ -70,14 +70,14 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
             crossOriginMode = CachedScriptFetcher::defaultCrossOriginModeForModule;
     }
     options.referrerPolicy = m_referrerPolicy;
-    options.fetchPriority = m_fetchPriority;
+    options.priority = m_fetchPriority;
     options.nonce = m_nonceAttribute;
     options.integrity = m_integrityAttribute;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTF::move(options), document, crossOriginMode);
     request.setInitiatorType(m_initiatorType);
 
     if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
-        request.setPriority(DefaultResourceLoadPriority::asyncScript);
+        request.setInternalPriority(DefaultResourceLoadPriority::asyncScript);
 
     return request;
 }

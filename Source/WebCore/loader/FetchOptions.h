@@ -56,16 +56,35 @@ struct FetchOptions {
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> [[nodiscard]] static bool decodePersistent(Decoder&, FetchOptions&);
 
+    // https://fetch.spec.whatwg.org/#concept-request-destination
     Destination destination { Destination::EmptyString };
+
+    // https://fetch.spec.whatwg.org/#concept-request-mode
     Mode mode { Mode::NoCors };
+
+    // https://fetch.spec.whatwg.org/#concept-request-credentials-mode
     Credentials credentials { Credentials::Omit };
+
+    // https://fetch.spec.whatwg.org/#concept-request-cache-mode
     Cache cache { Cache::Default };
+
+    // https://fetch.spec.whatwg.org/#concept-request-redirect-mode
     Redirect redirect { Redirect::Follow };
+
+    // https://fetch.spec.whatwg.org/#concept-request-referrer-policy
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
+
+    // https://fetch.spec.whatwg.org/#request-keepalive-flag
     bool keepAlive { false };
+
+    // https://fetch.spec.whatwg.org/#concept-request-integrity-metadata
     String integrity;
-    Markable<WTF::UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
-    Markable<WTF::UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
+
+    // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
+    Markable<WTF::UUID> clientIdentifier;
+
+    // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
+    Markable<WTF::UUID> resultingClientIdentifier;
 };
 
 inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<WTF::UUID> clientIdentifier, Markable<WTF::UUID> resultingClientIdentifier)

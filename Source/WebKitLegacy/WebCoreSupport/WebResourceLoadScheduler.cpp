@@ -161,7 +161,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     CheckedRef host = hostForURL(resourceLoader->url(), CreateIfNotFound).releaseNonNull();
 #endif
 
-    ResourceLoadPriority priority = resourceLoader->request().priority();
+    auto priority = resourceLoader->request().internalPriority();
 
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);

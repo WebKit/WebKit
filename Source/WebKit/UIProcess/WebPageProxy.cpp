@@ -9940,7 +9940,7 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request, OptionSet<WebCore::Ad
         }
     }
     request.setFirstPartyForCookies(request.url());
-    request.setPriority(ResourceLoadPriority::VeryHigh);
+    request.setInternalPriority(ResourceLoadPriority::VeryHigh);
     protect(websiteDataStore->networkProcess())->preconnectTo(sessionID(), identifier(), webPageIDInMainFrameProcess(), WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain(), advancedPrivacyProtections);
 }
 

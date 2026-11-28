@@ -50,7 +50,7 @@ bool ResourceRequest::s_httpPipeliningEnabled = false;
 void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {
     // These are things we don't want willSendRequest delegate to mutate or reset.
-    ResourceLoadPriority oldPriority = priority();
+    auto oldPriority = internalPriority();
     RefPtr<FormData> oldHTTPBody = httpBody();
     bool isHiddenFromInspector = hiddenFromInspector();
     auto oldRequester = requester();
@@ -62,7 +62,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 
     *this = delegateProvidedRequest;
 
-    setPriority(oldPriority);
+    setInternalPriority(oldPriority);
     setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);

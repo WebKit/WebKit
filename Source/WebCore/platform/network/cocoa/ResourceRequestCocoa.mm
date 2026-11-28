@@ -185,7 +185,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_requestData.m_allowCookies = [m_nsRequest HTTPShouldHandleCookies];
 
     if (resourcePrioritiesEnabled())
-        m_requestData.m_priority = toResourceLoadPriority(m_nsRequest ? CFURLRequestGetRequestPriority([m_nsRequest _CFURLRequest]) : 0);
+        m_requestData.m_internalPriority = toResourceLoadPriority(m_nsRequest ? CFURLRequestGetRequestPriority([m_nsRequest _CFURLRequest]) : 0);
 
     m_requestData.m_httpHeaderFields.clear();
     [retainPtr([m_nsRequest allHTTPHeaderFields]) enumerateKeysAndObjectsUsingBlock: ^(NSString *name, NSString *value, BOOL *) {
@@ -277,10 +277,10 @@ void ResourceRequest::doUpdatePlatformRequest()
         CFURLRequestSetShouldPipelineHTTP([nsRequest _CFURLRequest], true, true);
 
     if (ResourceRequest::resourcePrioritiesEnabled()) {
-        CFURLRequestSetRequestPriority([nsRequest _CFURLRequest], toPlatformRequestPriority(priority()));
+        CFURLRequestSetRequestPriority([nsRequest _CFURLRequest], toPlatformRequestPriority(internalPriority()));
 
         // Used by PLT to ignore very low priority beacon and ping loads.
-        if (priority() == ResourceLoadPriority::VeryLow)
+        if (internalPriority() == ResourceLoadPriority::VeryLow)
             _CFURLRequestSetProtocolProperty([nsRequest _CFURLRequest], CFSTR("WKVeryLowLoadPriority"), kCFBooleanTrue);
     }
 

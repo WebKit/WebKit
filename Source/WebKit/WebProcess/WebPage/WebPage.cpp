@@ -7972,7 +7972,7 @@ void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, c
     // See 283102@main for an explanation for how we handle main resource loads. We also ignore
     // very low priority loads like ping and beacon requests to match previous PLT heuristics.
     // We consider file requests as part of the PLT network heuristic for ease of API testing.
-    if (frame && request.requester() != ResourceRequestRequester::Main && request.priority() != WebCore::ResourceLoadPriority::VeryLow && (isHTTPRequest || request.url().protocolIsFile())) {
+    if (frame && request.requester() != ResourceRequestRequester::Main && request.internalPriority() != WebCore::ResourceLoadPriority::VeryLow && (isHTTPRequest || request.url().protocolIsFile())) {
         auto frameID = frame->frameID();
         auto& identifiers = m_networkResourceRequestIdentifiersForPageLoadTiming.ensure(frameID, [] {
             return HashSet<WebCore::ResourceLoaderIdentifier> { };

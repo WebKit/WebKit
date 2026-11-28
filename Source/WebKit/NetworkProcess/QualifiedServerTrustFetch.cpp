@@ -64,7 +64,7 @@ void QualifiedServerTrustFetch::didReachCompletion(QualifiedServerTrustFetch& fe
 static NetworkLoadParameters qualifiedServerTrustParameters(URL&& url, const NetworkResourceLoadParameters& parameters)
 {
     WebCore::ResourceRequest request(WTF::move(url));
-    request.setPriority(ResourceLoadPriority::VeryLow);
+    request.setInternalPriority(ResourceLoadPriority::VeryLow);
     return NetworkLoadParameters {
         parameters.webPageProxyID,
         parameters.webPageID,

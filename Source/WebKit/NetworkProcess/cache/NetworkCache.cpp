@@ -331,7 +331,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
         return StoreDecision::NoDueToRequestContainingFragments;
 
     bool isMainResource = originalRequest.requester() == WebCore::ResourceRequestRequester::Main;
-    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
+    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.internalPriority() == WebCore::ResourceLoadPriority::VeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto now = WallTime::now();
         Seconds allowedStale { 0_ms };
@@ -434,10 +434,10 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), static_cast<int>(request.priority()));
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", makeUTF8CString(request.url().stringWithoutFragmentIdentifier()), static_cast<int>(request.internalPriority()));
 
     Key storageKey = makeCacheKey(RecordType::Resource, request);
-    auto priority = static_cast<unsigned>(request.priority());
+    auto priority = static_cast<unsigned>(request.internalPriority());
 
     RetrieveInfo info;
     info.url = request.url();
@@ -511,7 +511,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 
 #if !LOG_DISABLED
         auto elapsed = MonotonicTime::now() - info.startTime;
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsed.millisecondsAs<int64_t>());
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.internalPriority()), elapsed.millisecondsAs<int64_t>());
 #endif
         completeRetrieve(WTF::move(completionHandler), WTF::move(entry), info);
 

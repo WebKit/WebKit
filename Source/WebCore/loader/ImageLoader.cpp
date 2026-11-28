@@ -265,7 +265,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element);
     if (imageElement) {
         options.referrerPolicy = imageElement->referrerPolicy();
-        options.fetchPriority = imageElement->fetchPriority();
+        options.priority = imageElement->fetchPriority();
         if (imageElement->usesSrcsetOrPicture())
             options.initiator = Initiator::Imageset;
     } else if (RefPtr svgImageElement = dynamicDowncast<SVGImageElement>(element))

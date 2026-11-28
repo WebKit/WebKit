@@ -3814,7 +3814,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
     }
 
     if (m_overrideResourceLoadPriorityForTesting)
-        request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
+        request.setInternalPriority(m_overrideResourceLoadPriorityForTesting.value());
 
     // Make sure we send the Origin header.
     addHTTPOriginIfNeeded(request, String());

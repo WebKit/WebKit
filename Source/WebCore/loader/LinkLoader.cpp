@@ -428,7 +428,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.referrerPolicy = params.referrerPolicy;
-    options.fetchPriority = params.fetchPriority;
+    options.priority = params.fetchPriority;
     options.nonce = params.nonce;
     options.integrity = params.integrity;
 
@@ -444,7 +444,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
         }
         return createPotentialAccessControlRequest(WTF::move(url), WTF::move(options), document, params.crossOrigin);
     }();
-    linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(type.value()));
+    linkRequest.setInternalPriority(DefaultResourceLoadPriority::forResourceType(type.value()));
     linkRequest.setInitiatorType("link"_s);
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
@@ -540,14 +540,14 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::loadCompressionDictionaryIfNeeded(
 
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.referrerPolicy = params.referrerPolicy;
-    options.fetchPriority = params.fetchPriority;
+    options.priority = params.fetchPriority;
     options.nonce = params.nonce;
     options.destination = FetchOptions::Destination::CompressionDictionary;
 
     // No CORS is coerced to Anonymous, so this is always a CORS fetch.
     auto crossOrigin = params.crossOrigin.isNull() ? String { "anonymous"_s } : params.crossOrigin;
     auto linkRequest = createPotentialAccessControlRequest(ResourceRequest { WTF::move(url) }, WTF::move(options), document, crossOrigin);
-    linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(CachedResource::Type::RawResource));
+    linkRequest.setInternalPriority(DefaultResourceLoadPriority::forResourceType(CachedResource::Type::RawResource));
     linkRequest.setInitiatorType("link"_s);
     linkRequest.setIgnoreForRequestCount(true);
 

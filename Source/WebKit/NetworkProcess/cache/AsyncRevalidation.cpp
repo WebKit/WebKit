@@ -47,7 +47,7 @@ static inline WebCore::ResourceRequest constructRevalidationRequest(const Key& k
     if (!lastModified.isEmpty())
         revalidationRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfModifiedSince, lastModified);
 
-    revalidationRequest.setPriority(WebCore::ResourceLoadPriority::Low);
+    revalidationRequest.setInternalPriority(WebCore::ResourceLoadPriority::Low);
 
     return revalidationRequest;
 }

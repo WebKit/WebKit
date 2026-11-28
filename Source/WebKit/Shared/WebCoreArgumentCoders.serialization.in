@@ -1199,7 +1199,7 @@ header: <WebCore/ResourceRequest.h>
     Vector<String> m_responseContentDispositionEncodingFallbackArray;
     WebCore::ResourceRequestCachePolicy m_cachePolicy;
     WebCore::ResourceRequestBase::SameSiteDisposition m_sameSiteDisposition;
-    WebCore::ResourceLoadPriority m_priority;
+    WebCore::ResourceLoadPriority m_internalPriority;
     WebCore::ResourceRequestRequester m_requester;
     [BitField] bool m_allowCookies;
     [BitField] bool m_isTopSite;

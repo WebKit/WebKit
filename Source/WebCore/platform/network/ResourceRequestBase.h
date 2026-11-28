@@ -75,7 +75,7 @@ public:
     struct RequestData {
         RequestData() { }
 
-        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public, ThirdPartyCookieBlockingDecision latchedThirdPartyCookieBlockingDecision = ThirdPartyCookieBlockingDecision::None)
+        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority internalPriority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public, ThirdPartyCookieBlockingDecision latchedThirdPartyCookieBlockingDecision = ThirdPartyCookieBlockingDecision::None)
             : m_url(WTF::move(url))
             , m_firstPartyForCookies(WTF::move(firstPartyForCookies))
             , m_timeoutInterval(timeoutInterval)
@@ -84,7 +84,7 @@ public:
             , m_responseContentDispositionEncodingFallbackArray(WTF::move(responseContentDispositionEncodingFallbackArray))
             , m_cachePolicy(cachePolicy)
             , m_sameSiteDisposition(sameSiteDisposition)
-            , m_priority(priority)
+            , m_internalPriority(internalPriority)
             , m_requester(requester)
             , m_isTopSite(isTopSite)
             , m_allowCookies(allowCookies)
@@ -113,7 +113,7 @@ public:
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         ResourceRequestCachePolicy m_cachePolicy { ResourceRequestCachePolicy::UseProtocolCachePolicy };
         SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
-        ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
+        ResourceLoadPriority m_internalPriority { ResourceLoadPriority::Low };
         ResourceRequestRequester m_requester { ResourceRequestRequester::Unspecified };
         bool m_isTopSite : 1 { false };
         bool m_allowCookies : 1 { false };
@@ -240,8 +240,9 @@ public:
     WEBCORE_EXPORT bool allowCookies() const;
     WEBCORE_EXPORT void setAllowCookies(bool);
 
-    WEBCORE_EXPORT ResourceLoadPriority priority() const;
-    WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
+    // https://fetch.spec.whatwg.org/#request-internal-priority
+    WEBCORE_EXPORT ResourceLoadPriority internalPriority() const;
+    WEBCORE_EXPORT void setInternalPriority(ResourceLoadPriority);
 
     WEBCORE_EXPORT String cachePartition() const;
     bool shouldBlockThirdPartyStorage() const { return m_shouldBlockThirdPartyStorage; }

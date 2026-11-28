@@ -351,7 +351,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     updateTaskWithStoragePartitionIdentifier(request);
 #endif
 
-    WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", makeUTF8CString(request.httpMethod()), makeUTF8CString(url.string()), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    WTFBeginSignpost(m_task.get(), DataTask, "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", makeUTF8CString(request.httpMethod()), makeUTF8CString(url.string()), toNSURLSessionTaskPriority(request.internalPriority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     switch (parameters.storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
@@ -389,7 +389,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     }
 
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled())
-        m_task.get().priority = toNSURLSessionTaskPriority(request.priority());
+        m_task.get().priority = toNSURLSessionTaskPriority(request.internalPriority());
 
     updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 

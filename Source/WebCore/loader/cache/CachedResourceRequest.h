@@ -62,10 +62,10 @@ public:
     const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
     void setOptions(const ResourceLoaderOptions& options) { m_options = options; }
 
-    const std::optional<ResourceLoadPriority>& priority() const LIFETIME_BOUND { return m_priority; }
-    void setPriority(std::optional<ResourceLoadPriority>&& priority) { m_priority = WTF::move(priority); }
+    const std::optional<ResourceLoadPriority>& internalPriority() const LIFETIME_BOUND { return m_internalPriority; }
+    void setInternalPriority(std::optional<ResourceLoadPriority>&& priority) { m_internalPriority = WTF::move(priority); }
 
-    RequestPriority fetchPriority() const { return m_options.fetchPriority; }
+    RequestPriority priority() const { return m_options.priority; }
 
     void setInitiator(Element&);
     void setInitiatorType(const AtomString&);
@@ -121,7 +121,7 @@ private:
     ResourceRequest m_resourceRequest;
     String m_charset;
     ResourceLoaderOptions m_options;
-    std::optional<ResourceLoadPriority> m_priority;
+    std::optional<ResourceLoadPriority> m_internalPriority;
     RefPtr<Element> m_initiatorElement;
     AtomString m_initiatorType;
     RefPtr<SecurityOrigin> m_origin;

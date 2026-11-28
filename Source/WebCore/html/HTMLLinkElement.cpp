@@ -376,10 +376,10 @@ void HTMLLinkElement::process()
             options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
         options.integrity = attributeWithoutSynchronization(HTMLNames::integrityAttr);
         options.referrerPolicy = params.referrerPolicy;
-        options.fetchPriority = fetchPriority();
+        options.priority = fetchPriority();
 
         auto request = createPotentialAccessControlRequest(URL { m_url }, WTF::move(options), document, crossOrigin());
-        request.setPriority(WTF::move(priority));
+        request.setInternalPriority(WTF::move(priority));
         request.setCharset(WTF::move(charset));
         request.setInitiator(*this);
 

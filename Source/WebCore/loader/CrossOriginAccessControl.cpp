@@ -97,7 +97,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     updateRequestForAccessControl(preflightRequest, securityOrigin, StoredCredentialsPolicy::DoNotUse);
     preflightRequest.setHTTPMethod("OPTIONS"_s);
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
-    preflightRequest.setPriority(request.priority());
+    preflightRequest.setInternalPriority(request.internalPriority());
     preflightRequest.setFirstPartyForCookies(request.firstPartyForCookies());
     preflightRequest.setIsAppInitiated(request.isAppInitiated());
     if (!referrer.isNull())

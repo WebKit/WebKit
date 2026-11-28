@@ -69,7 +69,7 @@ void IconLoader::startLoading()
         return;
 
     ResourceRequest resourceRequest = URL { m_url };
-    resourceRequest.setPriority(ResourceLoadPriority::Low);
+    resourceRequest.setInternalPriority(ResourceLoadPriority::Low);
 #if !ERROR_DISABLED
     // Copy this because we may want to access it after transferring the
     // `resourceRequest` to the `request`. If we don't, then the LOG_ERROR

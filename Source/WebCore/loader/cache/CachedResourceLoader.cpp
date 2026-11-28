@@ -1307,7 +1307,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "URL is invalid"_s });
     }
 
-    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", makeUTF8CString(url.stringCenterEllipsizedToLength()), makeUTF8CString(request.charset()), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
+    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%.255s', charset '%s', priority=%d, forPreload=%u", makeUTF8CString(url.stringCenterEllipsizedToLength()), makeUTF8CString(request.charset()), request.internalPriority() ? static_cast<int>(request.internalPriority().value()) : -1, forPreload == ForPreload::Yes);
 
     request.setDestinationIfNotSet(destinationForType(type, frame));
 
@@ -1567,7 +1567,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
             }
 
             if (forPreload == ForPreload::No)
-                resource->setLoadPriority(request.priority(), request.fetchPriority());
+                resource->setLoadPriority(request.internalPriority(), request.priority());
         }
         break;
     }

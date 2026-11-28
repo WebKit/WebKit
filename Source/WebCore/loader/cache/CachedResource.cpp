@@ -99,7 +99,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
 {
     ASSERT(m_sessionID.isValid());
 
-    setLoadPriority(request.priority(), request.fetchPriority());
+    setLoadPriority(request.internalPriority(), request.priority());
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == Type::MainResource || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch);
@@ -230,7 +230,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 
     if (type() == Type::LinkPrefetch)
         m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_s);
-    m_resourceRequest.setPriority(loadPriority());
+    m_resourceRequest.setInternalPriority(loadPriority());
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.

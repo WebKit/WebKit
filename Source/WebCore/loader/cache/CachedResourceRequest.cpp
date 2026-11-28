@@ -54,11 +54,11 @@
 
 namespace WebCore {
 
-CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, std::optional<ResourceLoadPriority> priority, String&& charset)
+CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, std::optional<ResourceLoadPriority> internalPriority, String&& charset)
     : m_resourceRequest(WTF::move(resourceRequest))
     , m_charset(WTF::move(charset))
     , m_options(options)
-    , m_priority(priority)
+    , m_internalPriority(internalPriority)
     , m_fragmentIdentifier(splitFragmentIdentifierFromRequestURL(m_resourceRequest))
 {
 }

@@ -102,7 +102,7 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
     String referrer = SecurityPolicy::generateReferrerHeader(*referrerPolicy, url, referrerURL, OriginAccessPatternsForWebProcess::singleton());
 
     ResourceRequest request { WTF::move(url) };
-    request.setPriority(ResourceLoadPriority::VeryLow);
+    request.setInternalPriority(ResourceLoadPriority::VeryLow);
 
     // https://html.spec.whatwg.org/multipage/speculative-loading.html#the-sec-speculation-tags-header
     if (!tags.isEmpty()) {
@@ -163,7 +163,7 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     prefetchOptions.destination = FetchOptions::Destination::Document;
     CachedResourceRequest prefetchRequest(WTF::move(request), prefetchOptions);
     if (lowPriority)
-        prefetchRequest.setPriority(ResourceLoadPriority::Low);
+        prefetchRequest.setInternalPriority(ResourceLoadPriority::Low);
 
     auto resourceErrorOr = protect(document->cachedResourceLoader())->requestRawResource(WTF::move(prefetchRequest));
 

@@ -91,7 +91,7 @@ SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest&
     , m_isAppInitiated(request.isAppInitiated())
     , m_firstPartyForCookies(request.firstPartyForCookies())
     , m_requestHeaders(request.httpHeaderFields())
-    , m_priority(request.priority())
+    , m_priority(request.internalPriority())
 {
 }
 

@@ -69,7 +69,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setTimeoutInterval(other.timeoutInterval());
     setFirstPartyForCookies(other.firstPartyForCookies().isolatedCopy());
     setHTTPMethod(other.httpMethod().isolatedCopy());
-    setPriority(other.priority());
+    setInternalPriority(other.internalPriority());
     setRequester(other.requester());
     setInitiatorIdentifier(other.initiatorIdentifier().isolatedCopy());
     setShouldBlockThirdPartyStorage(other.shouldBlockThirdPartyStorage());
@@ -609,21 +609,21 @@ void ResourceRequestBase::setAllowCookies(bool allowCookies)
     m_platformRequestUpdated = false;
 }
 
-ResourceLoadPriority ResourceRequestBase::priority() const
+ResourceLoadPriority ResourceRequestBase::internalPriority() const
 {
     updateResourceRequest();
 
-    return m_requestData.m_priority;
+    return m_requestData.m_internalPriority;
 }
 
-void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
+void ResourceRequestBase::setInternalPriority(ResourceLoadPriority priority)
 {
     updateResourceRequest();
 
-    if (m_requestData.m_priority == priority)
+    if (m_requestData.m_internalPriority == priority)
         return;
 
-    m_requestData.m_priority = priority;
+    m_requestData.m_internalPriority = priority;
 
     m_platformRequestUpdated = false;
 }
@@ -772,7 +772,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.allowCookies() != b.allowCookies())
         return false;
     
-    if (a.priority() != b.priority())
+    if (a.internalPriority() != b.internalPriority())
         return false;
 
     if (a.requester() != b.requester())

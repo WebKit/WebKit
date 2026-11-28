@@ -234,7 +234,7 @@ void Coder<WebCore::ResourceRequest>::encodeForPersistence(Encoder& encoder, con
     encoder << instance.allowCookies();
     encoder << instance.sameSiteDisposition();
     encoder << instance.isTopSite();
-    encoder << instance.priority();
+    encoder << instance.internalPriority();
     encoder << instance.requester();
     encoder << instance.isAppInitiated();
 }
@@ -317,7 +317,7 @@ std::optional<WebCore::ResourceRequest> Coder<WebCore::ResourceRequest>::decodeF
     request.setAllowCookies(*allowCookies);
     request.setSameSiteDisposition(*sameSiteDisposition);
     request.setIsTopSite(*isTopSite);
-    request.setPriority(*priority);
+    request.setInternalPriority(*priority);
     request.setRequester(*requester);
     request.setIsAppInitiated(*isAppInitiated);
     return { request };

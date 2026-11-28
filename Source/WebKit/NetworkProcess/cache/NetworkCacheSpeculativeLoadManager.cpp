@@ -114,7 +114,7 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
             revalidationRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
     }
     
-    revalidationRequest.setPriority(subResourceInfo.priority());
+    revalidationRequest.setInternalPriority(subResourceInfo.priority());
 
     return revalidationRequest;
 }

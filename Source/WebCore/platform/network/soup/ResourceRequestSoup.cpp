@@ -85,7 +85,7 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
 
     GRefPtr soupMessage = adoptGRef(soup_message_new_from_uri(method.ascii().data(), uri.get()));
 
-    soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(priority()));
+    soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(internalPriority()));
 
     updateSoupMessageHeaders(soup_message_get_request_headers(soupMessage.get()));
 
@@ -193,7 +193,7 @@ GRefPtr<GUri> ResourceRequest::createSoupURI() const
 void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {
     // These are things we don't want willSendRequest delegate to mutate or reset.
-    ResourceLoadPriority oldPriority = priority();
+    auto oldPriority = internalPriority();
     RefPtr<FormData> oldHTTPBody = httpBody();
     bool isHiddenFromInspector = hiddenFromInspector();
     auto oldRequester = requester();
@@ -202,7 +202,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 
     *this = delegateProvidedRequest;
 
-    setPriority(oldPriority);
+    setInternalPriority(oldPriority);
     setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);

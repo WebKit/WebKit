@@ -62,7 +62,7 @@ void NetworkLoadScheduler::HostContext::schedule(NetworkLoad& load)
 {
     auto startImmediately = [&] {
         auto& request = load.currentRequest();
-        if (request.priority() > WebCore::ResourceLoadPriority::Low)
+        if (request.internalPriority() > WebCore::ResourceLoadPriority::Low)
             return true;
         
         if (request.isConditional())
@@ -96,7 +96,7 @@ void NetworkLoadScheduler::HostContext::unschedule(NetworkLoad& load)
 
 void NetworkLoadScheduler::HostContext::prioritize(NetworkLoad& load)
 {
-    auto priority = load.parameters().request.priority();
+    auto priority = load.parameters().request.internalPriority();
     load.reprioritizeRequest(++priority);
 
     if (!m_pendingLoads.remove(load))

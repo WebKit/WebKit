@@ -70,7 +70,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     RetainPtr<CFURLRequestRef> urlRequest = AVCFAssetResourceLoadingRequestGetURLRequest(m_avRequest.get());
 
     ResourceRequest resourceRequest(urlRequest.get());
-    resourceRequest.setPriority(ResourceLoadPriority::Low);
+    resourceRequest.setInternalPriority(ResourceLoadPriority::Low);
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
     CachedResourceRequest request(WTF::move(resourceRequest), ResourceLoaderOptions(

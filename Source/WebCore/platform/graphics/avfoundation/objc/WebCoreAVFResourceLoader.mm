@@ -350,7 +350,7 @@ void WebCoreAVFResourceLoader::startLoading()
     RetainPtr<NSURLRequest> nsRequest = [m_avRequest request];
 
     ResourceRequest request(nsRequest.get());
-    request.setPriority(ResourceLoadPriority::Low);
+    request.setInternalPriority(ResourceLoadPriority::Low);
 
     m_loadStartTime = MonotonicTime::now();
 
