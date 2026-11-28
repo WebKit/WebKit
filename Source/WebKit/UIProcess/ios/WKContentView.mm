@@ -52,6 +52,7 @@
 #import "WKAPICast.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKInspectorHighlightView.h"
+#import "WKPickerPresenter.h"
 #import "WKPreferencesInternal.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKVisibilityPropagationView.h"
@@ -295,6 +296,8 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     [_rootContentView layer].masksToBounds = NO;
     [_rootContentView layer].anchorPoint = CGPointZero;
     [_fixedClippingView addSubview:_rootContentView.get()];
+
+    _pickerPresenter = adoptNS([[WKPickerPresenter alloc] initWithContentView:self]);
 
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LazyGestureRecognizerInstallation))
         [self setUpInteraction];

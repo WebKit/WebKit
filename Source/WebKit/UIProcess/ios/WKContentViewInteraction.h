@@ -51,14 +51,11 @@
 #import "WKTextAnimationManagerIOS.h"
 #import "WKTextSelectionRect.h"
 #import <WebKit/WKActionSheetAssistant.h>
-#import <WebKit/WKAirPlayRoutePicker.h>
-#import <WebKit/WKContactPicker.h>
 #import <WebKit/WKDeferringGestureRecognizer.h>
 #import <WebKit/WKFileUploadPanel.h>
 #import <WebKit/WKFormAccessoryView.h>
 #import <WebKit/WKFormPeripheral.h>
 #import <WebKit/WKKeyboardScrollingAnimator.h>
-#import <WebKit/WKShareSheet.h>
 #import <WebKit/WKSyntheticTapGestureRecognizer.h>
 #import <WebKit/WKTouchActionGestureRecognizer.h>
 #import <WebKit/WKTouchEventsGestureRecognizer.h>
@@ -153,6 +150,7 @@ enum class PickerDismissalReason : uint8_t;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKImageAnalysisGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class WKPickerPresenter;
 @class WKSelectPicker;
 @class WKTargetedPreviewContainer;
 @class WKTextInteractionWrapper;
@@ -161,10 +159,6 @@ enum class PickerDismissalReason : uint8_t;
 
 @class WKTextAnimationManager;
 @class WKTextEffectManager;
-
-#if ENABLE(WEB_AUTHN)
-@class WKDigitalCredentialsPicker;
-#endif
 
 #if !PLATFORM(WATCHOS)
 @class WKDateTimeInputControl;
@@ -438,21 +432,8 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKTargetedPreviewContainer> _dropPreviewContainerView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
-#if ENABLE(AIRPLAY_PICKER)
-    RetainPtr<WKAirPlayRoutePicker> _airPlayRoutePicker;
-#endif
     RetainPtr<WKFormInputSession> _formInputSession;
-    RetainPtr<WKFileUploadPanel> _fileUploadPanel;
-    std::optional<WebKit::FrameInfoData> _frameInfoForFileUploadPanel;
-#if HAVE(SHARE_SHEET_UI)
-    RetainPtr<WKShareSheet> _shareSheet;
-#endif
-#if HAVE(CONTACTSUI)
-    RetainPtr<WKContactPicker> _contactPicker;
-#endif
-#if ENABLE(WEB_AUTHN)
-    RetainPtr<WKDigitalCredentialsPicker> _digitalCredentialsPicker;
-#endif
+    RetainPtr<WKPickerPresenter> _pickerPresenter;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
     RetainPtr<UIGestureRecognizer> _previewSecondaryGestureRecognizer;
     Vector<bool> _focusStateStack;
@@ -699,13 +680,7 @@ struct ImageAnalysisContextMenuActionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextInput, WKFormAccessoryViewDelegate, WKActionSheetAssistantDelegate, WKFileUploadPanelDelegate, WKKeyboardScrollViewAnimatorDelegate, WKDeferringGestureRecognizerDelegate, WKTextSelectionRectDelegate
-#if HAVE(CONTACTSUI)
-    , WKContactPickerDelegate
-#endif
-#if HAVE(SHARE_SHEET_UI)
-    , WKShareSheetDelegate
-#endif
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UITextInput, WKFormAccessoryViewDelegate, WKActionSheetAssistantDelegate, WKKeyboardScrollViewAnimatorDelegate, WKDeferringGestureRecognizerDelegate, WKTextSelectionRectDelegate
 #if ENABLE(DRAG_SUPPORT)
     , UIDropInteractionDelegate
 #endif

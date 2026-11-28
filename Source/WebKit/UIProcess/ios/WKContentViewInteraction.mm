@@ -74,6 +74,7 @@
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
+#import "WKPickerPresenter.h"
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
@@ -210,10 +211,6 @@
 
 #if HAVE(AVKIT)
 #import <pal/spi/cocoa/AVKitSPI.h>
-#endif
-
-#if ENABLE(WEB_AUTHN)
-#import "WKDigitalCredentialsPicker.h"
 #endif
 
 #if ENABLE(WRITING_TOOLS)
@@ -2095,7 +2092,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // If the file upload panel kept the keyboard up for the menu and then resigned when a picker was presented,
         // becoming first responder again brings the keyboard back for the focused element without going through
         // -_elementDidFocus:, so reveal the element once the keyboard has shown so that it does not overlap the content.
-        if (!_revealFocusedElementDeferrer && [_fileUploadPanel didDeferResigningFirstResponderUntilPickerIsPresented])
+        if (!_revealFocusedElementDeferrer && [protect([_pickerPresenter fileUploadPanel]) didDeferResigningFirstResponderUntilPickerIsPresented])
             _revealFocusedElementDeferrer = WebKit::RevealFocusedElementDeferrer::create(self, WebKit::RevealFocusedElementDeferralReason::KeyboardDidShow);
 
         if (self._shouldActivateSelectionAfterBecomingFirstResponder) {
@@ -2907,7 +2904,7 @@ static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const Re
     });
 
 #if USE(UICONTEXTMENU)
-    [_fileUploadPanel repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::No];
+    [protect([_pickerPresenter fileUploadPanel]) repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::No];
 #endif
 }
 
@@ -5017,7 +5014,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _keyboardDidRequestDismissal = YES;
 
 #if USE(UICONTEXTMENU)
-    [_fileUploadPanel repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::Yes];
+    [protect([_pickerPresenter fileUploadPanel]) repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::Yes];
 #endif
 }
 
@@ -7911,15 +7908,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (NSArray<NSString *> *)filePickerAcceptedTypeIdentifiers
 {
-    if (!_fileUploadPanel)
-        return @[];
-
-    return [_fileUploadPanel acceptedTypeIdentifiers];
+    return [_pickerPresenter filePickerAcceptedTypeIdentifiers];
 }
 
 - (void)dismissFilePicker
 {
-    [_fileUploadPanel dismissIfNeededWithReason:WebKit::PickerDismissalReason::Testing];
+    [_pickerPresenter dismissFilePicker];
 }
 
 - (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator
@@ -9858,65 +9852,17 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
 {
-#if ENABLE(AIRPLAY_PICKER)
-    if (!_airPlayRoutePicker)
-        _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] init]);
-    [_airPlayRoutePicker showFromView:self routeSharingPolicy:routeSharingPolicy routingContextUID:routingContextUID hasVideo:hasVideo];
-#endif
+    [_pickerPresenter showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:routeSharingPolicy routingContextUID:routingContextUID];
 }
 
 - (BOOL)_showRunOpenPanel:(API::OpenPanelParameters*)parameters frameInfo:(const WebKit::FrameInfoData&)frameInfo resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener
 {
-    // The panel still showing may belong to a frame whose process has exited.
-    if (_fileUploadPanel)
-        return NO;
-
-    _frameInfoForFileUploadPanel = frameInfo;
-    _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
-    [_fileUploadPanel setDelegate:self];
-    [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
-    return YES;
+    return [_pickerPresenter showFileUploadPanelWithParameters:parameters frameInfo:frameInfo resultListener:listener];
 }
-
-- (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
-{
-    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
-
-    if ([self window] && ![[self window] firstResponder])
-        [self becomeFirstResponder];
-
-    [_fileUploadPanel setDelegate:nil];
-    _fileUploadPanel = nil;
-}
-
-- (BOOL)fileUploadPanelDestinationIsManaged:(WKFileUploadPanel *)fileUploadPanel
-{
-    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
-
-    auto webView = _webView.get();
-    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([webView UIDelegate]);
-    return [uiDelegate respondsToSelector:@selector(_webView:fileUploadPanelContentIsManagedWithInitiatingFrame:)]
-        && [uiDelegate _webView:webView.get() fileUploadPanelContentIsManagedWithInitiatingFrame:_frameInfoForFileUploadPanel ? wrapper(API::FrameInfo::create(*std::exchange(_frameInfoForFileUploadPanel, std::nullopt))).get() : nil];
-}
-
-#if HAVE(PHOTOS_UI)
-- (BOOL)fileUploadPanelPhotoPickerPrefersOriginalImageFormat:(WKFileUploadPanel *)fileUploadPanel
-{
-    ASSERT(_fileUploadPanel.get() == fileUploadPanel);
-    return protect(_page->preferences())->photoPickerPrefersOriginalImageFormat();
-}
-#endif
 
 - (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
-#if HAVE(SHARE_SHEET_UI)
-    if (_shareSheet)
-        [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
-
-    _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:self.webView]);
-    [_shareSheet setDelegate:self];
-
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+#if HAVE(SHARE_SHEET_UI) && HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     if (!rect) {
         if (auto lastLocation = [_mouseInteraction lastLocation]) {
             auto hoverLocationInWebView = [self convertPoint:*lastLocation toView:self.webView];
@@ -9924,94 +9870,30 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         }
     }
 #endif
-    
-    [_shareSheet presentWithParameters:data inRect:rect completionHandler:WTF::move(completionHandler)];
-#endif // HAVE(SHARE_SHEET_UI)
+
+    [_pickerPresenter showShareSheet:data inRect:rect completionHandler:WTF::move(completionHandler)];
 }
-
-#if HAVE(SHARE_SHEET_UI)
-
-- (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet
-{
-    ASSERT(_shareSheet == shareSheet);
-
-    [_shareSheet setDelegate:nil];
-    _shareSheet = nil;
-}
-
-- (void)shareSheet:(WKShareSheet *)shareSheet willShowActivityItems:(NSArray *)activityItems
-{
-    ASSERT(_shareSheet == shareSheet);
-
-    RetainPtr uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView.get() UIDelegate]);
-    if ([uiDelegate respondsToSelector:@selector(_webView:willShareActivityItems:)])
-        [uiDelegate _webView:self.webView willShareActivityItems:activityItems];
-}
-
-#endif // HAVE(SHARE_SHEET_UI)
 
 #if ENABLE(WEB_AUTHN)
 - (void)_showDigitalCredentialsChooser:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler
 {
-    _digitalCredentialsPicker = adoptNS([[WKDigitalCredentialsPicker alloc] initWithView:self.webView page:_page.get()]);
-    [_digitalCredentialsPicker presentWithRequestData:requestData completionHandler:WTF::move(completionHandler)];
+    [_pickerPresenter showDigitalCredentialsChooser:requestData completionHandler:WTF::move(completionHandler)];
 }
 
 - (void)_dismissDigitalCredentialsChooser:(WTF::CompletionHandler<void(bool)>&&)completionHandler
 {
-    if (!_digitalCredentialsPicker) {
-        LOG(DigitalCredentials, "Digital credentials chooser is not presented.");
-        completionHandler(false);
-        return;
-    }
-    [_digitalCredentialsPicker dismissWithCompletionHandler:WTF::move(completionHandler)];
+    [_pickerPresenter dismissDigitalCredentialsChooser:WTF::move(completionHandler)];
 }
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)_showContactPicker:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
 {
-#if HAVE(CONTACTSUI)
-    _contactPicker = adoptNS([[WKContactPicker alloc] initWithView:self.webView]);
-    [_contactPicker setDelegate:self];
-    [_contactPicker presentWithRequestData:requestData completionHandler:WTF::move(completionHandler)];
-#else
-    completionHandler(std::nullopt);
-#endif
+    [_pickerPresenter showContactPicker:requestData completionHandler:WTF::move(completionHandler)];
 }
-
-#if HAVE(CONTACTSUI)
-- (void)contactPickerDidPresent:(WKContactPicker *)contactPicker
-{
-    ASSERT(_contactPicker == contactPicker);
-
-    [_webView.get() _didPresentContactPicker];
-}
-
-- (void)contactPickerDidDismiss:(WKContactPicker *)contactPicker
-{
-    ASSERT(_contactPicker == contactPicker);
-
-    [_contactPicker setDelegate:nil];
-    _contactPicker = nil;
-
-    [_webView.get() _didDismissContactPicker];
-}
-#endif
 
 - (void)dismissPickersIfNeededWithReason:(WebKit::PickerDismissalReason)reason
 {
-    if ([_fileUploadPanel dismissIfNeededWithReason:reason])
-        _fileUploadPanel = nil;
-
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if ([_shareSheet dismissIfNeededWithReason:reason])
-        _shareSheet = nil;
-#endif
-
-#if HAVE(CONTACTSUI)
-    if ([_contactPicker dismissIfNeededWithReason:reason])
-        _contactPicker = nil;
-#endif
+    [_pickerPresenter dismissPickersIfNeededWithReason:reason];
 }
 
 #if PLATFORM(WATCHOS)
@@ -12066,7 +11948,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         return;
 #endif
     // and for the file upload panel...
-    if (_fileUploadPanel)
+    if ([_pickerPresenter fileUploadPanel])
         return;
 
     // and for the date/time picker.
@@ -14888,9 +14770,10 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
     if ([userInterfaceItem isEqualToString:@"fileUploadPanelMenu"]) {
-        if (!_fileUploadPanel)
+        RetainPtr fileUploadPanel = [_pickerPresenter fileUploadPanel];
+        if (!fileUploadPanel)
             return @{ userInterfaceItem: @[] };
-        return @{ userInterfaceItem: [_fileUploadPanel currentAvailableActionTitles] };
+        return @{ userInterfaceItem: [fileUploadPanel currentAvailableActionTitles] };
     }
 
     if ([userInterfaceItem isEqualToString:@"selectMenu"]) {
@@ -14904,9 +14787,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts
 {
-#if HAVE(CONTACTSUI)
-    [_contactPicker dismissWithContacts:contacts];
-#endif
+    [_pickerPresenter dismissContactPickerWithContacts:contacts];
 }
 
 #if ENABLE(MODEL_PROCESS)

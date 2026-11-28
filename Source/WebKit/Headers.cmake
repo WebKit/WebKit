@@ -692,6 +692,7 @@ set(_webkit_ios_headers
     UIProcess/ios/WKMouseInteraction.h
     UIProcess/ios/WKPageHostedPortalView.h
     UIProcess/ios/WKPasswordView.h
+    UIProcess/ios/WKPickerPresenter.h
     UIProcess/ios/WKPortalVolumetricSceneController.h
     UIProcess/ios/WKScrollView.h
     UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.h
