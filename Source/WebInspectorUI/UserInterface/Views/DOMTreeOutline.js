@@ -312,6 +312,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             usingLocalDOMNode: this._usingLocalDOMNode,
             excludeRevealElement: this._excludeRevealElementContextMenu,
             copySubMenu: subMenus.copy,
+            popoverDelegate: treeElement,
             popoverTargetElement: treeElement.statusImageElement,
         };
 
