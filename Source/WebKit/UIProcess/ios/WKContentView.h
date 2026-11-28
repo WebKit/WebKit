@@ -83,6 +83,10 @@ using LayerHostingContextID = uint32_t;
 - (CGRect)_fixedClippingViewBoundsForTesting;
 - (NSArray<NSNumber *> *)_processIdentifiersWithVisibilityPropagationForTesting;
 
+#if HAVE(UIVIEW_RESERVED_REGION)
+- (void)_setViewportFoldRectsForTesting:(NSArray<NSValue *> *)foldRects;
+#endif
+
 - (void)didFinishScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
