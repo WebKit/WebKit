@@ -124,6 +124,9 @@ struct SiteIsolationPolicyDecisionTests {
 
     // A decision for an iframe of the document the main frame navigated away from must not join a process to the page
     // that replaced it, or load anything.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+    #endif
     @Test(arguments: MainFrameNavigation.allCases, [true, false])
     func childFrameDecisionAfterMainFrameNavigatesAwayFromDocumentIsIgnored(
         mainFrameNavigation: MainFrameNavigation,
@@ -200,6 +203,9 @@ struct SiteIsolationPolicyDecisionTests {
     // A decision for an iframe of a document the main frame navigated away from must not choose a process either when a
     // window that shares the group keeps the group alive, and the window can still load the iframe's destination in an
     // iframe.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+    #endif
     @Test(arguments: [true, false])
     func childFrameDecisionAfterMainFrameNavigatesAwayFromDocumentInOpenedWindow(mainFrameLeavesGroup: Bool) async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
@@ -360,6 +366,9 @@ struct SiteIsolationPolicyDecisionTests {
         .remote(children: [.local("https://webkit.org")]),
     ]
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func configuration(
         _ server: HTTPServer.Configuration,
         backForwardCacheEnabled: Bool
@@ -415,6 +424,9 @@ private final class HeldNavigationActionDecisions {
 /// - Parameter processPool: The process pool.
 /// - Returns: The identifiers of the prewarmed processes.
 /// - Throws: ``ConditionTimedOut`` if the process pool has no launched prewarmed process.
+#if hasAttribute(diagnose)
+@diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+#endif
 @MainActor
 private func stablePrewarmedProcessIdentifiers(of processPool: WKProcessPool) async throws -> Set<NSNumber> {
     processPool._warmInitialProcess()

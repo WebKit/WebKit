@@ -238,11 +238,18 @@ extension WKSeparatedImageView {
         return toggleView
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Keeps UIScreen.displayLink for compatibility")
+    #endif
+    private func makeDisplayLink(for screen: UIScreen, target: DisplayLinkTarget) -> CADisplayLink? {
+        screen.displayLink(withTarget: target, selector: #selector(DisplayLinkTarget.handle(_:)))
+    }
+
     func nextDisplayLink() async {
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             let target = DisplayLinkTarget(continuation)
             guard let screen = window?.windowScene?.screen,
-                let link = screen.displayLink(withTarget: target, selector: #selector(DisplayLinkTarget.handle(_:)))
+                let link = makeDisplayLink(for: screen, target: target)
             else {
                 continuation.resume()
                 return

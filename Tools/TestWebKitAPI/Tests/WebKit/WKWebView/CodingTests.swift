@@ -50,7 +50,9 @@ struct CodingTests {
         let b = try encodeAndDecode(a)
 
         #expect(a.minimumFontSize == b.minimumFontSize)
-        #expect(a.javaScriptEnabled == b.javaScriptEnabled)
+        let aJavaScriptEnabled = a.javaScriptEnabled
+        let bJavaScriptEnabled = b.javaScriptEnabled
+        #expect(aJavaScriptEnabled == bJavaScriptEnabled)
         #expect(a.javaScriptCanOpenWindowsAutomatically == b.javaScriptCanOpenWindowsAutomatically)
         #expect(a.shouldPrintBackgrounds == b.shouldPrintBackgrounds)
         #expect(a.tabFocusesLinks == b.tabFocusesLinks)
@@ -61,7 +63,8 @@ struct CodingTests {
     #endif
     @Test
     func wkProcessPoolShared() throws {
-        let a = try #require(WKProcessPool._shared())
+        let sharedPool = WKProcessPool._shared()
+        let a = try #require(sharedPool)
         let b = try encodeAndDecode(a)
 
         #expect(a === b)
@@ -73,7 +76,8 @@ struct CodingTests {
     @Test
     func wkProcessPool() throws {
         let pool = try encodeAndDecode(WKProcessPool())
-        #expect(pool !== WKProcessPool._shared())
+        let sharedPool = WKProcessPool._shared()
+        #expect(pool !== sharedPool)
     }
 
     @Test
@@ -90,6 +94,9 @@ struct CodingTests {
         #expect(!store.isPersistent)
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Tests coding of deprecated iOS properties")
+    #endif
     @Test
     func wkWebViewConfiguration() throws {
         let a = WKWebViewConfiguration()
@@ -116,8 +123,12 @@ struct CodingTests {
         #if WTF_PLATFORM_IOS_FAMILY
         #expect(a.dataDetectorTypes == b.dataDetectorTypes)
         #expect(a.allowsInlineMediaPlayback == b.allowsInlineMediaPlayback)
-        #expect(a.requiresUserActionForMediaPlayback == b.requiresUserActionForMediaPlayback)
-        #expect(a.selectionGranularity == b.selectionGranularity)
+        let aRequiresUserActionForMediaPlayback = a.requiresUserActionForMediaPlayback
+        let bRequiresUserActionForMediaPlayback = b.requiresUserActionForMediaPlayback
+        let aSelectionGranularity = a.selectionGranularity
+        let bSelectionGranularity = b.selectionGranularity
+        #expect(aRequiresUserActionForMediaPlayback == bRequiresUserActionForMediaPlayback)
+        #expect(aSelectionGranularity == bSelectionGranularity)
         #expect(a.allowsPictureInPictureMediaPlayback == b.allowsPictureInPictureMediaPlayback)
         #endif // WTF_PLATFORM_IOS_FAMILY
     }
@@ -181,7 +192,9 @@ struct CodingTests {
         let a = aView.configuration
         let b = bView.configuration
 
-        #expect(a.processPool === b.processPool)
+        let aProcessPool = a.processPool
+        let bProcessPool = b.processPool
+        #expect(aProcessPool === bProcessPool)
         #expect(a.preferences === b.preferences)
         #expect(a.userContentController === b.userContentController)
         #expect(a.websiteDataStore === b.websiteDataStore)

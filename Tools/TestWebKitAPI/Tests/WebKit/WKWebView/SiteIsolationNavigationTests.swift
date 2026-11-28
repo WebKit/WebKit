@@ -143,7 +143,8 @@ struct SiteIsolationNavigationTests {
             let processPoolConfiguration = _WKProcessPoolConfiguration()
             processPoolConfiguration.pageCacheEnabled = false
             let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
-            configuration.processPool = try #require(WKProcessPool._processPool(with: processPoolConfiguration))
+            let processPool = WKProcessPool._processPool(with: processPoolConfiguration)
+            configuration.processPool = try #require(processPool)
             let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
 
             webView.load(URLRequest(url: try #require(URL(string: "https://example.com/example"))))

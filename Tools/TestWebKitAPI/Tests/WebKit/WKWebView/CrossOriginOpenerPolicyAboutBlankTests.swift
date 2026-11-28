@@ -230,6 +230,9 @@ struct CrossOriginOpenerPolicyAboutBlankTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func makeWebView(
         server: HTTPServer.Configuration,
         siteIsolationEnabled: Bool

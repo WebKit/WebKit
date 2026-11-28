@@ -38,6 +38,9 @@ struct ProcessSwapCOOPProcessReuseTests {
     // The back/forward cache or the process cache keeps a process of site2.example.com. Navigations to a COOP page of
     // site1.example.com in a second tab must not continue in it. Such a swap used to need another swap, again to that
     // process, so the navigation never finished (https://bugs.webkit.org/show_bug.cgi?id=293321).
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test(arguments: [false, true], [false, true])
     func navigationsToCOOPPageInSecondTabDoNotUseProcessOfSameSiteOrigin(
         siteIsolationEnabled: Bool,

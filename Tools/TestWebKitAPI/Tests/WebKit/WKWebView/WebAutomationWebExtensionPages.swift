@@ -260,7 +260,8 @@ struct WebAutomationWebExtensionPagesTests {
         let context = try #require(manager.context)
         let fixture = SessionFixture(extensionContext: context)
 
-        let processPool = try #require(context._backgroundWebView?.configuration.processPool)
+        let backgroundProcessPool = context._backgroundWebView?.configuration.processPool
+        let processPool = try #require(backgroundProcessPool)
         processPool._setAutomationSession(fixture.session)
         defer { processPool._setAutomationSession(nil) }
 

@@ -387,7 +387,7 @@ extension WKSLinearMediaPlayer {
             "\(#function)\(self.logIdentifier, privacy: .public): spatialVideoMetadata; making peculiar spatial entity"
         )
 
-        swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .immersive : .portal
+        swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .full : .portal
         // FIXME (147782145): Define a clang module for XPC to be used in Public SDK builds
         #if USE_APPLE_INTERNAL_SDK && canImport(XPC)
         swiftOnlyData.videoReceiverEndpointObserver = swiftOnlyData.peculiarEntity?.videoReceiverEndpointPublisher

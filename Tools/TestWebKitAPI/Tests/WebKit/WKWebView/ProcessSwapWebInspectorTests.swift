@@ -116,9 +116,9 @@ struct ProcessSwapWebInspectorTests {
         try await server.run { serverConfiguration in
             let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
             configuration.processPool = .processSwapping(backForwardCacheEnabled: false)
-            #expect(configuration.processPool._processCacheCapacity() > 0)
-            configuration.preferences._developerExtrasEnabled = true
             let processPool = configuration.processPool
+            #expect(processPool._processCacheCapacity() > 0)
+            configuration.preferences._developerExtrasEnabled = true
             let (webView, navigationDelegate) = webViewAndDelegate(
                 configuration: configuration,
                 frame: CGRect(x: 0, y: 0, width: 800, height: 600),

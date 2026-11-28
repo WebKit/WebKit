@@ -38,6 +38,9 @@ import struct Swift.String
 
 @MainActor
 struct ProcessSwapBackForwardTests {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func navigateBackAndForwardAcrossCrossOriginIsolationUsesBackForwardCache() async throws {
         let pageshowScript = "<script>addEventListener('pageshow', event => { window.persisted = event.persisted })</script>"
@@ -89,6 +92,9 @@ struct ProcessSwapBackForwardTests {
     }
 
     // A control: going back across cross-origin isolation still uses a new process when it turns on Lockdown Mode.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func navigateBackAcrossCrossOriginIsolationIntoLockdownModeUsesNewProcess() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
@@ -135,6 +141,9 @@ struct ProcessSwapBackForwardTests {
 
     // Going back in Lockdown Mode doesn't restore a page into its process without Lockdown Mode, even when the process
     // it leaves has Lockdown Mode.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test(arguments: [false, true])
     func navigateBackInLockdownModeAvoidsProcessWithoutLockdownMode(acrossCrossOriginIsolation: Bool) async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
@@ -186,6 +195,9 @@ struct ProcessSwapBackForwardTests {
 
     // A client redirect evicts the page in the in-process back/forward cache without telling the UI process, and the
     // process can then enter the process cache. Going back to that item must not use the cached process.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func inProcessBackForwardCacheProcessInWebProcessCache() async throws {
         var server = try HTTPServer(protocol: .https) {
@@ -241,6 +253,9 @@ struct ProcessSwapBackForwardTests {
 
     // Two tabs share a process pool and end up with suspended pages in the same process. Restoring one tab's suspended
     // page must not drop the other tab's.
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     @Test
     func crossTabSuspendedPagesInSameProcess() async throws {
         var server = try HTTPServer(protocol: .httpsProxy) {
@@ -323,6 +338,9 @@ struct ProcessSwapBackForwardTests {
         "Cross-Origin-Embedder-Policy": "require-corp",
     ]
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func crossOriginIsolationWebViewAndDelegate(
         server: HTTPServer.Configuration,
         processPool: WKProcessPool

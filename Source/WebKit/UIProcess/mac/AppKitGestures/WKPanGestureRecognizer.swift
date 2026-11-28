@@ -158,6 +158,9 @@ extension WKPanGestureRecognizer {
 
     #if canImport(AppKit, _version: "2759")
     // swift-format-ignore: NoLeadingUnderscores
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses __*Unsafe() until Swift 6.5 is required")
+    #endif
     override func _shouldRecognize(forDelta delta: NSPoint) -> NSPanShouldRecognizeResponse {
         guard let webView, let page = webView._protectedPage().get() else {
             return .fail

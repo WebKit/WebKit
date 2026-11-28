@@ -55,6 +55,9 @@ extension WebKit.VectorBackForwardListItemState: CxxVector {
 }
 
 extension WebKit.WebBackForwardListItem {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Uses __urlUnsafe() until Swift 6.5 is required")
+    #endif
     private borrowing func getUrlCopy() -> WTF.String {
         // Safety: we immediately make a copy of the string before
         // it could be freed or mutated. FIXME(rdar://145054011): remove
@@ -741,7 +744,12 @@ final class WebBackForwardList {
         }
 
         for (i, entry) in entries.enumerated() {
-            if filter.pointee.__convertToBool() && !filter.pointee(entry) {
+            #if compiler(>=6.5) && !SWIFT_WEBKIT_TOOLCHAIN
+            let hasFilter = Bool(fromCxx: filter.pointee)
+            #else
+            let hasFilter = filter.pointee.__convertToBool()
+            #endif
+            if hasFilter && !filter.pointee(entry) {
                 if let stateCurrentIndex = Optional(fromCxx: backForwardListState.currentIndex) {
                     if i <= stateCurrentIndex && stateCurrentIndex != 0 {
                         setOptionalUInt32Value(&backForwardListState.currentIndex, stateCurrentIndex - 1)

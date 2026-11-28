@@ -35,6 +35,9 @@ import struct Swift.String
 
 @MainActor
 struct NavigationResponseProcessSwapTests {
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+    #endif
     @Test(arguments: [false, true])
     func swapToProcessWithResponseInMemoryCache(siteIsolationEnabled: Bool) async throws {
         var server = try Self.makeServer()
@@ -76,6 +79,9 @@ struct NavigationResponseProcessSwapTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses process pool SPI")
+    #endif
     @Test(arguments: [false, true])
     func backForwardSwapToProcessWithResponseInMemoryCache(siteIsolationEnabled: Bool) async throws {
         var server = try Self.makeServer()
@@ -137,11 +143,15 @@ struct NavigationResponseProcessSwapTests {
         }
     }
 
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses a custom process pool")
+    #endif
     private static func makeConfiguration(httpsProxyFor serverConfiguration: HTTPServer.Configuration) throws -> WKWebViewConfiguration {
         let processPoolConfiguration = _WKProcessPoolConfiguration()
         processPoolConfiguration.usesWebProcessCache = true
         let configuration = WKWebViewConfiguration(httpsProxyFor: serverConfiguration)
-        configuration.processPool = try #require(WKProcessPool._processPool(with: processPoolConfiguration))
+        let processPool = WKProcessPool._processPool(with: processPoolConfiguration)
+        configuration.processPool = try #require(processPool)
         // Without Site Isolation, iOS launches a process when a web view is created by default, and the first load of the
         // web view stays in that process instead of taking one from the process cache.
         configuration._delaysWebProcessLaunchUntilFirstLoad = true
