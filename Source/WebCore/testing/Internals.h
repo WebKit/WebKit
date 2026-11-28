@@ -1506,6 +1506,7 @@ class Internals final
     bool validateAV1PerLevelConstraints(const String&, VideoConfiguration&&);
 
     void setCookie(CookieData&&);
+    void deleteCookie(const String& cookieName);
     Vector<CookieData> getCookies() const;
 
     Vector<WebDriverCookieData> webDriverGetCookies(Document&) const;
