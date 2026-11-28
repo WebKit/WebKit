@@ -1940,7 +1940,7 @@ DamageRectangleThreshold:
   category: dom
   humanReadableName: "Damage Rectangle Threshold"
   humanReadableDescription: "Maximum number of damage rectangles to track before damaged regions are unified into their bounding box"
-  condition: ENABLE(DAMAGE_TRACKING)
+  condition: USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
   defaultValue: 4
 
 DataDetectorTypes:
@@ -5247,7 +5247,7 @@ PropagateDamagingInformation:
   category: dom
   humanReadableName: "Propagate Damaging Information"
   humanReadableDescription: "Propagate Damaging Information"
-  condition: ENABLE(DAMAGE_TRACKING)
+  condition: USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
   defaultValue:
     default: false
     WebKit:
@@ -6740,7 +6740,7 @@ UnifyDamagedRegions:
   category: dom
   humanReadableName: "Unify Damaged Regions"
   humanReadableDescription: "Unify Damaged Regions"
-  condition: ENABLE(DAMAGE_TRACKING)
+  condition: USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
   defaultValue:
     default: false
     WebKit:
@@ -6823,7 +6823,7 @@ UseDamagingInformationForCompositing:
   category: dom
   humanReadableName: "Use the Damaging Information to optimize compositing"
   humanReadableDescription: "Use the Damaging Information to optimize compositing"
-  condition: ENABLE(DAMAGE_TRACKING)
+  condition: USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
   defaultValue:
     default: false
     WebKit:

@@ -78,13 +78,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();
-#if ENABLE(DAMAGE_TRACKING)
-        rootLayer.setDamagePropagationEnabled(webPage.corePage()->settings().propagateDamagingInformation());
-        if (webPage.corePage()->settings().propagateDamagingInformation()) {
-            m_damageInGlobalCoordinateSpace = std::make_shared<Damage>(m_webPage.size());
-            rootLayer.setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
-        }
-#endif
         Locker locker { rootLayer.lock() };
         rootLayer.setAnchorPoint(FloatPoint3D(0, 0, 0));
         rootLayer.setSize(m_webPage.size());
@@ -96,18 +89,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     lazyInitialize(m_compositor, ThreadedCompositor::create(*this));
 #else
     lazyInitialize(m_compositor, ThreadedCompositor::create(*this, *this, displayID));
-#endif
-#if ENABLE(DAMAGE_TRACKING)
-    std::optional<OptionSet<ThreadedCompositor::DamagePropagationFlags>> damagePropagationFlags;
-    const auto& settings = webPage.corePage()->settings();
-    if (settings.propagateDamagingInformation()) {
-        damagePropagationFlags = OptionSet<ThreadedCompositor::DamagePropagationFlags> { };
-        if (settings.unifyDamagedRegions())
-            damagePropagationFlags->add(ThreadedCompositor::DamagePropagationFlags::Unified);
-        if (settings.useDamagingInformationForCompositing())
-            damagePropagationFlags->add(ThreadedCompositor::DamagePropagationFlags::UseForCompositing);
-    }
-    m_compositor->setDamagePropagationSettings(damagePropagationFlags, settings.damageRectangleThreshold());
 #endif
     m_layerTreeContext.contextID = m_compositor->surfaceID();
 }
@@ -370,11 +351,6 @@ void LayerTreeHost::backgroundColorDidChange()
 
 void LayerTreeHost::attachLayer(CoordinatedPlatformLayer& layer)
 {
-#if ENABLE(DAMAGE_TRACKING)
-    layer.setDamagePropagationEnabled(webPage().corePage()->settings().propagateDamagingInformation());
-    if (m_damageInGlobalCoordinateSpace)
-        layer.setDamageInGlobalCoordinateSpace(m_damageInGlobalCoordinateSpace);
-#endif
     m_sceneState->addLayer(layer);
 }
 
@@ -553,30 +529,6 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
     }
 
     WTFEndSignpost(this, RenderNextFrame);
-}
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
-void LayerTreeHost::notifyFrameDamageForTesting(Region&& damageRegion)
-{
-    Locker locker { m_frameDamageHistoryForTestingLock };
-    m_frameDamageHistoryForTesting.append(WTF::move(damageRegion));
-}
-
-void LayerTreeHost::resetDamageHistoryForTesting()
-{
-    {
-        Locker locker { m_frameDamageHistoryForTestingLock };
-        m_frameDamageHistoryForTesting.clear();
-    }
-    m_compositor->enableFrameDamageNotificationForTesting();
-}
-
-void LayerTreeHost::foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const Region&)>& callback)
-{
-    Locker locker { m_frameDamageHistoryForTestingLock };
-    for (const auto& region : m_frameDamageHistoryForTesting)
-        callback(region);
 }
 #endif
 

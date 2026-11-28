@@ -97,12 +97,12 @@ public:
 
     std::optional<float> fps() const { return m_fpsCounter.fps.load(); };
 
-#if ENABLE(DAMAGE_TRACKING)
     enum class DamagePropagationFlags : uint8_t {
         Unified = 1 << 0,
         UseForCompositing = 1 << 1
     };
     void setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>>, unsigned rectangleThreshold);
+#if ENABLE(DAMAGE_TESTING)
     void enableFrameDamageNotificationForTesting();
 #endif
 
@@ -135,13 +135,10 @@ private:
     void updateFPSCounterGeometry();
     WebCore::FloatRect fpsCounterRect() const;
     void drawFPSCounter(SkCanvas&);
-#if ENABLE(DAMAGE_TRACKING)
     bool drawsOverlay() const;
-
     WebCore::IntRect takeFPSCounterDamage();
     void recordFrameDamage(WebCore::Damage&&);
     bool damageUsedForCompositing() const;
-#endif
 
     const Ref<WorkQueue> m_workQueue;
     CheckedPtr<LayerTreeHost> m_layerTreeHost;
@@ -196,13 +193,13 @@ private:
         WebCore::IntRect lastDrawnRect;
     } m_fpsCounter;
 
-#if ENABLE(DAMAGE_TRACKING)
     struct {
         std::optional<OptionSet<DamagePropagationFlags>> flags;
         bool showAccumulatedDamageOverlay { false };
+#if ENABLE(DAMAGE_TESTING)
         std::atomic<bool> shouldNotifyFrameDamageForTesting { false };
-    } m_damage;
 #endif
+    } m_damage;
 
     const std::unique_ptr<WebCore::RunLoopObserver> m_didCompositeRunLoopObserver;
 };

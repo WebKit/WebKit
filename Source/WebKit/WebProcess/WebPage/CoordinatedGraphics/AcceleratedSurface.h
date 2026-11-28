@@ -135,7 +135,6 @@ public:
 
     std::optional<SkColor> skiaClearColor(const OptionSet<WebCore::CompositionReason>&);
 
-#if ENABLE(DAMAGE_TRACKING)
     void setDamageUsedForCompositing(bool used) { m_damageTracker.setDamageUsedForCompositing(used); }
     void setFrameDamage(WebCore::Damage&& damage) { m_damageTracker.recordFrameDamage(WTF::move(damage), SwapChainDamageTracker::AccumulateIntoSwapChain::Yes); }
 
@@ -143,7 +142,6 @@ public:
     void setFrameDamageRectangleThreshold(unsigned threshold) { m_damageTracker.setRectangleThreshold(threshold); }
     const std::optional<WebCore::Damage>& frameDamage() const LIFETIME_BOUND { return m_damageTracker.frameDamage(); }
     const std::optional<WebCore::Damage>& renderTargetDamage();
-#endif
 
     void didCreateCompositingRunLoop(WTF::RunLoop&);
     void willDestroyCompositingRunLoop();
@@ -178,9 +176,7 @@ private:
     bool isLegacyWPERenderer() const { return m_swapChain.type() == SwapChain::Type::WPEBackend; }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
     class SwapChainDamageTracker;
-#endif
 
     class RenderTarget {
         WTF_MAKE_TZONE_ALLOCATED(RenderTarget);
@@ -199,7 +195,6 @@ private:
         SkSurface* skiaSurface() const { return m_skiaSurface.get(); }
 
     private:
-#if ENABLE(DAMAGE_TRACKING)
         // The damage record is maintained by SwapChainDamageTracker alone, which is what keeps it meaning
         // everything that changed since this target was last current.
         friend class SwapChainDamageTracker;
@@ -213,7 +208,6 @@ private:
         }
 
         std::optional<WebCore::Damage> m_damage;
-#endif
 
     protected:
         RenderTarget(AcceleratedSurface&, const WebCore::IntSize&);
@@ -386,7 +380,6 @@ private:
         void reset();
         void releaseUnusedBuffers();
 
-#if ENABLE(DAMAGE_TRACKING)
         template<typename Functor> void forEachTarget(NOESCAPE const Functor& functor)
         {
             for (auto& target : m_freeTargets)
@@ -394,7 +387,6 @@ private:
             for (auto& target : m_lockedTargets)
                 functor(*target);
         }
-#endif
 
 #if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
         void setupBufferFormat();
@@ -428,7 +420,6 @@ private:
 #endif
     };
 
-#if ENABLE(DAMAGE_TRACKING)
     class SwapChainDamageTracker {
         WTF_MAKE_NONCOPYABLE(SwapChainDamageTracker);
     public:
@@ -475,7 +466,6 @@ private:
         // damage used for compositing stays fine-grained no matter how many rects the frame has.
         unsigned m_rectangleThreshold { 4 };
     };
-#endif
 
     const WeakRef<WebPage> m_webPage;
     Function<void()> m_frameCompleteHandler;
@@ -493,9 +483,7 @@ private:
     bool m_useExplicitSync { false };
     std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
     RefPtr<WTF::RunLoop> m_compositingRunLoop;
-#if ENABLE(DAMAGE_TRACKING)
     SwapChainDamageTracker m_damageTracker;
-#endif
 };
 
 } // namespace WebKit

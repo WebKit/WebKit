@@ -47,10 +47,7 @@ public:
 private:
     bool initialize();
 
-#if ENABLE(DAMAGE_TRACKING)
     void resetFrameDamage();
-#endif
-
     void addDirtyRect(const WebCore::IntRect&);
     void finishRenderingUpdate();
     void frameComplete();
@@ -69,7 +66,7 @@ private:
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
     void preferredBufferFormatsDidChange() override;
 #endif
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     void resetDamageHistoryForTesting() override;
     void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const override;
 #endif
@@ -86,8 +83,8 @@ private:
     bool m_pendingNotifyFrame { false };
     bool m_isWaitingForFrameComplete { false };
     bool m_shouldRenderFollowupFrame { false };
-#if ENABLE(DAMAGE_TRACKING)
     std::optional<WebCore::Damage> m_frameDamage;
+#if ENABLE(DAMAGE_TESTING)
     std::optional<Vector<WebCore::Region>> m_frameDamageHistoryForTesting;
 #endif
 };

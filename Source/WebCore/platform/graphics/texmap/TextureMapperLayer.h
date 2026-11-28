@@ -118,13 +118,6 @@ public:
 
     void addChild(TextureMapperLayer*);
 
-#if ENABLE(DAMAGE_TRACKING)
-    void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
-    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
-    void setDamage(Damage&&);
-    void collectDamage(TextureMapper&, Damage&);
-#endif
-
     FloatRect effectiveLayerRect() const;
 
 private:
@@ -187,18 +180,6 @@ private:
     void paintBackdrop(TextureMapperPaintOptions&);
     void applyMask(TextureMapperPaintOptions&);
     void collect3DRenderingContextLayers(Vector<TextureMapperLayer*>&);
-
-#if ENABLE(DAMAGE_TRACKING)
-    void collectDamageRecursive(TextureMapperPaintOptions&, Damage&);
-    void collectDamageSelfAndChildren(TextureMapperPaintOptions&, Damage&);
-    void collectDamageSelf(TextureMapperPaintOptions&, Damage&);
-    void collectDamageSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&, Damage&);
-    void collectDamageSelfChildrenFilterAndMask(TextureMapperPaintOptions&, Damage&);
-    void collectDamageFromLayerAboutToBeRemoved(TextureMapperLayer&);
-    NODELETE ALWAYS_INLINE Damage& ensureDamageInLayerCoordinateSpace();
-    inline void damageWholeLayer();
-    void damageWholeLayerIncludingItsRectFromPreviousFrame();
-#endif
 
     bool isVisible() const;
 
@@ -287,15 +268,6 @@ private:
 #endif
     bool m_isBackdrop { false };
     bool m_isReplica { false };
-
-#if ENABLE(DAMAGE_TRACKING)
-    bool m_damagePropagationEnabled { false };
-    bool m_collectDamageDespiteBeingInvisible { false };
-    std::optional<Damage> m_damageInLayerCoordinateSpace;
-    std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
-    FloatRect m_accumulatedOverlapRegionDamage;
-    std::optional<FloatRect> m_previousLayerRectInGlobalCoordinateSpace;
-#endif
 
     struct {
         TransformationMatrix localTransform;

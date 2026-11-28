@@ -88,12 +88,11 @@ ThreadedCompositor::ThreadedCompositor(WebPage& webPage, LayerTreeHost& layerTre
     }));
 
     initializeFPSCounter();
-#if ENABLE(DAMAGE_TRACKING)
+
     if (const auto* showDamageEnvvar = getenv("WEBKIT_SHOW_DAMAGE")) {
         if (auto value = parseInteger<unsigned>(StringView::fromLatin1(showDamageEnvvar)); value && *value)
             m_damage.showAccumulatedDamageOverlay = true;
     }
-#endif
 
     updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
 
@@ -293,7 +292,6 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
     updateSceneAttributes(size, deviceScaleFactor);
 }
 
-#if ENABLE(DAMAGE_TRACKING)
 void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>> flags, unsigned rectangleThreshold)
 {
     m_damage.flags = flags;
@@ -319,15 +317,19 @@ bool ThreadedCompositor::drawsOverlay() const
     return m_damage.showAccumulatedDamageOverlay;
 }
 
+#if ENABLE(DAMAGE_TESTING)
 void ThreadedCompositor::enableFrameDamageNotificationForTesting()
 {
     m_damage.shouldNotifyFrameDamageForTesting = true;
 }
+#endif
 
 void ThreadedCompositor::recordFrameDamage(Damage&& damage)
 {
+#if ENABLE(DAMAGE_TESTING)
     if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
         m_layerTreeHost->notifyFrameDamageForTesting(damage.regionForTesting());
+#endif
 
     // Nothing changed this frame: an empty damage contributes nothing to the targets, since Damage::add()
     // ignores empty damage. Skip it rather than replace the recorded frame damage with an empty one.
@@ -350,7 +352,6 @@ static void drawDamageOverlay(SkCanvas& canvas, const Damage& damage, const IntS
     else
         canvas.drawPaint(paint);
 }
-#endif
 
 void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason>& reasons)
 {
@@ -384,7 +385,6 @@ TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationM
     std::optional<Damage> priorTargetDamage;
     const std::optional<SkColor> clearColor = m_surface->skiaClearColor(reasons);
 
-#if ENABLE(DAMAGE_TRACKING)
     // Also collect for the accumulated-damage overlay, so it works with the compositing feature off.
     if (m_damage.flags || m_damage.showAccumulatedDamageOverlay)
         frameDamage = Damage(size, m_damage.flags && m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
@@ -396,13 +396,11 @@ TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationM
     // Read the target's record before this frame is recorded into it.
     if (damageUsedForCompositing() && !drawsOverlay())
         priorTargetDamage = m_surface->renderTargetDamage();
-#endif
 
     canvas->save();
     const bool hasRunningAnimations = rootLayer.paint(*canvas, frameDamage, priorTargetDamage, clearColor);
     canvas->restore();
 
-#if ENABLE(DAMAGE_TRACKING)
     // Record into every target, so each one repaints this frame's damage the next time it is used.
     if (frameDamage)
         recordFrameDamage(WTF::move(*frameDamage));
@@ -421,7 +419,6 @@ TargetContents ThreadedCompositor::paintToCurrentGLContext(const TransformationM
     // surface changed. Otherwise it may leave the previous frame's overlay on screen.
     if (drawsOverlay())
         m_surface->setFrameDamageForPlatformOnly(Damage(size, Damage::Mode::Full));
-#endif
 
     if (m_fpsCounter.drawsFPS)
         drawFPSCounter(*canvas);
@@ -746,7 +743,6 @@ void ThreadedCompositor::updateFPSCounterGeometry()
     m_fpsCounter.textBaseline = -textBounds.fTop + padding;
 }
 
-#if ENABLE(DAMAGE_TRACKING)
 IntRect ThreadedCompositor::takeFPSCounterDamage()
 {
     // Nothing to repaint on the frames between counts, and drawFPSCounter() redraws the box regardless.
@@ -760,7 +756,6 @@ IntRect ThreadedCompositor::takeFPSCounterDamage()
     damage.unite(std::exchange(m_fpsCounter.lastDrawnRect, damage));
     return damage;
 }
-#endif
 
 void ThreadedCompositor::drawFPSCounter(SkCanvas& canvas)
 {

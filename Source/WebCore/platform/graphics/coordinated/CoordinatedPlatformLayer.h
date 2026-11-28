@@ -116,13 +116,11 @@ public:
 #else
     SkiaCompositingLayer& ensureTarget();
     sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const { return m_threadSafeGrContext; }
-#endif
-    void invalidateTarget();
 
-#if ENABLE(DAMAGE_TRACKING)
     void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
     void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
 #endif
+    void invalidateTarget();
 
     void setPosition(const FloatPoint&) WTF_REQUIRES_LOCK(m_lock);
     void setPositionForScrolling(const FloatPoint&);
@@ -270,11 +268,6 @@ private:
     bool needsBackingStore() const;
     void purgeBackingStores();
 
-#if ENABLE(DAMAGE_TRACKING)
-    void addDamage(Damage&&) WTF_REQUIRES_CAPABILITY(mainThread);
-#endif
-    void damageWholeLayer() REQUIRE_LOCK_OR_MAIN_THREAD;
-
 #if USE(TEXTURE_MAPPER)
     void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
 #else
@@ -283,6 +276,9 @@ private:
     void flushCompositingStateProperties(const OptionSet<CompositionReason>&);
     void flushCompositingStateScrollbarContents(const OptionSet<CompositionReason>&);
     void flushCompositingStateVideoContents(const OptionSet<CompositionReason>&);
+
+    void addDamage(Damage&&) WTF_REQUIRES_CAPABILITY(mainThread);
+    void damageWholeLayer() REQUIRE_LOCK_OR_MAIN_THREAD;
 #endif
 
     enum class Change : uint8_t {
@@ -311,7 +307,7 @@ private:
         ContentsRectClipsDescendants,
         ContentsTiling,
         ContentsVisible,
-#if ENABLE(DAMAGE_TRACKING)
+#if !USE(TEXTURE_MAPPER)
         Damage,
 #endif
         DebugIndicators,
@@ -379,9 +375,7 @@ private:
         Color debugBorderColor;
         float debugBorderWidth { 0 };
         int repaintCount { -1 };
-#if ENABLE(DAMAGE_TRACKING)
         std::optional<Damage> damage;
-#endif
     };
 #endif
 
@@ -444,12 +438,7 @@ private:
     Color m_debugBorderColor WTF_GUARDED_BY_CAPABILITY(mainThread);
     float m_debugBorderWidth WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
     int m_repaintCount WTF_GUARDED_BY_CAPABILITY(mainThread) { -1 };
-#if ENABLE(DAMAGE_TRACKING)
     std::optional<Damage> m_damage WTF_GUARDED_BY_CAPABILITY(mainThread);
-#endif
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
     bool m_damagePropagationEnabled { false };
     std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
 #endif

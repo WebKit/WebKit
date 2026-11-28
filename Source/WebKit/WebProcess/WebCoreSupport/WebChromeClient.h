@@ -639,7 +639,7 @@ private:
 
     void didProgrammaticallyClearTextFormControl(const WebCore::HTMLTextFormControlElement&) final;
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     void resetDamageHistoryForTesting() final;
     void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&& callback) const final;
 #endif

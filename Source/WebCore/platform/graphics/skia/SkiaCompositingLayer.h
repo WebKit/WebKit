@@ -106,14 +106,11 @@ public:
     void setIsBackdropRoot(bool isBackdropRoot) { m_isBackdropRoot = isBackdropRoot; }
     void setChildren(Vector<Ref<SkiaCompositingLayer>>&&);
 
-#if ENABLE(DAMAGE_TRACKING)
     void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
     void addDamage(Damage&&);
-#endif
 
     bool damageWholeLayer()
     {
-#if ENABLE(DAMAGE_TRACKING)
         if (!damagePropagationEnabled() || m_rect.isEmpty())
             return false;
 
@@ -122,9 +119,6 @@ public:
         else
             m_layerDamage->makeFull();
         return true;
-#else
-        return false;
-#endif
     }
 
     void setUseBackingStore(bool, CoordinatedAnimatedBackingStoreClient* = nullptr);
@@ -172,7 +166,6 @@ private:
 
     bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
-#if ENABLE(DAMAGE_TRACKING)
     // Where every layer that has painted last frame and where it is painting now, keyed by an identifier
     // given out on a layer's first paint. The root holds this rather than the layer itself, because the
     // place a layer that leaves the tree used to be still needs a repaint, and the layer may already be
@@ -212,7 +205,6 @@ private:
         uint64_t m_currentFrameID { 0 };
         uint64_t m_lastLayerRectID { 0 };
     };
-#endif
 
     struct FilteredImage {
         sk_sp<SkImage> image;
@@ -222,7 +214,6 @@ private:
 
     // The damage-collecting walk gathers damage and draws nothing. The painting walk is the reverse.
     struct PaintContext {
-#if ENABLE(DAMAGE_TRACKING)
         // What the collecting walk gathers into. Only that walk engages it, which is how the two walks
         // tell themselves apart.
         struct CollectState {
@@ -234,9 +225,9 @@ private:
         std::optional<CollectState> collectState;
 
         bool shouldDraw() const { return !collectState; }
-#endif
-        std::optional<SkiaDamageRegion> compositingDamageRegion;
         const SkiaDamageRegion* damageRegionOrNull() const { return compositingDamageRegion ? &*compositingDamageRegion : nullptr; }
+
+        std::optional<SkiaDamageRegion> compositingDamageRegion;
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
         sk_sp<SkColorFilter> colorFilter;
@@ -280,13 +271,11 @@ private:
     void paintContents(SkCanvas&, PaintContext&);
     void paintDebugBorder(SkCanvas&, PaintContext&);
     void paintRepaintCounter(SkCanvas&, PaintContext&);
-#if ENABLE(DAMAGE_TRACKING)
     void collectFrameDamage(SkCanvas&, PaintContext&);
     void collectBackdropDamage(SkCanvas&, PaintContext&);
     void collectGroupDamage(SkCanvas&, PaintContext&);
     void addGroupDamage(SkCanvas&, PaintContext&, const Vector<IntRect, 1>& overlapRects);
     static void resolveBackdropDamage(const Vector<FloatRect>& backdropRectsInFrame, Damage&);
-#endif
     bool stopPaintingIntoBackdropIfNeeded(PaintContext&);
     void paintSelfAndChildren(SkCanvas&, PaintContext&);
     void paintWithIntermediateSurface(SkCanvas&, PaintContext&, const IntRect&, SkPaint*, NOESCAPE const PaintFunction&);
@@ -308,37 +297,25 @@ private:
         if (member == value)
             return;
         member = std::forward<U>(value);
-#if ENABLE(DAMAGE_TRACKING)
         m_clipGeometryChanged = true;
-#endif
     }
 
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
     enum class ClipAlignment : bool { NotPixelAligned, PixelAligned };
     ClipAlignment clipRectToDevicePixels(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix&);
-#if ENABLE(DAMAGE_TRACKING)
     void collectDescendantClipDamage(const SkCanvas&, PaintContext&, std::optional<ClipAlignment>);
-#endif
 
     enum class IncludesReplica : bool { No, Yes };
     enum class IncludesFilterOutsets : bool { No, Yes };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes, IncludesFilterOutsets = IncludesFilterOutsets::Yes);
 
-    void groupPropertyChanged()
-    {
-#if ENABLE(DAMAGE_TRACKING)
-        m_groupPropertyChanged = true;
-#endif
-    }
-
-#if ENABLE(DAMAGE_TRACKING)
+    void groupPropertyChanged() { m_groupPropertyChanged = true; }
     bool damagePropagationEnabled() const { return m_damagePropagationEnabled; }
     bool hasLayerDamage() const { return m_layerDamage && !m_layerDamage->isEmpty(); }
     bool hasGroupPropertyDamage() const;
     bool hasDamageInSubtree() const;
     void trackLayerRect(PaintContext&, const FloatRect& layerRectInFrame, LayerRectTracker::Coverage, LayerRectTracker::FullyDamaged);
     bool combinedTransformMovedOnScreen() const;
-#endif
 
     struct AnimationsState {
         std::optional<TransformationMatrix> transform;
@@ -429,7 +406,7 @@ private:
         TransformationMatrix combined;
         TransformationMatrix futureCombined;
     } m_transforms;
-#if ENABLE(DAMAGE_TRACKING)
+
     bool m_damagePropagationEnabled { false };
     std::optional<Damage> m_layerDamage;
     const std::unique_ptr<LayerRectTracker> m_layerRectTracker;
@@ -439,7 +416,6 @@ private:
     bool m_groupPropertyChanged { false };
     bool m_clipGeometryChanged { false };
     bool m_movedOnScreen { false };
-#endif
 };
 
 } // namespace WebCore

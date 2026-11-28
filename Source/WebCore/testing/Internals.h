@@ -1789,14 +1789,14 @@ public:
     bool isNetworkInterceptionConfiguredForTesting(const String& url);
     ExceptionOr<void> lowerAllFrameMemoryMonitorLimits();
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     struct FrameDamage {
         unsigned sequenceId { 0 };
         RefPtr<DOMRectReadOnly> bounds;
         Vector<Ref<DOMRectReadOnly>> rects;
     };
     ExceptionOr<Vector<FrameDamage>> getFrameDamageHistory() const;
-#endif // ENABLE(DAMAGE_TRACKING)
+#endif
 
     ExceptionOr<Ref<ReadableStream>> readableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
     ExceptionOr<Ref<WritableStream>> writableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);

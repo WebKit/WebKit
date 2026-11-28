@@ -92,9 +92,6 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, ThreadedDis
     ASSERT(RunLoop::isMain());
 
     initializeFPSCounter();
-#if ENABLE(DAMAGE_TRACKING)
-    m_damage.visualizer = TextureMapperDamageVisualizer::create();
-#endif
 
     const auto& webPage = m_layerTreeHost->webPage();
     updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
@@ -208,23 +205,6 @@ void ThreadedCompositor::setSize(const IntSize& size, float deviceScaleFactor)
     updateSceneAttributes(size, deviceScaleFactor);
 }
 
-#if ENABLE(DAMAGE_TRACKING)
-void ThreadedCompositor::setDamagePropagationSettings(std::optional<OptionSet<DamagePropagationFlags>> flags, unsigned /* rectangleThreshold */)
-{
-    m_damage.flags = flags;
-    if (m_damage.visualizer && m_damage.flags) {
-        // We don't use damage when rendering layers if the visualizer is enabled, because we need to make sure the whole
-        // frame is invalidated in the next paint so that previous damage rects are cleared.
-        m_damage.flags->remove(DamagePropagationFlags::UseForCompositing);
-    }
-}
-
-void ThreadedCompositor::enableFrameDamageNotificationForTesting()
-{
-    m_damage.shouldNotifyFrameDamageForTesting = true;
-}
-#endif
-
 void ThreadedCompositor::updateSceneState()
 {
     if (!m_textureMapper)
@@ -248,54 +228,11 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
     m_textureMapper->beginPainting(m_flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
     m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
 
-#if ENABLE(DAMAGE_TRACKING)
-    std::optional<FloatRoundedRect> rectContainingRegionThatActuallyChanged;
-    currentRootLayer.prepareForPainting(*m_textureMapper);
-    if (m_damage.flags) {
-        Damage frameDamage(size, m_damage.flags->contains(DamagePropagationFlags::Unified) ? Damage::Mode::BoundingBox : Damage::Mode::Rectangles);
-
-        WTFBeginSignpost(this, CollectDamage);
-        currentRootLayer.collectDamage(*m_textureMapper, frameDamage);
-        WTFEndSignpost(this, CollectDamage);
-
-        if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
-            m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.regionForTesting());
-
-        if (!frameDamage.isEmpty())
-            m_surface->setFrameDamage(WTF::move(frameDamage));
-
-        if (m_damage.flags->contains(DamagePropagationFlags::UseForCompositing)) {
-            const auto& damageSinceLastSurfaceUse = m_surface->renderTargetDamage();
-            if (damageSinceLastSurfaceUse && !FloatRect(damageSinceLastSurfaceUse->bounds()).contains(clipRect))
-                rectContainingRegionThatActuallyChanged = FloatRoundedRect(damageSinceLastSurfaceUse->bounds());
-
-            m_textureMapper->setDamage(damageSinceLastSurfaceUse);
-        }
-    }
-
-    if (rectContainingRegionThatActuallyChanged)
-        m_textureMapper->beginClip(TransformationMatrix(), *rectContainingRegionThatActuallyChanged);
-#endif
-
     m_surface->clear({ });
 
     WTFBeginSignpost(this, PaintTextureMapperLayerTree);
     currentRootLayer.paint(*m_textureMapper);
     WTFEndSignpost(this, PaintTextureMapperLayerTree);
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (rectContainingRegionThatActuallyChanged)
-        m_textureMapper->endClip();
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
-    if (m_damage.visualizer) {
-        m_damage.visualizer->paintDamage(*m_textureMapper, m_surface->frameDamage());
-        // When damage visualizer is active, we cannot send the original damage to the platform as in this case
-        // the damage rects visualized previous frame may not get erased if platform actually uses damage.
-        m_surface->setFrameDamage(Damage(size, Damage::Mode::Full));
-    }
-#endif
 
     m_textureMapper->endClip();
     m_textureMapper->endPainting();

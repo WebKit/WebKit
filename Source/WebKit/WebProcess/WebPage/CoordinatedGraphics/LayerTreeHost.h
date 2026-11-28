@@ -45,7 +45,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 #include <WebCore/Region.h>
 #endif
 
@@ -76,7 +76,7 @@ public:
     void willRenderFrame();
     void didRenderFrame();
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     void notifyFrameDamageForTesting(WebCore::Region&&);
 #endif
 
@@ -128,7 +128,7 @@ private:
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
     void preferredBufferFormatsDidChange() override;
 #endif
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     void resetDamageHistoryForTesting() override;
     void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const override;
 #endif
@@ -166,11 +166,11 @@ private:
     WebCore::FloatPoint m_transientZoomOrigin;
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     mutable Lock m_frameDamageHistoryForTestingLock;
     Vector<WebCore::Region> m_frameDamageHistoryForTesting WTF_GUARDED_BY_LOCK(m_frameDamageHistoryForTestingLock);
-    std::shared_ptr<WebCore::Damage> m_damageInGlobalCoordinateSpace;
 #endif
+    std::shared_ptr<WebCore::Damage> m_damageInGlobalCoordinateSpace;
 };
 
 } // namespace WebKit

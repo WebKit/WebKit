@@ -695,7 +695,7 @@ void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
     m_dirtyRegion = m_webPage->bounds();
 }
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
 void DrawingAreaCoordinatedGraphics::resetDamageHistoryForTesting()
 {
     if (m_layerTreeHost)

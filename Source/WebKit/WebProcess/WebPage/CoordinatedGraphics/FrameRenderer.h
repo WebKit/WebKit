@@ -68,7 +68,7 @@ public:
     virtual void preferredBufferFormatsDidChange() { }
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
+#if ENABLE(DAMAGE_TESTING)
     virtual void resetDamageHistoryForTesting() = 0;
     virtual void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&) const = 0;
 #endif

@@ -48,10 +48,6 @@
 #include "ThreadedDisplayRefreshMonitorPlayStation.h"
 #endif
 
-#if ENABLE(DAMAGE_TRACKING)
-#include <WebCore/Region.h>
-#endif
-
 namespace WebCore {
 class CoordinatedTileManager;
 class Damage;
@@ -116,12 +112,6 @@ public:
 #if !HAVE(DISPLAY_LINK)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
-#endif
-
-#if ENABLE(DAMAGE_TRACKING)
-    void notifyFrameDamageForTesting(WebCore::Region&&);
-    void resetDamageHistoryForTesting();
-    void foreachRegionInDamageHistoryForTesting(NOESCAPE const Function<void(const WebCore::Region&)>&);
 #endif
 
 private:
@@ -197,12 +187,6 @@ private:
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 
     uint32_t m_compositionRequestID { 0 };
-
-#if ENABLE(DAMAGE_TRACKING)
-    Lock m_frameDamageHistoryForTestingLock;
-    Vector<WebCore::Region> m_frameDamageHistoryForTesting WTF_GUARDED_BY_LOCK(m_frameDamageHistoryForTestingLock);
-    std::shared_ptr<WebCore::Damage> m_damageInGlobalCoordinateSpace;
-#endif
 };
 
 } // namespace WebKit
