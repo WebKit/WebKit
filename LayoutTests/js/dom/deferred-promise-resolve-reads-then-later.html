@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Resolving a promise from WebIDL does not read "then" synchronously</title>
+<link rel="help" href="https://tc39.es/proposal-thenable-curtailment/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+function installThenGetter(test, target, log)
+{
+    Object.defineProperty(Object.prototype, "then", {
+        configurable: true,
+        get() {
+            if (this === target)
+                log.push("then getter");
+            return undefined;
+        }
+    });
+    test.add_cleanup(() => { delete Object.prototype.then; });
+}
+
+promise_test(async (test) => {
+    const animation = document.body.animate(null, 100000);
+    const finished = animation.finished;
+    const log = [];
+    installThenGetter(test, animation, log);
+
+    animation.finish();
+    log.push("finish returned");
+
+    assert_equals(await finished, animation);
+    assert_equals(log[0], "finish returned", "\"then\" is not read while finish() runs");
+    assert_true(log.includes("then getter"), "\"then\" is read from a microtask");
+}, "Animation.finish() resolving the finished promise with the animation");
+
+promise_test(async (test) => {
+    const name = "x-thenable-curtailment";
+    const whenDefined = customElements.whenDefined(name);
+    class TestElement extends HTMLElement { }
+    const log = [];
+    installThenGetter(test, TestElement, log);
+
+    customElements.define(name, TestElement);
+    log.push("define returned");
+
+    assert_equals(await whenDefined, TestElement);
+    assert_array_equals(log, ["define returned", "then getter"]);
+}, "customElements.define() resolving the whenDefined() promise with the constructor");
+
+promise_test(async (test) => {
+    const name = "x-thenable-curtailment-callable";
+    const whenDefined = customElements.whenDefined(name);
+    class TestElement extends HTMLElement { }
+    const log = [];
+    TestElement.then = function (onFulfilled) {
+        log.push("then called");
+        delete TestElement.then;
+        onFulfilled("from then");
+    };
+
+    customElements.define(name, TestElement);
+    log.push("define returned");
+
+    assert_equals(await whenDefined, "from then");
+    assert_array_equals(log, ["define returned", "then called"]);
+}, "A callable \"then\" is still honored, from a microtask");
+
+</script>
+</body>
+</html>

@@ -1,3 +1,3 @@
 
-PASS Patched then() sees byobRequest after filling all pending pull-into descriptors
+FAIL Patched then() sees byobRequest after filling all pending pull-into descriptors assert_true: patched then() should be called expected true got false
 

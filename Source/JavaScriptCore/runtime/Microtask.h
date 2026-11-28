@@ -50,6 +50,7 @@ using MicrotaskIdentifier = ObjectIdentifier<MicrotaskIdentifierType>;
     macro(PromiseResolveThenableJobWithInternalMicrotaskFast) \
     macro(PromiseResolveThenableJob) \
     macro(PromiseResolveThenableJobWithInternalMicrotask) \
+    macro(PromiseSafeResolveJob) \
     macro(PromiseResolveWithoutHandlerJob) \
     macro(PromiseFulfillWithoutHandlerJob) \
     macro(PromiseRaceResolveJob) \

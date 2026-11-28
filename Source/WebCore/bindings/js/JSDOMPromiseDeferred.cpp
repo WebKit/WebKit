@@ -34,7 +34,6 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromise.h"
-#include "JSExecState.h"
 #include "LocalDOMWindow.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
@@ -99,21 +98,9 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
         return;
     }
 
-    // FIXME: We could have error since any JS call can throw stack-overflow errors.
-    // https://bugs.webkit.org/show_bug.cgi?id=203402
     switch (mode) {
     case ResolveMode::Resolve:
-        {
-            auto& data = threadGlobalDataSingleton();
-            bool shouldSetCurrentState = !data.currentState();
-            if (shouldSetCurrentState)
-                data.setCurrentState(&lexicalGlobalObject);
-
-            deferred()->resolve(&lexicalGlobalObject, vm, resolution);
-
-            if (shouldSetCurrentState)
-                data.setCurrentState(nullptr);
-        }
+        deferred()->safeResolve(&lexicalGlobalObject, vm, resolution);
         break;
     case ResolveMode::Reject:
         deferred()->reject(vm, resolution);

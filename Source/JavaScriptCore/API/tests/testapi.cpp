@@ -135,6 +135,7 @@ public:
     void promiseUnhandledRejectionFromUnhandledRejectionCallback();
     void promiseEarlyHandledRejections();
     void promiseDrainDoesNotEatExceptions();
+    void promiseSafeResolveDefersCallbackObjectLookup();
     void topCallFrameAccess();
     void markedJSValueArrayAndGC();
     void classDefinitionWithJSSubclass();
@@ -604,6 +605,39 @@ void TestAPI::promiseDrainDoesNotEatExceptions()
     ScriptResult result = callFunction("(function() { Promise.resolve().then(() => { throw 2; }); throw 1; })");
     check(!result, "function should throw an error");
     check(JSValueIsNumber(context, result.error()) && JSValueToNumber(context, result.error(), nullptr) == 1, "exception payload should have been 1");
+}
+
+void TestAPI::promiseSafeResolveDefersCallbackObjectLookup()
+{
+    static unsigned thenLookups;
+    thenLookups = 0;
+
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.getProperty = [](JSContextRef, JSObjectRef, JSStringRef propertyName, JSValueRef*) -> JSValueRef {
+        if (JSStringIsEqualToUTF8CString(propertyName, "then"))
+            ++thenLookups;
+        return nullptr;
+    };
+    JSClassRef jsClass = JSClassCreate(&definition);
+    JSObjectRef object = JSObjectMake(context, jsClass, nullptr);
+    JSClassRelease(jsClass);
+
+    // Without a "then" somewhere on the prototype chain, resolution proves the object non-thenable from its structures alone.
+    check(!!evaluateScript("Object.prototype.then = 42;"), "installing Object.prototype.then should not throw");
+
+    JSC::JSGlobalObject* globalObject = context;
+    JSC::VM& vm = globalObject->vm();
+    {
+        JSC::JSLockHolder locker(vm);
+        auto* promise = JSC::JSPromise::create(vm, globalObject->promiseStructure());
+        promise->safeResolve(globalObject, vm, toJS(object));
+        check(!thenLookups, "SafePromiseResolve should not call a C API object's getProperty callback synchronously");
+        vm.drainMicrotasks();
+        check(thenLookups == 1, "SafePromiseResolve should look up then on a C API object from a microtask");
+        check(promise->status() == JSC::JSPromise::Status::Fulfilled && promise->result() == toJS(object), "SafePromiseResolve should fulfill with the C API object when its then is not callable");
+    }
+
+    check(!!evaluateScript("delete Object.prototype.then;"), "removing Object.prototype.then should not throw");
 }
 
 void TestAPI::topCallFrameAccess()
@@ -1380,6 +1414,7 @@ int testCAPIViaCpp(const char* filter)
     RUN(promiseUnhandledRejectionFromUnhandledRejectionCallback());
     RUN(promiseDrainDoesNotEatExceptions());
     RUN(promiseEarlyHandledRejections());
+    RUN(promiseSafeResolveDefersCallbackObjectLookup());
     RUN(markedJSValueArrayAndGC());
     RUN(classDefinitionWithJSSubclass());
     RUN(classDefinitionRetainsParentClass());
