@@ -308,12 +308,12 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     if (!options.usingLocalDOMNode) {
         if (domNode.isCustomElement()) {
             contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
-                function didGetFunctionDetails(error, response) {
+                function didGetFunctionDetails(target, error, response) {
                     if (error)
                         return;
 
                     let location = response.location;
-                    let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, WI.mainTarget);
+                    let sourceCode = WI.debuggerManager.scriptForStackTraceIdentifier(location.scriptId, target, {deliveredOnTarget: true});
                     if (!sourceCode)
                         return;
 
@@ -329,7 +329,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                         if (error)
                             return;
                         if (result.type === "function")
-                            remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
+                            remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails.bind(null, remoteObject.target));
                         result.release();
                     });
                     remoteObject.release();

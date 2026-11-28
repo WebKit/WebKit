@@ -1,0 +1,29 @@
+Test that "Jump to Definition" on a custom element shows its definition, in the main frame and in a cross-origin iframe, under Site Isolation.
+
+Custom element in the main frame.
+
+== Running test suite: SiteIsolation.DOM.JumpToDefinition.CustomElement
+-- Running test case: SiteIsolation.DOM.JumpToDefinition.CustomElement.Setup
+PASS: Should find the main frame target.
+PASS: Should find the cross-origin iframe's frame target.
+PASS: The main frame target should not be the page target.
+PASS: Should load the context menu code.
+
+-- Running test case: SiteIsolation.DOM.JumpToDefinition.CustomElement.CrossOriginIFrame
+PASS: The element in the iframe should be a custom element.
+PASS: The context menu should have a Jump to Definition item.
+PASS: Jump to Definition should show a location.
+PASS: The location should be in a script.
+PASS: The script should belong to the frame target that owns the element.
+PASS: The script should define FrameElement.
+PASS: The location should be the line of the constructor.
+
+-- Running test case: SiteIsolation.DOM.JumpToDefinition.CustomElement.MainFrame
+PASS: The element in the main frame should be a custom element.
+PASS: The context menu should have a Jump to Definition item.
+PASS: Jump to Definition should show a location.
+PASS: The location should be in a script.
+PASS: The script should belong to the frame target that owns the element.
+PASS: The script should define MainElement.
+PASS: The location should be the line of the constructor.
+
