@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200">
+  <!-- webkit.org/b/139210: the descendant <tspan textLength="50"> owns its content, so the
+       ancestor <text textLength="100"> governs only the rest (100 - 50 = 50). Both "hello"s render 50px. -->
+  <text x="100" y="100" style="font: 32px sans-serif" textLength="100" lengthAdjust="spacingAndGlyphs">hello<tspan x="100" y="140" textLength="50" lengthAdjust="spacingAndGlyphs">hello</tspan></text>
+</svg>

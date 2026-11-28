@@ -690,22 +690,38 @@ std::pair<float, float> SVGTextLayoutAlgorithm::extent(std::span<const unsigned>
 }
 
 // Procedure "resolve text length", children before parents.
-// "Find the distance delta = 'textLength' computed value − (b − a)."
-// "Find the per-character adjustment δ = delta/n."
 // https://w3c.github.io/svgwg/svg2-draft/text.html#ResolveTextLength
-// FIXME: A resolved descendant node should count as a single typographic character.
 void SVGTextLayoutAlgorithm::applyTextLength()
 {
-    for (auto elementIndex : m_elementsInPostOrder) {
-        auto& element = m_elements[elementIndex];
-        // Text paths apply textLength along the path.
+    // Text paths apply textLength along the path.
+    auto textLengths = WTF::map(m_elements, [](auto& element) -> std::optional<TextLength> {
         if (element.isTextPath || element.start == element.end)
-            continue;
+            return { };
+        return textLength(protect(*element.element));
+    });
 
-        auto elementTextLength = textLength(protect(*element.element));
+    // "Define resolved descendant node as a descendant of node with a valid 'textLength' attribute that is not itself a
+    // descendant node of a descendant node that has a valid 'textLength' attribute."
+    auto resolvedDescendants = [&](unsigned elementIndex) {
+        auto end = m_elements[elementIndex].end;
+        auto descendants = Vector<unsigned, 2> { };
+        for (auto index = elementIndex + 1; index < m_elements.size() && m_elements[index].start < end; ++index) {
+            if (!textLengths[index])
+                continue;
+            descendants.append(index);
+            auto descendantEnd = m_elements[index].end;
+            while (index + 1 < m_elements.size() && m_elements[index + 1].start < descendantEnd)
+                ++index;
+        }
+        return descendants;
+    };
+
+    for (auto elementIndex : m_elementsInPostOrder) {
+        auto& elementTextLength = textLengths[elementIndex];
         if (!elementTextLength)
             continue;
 
+        auto& element = m_elements[elementIndex];
         auto characterIndexes = Vector<unsigned> { };
         for (auto index : m_displayOrder) {
             if (index >= element.start && index < element.end && !m_characters[index].isOnPath)
@@ -720,12 +736,40 @@ void SVGTextLayoutAlgorithm::applyTextLength()
         if (totalLength <= 0)
             continue;
 
+        auto descendants = resolvedDescendants(elementIndex);
+        auto isInResolvedDescendant = Vector<bool, 16>(FillWith { }, characterIndexes.size(), false);
+        // "k is not a character in a resolved descendant node other than the first character"
+        auto startsAdjustmentUnit = Vector<bool, 16>(FillWith { }, characterIndexes.size(), false);
+        auto descendantSeen = Vector<bool, 2>(FillWith { }, descendants.size(), false);
+        for (size_t position = 0; position < characterIndexes.size(); ++position) {
+            auto index = characterIndexes[position];
+            auto descendant = std::ranges::find_if(descendants, [&](auto descendantIndex) {
+                return index >= m_elements[descendantIndex].start && index < m_elements[descendantIndex].end;
+            });
+            auto isInDescendant = descendant != descendants.end();
+            isInResolvedDescendant[position] = isInDescendant;
+            if (!m_characters[index].hasMetrics())
+                continue;
+            if (!isInDescendant) {
+                startsAdjustmentUnit[position] = true;
+                continue;
+            }
+            auto& seen = descendantSeen[descendant - descendants.begin()];
+            startsAdjustmentUnit[position] = !seen;
+            seen = true;
+        }
+
         if (elementTextLength->lengthAdjust == SVGLengthAdjustSpacing) {
-            auto characterCount = typographicCharacterCount(characterIndexes);
-            auto spacing = characterCount > 1 ? (elementTextLength->length - totalLength) / (characterCount - 1) : 0.f;
+            // "Find the distance delta = 'textLength' computed value − (b − a)."
+            // "Find n, the total number of typographic characters in this node including any descendant nodes that are not
+            // resolved descendant nodes or within a resolved descendant node."
+            // "Let n = n + number of resolved descendant nodes − 1."
+            // "Find the per-character adjustment δ = delta/n."
+            auto unitCount = static_cast<unsigned>(std::ranges::count(startsAdjustmentUnit, true));
+            auto spacing = unitCount > 1 ? (elementTextLength->length - totalLength) / (unitCount - 1) : 0.f;
             auto shift = 0.f;
-            for (auto index : characterIndexes) {
-                auto& character = m_characters[index];
+            for (size_t position = 0; position < characterIndexes.size(); ++position) {
+                auto& character = m_characters[characterIndexes[position]];
                 character.isInSpacingTextLength = true;
                 if (!character.hasMetrics())
                     continue;
@@ -733,20 +777,61 @@ void SVGTextLayoutAlgorithm::applyTextLength()
                     character.y += shift;
                 else
                     character.x += shift;
-                shift += spacing;
+                if (startsAdjustmentUnit[position])
+                    shift += spacing;
             }
             continue;
         }
 
         // "Indicates that the advance values are adjusted and the glyphs themselves stretched or compressed in one axis"
         // https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementLengthAdjustAttribute
-        // Positions scale around the start of the element and each glyph stretches in place. Absolute x and y are applied
-        // after this step, so they stay exact.
-        auto scale = elementTextLength->length / totalLength;
-        for (auto index : characterIndexes) {
-            auto& character = m_characters[index];
-            auto& position = m_isVertical ? character.y : character.x;
-            position = start + (position - start) * scale;
+        // "the total advance values for the other content within that ancestor is the difference between the advance value
+        // on that ancestor and the advance value for this element."
+        // https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementTextLengthAttribute
+        // Resolved descendants keep their length and move as a whole. The other positions scale around the start of the
+        // element and each of their glyphs stretches in place. Absolute x and y are applied after this step, so they stay exact.
+        auto resolvedLength = 0.f;
+        auto runStart = std::optional<float> { };
+        for (size_t position = 0; position < characterIndexes.size(); ++position) {
+            auto& character = m_characters[characterIndexes[position]];
+            auto characterPosition = m_isVertical ? character.y : character.x;
+            if (isInResolvedDescendant[position]) {
+                if (!runStart)
+                    runStart = characterPosition;
+                continue;
+            }
+            if (runStart) {
+                resolvedLength += characterPosition - *runStart;
+                runStart = { };
+            }
+        }
+        if (runStart)
+            resolvedLength += end - *runStart;
+
+        auto otherLength = totalLength - resolvedLength;
+        if (otherLength <= 0)
+            continue;
+
+        auto scale = std::max(0.f, (elementTextLength->length - resolvedLength) / otherLength);
+        auto resolvedLengthBefore = 0.f;
+        auto mappedRunStart = 0.f;
+        runStart = { };
+        for (size_t position = 0; position < characterIndexes.size(); ++position) {
+            auto& character = m_characters[characterIndexes[position]];
+            auto& characterPosition = m_isVertical ? character.y : character.x;
+            if (isInResolvedDescendant[position]) {
+                if (!runStart) {
+                    runStart = characterPosition;
+                    mappedRunStart = start + (characterPosition - start - resolvedLengthBefore) * scale + resolvedLengthBefore;
+                }
+                characterPosition = mappedRunStart + (characterPosition - *runStart);
+                continue;
+            }
+            if (runStart) {
+                resolvedLengthBefore += characterPosition - *runStart;
+                runStart = { };
+            }
+            characterPosition = start + (characterPosition - start - resolvedLengthBefore) * scale + resolvedLengthBefore;
             character.lengthAdjustScale *= scale;
         }
     }
