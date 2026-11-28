@@ -300,10 +300,8 @@ Tests/WebKit/WKWebView/ResourceLoadDelegate.mm @nonARC
 Tests/WebKit/WKWebView/ResourceLoadStatistics.mm @nonARC
 Tests/WebKit/WKWebView/ResponsivenessTimer.mm @nonARC
 Tests/WebKit/WKWebView/ResponsivenessTimerDoesntFireEarly.mm @nonARC
-Tests/WebKit/WKWebView/RestoreLocalStorage.mm @nonARC
 Tests/WebKit/WKWebView/RestoreScrollPosition.mm @nonARC
 Tests/WebKit/WKWebView/RestoreSessionStateWithoutNavigation.mm @nonARC
-Tests/WebKit/WKWebView/RestoreSessionStorage.mm @nonARC
 Tests/WebKit/WKWebView/RunOpenPanel.mm @nonARC
 Tests/WebKit/WKWebView/RunScriptAfterDocumentLoad.mm @nonARC
 Tests/WebKit/WKWebView/SafeBrowsing.mm @nonARC
