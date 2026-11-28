@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastBitVector.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SIMDHelpers.h>
@@ -37,6 +38,36 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(BitVector, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BitVector);
+
+BitVector::BitVector(const FastBitVector& other)
+    : m_bitsOrPointer(makeInlineBits(0))
+{
+    constexpr size_t bitsInSourceWord = sizeof(uint32_t) * 8;
+    static_assert(!(bitsInPointer() % bitsInSourceWord));
+
+    // FastBitVector can have garbage in its last word beyond numBits().
+    auto sourceWord = [&](size_t index) -> uint32_t {
+        uint32_t word = other.unsafeWords().word(index);
+        size_t bitsInLastWord = other.numBits() % bitsInSourceWord;
+        if (bitsInLastWord && index == other.arrayLength() - 1)
+            word &= (1U << bitsInLastWord) - 1;
+        return word;
+    };
+
+    // Size this for the highest set bit, not for numBits(), so that we stay inline when possible.
+    size_t numWords = other.arrayLength();
+    while (numWords && !sourceWord(numWords - 1))
+        --numWords;
+    if (!numWords)
+        return;
+    ensureSize(numWords * bitsInSourceWord - std::countl_zero(sourceWord(numWords - 1)));
+
+    auto destination = words();
+    for (size_t i = 0; i < numWords; ++i) {
+        size_t bit = i * bitsInSourceWord;
+        destination[bit / bitsInPointer()] |= static_cast<uintptr_t>(sourceWord(i)) << (bit % bitsInPointer());
+    }
+}
 
 void BitVector::setSlow(const BitVector& other)
 {

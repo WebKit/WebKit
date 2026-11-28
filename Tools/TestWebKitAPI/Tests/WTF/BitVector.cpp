@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/BitVector.h>
 
+#include <wtf/FastBitVector.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
@@ -220,6 +221,38 @@ TEST(WTF_BitVector, FilterOutOfLineWithInline)
     EXPECT_FALSE(large.get(200));
 
     EXPECT_EQ(large.bitCount(), 1u);
+}
+
+TEST(WTF_BitVector, ConstructFromFastBitVector)
+{
+    for (size_t numBits : { 0, 1, 31, 32, 33, 62, 63, 64, 65, 95, 96, 127, 128, 129, 1000 }) {
+        // A stride larger than numBits sets only bit 0.
+        for (size_t stride : { 1, 3, 31, 32, 63, 64, 2000 }) {
+            FastBitVector source(FillWith { }, numBits, false);
+            BitVector expected;
+            for (size_t i = 0; i < numBits; i += stride) {
+                source[i] = true;
+                expected.set(i);
+            }
+
+            BitVector converted(source);
+            EXPECT_EQ(converted.bitCount(), expected.bitCount());
+            EXPECT_TRUE(converted == expected);
+            EXPECT_EQ(converted.hash(), expected.hash());
+            EXPECT_EQ(converted.size(), expected.size());
+        }
+    }
+
+    // setAll() also sets the bits of the last word beyond numBits().
+    FastBitVector full(FillWith { }, 40, true);
+    BitVector converted(full);
+    EXPECT_EQ(converted.bitCount(), 40u);
+    EXPECT_TRUE(converted.get(39));
+    EXPECT_FALSE(converted.get(40));
+
+    FastBitVector empty(FillWith { }, 1000, false);
+    EXPECT_TRUE(BitVector(empty) == BitVector());
+    EXPECT_EQ(BitVector(empty).size(), BitVector().size());
 }
 
 } // namespace TestWebKitAPI

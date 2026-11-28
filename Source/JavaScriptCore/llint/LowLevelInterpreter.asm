@@ -2319,6 +2319,10 @@ llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
 llintSlowPathOp(create_lexical_environment)
+# FIXME: Suspension points with one or two live locals are a few percent slower here than the
+# op_put_to_scope / op_get_from_scope sequences they replace. Add a fast path for inline bit vectors.
+llintSlowPathOp(save_generator_locals)
+llintSlowPathOp(restore_generator_locals)
 llintSlowPathOp(create_direct_arguments)
 llintSlowPathOp(create_scoped_arguments)
 llintSlowPathOp(create_cloned_arguments)

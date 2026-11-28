@@ -723,6 +723,39 @@ LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
     LLINT_RETURN(newScope);
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_save_generator_locals)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpSaveGeneratorLocals>();
+    JSLexicalEnvironment* environment = uncheckedDowncast<JSLexicalEnvironment>(getNonConstantOperand(callFrame, bytecode.m_scope));
+    bool storedCell = false;
+    forEachLiveGeneratorLocal(codeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+        JSValue value = getNonConstantOperand(callFrame, local);
+        storedCell |= value && value.isCell();
+        environment->variableAt(offset).setWithoutWriteBarrier(value);
+    });
+    forEachClearedGeneratorSlot(codeBlock, bytecode, [&](ScopeOffset offset) {
+        environment->variableAt(offset).setWithoutWriteBarrier(jsUndefined());
+    });
+    if (storedCell)
+        vm.writeBarrier(environment);
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_restore_generator_locals)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpRestoreGeneratorLocals>();
+    JSLexicalEnvironment* environment = uncheckedDowncast<JSLexicalEnvironment>(getNonConstantOperand(callFrame, bytecode.m_scope));
+    unsigned valueProfile = bytecode.m_valueProfile;
+    forEachLiveGeneratorLocal(codeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+        JSValue value = environment->variableAt(offset).get();
+        callFrame->uncheckedR(local) = value;
+        codeBlock->valueProfileForOffset(valueProfile++).m_buckets[0] = JSValue::encode(value);
+    });
+    LLINT_END();
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_create_direct_arguments)
 {
     LLINT_BEGIN();

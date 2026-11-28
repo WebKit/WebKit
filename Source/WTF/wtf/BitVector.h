@@ -43,6 +43,7 @@ class CachedBitVector;
 
 namespace WTF {
 
+class FastBitVector;
 class FixedBitVector;
 
 // This is a space-efficient, resizeable bitvector class. In the common case it
@@ -87,6 +88,8 @@ public:
     {
         (*this) = other;
     }
+
+    WTF_EXPORT_PRIVATE explicit BitVector(const FastBitVector&);
 
     BitVector(BitVector&& other)
         : m_bitsOrPointer(std::exchange(other.m_bitsOrPointer, makeInlineBits(0)))

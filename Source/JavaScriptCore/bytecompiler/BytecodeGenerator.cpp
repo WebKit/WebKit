@@ -366,7 +366,7 @@ ParserError BytecodeGenerator::generate(unsigned& size)
     
 
     if (m_needsGeneratorification)
-        performGeneratorification(*this, m_codeBlock.get(), m_writer, m_generatorFrameSymbolTable.get(), m_generatorFrameSymbolTableIndex);
+        performGeneratorification(*this, m_codeBlock.get(), m_writer, m_generatorFrameSymbolTable.get());
 
     RELEASE_ASSERT(m_codeBlock->numCalleeLocals() < static_cast<unsigned>(FirstConstantRegisterIndex));
     size = instructions().size();
@@ -977,11 +977,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     else if (isAsyncGeneratorWrapperParseMode(parseMode))
         emitCreateAsyncGenerator(m_generatorRegister, &m_calleeRegister);
     
-    // Set up the lexical environment scope as the generator frame. We store the saved and resumed generator registers into this scope with the symbol keys.
-    // Since they are symbol keyed, these variables cannot be reached from the usual code.
+    // Set up the lexical environment scope as the generator frame. We store the saved and resumed generator registers into
+    // scope slots that have no symbol table entries, so these variables cannot be reached from the usual code.
+    // FIXME: The saved registers no longer need a symbol table, so the generator frame can be a JSCellButterfly.
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         m_generatorFrameSymbolTable.set(m_vm, functionSymbolTable);
-        m_generatorFrameSymbolTableIndex = symbolTableConstantIndex;
         if (m_lexicalEnvironmentRegister)
             move(generatorFrameRegister(), m_lexicalEnvironmentRegister);
         else {
@@ -1167,7 +1167,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     if (moduleProgramNode->usesAwait()) {
         m_generatorFrameSymbolTable.set(m_vm, moduleEnvironmentSymbolTable);
-        m_generatorFrameSymbolTableIndex = constantSymbolTable->index();
         emitPutInternalField(generatorRegister(), static_cast<unsigned>(AbstractModuleRecord::Field::Frame), generatorFrameRegister());
     }
 
