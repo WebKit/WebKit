@@ -1,0 +1,127 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function navigateFrame(url) {
+    document.getElementById("frame").src = url;
+}
+
+function removeFrame() {
+    document.getElementById("frame").remove();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved");
+
+    const frameURL = "http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html";
+    const crossSiteFrameURL = "https://localhost:8443/site-isolation/inspector/debugger/resources/frame-without-scripts.html";
+
+    let frameTarget;
+    let resourceBreakpoint;
+    let restoredBreakpoint;
+
+    async function waitFor(callback) {
+        for (let i = 0; i < 100; ++i) {
+            let value = callback();
+            if (value)
+                return value;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    async function awaitTargetRemoved(target) {
+        while (true) {
+            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            if (event.data.target === target)
+                return;
+        }
+    }
+
+    function expectResolvedIn(breakpoint, target, name) {
+        InspectorTest.expectTrue(breakpoint.resolved, `The ${name} should be resolved.`);
+        InspectorTest.expectEqual(breakpoint.resolvedLocations.length, 1, `The ${name} should have one resolved location.`);
+        InspectorTest.expectEqual(breakpoint.resolvedLocations[0]?.sourceCode?.target, target, `The ${name}'s location should belong to the live frame target.`);
+    }
+
+    function expectNotResolved(breakpoint, name) {
+        InspectorTest.expectFalse(breakpoint.resolved, `The ${name} should not be resolved.`);
+        InspectorTest.expectEqual(breakpoint.resolvedLocations.length, 0, `The ${name} should have no resolved locations.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.Setup",
+        description: "Add breakpoints in the iframe's script.",
+        async test() {
+            frameTarget = await waitForFrameTargetForURLContaining("debugger-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the iframe's frame target.");
+
+            let frame = await waitFor(() => WI.networkManager.frames.find((frame) => !frame.isMainFrame()));
+            let resource = await waitFor(() => Array.from(frame.resourceCollection).find((resource) => resource.url.endsWith("/debugger-frame-script.js")));
+            InspectorTest.expectNotNull(resource, "Should find the iframe's script resource.");
+
+            resourceBreakpoint = new WI.JavaScriptBreakpoint(resource.createSourceCodeLocation(8, 0));
+            WI.debuggerManager.addBreakpoint(resourceBreakpoint);
+
+            // Without a source code, like a breakpoint restored from the previous session.
+            restoredBreakpoint = new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(null, 9, 0), {contentIdentifier: resource.url});
+            WI.debuggerManager.addBreakpoint(restoredBreakpoint);
+
+            await waitFor(() => resourceBreakpoint.resolved && restoredBreakpoint.resolved);
+            expectResolvedIn(resourceBreakpoint, frameTarget, "breakpoint of the resource");
+            expectResolvedIn(restoredBreakpoint, frameTarget, "restored breakpoint");
+            InspectorTest.expectEqual(restoredBreakpoint.sourceCodeLocation.sourceCode?.target, frameTarget, "The restored breakpoint should take the script of the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.ProcessSwap",
+        description: "A frame navigating to another site loses its process; breakpoints should not keep its locations.",
+        async test() {
+            let removed = awaitTargetRemoved(frameTarget);
+            InspectorTest.evaluateInPage(`navigateFrame("${crossSiteFrameURL}")`);
+            await removed;
+
+            expectNotResolved(resourceBreakpoint, "breakpoint of the resource");
+            expectNotResolved(restoredBreakpoint, "restored breakpoint");
+            InspectorTest.expectNull(restoredBreakpoint.sourceCodeLocation.sourceCode, "The restored breakpoint should drop the script of the removed frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.NavigateBack",
+        description: "The script loads in a new frame target; breakpoints should resolve only there.",
+        async test() {
+            InspectorTest.evaluateInPage(`navigateFrame("${frameURL}")`);
+            frameTarget = await waitForFrameTargetForURLContaining("debugger-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the new frame target.");
+
+            await waitFor(() => resourceBreakpoint.resolved && restoredBreakpoint.resolved);
+            expectResolvedIn(resourceBreakpoint, frameTarget, "breakpoint of the resource");
+            expectResolvedIn(restoredBreakpoint, frameTarget, "restored breakpoint");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.FrameRemoved",
+        async test() {
+            let removed = awaitTargetRemoved(frameTarget);
+            InspectorTest.evaluateInPage(`removeFrame()`);
+            await removed;
+
+            expectNotResolved(resourceBreakpoint, "breakpoint of the resource");
+            expectNotResolved(restoredBreakpoint, "restored breakpoint");
+            InspectorTest.expectNull(restoredBreakpoint.sourceCodeLocation.sourceCode, "The restored breakpoint should drop the script of the removed frame target.");
+
+            WI.debuggerManager.removeBreakpoint(resourceBreakpoint);
+            WI.debuggerManager.removeBreakpoint(restoredBreakpoint);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that breakpoints drop their resolved locations when the frame target that holds them is removed under Site Isolation.</p>
+<iframe id="frame" src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

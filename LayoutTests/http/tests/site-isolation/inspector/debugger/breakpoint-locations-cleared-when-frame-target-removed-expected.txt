@@ -1,0 +1,38 @@
+Test that breakpoints drop their resolved locations when the frame target that holds them is removed under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved
+-- Running test case: SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.Setup
+PASS: Should find the iframe's frame target.
+PASS: Should find the iframe's script resource.
+PASS: The breakpoint of the resource should be resolved.
+PASS: The breakpoint of the resource should have one resolved location.
+PASS: The breakpoint of the resource's location should belong to the live frame target.
+PASS: The restored breakpoint should be resolved.
+PASS: The restored breakpoint should have one resolved location.
+PASS: The restored breakpoint's location should belong to the live frame target.
+PASS: The restored breakpoint should take the script of the frame target.
+
+-- Running test case: SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.ProcessSwap
+PASS: The breakpoint of the resource should not be resolved.
+PASS: The breakpoint of the resource should have no resolved locations.
+PASS: The restored breakpoint should not be resolved.
+PASS: The restored breakpoint should have no resolved locations.
+PASS: The restored breakpoint should drop the script of the removed frame target.
+
+-- Running test case: SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.NavigateBack
+PASS: Should find the new frame target.
+PASS: The breakpoint of the resource should be resolved.
+PASS: The breakpoint of the resource should have one resolved location.
+PASS: The breakpoint of the resource's location should belong to the live frame target.
+PASS: The restored breakpoint should be resolved.
+PASS: The restored breakpoint should have one resolved location.
+PASS: The restored breakpoint's location should belong to the live frame target.
+
+-- Running test case: SiteIsolation.Debugger.BreakpointLocationsClearedWhenFrameTargetRemoved.FrameRemoved
+PASS: The breakpoint of the resource should not be resolved.
+PASS: The breakpoint of the resource should have no resolved locations.
+PASS: The restored breakpoint should not be resolved.
+PASS: The restored breakpoint should have no resolved locations.
+PASS: The restored breakpoint should drop the script of the removed frame target.
+
