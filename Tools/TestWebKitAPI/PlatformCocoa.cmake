@@ -839,6 +839,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationContextMenuInteractionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationCookieTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDataDetectionTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationDialogTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDragAndDropTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDragPreviewTests.swift
     Tests/WebKit/WKWebView/SiteIsolationEditableRegionTests.swift
