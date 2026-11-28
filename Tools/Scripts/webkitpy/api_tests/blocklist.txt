@@ -937,8 +937,6 @@ TestWebKitAPI._WKDownload.DownloadMonitorReturnToForeground
 [ mac ] TestWebKitAPI.FullscreenVideoTextRecognition.TogglePlaybackInElementFullscreen
 [ mac ] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo
 [ mac ] TestWebKitAPI.HSTS.Preconnect
-[ mac ] TestWebKitAPI.IndexedDB.IndexedDBTempFileSize
-[ mac ] TestWebKitAPI.IndexedDB.StoreBlobThenDeleteDatabase
 [ mac ] TestWebKitAPI.IsolatedSiteStore.PersistsAcrossSessions
 [ mac ] TestWebKitAPI.MessagePortSecurity.LocalMessagePortCanBeTransferredAfterItsPartnerClosedAndNetworkProcessRestart
 [ mac ] TestWebKitAPI.MessagePortSecurity.LocalMessagePortsCanBeTransferredAfterNetworkProcessRestart
