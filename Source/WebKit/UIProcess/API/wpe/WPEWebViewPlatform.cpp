@@ -493,6 +493,13 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
     return FALSE;
 }
 
+void ViewPlatform::cancelGesture()
+{
+    m_touchPanInProgress = false;
+    if (auto* gestureController = wpe_view_get_gesture_controller(m_wpeView.get()))
+        wpe_gesture_controller_cancel(gestureController);
+}
+
 void ViewPlatform::handleGesture(WPEEvent* event)
 {
     auto* gestureController = wpe_view_get_gesture_controller(m_wpeView.get());
@@ -505,6 +512,10 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     }
 
     WPEGesture gesture = wpe_gesture_controller_get_gesture(gestureController);
+
+    // The gesture controller keeps reporting a drag after its touch sequence ends, until a new sequence
+    // starts, so track the pan here. A touch down of another finger is not accepted and keeps the pan.
+    m_touchPanInProgress = gesture == WPE_GESTURE_DRAG && wpe_event_get_event_type(event) != WPE_EVENT_TOUCH_UP;
 
     bool longPressFired = m_longPressFired;
     switch (wpe_event_get_event_type(event)) {

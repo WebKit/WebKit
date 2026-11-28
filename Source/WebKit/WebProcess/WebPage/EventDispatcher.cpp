@@ -321,12 +321,10 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID,
         scrollingTree = m_scrollingTrees.get(pageID);
     }
 
-    if (!scrollingTree) {
-        dispatchTouchEventViaMainThread(pageID, WTF::move(touchEvent), WTF::move(completionHandler));
-        return;
-    }
-
-    auto trackingType = scrollingTree->eventTrackingTypeForTouchEvent(platform(touchEvent));
+    // Without a scrolling tree, the touch event regions aren't known, so handle the event as if the page listened to it.
+    auto trackingType = scrollingTree ? scrollingTree->eventTrackingTypeForTouchEvent(platform(touchEvent)) : TrackingType::Synchronous;
+    if (trackingType == TrackingType::Synchronous && !touchEvent->canPreventNativeGestures())
+        trackingType = TrackingType::Asynchronous;
 
     if (trackingType == TrackingType::NotTracking) {
         completionHandler(touchEvent->type(), false);

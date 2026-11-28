@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body { height: 5000px; }
+</style>
+</head>
+<body onload="runTest();">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests that the touchstart of a finger added during a touch pan is not cancelable and does not stop the pan, and that touch events are cancelable again once the finger that panned is released.');
+
+window.jsTestIsAsync = true;
+
+let events = [];
+let preventSecondTouchStart = false;
+
+for (const type of ['touchstart', 'touchmove', 'touchend']) {
+    document.addEventListener(type, event => {
+        events.push(`${type}:${event.cancelable}`);
+        if (preventSecondTouchStart && type == 'touchstart' && event.touches.length > 1)
+            event.preventDefault();
+    }, { passive: false });
+}
+
+async function pan()
+{
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 400);
+    await eventSender.asyncTouchStart();
+    // Each step is longer than the drag threshold, so the pan starts after the first move.
+    for (let y = 380; y >= 320; y -= 20) {
+        eventSender.updateTouchPoint(0, 100, y);
+        await eventSender.asyncTouchMove();
+    }
+    await UIHelper.renderingComplete();
+}
+
+async function addSecondFinger()
+{
+    events = [];
+    eventSender.addTouchPoint(200, 400);
+    await eventSender.asyncTouchStart();
+}
+
+let scrollBeforeSecondFinger;
+let scrollAfterSecondFinger;
+
+async function runTest()
+{
+    // Touch event regions must reach the scrolling tree before touch events are dispatched.
+    await UIHelper.renderingComplete();
+
+    if (!window.eventSender) {
+        debug('This test requires WebKitTestRunner.');
+        finishJSTest();
+        return;
+    }
+
+    debug('A second finger is added during the pan, and the page prevents its touchstart:');
+    preventSecondTouchStart = true;
+    await pan();
+    scrollBeforeSecondFinger = window.scrollY;
+    await addSecondFinger();
+    for (let y = 300; y >= 260; y -= 20) {
+        eventSender.updateTouchPoint(0, 100, y);
+        await eventSender.asyncTouchMove();
+    }
+    await UIHelper.renderingComplete();
+    scrollAfterSecondFinger = window.scrollY;
+    shouldBeEqualToString('events.join()', 'touchstart:false,touchmove:false,touchmove:false,touchmove:false');
+    shouldBeTrue('scrollAfterSecondFinger > scrollBeforeSecondFinger');
+    eventSender.releaseTouchPoint(1);
+    await eventSender.asyncTouchEnd();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+    await UIHelper.renderingComplete();
+
+    debug('');
+    debug('The finger that panned is released while the second finger stays down:');
+    preventSecondTouchStart = false;
+    // The previous pan has ended, so the touch events of the new one are cancelable until it starts.
+    events = [];
+    await pan();
+    shouldBeEqualToString('events.join()', 'touchstart:true,touchmove:true,touchmove:false,touchmove:false,touchmove:false');
+    await addSecondFinger();
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+    // The second finger is now the only touch point.
+    for (let y = 380; y >= 340; y -= 20) {
+        eventSender.updateTouchPoint(0, 200, y);
+        await eventSender.asyncTouchMove();
+    }
+    shouldBeEqualToString('events.join()', 'touchstart:false,touchend:false,touchmove:true,touchmove:true,touchmove:true');
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

@@ -73,6 +73,8 @@ public:
     WebKit::RendererBufferDescription renderBufferDescription() const;
 
     void handleGesture(WPEEvent*);
+    void cancelGesture();
+    bool isTouchPanInProgress() const { return m_touchPanInProgress; }
 
 #if ENABLE(CONTEXT_MENUS)
     void cancelLongPress();
@@ -122,6 +124,7 @@ private:
     double m_longPressX { 0 };
     double m_longPressY { 0 };
 #endif // ENABLE(CONTEXT_MENUS)
+    bool m_touchPanInProgress { false };
 };
 
 } // namespace WKWPE

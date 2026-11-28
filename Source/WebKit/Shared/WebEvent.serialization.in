@@ -119,6 +119,9 @@ enum class WebKit::WebEventType : uint32_t {
     float gestureRotation;
     bool canPreventNativeGestures;
 #endif
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    bool canPreventNativeGestures;
+#endif
 };
 
 [RefCounted] class WebKit::WebTouchEvent {

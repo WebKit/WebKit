@@ -6166,6 +6166,23 @@ void WebPageProxy::processNextQueuedTouchEvent()
     ASSERT(!internals().touchEventQueue.isEmpty());
 
     Ref sentEvent = internals().touchEventQueue.first().forwardedEvent;
+
+    // Once a touch pan has started, the page can't stop it, so the web process doesn't need to wait
+    // for its main thread. Check it when the event is sent rather than when it is queued: the older
+    // events have reached the gesture controller by now. As on iOS, this includes the touchstart of
+    // a finger added during the pan, but not a touchstart that starts a new touch sequence: if the
+    // end of the previous one was lost, for example when the web process crashed, the page client
+    // may still think that a pan is in progress.
+    auto startsTouchSequence = [](const WebTouchEvent& event) {
+        return event.type() == WebEventType::TouchStart && std::ranges::all_of(event.touchPoints(), [](auto& touchPoint) {
+            return touchPoint.state() == WebPlatformTouchPoint::State::Pressed;
+        });
+    };
+    if (!startsTouchSequence(sentEvent)) {
+        if (RefPtr pageClient = this->pageClient(); pageClient && pageClient->isTouchPanInProgress())
+            sentEvent->setCanPreventNativeGestures(false);
+    }
+
     protect(legacyMainFrameProcess())->startResponsivenessTimer();
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, sentEvent.copyRef()), [this, protectedThis = Ref { *this }, sentEvent](IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
         if (connection)
@@ -6190,6 +6207,9 @@ void WebPageProxy::processNextQueuedTouchEvent()
         auto queuedEvents = touchEventQueue.takeFirst();
 
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
+
+        if (!queuedEvents.forwardedEvent->canPreventNativeGestures())
+            handled = false;
 
         doneWithTouchEvents(*pageClient, queuedEvents, handled);
 

@@ -1,0 +1,16 @@
+Tests that the touchstart of a finger added during a touch pan is not cancelable and does not stop the pan, and that touch events are cancelable again once the finger that panned is released.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A second finger is added during the pan, and the page prevents its touchstart:
+PASS events.join() is "touchstart:false,touchmove:false,touchmove:false,touchmove:false"
+PASS scrollAfterSecondFinger > scrollBeforeSecondFinger is true
+
+The finger that panned is released while the second finger stays down:
+PASS events.join() is "touchstart:true,touchmove:true,touchmove:false,touchmove:false,touchmove:false"
+PASS events.join() is "touchstart:false,touchend:false,touchmove:true,touchmove:true,touchmove:true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

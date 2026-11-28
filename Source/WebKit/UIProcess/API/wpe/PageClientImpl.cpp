@@ -247,6 +247,17 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
 }
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+bool PageClientImpl::isTouchPanInProgress() const
+{
+#if ENABLE(WPE_PLATFORM)
+    if (m_view.wpeView())
+        return static_cast<const WKWPE::ViewPlatform&>(m_view).isTouchPanInProgress();
+#endif
+    return false;
+}
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wasEventHandled)
 {
@@ -269,7 +280,7 @@ void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wa
 
             // Otherwise interrupt any ongoing gesture detection so that gestures are not
             // detected by the engine itself.
-            wpe_gesture_controller_cancel(gestureController);
+            static_cast<WKWPE::ViewPlatform&>(m_view).cancelGesture();
         }
 
 #if ENABLE(CONTEXT_MENUS)

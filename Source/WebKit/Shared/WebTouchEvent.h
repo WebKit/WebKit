@@ -244,6 +244,9 @@ struct WebTouchEventData {
     Vector<WebPlatformTouchPoint> touchPoints;
     Vector<Ref<WebTouchEvent>> coalescedEvents;
     Vector<Ref<WebTouchEvent>> predictedEvents;
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    bool canPreventNativeGestures { true };
+#endif
 };
 
 struct WebTouchEventInit {
@@ -270,6 +273,9 @@ public:
 
 #if ENABLE(COORDINATED_TOUCH_EVENTS)
     void mergeMovedTouchPointsFrom(const WebTouchEvent&);
+
+    bool canPreventNativeGestures() const { return m_data.canPreventNativeGestures; }
+    void setCanPreventNativeGestures(bool canPreventNativeGestures) { m_data.canPreventNativeGestures = canPreventNativeGestures; }
 #endif
 
 #if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
