@@ -875,6 +875,9 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
         return;
     }
 
+    if (!elementData()->animatedSVGAttributesAreDirty())
+        return;
+
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
         const_cast<SVGElement&>(*svgElement).synchronizeAttribute(name);
     }
@@ -898,6 +901,9 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const AtomString& localName) co
         uncheckedDowncast<StyledElement>(*this).synchronizeStyleAttributeInternal();
         return;
     }
+
+    if (!elementData()->animatedSVGAttributesAreDirty())
+        return;
 
     if (auto* svgElement = dynamicDowncast<SVGElement>(*this)) {
         const_cast<SVGElement&>(*svgElement).synchronizeAttribute(QualifiedName(nullAtom(), localName, nullAtom()));
