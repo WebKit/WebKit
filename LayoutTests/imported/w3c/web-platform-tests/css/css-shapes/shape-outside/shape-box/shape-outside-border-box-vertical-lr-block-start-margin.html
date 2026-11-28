@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<title>CSS Shapes Test: vertical-lr, float left, border-box, margin on the block-start side only</title>
+<link rel="help" href="https://drafts.csswg.org/css-shapes-1/#shapes-from-box-values">
+<link rel="match" href="reference/shape-outside-border-box-vertical-lr-block-start-margin-ref.html">
+<meta name="assert" content="The float area is the float's border box, which starts after the float's margin on the block-start side (the left side in vertical-lr), so the lines beside that margin keep their full length and only the lines beside the border box are shortened.">
+<style>
+.container {
+  writing-mode: vertical-lr;
+  inline-size: 200px;
+  line-height: 0;
+}
+
+.shape {
+  float: left;
+  shape-outside: border-box;
+  block-size: 40px;
+  inline-size: 60px;
+  margin-block-start: 40px;
+  background-color: orange;
+}
+
+.box {
+  display: inline-block;
+  block-size: 20px;
+  inline-size: 140px;
+  background-color: blue;
+}
+</style>
+<main class="container">
+  <div class="shape"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+</main>

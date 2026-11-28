@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<style>
+.container {
+  position: relative;
+}
+
+.container > div {
+  position: absolute;
+}
+
+.shape {
+  left: 40px;
+  top: 0;
+  width: 40px;
+  height: 60px;
+  background-color: orange;
+}
+
+.box {
+  width: 20px;
+  height: 140px;
+  background-color: blue;
+}
+</style>
+<main class="container">
+  <div class="shape"></div>
+  <div class="box" style="left: 0; top: 0"></div>
+  <div class="box" style="left: 20px; top: 0"></div>
+  <div class="box" style="left: 40px; top: 60px"></div>
+  <div class="box" style="left: 60px; top: 60px"></div>
+  <div class="box" style="left: 80px; top: 0"></div>
+</main>

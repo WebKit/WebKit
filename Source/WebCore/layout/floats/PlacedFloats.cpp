@@ -112,8 +112,7 @@ void PlacedFloats::add(Item newFloatItem)
 
     // FloatingContext takes the last float in the list that covers a block axis position as the inner-most one there, so floats on the same side
     // that share a block axis position have to stay in inline-axis order. A new float normally is the inner-most one, but it can end up outside
-    // an earlier float: with a negative inline-axis margin, or when another formatting context placed it against the floored edge of that float
-    // (see LineLayout::preparePlacedFloats()). Then it goes right before the first such float.
+    // an earlier float with a negative inline-axis margin. Then it goes right before the first such float.
     if (!mayShareBlockAxisPositionWithEarlierFloat)
         return m_list.append(newFloatItem);
 
@@ -136,9 +135,13 @@ void PlacedFloats::add(Item newFloatItem)
 
 void PlacedFloats::moveOnBlockAxis(size_t index, LayoutUnit offset)
 {
-    ASSERT(offset >= 0);
     auto& floatItem = m_list[index];
     floatItem.moveOnBlockAxis(offset);
+    if (offset < 0) {
+        computeLowestPositionsOnBlockAxis();
+        computeLowestTopPositionOnBlockAxis();
+        return;
+    }
     // A float that moves down can only lower these.
     auto& lowestPositionOnBlockAxis = floatItem.isStartPositioned() ? m_lowestStartPositionOnBlockAxis : m_lowestEndPositionOnBlockAxis;
     lowestPositionOnBlockAxis = std::max(lowestPositionOnBlockAxis.value_or(floatItem.marginBoxBottom()), floatItem.marginBoxBottom());
