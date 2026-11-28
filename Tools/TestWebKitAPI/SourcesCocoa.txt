@@ -198,13 +198,10 @@ Tests/WebKit/WKWebView/ImageAnalysisTests.mm @nonARC
 Tests/WebKit/WKWebView/InAppBrowserPrivacy.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBDatabaseProcessKill.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBFileName.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBInPageCache.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBMultiProcess.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBPersistence.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBStructuredCloneBackwardCompatibility.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBSuspendImminently.mm @nonARC
 Tests/WebKit/WKWebView/IndexedDBTempFileSize.mm @nonARC
-Tests/WebKit/WKWebView/IndexedDBUserDelete.mm @nonARC
 Tests/WebKit/WKWebView/InitializeWebViewWhenChangingUserDefaults.mm @nonARC
 Tests/WebKit/WKWebView/InjectedBundleNodeHandleIsSelectElement.mm @nonARC
 Tests/WebKit/WKWebView/InjectedBundleNodeHandleIsTextField.mm @nonARC
