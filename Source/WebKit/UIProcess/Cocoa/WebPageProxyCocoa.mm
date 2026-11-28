@@ -614,7 +614,7 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
+void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragItem, OptionSet<DragOperation> dragSourceOperationMask, ShareableBitmap::Handle&& dragImageHandle, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
     auto& promisedAttachmentInfo = dragItem.promisedAttachmentInfo;
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -633,6 +633,7 @@ void WebPageProxy::startDrag(IPC::Connection& connection, const DragItem& dragIt
     }
 
     m_dragSourceFrameID = frameID;
+    m_dragSourceOperationMask = dragSourceOperationMask;
     if (RefPtr pageClient = this->pageClient())
         pageClient->startDrag(dragItem, WTF::move(dragImageHandle), nodeID, frameID);
 }

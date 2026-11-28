@@ -105,8 +105,12 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, co
     if (!handle)
         return;
 
+    OptionSet<DragOperation> sourceOperationMask;
+    if (RefPtr corePage = m_page->corePage())
+        sourceOperationMask = corePage->dragController().sourceDragOperationMask();
+
     m_page->willStartDrag();
-    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, WTF::move(*handle), nodeID, frame.frameID()));
+    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, sourceOperationMask, WTF::move(*handle), nodeID, frame.frameID()));
 }
 
 void WebDragClient::didConcludeEditDrag()
