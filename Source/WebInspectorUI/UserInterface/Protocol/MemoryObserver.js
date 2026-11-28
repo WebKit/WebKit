@@ -29,7 +29,7 @@ WI.MemoryObserver = class MemoryObserver extends InspectorBackend.Dispatcher
 
     memoryPressure(timestamp, severity)
     {
-        WI.memoryManager.memoryPressure(timestamp, severity);
+        WI.memoryManager.memoryPressure(this._target, timestamp, severity);
     }
 
     trackingStart(timestamp)

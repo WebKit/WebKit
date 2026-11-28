@@ -1,0 +1,22 @@
+Tests that the late Heap and Animation events of a target that the user stopped waiting for are dropped.
+
+
+== Running test suite: Timeline.StopWaiting.LateEvents
+-- Running test case: Timeline.StopWaiting.LateEvents.Setup
+PASS: Added a Worker target.
+
+-- Running test case: Timeline.StopWaiting.LateEvents.Heap
+PASS: Capturing should still be stopping while the blocked Worker has not reported that it stopped.
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: Breakpoints should no longer be disabled temporarily.
+PASS: A garbage collection of the first capture should not be added to the new capture.
+PASS: The Heap snapshot of the first capture should not be parsed.
+PASS: Recorded a Heap snapshot from the Worker in the new capture.
+PASS: The new capture stopped after the Worker stopped.
+
+-- Running test case: Timeline.StopWaiting.LateEvents.Animation
+PASS: Capturing should be inactive after the user stops waiting.
+PASS: The Animation update of the abandoned capture should not be added.
+PASS: The new capture stopped.
+PASS: Breakpoints should no longer be disabled temporarily.
+
