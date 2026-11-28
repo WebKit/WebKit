@@ -11003,15 +11003,9 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(Vector<SharedMemory::Handle>&
 void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
 {
     m_appHighlightsVisible = appHighlightVisibility;
-    for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames())) {
-        for (RefPtr<Frame> frame = rootFrame.ptr(); frame; frame = frame->tree().traverseNextRendered(rootFrame.ptr())) {
-            RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-            if (!localFrame)
-                continue;
-            if (RefPtr document = localFrame->document())
-                protect(document->appHighlightRegistry())->setHighlightVisibility(appHighlightVisibility);
-        }
-    }
+    protect(corePage())->forEachDocument([&](auto& document) {
+        protect(document.appHighlightRegistry())->setHighlightVisibility(appHighlightVisibility);
+    });
 }
 
 #endif
