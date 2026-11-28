@@ -8895,6 +8895,7 @@
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-border-radius-011-ref.html",
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-border-radius-012-ref.html",
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-shape-margin-with-margin-ref.html",
+        "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-vertical-lr-block-start-margin-ref.html",
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-block-start-margin-ref.html",
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-margin-ref.html",
         "web-platform-tests/css/css-shapes/shape-outside/shape-box/reference/shape-outside-border-box-with-margin-right-float-ref.html",
