@@ -209,6 +209,7 @@ struct WebPageCreationParameters {
     bool allowPostingLegacySynchronousMessages { false };
     bool backgroundTextExtractionEnabled { false };
     ContentInversion contentInversion { ContentInversion::System };
+    String customTextEncodingName { };
 
 #if PLATFORM(MAC)
     std::optional<WebCore::ColorSpace> colorSpace { };

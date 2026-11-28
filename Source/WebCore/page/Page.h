@@ -455,6 +455,9 @@ public:
     WEBCORE_EXPORT bool hasAnyLocalFrame() const;
     NODELETE WEBCORE_EXPORT Document* localTopDocument() const;
 
+    const String& customTextEncodingName() const { return m_customTextEncodingName; }
+    void setCustomTextEncodingName(const String& customTextEncodingName) { m_customTextEncodingName = customTextEncodingName; }
+
     // localMainFrame() normally; under Site Isolation the main frame can be remote in this process,
     // so falls back to the local root frame. Document overlays and their geometry are relative to it.
     NODELETE WEBCORE_EXPORT LocalFrame* localMainOrRootFrame() const;
@@ -1611,6 +1614,7 @@ private:
 
     Ref<Frame> m_mainFrame;
     String m_mainFrameURLFragment;
+    String m_customTextEncodingName;
 
     RefPtr<PluginData> m_pluginData;
 
