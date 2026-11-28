@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<title>Changing the d attribute keeps the computed d property correct without a full style resolution</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+    .css-d { d: path("M 0 0 H 5"); }
+    .css-none { d: none; }
+    .transitioning { transition: d 100s linear; }
+</style>
+<svg width="200" height="200" id="svg"></svg>
+<script>
+// A `d` attribute change on a <path> may update the computed `d` in place instead of invalidating
+// style. These tests check the cases where that shortcut applies and those where it must not.
+
+function createPath(t, d, attributes = { }) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", d);
+    path.setAttribute("stroke", "blue");
+    for (const [name, value] of Object.entries(attributes))
+        path.setAttribute(name, value);
+    document.getElementById("svg").appendChild(path);
+    t.add_cleanup(() => path.remove());
+    // Resolve style so that later changes see an up-to-date computed style.
+    getComputedStyle(path).d;
+    return path;
+}
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+    assert_equals(path.getBBox().width, 30, "the rendered path follows");
+}, "Changing the d attribute updates the computed d and the rendered path");
+
+test(t => {
+    if (!window.internals)
+        return;
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_false(internals.nodeNeedsStyleRecalc(path), "changing only the d attribute does not invalidate style");
+    path.setAttribute("stroke-width", "2");
+    assert_true(internals.nodeNeedsStyleRecalc(path), "changing another presentation attribute still does");
+}, "Changing the d attribute alone does not invalidate style");
+
+test(t => {
+    if (!window.internals)
+        return;
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 20");
+    assert_false(internals.nodeNeedsStyleRecalc(path), "setting the current value again does not invalidate style");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 20")');
+    path.setAttribute("d", "M 10 10 H 30");
+    assert_false(internals.nodeNeedsStyleRecalc(path), "a later change is still handled without invalidating style");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 30")');
+}, "Setting the d attribute to its current value does not invalidate style");
+
+test(t => {
+    if (!window.internals)
+        return;
+    const paths = [];
+    for (let i = 0; i < 50; ++i)
+        paths.push(createPath(t, `M 0 ${i} H 10`, { fill: "none", "stroke-width": "2" }));
+    for (let frame = 1; frame <= 3; ++frame) {
+        paths.forEach((path, i) => path.setAttribute("d", `M 0 ${i} H ${10 + frame}`));
+        assert_equals(paths.filter(path => internals.nodeNeedsStyleRecalc(path)).length, 0, `no path invalidated in frame ${frame}`);
+        document.getElementById("svg").getBoundingClientRect();
+    }
+    assert_equals(getComputedStyle(paths[49]).d, 'path("M 0 49 H 13")');
+}, "Changing the d attribute of many paths does not invalidate style");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    for (let i = 1; i <= 5; ++i) {
+        path.setAttribute("d", `M 10 10 H ${20 + i}`);
+        assert_equals(getComputedStyle(path).d, `path("M 10 10 H ${20 + i}")`);
+    }
+    assert_equals(path.getBBox().width, 15);
+}, "Repeatedly changing the d attribute keeps the computed d up to date");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 30");
+    path.setAttribute("d", "M 10 10 H 50");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 50")');
+}, "Changing the d attribute twice before reading style uses the last value");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20", { class: "css-d" });
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 5")');
+    path.classList.remove("css-d");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+}, "A stylesheet d wins over d attribute changes");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20", { class: "css-d" });
+    path.classList.remove("css-d");
+    getComputedStyle(path).d;
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+}, "The d attribute determines the computed d again once a stylesheet d no longer applies");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.style.d = 'path("M 0 0 H 6")';
+    getComputedStyle(path).d;
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 6")');
+    path.style.d = "";
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+}, "An inline style d wins over d attribute changes");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20", { class: "css-none" });
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, "none");
+    assert_equals(path.getBBox().width, 0, "d: none renders nothing");
+}, "A stylesheet d: none wins over d attribute changes");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 40");
+    getComputedStyle(path).d;
+    path.classList.add("css-d");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 5")');
+}, "A stylesheet d applying after a d attribute change wins");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    const style = document.createElement("style");
+    style.textContent = "#svg path { d: path('M 0 0 H 9'); }";
+    document.head.appendChild(style);
+    t.add_cleanup(() => style.remove());
+    // The stylesheet is added but not processed yet when the attribute changes.
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 9")');
+}, "A stylesheet d added right before a d attribute change wins");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20", { class: "transitioning" });
+    path.setAttribute("d", "M 10 10 H 40");
+    getComputedStyle(path).d;
+    assert_equals(path.getAnimations().length, 1, "a transition started");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 20")', "the transition starts from the previous value");
+}, "Changing the d attribute starts a transition on d");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    const animation = path.animate({ d: ['path("M 0 0 H 1")', 'path("M 0 0 H 2")'] }, 100000);
+    animation.pause();
+    getComputedStyle(path).d;
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 1")', "the animation still applies");
+    animation.cancel();
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")', "the new attribute value applies once the animation is gone");
+}, "Changing the d attribute while d is animated");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 40");
+    getComputedStyle(path).d;
+    path.setAttribute("stroke-width", "3");
+    assert_equals(getComputedStyle(path).strokeWidth, "3px");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")', "a full style resolution keeps the new d");
+}, "A later full style resolution keeps the updated d");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.setAttribute("d", "M 10 10 H 40");
+    path.setAttribute("stroke-width", "4");
+    assert_equals(getComputedStyle(path).strokeWidth, "4px");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+}, "Changing d and another presentation attribute together");
+
+test(t => {
+    const path = createPath(t, "M 10 10 H 20");
+    path.removeAttribute("d");
+    assert_equals(path.getBBox().width, 0);
+    path.setAttribute("d", "M 10 10 H 40");
+    assert_equals(getComputedStyle(path).d, 'path("M 10 10 H 40")');
+}, "Removing and setting the d attribute again");
+
+test(t => {
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.id = "referenced";
+    path.setAttribute("d", "M 0 5 H 20");
+    path.setAttribute("stroke", "blue");
+    path.setAttribute("stroke-width", "10");
+    defs.appendChild(path);
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", "#referenced");
+    const svg = document.getElementById("svg");
+    svg.append(defs, use);
+    t.add_cleanup(() => { defs.remove(); use.remove(); });
+    // Hit testing reaches the instance's own rendered geometry.
+    const rect = svg.getBoundingClientRect();
+    const hit = () => document.elementFromPoint(rect.left + 50, rect.top + 5);
+    assert_not_equals(hit(), use, "the instance does not reach x=50 yet");
+    path.setAttribute("d", "M 0 5 H 60");
+    assert_equals(hit(), use, "the instance follows the new path");
+}, "A <use> instance follows d attribute changes on the referenced path");
+</script>
