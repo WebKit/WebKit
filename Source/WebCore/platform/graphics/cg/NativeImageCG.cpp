@@ -149,12 +149,24 @@ static void releaseProviderInfo(void* info)
 static const CGImageProviderCallbacksVersion1 blockSetOnlyCallbacks = { 1, copyImageBlockSet, releaseProviderInfo };
 static const CGImageProviderCallbacksVersion2 surfaceCallbacks = { 2, copyImageBlockSet, copyIOSurface, releaseProviderInfo };
 
-RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer, CGImageAlphaInfo alphaInfo, RetainPtr<CGColorSpaceRef> colorSpace)
+static RetainPtr<CGImageRef> createPlatformImageFromPixelBuffer(RetainPtr<CVPixelBufferRef>&& pixelBuffer, CGImageAlphaInfo alphaInfo, RetainPtr<CGColorSpaceRef>&& colorSpace, Headroom contentHeadroom)
 {
     if (!pixelBuffer)
         return nullptr;
-    if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) != kCVPixelFormatType_32BGRA)
+    CGImageComponentType componentType;
+    CGBitmapInfo byteOrder;
+    switch (CVPixelBufferGetPixelFormatType(pixelBuffer.get())) {
+    case kCVPixelFormatType_32BGRA:
+        componentType = kCGImageComponent8BitInteger;
+        byteOrder = kCGBitmapByteOrder32Little;
+        break;
+    case kCVPixelFormatType_64RGBAHalf:
+        componentType = kCGImageComponent16BitFloat;
+        byteOrder = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        break;
+    default:
         return nullptr;
+    }
     IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer.get())), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer.get())) };
     if (size.isEmpty() || !colorSpace)
         return nullptr;
@@ -164,13 +176,13 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
         setAlphaInfoForCVPixelBuffer(pixelBuffer.get(), alphaInfo);
     const void* callbacks = surface ? static_cast<const void*>(&surfaceCallbacks) : static_cast<const void*>(&blockSetOnlyCallbacks);
 
-    auto bitmapInfo = static_cast<int32_t>(static_cast<CGBitmapInfo>(alphaInfo) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little));
+    auto bitmapInfo = static_cast<int32_t>(static_cast<CGBitmapInfo>(alphaInfo) | byteOrder);
     RetainPtr bitmapInfoNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &bitmapInfo));
     CFTypeRef keys[] = { kCGImageProviderBitmapInfo };
     CFTypeRef values[] = { bitmapInfoNumber.get() };
     RetainPtr auxiliaryInfo = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr provider = adoptCF(CGImageProviderCreate(CGSizeMake(size.width(), size.height()), kCGImageComponent8BitInteger, colorSpace.get(), pixelBuffer.get(), callbacks, auxiliaryInfo.get()));
+    RetainPtr provider = adoptCF(CGImageProviderCreate(CGSizeMake(size.width(), size.height()), componentType, colorSpace.get(), pixelBuffer.get(), callbacks, auxiliaryInfo.get()));
     if (!provider)
         return nullptr;
     // On success, the provider owns the pixel buffer, and releases it via releaseProviderInfo.
@@ -179,6 +191,16 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateWithImageProvider(provider.get(), nullptr, false, kCGRenderingIntentDefault));
     if (!image)
         return nullptr;
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+    if (Headroom::None < contentHeadroom) {
+        image = adoptCF(CGImageCreateCopyWithContentHeadroom(contentHeadroom, image.get()));
+        if (!image)
+            return nullptr;
+    }
+#else
+    UNUSED_PARAM(contentHeadroom);
+#endif
+    // The properties are set last, as the copy with the content headroom does not keep them.
     // CoreAnimation draws the surface directly when the image describes it, instead of
     // reading the contents back and uploading them to a texture of its own.
     if (surface)
@@ -189,7 +211,22 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     // the source video. Setting this property, even for an image that is not IOSurface
     // backed, avoids this non-adjustment of the image color space. rdar://88804270
     CGImageSetProperty(image.get(), CFSTR("CA_IOSURFACE_IMAGE"), kCFBooleanTrue);
-    return NativeImage::create(WTF::move(image));
+    return image;
+}
+
+RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer, CGImageAlphaInfo alphaInfo, RetainPtr<CGColorSpaceRef> colorSpace, Headroom contentHeadroom)
+{
+    return create(createPlatformImageFromPixelBuffer(WTF::move(pixelBuffer), alphaInfo, WTF::move(colorSpace), contentHeadroom));
+}
+
+RefPtr<NativeImage> NativeImage::createTransient(RetainPtr<CVPixelBufferRef> pixelBuffer, CGImageAlphaInfo alphaInfo, RetainPtr<CGColorSpaceRef> colorSpace, Headroom contentHeadroom)
+{
+    RetainPtr image = createPlatformImageFromPixelBuffer(WTF::move(pixelBuffer), alphaInfo, WTF::move(colorSpace), contentHeadroom);
+    if (!image)
+        return nullptr;
+    // The image is created here, so setting its caching flags affects no one else.
+    CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+    return create(WTF::move(image));
 }
 
 NODELETE static CGImageAlphaInfo alphaInfoForAlphaLast(bool isPremultiplied)

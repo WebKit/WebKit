@@ -41,10 +41,13 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
+
+typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
 namespace WebCore {
 class NativeImage;
+class VideoFrame;
 }
 
 namespace WebCore {
@@ -75,8 +78,10 @@ public:
         m_renderBufferWasReplacedCallback = WTF::move(renderBufferWasReplacedCallback);
     }
 
-    void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) final;
-    NODELETE void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(uint32_t bufferIndex) final;
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<WebCore::VideoFrame> copyVideoFrame(uint32_t bufferIndex) final;
+#endif
 
 private:
 
@@ -99,8 +104,17 @@ private:
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(MachSendRight&&, std::optional<uint32_t>)>&&) override;
 
     bool replaceRenderBufferIfInUse(uint32_t index);
+    // The spare render buffers hold both the render buffers that were replaced and the copies of
+    // render buffers. A spare is available for either when it is not in use and has the format and
+    // the color space.
+    std::optional<size_t> availableSpareRenderBufferIndex(WebCore::IOSurface::Format, const WebCore::ColorSpace&);
     std::unique_ptr<WebCore::IOSurface> takeSpareRenderBuffer();
+    void addSpareRenderBuffer(UniqueRef<WebCore::IOSurface>&&);
     void updateSpareRenderBuffers();
+    WebCore::IOSurface* copyRenderBufferDestination(WebCore::IOSurface::Format, const WebCore::ColorSpace&);
+    RetainPtr<CVPixelBufferRef> copyRenderBufferToPixelBuffer(uint32_t bufferIndex, WebCore::IOSurface::Format, ::WebGPU::RenderBufferCopyColorSpace);
+    WebCore::IOSurface::Format copyFormat() const;
+    CGImageAlphaInfo copyAlphaInfo() const;
 
     struct SpareRenderBuffer {
         UniqueRef<WebCore::IOSurface> surface;

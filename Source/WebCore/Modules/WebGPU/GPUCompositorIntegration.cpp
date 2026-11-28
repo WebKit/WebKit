@@ -26,6 +26,9 @@
 #include "config.h"
 #include "GPUCompositorIntegration.h"
 
+#include "NativeImage.h"
+#include "VideoFrame.h"
+
 namespace WebCore {
 
 #if PLATFORM(COCOA)
@@ -40,10 +43,17 @@ void GPUCompositorIntegration::prepareForDisplay(uint32_t frameIndex, Completion
 }
 #endif
 
-void GPUCompositorIntegration::paintCompositedResultsToCanvas(WebCore::ImageBuffer& imageBuffer, uint32_t bufferIndex)
+RefPtr<NativeImage> GPUCompositorIntegration::copyNativeImage(uint32_t bufferIndex)
 {
-    m_backing->paintCompositedResultsToCanvas(imageBuffer, bufferIndex);
+    return m_backing->copyNativeImage(bufferIndex);
 }
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+RefPtr<VideoFrame> GPUCompositorIntegration::copyVideoFrame(uint32_t bufferIndex)
+{
+    return m_backing->copyVideoFrame(bufferIndex);
+}
+#endif
 
 void GPUCompositorIntegration::updateContentsHeadroom(float headroom)
 {

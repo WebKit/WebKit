@@ -875,16 +875,20 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER)
     Ref document = this->document();
-#if ENABLE(WEBGL)
-    if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context)) {
-        if (document->settings().webAPIStatisticsEnabled())
-            ResourceLoadObserver::singleton().logCanvasRead(document.get());
-        return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
-    }
-#endif
 
     if (document->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logCanvasRead(document.get());
+    if (!shouldInjectNoiseBeforeReadback()) {
+#if ENABLE(WEBGL)
+        if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context))
+            return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+#endif
+
+        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context)) {
+            if (RefPtr videoFrame = context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer))
+                return videoFrame;
+        }
+    }
 
     RefPtr imageBuffer = makeRenderingResultsAvailable();
     if (!imageBuffer)

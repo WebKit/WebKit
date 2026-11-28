@@ -75,7 +75,6 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 
-typedef struct CGImage* CGImageRef;
 typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __IOSurface* IOSurfaceRef;
 #endif
@@ -309,6 +308,14 @@ enum class PrimitiveTopology : uint8_t {
 enum class QueryType : uint8_t {
     Occlusion,
     Timestamp,
+};
+
+// The color space of a copy of a render buffer.
+enum class RenderBufferCopyColorSpace : bool {
+    // The color space of the render buffer.
+    RenderBuffer,
+    // sRGB, in the standard range.
+    SRGB, // NOLINT
 };
 
 enum class SamplerBindingType : uint8_t {
@@ -1646,9 +1653,11 @@ public:
     // The time the last present waited for an in-flight frame to finish.
     virtual Seconds lastFramePresentStall() const = 0;
 #if PLATFORM(COCOA)
-    // The contents of a render buffer. isIOSurfaceSupportedFormat is false when its format cannot be
-    // read back that way.
-    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
+    // Copies the contents of a render buffer to an IOSurface of its size. The destination has the
+    // pixel format of the render buffer, or a BGRA pixel format, to which the contents are converted.
+    // A copy in the sRGB color space has a BGRA destination, and has the contents converted to sRGB
+    // and clamped to the standard range. Returns false when the render buffer cannot be copied.
+    virtual bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination, RenderBufferCopyColorSpace) = 0;
 #endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;

@@ -123,7 +123,7 @@ Seconds RemotePresentationContextProxy::lastFramePresentStall() const
 }
 
 #if PLATFORM(COCOA)
-RetainPtr<CGImageRef> RemotePresentationContextProxy::getTextureAsNativeImage(uint32_t, bool&)
+bool RemotePresentationContextProxy::copyRenderBuffer(uint32_t, IOSurfaceRef, ::WebGPU::RenderBufferCopyColorSpace)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

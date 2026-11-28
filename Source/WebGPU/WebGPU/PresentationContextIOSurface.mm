@@ -29,7 +29,7 @@
 #import "APIConversions.h"
 #import "Texture.h"
 #import "TextureView.h"
-#import <wtf/FastMalloc.h>
+#import <CoreVideo/CVPixelBuffer.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -141,63 +141,64 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& c
         completionHandler();
 }
 
-RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
+bool PresentationContextIOSurface::copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination, WebGPU::RenderBufferCopyColorSpace copyColorSpace)
 {
-    isIOSurfaceSupportedFormat = false;
-    RefPtr device = m_device.get();
-    if (!device || bufferIndex >= m_renderBuffers.size())
-        return nullptr;
+    RefPtr device = m_device;
+    if (!device || !destination || m_ioSurfaces.count != m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size())
+        return false;
 
-    auto& renderBuffer = m_renderBuffers[bufferIndex];
-    RefPtr texture = renderBuffer.luminanceClampTexture.get() ? renderBuffer.luminanceClampTexture.get() : renderBuffer.texture.ptr();
-    if (!texture || !texture->waitForCommandBufferCompletion())
-        return nullptr;
+    // The render buffer texture is the IOSurface that is displayed.
+    id<MTLTexture> source = m_renderBuffers[bufferIndex].texture->texture();
+    RetainPtr<IOSurfaceRef> sourceSurface = source.iosurface;
+    if (!source || !sourceSurface || IOSurfaceGetWidth(destination) != source.width || IOSurfaceGetHeight(destination) != source.height)
+        return false;
 
-    id<MTLTexture> mtlTexture = texture->texture();
-    if (!mtlTexture || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm || mtlTexture.pixelFormat == MTLPixelFormatBGRA8Unorm_sRGB || mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float) {
-        isIOSurfaceSupportedFormat = true;
-        return nullptr;
+    // A copy to sRGB converts the contents when they are in another color space, or in the extended
+    // range of a 16-bit float render buffer.
+    bool convertsToSRGB = copyColorSpace == WebGPU::RenderBufferCopyColorSpace::SRGB && (source.pixelFormat == MTLPixelFormatRGBA16Float || m_colorSpace != WebGPU::PredefinedColorSpace::SRGB);
+    if (convertsToSRGB && (IOSurfaceGetPixelFormat(destination) != kCVPixelFormatType_32BGRA || !convertToSRGBComputePipelineState()))
+        return false;
+
+    // A blit copies the bytes, so it needs a destination with the layout of the source. Otherwise,
+    // such as for an RGBA render buffer copied to a BGRA destination, a compute pass converts them.
+    bool canBlit = !convertsToSRGB && IOSurfaceGetPixelFormat(destination) == IOSurfaceGetPixelFormat(sourceSurface.get());
+    MTLPixelFormat destinationPixelFormat = source.pixelFormat;
+    if (!canBlit) {
+        switch (IOSurfaceGetPixelFormat(destination)) {
+        case kCVPixelFormatType_32BGRA:
+            destinationPixelFormat = MTLPixelFormatBGRA8Unorm;
+            break;
+        default:
+            return false;
+        }
     }
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:destinationPixelFormat width:source.width height:source.height mipmapped:NO];
+    textureDescriptor.usage = canBlit ? MTLTextureUsageShaderRead : MTLTextureUsageShaderWrite;
+    id<MTLTexture> destinationTexture = device->newTextureWithDescriptor(textureDescriptor, destination);
+    if (!destinationTexture)
+        return false;
 
-    bool fp16 = mtlTexture.pixelFormat == MTLPixelFormatRGBA16Float;
-    CFStringRef colorSpaceName = kCGColorSpaceSRGB;
-    switch (m_colorSpace) {
-    case WebGPU::PredefinedColorSpace::SRGB:
-        colorSpaceName = kCGColorSpaceSRGB;
-        break;
-    case WebGPU::PredefinedColorSpace::SRGBLinear:
-        colorSpaceName = kCGColorSpaceLinearSRGB;
-        break;
-    case WebGPU::PredefinedColorSpace::DisplayP3:
-        colorSpaceName = kCGColorSpaceDisplayP3;
-        break;
-    case WebGPU::PredefinedColorSpace::DisplayP3Linear:
-        colorSpaceName = kCGColorSpaceLinearDisplayP3;
-        break;
-    }
-
-    auto colorSpace = adoptCF(CGColorSpaceCreateWithName(colorSpaceName));
-    auto bytesPerPixel = fp16 ? 8 : 4;
-    auto width = mtlTexture.width;
-    auto height = mtlTexture.height;
-    auto bytesPerRow = bytesPerPixel * width;
-    auto bitsPerComponent = bytesPerPixel * 2;
-    auto bitsPerPixel = bitsPerComponent * 4;
-    bool isOpaque = m_alphaMode == WebGPU::CanvasAlphaMode::Opaque;
-    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGImageByteOrder32Big);
-    if (fp16)
-        bitmapInfo = static_cast<CGBitmapInfo>(isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
-
-    size_t imageBytesSize = bytesPerRow * height;
-    void* imageBytes = FastMalloc::tryMalloc(imageBytesSize);
-    if (!imageBytes)
-        return nullptr;
-    [mtlTexture getBytes:imageBytes bytesPerRow:bytesPerRow fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
-    auto freeImageBytes = [](void* imageBytes, const void*, size_t) {
-        FastMalloc::free(imageBytes);
-    };
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(imageBytes, imageBytes, imageBytesSize, freeImageBytes));
-    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    Ref deviceQueue = device->getQueue();
+    deviceQueue->resolveProvisionalTextureClears();
+    id<MTLCommandBuffer> commandBuffer = deviceQueue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!commandBuffer)
+        return false;
+    if (canBlit) {
+        id<MTLBlitCommandEncoder> blitEncoder = [commandBuffer blitCommandEncoderWithDescriptor:[MTLBlitPassDescriptor new]];
+        deviceQueue->setEncoderForBuffer(commandBuffer, blitEncoder);
+        [blitEncoder copyFromTexture:source toTexture:destinationTexture];
+        deviceQueue->endEncoding(blitEncoder, commandBuffer);
+    } else if (convertsToSRGB)
+        convertTextureToSRGB(destinationTexture, source, commandBuffer);
+    else
+        copyTextureToTexture(destinationTexture, source, commandBuffer);
+    deviceQueue->commitMTLCommandBuffer(commandBuffer);
+    // An invalid queue, such as the one of a lost device, does not commit.
+    if (commandBuffer.status < MTLCommandBufferStatusCommitted)
+        return false;
+    // The copy is read by others once it is scheduled.
+    [commandBuffer waitUntilScheduled];
+    return true;
 }
 
 static void generateAValidationError(Device& device, NSString* message, bool generateValidationError)
@@ -265,6 +266,126 @@ void PresentationContextIOSurface::copyTextureToTexture(id<MTLTexture> destinati
 
     [computeEncoder setTexture:source atIndex:0];
     [computeEncoder setTexture:destination atIndex:1];
+    auto threadgroupSize = MTLSizeMake(16, 16, 1);
+
+    MTLSize threadgroupCount;
+    threadgroupCount.width  = (destination.width  + threadgroupSize.width -  1) / threadgroupSize.width;
+    threadgroupCount.height = (destination.height + threadgroupSize.height - 1) / threadgroupSize.height;
+    threadgroupCount.depth = 1;
+    [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
+    deviceQueue->endEncoding(computeEncoder, commandBuffer);
+}
+
+id<MTLComputePipelineState> PresentationContextIOSurface::convertToSRGBComputePipelineState()
+{
+    if (m_convertToSRGBComputePipelineState)
+        return m_convertToSRGBComputePipelineState;
+
+    NSError *error = nil;
+    MTLCompileOptions* options = [MTLCompileOptions new];
+    // The transfer functions are evaluated precisely, so that the 8-bit result matches a conversion
+    // on the CPU.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    options.fastMathEnabled = NO;
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    id<MTLDevice> device = m_device->device();
+    /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:@R"(
+using namespace metal;
+struct ConvertToSRGBParameters {
+    uint isPremultiplied;
+    uint isOpaque;
+    uint isLinear;
+    uint isDisplayP3;
+};
+// A float3x3 is built from its columns, so each float3 below is one column of the linear Display P3
+// (D65) to linear sRGB matrix.
+constant float3x3 linearDisplayP3ToLinearSRGB = float3x3(
+    float3(1.2249402, -0.0420570, -0.0196376),
+    float3(-0.2249402, 1.0420570, -0.0786360),
+    float3(0, 0, 1.0982736));
+// The extended sRGB transfer function, which mirrors the negative values.
+static float3 sRGBToLinear(float3 color)
+{
+    float3 magnitude = abs(color);
+    float3 linear = select(pow((magnitude + 0.055) / 1.055, 2.4), magnitude / 12.92, magnitude <= 0.04045);
+    return copysign(linear, color);
+}
+static float3 linearToSRGB(float3 color)
+{
+    return select(1.055 * pow(color, 1.0 / 2.4) - 0.055, color * 12.92, color <= 0.0031308);
+}
+kernel void convertToSRGB(texture2d<float, access::read> inTexture [[texture(0)]],
+    texture2d<float, access::write> outTexture [[texture(1)]],
+    constant ConvertToSRGBParameters& parameters [[buffer(0)]],
+    uint2 gid [[thread_position_in_grid]])
+{
+    if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height())
+        return;
+
+    float4 color = inTexture.read(gid);
+    float alpha = parameters.isOpaque ? 1 : saturate(color.a);
+    float3 rgb = color.rgb;
+    if (parameters.isPremultiplied)
+        rgb = alpha > 0 ? rgb / alpha : float3(0);
+    if (!parameters.isLinear)
+        rgb = sRGBToLinear(rgb);
+    if (parameters.isDisplayP3)
+        rgb = linearDisplayP3ToLinearSRGB * rgb;
+    rgb = linearToSRGB(saturate(rgb));
+    if (parameters.isPremultiplied)
+        rgb *= alpha;
+    outTexture.write(float4(rgb, alpha), gid);
+})" /* NOLINT */ options:options error:&error];
+    if (error) {
+        WTFLogAlways("%@", error); // NOLINT
+        return nil;
+    }
+    id<MTLFunction> function = [library newFunctionWithName:@"convertToSRGB"];
+    m_convertToSRGBComputePipelineState = [device newComputePipelineStateWithFunction:function error:&error];
+    if (error) {
+        WTFLogAlways("%@", error); // NOLINT
+        return nil;
+    }
+
+    return m_convertToSRGBComputePipelineState;
+}
+
+// Converts the contents of the source, which may be in the extended range of a 16-bit float texture,
+// to sRGB in the standard range. The colors are converted before they are clamped, so the colors
+// outside of the sRGB range are clamped as they would be by a conversion on the CPU.
+void PresentationContextIOSurface::convertTextureToSRGB(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer> commandBuffer)
+{
+    if (!source || !destination || source.width != destination.width || source.height != destination.height)
+        return;
+
+    id<MTLComputePipelineState> pso = convertToSRGBComputePipelineState();
+    if (!pso)
+        return;
+
+    struct {
+        uint32_t isPremultiplied;
+        uint32_t isOpaque;
+        uint32_t isLinear;
+        uint32_t isDisplayP3;
+    } parameters {
+        .isPremultiplied = m_alphaMode == WebGPU::CanvasAlphaMode::Premultiplied,
+        .isOpaque = m_alphaMode == WebGPU::CanvasAlphaMode::Opaque,
+        .isLinear = m_colorSpace == WebGPU::PredefinedColorSpace::SRGBLinear || m_colorSpace == WebGPU::PredefinedColorSpace::DisplayP3Linear,
+        .isDisplayP3 = m_colorSpace == WebGPU::PredefinedColorSpace::DisplayP3 || m_colorSpace == WebGPU::PredefinedColorSpace::DisplayP3Linear,
+    };
+
+    RefPtr device = m_device;
+    Ref deviceQueue = device->getQueue();
+
+    MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
+    computeDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+    id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
+    deviceQueue->setEncoderForBuffer(commandBuffer, computeEncoder);
+    [computeEncoder setComputePipelineState:pso];
+    [computeEncoder setTexture:source atIndex:0];
+    [computeEncoder setTexture:destination atIndex:1];
+    [computeEncoder setBytes:&parameters length:sizeof(parameters) atIndex:0];
     auto threadgroupSize = MTLSizeMake(16, 16, 1);
 
     MTLSize threadgroupCount;

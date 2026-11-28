@@ -75,7 +75,7 @@ public:
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool&) override { return nullptr; }
+    bool copyRenderBuffer(uint32_t, IOSurfaceRef, WebGPU::RenderBufferCopyColorSpace) override { return false; }
 
     void setLabel(String&&) override { }
     bool isValid() const override { return false; }

@@ -68,9 +68,11 @@ private:
     void replaceRenderBuffer(uint32_t index, IOSurface *);
     void setOwnershipIdentity(IOSurface *);
     void onSubmittedWorkScheduled(Function<void()>&&);
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
+    bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination, WebGPU::RenderBufferCopyColorSpace) final;
     void copyTextureToTexture(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer>);
     id<MTLComputePipelineState> resizeComputePipelineState();
+    void convertTextureToSRGB(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer>);
+    id<MTLComputePipelineState> convertToSRGBComputePipelineState();
 
     void waitForInFlightFrameSlot();
 
@@ -87,6 +89,7 @@ private:
     id<MTLFunction> m_luminanceClampFunction;
     id<MTLComputePipelineState> m_computePipelineState;
     id<MTLComputePipelineState> m_resizeComputePipelineState;
+    id<MTLComputePipelineState> m_convertToSRGBComputePipelineState;
     Deque<Ref<Texture>> m_inFlightFrames;
     size_t m_maximumInFlightFrames { 0 };
     Seconds m_lastDrainedFrameGPUCost { 0_s };

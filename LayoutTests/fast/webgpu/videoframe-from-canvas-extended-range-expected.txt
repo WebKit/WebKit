@@ -1,0 +1,125 @@
+Tests that a VideoFrame of a WebGPU canvas draws like the canvas, for the extended range, every color space and alpha mode, and both canvas elements and OffscreenCanvases.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bgra8unorm standard srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm standard display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS bgra8unorm extended display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm standard display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba8unorm extended display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float standard display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb opaque HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended srgb opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb opaque OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended srgb premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb premultiplied HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended srgb premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb premultiplied OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3 opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3 opaque HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3 opaque HTMLCanvasElement: the VideoFrame converts (2, 0.5, 0) before clamping it
+PASS rgba16float extended display-p3 opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3 opaque OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3 opaque OffscreenCanvas: the VideoFrame converts (2, 0.5, 0) before clamping it
+PASS rgba16float extended display-p3 premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3 premultiplied HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3 premultiplied HTMLCanvasElement: the VideoFrame converts (2, 0.5, 0) before clamping it
+PASS rgba16float extended display-p3 premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3 premultiplied OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3 premultiplied OffscreenCanvas: the VideoFrame converts (2, 0.5, 0) before clamping it
+PASS rgba16float extended srgb-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb-linear opaque HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended srgb-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb-linear opaque OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended srgb-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb-linear premultiplied HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended srgb-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended srgb-linear premultiplied OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3-linear opaque HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3-linear opaque HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3-linear opaque OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3-linear opaque OffscreenCanvas: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3-linear premultiplied HTMLCanvasElement: the VideoFrame is in sRGB
+PASS rgba16float extended display-p3-linear premultiplied OffscreenCanvas: the VideoFrame draws like the canvas
+PASS rgba16float extended display-p3-linear premultiplied OffscreenCanvas: the VideoFrame is in sRGB
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
