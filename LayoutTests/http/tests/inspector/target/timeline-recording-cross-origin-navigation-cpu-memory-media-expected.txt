@@ -1,0 +1,19 @@
+Tests that, without Site Isolation, the CPU, Memory and Media instruments do not start the page target that a cross-origin navigation creates during a capture, and that capturing still stops.
+
+
+== Running test suite: Timeline.CrossOriginNavigation.CPUMemoryMedia
+-- Running test case: Timeline.CrossOriginNavigation.CPUMemoryMedia.NewPageTargetNotStarted
+PASS: Capturing is active.
+PASS: The page target should be started for CPUProfiler.
+PASS: The page target should be started for Memory.
+PASS: The page target should be started for Animation.
+PASS: The page target created by the navigation should be the main target.
+PASS: Site Isolation should not be detected.
+PASS: The page target created by the navigation should lead its process.
+PASS: The page target created by the navigation should be started for Timeline.
+PASS: The page target created by the navigation should not be started for CPUProfiler.
+PASS: The page target created by the navigation should not be started for Memory.
+PASS: The page target created by the navigation should not be started for Animation.
+PASS: Capturing stopped.
+PASS: There should be no unhandled promise rejections.
+
