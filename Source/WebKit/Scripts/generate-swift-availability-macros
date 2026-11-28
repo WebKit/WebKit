@@ -44,7 +44,7 @@ elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"
     [[ -n ${WATCHOS_VERSION} ]] || WATCHOS_VERSION="9999"
     [[ -n ${TVOS_VERSION} ]] || TVOS_VERSION="9999"
-elif [[ "${PLATFORM_NAME}" == xr* ]]; then
+elif [[ "${WK_PLATFORM_NAME}" == xr* || "${PLATFORM_NAME}" == xr* ]]; then
     [[ -n ${XROS_VERSION} ]] || XROS_VERSION=${XROS_DEPLOYMENT_TARGET}
     [[ -n ${IOS_VERSION} ]] || IOS_VERSION="9999"
     [[ -n ${OSX_VERSION} ]] || OSX_VERSION="9999"

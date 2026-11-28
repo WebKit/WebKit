@@ -979,34 +979,37 @@ webkit_target_add_swift_objc_importer_options(WebKitSwift "${CMAKE_CURRENT_BINAR
 
 # WebKit's custom Swift @available macros, as a response file.
 set(_swift_tba_resp "${CMAKE_CURRENT_BINARY_DIR}/swift-tba-availability-macros.resp")
+# Only the deployment target of the platform being built for is known; the
+# script treats 9999 as the placeholder for the others. Mac Catalyst deploys to
+# an iOS version, like iOS does.
 if (WEBKIT_PLATFORM_MAC)
-    set(_swift_tba_env
-        IPHONEOS_DEPLOYMENT_TARGET=9999
-        MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        WK_PLATFORM_NAME=macosx
-    )
+    set(_swift_tba_target_platform MACOSX)
+elseif (WEBKIT_SDK_IS_TVOS)
+    set(_swift_tba_target_platform TVOS)
+elseif (WEBKIT_SDK_IS_WATCHOS)
+    set(_swift_tba_target_platform WATCHOS)
+elseif (WEBKIT_SDK_IS_XROS)
+    set(_swift_tba_target_platform XROS)
 else ()
-    if (WEBKIT_SDK_IS_MACCATALYST)
-        set(_swift_tba_platform "maccatalyst")
-    elseif (WEBKIT_SDK_IS_SIMULATOR)
-        set(_swift_tba_platform "iphonesimulator")
-    else ()
-        set(_swift_tba_platform "iphoneos")
-    endif ()
-    set(_swift_tba_env
-        WK_PLATFORM_NAME=${_swift_tba_platform}
-        IPHONEOS_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        # LLVM_TARGET_TRIPLE_OS_VERSION is only used by iOS code (to
-        # disambiguate between iOS and Catalyst).
-        LLVM_TARGET_TRIPLE_OS_VERSION=ios${CMAKE_OSX_DEPLOYMENT_TARGET}
-        MACOSX_DEPLOYMENT_TARGET=9999
-    )
-    unset(_swift_tba_platform)
+    set(_swift_tba_target_platform IPHONEOS)
 endif ()
+set(_swift_tba_env
+    PLATFORM_NAME=${WEBKIT_SDK_NAME}
+    WK_PLATFORM_NAME=${WK_PLATFORM_NAME}
+    LLVM_TARGET_TRIPLE_OS_VERSION=${WEBKIT_SDK_MODULE_OS}${CMAKE_OSX_DEPLOYMENT_TARGET}
+)
+foreach (_swift_tba_platform IN ITEMS MACOSX IPHONEOS TVOS WATCHOS XROS)
+    if (_swift_tba_platform STREQUAL _swift_tba_target_platform)
+        list(APPEND _swift_tba_env ${_swift_tba_platform}_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+    else ()
+        list(APPEND _swift_tba_env ${_swift_tba_platform}_DEPLOYMENT_TARGET=9999)
+    endif ()
+endforeach ()
+unset(_swift_tba_platform)
+unset(_swift_tba_target_platform)
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E env
         ${_swift_tba_env}
-        XROS_DEPLOYMENT_TARGET=9999
         BUILT_PRODUCTS_DIR=${CMAKE_BINARY_DIR}
         SDKROOT=${CMAKE_OSX_SYSROOT}
         SCRIPT_OUTPUT_FILE_0=${_swift_tba_resp}
