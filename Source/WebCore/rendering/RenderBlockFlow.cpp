@@ -2930,6 +2930,13 @@ void RenderBlockFlow::placeFloatingBox(FloatingObject& floatingObject, const Lay
     m_floatingObjects->place(floatingObject, frameRect, marginOffset);
 }
 
+Layout::PlacedFloats& RenderBlockFlow::placedFloats()
+{
+    if (!m_floatingObjects)
+        createFloatingObjects();
+    return m_floatingObjects->placedFloats();
+}
+
 void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
 {
     if (!m_floatingObjects)
@@ -3208,9 +3215,6 @@ LayoutUnit RenderBlockFlow::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop,
     if (!m_floatingObjects || !m_floatingObjects->hasLeftObjects())
         return fixedOffset;
 
-    if (!view().frameView().layoutContext().isInRenderTreeLayout())
-        return m_floatingObjects->logicalLeftOffset(fixedOffset, logicalTop, logicalHeight);
-
     auto leftFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).first;
     return leftFloatsEdge ? std::max(fixedOffset, *leftFloatsEdge) : fixedOffset;
 }
@@ -3219,9 +3223,6 @@ LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop
 {
     if (!m_floatingObjects || !m_floatingObjects->hasRightObjects())
         return fixedOffset;
-
-    if (!view().frameView().layoutContext().isInRenderTreeLayout())
-        return m_floatingObjects->logicalRightOffset(fixedOffset, logicalTop, logicalHeight);
 
     auto rightFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).second;
     return rightFloatsEdge ? std::min(fixedOffset, *rightFloatsEdge) : fixedOffset;

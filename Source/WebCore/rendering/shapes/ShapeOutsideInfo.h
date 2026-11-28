@@ -38,45 +38,9 @@
 
 namespace WebCore {
 
-class RenderBlockFlow;
 class RenderBox;
-class FloatingObject;
 
 Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox&);
-
-class ShapeOutsideDeltas final {
-    WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideDeltas);
-public:
-    ShapeOutsideDeltas() = default;
-
-    ShapeOutsideDeltas(LayoutUnit leftMarginBoxDelta, LayoutUnit rightMarginBoxDelta, bool lineOverlapsShape, LayoutUnit borderBoxLineTop, LayoutUnit lineHeight)
-        : m_leftMarginBoxDelta(leftMarginBoxDelta)
-        , m_rightMarginBoxDelta(rightMarginBoxDelta)
-        , m_borderBoxLineTop(borderBoxLineTop)
-        , m_lineHeight(lineHeight)
-        , m_lineOverlapsShape(lineOverlapsShape)
-        , m_isValid(true)
-    {
-    }
-
-    bool isForLine(LayoutUnit borderBoxLineTop, LayoutUnit lineHeight)
-    {
-        return m_isValid && m_borderBoxLineTop == borderBoxLineTop && m_lineHeight == lineHeight;
-    }
-
-    bool isValid() { return m_isValid; }
-    LayoutUnit leftMarginBoxDelta() { ASSERT(m_isValid); return m_leftMarginBoxDelta; }
-    LayoutUnit rightMarginBoxDelta() { ASSERT(m_isValid); return m_rightMarginBoxDelta; }
-    bool lineOverlapsShape() { ASSERT(m_isValid); return m_lineOverlapsShape; }
-
-private:
-    LayoutUnit m_leftMarginBoxDelta;
-    LayoutUnit m_rightMarginBoxDelta;
-    LayoutUnit m_borderBoxLineTop;
-    LayoutUnit m_lineHeight;
-    unsigned m_lineOverlapsShape : 1 { false };
-    unsigned m_isValid : 1 { false };
-};
 
 class ShapeOutsideInfo final {
     WTF_MAKE_TZONE_ALLOCATED(ShapeOutsideInfo);
@@ -86,14 +50,9 @@ public:
 
     static bool isEnabledFor(const RenderBox&);
 
-    ShapeOutsideDeltas computeDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
-
     void invalidateForSizeChangeIfNeeded();
 
-    LayoutUnit shapeLogicalBottom() const { return protect(computedShape())->shapeMarginLogicalBoundingBox().maxY(); }
-
     void markShapeAsDirty() { m_shape = nullptr; }
-    bool isShapeDirty() { return !m_shape; }
 
     LayoutRect computedShapePhysicalBoundingBox() const;
     NODELETE FloatPoint shapeToRendererPoint(const FloatPoint&) const;
@@ -109,8 +68,6 @@ private:
 
     mutable RefPtr<const LayoutShape> m_shape;
     LayoutSize m_cachedShapeLogicalSize;
-
-    ShapeOutsideDeltas m_shapeOutsideDeltas;
 };
 
 }

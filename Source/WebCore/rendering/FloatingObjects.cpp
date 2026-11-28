@@ -182,23 +182,6 @@ protected:
     bool updateOffsetIfNeeded(const FloatingObject&) final;
 };
 
-template <FloatingObject::Type FloatTypeValue>
-class ComputeFloatOffsetForLineLayoutAdapter : public ComputeFloatOffsetAdapter<FloatTypeValue> {
-public:
-    ComputeFloatOffsetForLineLayoutAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
-        : ComputeFloatOffsetAdapter<FloatTypeValue>(renderer, lineTop, lineBottom, offset)
-    {
-    }
-
-    virtual ~ComputeFloatOffsetForLineLayoutAdapter() = default;
-
-    NODELETE LayoutUnit lowValue() const { return LayoutUnit { this->m_lineTop.floor() }; }
-    void collectIfNeeded(const FloatingObjectInterval&);
-
-protected:
-    bool updateOffsetIfNeeded(const FloatingObject&) final;
-};
-
 static Layout::PlacedFloats::Item placedFloatItem(const RenderBlockFlow& block, const FloatingObject& floatingObject)
 {
     CheckedRef floatBox = *floatingObject.renderer();
@@ -319,12 +302,25 @@ void FloatingObjects::place(FloatingObject& floatingObject, const LayoutRect& fr
 {
     // The float may already be in m_placedFloatsTree, indexed on the rect it had then. Take it out before
     // changing the rect, so the entry is keyed on the rect the float actually has.
-    if (floatingObject.isPlaced())
-        removePlacedObject(&floatingObject);
+    if (floatingObject.isPlaced() && m_placedFloatsTree) {
+        auto removed = m_placedFloatsTree->remove(intervalForFloatingObject(&floatingObject));
+        ASSERT_UNUSED(removed, removed);
+#if ASSERT_ENABLED
+        floatingObject.setIsInPlacedTree(false);
+#endif
+    }
 
     floatingObject.setFrameRect(frameRect);
     floatingObject.setMarginOffset(marginOffset);
-    addPlacedObject(&floatingObject);
+    floatingObject.setIsPlaced(true);
+    // Inline layout may have put the float anywhere in the list (see PlacedFloats::add()), where FloatingContext::constraints() may skip it.
+    m_floatingContext = nullptr;
+    if (m_placedFloatsTree) {
+        m_placedFloatsTree->add(intervalForFloatingObject(&floatingObject));
+#if ASSERT_ENABLED
+        floatingObject.setIsInPlacedTree(true);
+#endif
+    }
 }
 
 FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)
@@ -376,7 +372,7 @@ std::unique_ptr<Layout::PlacedFloats> FloatingObjects::makePlacedFloats() const
     return placedFloats;
 }
 
-const Layout::PlacedFloats& FloatingObjects::placedFloats()
+Layout::PlacedFloats& FloatingObjects::placedFloats()
 {
     if (!m_placedFloats)
         m_placedFloats = makePlacedFloats();
@@ -421,24 +417,6 @@ LayoutUnit FloatingObjects::logicalRightOffsetForPositioningFloat(LayoutUnit fix
 
     if (heightRemaining)
         *heightRemaining = adapter.heightRemaining();
-
-    return std::min(fixedOffset, adapter.offset());
-}
-
-LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight)
-{
-    ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft> adapter(renderer(), logicalTop, logicalTop + logicalHeight, fixedOffset);
-    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
-        placedFloatsTree->allOverlapsWithAdapter(adapter);
-
-    return adapter.offset();
-}
-
-LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight)
-{
-    ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight> adapter(renderer(), logicalTop, logicalTop + logicalHeight, fixedOffset);
-    if (const FloatingObjectTree* placedFloatsTree = this->placedFloatsTree())
-        placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return std::min(fixedOffset, adapter.offset());
 }
@@ -509,72 +487,6 @@ inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const Int
     bool floatIsNewExtreme = updateOffsetIfNeeded(floatingObject);
     if (floatIsNewExtreme)
         m_outermostFloat = &floatingObject;
-}
-
-template <FloatingObject::Type FloatTypeValue>
-inline void ComputeFloatOffsetForLineLayoutAdapter<FloatTypeValue>::collectIfNeeded(const FloatingObjectInterval& interval)
-{
-    const auto& floatingObject = *interval.data();
-    if (floatingObject.type() != FloatTypeValue || !rangesIntersect(this->m_renderer->logicalTopForFloat(floatingObject), this->m_renderer->logicalBottomForFloat(floatingObject), this->m_lineTop, this->m_lineBottom))
-        return;
-
-    // All the objects returned from the tree should be already placed.
-    ASSERT(floatingObject.isPlaced());
-
-    if (updateOffsetIfNeeded(floatingObject))
-        this->m_outermostFloat = &floatingObject;
-}
-
-// There is nothing to overlap in an empty margin box, so a float with one takes no room (see FloatingContext's floatContainsLine()).
-// FIXME: The frame rect is not always the margin box: its block size also covers the pagination strut and the initial-letter
-// sink (see RenderBlockFlow::positionNewFloats() and adjustInitialLetterPosition()).
-static bool hasEmptyMarginBox(const RenderBlockFlow& block, const FloatingObject& floatingObject)
-{
-    return block.logicalWidthForFloat(floatingObject) <= 0 || block.logicalHeightForFloat(floatingObject) <= 0;
-}
-
-template<>
-inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
-{
-    if (!floatingObject.renderer() || hasEmptyMarginBox(*m_renderer, floatingObject))
-        return false;
-
-    LayoutUnit logicalRight = m_renderer->logicalRightForFloat(floatingObject);
-    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer()->shapeOutsideInfo()) {
-        ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(*m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
-        if (!shapeDeltas.isValid() || !shapeDeltas.lineOverlapsShape())
-            return false;
-
-        logicalRight += shapeDeltas.rightMarginBoxDelta();
-    }
-    if (logicalRight > m_offset) {
-        m_offset = logicalRight;
-        return true;
-    }
-
-    return false;
-}
-
-template<>
-inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
-{
-    if (!floatingObject.renderer() || hasEmptyMarginBox(*m_renderer, floatingObject))
-        return false;
-
-    LayoutUnit logicalLeft = m_renderer->logicalLeftForFloat(floatingObject);
-    if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer()->shapeOutsideInfo()) {
-        ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(*m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
-        if (!shapeDeltas.isValid() || !shapeDeltas.lineOverlapsShape())
-            return false;
-
-        logicalLeft += shapeDeltas.leftMarginBoxDelta();
-    }
-    if (logicalLeft < m_offset) {
-        m_offset = logicalLeft;
-        return true;
-    }
-
-    return false;
 }
 
 } // namespace WebCore
