@@ -619,6 +619,7 @@ UIProcess/ios/WKActionSheetAssistant.mm @nonARC
 UIProcess/ios/WKApplicationStateTrackingView.mm @nonARC
 UIProcess/ios/WKBaseScrollView.mm @nonARC
 UIProcess/ios/WKCapturePreviewViewController.mm @nonARC
+UIProcess/ios/WKContentView+Find.mm @nonARC
 UIProcess/ios/WKContentView.mm @nonARC @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
 UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC
@@ -634,6 +635,7 @@ UIProcess/ios/WKMouseInteraction.mm @nonARC
 UIProcess/ios/WKPageHostedPortalView.mm @nonARC
 UIProcess/ios/WKPasswordView.mm @nonARC
 UIProcess/ios/WKPickerPresenter.mm @nonARC
+UIProcess/ios/WKPointerInteractionController.mm @nonARC
 UIProcess/ios/WKPortalVolumetricSceneController.mm @nonARC
 UIProcess/ios/WKScrollView.mm @nonARC
 UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm @nonARC
