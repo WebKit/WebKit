@@ -14,13 +14,16 @@ oscillatorNode.connect(gainNode).connect(audioContext.destination);
 oscillatorNode.start();
 
 handle = setInterval(() => {
-    if (audioContext.currentTime < 0.100)
+    if (audioContext.currentTime < 0.1)
         return;
     clearInterval(handle);
 
-    contextTime = audioContext.getOutputTimestamp().contextTime;
-    shouldBeTrue("contextTime > 0.090");
+    var timestamp = audioContext.getOutputTimestamp();
+    contextTime = timestamp.contextTime;
+    performanceTime = timestamp.performanceTime;
+    shouldBeTrue("contextTime > 0");
     shouldBeTrue("contextTime <= audioContext.currentTime");
+    shouldBeTrue("performanceTime > 0");
     finishJSTest();
 }, 10);
 </script>

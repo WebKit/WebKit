@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "RemoteAudioDestinationManagerMessages.h"
+#include "RemoteAudioOutputState.h"
 #include "WebProcess.h"
 #include <WebCore/AudioBus.h>
 #include <WebCore/AudioUtilities.h>
@@ -81,8 +82,9 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(const CreationOptions& 
 
 uint32_t RemoteAudioDestinationProxy::totalFrameCount() const
 {
-    RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-    return WTF::atomicLoad(&spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan())[0]);
+    RELEASE_ASSERT(m_frameCount->size() == sizeof(RemoteAudioOutputState));
+    auto state = spanReinterpretCast<RemoteAudioOutputState>(m_frameCount->mutableSpan());
+    return WTF::atomicLoad(&state[0].frameCount);
 }
 
 void RemoteAudioDestinationProxy::startRenderingThread()
@@ -133,7 +135,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
 
         m_lastFrameCount = 0;
         std::optional<WebCore::SharedMemory::Handle> frameCountHandle;
-        RefPtr frameCount = WebCore::SharedMemory::allocate(sizeof(std::atomic<uint32_t>));
+        RefPtr frameCount = WebCore::SharedMemory::allocate(sizeof(RemoteAudioOutputState));
         m_frameCount = frameCount;
         if (frameCount)
             frameCountHandle = frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
@@ -214,11 +216,16 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
 
 MediaTime RemoteAudioDestinationProxy::outputLatency() const
 {
-    return (MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(sampleRate()) }
+    // MediaTime(value, 0) is infinite, so skip a term whose sample rate is not known yet.
+    MediaTime latency;
+    if (auto rate = sampleRate())
+        latency = MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(rate) };
 #if USE(AUDIO_SESSION)
-            + MediaTime { static_cast<int64_t>(WebCore::AudioSession::singleton().outputLatency()), static_cast<uint32_t>(WebCore::AudioSession::singleton().sampleRate()) }
+    auto sessionRate = WebCore::AudioSession::singleton().sampleRate();
+    if (sessionRate > 0)
+        latency += MediaTime { static_cast<int64_t>(WebCore::AudioSession::singleton().outputLatency()), static_cast<uint32_t>(sessionRate) };
 #endif
-            );
+    return latency;
 }
 
 void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
@@ -226,9 +233,15 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
     ASSERT(!isMainRunLoop());
 
 #if PLATFORM(COCOA)
+    if (m_frameCount && m_remoteSampleRate > 0) {
+        auto state = spanReinterpretCast<RemoteAudioOutputState>(m_frameCount->mutableSpan());
+        uint64_t consumedFrame = 0;
+        uint64_t hostTime = 0;
+        if (!state.empty() && state[0].loadPlayback(consumedFrame, hostTime) && hostTime)
+            m_lastPlaybackPosition = { Seconds { static_cast<double>(consumedFrame) / m_remoteSampleRate }, MonotonicTime::fromMachAbsoluteTime(hostTime) };
+    }
+    auto outputTime = m_lastPlaybackPosition;
     while (frameCount) {
-        auto sampleTime = m_currentFrame / static_cast<double>(m_remoteSampleRate);
-        auto hostTime =  MonotonicTime::fromMachAbsoluteTime(mach_absolute_time());
         size_t numberOfFrames = std::min(frameCount, maxAudioBufferListSampleCount);
         frameCount -= numberOfFrames;
         auto* ioData = m_audioBufferList->list();
@@ -246,7 +259,7 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
         }
         size_t framesToRender = pullRendered(numberOfFrames);
         m_ringBuffer->store(m_audioBufferList->list(), numberOfFrames, m_currentFrame);
-        render(sampleTime, hostTime, framesToRender);
+        render(outputTime.position.seconds(), outputTime.timestamp, framesToRender);
         m_currentFrame += numberOfFrames;
     }
 #endif

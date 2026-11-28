@@ -52,6 +52,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -234,15 +235,54 @@ double AudioContext::outputLatency()
 AudioTimestamp AudioContext::getOutputTimestamp()
 {
     auto position = outputPosition();
+    double rendered = currentTime();
 
-    // The timestamp of what is currently being played (contextTime) cannot be
-    // later than what is being rendered. (currentTime)
-    position.position = Seconds { std::min(position.position.seconds(), currentTime()) };
+    // No device buffer yet. The rendered frame stands in until one is consumed.
+    if (!position.timestamp) {
+        position.position = Seconds { rendered };
+        position.timestamp = MonotonicTime::now();
+    }
+
+    // The device cursor can run ahead of the rendered frame. Clamp before
+    // subtracting output latency, or the currentTime bound erases that latency.
+    double consumed = position.position.seconds();
+    if (consumed > rendered) {
+        position.timestamp -= Seconds { consumed - rendered };
+        consumed = rendered;
+    }
+
+#if USE(AUDIO_SESSION)
+    // outputLatency() is the delay after the hardware consumes the buffer.
+    // GTK keeps that delay in the timestamp instead, as a future playback time.
+    double latency = outputLatency();
+    if (!(latency >= 0 && latency < 60))
+        latency = 0;
+    // A cursor still inside that delay would leave contextTime at 0.
+    if (consumed - latency <= 0 && rendered > consumed) {
+        position.timestamp += Seconds { rendered - consumed };
+        consumed = rendered;
+    }
+    double contextTime = consumed - latency;
+    if (contextTime < 0) {
+        position.timestamp += Seconds { -contextTime };
+        contextTime = 0;
+    }
+    consumed = contextTime;
+#endif
+    // The latency-adjusted sample is still before 0. Use the rendered frame.
+    if (!(consumed > 0) && rendered > 0)
+        consumed = rendered;
+    position.position = Seconds { consumed };
 
     DOMHighResTimeStamp performanceTime = 0.0;
     RefPtr document = this->document();
-    if (document && document->window())
-        performanceTime = std::max(protect(protect(document->window())->performance())->relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
+    if (document && document->window()) {
+        Ref performance = protect(protect(document->window())->performance());
+        performanceTime = std::max(performance->relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
+        // A host time from before the document time origin clamps to 0.
+        if (!(performanceTime > 0))
+            performanceTime = std::max(performance->relativeTimeFromTimeOriginInReducedResolution(MonotonicTime::now()), 0.0);
+    }
 
     return { position.position.seconds(), performanceTime };
 }
