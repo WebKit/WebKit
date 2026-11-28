@@ -182,12 +182,12 @@ public:
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
-    void preparePlacedFloats();
+    void preparePlacedFloats(size_t layoutStartLineIndex);
     FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     static std::unique_ptr<LayoutInfoForTesting> collectLayoutInfoForTesting(const Layout::InlineLayoutResult*);
     void setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&);
-    Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
-    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
+    Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout, size_t layoutStartLineIndex);
+    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent, size_t layoutStartLineIndex);
 
     InlineContent& ensureInlineContent() LIFETIME_BOUND;
     Layout::BlockFormattingState& ensureBlockFormattingState() LIFETIME_BOUND;

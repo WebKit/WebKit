@@ -433,12 +433,7 @@ void InlineFormattingContext::updateLayoutStateWithLineLayoutResult(const LineLa
 void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList& placedFloats)
 {
     for (auto& floatItem : placedFloats) {
-        if (!floatItem.layoutBox()) {
-            ASSERT_NOT_REACHED();
-            // We should not be placing intrusive floats coming from parent BFC.
-            continue;
-        }
-        auto& boxGeometry = geometryForBox(*protect(floatItem.layoutBox()));
+        auto& boxGeometry = geometryForBox(protect(floatItem.layoutBox()));
         auto usedGeometry = floatItem.boxGeometry();
         boxGeometry.setTopLeft(BoxGeometry::borderBoxTopLeft(usedGeometry));
         // Adopt trimmed inline direction margin.

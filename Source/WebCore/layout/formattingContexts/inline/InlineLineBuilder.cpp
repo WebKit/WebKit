@@ -1934,7 +1934,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
 bool LineBuilder::unplaceFloatBox(const Box& floatBox)
 {
     auto isPlacedOnThisLine = m_placedFloats.removeFirstMatching([&floatBox](auto& placedFloatItem) {
-        return placedFloatItem.layoutBox() == &floatBox;
+        return &placedFloatItem.layoutBox() == &floatBox;
     });
     if (isInIntrinsicWidthMode()) {
         // These floats were never added to the placed floats (see tryPlacingFloatBox).

@@ -29,6 +29,7 @@
 #include "BlockLayoutState.h"
 #include "FloatingObjects.h"
 #include "InlineLayoutState.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationUtils.h"
 #include "RenderBlock.h"
@@ -122,11 +123,10 @@ static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContaine
 {
     auto blockFormattingContextRootWritingMode = placedFloats.blockFormattingContextRoot().style().writingMode();
     for (auto& floatItem : placedFloats.list()) {
-        CheckedPtr layoutBox = floatItem.layoutBox();
-        if (!layoutBox) {
-            // Floats inherited by IFC do not have associated layout boxes.
+        CheckedRef layoutBox = floatItem.layoutBox();
+        // A float with another containing block was placed by another block (it is inherited, or inside a block in the inline content).
+        if (&Layout::containingBlock(layoutBox) != &rootBlockContainer.layoutBox())
             continue;
-        }
         auto& floatingObject = rootBlockContainer.insertFloatingBox(protect(downcast<RenderBox>(*layoutBox->rendererForIntegration())));
         if (floatingObject.isPlaced()) {
             // We have already inserted this float when laying out a previous middle-block.
@@ -169,11 +169,12 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
         boxGeometry.setVerticalMargin({ marginOffset.height(), floatRect.height() - marginOffset.height() - borderBoxSize.height() });
 
         CheckedPtr floatRenderer = floatingObject->renderer();
-        auto shapeOutsideInfo = floatRenderer->shapeOutsideInfo();
-        RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
-
+        CheckedRef floatBox = floatRenderer->layoutBox();
         auto usedPosition = floatRenderer->usedStyle().floating() == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
-        placedFloats.add({ usedPosition, boxGeometry, borderBoxTopLeft, WTF::move(shape) });
+        // Inline layout may lay out the block more than once (InlineContentConstrainer lays out the lines to measure them first),
+        // and each time the block places its floats again.
+        placedFloats.remove(floatBox);
+        placedFloats.add({ floatBox, usedPosition, boxGeometry, borderBoxTopLeft, { } });
     }
 }
 

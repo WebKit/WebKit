@@ -292,7 +292,7 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
     if (m_placedFloats && floatingObject->renderer()) {
         m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
         // FloatingContext::constraints() skips the floats it found ending above its last position, and a float inserted among them would be skipped too.
-        if (m_floatingContext && m_placedFloats->list().last().layoutBox() != &floatingObject->renderer()->layoutBox())
+        if (m_floatingContext && &m_placedFloats->list().last().layoutBox() != &floatingObject->renderer()->layoutBox())
             m_floatingContext = nullptr;
     }
 }

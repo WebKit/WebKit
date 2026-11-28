@@ -48,7 +48,7 @@ struct LayoutRestartLine {
     LayoutUnit offset;
 };
 
-std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent&, const Layout::PlacedFloats&, bool allowLayoutRestart, const Layout::BlockLayoutState&, RenderBlockFlow&);
+std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent&, const Layout::PlacedFloats&, size_t layoutStartLineIndex, bool allowLayoutRestart, const Layout::BlockLayoutState&, RenderBlockFlow&);
 void adjustLinePositionsForPagination(InlineContent&, const Vector<LineAdjustment>&);
 
 }

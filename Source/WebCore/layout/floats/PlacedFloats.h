@@ -54,9 +54,7 @@ public:
 
     class Item {
     public:
-        // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Start, End };
-        Item(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, RefPtr<const LayoutShape>&&);
         Item(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
         Item(const Box&, Position, const Rect& marginBoxRect, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft);
         Item(const Box&, Position);
@@ -81,11 +79,9 @@ public:
         const LayoutShape* shape() const { return m_shape.get(); }
         std::optional<size_t> placedByLine() const { return m_placedByLine; }
 
-        const Box* layoutBox() const;
+        const Box& layoutBox() const;
 
     private:
-        // Destroying the whole render tree destroys floats without taking them out of the lists (see RenderBox::removeFloatingAndInvalidateForLayout()),
-        // so an item refers to its float weakly, through the float's renderer.
         SingleThreadWeakPtr<const RenderElement> m_renderer;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
@@ -133,7 +129,7 @@ private:
 inline bool PlacedFloats::remove(const Box& floatBox)
 {
     auto removed = m_list.removeFirstMatching([&floatBox](auto& placedFloatItem) {
-        return placedFloatItem.layoutBox() == &floatBox;
+        return &placedFloatItem.layoutBox() == &floatBox;
     });
     if (removed) {
         computeLowestPositionsOnBlockAxis();

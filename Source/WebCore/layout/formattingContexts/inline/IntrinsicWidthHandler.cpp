@@ -300,7 +300,7 @@ static InlineLayoutUnit lineLogicalWidthWithFloats(const InlineFormattingContext
         // A float that does not fit next to the content goes below it.
         auto lineLogicalWidth = lineContentLogicalWidth;
         for (auto& floatItem : placedFloats) {
-            CheckedRef floatBox = downcast<ElementBox>(*floatItem.layoutBox());
+            CheckedRef floatBox = downcast<ElementBox>(floatItem.layoutBox());
             lineLogicalWidth = std::max(lineLogicalWidth, floatMarginBoxWidth(floatBox.get()));
         }
         return lineLogicalWidth;
@@ -314,7 +314,7 @@ static InlineLayoutUnit lineLogicalWidthWithFloats(const InlineFormattingContext
     auto startFloatsWidth = InlineLayoutUnit { };
     auto endFloatsWidth = InlineLayoutUnit { };
     for (auto& floatItem : placedFloats) {
-        CheckedRef floatBox = downcast<ElementBox>(*floatItem.layoutBox());
+        CheckedRef floatBox = downcast<ElementBox>(floatItem.layoutBox());
         auto clear = floatBox->style().clear();
         auto clearsStartFloats = clear == Clear::Both || clear == Clear::InlineStart || clear == (isLeftToRight ? Clear::Left : Clear::Right);
         auto clearsEndFloats = clear == Clear::Both || clear == Clear::InlineEnd || clear == (isLeftToRight ? Clear::Right : Clear::Left);

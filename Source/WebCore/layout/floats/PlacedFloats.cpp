@@ -64,15 +64,6 @@ PlacedFloats::Item::Item(const Box& layoutBox, Position position)
 {
 }
 
-PlacedFloats::Item::Item(Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, RefPtr<const LayoutShape>&& shape)
-    : m_position(position)
-    , m_absoluteBoxGeometry(absoluteBoxGeometry)
-    , m_marginBoxRect(BoxGeometry::marginBoxRect(absoluteBoxGeometry))
-    , m_localTopLeft(localTopLeft)
-    , m_shape(WTF::move(shape))
-{
-}
-
 BoxGeometry PlacedFloats::Item::boxGeometry() const
 {
     auto boxGeometry = BoxGeometry { m_absoluteBoxGeometry };
@@ -82,9 +73,10 @@ BoxGeometry PlacedFloats::Item::boxGeometry() const
 
 PlacedFloats::Item::~Item() = default;
 
-const Box* PlacedFloats::Item::layoutBox() const
+const Box& PlacedFloats::Item::layoutBox() const
 {
-    return m_renderer ? &m_renderer->layoutBox() : nullptr;
+    ASSERT(m_renderer);
+    return m_renderer->layoutBox();
 }
 
 PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
@@ -107,9 +99,8 @@ void PlacedFloats::add(Item newFloatItem)
     if (m_list.isEmpty())
         return m_list.append(newFloatItem);
 
-    // The integration codepath does not construct a layout box for the float item.
-    ASSERT_IMPLIES(newFloatItem.layoutBox(), m_list.findIf([&] (auto& entry) {
-        return entry.layoutBox() == newFloatItem.layoutBox();
+    ASSERT(m_list.findIf([&](auto& entry) {
+        return &entry.layoutBox() == &newFloatItem.layoutBox();
     }) == notFound);
 
     // FloatingContext takes the last float in the list that covers a block axis position as the inner-most one there, so floats on the same side
@@ -140,14 +131,9 @@ bool PlacedFloats::Item::isInFormattingContextOf(const ElementBox& formattingCon
 {
     // Render tree layout places a block-level float with a FloatingContext rooted at its containing block, which may be a block container in a parent block formatting context.
     ASSERT(formattingContextRoot.establishesFormattingContext() || formattingContextRoot.isBlockContainer());
-    // FIXME: No layout box means the render tree integration codepath put it here, which it only does for intruding floats from outside the inline formatting context.
-    // This works as long as the incoming formattingContextRoot is the current IFC.
-    CheckedPtr layoutBox = this->layoutBox();
-    if (!layoutBox)
-        return false;
-
-    ASSERT(!is<InitialContainingBlock>(*layoutBox));
-    for (CheckedRef containingBlock : containingBlockChain(*layoutBox)) {
+    CheckedRef layoutBox = this->layoutBox();
+    ASSERT(!is<InitialContainingBlock>(layoutBox));
+    for (CheckedRef containingBlock : containingBlockChain(layoutBox.get())) {
         if (containingBlock.ptr() == &formattingContextRoot)
             return true;
     }

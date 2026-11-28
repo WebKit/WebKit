@@ -45,6 +45,7 @@
 #include "InlineItemsBuilder.h"
 #include "InlineIteratorSVGTextBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
 #include "LayoutIntegrationInlineContentPainter.h"
 #include "LayoutIntegrationPagination.h"
@@ -570,7 +571,7 @@ void LineLayout::setOutsideMarkerPositions(const OutsideMarkerList& outsideMarke
         // have started without it. One intruding from earlier content moves the marker with the line instead
         // (webkit.org/b/166528).
         for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
-            if (!floatItem.isInFormattingContextOf(protect(rootLayoutBox())))
+            if (&Layout::containingBlock(protect(floatItem.layoutBox())) != &rootLayoutBox())
                 continue;
             // These placed floats are relative to rootLayoutBox() (see ensureBlockFormattingState()).
             if (floatItem.marginBoxBottom().value() <= lineBoxLogicalRect.y() || floatItem.marginBoxTop().value() >= lineBoxLogicalRect.maxY())
@@ -610,9 +611,9 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 
-    preparePlacedFloats();
-
     auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
+    auto layoutStartLineIndex = isPartialLayout ? m_lineDamage->layoutStartPosition()->lineIndex : 0;
+    preparePlacedFloats(layoutStartLineIndex);
     if (!isPartialLayout) {
         // FIXME: Partial layout should not rely on previous inline display content.
         clearInlineContent();
@@ -667,9 +668,9 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
     m_lineDamage = { };
 
-    auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout);
+    auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout, layoutStartLineIndex);
 
-    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent);
+    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent, layoutStartLineIndex);
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
@@ -748,7 +749,7 @@ void LineLayout::setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&&
     m_layoutInfoForTesting = WTF::move(layoutInfo);
 }
 
-void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent)
+void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent, size_t layoutStartLineIndex)
 {
     if (!m_inlineContent && !didDiscardContent)
         return;
@@ -797,10 +798,11 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
     if (!lineAdjustments.isEmpty()) {
         for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
-            if (!floatItem.layoutBox() || !floatItem.placedByLine())
+            // Floats an earlier layout placed on the lines before the first line a partial layout lays out stay where that layout put them.
+            if (!floatItem.placedByLine() || *floatItem.placedByLine() < layoutStartLineIndex)
                 continue;
             auto adjustmentOffset = visualAdjustmentOffset(*floatItem.placedByLine());
-            floatPaginationOffsetMap.add(*floatItem.layoutBox(), adjustmentOffset);
+            floatPaginationOffsetMap.add(floatItem.layoutBox(), adjustmentOffset);
         }
     }
 
@@ -981,9 +983,16 @@ FloatRect LineLayout::applySVGTextFragments()
     return fullBoundaries;
 }
 
-void LineLayout::preparePlacedFloats()
+void LineLayout::preparePlacedFloats(size_t layoutStartLineIndex)
 {
     auto& placedFloats = ensureBlockFormattingState().placedFloats();
+    // When inline layout runs again in the same block layout (e.g. pagination restarting it at a line, see adjustContentForPagination()),
+    // the set has the root's own floats too. The lines before the first line laid out keep theirs, and the other lines place theirs again.
+    auto lineForFloat = HashMap<CheckedRef<const Layout::Box>, size_t> { };
+    for (auto& floatItem : placedFloats.list()) {
+        if (auto line = floatItem.placedByLine(); line && *line < layoutStartLineIndex)
+            lineForFloat.add(floatItem.layoutBox(), *line);
+    }
     placedFloats.clear();
 
     if (!protect(flow())->containsFloats())
@@ -992,8 +1001,14 @@ void LineLayout::preparePlacedFloats()
     auto placedFloatsWritingMode = placedFloats.blockFormattingContextRoot().style().writingMode();
     auto placedFloatsIsLeftToRight = placedFloatsWritingMode.isLogicalLeftInlineStart();
     auto isHorizontalWritingMode = placedFloatsWritingMode.isHorizontal();
+    CheckedRef rootLayoutBox = this->rootLayoutBox();
     for (auto& floatingObject : *flow().floatingObjectSet()) {
         if (!floatingObject->renderer())
+            continue;
+
+        CheckedRef floatBox = floatingObject->renderer()->layoutBox();
+        auto line = lineForFloat.getOptional(floatBox);
+        if (!line && &Layout::containingBlock(floatBox) == rootLayoutBox.ptr())
             continue;
 
         auto& visualRect = floatingObject->frameRect();
@@ -1036,11 +1051,7 @@ void LineLayout::preparePlacedFloats()
         boxGeometry.setHorizontalMargin(logicalMargin.horizontal);
         boxGeometry.setVerticalMargin(logicalMargin.vertical);
 
-        CheckedPtr floatRenderer = floatingObject->renderer();
-        auto shapeOutsideInfo = floatRenderer->shapeOutsideInfo();
-        RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
-
-        placedFloats.add({ logicalPosition, boxGeometry, borderBoxLogicalTopLeft, WTF::move(shape) });
+        placedFloats.add({ floatBox, logicalPosition, boxGeometry, borderBoxLogicalTopLeft, line });
     }
 }
 
@@ -1302,7 +1313,7 @@ LayoutUnit LineLayout::baselineForLine(const InlineDisplay::Line& line) const
     }
 }
 
-Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::BlockLayoutState& blockLayoutState, bool isPartialLayout)
+Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::BlockLayoutState& blockLayoutState, bool isPartialLayout, size_t layoutStartLineIndex)
 {
     ASSERT(!m_lineDamage);
 
@@ -1314,7 +1325,7 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
         return { };
 
     bool allowLayoutRestart = !isPartialLayout;
-    auto [adjustments, layoutRestartLine] = computeAdjustmentsForPagination(*m_inlineContent, ensureBlockFormattingState().placedFloats(), allowLayoutRestart, blockLayoutState, protect(flow()));
+    auto [adjustments, layoutRestartLine] = computeAdjustmentsForPagination(*m_inlineContent, ensureBlockFormattingState().placedFloats(), layoutStartLineIndex, allowLayoutRestart, blockLayoutState, protect(flow()));
 
     if (!adjustments.isEmpty()) {
         adjustLinePositionsForPagination(*m_inlineContent, adjustments);

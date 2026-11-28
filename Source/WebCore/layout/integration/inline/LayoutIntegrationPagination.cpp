@@ -29,6 +29,7 @@
 #include "BlockLayoutState.h"
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "PlacedFloats.h"
 #include "RenderBlockFlow.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -53,20 +54,22 @@ NODELETE static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::L
     return lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline;
 }
 
-std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
+std::pair<Vector<LineAdjustment>, std::optional<LayoutRestartLine>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, size_t layoutStartLineIndex, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
 
     HashMap<size_t, LayoutUnit> lineFloatBottomMap;
     for (auto& floatBox : placedFloats.list()) {
-        if (!floatBox.layoutBox())
+        auto placedByLine = floatBox.placedByLine();
+        // Only the floats this layout placed: not the ones other blocks placed (inherited ones, ones inside a block in the inline content),
+        // and not the ones on the lines before the first line a partial layout lays out.
+        if (placedByLine ? *placedByLine < layoutStartLineIndex : &Layout::containingBlock(protect(floatBox.layoutBox())) != &placedFloats.blockFormattingContextRoot())
             continue;
 
-        CheckedRef renderer = downcast<RenderBox>(*floatBox.layoutBox()->rendererForIntegration());
+        CheckedRef renderer = downcast<RenderBox>(*floatBox.layoutBox().rendererForIntegration());
         bool isUnsplittable = renderer->isUnsplittableForPagination() || renderer->style().breakInside() == BreakInside::Avoid;
 
-        auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {
             if (isUnsplittable) {
                 flow.updateMinimumPageHeight(floatBox.marginBoxTop().value(), floatBox.marginBoxSize().height());
