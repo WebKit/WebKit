@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Counter Styles: extending ethiopic-numeric negative values use the negative sign, zero uses the fallback</title>
+<link rel="help" href="https://drafts.csswg.org/css-counter-styles/#ethiopic-numeric-counter-style">
+<link rel="help" href="https://drafts.csswg.org/css-counter-styles/#counter-style-range">
+<link rel="match" href="counter-ethiopic-numeric-extends-non-positive-ref.html">
+<style>
+  @counter-style ethiopic-any-range {
+    system: extends ethiopic-numeric;
+    range: -5 5;
+    suffix: "";
+    fallback: decimal;
+  }
+  div::after {
+    content: counter(n, ethiopic-any-range);
+  }
+</style>
+<div style="counter-reset: n -2;"></div>
+<div style="counter-reset: n 0;"></div>
+<div style="counter-reset: n 1;"></div>
+<div style="counter-reset: n 3;"></div>
