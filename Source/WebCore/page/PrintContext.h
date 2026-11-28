@@ -64,7 +64,8 @@ public:
     size_t pageCount() const { return m_pageRects.size(); }
     const IntRect& pageRect(size_t pageNumber) const LIFETIME_BOUND { return m_pageRects[pageNumber]; }
     const Vector<IntRect>& pageRects() const LIFETIME_BOUND { return m_pageRects; }
-    WEBCORE_EXPORT FloatBoxExtent computedPageMargin(FloatBoxExtent printMargin);
+    // In points for a page box of pageBoxSize points. Auto sides keep printMargin.
+    WEBCORE_EXPORT FloatBoxExtent computedPageMargin(FloatSize pageBoxSize, const FloatBoxExtent& printMargin);
 
     WEBCORE_EXPORT float computeAutomaticScaleFactor(const FloatSize& availablePaperSize);
 
