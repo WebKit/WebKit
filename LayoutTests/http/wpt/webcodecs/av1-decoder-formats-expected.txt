@@ -1,0 +1,13 @@
+
+PASS VideoDecoder decodes av01.0.00M.10 to I420P10
+PASS VideoDecoder decodes av01.2.00M.08.0.100 to I422
+PASS VideoDecoder decodes av01.2.00M.10.0.100 to I422P10
+PASS VideoDecoder decodes av01.1.00M.08.0.000 to I444
+PASS VideoDecoder decodes av01.1.00M.10.0.000 to I444P10
+PASS VideoDecoder.isConfigSupported rejects av01.0.00M.08.0.000
+PASS VideoDecoder.isConfigSupported rejects av01.1.00M.08
+PASS VideoDecoder.isConfigSupported rejects av01.1.00M.08.1
+PASS VideoDecoder.isConfigSupported rejects av01.2.00M.08.0.000
+PASS VideoDecoder.isConfigSupported rejects av01.2.00M.10.0.110
+PASS VideoDecoder.isConfigSupported rejects av01.0.00M.09
+

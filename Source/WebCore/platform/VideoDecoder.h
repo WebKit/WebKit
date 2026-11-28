@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class VideoFrame;
+struct AV1CodecConfigurationRecord;
 
 class VideoDecoder : public ThreadSafeRefCounted<VideoDecoder> {
 public:
@@ -61,6 +62,7 @@ public:
     };
 
     NODELETE static bool isVPXSupported();
+    static bool isAV1Supported(const AV1CodecConfigurationRecord&);
 
     using OutputCallback = Function<void(std::expected<DecodedFrame, String>&&)>;
     using CreateResult = std::expected<Ref<VideoDecoder>, String>;

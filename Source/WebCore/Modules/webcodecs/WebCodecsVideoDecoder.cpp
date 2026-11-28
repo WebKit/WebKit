@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "AV1Utilities.h"
 #include "CSSStyleImageValue.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
@@ -97,13 +98,21 @@ static bool isSupportedVP9DecoderCodec(const String& codec, const SettingsValues
     }
 }
 
+static bool isSupportedAV1DecoderCodec(const String& codec, const SettingsValues& settings)
+{
+    if (!settings.webCodecsAV1Enabled)
+        return false;
+    auto parameters = parseAV1CodecParameters(codec);
+    return parameters && VideoDecoder::isAV1Supported(*parameters);
+}
+
 static bool isSupportedDecoderCodec(const String& codec, const SettingsValues& settings)
 {
     return codec.startsWith("vp8"_s) || codec.startsWith("avc1."_s)
         || (codec.startsWith("vp09."_s) && isSupportedVP9DecoderCodec(codec, settings))
         || (codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
         || (codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
-        || (codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);
+        || (codec.startsWith("av01."_s) && isSupportedAV1DecoderCodec(codec, settings));
 }
 
 static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)

@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebCodecsAV1Enabled=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Each stream is one 32x32 keyframe of a single colour, encoded with aomenc. Hardware AV1 decoders
+// don't decode pictures this small, so they are decoded in software.
+const streams = [
+    {
+        codec: "av01.0.00M.10",
+        format: "I420P10",
+        samples: [464, 664, 380],
+        data: [0x12, 0x00, 0x0a, 0x06, 0x18, 0x11, 0x3f, 0xfe, 0xe0, 0x20, 0x32, 0x15, 0x10, 0x40, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x17, 0xaf, 0x0a, 0x54, 0x65, 0xe5, 0x24, 0x4b, 0xa4, 0x4e, 0x8c, 0x7f],
+    },
+    {
+        codec: "av01.2.00M.08.0.100",
+        format: "I422",
+        samples: [116, 166, 95],
+        data: [0x12, 0x00, 0x0a, 0x06, 0x58, 0x11, 0x3f, 0xfe, 0xc0, 0x80, 0x32, 0x14, 0x10, 0x40, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x17, 0xb0, 0x6c, 0x72, 0xdc, 0xfc, 0x05, 0x77, 0x8c, 0x61, 0xd0],
+    },
+    {
+        codec: "av01.2.00M.10.0.100",
+        format: "I422P10",
+        samples: [464, 664, 380],
+        data: [0x12, 0x00, 0x0a, 0x06, 0x58, 0x11, 0x3f, 0xfe, 0xe0, 0x40, 0x32, 0x15, 0x10, 0x40, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x17, 0xaf, 0x0a, 0x53, 0x9f, 0x3d, 0x8b, 0x05, 0xe4, 0xc3, 0xcc, 0xc0],
+    },
+    {
+        codec: "av01.1.00M.08.0.000",
+        format: "I444",
+        samples: [116, 166, 95],
+        data: [0x12, 0x00, 0x0a, 0x05, 0x38, 0x11, 0x3f, 0xfe, 0xc1, 0x32, 0x14, 0x10, 0x40, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x17, 0xb0, 0x6c, 0x6f, 0x10, 0x3b, 0x99, 0xed, 0x8b, 0x19, 0xe4],
+    },
+    {
+        codec: "av01.1.00M.10.0.000",
+        format: "I444P10",
+        samples: [464, 664, 380],
+        data: [0x12, 0x00, 0x0a, 0x05, 0x38, 0x11, 0x3f, 0xfe, 0xe1, 0x32, 0x16, 0x10, 0x40, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0xa3, 0x42, 0xf3, 0xca, 0x1a, 0x64, 0x32, 0xe0, 0x7d, 0x1c, 0x9c, 0x79, 0x8e, 0x70],
+    },
+];
+
+for (const { codec, format, samples, data } of streams) {
+    promise_test(async () => {
+        const support = await VideoDecoder.isConfigSupported({ codec });
+        assert_true(support.supported, "isConfigSupported");
+
+        const frames = [];
+        let decoderError;
+        const decoder = new VideoDecoder({
+            output: frame => frames.push(frame),
+            error: e => decoderError = e,
+        });
+        decoder.configure({ codec, codedWidth: 32, codedHeight: 32 });
+        decoder.decode(new EncodedVideoChunk({ type: "key", timestamp: 0, data: new Uint8Array(data) }));
+        await decoder.flush();
+        assert_equals(decoderError, undefined, "decoder error");
+        assert_equals(frames.length, 1);
+
+        const frame = frames[0];
+        assert_equals(frame.format, format);
+        assert_equals(frame.codedWidth, 32);
+        assert_equals(frame.codedHeight, 32);
+
+        const buffer = new Uint8Array(frame.allocationSize());
+        const layout = await frame.copyTo(buffer);
+        frame.close();
+
+        const isTenBit = format.endsWith("P10");
+        const view = new DataView(buffer.buffer);
+        const sampleAt = (plane, x, y) => {
+            const offset = layout[plane].offset + y * layout[plane].stride;
+            return isTenBit ? view.getUint16(offset + x * 2, true) : view.getUint8(offset + x);
+        };
+        assert_equals(sampleAt(0, 10, 10), samples[0], "Y");
+        assert_equals(sampleAt(1, 5, 5), samples[1], "U");
+        assert_equals(sampleAt(2, 5, 5), samples[2], "V");
+    }, `VideoDecoder decodes ${codec} to ${format}`);
+}
+
+// Combinations of profile, bit depth and subsampling that the AV1 specification doesn't allow.
+for (const codec of ["av01.0.00M.08.0.000", "av01.1.00M.08", "av01.1.00M.08.1", "av01.2.00M.08.0.000", "av01.2.00M.10.0.110", "av01.0.00M.09"]) {
+    promise_test(async () => {
+        const support = await VideoDecoder.isConfigSupported({ codec });
+        assert_false(support.supported);
+    }, `VideoDecoder.isConfigSupported rejects ${codec}`);
+}
+</script>
+</body>
+</html>
