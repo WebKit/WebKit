@@ -1,18 +1,14 @@
 X
 
 
-Harness Error (FAIL), message = Test named 'updateElementGeometry and clearElementGeometry throw InvalidStateError for ineligible ElementImage' specified 1 'cleanup' function, and 1 failed.
-
 PASS canvas.updateElementGeometry and clearElementGeometry are defined
-FAIL updateElementGeometry throws InvalidStateError for ineligible elements assert_throws_dom: Calling updateElementGeometry on canvas without content=drawable must throw function "() => {
-          notDrawableCanvas.updateElementGeometry(child);
-        }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
-FAIL clearElementGeometry throws InvalidStateError for ineligible elements assert_throws_dom: Calling clearElementGeometry on canvas without content=drawable must throw function "() => {
-          notDrawableCanvas.clearElementGeometry(child);
-        }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
-FAIL updateElementGeometry() with canvasTransform affects getBoundingClientRect() on canvas child The operation is not supported.
-FAIL clearElementGeometry() unsets canvas transform on canvas child The operation is not supported.
-FAIL updateElementGeometry and clearElementGeometry accept ElementImage promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL updateElementGeometry and clearElementGeometry throw InvalidStateError for ineligible ElementImage promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL updateElementGeometry() with clip does not affect getBoundingClientRect() The operation is not supported.
+PASS updateElementGeometry throws InvalidStateError for ineligible elements
+PASS clearElementGeometry throws InvalidStateError for ineligible elements
+FAIL updateElementGeometry() with canvasTransform affects getBoundingClientRect() on canvas child assert_equals: expected 60 but got 10
+PASS clearElementGeometry() unsets canvas transform on canvas child
+PASS updateElementGeometry and clearElementGeometry accept ElementImage
+FAIL updateElementGeometry and clearElementGeometry throw InvalidStateError for ineligible ElementImage assert_throws_dom: updateElementGeometry with closed ElementImage must throw function "() => {
+          canvas.updateElementGeometry(elementImage);
+        }" did not throw
+PASS updateElementGeometry() with clip does not affect getBoundingClientRect()
 

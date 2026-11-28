@@ -4091,7 +4091,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texElementSnapshot2D(GCGLenum targe
         bool hasAnySourceMember = hasSourceMembers[0] || hasSourceMembers[1] || hasSourceMembers[2] || hasSourceMembers[3];
         bool hasAllSourceMembers = hasSourceMembers[0] && hasSourceMembers[1] && hasSourceMembers[2] && hasSourceMembers[3];
 
-        // Sepcs: If only some of the config members are supplied, generates an INVALID_VALUE error.
+        // Specs: If only some of the config members are supplied, generates an INVALID_VALUE error.
         if (hasAnySourceMember && !hasAllSourceMembers) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "sx, sy, swidth and sheight must be all specified or all omitted"_s);
             return { };
@@ -4103,7 +4103,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texElementSnapshot2D(GCGLenum targe
             return { };
         }
 
-        // Sepcs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
+        // Specs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
         // define the source rectangle of the element image snapshot to render, in CSS pixels.
         if (hasAllSourceMembers) {
             srcRect = {
@@ -4171,7 +4171,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texElementSnapshot2D(GCGLenum targe
         return { };
     }
 
-    // Sepcs: UNPACK_ pixel store parameters should be ignored by this function.
+    // Specs: UNPACK_ pixel store parameters should be ignored by this function.
     texImageImpl(TexImageFunctionID::TexSubImage2D, target, level, 0, xoffset, yoffset, 0, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, *image, AlphaPremultiplication::Premultiplied, false, false, sentinelEmptyRect(), 1, 0);
     return { };
 }

@@ -1541,7 +1541,7 @@ ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& s
     bool hasAnySourceMember = hasSourceMembers[0] || hasSourceMembers[1] || hasSourceMembers[2] || hasSourceMembers[3];
     bool hasAllSourceMembers = hasSourceMembers[0] && hasSourceMembers[1] && hasSourceMembers[2] && hasSourceMembers[3];
 
-    // Sepcs: If only some of the config members are supplied, generates an INVALID_VALUE error.
+    // Specs: If only some of the config members are supplied, generates an INVALID_VALUE error.
     if (hasAnySourceMember && !hasAllSourceMembers)
         return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: sx, sy, swidth and sheight must be all specified or all omitted"_s };
 
@@ -1549,7 +1549,7 @@ ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& s
     if (source.sourceX.value_or(0) < 0 || source.sourceY.value_or(0) < 0 || source.sourceWidth.value_or(0) < 0 || source.sourceHeight.value_or(0) < 0)
         return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: config members must not be negative"_s };
 
-    // Sepcs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
+    // Specs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
     // define the source rectangle of the element image snapshot to render, in CSS pixels.
     if (hasAllSourceMembers) {
         srcRect = {

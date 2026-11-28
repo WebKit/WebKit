@@ -1,4 +1,7 @@
 
-FAIL Paint events fire in reverse shadow-including tree order across frames promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
-FAIL Paint events fire in reverse shadow-including tree order across frames on content invalidation promise_test: Unhandled rejection with value: object "TypeError: canvas.requestPaint is not a function. (In 'canvas.requestPaint()', 'canvas.requestPaint' is undefined)"
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Paint events fire in reverse shadow-including tree order across frames assert_array_equals: Paint events should fire in reverse shadow-including tree order across frames expected property 0 to be "iframeCanvas" but got "inner" (expected array ["iframeCanvas", "inner", "outer"] got ["inner", "outer", "iframeCanvas"])
+TIMEOUT Paint events fire in reverse shadow-including tree order across frames on content invalidation Test timed out
 

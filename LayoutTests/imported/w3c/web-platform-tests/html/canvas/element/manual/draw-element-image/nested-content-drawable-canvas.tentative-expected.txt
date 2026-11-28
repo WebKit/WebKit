@@ -1,3 +1,3 @@
 
-FAIL Nested content=drawable canvas should draw promise_test: Unhandled rejection with value: object "TypeError: nested_canvas.requestPaint is not a function. (In 'nested_canvas.requestPaint()', 'nested_canvas.requestPaint' is undefined)"
+FAIL Nested content=drawable canvas should draw assert_array_equals: #nested_canvas_target_a should be painted at 125,125 expected property 2 to be 255 but got 0 (expected array [0, 0, 255, 255] got object "0,0,0,0")
 

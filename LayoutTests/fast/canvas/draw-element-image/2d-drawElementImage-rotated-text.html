@@ -1,8 +1,14 @@
 <!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
 <!DOCTYPE html>
+<html class="reftest-wait">
 <meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-20116">
 <meta charset="utf-8" />
 <style>
+    html, body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+    }
     canvas {
         width: 638px;
         height: 318px;
@@ -36,24 +42,23 @@
         </div>
     </canvas>
     <script>
-        if (window.testRunner)
-            testRunner.waitUntilDone();
-
-        function runTest() {
+        window.addEventListener('load', () => {
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
 
-            ctx.imageSmoothingEnabled = false;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.onpaint = () => {
+                ctx.imageSmoothingEnabled = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            ctx.translate(80, 0);
-            ctx.rotate((15 * Math.PI) / 180);
-            ctx.drawElementImage(draw_element, 0, 0);
+                ctx.save();
+                ctx.translate(80, 0);
+                ctx.rotate((15 * Math.PI) / 180);
+                ctx.drawElementImage(draw_element, 0, 0);
+                ctx.restore();
 
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
-
-        canvas.onpaint = runTest;
+                document.documentElement.classList.remove("reftest-wait");
+            };
+        });
     </script>
 </body>
+</html>

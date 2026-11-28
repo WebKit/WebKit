@@ -1,4 +1,4 @@
 
 
-PASS drawElementImage does not draw cross-origin HTML images
+FAIL drawElementImage does not draw cross-origin HTML images assert_array_equals: Cross origin should not draw expected property 0 to be 0 but got 255 (expected array [0, 128, 0, 255] got object "255,0,0,255")
 

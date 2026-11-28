@@ -1,4 +1,3 @@
 
-
 FAIL drawElementImage does not use cross-origin feImages on nested filtered SVG content inside masks assert_array_equals: Nested cross origin filter images in internal mask should not be drawn expected property 0 to be 0 but got 30 (expected array [0, 0, 255, 255] got object "30,130,230,255")
 

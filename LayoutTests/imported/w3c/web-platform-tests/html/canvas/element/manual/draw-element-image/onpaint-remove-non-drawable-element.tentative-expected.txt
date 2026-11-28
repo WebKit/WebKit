@@ -1,6 +1,11 @@
 
-FAIL onpaint should fire when a non-drawable child of a drawable element is removed assert_equals: onpaint should fire after a non-drawable child is removed. expected 1 but got 0
-FAIL onpaint should fire when a non-drawable inline child of a drawable element is removed assert_equals: onpaint should fire after a non-drawable inline child is removed. expected 1 but got 0
-FAIL onpaint should fire when a non-drawable child is removed from a drawable element with mixed children assert_equals: onpaint should fire after a non-drawable child is removed from a mixed container. expected 1 but got 0
-FAIL onpaint should fire when a deep non-drawable descendant of a drawable element is removed assert_equals: onpaint should fire after a deep non-drawable descendant is removed. expected 1 but got 0
+FAIL onpaint should fire when a non-drawable child of a drawable element is removed assert_array_equals: The parent drawable element should be reported in changedElements. lengths differ, expected array [Element node <div id="drawable_parent" drawable="">
+
+  </div>] length 1, got [Element node <div id="drawable_parent" drawable="">
+
+  </div>, Element node <div id="drawable_parent_inline" drawable="">
+    <span i...] length 2
+PASS onpaint should fire when a non-drawable inline child of a drawable element is removed
+PASS onpaint should fire when a non-drawable child is removed from a drawable element with mixed children
+PASS onpaint should fire when a deep non-drawable descendant of a drawable element is removed
 
