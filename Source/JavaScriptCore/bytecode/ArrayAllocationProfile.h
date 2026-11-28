@@ -51,7 +51,7 @@ public:
     {
         ASSERT(!isCompilationThread());
         if (JSArray* lastArray = m_storage.pointer()) {
-            if (lastArray->indexingType() != current().indexingType()) [[unlikely]]
+            if (lastArray->indexingType() != (current().indexingType() & IndexingTypeMask)) [[unlikely]]
                 updateProfile();
         }
         return current().indexingType();
