@@ -42,7 +42,6 @@ enum class LogicalHeightType : uint8_t;
 
 namespace Layout {
 
-class BlockFormattingState;
 class BoxGeometry;
 class InlineContentCache;
 class InlineLayoutState;
@@ -68,9 +67,6 @@ public:
     void updateQuirksMode(const Document&);
 
     InlineContentCache& inlineContentCache(const ElementBox& formattingContextRoot);
-
-    BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot) LIFETIME_BOUND;
-    void destroyBlockFormattingState(const ElementBox& formattingContextRoot);
 
     BoxGeometry& ensureGeometryForBox(const Box&) LIFETIME_BOUND;
     const BoxGeometry& geometryForBox(const Box&) const LIFETIME_BOUND;
@@ -100,7 +96,6 @@ private:
 
     const Type m_type;
 
-    HashMap<CheckedRef<const ElementBox>, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
     HashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };
     bool m_isTextShapingAcrossInlineBoxesEnabled { false };

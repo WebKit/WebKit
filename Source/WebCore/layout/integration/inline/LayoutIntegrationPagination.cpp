@@ -203,4 +203,17 @@ void adjustFloatPositionsForPagination(Layout::PlacedFloats& placedFloats, Layou
     }
 }
 
+void removeFloatsPlacedByLines(Layout::PlacedFloats& placedFloats, size_t firstLineIndex)
+{
+    // Inline layout starts over at this line in the same block layout, and the line and the ones after it place their floats again.
+    // The floats of the lines before it stay.
+    auto floatsToPlaceAgain = Vector<CheckedRef<const Layout::Box>> { };
+    for (auto& floatItem : placedFloats.list()) {
+        if (auto line = floatItem.placedByLine(); line && *line >= firstLineIndex)
+            floatsToPlaceAgain.append(protect(floatItem.layoutBox()));
+    }
+    for (auto& floatBox : floatsToPlaceAgain)
+        placedFloats.remove(floatBox);
+}
+
 }

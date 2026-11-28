@@ -147,6 +147,22 @@ Layout::BoxGeometry::VerticalEdges BoxGeometryUpdater::verticalLogicalMargin(con
     return { usedStyle.marginRight(reference).value_or(0_lu), usedStyle.marginLeft(reference).value_or(0_lu) };
 }
 
+// Floats are placed in the block flow direction, so their block-axis margins are flow-relative (block-start, block-end), unlike
+// the line-relative ones of inline-level boxes.
+static Layout::BoxGeometry::VerticalEdges blockAxisMarginForFloat(const RenderBox& floatBox, std::optional<LayoutUnit> availableWidth, WritingMode writingMode)
+{
+    auto usedStyle = floatBox.usedStyle();
+    auto reference = availableWidth.value_or(0_lu);
+    if (writingMode.isHorizontal()) {
+        auto top = usedStyle.marginTop(reference).value_or(0_lu);
+        auto bottom = usedStyle.marginBottom(reference).value_or(0_lu);
+        return writingMode.isBlockTopToBottom() ? Layout::BoxGeometry::VerticalEdges { top, bottom } : Layout::BoxGeometry::VerticalEdges { bottom, top };
+    }
+    auto left = usedStyle.marginLeft(reference).value_or(0_lu);
+    auto right = usedStyle.marginRight(reference).value_or(0_lu);
+    return writingMode.isBlockLeftToRight() ? Layout::BoxGeometry::VerticalEdges { left, right } : Layout::BoxGeometry::VerticalEdges { right, left };
+}
+
 Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxModelObject& renderer, WritingMode writingMode, bool isIntrinsicWidthMode)
 {
     auto borderWidths = renderer.usedStyle().borderWidths();
@@ -584,7 +600,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
         boxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(renderBox, inlineSpaceAroundContent));
         boxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(renderBox, blockSpaceAroundContent));
     }
-    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderBox, availableWidth, writingMode));
+    boxGeometry.setVerticalMargin(renderBox.isFloating() ? blockAxisMarginForFloat(renderBox, availableWidth, writingMode) : verticalLogicalMargin(renderBox, availableWidth, writingMode));
     boxGeometry.setHorizontalMargin(inlineMargin);
     boxGeometry.setBorder(border);
     boxGeometry.setPadding(padding);
@@ -747,6 +763,10 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
         };
         if (needsFullGeometryUpdate())
             updateLayoutBoxDimensions(*renderBox, availableWidth);
+        else if (renderBox->isFloating()) {
+            // Laying out the float's own content may have set its geometry as a formatting context root, with line-relative margins.
+            boxGeometry.setVerticalMargin(blockAxisMarginForFloat(*renderBox, availableWidth, renderBox->parent()->writingMode()));
+        }
 
         if (auto* shapeOutsideInfo = renderBox->shapeOutsideInfo())
             const_cast<Layout::ElementBox&>(layoutBox).setShape(&shapeOutsideInfo->computedShape());

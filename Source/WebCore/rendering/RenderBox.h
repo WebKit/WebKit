@@ -229,7 +229,7 @@ public:
     LayoutRect applyVisualEffectOverflow(const LayoutRect&, EnumSet<VisualEffectOverflowOption> = { }) const;
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
-    void addOverflowFromFloatBox(const FloatingObject&);
+    void addOverflowFromFloatBox(const RenderBox& floatBox, LayoutSize borderBoxOffset);
 
     LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
     LayoutRect visualOverflowRectForPropagation(const WritingMode) const;

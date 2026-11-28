@@ -39,7 +39,6 @@
 #include "FlexFormattingUtils.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
-#include "FloatingObjects.h"
 #include "FontBaseline.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
@@ -4798,13 +4797,11 @@ void RenderBox::addOverflowFromContainedBox(const RenderBox& child, OptionSet<Co
     addOverflowWithRendererOffset(child, child.locationOffset(), options);
 }
 
-void RenderBox::addOverflowFromFloatBox(const FloatingObject& floatBox)
+void RenderBox::addOverflowFromFloatBox(const RenderBox& floatBox, LayoutSize borderBoxOffset)
 {
-    if (!floatBox.renderer())
-        return;
     CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
     auto options = blockFlow && blockFlow->establishesLineClampContainer() ? OptionSet { ComputeOverflowOptions::DoesNotContributeToScrollableOverflow } : OptionSet<ComputeOverflowOptions> { };
-    addOverflowWithRendererOffset(*floatBox.renderer(), floatBox.locationOffsetOfBorderBox(), options);
+    addOverflowWithRendererOffset(floatBox, borderBoxOffset, options);
 }
 
 // 'offsetFromThis' is normally the renderer's position (RenderBox::location()).

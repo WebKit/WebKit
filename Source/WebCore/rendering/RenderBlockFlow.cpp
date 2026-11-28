@@ -44,6 +44,7 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationUtils.h"
 #include "LayoutRepainter.h"
 #include "LineClampUpdater.h"
 #include "LineSelection.h"
@@ -1142,8 +1143,7 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
             }
             child.setIsClippedByLineClamp(LineClampUpdater::isInsideLineClampContainer(child));
             markSiblingsIfIntrudingForLayout();
-            insertFloatingBoxAndMarkForLayout(child);
-            adjustFloatingBlock(marginInfo);
+            insertFloatingBoxAndMarkForLayout(child, marginInfo);
             continue;
         }
 
@@ -1531,7 +1531,7 @@ void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, App
     setLogicalLeftForChild(child, writingMode().isLogicalLeftInlineStart() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), applyDelta);
 }
 
-void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
+void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo, std::unique_ptr<FloatingObject> floatingObject)
 {
     // The float should be positioned taking into account the bottom margin
     // of the previous flow. We add that margin into the height, get the
@@ -1548,7 +1548,7 @@ void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
     // an example of this scenario.
     LayoutUnit marginOffset = marginInfo.canCollapseWithMarginBefore() ? 0_lu : marginInfo.margin();
     setLogicalHeight(logicalHeight() + marginOffset);
-    positionNewFloats();
+    positionNewFloat(WTF::move(floatingObject));
     setLogicalHeight(logicalHeight() - marginOffset);
 }
 
@@ -2741,10 +2741,8 @@ void RenderBlockFlow::styleDidChange(Style::Difference diff, const Style::Comput
             if (ancestor.isRenderView())
                 break;
             if (ancestor.hasOverhangingFloats()) {
-                for (auto& floatingObject : m_floatingObjects->set()) {
-                    if (!floatingObject->renderer())
-                        continue;
-                    if (ancestor.hasOverhangingFloat(*floatingObject->renderer())) {
+                for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+                    if (ancestor.hasOverhangingFloat(downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration()))) {
                         parentBlock = &ancestor;
                         break;
                     }
@@ -2851,14 +2849,16 @@ void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Co
             addVisualOverflow(floatInkOverflowRect);
         };
 
-        for (auto& floatingObject : m_floatingObjects->set()) {
-            CheckedPtr floatBox = floatingObject->renderer();
-            if (!floatBox || !floatingObject->isDescendant())
+        for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+            CheckedRef floatBox = downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration());
+            // The floats that intrude from the parent or a previous sibling add to the overflow of the block they are in.
+            if (!floatBox->isDescendantOf(this))
                 continue;
+            auto borderBoxOffset = toLayoutSize(Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), borderBoxSize(), writingMode()).second.location());
             if (shouldIncludeFloats)
-                addOverflowFromFloatBox(*floatingObject);
+                addOverflowFromFloatBox(floatBox, borderBoxOffset);
             if (floatBox->containingBlock() == this)
-                addInkOverflowFromOwnFloat(*floatBox, floatingObject->locationOffsetOfBorderBox());
+                addInkOverflowFromOwnFloat(floatBox, borderBoxOffset);
         }
     };
     addOverflowFromFloats();
@@ -2869,13 +2869,14 @@ void RenderBlockFlow::clipOutFloatingBoxes(RenderBlock& rootBlock, const PaintIn
     if (!m_floatingObjects)
         return;
 
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        LayoutRect floatBox(offsetFromRootBlock.width(), offsetFromRootBlock.height(), floatingObject->renderer()->borderBoxWidth(), floatingObject->renderer()->borderBoxHeight());
-        floatBox.move(floatingObject->locationOffsetOfBorderBox());
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        CheckedRef floatRenderer = downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration());
+        auto floatBox = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), borderBoxSize(), writingMode()).second;
+        // Pagination may lay the float out again after it is placed, and the float paints with the size it has now.
+        floatBox.setSize(floatRenderer->borderBoxSize());
+        floatBox.move(offsetFromRootBlock);
         rootBlock.blockStartRelativeToPhysical(floatBox);
-        floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
+        floatBox.moveBy(rootBlockPhysicalPosition);
         paintInfo->context().clipOut(snappedIntRect(floatBox));
     }
 }
@@ -2885,8 +2886,11 @@ void RenderBlockFlow::createFloatingObjects()
     m_floatingObjects = makeUnique<FloatingObjects>(*this);
 }
 
-void RenderBlockFlow::insertFloatingBoxAndMarkForLayout(RenderBox& floatBox)
+void RenderBlockFlow::insertFloatingBoxAndMarkForLayout(RenderBox& floatBox, const MarginInfo& marginInfo)
 {
+    ASSERT(floatBox.isFloating());
+    ASSERT(!layoutContext().isSkippedContentForLayout(*this));
+
     // Our location is irrelevant if we're unsplittable or no pagination is in effect. Just lay out the float.
     bool isChildRenderBlock = floatBox.isRenderBlock();
     if (isChildRenderBlock && !floatBox.needsLayout() && view().frameView().layoutContext().layoutState()->pageLogicalHeightChanged())
@@ -2901,33 +2905,37 @@ void RenderBlockFlow::insertFloatingBoxAndMarkForLayout(RenderBox& floatBox)
         floatBox.computeAndSetBlockDirectionMargins(*this);
     }
 
-    auto& floatingObject = insertFloatingBox(floatBox);
-    setLogicalWidthForFloat(floatingObject, logicalWidthForChild(floatBox) + marginStartForChild(floatBox) + marginEndForChild(floatBox));
-}
-
-FloatingObject& RenderBlockFlow::insertFloatingBox(RenderBox& floatBox)
-{
-    ASSERT(floatBox.isFloating());
-    ASSERT(!layoutContext().isSkippedContentForLayout(*this));
-
     if (!m_floatingObjects)
         createFloatingObjects();
 
+    auto floatLogicalWidth = logicalWidthForChild(floatBox) + marginStartForChild(floatBox) + marginEndForChild(floatBox);
     auto& floatingObjectSet = m_floatingObjects->set();
-    auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
-    if (it != floatingObjectSet.end())
-        return *it->get();
-
-    return *m_floatingObjects->add(FloatingObject::create(floatBox));
-}
-
-void RenderBlockFlow::placeFloatingBox(FloatingObject& floatingObject, const LayoutRect& frameRect, LayoutSize marginOffset)
-{
-    if (!m_floatingObjects) {
-        ASSERT_NOT_REACHED();
+    if (auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox); it != floatingObjectSet.end()) {
+        // The block lists the float already, and it stays where it is.
+        setLogicalWidthForFloat(**it, floatLogicalWidth);
         return;
     }
-    m_floatingObjects->place(floatingObject, frameRect, marginOffset);
+
+    // The float goes into the set once it is placed.
+    auto floatingObject = FloatingObject::create(floatBox);
+    setLogicalWidthForFloat(*floatingObject, floatLogicalWidth);
+    adjustFloatingBlock(marginInfo, WTF::move(floatingObject));
+}
+
+void RenderBlockFlow::placeFloatingBox(RenderBox& floatBox, const LayoutRect& frameRect, LayoutSize marginOffset)
+{
+    ASSERT(floatBox.isFloating());
+    ASSERT(!layoutContext().isSkippedContentForLayout(*this));
+    if (!m_floatingObjects)
+        createFloatingObjects();
+    m_floatingObjects->place(floatBox, frameRect, marginOffset);
+}
+
+Layout::PlacedFloats& RenderBlockFlow::placedFloats()
+{
+    if (!m_floatingObjects)
+        createFloatingObjects();
+    return m_floatingObjects->placedFloats();
 }
 
 void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
@@ -2941,20 +2949,22 @@ void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
         m_floatingObjects->remove(it->get());
 }
 
-LayoutUnit RenderBlockFlow::logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const
+OffsetForPositioningFloat RenderBlockFlow::logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const
 {
-    LayoutUnit offset = fixedOffset;
+    auto result = OffsetForPositioningFloat { fixedOffset, { } };
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects())
-        offset = m_floatingObjects->logicalLeftOffsetForPositioningFloat(fixedOffset, logicalTop, heightRemaining);
-    return adjustLogicalLeftOffsetForLine(offset);
+        result = m_floatingObjects->offsetForPositioningFloat(FloatingObject::FloatLeft, fixedOffset, logicalTop);
+    result.offset = adjustLogicalLeftOffsetForLine(result.offset);
+    return result;
 }
 
-LayoutUnit RenderBlockFlow::logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const
+OffsetForPositioningFloat RenderBlockFlow::logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const
 {
-    LayoutUnit offset = fixedOffset;
+    auto result = OffsetForPositioningFloat { fixedOffset, { } };
     if (m_floatingObjects && m_floatingObjects->hasRightObjects())
-        offset = m_floatingObjects->logicalRightOffsetForPositioningFloat(fixedOffset, logicalTop, heightRemaining);
-    return adjustLogicalRightOffsetForLine(offset);
+        result = m_floatingObjects->offsetForPositioningFloat(FloatingObject::FloatRight, fixedOffset, logicalTop);
+    result.offset = adjustLogicalRightOffsetForLine(result.offset);
+    return result;
 }
 
 void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObject, LayoutUnit& logicalTopOffset)
@@ -3011,43 +3021,46 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
 
         LayoutUnit floatLogicalWidth = std::min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset); // The width we look for.
 
-        LayoutUnit floatLogicalLeft;
-
         bool insideFragmentedFlow = enclosingFragmentedFlow();
 
+        // Down to where the float that narrows the space ends, a pixel at a time when a side has no float.
+        auto distanceToNextPosition = [](const OffsetForPositioningFloat& left, const OffsetForPositioningFloat& right) {
+            return std::min(left.heightRemaining.value_or(1_lu), right.heightRemaining.value_or(1_lu));
+        };
+
         if (childBox.usedStyle().floating() == UsedFloat::Left) {
-            LayoutUnit heightRemainingLeft = 1_lu;
-            LayoutUnit heightRemainingRight = 1_lu;
-            floatLogicalLeft = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, &heightRemainingLeft);
-            while (logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset, &heightRemainingRight) - floatLogicalLeft < floatLogicalWidth) {
-                logicalTopOffset += std::min(heightRemainingLeft, heightRemainingRight);
-                floatLogicalLeft = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, &heightRemainingLeft);
+            auto left = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset);
+            auto right = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset);
+            while (right.offset - left.offset < floatLogicalWidth) {
+                logicalTopOffset += distanceToNextPosition(left, right);
+                left = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset);
                 if (insideFragmentedFlow) {
                     // Have to re-evaluate all of our offsets, since they may have changed.
                     logicalRightOffset = logicalRightOffsetForContent(); // Constant part of right offset.
                     logicalLeftOffset = logicalLeftOffsetForContent(); // Constant part of left offset.
                     floatLogicalWidth = std::min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset);
                 }
+                right = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset);
             }
-            return std::max(logicalLeftOffset - borderAndPaddingLogicalLeft(), floatLogicalLeft);
+            return std::max(logicalLeftOffset - borderAndPaddingLogicalLeft(), left.offset);
         }
-        LayoutUnit heightRemainingLeft = 1_lu;
-        LayoutUnit heightRemainingRight = 1_lu;
-        floatLogicalLeft = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset, &heightRemainingRight);
-        while (floatLogicalLeft - logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, &heightRemainingLeft) < floatLogicalWidth) {
-            logicalTopOffset += std::min(heightRemainingLeft, heightRemainingRight);
-            floatLogicalLeft = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset, &heightRemainingRight);
+        auto right = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset);
+        auto left = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset);
+        while (right.offset - left.offset < floatLogicalWidth) {
+            logicalTopOffset += distanceToNextPosition(left, right);
+            right = logicalRightOffsetForPositioningFloat(logicalTopOffset, logicalRightOffset);
             if (insideFragmentedFlow) {
                 // Have to re-evaluate all of our offsets, since they may have changed.
                 logicalRightOffset = logicalRightOffsetForContent(); // Constant part of right offset.
                 logicalLeftOffset = logicalLeftOffsetForContent(); // Constant part of left offset.
                 floatLogicalWidth = std::min(logicalWidthForFloat(floatingObject), logicalRightOffset - logicalLeftOffset);
             }
+            left = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset);
         }
         // Use the original width of the float here, since the local variable
         // |floatLogicalWidth| was capped to the available line width. See
         // fast/block/float/clamped-right-float.html.
-        return floatLogicalLeft - logicalWidthForFloat(floatingObject);
+        return right.offset - logicalWidthForFloat(floatingObject);
     };
     auto floatLogicalLeft = style().lineAlign() == LineAlign::None ? floatLogicalLeftFromFloatingContext() : floatLogicalLeftAlignedWithLineGrid();
 
@@ -3094,122 +3107,81 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
         setLogicalHeight(logicalHeight() + dropHeightDelta * heightOfLine);
 }
 
-bool RenderBlockFlow::positionNewFloats()
+void RenderBlockFlow::positionNewFloat(std::unique_ptr<FloatingObject> newFloatingObject)
 {
-    if (!m_floatingObjects)
-        return false;
-
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    if (floatingObjectSet.isEmpty())
-        return false;
-
-    // If all floats have already been positioned, then we have no work to do.
-    if (floatingObjectSet.last()->isPlaced())
-        return false;
-
-    // Move backwards through our floating object list until we find a float that has
-    // already been positioned. Then we'll be able to move forward, positioning all of
-    // the new floats that need it.
-    auto it = floatingObjectSet.end();
-    --it; // Go to last item.
-    auto begin = floatingObjectSet.begin();
-    FloatingObject* lastPlacedFloatingObject = 0;
-    while (it != begin) {
-        --it;
-        if ((*it)->isPlaced()) {
-            lastPlacedFloatingObject = it->get();
-            ++it;
-            break;
-        }
-    }
+    auto& floatingObject = *newFloatingObject;
+    auto& childBox = *floatingObject.renderer();
+    ASSERT(childBox.containingBlock() == this);
 
     LayoutUnit logicalTop = logicalHeight();
-    
     // The float cannot start above the top position of the last positioned float.
-    if (lastPlacedFloatingObject)
-        logicalTop = std::max(logicalTopForFloat(*lastPlacedFloatingObject), logicalTop);
+    if (auto& floatingObjectSet = m_floatingObjects->set(); !floatingObjectSet.isEmpty())
+        logicalTop = std::max(logicalTopForFloat(*floatingObjectSet.last()), logicalTop);
 
-    auto end = floatingObjectSet.end();
-    // Now walk through the set of unpositioned floats and place them.
-    for (; it != end; ++it) {
-        auto& floatingObject = *it->get();
-        if (!floatingObject.renderer())
-            continue;
-        // The containing block is responsible for positioning floats, so if we have floats in our
-        // list that come from somewhere else, do not attempt to position them.
-        auto& childBox = *floatingObject.renderer();
-        if (childBox.containingBlock() != this)
-            continue;
+    LayoutRect oldRect = childBox.borderBoxRectInContainer();
+    auto childBoxUsedClear = childBox.usedStyle().clear();
+    if (childBoxUsedClear == UsedClear::Left || childBoxUsedClear == UsedClear::Both)
+        logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);
+    if (childBoxUsedClear == UsedClear::Right || childBoxUsedClear == UsedClear::Both)
+        logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
-        LayoutRect oldRect = childBox.borderBoxRectInContainer();
-        auto childBoxUsedClear = childBox.usedStyle().clear();
-        if (childBoxUsedClear == UsedClear::Left || childBoxUsedClear == UsedClear::Both)
-            logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);
-        if (childBoxUsedClear == UsedClear::Right || childBoxUsedClear == UsedClear::Both)
-            logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
+    computeLogicalLocationForFloat(floatingObject, logicalTop);
+    LayoutUnit childLogicalTop = logicalTopForChild(childBox);
 
-        computeLogicalLocationForFloat(floatingObject, logicalTop);
-        LayoutUnit childLogicalTop = logicalTopForChild(childBox);
+    estimateFragmentRangeForBoxChild(childBox);
 
-        estimateFragmentRangeForBoxChild(childBox);
+    childBox.markForPaginationRelayoutIfNeeded();
+    childBox.layoutIfNeeded();
 
-        childBox.markForPaginationRelayoutIfNeeded();
-        childBox.layoutIfNeeded();
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    bool isPaginated = layoutState->isPaginated();
+    if (isPaginated) {
+        // If we are unsplittable and don't fit, then we need to move down.
+        // We include our margins as part of the unsplittable area.
+        LayoutUnit newLogicalTop = adjustForUnsplittableChild(childBox, logicalTop, childLogicalTop - logicalTop, marginAfterForChild(childBox));
 
-        auto* layoutState = view().frameView().layoutContext().layoutState();
-        bool isPaginated = layoutState->isPaginated();
-        if (isPaginated) {
-            // If we are unsplittable and don't fit, then we need to move down.
-            // We include our margins as part of the unsplittable area.
-            LayoutUnit newLogicalTop = adjustForUnsplittableChild(childBox, logicalTop, childLogicalTop - logicalTop, marginAfterForChild(childBox));
-            
-            // See if we have a pagination strut that is making us move down further.
-            // Note that an unsplittable child can't also have a pagination strut, so this
-            // is exclusive with the case above.
-            auto* childBlock = dynamicDowncast<RenderBlock>(childBox);
-            if (childBlock && childBlock->paginationStrut()) {
-                newLogicalTop += childBlock->paginationStrut();
-                childBlock->setPaginationStrut(0);
-            }
-            
-            if (newLogicalTop != logicalTop) {
-                computeLogicalLocationForFloat(floatingObject, newLogicalTop);
-                if (childBlock)
-                    childBlock->setChildNeedsLayout(MarkingBehavior::OnlyThis);
-                childBox.layoutIfNeeded();
-                logicalTop = newLogicalTop;
-            }
-
-            if (updateFragmentRangeForBoxChild(childBox)) {
-                childBox.setNeedsLayout(MarkingBehavior::OnlyThis);
-                childBox.layoutIfNeeded();
-            }
+        // See if we have a pagination strut that is making us move down further.
+        // Note that an unsplittable child can't also have a pagination strut, so this
+        // is exclusive with the case above.
+        auto* childBlock = dynamicDowncast<RenderBlock>(childBox);
+        if (childBlock && childBlock->paginationStrut()) {
+            newLogicalTop += childBlock->paginationStrut();
+            childBlock->setPaginationStrut(0);
         }
 
-        setLogicalHeightForFloat(floatingObject, logicalHeightForChildForFragmentation(childBox) + (logicalTopForChild(childBox) - logicalTop) + marginAfterForChild(childBox));
+        if (newLogicalTop != logicalTop) {
+            computeLogicalLocationForFloat(floatingObject, newLogicalTop);
+            if (childBlock)
+                childBlock->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+            childBox.layoutIfNeeded();
+            logicalTop = newLogicalTop;
+        }
 
-        // The placed float takes its shape from the float's layout box.
-        if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo()) {
-            shapeOutside->invalidateForSizeChangeIfNeeded();
-            childBox.layoutBox().setShape(&shapeOutside->computedShape());
-        } else if (childBox.layoutBox().shape())
-            childBox.layoutBox().setShape({ });
-        m_floatingObjects->addPlacedObject(&floatingObject);
-
-        // If the child moved, we have to repaint it.
-        if (childBox.checkForRepaintDuringLayout())
-            childBox.repaintDuringLayoutIfMoved(oldRect);
+        if (updateFragmentRangeForBoxChild(childBox)) {
+            childBox.setNeedsLayout(MarkingBehavior::OnlyThis);
+            childBox.layoutIfNeeded();
+        }
     }
-    return true;
+
+    setLogicalHeightForFloat(floatingObject, logicalHeightForChildForFragmentation(childBox) + (logicalTopForChild(childBox) - logicalTop) + marginAfterForChild(childBox));
+
+    // The placed float takes its shape from the float's layout box.
+    if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo()) {
+        shapeOutside->invalidateForSizeChangeIfNeeded();
+        childBox.layoutBox().setShape(&shapeOutside->computedShape());
+    } else if (childBox.layoutBox().shape())
+        childBox.layoutBox().setShape({ });
+    m_floatingObjects->add(WTF::move(newFloatingObject));
+
+    // If the child moved, we have to repaint it.
+    if (childBox.checkForRepaintDuringLayout())
+        childBox.repaintDuringLayoutIfMoved(oldRect);
 }
 
 LayoutUnit RenderBlockFlow::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const
 {
     if (!m_floatingObjects || !m_floatingObjects->hasLeftObjects())
         return fixedOffset;
-
-    if (!view().frameView().layoutContext().isInRenderTreeLayout())
-        return m_floatingObjects->logicalLeftOffset(fixedOffset, logicalTop, logicalHeight);
 
     auto leftFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).first;
     return leftFloatsEdge ? std::max(fixedOffset, *leftFloatsEdge) : fixedOffset;
@@ -3219,9 +3191,6 @@ LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop
 {
     if (!m_floatingObjects || !m_floatingObjects->hasRightObjects())
         return fixedOffset;
-
-    if (!view().frameView().layoutContext().isInRenderTreeLayout())
-        return m_floatingObjects->logicalRightOffset(fixedOffset, logicalTop, logicalHeight);
 
     auto rightFloatsEdge = floatEdgesFromFloatingContext(logicalTop, logicalHeight).second;
     return rightFloatsEdge ? std::min(fixedOffset, *rightFloatsEdge) : fixedOffset;
@@ -3283,25 +3252,16 @@ LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatT
 {
     if (!m_floatingObjects)
         return 0;
-    if (auto* placedFloats = m_floatingObjects->keptPlacedFloats()) {
-        // While the block lays out its children, its PlacedFloats list keeps the lowest float bottom on each side, the inline start
-        // and end (see placedFloatItem()).
-        auto isLeftToRight = writingMode().isLogicalLeftInlineStart();
-        auto side = Clear::Both;
-        if (floatType == FloatingObject::FloatLeft)
-            side = isLeftToRight ? Clear::InlineStart : Clear::InlineEnd;
-        else if (floatType == FloatingObject::FloatRight)
-            side = isLeftToRight ? Clear::InlineEnd : Clear::InlineStart;
-        // Like the walk below, which starts at 0.
-        auto lowestPosition = placedFloats->lowestPositionOnBlockAxis(side);
-        return lowestPosition ? std::max(0_lu, lowestPosition->value()) : 0_lu;
-    }
-    LayoutUnit lowestFloatBottom;
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (floatingObject->isPlaced() && floatingObject->type() & floatType)
-            lowestFloatBottom = std::max(lowestFloatBottom, logicalBottomForFloat(*floatingObject));
-    }
-    return lowestFloatBottom;
+    // The PlacedFloats list keeps the lowest float bottom on each side, the inline start and end (see placedFloatItem()).
+    auto isLeftToRight = writingMode().isLogicalLeftInlineStart();
+    auto side = Clear::Both;
+    if (floatType == FloatingObject::FloatLeft)
+        side = isLeftToRight ? Clear::InlineStart : Clear::InlineEnd;
+    else if (floatType == FloatingObject::FloatRight)
+        side = isLeftToRight ? Clear::InlineEnd : Clear::InlineStart;
+    // A float that ends above the block's top counts as ending at 0, as when the block has no float.
+    auto lowestPosition = m_floatingObjects->placedFloats().lowestPositionOnBlockAxis(side);
+    return lowestPosition ? std::max(0_lu, lowestPosition->value()) : 0_lu;
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() const
@@ -3309,11 +3269,10 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     if (!m_floatingObjects)
         return { };
     auto lowestFloatBottom = std::optional<LayoutUnit> { };
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        if (floatingObject->isPlaced() && floatingObject->renderer()->style().pseudoElementType() == PseudoElementType::FirstLetter && floatingObject->renderer()->style().initialLetter().drop() > 0)
-            lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), logicalBottomForFloat(*floatingObject));
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        CheckedRef floatStyle = floatItem.layoutBox().style();
+        if (floatStyle->pseudoElementType() == PseudoElementType::FirstLetter && floatStyle->initialLetter().drop() > 0)
+            lowestFloatBottom = std::max(lowestFloatBottom.value_or(0_lu), floatItem.marginBoxBottom().value());
     }
     return lowestFloatBottom;
 }
@@ -3350,23 +3309,22 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child)
         } else {
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject->isDescendant())
-                child.addOverflowFromFloatBox(*floatingObject);
+                child.addOverflowFromFloatBox(renderer, floatingObject->locationOffsetOfBorderBox());
         }
     }
     return lowestFloatLogicalBottom;
 }
 
-bool RenderBlockFlow::hasOverhangingFloat(RenderBox& renderer)
+bool RenderBlockFlow::hasOverhangingFloat(const RenderBox& floatBox)
 {
     if (!m_floatingObjects || !parent())
         return false;
 
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    const auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(renderer);
-    if (it == floatingObjectSet.end())
-        return false;
-
-    return logicalBottomForFloat(*it->get()) > logicalHeight();
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        if (&floatItem.layoutBox() == &floatBox.layoutBox())
+            return floatItem.marginBoxBottom().value() > logicalHeight();
+    }
+    return false;
 }
 
 void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* previousBlock, RenderBlockFlow* container, LayoutUnit logicalLeftOffset, LayoutUnit logicalTopOffset)
@@ -3473,11 +3431,8 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     if (!m_floatingObjects)
         return;
 
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        markSiblingsWithIntrusiveFloatForLayoutIfApplicable(*floatingObject->renderer());
-    }
+    for (auto& floatItem : m_floatingObjects->placedFloats().list())
+        markSiblingsWithIntrusiveFloatForLayoutIfApplicable(downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration()));
 }
 
 LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutUnit logicalTop)

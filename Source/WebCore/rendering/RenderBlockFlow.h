@@ -32,6 +32,7 @@ namespace WebCore {
 class FloatingObject;
 class FloatingObjects;
 class RenderMultiColumnFlow;
+struct OffsetForPositioningFloat;
 enum FloatingObjectType : uint8_t;
 struct FloatingObjectHashFunctions;
 
@@ -261,7 +262,7 @@ public:
     std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
     void adjustOutOfFlowBlock(RenderBox& child, const MarginInfo&);
-    void adjustFloatingBlock(const MarginInfo&);
+    void adjustFloatingBlock(const MarginInfo&, std::unique_ptr<FloatingObject>);
 
     void adjustBlockEndChildrenForMarginTrim();
 
@@ -303,16 +304,17 @@ public:
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    NODELETE LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
-    NODELETE LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
+    LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
 
     inline const FloatingObjectSet* floatingObjectSet() const LIFETIME_BOUND; // Defined in RenderBlockFlowInlines.h
 
-    FloatingObject& insertFloatingBox(RenderBox&);
-    void placeFloatingBox(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
+    // For a float inline layout placed, which put it in placedFloats() already.
+    void placeFloatingBox(RenderBox&, const LayoutRect& frameRect, LayoutSize marginOffset);
+    Layout::PlacedFloats& placedFloats();
 
     inline LayoutUnit logicalTopForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
     inline LayoutUnit logicalBottomForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
@@ -395,7 +397,7 @@ public:
 
     LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
 
-    NODELETE std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
+    std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
 
     std::optional<LayoutUnit> firstLineBaseline() const override;
@@ -465,26 +467,24 @@ private:
 
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 
-    void insertFloatingBoxAndMarkForLayout(RenderBox&);
+    void insertFloatingBoxAndMarkForLayout(RenderBox&, const MarginInfo&);
     void removeFloatingBox(RenderBox&);
     void computeLogicalLocationForFloat(FloatingObject&, LayoutUnit& logicalTopOffset);
 
-    // Called from lineWidth, to position the floats added in the last line.
-    // Returns true if and only if it has positioned any floats.
-    bool positionNewFloats();
+    void positionNewFloat(std::unique_ptr<FloatingObject>);
 
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     // The logical right edge of the left floats and the logical left edge of the right floats.
     std::pair<std::optional<LayoutUnit>, std::optional<LayoutUnit>> floatEdgesFromFloatingContext(LayoutUnit logicalTop, LayoutUnit logicalHeight) const;
 
-    LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
-    LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
+    OffsetForPositioningFloat logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const;
+    OffsetForPositioningFloat logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset) const;
     
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;
     
     LayoutUnit addOverhangingFloats(RenderBlockFlow& child);
-    NODELETE bool hasOverhangingFloat(RenderBox&);
+    bool hasOverhangingFloat(const RenderBox&);
     void addIntrudingFloats(RenderBlockFlow* prev, RenderBlockFlow* container, LayoutUnit xoffset, LayoutUnit yoffset);
     inline bool hasOverhangingFloats() const;
     LayoutUnit computedClearDeltaForChild(RenderBox& child, LayoutUnit yPos);

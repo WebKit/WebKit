@@ -218,8 +218,6 @@ RenderBlockFlow::MarginInfo IntegrationUtils::toMarginInfo(const Layout::BlockLa
 
 std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode writingMode)
 {
-    // In certain writing modes, IFC gets the border box position wrong;
-    // but the margin box is correct, so use it to derive the border box.
     auto marginBoxLogicalRect = BoxGeometry::marginBoxRect(logicalGeometry);
     auto containerLogicalWidth = writingMode.isHorizontal() ? containerSize.width() : containerSize.height();
     auto marginBoxLogicalX = writingMode.isInlineFlipped() ? containerLogicalWidth - marginBoxLogicalRect.right() : marginBoxLogicalRect.left();
@@ -232,14 +230,14 @@ std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRe
     auto marginWidth = LayoutUnit { };
     auto marginHeight = LayoutUnit { };
 
+    // The visual rect is block-start relative, like a float's block-axis margins (see BoxGeometryUpdater::updateLayoutBoxDimensions()).
     if (writingMode.isHorizontal()) {
         marginLeft = writingMode.isInlineLeftToRight() ? logicalGeometry.marginStart() : logicalGeometry.marginEnd();
-        marginTop = writingMode.isBlockTopToBottom() ? logicalGeometry.marginBefore() : logicalGeometry.marginAfter();
+        marginTop = logicalGeometry.marginBefore();
         marginWidth = logicalGeometry.marginStart() + logicalGeometry.marginEnd();
         marginHeight = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();
     } else {
-        // Invert verticalLogicalMargin() and convert to block-start relative coords.
-        marginLeft = writingMode.isLineInverted() ? logicalGeometry.marginAfter() : logicalGeometry.marginBefore();
+        marginLeft = logicalGeometry.marginBefore();
         marginTop = writingMode.isInlineTopToBottom() ? logicalGeometry.marginStart() : logicalGeometry.marginEnd();
         marginWidth = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();
         marginHeight = logicalGeometry.marginStart() + logicalGeometry.marginEnd();
