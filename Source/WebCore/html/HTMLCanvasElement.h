@@ -63,6 +63,7 @@ class OffscreenCanvas;
 class VideoFrame;
 class WebGLRenderingContextBase;
 class WebCoreOpaqueRoot;
+struct CanvasElementImageDefaultSize;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
@@ -95,6 +96,7 @@ public:
     ExceptionOr<void> updateElementGeometry(const CanvasElementImageSource&, std::optional<UpdateElementGeometryOptions>);
     ExceptionOr<void> clearElementGeometry(const CanvasElementImageSource&);
     ExceptionOr<Ref<DOMMatrix>> getElementTransform(const Element&);
+    ExceptionOr<CanvasElementImageDefaultSize> getElementImageDefaultSize(const CanvasElementImageSource&);
 
     NODELETE CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);

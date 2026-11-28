@@ -1402,6 +1402,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     html/canvas/CanvasDirection.idl
     html/canvas/CanvasElementImage.idl
+    html/canvas/CanvasElementImageDefaultSize.idl
     html/canvas/CanvasFillRule.idl
     html/canvas/CanvasFontKerning.idl
     html/canvas/CanvasFontStretch.idl

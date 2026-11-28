@@ -1464,6 +1464,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasDrawImage.idl \
     $(WebCore)/html/canvas/CanvasDrawPath.idl \
 	$(WebCore)/html/canvas/CanvasElementImage.idl \
+	$(WebCore)/html/canvas/CanvasElementImageDefaultSize.idl \
     $(WebCore)/html/canvas/CanvasFillRule.idl \
     $(WebCore)/html/canvas/CanvasFillStrokeStyles.idl \
     $(WebCore)/html/canvas/CanvasFilters.idl \

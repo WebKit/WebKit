@@ -29,6 +29,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CSSValuePool.h"
+#include "CanvasElementImageDefaultSize.h"
 #include "CanvasRenderingContext.h"
 #include "ContextDestructionObserverInlines.h"
 #include "Chrome.h"
@@ -178,6 +179,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 {
     Ref offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), LocalPlaceholderRenderingContextSource::create(placeholder)));
     Ref canvas = placeholder.canvas();
+    offscreen->m_placeholderCanvasIdentifier = canvas->nodeIdentifier();
     offscreen->m_inheritedLanguage = canvas->effectiveLang();
     offscreen->m_inheritedDirection = canvas->effectiveTextDirection();
     offscreen->suspendIfNeeded();
@@ -252,6 +254,19 @@ ExceptionOr<void> OffscreenCanvas::updateElementGeometry(const CanvasElementImag
 ExceptionOr<void> OffscreenCanvas::clearElementGeometry(const CanvasElementImageSource&)
 {
     return Exception { ExceptionCode::NotSupportedError };
+}
+
+ExceptionOr<CanvasElementImageDefaultSize> OffscreenCanvas::getElementImageDefaultSize(const CanvasElementImageSource& source)
+{
+    if (m_detached)
+        return Exception { ExceptionCode::InvalidStateError, "OffscreenCanvas is detached."_s };
+
+    auto snapshot = canvasElementSnapshot(*this, source, "getElementImageDefaultSize: an Element cannot be drawn into an OffscreenCanvas."_s);
+    if (snapshot.hasException())
+        return snapshot.releaseException();
+
+    auto defaultSize = snapshot.returnValue().defaultSize(size());
+    return CanvasElementImageDefaultSize { defaultSize.width(), defaultSize.height() };
 }
 
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)

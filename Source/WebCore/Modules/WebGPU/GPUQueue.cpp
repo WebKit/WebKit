@@ -1626,7 +1626,9 @@ ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageS
             return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: Failed to get a snapshot for a drawableElement"_s };
         },
         [&](const Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
-            return drawSnapshotToTexture(elementImage->snapshot(), source, destination);
+            if (auto* snapshot = elementImage->snapshot())
+                return drawSnapshotToTexture(*snapshot, source, destination);
+            return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: The ElementImage has been closed"_s };
         }
     );
 }

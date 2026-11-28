@@ -32,7 +32,5 @@
     InterfaceName=ElementImage,
     Transferable
 ] interface CanvasElementImage {
-    readonly attribute double width;
-    readonly attribute double height;
     undefined close();
 };

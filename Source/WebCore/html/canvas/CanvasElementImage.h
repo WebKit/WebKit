@@ -26,34 +26,57 @@
 #pragma once
 
 #include <WebCore/DisplayList.h>
+#include <WebCore/ExceptionOr.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntSize.h>
+#include <WebCore/NodeIdentifier.h>
+#include <expected>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
+class CanvasBase;
 class Element;
 
 struct CanvasElementSnapshot {
     Ref<const DisplayList::DisplayList> displayList;
+    // The bounds of the recorded display list.
     FloatSize size;
+    // The drawable element's border box, and the canvas's replaced content rect (which its pixel grid
+    // fills), in layout units, as they were when the snapshot was painted.
+    FloatSize borderBoxSize;
+    FloatSize canvasContentSize;
+    // The canvas the snapshot was painted for.
+    NodeIdentifier canvasIdentifier;
+
+    // Maps a size in the snapshot's layout units to the pixel grid of a canvas whose width and height are `canvasSize`.
+    FloatSize sizeInCanvasGrid(const FloatSize&, const IntSize& canvasSize) const;
+    // https://github.com/WICG/html-in-canvas: the default size of the element in canvas grid coordinates.
+    // drawElementImage() draws at this size when it is not given a destination size.
+    FloatSize defaultSize(const IntSize& canvasSize) const { return sizeInCanvasGrid(borderBoxSize, canvasSize); }
 };
 
 class CanvasElementImage : public RefCounted<CanvasElementImage> {
 public:
     NODELETE static Ref<CanvasElementImage> create(CanvasElementSnapshot&&);
 
-    double width() const { return size().width(); }
-    double height() const { return size().height(); }
-    NODELETE void close();
+    void close();
 
-    const CanvasElementSnapshot& snapshot() const { return m_snapshot; }
-    const DisplayList::DisplayList& displayList() const { return m_snapshot.displayList; }
-    FloatSize size() const { return m_snapshot.size; }
+    // Null once close() has released the snapshot.
+    const CanvasElementSnapshot* snapshot() const { return m_snapshot ? &*m_snapshot : nullptr; }
 
 private:
     CanvasElementImage(CanvasElementSnapshot&&);
 
-    CanvasElementSnapshot m_snapshot;
+    std::optional<CanvasElementSnapshot> m_snapshot;
 };
 
 using CanvasElementImageSource = Variant<Ref<Element>, Ref<CanvasElementImage>>;
+
+// The snapshot that drawing `source` into `canvas` uses, or an error message if it cannot be drawn
+// there: an Element without a painted snapshot in `canvas` (reported with `missingSnapshotMessage`),
+// a closed ElementImage, or one captured from another canvas.
+std::expected<CanvasElementSnapshot, ASCIILiteral> canvasElementSnapshotOrError(CanvasBase&, const CanvasElementImageSource&, ASCIILiteral missingSnapshotMessage);
+ExceptionOr<CanvasElementSnapshot> canvasElementSnapshot(CanvasBase&, const CanvasElementImageSource&, ASCIILiteral missingSnapshotMessage);
 
 } // namespace WebCore

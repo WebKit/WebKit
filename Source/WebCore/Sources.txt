@@ -4137,6 +4137,7 @@ JSCanvasDrawElementImageOptions.cpp
 JSCanvasDrawImage.cpp
 JSCanvasDrawPath.cpp
 JSCanvasElementImage.cpp
+JSCanvasElementImageDefaultSize.cpp
 JSCanvasFillRule.cpp
 JSCanvasFillStrokeStyles.cpp
 JSCanvasFilters.cpp

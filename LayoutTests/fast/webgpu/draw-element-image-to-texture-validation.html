@@ -48,6 +48,8 @@ async function runTest()
     });
 
     const image = canvas.captureElementImage(box);
+    const closedImage = canvas.captureElementImage(box);
+    closedImage.close();
 
     // Valid calls.
     expectResult("no exception", "element source", () => draw({ source: box }));
@@ -61,6 +63,7 @@ async function runTest()
     expectResult("TypeError", "null source", () => draw({ source: null }));
     expectResult("TypeError", "non-element source", () => draw({ source: { } }));
     expectResult("InvalidStateError", "element which is not a drawable child of a canvas", () => draw({ source: outside }));
+    expectResult("InvalidStateError", "closed ElementImage", () => draw({ source: closedImage }));
 
     // Partial source rectangle.
     expectResult("InvalidStateError", "only sourceX", () => draw({ source: box, sourceX: 0 }));

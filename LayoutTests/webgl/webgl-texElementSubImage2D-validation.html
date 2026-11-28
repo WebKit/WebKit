@@ -8,12 +8,17 @@
     <canvas id="canvas" width="64" height="64" content="drawable">
         <div id="box" style="width: 20px; height: 20px; background-color: green" drawable></div>
     </canvas>
+    <canvas id="otherCanvas" width="64" height="64" content="drawable">
+        <div id="otherBox" style="width: 20px; height: 20px; background-color: blue" drawable></div>
+    </canvas>
     <script>
         description("Tests the input validation of WebGL texElementSubImage2D().");
         jsTestIsAsync = true;
 
         const canvas = document.getElementById("canvas");
         const box = document.getElementById("box");
+        const otherCanvas = document.getElementById("otherCanvas");
+        const otherBox = document.getElementById("otherBox");
         let gl;
         let texture;
 
@@ -49,10 +54,21 @@
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
             expectError(gl.NO_ERROR, "texImage2D", () => { });
 
+            const image = canvas.captureElementImage(box);
+            const otherImage = otherCanvas.captureElementImage(otherBox);
+            const closedImage = canvas.captureElementImage(box);
+            closedImage.close();
+
             expectError(gl.NO_ERROR, "valid call", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box));
+            expectError(gl.NO_ERROR, "valid call with ElementImage", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, image));
             expectError(gl.NO_ERROR, "valid call with empty config", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { }));
             expectError(gl.NO_ERROR, "valid call with full source rect", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box, { sx: 0, sy: 0, swidth: 10, sheight: 10 }));
             expectError(gl.NO_ERROR, "valid call with size", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 4, 4, box, { width: 8, height: 8 }));
+
+            // Invalid Element and ElementImage sources.
+            expectError(gl.INVALID_OPERATION, "element from another canvas", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, otherBox));
+            expectError(gl.INVALID_OPERATION, "ElementImage from another canvas", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, otherImage));
+            expectError(gl.INVALID_OPERATION, "closed ElementImage", () => gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, closedImage));
 
             // Invalid target.
             expectError(gl.INVALID_ENUM, "invalid target", () => gl.texElementSubImage2D(gl.ARRAY_BUFFER, 0, 0, 0, box));

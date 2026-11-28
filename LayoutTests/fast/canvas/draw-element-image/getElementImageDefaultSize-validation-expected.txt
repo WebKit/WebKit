@@ -1,0 +1,5 @@
+
+PASS Rejects ElementImage captured from a different canvas
+PASS Rejects getElementImageDefaultSize on a detached OffscreenCanvas
+PASS Handles zero-width canvas grid and single-axis zero CSS content size cleanly
+
