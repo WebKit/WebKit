@@ -51,6 +51,7 @@ public:
     const Vector<String>& filenames() const LIFETIME_BOUND { return m_filenames; }
     bool hasURIList() const { return !m_uriList.isEmpty(); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
+    void clearFilenames() { m_filenames.clear(); }
     void clearURIList() { m_uriList = emptyString(); }
 
     void setImage(RefPtr<ShareableBitmap>&& newImage) { m_image = WTF::move(newImage); }
@@ -74,7 +75,7 @@ public:
     void clearAll();
     void clearAllExceptFilenames();
 
-    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, RefPtr<ShareableBitmap>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
+    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, Vector<String>&& filenames, RefPtr<ShareableBitmap>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
     SelectionData() = default;
 
 private:

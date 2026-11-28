@@ -50,6 +50,13 @@ DragSource::~DragSource()
         g_signal_handlers_disconnect_by_data(m_drag.get(), this);
 }
 
+static constexpr ASCIILiteral webViewDragKey = "wk-web-view-drag"_s;
+
+bool DragSource::isWebViewDrag(GdkDrag* drag)
+{
+    return drag && g_object_get_data(G_OBJECT(drag), webViewDragKey.characters());
+}
+
 static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
 {
     if (!iconImage)
@@ -115,6 +122,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     auto* device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(m_webView)));
     GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.mutableSpan().data(), providers.size()));
     m_drag = adoptGRef(gdk_drag_begin(surface, device, provider.get(), dragOperationToGdkDragActions(operationMask), 0, 0));
+    g_object_set_data(G_OBJECT(m_drag.get()), webViewDragKey.characters(), GINT_TO_POINTER(TRUE));
     g_signal_connect(m_drag.get(), "dnd-finished", G_CALLBACK(+[](GdkDrag* gtkDrag, gpointer userData) {
         auto& drag = *static_cast<DragSource*>(userData);
         if (drag.m_drag.get() != gtkDrag)

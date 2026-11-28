@@ -28,6 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT) && !USE(GTK4)
 
+#include "DragSource.h"
 #include "GRefPtrGtk.h"
 #include "GtkUtilities.h"
 #include "SandboxExtension.h"
@@ -223,6 +224,9 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
 
     if (--m_dataRequestCount)
         return;
+
+    if (DragSource::isWebViewDrag(m_drop.get()))
+        m_selectionData->clearFilenames();
 
     enter(WTF::move(position), time);
 }

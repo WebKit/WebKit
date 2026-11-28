@@ -28,6 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT) && USE(GTK4)
 
+#include "DragSource.h"
 #include "GtkUtilities.h"
 #include "SandboxExtension.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -314,6 +315,9 @@ void DropTarget::didLoadData()
         m_selectionData->setURIList(m_uriListBuilder.toString());
         m_uriListBuilder.clear();
     }
+
+    if (DragSource::isWebViewDrag(gdk_drop_get_drag(m_drop.get())))
+        m_selectionData->clearFilenames();
 
     m_cancellable = nullptr;
 

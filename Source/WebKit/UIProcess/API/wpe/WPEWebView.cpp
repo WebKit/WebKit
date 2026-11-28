@@ -184,6 +184,8 @@ void View::setDragData(WebCore::SelectionData&& selectionData, OptionSet<WebCore
         selectionData.setImage(WTF::move(copy));
     }
 
+    selectionData.clearFilenames();
+
     m_dragData = WTF::move(selectionData);
     m_dragMask = dragOperationMask;
 }

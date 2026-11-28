@@ -39,6 +39,12 @@ using namespace WebCore;
 
 enum DragTargetType { Markup, Text, Image, URIList, NetscapeURL, SmartPaste, Custom };
 
+bool DragSource::isWebViewDrag(GdkDragContext* context)
+{
+    auto* sourceWidget = context ? gtk_drag_get_source_widget(context) : nullptr;
+    return sourceWidget && WEBKIT_IS_WEB_VIEW_BASE(sourceWidget);
+}
+
 DragSource::DragSource(GtkWidget* webView)
     : m_webView(webView)
 {
