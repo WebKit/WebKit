@@ -93,7 +93,9 @@ class IterableWeakSet
     clear()
     {
         for (let wrapper of this._wrappers) {
-            this._wrapperForItem.delete(wrapper);
+            let item = wrapper.deref();
+            if (item)
+                this._wrapperForItem.delete(item);
             this._finalizationRegistry.unregister(wrapper);
         }
 
