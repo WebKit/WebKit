@@ -2552,7 +2552,6 @@ mathml/non-core/mathvariant/mathvariant-basic-transforms-with-default-font.html 
 mathml/non-core/mathvariant/mathvariant-double-struck-font-style-font-weight.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/mathml/relations/css-styling/first-line-first-letter-pseudo-elements-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/first-line-first-letter-pseudo-elements-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/first-line-first-letter-pseudo-elements-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/table-width-3.html [ ImageOnlyFailure ]

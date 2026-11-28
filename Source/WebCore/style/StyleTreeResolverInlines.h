@@ -25,13 +25,27 @@
 
 #pragma once
 
+#include "Element.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleTreeResolver.h"
 
 namespace WebCore::Style {
 
-inline bool supportsFirstLineAndLetterPseudoElement(const Style::ComputedStyle& style)
+// FIXME: MathML elements use block, inline and inline-block as stand-ins for 'block math' and 'inline math' (webkit.org/b/278533).
+inline bool isDisplayMath(const Element* element, const Style::ComputedStyle& style)
 {
+    if (!element || !element->isMathMLElement())
+        return false;
+    auto display = style.display();
+    return display == DisplayType::BlockFlow
+        || display == DisplayType::InlineFlow
+        || display == DisplayType::InlineFlowRoot;
+}
+
+inline bool supportsFirstLineAndLetterPseudoElement(const Element* element, const Style::ComputedStyle& style)
+{
+    if (isDisplayMath(element, style))
+        return false;
     auto display = style.display();
     return display == DisplayType::BlockFlow
         || display == DisplayType::BlockFlowRoot
