@@ -6934,6 +6934,7 @@
 		9E73BBA26303CDD5AC0FC2BD /* BoxDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EFE3E593EFEB8A7D082769 /* BoxDecorationPainter.h */; };
 		DED455D86AFC6F27CAED7FD0 /* MaskPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67DCCCAC39DA40C5774677AC /* MaskPainter.h */; };
 		EAFC07D2A3474D9770485DDB /* BlockHitTester.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC04BA537D7C75DF1DE04B9 /* BlockHitTester.h */; };
+		F92E55C5C6AE375293694BC3 /* TableHitTester.h in Headers */ = {isa = PBXBuildFile; fileRef = EF0F861A4E49AEFC67F49ECD /* TableHitTester.h */; };
 		E2DCBC42335344CF1E3576DC /* TablePainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6455CD5D7AD6A0B89F12F372 /* TablePainter.h */; };
 		9234214D6BA65E79F2D23B59 /* PaintOrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B0934FEEB82F0746DB18450 /* PaintOrderIterator.h */; };
 		37E7335109FD761165A999E6 /* BlockPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = B141E4BFEA47122D7DBF2559 /* BlockPainter.h */; };
@@ -22979,6 +22980,8 @@
 		67DCCCAC39DA40C5774677AC /* MaskPainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskPainter.h; sourceTree = "<group>"; };
 		3AB22090812BA6BF98DEC93D /* BlockHitTester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockHitTester.cpp; sourceTree = "<group>"; };
 		CFC04BA537D7C75DF1DE04B9 /* BlockHitTester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockHitTester.h; sourceTree = "<group>"; };
+		D16D67BBD061057316189DE1 /* TableHitTester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TableHitTester.cpp; sourceTree = "<group>"; };
+		EF0F861A4E49AEFC67F49ECD /* TableHitTester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableHitTester.h; sourceTree = "<group>"; };
 		214F9051B44B1EF9AB8D7A11 /* TablePainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TablePainter.cpp; sourceTree = "<group>"; };
 		6455CD5D7AD6A0B89F12F372 /* TablePainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TablePainter.h; sourceTree = "<group>"; };
 		BC1033E07661EE79FC603E12 /* PaintOrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PaintOrderIterator.cpp; sourceTree = "<group>"; };
@@ -28263,6 +28266,8 @@
 				E4C91A0F1802343900A17F6D /* PaintTextStyle.cpp */,
 				E4C91A0D1802343100A17F6D /* PaintTextStyle.h */,
 				43C6D41BC4AA85D259FF1215 /* PaintTransformScope.h */,
+				D16D67BBD061057316189DE1 /* TableHitTester.cpp */,
+				EF0F861A4E49AEFC67F49ECD /* TableHitTester.h */,
 				214F9051B44B1EF9AB8D7A11 /* TablePainter.cpp */,
 				6455CD5D7AD6A0B89F12F372 /* TablePainter.h */,
 				E440DF5726EB53EA004AF06B /* TextBoxPainter.cpp */,
@@ -50206,6 +50211,7 @@
 				E3C04138254CB30D0021D0E6 /* SystemSoundDelegate.h in Headers */,
 				E3C0412F254CA29B0021D0E6 /* SystemSoundManager.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
+				F92E55C5C6AE375293694BC3 /* TableHitTester.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				E2DCBC42335344CF1E3576DC /* TablePainter.h in Headers */,
 				3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */,

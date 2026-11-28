@@ -48,6 +48,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TableHitTester.h"
 #include "TablePainter.h"
 #include <limits>
 #include <ranges>
@@ -1308,69 +1309,7 @@ void RenderTableSection::splitColumn(unsigned pos, unsigned first)
 // Hit Testing
 bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
-    // If we have no children then we have nothing to do.
-    if (!firstRow())
-        return false;
-
-    // Table sections cannot ever be hit tested.  Effectively they do not exist.
-    // Just forward to our children always.
-    LayoutPoint adjustedLocation = accumulatedOffset + location();
-
-    if (hasNonVisibleOverflow() && !locationInContainer.intersects(overflowClipRect(adjustedLocation)))
-        return false;
-
-    if (hasOverflowingCell()) {
-        for (CheckedPtr row = lastRow(); row; row = row->previousRow()) {
-            // FIXME: We have to skip over inline flows, since they can show up inside table rows
-            // at the moment (a demoted inline <form> for example). If we ever implement a
-            // table-specific hit-test method (which we should do for performance reasons anyway),
-            // then we can remove this check.
-            if (!row->hasSelfPaintingLayer()) {
-                auto rowOffset = blockStartRelativeToPhysicalForChild(*row, adjustedLocation);
-                if (row->nodeAtPoint(request, result, locationInContainer, rowOffset, action))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    recalcCellsIfNeeded();
-
-    LayoutRect hitTestRect = locationInContainer.boundingBox();
-    hitTestRect.moveBy(-adjustedLocation);
-
-    LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(hitTestRect);
-    CellSpan rowSpan = spannedRows(tableAlignedRect, DoNotIncludeAllIntersectingCells);
-    CellSpan columnSpan = spannedColumns(tableAlignedRect, DoNotIncludeAllIntersectingCells);
-
-    // Now iterate over the spanned rows and columns.
-    for (unsigned hitRow = rowSpan.start; hitRow < rowSpan.end; ++hitRow) {
-        for (unsigned hitColumn = columnSpan.start; hitColumn < columnSpan.end; ++hitColumn) {
-            CellStruct& current = cellAt(hitRow, hitColumn);
-
-            // If the cell is empty, there's nothing to do
-            if (!current.hasCells())
-                continue;
-
-            for (unsigned i = current.cells.size() ; i; ) {
-                --i;
-                CheckedPtr cell = current.cells[i];
-                CheckedRef row = downcast<RenderTableRow>(*cell->parent());
-                auto rowPoint = blockStartRelativeToPhysicalForChild(row, adjustedLocation) + row->location();
-                auto cellPoint = row->blockStartRelativeToPhysicalForChild(*cell, rowPoint);
-                if (static_cast<RenderObject*>(cell.get())->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
-                    updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
-                    return true;
-                }
-            }
-            if (!request.resultIsElementList())
-                break;
-        }
-        if (!request.resultIsElementList())
-            break;
-    }
-
-    return false;
+    return Paint::TableHitTester::hitTest(*this, request, result, locationInContainer, accumulatedOffset, action);
 }
 
 void RenderTableSection::clearCachedCollapsedBorders()

@@ -62,6 +62,7 @@
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include "StyleSizing.h"
+#include "TableHitTester.h"
 #include "TablePainter.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
@@ -1657,31 +1658,7 @@ LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, OverlayScr
 
 bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
-    LayoutPoint adjustedLocation = accumulatedOffset + location();
-
-    // Check kids first.
-    if (!hasNonVisibleOverflow() || locationInContainer.intersects(overflowClipRect(adjustedLocation))) {
-        for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
-            CheckedPtr box = dynamicDowncast<RenderBox>(*child);
-            if (box && !box->hasSelfPaintingLayer() && (box->isRenderTableSection() || box->isRenderTableCaption())) {
-                LayoutPoint childPoint = blockStartRelativeToPhysicalForChild(*box, adjustedLocation);
-                if (box->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
-                    updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
-                    return true;
-                }
-            }
-        }
-    }
-
-    // Check our bounds next.
-    LayoutRect boundsRect(adjustedLocation, borderBoxSize());
-    if (visibleToHitTesting(request) && (action == HitTestAction::BlockBackground || action == HitTestAction::ChildBlockBackground) && locationInContainer.intersects(boundsRect)) {
-        updateHitTestResult(result, physicalToBlockStartRelative(locationInContainer.point() - toLayoutSize(adjustedLocation)));
-        if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
-            return true;
-    }
-
-    return false;
+    return Paint::TableHitTester::hitTest(*this, request, result, locationInContainer, accumulatedOffset, action);
 }
 
 void RenderTable::markForPaginationRelayoutIfNeeded()

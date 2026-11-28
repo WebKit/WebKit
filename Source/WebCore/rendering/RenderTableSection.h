@@ -55,12 +55,14 @@ public:
 };
 
 namespace Paint {
+class TableHitTester;
 class TablePainter;
 }
 
 class RenderTableSection final : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableSection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableSection);
+    friend class Paint::TableHitTester;
     friend class Paint::TablePainter;
 public:
     // The fraction of overflowing cells above which painting doesn't use the fast path.

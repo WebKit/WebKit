@@ -34,12 +34,14 @@ static const unsigned unsetRowIndex = 0x7FFFFFFF;
 static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 namespace Paint {
+class TableHitTester;
 class TablePainter;
 }
 
 class RenderTableRow final : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTableRow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableRow);
+    friend class Paint::TableHitTester;
     friend class Paint::TablePainter;
 public:
     RenderTableRow(Element&, UniqueRef<Style::ComputedStyle>&&);

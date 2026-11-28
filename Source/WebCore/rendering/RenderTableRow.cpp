@@ -40,6 +40,7 @@
 #include "RenderTableCell.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "TableHitTester.h"
 #include "TablePainter.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -210,27 +211,7 @@ auto RenderTableRow::rectsForRepaintingAfterLayout(const RenderLayerModelObject*
 
 bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
-    // Table rows cannot ever be hit tested.  Effectively they do not exist.
-    // Just forward to our children always.
-    if (!section())
-        return false;
-
-    auto adjustedOffset = accumulatedOffset + location();
-    for (CheckedPtr cell = lastCell(); cell; cell = cell->previousCell()) {
-        // FIXME: We have to skip over inline flows, since they can show up inside table rows
-        // at the moment (a demoted inline <form> for example). If we ever implement a
-        // table-specific hit-test method (which we should do for performance reasons anyway),
-        // then we can remove this check.
-        if (!cell->hasSelfPaintingLayer()) {
-            auto cellPoint = blockStartRelativeToPhysicalForChild(*cell, adjustedOffset);
-            if (cell->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
-                updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return Paint::TableHitTester::hitTest(*this, request, result, locationInContainer, accumulatedOffset, action);
 }
 
 void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

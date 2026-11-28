@@ -45,12 +45,14 @@ enum class SkipEmptySections : bool { No, Yes };
 enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 
 namespace Paint {
+class TableHitTester;
 class TablePainter;
 }
 
 class RenderTable : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderTable);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTable);
+    friend class Paint::TableHitTester;
     friend class Paint::TablePainter;
 public:
     RenderTable(Type, Element&, UniqueRef<Style::ComputedStyle>&&);
