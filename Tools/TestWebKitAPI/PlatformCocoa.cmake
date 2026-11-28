@@ -777,6 +777,7 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPage+JavaScriptExpression.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebPageConfiguration+Extras.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WebsiteDataStoreTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WKWebView+Extras.swift
 
     ${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm
