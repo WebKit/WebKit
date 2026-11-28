@@ -2852,14 +2852,16 @@ void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<Co
             addVisualOverflow(floatInkOverflowRect);
         };
 
-        for (auto& floatingObject : m_floatingObjects->set()) {
-            CheckedPtr floatBox = floatingObject->renderer();
-            if (!floatBox || !floatingObject->isDescendant())
+        for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+            CheckedRef floatBox = downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration());
+            // The floats that intrude from the parent or a previous sibling add to the overflow of the block they are in.
+            if (!floatBox->isDescendantOf(this))
                 continue;
+            auto borderBoxOffset = toLayoutSize(Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), borderBoxSize(), writingMode()).second.location());
             if (shouldIncludeFloats)
-                addOverflowFromFloatBox(*floatingObject);
+                addOverflowFromFloatBox(floatBox, borderBoxOffset);
             if (floatBox->containingBlock() == this)
-                addInkOverflowFromOwnFloat(*floatBox, floatingObject->locationOffsetOfBorderBox());
+                addInkOverflowFromOwnFloat(floatBox, borderBoxOffset);
         }
     };
     addOverflowFromFloats();
@@ -3357,7 +3359,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child)
         } else {
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject->isDescendant())
-                child.addOverflowFromFloatBox(*floatingObject);
+                child.addOverflowFromFloatBox(renderer, floatingObject->locationOffsetOfBorderBox());
         }
     }
     return lowestFloatLogicalBottom;
