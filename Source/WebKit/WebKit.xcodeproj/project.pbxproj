@@ -2776,6 +2776,7 @@
 		F4DBC0BE276AA6A70001D169 /* _WKModalContainerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DBC0BC276AA6A70001D169 /* _WKModalContainerInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4DBC0C1276AA6CA0001D169 /* _WKModalContainerInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */; };
 		F4DF71E82B069AC6009A4522 /* WKExtendedTextInputTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DF71D72B0689A5009A4522 /* WKExtendedTextInputTraits.h */; };
+		1360E518F8F48D9F2D2E898A /* WKFormInputSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 2331595A90A61A81EBE8773E /* WKFormInputSession.h */; };
 		F4DF72122B0C3A8C009A4522 /* WKBaseScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */; };
 		F4E038F82F230571003A8F3A /* WKWebView+SystemTextExtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E038F72F230567003A8F3A /* WKWebView+SystemTextExtraction.swift */; };
 		F4E07ACA2D8479D400322226 /* WKIdentityDocumentPresentmentController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E07AC52D84701600322226 /* WKIdentityDocumentPresentmentController.h */; };
@@ -9266,6 +9267,8 @@
 		F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKModalContainerInfoInternal.h; sourceTree = "<group>"; };
 		F4DF71D72B0689A5009A4522 /* WKExtendedTextInputTraits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKExtendedTextInputTraits.h; sourceTree = "<group>"; };
 		F4DF71D82B0689A5009A4522 /* WKExtendedTextInputTraits.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKExtendedTextInputTraits.mm; sourceTree = "<group>"; };
+		2331595A90A61A81EBE8773E /* WKFormInputSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKFormInputSession.h; sourceTree = "<group>"; };
+		F9DCA168527914FF00F04D9D /* WKFormInputSession.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFormInputSession.mm; sourceTree = "<group>"; };
 		F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBaseScrollView.h; sourceTree = "<group>"; };
 		F4DF72112B0C324F009A4522 /* WKBaseScrollView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBaseScrollView.mm; sourceTree = "<group>"; };
 		F4E038F72F230567003A8F3A /* WKWebView+SystemTextExtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WKWebView+SystemTextExtraction.swift"; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKWebView+SystemTextExtraction.swift"; sourceTree = "<group>"; };
@@ -12824,6 +12827,8 @@
 				F4DF71D82B0689A5009A4522 /* WKExtendedTextInputTraits.mm */,
 				3AA994092B0B15CD00253533 /* WKExtrinsicButton.h */,
 				3AA9940A2B0B15CE00253533 /* WKExtrinsicButton.mm */,
+				2331595A90A61A81EBE8773E /* WKFormInputSession.h */,
+				F9DCA168527914FF00F04D9D /* WKFormInputSession.mm */,
 				0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */,
 				0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */,
 				F4DB54E42319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h */,
@@ -19843,6 +19848,7 @@
 				E5CB07DC20E1678F0022C183 /* WKFormColorControl.h in Headers */,
 				51BE10CB2F3B046D00628158 /* WKFormInfo.h in Headers */,
 				51BE10CF2F3BE6A300628158 /* WKFormInfoInternal.h in Headers */,
+				1360E518F8F48D9F2D2E898A /* WKFormInputSession.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
 				CE70EE5D22442BD000E0AF0F /* WKFormPeripheralBase.h in Headers */,
 				C54256B818BEC18C00DE4179 /* WKFormPopover.h in Headers */,

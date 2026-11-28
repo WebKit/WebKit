@@ -334,17 +334,8 @@ struct ImageAnalysisContextMenuActionData {
 } // namespace WebKit
 
 @class WKExtendedTextInputTraits;
-@class WKFocusedElementInfo;
 @protocol UIMenuBuilder;
 @protocol WKFormControl;
-
-@interface WKFormInputSession : NSObject <_WKFormInputSession>
-
-- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo requiresStrongPasswordAssistance:(BOOL)requiresStrongPasswordAssistance;
-- (void)endEditing;
-- (void)invalidate;
-
-@end
 
 @interface WKContentView () {
     RetainPtr<WKDeferringGestureRecognizer> _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures;

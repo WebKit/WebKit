@@ -56,6 +56,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKDataDetectorTypesInternal.h"
 #import "WKErrorInternal.h"
+#import "WKFormInputSession.h"
 #import "WKPasswordView.h"
 #import "WKProcessPoolPrivate.h"
 #import "WKScrollView.h"

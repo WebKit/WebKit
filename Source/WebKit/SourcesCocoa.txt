@@ -623,6 +623,7 @@ UIProcess/ios/WKContentView.mm @nonARC @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
 UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC
 UIProcess/ios/WKExtrinsicButton.mm @nonARC
+UIProcess/ios/WKFormInputSession.mm @nonARC
 UIProcess/ios/WKGeolocationProviderIOS.mm @nonARC
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm @nonARC
 UIProcess/ios/WKImageAnalysisGestureRecognizer.mm @nonARC
