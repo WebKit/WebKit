@@ -2749,6 +2749,7 @@
 		F4BCBBEC2AC332AA00C1858D /* WKFormAccessoryView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BCBBE62AC3295300C1858D /* WKFormAccessoryView.h */; };
 		F4BE0D7727AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */; };
 		F4C359532AF19BC40083B0EA /* WKTextInteractionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C359512AF18F620083B0EA /* WKTextInteractionWrapper.h */; };
+		725F9337054EC54D109FAA52 /* WKTextRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 269AB51BBE59C8DC698BC3B2 /* WKTextRange.h */; };
 		F4C627E72A7AC17B00F546BF /* WKMouseInteraction.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C627E62A7AC17400F546BF /* WKMouseInteraction.h */; };
 		F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CB09E4225D5A0300891487 /* WebsiteMediaSourcePolicy.h */; };
 		F4CBF79E2A6ADF7E00C066BF /* WebEventType.h in Headers */ = {isa = PBXBuildFile; fileRef = F4CBF79D2A6ADF5400C066BF /* WebEventType.h */; };
@@ -9240,6 +9241,8 @@
 		F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionContextIdentifier.h; sourceTree = "<group>"; };
 		F4C359512AF18F620083B0EA /* WKTextInteractionWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextInteractionWrapper.h; sourceTree = "<group>"; };
 		F4C359522AF18F620083B0EA /* WKTextInteractionWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextInteractionWrapper.mm; sourceTree = "<group>"; };
+		269AB51BBE59C8DC698BC3B2 /* WKTextRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextRange.h; sourceTree = "<group>"; };
+		C27ADC534B227DC68C84851E /* WKTextRange.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTextRange.mm; sourceTree = "<group>"; };
 		F4C627E52A7AC17300F546BF /* WKMouseInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMouseInteraction.mm; sourceTree = "<group>"; };
 		F4C627E62A7AC17400F546BF /* WKMouseInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMouseInteraction.h; sourceTree = "<group>"; };
 		F4C8A13A2AC6289900B94BA6 /* DrawingAreaInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DrawingAreaInfo.serialization.in; sourceTree = "<group>"; };
@@ -12853,6 +12856,8 @@
 				26F10BE719187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.mm */,
 				F4C359512AF18F620083B0EA /* WKTextInteractionWrapper.h */,
 				F4C359522AF18F620083B0EA /* WKTextInteractionWrapper.mm */,
+				269AB51BBE59C8DC698BC3B2 /* WKTextRange.h */,
+				C27ADC534B227DC68C84851E /* WKTextRange.mm */,
 				71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */,
 				71A676A522C62318007D6295 /* WKTouchActionGestureRecognizer.mm */,
 				F4F4757F2A4F3D6D0004197B /* WKTouchEventsGestureRecognizer.h */,
@@ -20080,6 +20085,7 @@
 				F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */,
 				F4C359532AF19BC40083B0EA /* WKTextInteractionWrapper.h in Headers */,
 				CE21215F240EE571006ED443 /* WKTextPlaceholder.h in Headers */,
+				725F9337054EC54D109FAA52 /* WKTextRange.h in Headers */,
 				07152D092F2F038A00B56C0E /* WKTextSelectionController.h in Headers */,
 				CE45945C240F88550078019F /* WKTextSelectionRect.h in Headers */,
 				2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */,

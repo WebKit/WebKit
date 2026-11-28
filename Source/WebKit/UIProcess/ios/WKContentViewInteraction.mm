@@ -85,6 +85,7 @@
 #import "WKTextInputListViewController.h"
 #import "WKTextInteractionWrapper.h"
 #import "WKTextPlaceholder.h"
+#import "WKTextRange.h"
 #import "WKTextSelectionRect.h"
 #import "WKTimePickerViewController.h"
 #import "WKTouchEventsGestureRecognizer.h"
@@ -231,37 +232,6 @@
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
-
-#if USE(BROWSERENGINEKIT)
-
-@interface WKUITextSelectionRect : UITextSelectionRect
-+ (instancetype)selectionRectWithCGRect:(CGRect)rect;
-@end
-
-@implementation WKUITextSelectionRect {
-    CGRect _selectionRect;
-}
-
-+ (instancetype)selectionRectWithCGRect:(CGRect)rect
-{
-    return adoptNS([[WKUITextSelectionRect alloc] initWithCGRect:rect]).autorelease();
-}
-
-- (instancetype)initWithCGRect:(CGRect)rect
-{
-    if (self = [super init])
-        _selectionRect = rect;
-    return self;
-}
-
-- (CGRect)rect
-{
-    return _selectionRect;
-}
-
-@end
-
-#endif // USE(BROWSERENGINEKIT)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -512,61 +482,13 @@ private:
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-enum class TextPositionAnchor : uint8_t {
-    Start = 1 << 0,
-    End = 1 << 1
-};
-
 enum class NotifyInputDelegate : bool { No, Yes };
 
 } // namespace WebKit
 
-@interface WKRelativeTextPosition : UITextPosition
-- (instancetype)initWithAnchors:(OptionSet<WebKit::TextPositionAnchor>)start offset:(NSInteger)offset;
-@property (nonatomic, readonly) OptionSet<WebKit::TextPositionAnchor> anchors;
-@property (nonatomic, readonly, getter=isRelativeToStart) BOOL relativeToStart;
-@property (nonatomic, readonly) NSInteger offset;
-@end
-
-@interface WKRelativeTextRange : UITextRange
-- (instancetype)initWithStart:(UITextPosition *)start end:(UITextPosition *)end;
-@property (nonatomic, readonly) WKRelativeTextPosition *start;
-@property (nonatomic, readonly) WKRelativeTextPosition *end;
-@end
-
 constexpr float highlightDelay = 0.12;
 constexpr float tapAndHoldDelay = 0.75;
 constexpr double fasterTapSignificantZoomThreshold = 0.8;
-
-@interface WKTextRange : UITextRange {
-    CGRect _startRect;
-    CGRect _endRect;
-    BOOL _isNone;
-    BOOL _isRange;
-    BOOL _isEditable;
-    RetainPtr<NSArray<WKTextSelectionRect *>> _selectionRects;
-    NSUInteger _selectedTextLength;
-}
-@property (nonatomic) CGRect startRect;
-@property (nonatomic) CGRect endRect;
-@property (nonatomic) BOOL isNone;
-@property (nonatomic) BOOL isRange;
-@property (nonatomic) BOOL isEditable;
-@property (nonatomic) NSUInteger selectedTextLength;
-@property (copy, nonatomic) NSArray<WKTextSelectionRect *> *selectionRects;
-
-+ (WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength;
-
-@end
-
-@interface WKTextPosition : UITextPosition
-
-@property (nonatomic) CGRect positionRect;
-@property (nonatomic) OptionSet<WebKit::TextPositionAnchor> anchors;
-
-+ (WKTextPosition *)textPositionWithRect:(CGRect)positionRect;
-
-@end
 
 #if HAVE(UIFINDINTERACTION)
 
@@ -653,17 +575,6 @@ inline static UITextPosition *positionWithOffsetFrom(UITextPosition *position, N
     return nil;
 }
 
-inline static std::pair<OptionSet<WebKit::TextPositionAnchor>, NSInteger> anchorsAndOffset(UITextPosition *position)
-{
-    if (auto concretePosition = dynamic_objc_cast<WKTextPosition>(position); concretePosition.anchors)
-        return { concretePosition.anchors, 0 };
-
-    if (auto relativePosition = dynamic_objc_cast<WKRelativeTextPosition>(position))
-        return { relativePosition.anchors, relativePosition.offset };
-
-    return { { }, 0 };
-}
-
 inline static RetainPtr<NSString> textRelativeToSelectionStart(WKRelativeTextRange *range, const WebKit::EditorState::PostLayoutData& data, std::optional<char32_t> lastInsertedCharacterOverride)
 {
     auto start = range.start;
@@ -701,78 +612,6 @@ inline static RetainPtr<NSString> textRelativeToSelectionStart(WKRelativeTextRan
     }
     return string.createNSString();
 }
-
-@implementation WKRelativeTextPosition
-
-- (instancetype)initWithAnchors:(OptionSet<WebKit::TextPositionAnchor>)anchors offset:(NSInteger)offset
-{
-    if (self = [super init]) {
-        _anchors = anchors;
-        _offset = offset;
-    }
-    return self;
-}
-
-- (BOOL)isRelativeToStart
-{
-    return _anchors.contains(WebKit::TextPositionAnchor::Start);
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"WKRelativeTextPosition(%s, %d)", _anchors.contains(WebKit::TextPositionAnchor::Start) ? "start" : "end", static_cast<int>(_offset)];
-}
-
-@end
-
-@implementation WKRelativeTextRange {
-    RetainPtr<WKRelativeTextPosition> _start;
-    RetainPtr<WKRelativeTextPosition> _end;
-}
-
-- (instancetype)initWithStart:(UITextPosition *)start end:(UITextPosition *)end
-{
-    if (self = [super init]) {
-        auto [startAnchors, startOffset] = anchorsAndOffset(start);
-        auto [endAnchors, endOffset] = anchorsAndOffset(end);
-        if (!startAnchors.isEmpty() && !endAnchors.isEmpty()) {
-            _start = adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:startAnchors offset:startOffset]);
-            _end = adoptNS([[WKRelativeTextPosition alloc] initWithAnchors:endAnchors offset:endOffset]);
-        }
-    }
-    return self;
-}
-
-- (WKRelativeTextPosition *)start
-{
-    return _start.get();
-}
-
-- (WKRelativeTextPosition *)end
-{
-    return _end.get();
-}
-
-- (BOOL)isEmpty
-{
-    return [_start anchors] == [_end anchors] && [_start offset] == [_end offset];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"WKRelativeTextRange(start=%@, end=%@)", _start.get(), _end.get()];
-}
-
-@end
-
-@interface WKAutocorrectionRects : UIWKAutocorrectionRects
-+ (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
-@end
-
-@interface WKAutocorrectionContext : UIWKAutocorrectionContext
-+ (WKAutocorrectionContext *)emptyAutocorrectionContext;
-+ (WKAutocorrectionContext *)autocorrectionContextWithWebContext:(const WebKit::WebAutocorrectionContext&)context;
-@end
 
 @interface UIView (UIViewInternalHack)
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
@@ -15998,140 +15837,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // HAVE(LINK_PREVIEW)
 
-// UITextRange and UITextPosition implementations for WK2
-// FIXME: Move these out into separate files.
-
-@implementation WKTextRange (UITextInputAdditions)
-
-- (BOOL)_isCaret
-{
-    return self.empty;
-}
-
-- (BOOL)_isRanged
-{
-    return !self.empty;
-}
-
-@end
-
-@implementation WKTextRange
-
-+ (WKTextRange *)textRangeWithState:(BOOL)isNone isRange:(BOOL)isRange isEditable:(BOOL)isEditable startRect:(CGRect)startRect endRect:(CGRect)endRect selectionRects:(NSArray *)selectionRects selectedTextLength:(NSUInteger)selectedTextLength
-{
-    auto range = adoptNS([[WKTextRange alloc] init]);
-    [range setIsNone:isNone];
-    [range setIsRange:isRange];
-    [range setIsEditable:isEditable];
-    [range setStartRect:startRect];
-    [range setEndRect:endRect];
-    [range setSelectedTextLength:selectedTextLength];
-    [range setSelectionRects:selectionRects];
-    return range.autorelease();
-}
-
-- (void)dealloc
-{
-    [super dealloc];
-}
-
-- (NSArray<WKTextSelectionRect *> *)selectionRects
-{
-    return _selectionRects.get();
-}
-
-- (void)setSelectionRects:(NSArray<WKTextSelectionRect *> *)selectionRects
-{
-    _selectionRects = adoptNS([selectionRects copy]);
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@(%p) - start:%@, end:%@", [self class], self, protect(NSStringFromCGRect(self.startRect)).get(), protect(NSStringFromCGRect(self.endRect)).get()];
-}
-
-- (WKTextPosition *)start
-{
-    WKTextPosition *position = [WKTextPosition textPositionWithRect:self.startRect];
-    OptionSet anchors { WebKit::TextPositionAnchor::Start };
-    if (self.isEmpty)
-        anchors.add(WebKit::TextPositionAnchor::End);
-    position.anchors = anchors;
-    return position;
-}
-
-- (WKTextPosition *)end
-{
-    WKTextPosition *position = [WKTextPosition textPositionWithRect:self.endRect];
-    OptionSet anchors { WebKit::TextPositionAnchor::End };
-    if (self.isEmpty)
-        anchors.add(WebKit::TextPositionAnchor::Start);
-    position.anchors = anchors;
-    return position;
-}
-
-- (BOOL)isEmpty
-{
-    return !self.isRange;
-}
-
-// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into an NSSet or is the key in an NSDictionary,
-// since two equal items could have different hashes.
-- (BOOL)isEqual:(id)other
-{
-    if (![other isKindOfClass:[WKTextRange class]])
-        return NO;
-
-    WKTextRange *otherRange = (WKTextRange *)other;
-
-    if (self == other)
-        return YES;
-
-    // FIXME: Probably incorrect for equality to ignore so much of the object state.
-    // It ignores isNone, isEditable, selectedTextLength, and selectionRects.
-
-    if (self.isRange) {
-        if (!otherRange.isRange)
-            return NO;
-        return CGRectEqualToRect(self.startRect, otherRange.startRect) && CGRectEqualToRect(self.endRect, otherRange.endRect);
-    } else {
-        if (otherRange.isRange)
-            return NO;
-        // FIXME: Do we need to check isNone here?
-        return CGRectEqualToRect(self.startRect, otherRange.startRect);
-    }
-}
-
-@end
-
-@implementation WKTextPosition
-
-@synthesize positionRect = _positionRect;
-
-+ (WKTextPosition *)textPositionWithRect:(CGRect)positionRect
-{
-    auto pos = adoptNS([[WKTextPosition alloc] init]);
-    [pos setPositionRect:positionRect];
-    return pos.autorelease();
-}
-
-// FIXME: Overriding isEqual: without overriding hash will cause trouble if this ever goes into a NSSet or is the key in an NSDictionary,
-// since two equal items could have different hashes.
-- (BOOL)isEqual:(id)other
-{
-    if (![other isKindOfClass:[WKTextPosition class]])
-        return NO;
-
-    return CGRectEqualToRect(self.positionRect, ((WKTextPosition *)other).positionRect);
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<WKTextPosition: %p, {%@}>", self, protect(NSStringFromCGRect(self.positionRect)).get()];
-}
-
-@end
-
 #if HAVE(UIFINDINTERACTION)
 
 @implementation WKFoundTextRange
@@ -16300,37 +16005,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 #endif
-
-@implementation WKAutocorrectionRects
-
-+ (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect
-{
-    auto rects = adoptNS([[WKAutocorrectionRects alloc] init]);
-    [rects setFirstRect:firstRect];
-    [rects setLastRect:lastRect];
-    return rects.autorelease();
-}
-
-@end
-
-@implementation WKAutocorrectionContext
-
-+ (WKAutocorrectionContext *)emptyAutocorrectionContext
-{
-    return [self autocorrectionContextWithWebContext:WebKit::WebAutocorrectionContext { }];
-}
-
-+ (WKAutocorrectionContext *)autocorrectionContextWithWebContext:(const WebKit::WebAutocorrectionContext&)webCorrection
-{
-    auto correction = adoptNS([[WKAutocorrectionContext alloc] init]);
-    [correction setContextBeforeSelection:nsStringNilIfEmpty(webCorrection.contextBefore).get()];
-    [correction setSelectedText:nsStringNilIfEmpty(webCorrection.selectedText).get()];
-    [correction setMarkedText:nsStringNilIfEmpty(webCorrection.markedText).get()];
-    [correction setContextAfterSelection:nsStringNilIfEmpty(webCorrection.contextAfter).get()];
-    [correction setRangeInMarkedText:webCorrection.selectedRangeInMarkedText];
-    return correction.autorelease();
-}
-
-@end
 
 #endif // PLATFORM(IOS_FAMILY)

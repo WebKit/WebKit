@@ -700,6 +700,7 @@ set(_webkit_ios_headers
     UIProcess/ios/WKSyntheticFlagsChangedWebEvent.h
     UIProcess/ios/WKSyntheticTapGestureRecognizer.h
     UIProcess/ios/WKTextInteractionWrapper.h
+    UIProcess/ios/WKTextRange.h
     UIProcess/ios/WKTouchActionGestureRecognizer.h
     UIProcess/ios/WKTouchEventsGestureRecognizer.h
     UIProcess/ios/WKTouchEventsGestureRecognizerTypes.h
