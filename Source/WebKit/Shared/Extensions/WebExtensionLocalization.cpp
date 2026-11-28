@@ -140,7 +140,7 @@ RefPtr<JSON::Object> WebExtensionLocalization::localizedJSONforJSON(RefPtr<JSON:
 
     Ref newObject = JSON::Object::create();
 
-    for (auto& key : borrow(json->keys())) {
+    for (auto& key : json->keys()) {
         auto valueType = json->getValue(key)->type();
 
         if (valueType == JSON::Value::Type::String)

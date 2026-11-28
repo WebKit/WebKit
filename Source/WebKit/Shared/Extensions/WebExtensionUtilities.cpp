@@ -85,7 +85,7 @@ RefPtr<JSON::Object> jsonWithLowercaseKeys(RefPtr<JSON::Object> json)
         return json;
 
     Ref newObject = JSON::Object::create();
-    for (auto& key : borrow(json->keys()))
+    for (auto& key : json->keys())
         newObject->setValue(key.convertToASCIILowercase(), *json->getValue(key));
 
     return newObject;
@@ -97,7 +97,7 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object> jsonA, RefPtr<JSON::Object> 
         return jsonA ?: jsonB;
 
     RefPtr mergedObject = jsonA.copyRef();
-    for (auto& key : borrow(jsonB->keys())) {
+    for (auto& key : jsonB->keys()) {
         if (!mergedObject->getValue(key))
             mergedObject->setValue(key, *jsonB->getValue(key));
     }
@@ -121,7 +121,7 @@ void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const
     size_t currentMemoryCost = 0;
     Ref<JSON::Object> currentJSON = JSON::Object::create();
 
-    for (auto& key : borrow(jsonObject->keys())) {
+    for (auto& key : jsonObject->keys()) {
         RefPtr value = jsonObject->getValue(key);
         if (!value)
             continue;
@@ -351,7 +351,7 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
 
     String errorString;
 
-    for (auto& key : borrow(object->keys())) {
+    for (auto& key : object->keys()) {
         if (!requiredKeysSet.contains(key) && !optionalKeysSet.contains(key))
             continue;
 

@@ -177,8 +177,7 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
         "referrer_policy"_s, "relative_to"_s, "eagerness"_s,
         "expects_no_vary_search"_s, "tag"_s
     };
-    auto keys = input.keys();
-    for (const auto& key : borrow(keys)) {
+    for (const auto& key : input.keys()) {
         if (!allowedKeys->contains(key))
             return std::nullopt;
     }

@@ -33,8 +33,8 @@
 #pragma once
 
 #include <variant>
-#include <wtf/HashMap.h>
 #include <wtf/NoVirtualDestructorBase.h>
+#include <wtf/OrderedHashMap.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -168,8 +168,7 @@ private:
 class ObjectBase : public Value {
 private:
     friend class Value;
-    using DataStorage = HashMap<String, Ref<Value>>;
-    using OrderStorage = Vector<String>;
+    using DataStorage = OrderedHashMap<String, Ref<Value>>;
 
 public:
     using iterator = DataStorage::iterator;
@@ -205,7 +204,7 @@ protected:
     const_iterator begin() const LIFETIME_BOUND { return m_map.begin(); }
     const_iterator end() const LIFETIME_BOUND { return m_map.end(); }
 
-    const OrderStorage& keys() const { return m_order; }
+    DataStorage::KeysConstIteratorRange keys() const LIFETIME_BOUND { return m_map.keys(); }
 
     unsigned size() const { return m_map.size(); }
 
@@ -224,7 +223,6 @@ private:
     void writeJSONImpl(StringBuilder& output) const;
 
     DataStorage m_map;
-    OrderStorage m_order;
 };
 
 class Object : public ObjectBase {
@@ -366,20 +364,17 @@ inline void ObjectBase::setString(const String& name, const String& value)
 
 inline void ObjectBase::setValue(const String& name, Ref<Value>&& value)
 {
-    if (m_map.set(name, WTF::move(value)).isNewEntry)
-        m_order.append(name);
+    m_map.set(name, WTF::move(value));
 }
 
 inline void ObjectBase::setObject(const String& name, Ref<ObjectBase>&& value)
 {
-    if (m_map.set(name, WTF::move(value)).isNewEntry)
-        m_order.append(name);
+    m_map.set(name, WTF::move(value));
 }
 
 inline void ObjectBase::setArray(const String& name, Ref<ArrayBase>&& value)
 {
-    if (m_map.set(name, WTF::move(value)).isNewEntry)
-        m_order.append(name);
+    m_map.set(name, WTF::move(value));
 }
 
 inline void ArrayBase::pushBoolean(bool value)

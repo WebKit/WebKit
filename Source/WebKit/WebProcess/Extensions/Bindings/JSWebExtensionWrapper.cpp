@@ -348,8 +348,7 @@ static JSValueRef fromJSONObject(JSContextRef context, const JSON::Object& objec
 
     auto result = JSObjectMake(context, nullptr, nullptr);
 
-    const Vector keys = object.keys();
-    for (auto& key : keys) {
+    for (auto& key : object.keys()) {
         if (auto value = object.getValue(key)) {
             RefPtr jsKey = toJSString(key);
             JSObjectSetProperty(context, result, jsKey.get(), fromJSON(context, value), 0, nullptr);

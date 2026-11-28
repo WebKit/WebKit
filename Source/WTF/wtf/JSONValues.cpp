@@ -629,12 +629,10 @@ void Value::dump(PrintStream& out) const
         SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto& object = *static_cast<const ObjectBase*>(this);
         CommaPrinter comma(","_s);
         out.print("{"_s);
-        for (const auto& key : object.m_order) {
-            auto findResult = object.m_map.find(key);
-            ASSERT(findResult != object.m_map.end());
+        for (const auto& entry : object.m_map) {
             StringBuilder builder;
-            builder.appendQuotedJSONString(findResult->key);
-            out.print(comma, builder.toString(), ":"_s, findResult->value.get());
+            builder.appendQuotedJSONString(entry.key);
+            out.print(comma, builder.toString(), ":"_s, entry.value.get());
         }
         out.print("}"_s);
     }, [&](ArrayTypeTag) {
@@ -764,20 +762,20 @@ RefPtr<Value> ObjectBase::getValue(const String& name) const
 void ObjectBase::remove(const String& name)
 {
     m_map.remove(name);
-    m_order.removeFirst(name);
 }
 
 void ObjectBase::writeJSONImpl(StringBuilder& output) const
 {
     output.append('{');
-    for (size_t i = 0; i < m_order.size(); ++i) {
-        auto findResult = m_map.find(m_order[i]);
-        ASSERT(findResult != m_map.end());
-        if (i)
+    bool isFirst = true;
+    for (const auto& entry : m_map) {
+        if (isFirst)
+            isFirst = false;
+        else
             output.append(',');
-        output.appendQuotedJSONString(findResult->key);
+        output.appendQuotedJSONString(entry.key);
         output.append(':');
-        Ref { findResult->value }->writeJSON(output);
+        Ref { entry.value }->writeJSON(output);
     }
     output.append('}');
 }
