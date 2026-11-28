@@ -1,0 +1,6 @@
+test
+aba
+
+PASS contenteditable=false inside design mode should not be editable
+PASS contenteditable=true in contenteditable=false should be editable
+

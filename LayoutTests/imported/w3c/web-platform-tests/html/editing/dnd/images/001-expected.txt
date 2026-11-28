@@ -1,0 +1,7 @@
+
+Drag circle above to the box below. It should be copied to the box once you drop it there.
+
+
+
+FAIL Dragging the image to the bottom div should copy the image there assert_equals: expected "http://web-platform.test:8800/html/editing/dnd/resources/circle.png" but got "http://web-platform.test:8800/html/editing/dnd/images/001.html"
+

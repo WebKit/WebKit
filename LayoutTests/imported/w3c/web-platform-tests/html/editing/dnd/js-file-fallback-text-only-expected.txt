@@ -1,0 +1,4 @@
+Source Target
+
+FAIL JS File falls back to text/plain filename when DragAndDropJSFileObjects is disabled assert_equals: Filename should be transferred as text/plain fallback expected "test.png" but got ""
+

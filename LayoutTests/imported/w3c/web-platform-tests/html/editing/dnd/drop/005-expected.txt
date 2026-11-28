@@ -1,0 +1,13 @@
+Drag these SVG images. Each has a different effectAllowed and color.
+
+
+
+Drop targets for each effect:
+
+copy move link
+
+
+FAIL dropEffect should match effectAllowed on drop for copy assert_equals: expected "none" but got "copy"
+FAIL dropEffect should match effectAllowed on drop for move assert_equals: expected "none" but got "move"
+FAIL dropEffect should match effectAllowed on drop for link assert_equals: expected "none" but got "link"
+

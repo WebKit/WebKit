@@ -10,12 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-attribute-removal-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-attribute-removal-002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-element-fragment-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-element-removal-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-element-removal-002.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-infinite-loop.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-scroll-to-text-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1-ref.html
@@ -49,5 +51,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-and-details.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-idl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-until-found-text-fragment.html

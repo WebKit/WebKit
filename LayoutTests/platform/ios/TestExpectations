@@ -6985,6 +6985,19 @@ imported/w3c/web-platform-tests/html/editing/focus/sequential-focus-navigation-a
 webkit.org/b/66547 imported/w3c/web-platform-tests/html/editing/dnd/events/dragenter-dragleave-related-target.html [ Skip ]
 imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-clear-read-only.html [ Skip ]
 imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-dragstart-after-dispatch.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/canvas [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/drop [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/events [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/images [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/layoutshift [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/platform [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/remove [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/js-file-fallback-text-only.html [ Skip ]
+imported/w3c/web-platform-tests/html/editing/dnd/js-file-image-drag.html [ Skip ]
+
+# Flaky under stress.
+imported/w3c/web-platform-tests/html/editing/editing-0/making-entire-documents-editable-the-designmode-idl-attribute/contenteditable-false-in-design-mode.html [ Skip ]
 
 ######################################################
 # Test failures from turning GPU Process on by default

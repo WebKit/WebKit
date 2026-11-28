@@ -1,0 +1,11 @@
+These are the draggable elements with different effectAllowed settings:
+
+uninitializedundefinednoneallcopymovelinkcopyMovecopyLinklinkMovedummy
+
+Drop targets with different dropEffects:
+
+nonecopymovelinkdummy
+
+
+FAIL move / link assert_unreached: No dragend event fired within 1000ms of the input actions completing Reached unreachable code
+

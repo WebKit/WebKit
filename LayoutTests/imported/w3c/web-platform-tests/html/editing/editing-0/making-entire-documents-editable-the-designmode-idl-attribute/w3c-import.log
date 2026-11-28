@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/making-entire-documents-editable-the-designmode-idl-attribute/contenteditable-false-in-design-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/making-entire-documents-editable-the-designmode-idl-attribute/original-id.json
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/making-entire-documents-editable-the-designmode-idl-attribute/user-interaction-editing-designMode-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/making-entire-documents-editable-the-designmode-idl-attribute/user-interaction-editing-designMode-xml.xml

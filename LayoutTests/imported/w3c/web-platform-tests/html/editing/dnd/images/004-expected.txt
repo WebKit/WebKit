@@ -1,0 +1,7 @@
+
+Drag circle above to the box below. It should be copied to the box once you drop it there.
+
+
+
+PASS Dragging the object to the bottom div should copy the image there
+

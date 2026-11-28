@@ -1,0 +1,4 @@
+Drag me
+
+PASS dragstart should still fire when the dragged element gets display:none in its pointerdown
+

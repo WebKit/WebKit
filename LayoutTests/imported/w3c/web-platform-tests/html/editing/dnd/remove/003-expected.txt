@@ -1,0 +1,3 @@
+
+FAIL Removing image element during drag and drop of SVG image assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+

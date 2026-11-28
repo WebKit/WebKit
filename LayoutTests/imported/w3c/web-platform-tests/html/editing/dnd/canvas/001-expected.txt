@@ -1,0 +1,6 @@
+Drag canvas pattern above to the box below. It should be copied to the box once you drop it there.
+
+
+
+PASS Dragging the canvas to the bottom div should turn it green
+

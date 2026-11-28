@@ -1,0 +1,4 @@
+
+
+PASS the focus method exists on all elements, not just focusable ones
+

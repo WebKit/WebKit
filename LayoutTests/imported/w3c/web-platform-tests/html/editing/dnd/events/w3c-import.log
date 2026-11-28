@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/001-1.xhtml
@@ -57,9 +55,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/037-proposed.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/037-spec.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/038-proposed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/dragenter-dragleave-related-target.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/events-cross-document-suite-HELPER-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-input-with-circle.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-link-with-circle.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drag-me-p-with-circle.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/helper-drop-here-body-circle.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/events/pointer-suppression.html

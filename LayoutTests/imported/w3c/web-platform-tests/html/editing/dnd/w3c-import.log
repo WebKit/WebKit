@@ -10,9 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/README
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/js-file-fallback-text-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/js-file-image-drag.html

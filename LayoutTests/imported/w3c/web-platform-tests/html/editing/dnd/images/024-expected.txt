@@ -1,0 +1,7 @@
+
+Drag little square above and drop it on vertical scrollbar. The drop event should not be sent, and the word PASS should not appear in the object.
+
+
+
+PASS Dropping image on the root scrollbar of an object. No drop event should be sent.
+

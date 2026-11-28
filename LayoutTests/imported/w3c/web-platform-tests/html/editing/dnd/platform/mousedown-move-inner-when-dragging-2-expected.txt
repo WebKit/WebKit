@@ -1,0 +1,3 @@
+
+PASS dragstart should still fire when the mousedown event moves the container of the inner element around
+

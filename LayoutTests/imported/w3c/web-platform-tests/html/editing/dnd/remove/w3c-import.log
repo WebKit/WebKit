@@ -10,18 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/001.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/002.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/003.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/004.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/005.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/006.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/007.xhtml
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/008.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/009.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/010.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/remove/011.xhtml

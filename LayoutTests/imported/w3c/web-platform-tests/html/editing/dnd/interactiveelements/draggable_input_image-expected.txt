@@ -1,0 +1,10 @@
+Press your mouse button down on the orange block and drag downwards. It should drag the input image.
+
+Press your mouse button down on the image and drag downwards. It should drag the input image.
+
+
+
+PASS Wait for image load
+PASS Draggable input image button should be draggable from border
+PASS Draggable input image button should be draggable from image
+

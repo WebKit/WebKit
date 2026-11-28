@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/001.xhtml
@@ -76,6 +74,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/057.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/058.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-getdata-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-text-plain-prefix-format.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitem-disabled-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-clear-read-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-clear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-dragstart-after-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-indexed-getter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-remove-file.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/helper-drop-box-here.xhtml

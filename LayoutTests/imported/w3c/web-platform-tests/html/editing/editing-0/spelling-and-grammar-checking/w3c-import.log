@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spellcheck-enumerated-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-checking/spelling-markers-001.html

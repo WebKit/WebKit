@@ -1,0 +1,11 @@
+These are the draggable elements with different effectAllowed settings:
+
+uninitializedundefinednoneallcopymovelinkcopyMovecopyLinklinkMovedummy
+
+Drop targets with different dropEffects:
+
+nonecopymovelinkdummy
+
+
+FAIL all / link assert_in_array: chosenDropEffect: link, chosenEffectAllowed: all; failed dropEffect check: value "none" not in array ["link"]
+

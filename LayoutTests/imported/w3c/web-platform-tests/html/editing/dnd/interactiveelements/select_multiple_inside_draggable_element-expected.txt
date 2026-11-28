@@ -1,0 +1,6 @@
+Press your mouse button down on the orange block and drag downwards. It should open and select items in the dropdown, and should not drag the block or text.
+
+
+
+FAIL Select multiple input inside draggable element should not be draggable from border assert_false: dragstart should not fire expected false got true
+

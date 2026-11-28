@@ -1,0 +1,7 @@
+Press your mouse button down on the orange block and drag downwards. It should open and select items in the dropdown, and should not drag the block or text.
+
+
+
+PASS Select input inside draggable element should not be draggable from border
+PASS Select input inside draggable element should not be draggable from select body
+

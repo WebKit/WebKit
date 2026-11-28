@@ -1,3 +1,4 @@
 
 PASS remove()ing an out-of-bounds index does nothing
+PASS remove()ing an item will put the associated DataTransferItem object in the disabled mode
 

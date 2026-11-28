@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/alttab.html
@@ -25,11 +23,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/html-unicode-to-os.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/inputs-no-js.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/keyboardshortcuts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/mousedown-drag-select-input-display-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/mousedown-move-inner-when-dragging-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/mousedown-move-inner-when-dragging-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/moving-window.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/overlappingwindows.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/placeholderposition1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/placeholderposition2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/plugindrop.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/pointerdown-add-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/pointerdown-add-overflow-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-between-ui.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-from-os.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/platform/selection-from-ui.html

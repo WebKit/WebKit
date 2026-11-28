@@ -1,0 +1,5 @@
+
+PASS activeElement initially starts as the document body
+PASS activeElement gets set to a focused element and reset to the body when the focused element disappears
+PASS re-adding the formerly active element to the document does not make it active again
+

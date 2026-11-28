@@ -1,0 +1,9 @@
+Press your mouse button down on the orange block and drag downwards. It should drag the draggable element.
+
+Press your mouse button down on the text and drag rightward. It should drag the draggable element.
+
+
+
+PASS Input submit button inside draggable element should be draggable from border
+PASS Input submit button inside draggable element should be draggable from button text
+

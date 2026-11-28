@@ -1,0 +1,4 @@
+
+
+PASS The focus() and blur() methods change the focus as expected
+

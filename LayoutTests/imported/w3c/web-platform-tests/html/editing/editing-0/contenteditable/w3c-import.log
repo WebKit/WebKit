@@ -10,11 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contentEditable-slotted-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-rendering-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-stops-rendering-when-attribute-removed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-stops-rendering-when-attribute-removed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-caret-stops-rendering-when-attribute-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-enumerated-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-overflow-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/editing-0/contenteditable/contenteditable-overflow-height-ref.html

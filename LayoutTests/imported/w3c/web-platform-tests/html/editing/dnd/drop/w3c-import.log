@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/001.xhtml
@@ -42,3 +40,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/026.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/027.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/028.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/029.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/drop/030.html

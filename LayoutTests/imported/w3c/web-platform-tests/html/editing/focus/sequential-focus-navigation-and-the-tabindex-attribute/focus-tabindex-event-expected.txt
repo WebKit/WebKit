@@ -6,5 +6,5 @@ Test tabIndex
 
 
 PASS HTML Test: tabindex - focus, click
-FAIL Check if click event will be fired when press the 'enter' key while the element is focused assert_true: Focus on the button by Tab key expected true got false
+PASS Check if click event will be fired when press the 'enter' key while the element is focused
 

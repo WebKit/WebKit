@@ -10,19 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/001.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/002.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/003.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/004.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/005.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/006.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/007.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/008.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/009.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/010.html
-/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/011.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/file/fail.txt

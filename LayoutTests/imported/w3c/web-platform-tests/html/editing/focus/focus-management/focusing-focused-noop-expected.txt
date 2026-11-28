@@ -1,0 +1,3 @@
+
+PASS focusing a focused element does not dispatch focus events
+

@@ -1,0 +1,3 @@
+
+FAIL Removing div element during drag and drop with text/plain data assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+

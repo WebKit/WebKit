@@ -1,0 +1,7 @@
+
+Drag circle above to the box below. It should be copied to the box once you drop it there.
+
+
+
+FAIL Dragging an image within an iframe to a div should copy it there assert_equals: expected "http://web-platform.test:8800/html/editing/dnd/resources/circle.png" but got "http://web-platform.test:8800/html/editing/dnd/images/009.html"
+

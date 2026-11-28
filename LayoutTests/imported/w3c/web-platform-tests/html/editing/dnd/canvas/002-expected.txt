@@ -1,0 +1,6 @@
+Drag green box above to the gray canvas below. Canvas should turn green when you drop green box on it.
+
+
+
+PASS Dragging the canvas to the bottom div should turn it green
+

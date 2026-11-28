@@ -1,0 +1,4 @@
+
+
+FAIL Removing input element during drag and drop of selection assert_unreached: No drop event fired within 1000ms of the input actions completing Reached unreachable code
+

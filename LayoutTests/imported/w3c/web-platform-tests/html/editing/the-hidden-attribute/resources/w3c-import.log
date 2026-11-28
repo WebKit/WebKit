@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/beforematch-scroll-to-text-fragment-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/beforematch-scroll-to-text-fragment-bubble.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/beforematch-scroll-to-text-fragment-with-anchor-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/beforematch-scroll-to-text-fragment-with-anchor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/container-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/resources/hidden-until-found-text-fragment.html

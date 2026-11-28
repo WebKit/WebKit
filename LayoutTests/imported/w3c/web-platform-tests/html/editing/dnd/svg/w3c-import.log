@@ -1,0 +1,91 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/001.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/002.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/003.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/004.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/005.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/006.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/007.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/008.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/009.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/010.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/011.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/012.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/013-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/013.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/014-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/014.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/015-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/015.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/016-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/016.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/025.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/026.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/028.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/029.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/030-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/030.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/031.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/032.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/033.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/034.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/035.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/036-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/036.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/037.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/038.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/039-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/039.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/040.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/041.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/042.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/043.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/044.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/045.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/046.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/047.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/048.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/049.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/050.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/051.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/052.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/053.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/054.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/055.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/056.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/057.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/058.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/059-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/059.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/060-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/060.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/061.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/062.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/063.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/064.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/065.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/066.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/067.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/svg/helper-drop-selection-here-textArea.svg
