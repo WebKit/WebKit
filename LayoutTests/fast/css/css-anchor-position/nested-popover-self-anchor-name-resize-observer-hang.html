@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<style>
+#root:not(:popover-open) {
+  display: none;
+}
+
+#root {
+  anchor-name: --option-list;
+  position-area: bottom;
+}
+
+#sublist {
+  anchor-name: --option-list;
+  position-anchor: --option-list;
+  position-area: right;
+}
+</style>
+
+<body>
+  <p>This test passes if it does not hang.</p>
+  <div id="root" popover="auto">
+    Menu
+    <div id="sublist" popover="manual">Submenu</div>
+  </div>
+  <pre id="log"></pre>
+
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    let previousVisibility;
+    new ResizeObserver(() => {
+      const visible = root.checkVisibility();
+      if (visible && visible !== previousVisibility && root.matches(":popover-open")) {
+        previousVisibility = visible;
+        if (!sublist.matches(":popover-open"))
+          sublist.showPopover();
+      } else if (!visible && visible !== previousVisibility && previousVisibility !== undefined) {
+        previousVisibility = visible;
+        if (sublist.matches(":popover-open"))
+          sublist.hidePopover();
+      } else
+        previousVisibility = visible;
+    }).observe(root);
+
+    function waitForFrames()
+    {
+      return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    async function runTest()
+    {
+      for (let i = 0; i < 3; ++i) {
+        root.togglePopover();
+        await waitForFrames();
+      }
+      log.textContent = "PASS: did not hang.";
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    onload = runTest;
+  </script>
+</body>
