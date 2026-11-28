@@ -127,8 +127,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
         referrer = String();
     } else
         referrer = (referrer == "client"_s) ? context.url().strippedForUseAsReferrer().string : URL(context.url(), referrer).strippedForUseAsReferrer().string;
-    if (options.referrerPolicy == ReferrerPolicy::EmptyString)
-        options.referrerPolicy = context.referrerPolicy();
+    options.referrerPolicy = resolveEmptyReferrerPolicy(options.referrerPolicy, context.referrerPolicy());
 
     m_loader = ThreadableLoader::create(context, *this, WTF::move(fetchRequest), options, WTF::move(referrer));
     m_isStarted = m_loader;

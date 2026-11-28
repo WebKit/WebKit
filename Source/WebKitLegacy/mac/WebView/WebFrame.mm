@@ -325,8 +325,8 @@ WebView *getWebView(WebFrame *webFrame)
     if (RefPtr parentLocalFrame = ownerElement.document().frame())
         effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
     auto effectiveReferrerPolicy = ownerElement.referrerPolicy();
-    if (RefPtr localTopDocument = page.localTopDocument(); effectiveReferrerPolicy == WebCore::ReferrerPolicy::EmptyString && localTopDocument)
-        effectiveReferrerPolicy = localTopDocument->referrerPolicy();
+    if (RefPtr localTopDocument = page.localTopDocument())
+        effectiveReferrerPolicy = WebCore::resolveEmptyReferrerPolicy(effectiveReferrerPolicy, localTopDocument->referrerPolicy());
 
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&, auto& frameLoader) {
         return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader, frame.get());

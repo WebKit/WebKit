@@ -1510,9 +1510,7 @@ ReferrerPolicy LocalFrame::effectiveReferrerPolicy() const
 {
     // Policy will be the one passed in from parent frame or opener.
     // Otherwise, use default.
-    if (m_parentFrameOrOpenerReferrerPolicy != ReferrerPolicy::EmptyString)
-        return m_parentFrameOrOpenerReferrerPolicy;
-    return ReferrerPolicy::Default;
+    return resolveEmptyReferrerPolicy(m_parentFrameOrOpenerReferrerPolicy);
 }
 
 void LocalFrame::updateReferrerPolicy(ReferrerPolicy referrerPolicy)

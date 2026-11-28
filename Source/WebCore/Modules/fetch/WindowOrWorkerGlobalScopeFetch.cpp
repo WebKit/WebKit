@@ -195,9 +195,7 @@ ExceptionOr<Ref<FetchLaterResult>> WindowOrWorkerGlobalScopeFetch::fetchLater(DO
     if (RefPtr frame = localWindow->frame()) {
         // The request's own referrer and referrerPolicy take precedence over the document's,
         // so fetchLater(url, { referrerPolicy: "no-referrer" }) sends no Referer.
-        auto referrerPolicy = request->referrerPolicy();
-        if (referrerPolicy == ReferrerPolicy::EmptyString)
-            referrerPolicy = document->referrerPolicy();
+        auto referrerPolicy = resolveEmptyReferrerPolicy(request->referrerPolicy(), document->referrerPolicy());
         auto requestedReferrer = request->referrer();
         URL referrerURL = requestedReferrer.isNull() || requestedReferrer == "about:client"_s
             ? frame->loader().outgoingReferrerURL()

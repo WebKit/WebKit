@@ -50,6 +50,14 @@ enum class ReferrerPolicy : uint8_t {
     Default = StrictOriginWhenCrossOrigin
 };
 
+// https://fetch.spec.whatwg.org/#main-fetch step 8: "If request's referrer policy is the empty string, then set
+// request's referrer policy to request's policy container's referrer policy."
+// The fallback defaults to a new policy container's referrer policy, the default referrer policy.
+constexpr ReferrerPolicy resolveEmptyReferrerPolicy(ReferrerPolicy policy, ReferrerPolicy fallback = ReferrerPolicy::Default)
+{
+    return policy == ReferrerPolicy::EmptyString ? fallback : policy;
+}
+
 enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader, ReferrerPolicyAttribute, SpeculationRules };
 std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ReferrerPolicySource);
 String referrerPolicyToString(const ReferrerPolicy&);

@@ -1599,9 +1599,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
     else
         argsReferrer = URL { argsReferrerString };
 
-    ReferrerPolicy referrerPolicy = request.referrerPolicy();
-    if (referrerPolicy == ReferrerPolicy::EmptyString)
-        referrerPolicy = frame->document()->referrerPolicy();
+    auto referrerPolicy = resolveEmptyReferrerPolicy(request.referrerPolicy(), frame->document()->referrerPolicy());
     String referrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, url, argsReferrer, OriginAccessPatternsForWebProcess::singleton());
 
     FrameLoadType loadType;

@@ -281,8 +281,7 @@ void CachedResourceRequest::applyResults(ContentRuleListResults&& results, Page*
 
 void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
 {
-    if (m_options.referrerPolicy == ReferrerPolicy::EmptyString)
-        m_options.referrerPolicy = defaultPolicy;
+    m_options.referrerPolicy = resolveEmptyReferrerPolicy(m_options.referrerPolicy, defaultPolicy);
 }
 
 void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoader)

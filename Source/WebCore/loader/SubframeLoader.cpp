@@ -325,9 +325,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
         document->decrementLoadEventDelayCount();
         return nullptr;
     }
-    ReferrerPolicy policy = ownerElement.referrerPolicy();
-    if (policy == ReferrerPolicy::EmptyString)
-        policy = document->referrerPolicy();
+    auto policy = resolveEmptyReferrerPolicy(ownerElement.referrerPolicy(), document->referrerPolicy());
     // For any new (about:blank) browsing context, step 16 of
     // https://html.spec.whatwg.org/#creating-a-new-browsing-context requires
     // setting the referrer to "the serialization of creator's URL" — that is,
