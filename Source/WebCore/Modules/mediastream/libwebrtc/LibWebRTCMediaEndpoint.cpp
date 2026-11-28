@@ -89,6 +89,9 @@ RefPtr<LibWebRTCMediaEndpoint> LibWebRTCMediaEndpoint::create(RTCPeerConnection&
 {
     prepareConfiguration(configuration);
 
+    client.setUseL4S(document.settings().webRTCL4SEnabled());
+    client.setUseWebCoreVideoDecoder(document.settings().webRTCWebCoreVideoDecoderEnabled());
+
     Ref endpoint = adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client, document, shouldEnableServiceClass));
     RefPtr backend = toRefPtr(client.createPeerConnection(document.identifier(), endpoint, endpoint->m_rtcSocketFactory.get(), WTF::move(configuration)));
     if (!backend)
@@ -126,8 +129,6 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(RTCPeerConnection& peerConnection
 #if RELEASE_LOG_DISABLED
     UNUSED_PARAM(peerConnection);
 #endif
-
-    client.setUseL4S(document.settings().webRTCL4SEnabled());
 }
 
 LibWebRTCMediaEndpoint::~LibWebRTCMediaEndpoint()

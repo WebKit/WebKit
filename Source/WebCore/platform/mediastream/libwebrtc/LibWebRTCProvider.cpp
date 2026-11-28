@@ -316,6 +316,15 @@ void LibWebRTCProvider::setUseL4S(bool useL4S)
     clearFactory();
 }
 
+void LibWebRTCProvider::setUseWebCoreVideoDecoder(bool useWebCoreVideoDecoder)
+{
+    if (m_useWebCoreVideoDecoder == useWebCoreVideoDecoder)
+        return;
+
+    m_useWebCoreVideoDecoder = useWebCoreVideoDecoder;
+    clearFactory();
+}
+
 class LibWebRTCProviderFieldTrials final : public webrtc::FieldTrialsView {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCProviderFieldTrials);
 public:

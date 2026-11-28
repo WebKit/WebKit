@@ -11459,6 +11459,10 @@
 		41B28B131F8501A400FB52AC /* MediaEndpointConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpointConfiguration.cpp; sourceTree = "<group>"; };
 		41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCProviderCocoa.h; path = libwebrtc/LibWebRTCProviderCocoa.h; sourceTree = "<group>"; };
 		41B28B381F860BD100FB52AC /* LibWebRTCProviderCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCProviderCocoa.cpp; path = libwebrtc/LibWebRTCProviderCocoa.cpp; sourceTree = "<group>"; };
+		BA047DAD58B7B0B482779FE5 /* LibWebRTCVideoDecoderAdapter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCVideoDecoderAdapter.cpp; path = libwebrtc/LibWebRTCVideoDecoderAdapter.cpp; sourceTree = "<group>"; };
+		23EB10153B86FC4DE73BCED4 /* LibWebRTCVideoDecoderAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCVideoDecoderAdapter.h; path = libwebrtc/LibWebRTCVideoDecoderAdapter.h; sourceTree = "<group>"; };
+		B694ED74A1676A725FF79D8E /* LibWebRTCVideoDecoderFactoryCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCVideoDecoderFactoryCocoa.cpp; path = libwebrtc/LibWebRTCVideoDecoderFactoryCocoa.cpp; sourceTree = "<group>"; };
+		FEE3BEB137B884A4CD819562 /* LibWebRTCVideoDecoderFactoryCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCVideoDecoderFactoryCocoa.h; path = libwebrtc/LibWebRTCVideoDecoderFactoryCocoa.h; sourceTree = "<group>"; };
 		41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAudioSourceProvider.h; sourceTree = "<group>"; };
 		41B5AABA291A7E73000C6777 /* MultiCacheQueryOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiCacheQueryOptions.h; sourceTree = "<group>"; };
 		41B5AABB291A7E73000C6777 /* MultiCacheQueryOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultiCacheQueryOptions.idl; sourceTree = "<group>"; };
@@ -27483,6 +27487,10 @@
 				41B28B361F860BD000FB52AC /* LibWebRTCProviderCocoa.h */,
 				41C6B69C2E20E6BE009E1D19 /* LibWebRTCRefWrappers.h */,
 				410E445F234373AD000173D4 /* LibWebRTCSocketIdentifier.h */,
+				BA047DAD58B7B0B482779FE5 /* LibWebRTCVideoDecoderAdapter.cpp */,
+				23EB10153B86FC4DE73BCED4 /* LibWebRTCVideoDecoderAdapter.h */,
+				B694ED74A1676A725FF79D8E /* LibWebRTCVideoDecoderFactoryCocoa.cpp */,
+				FEE3BEB137B884A4CD819562 /* LibWebRTCVideoDecoderFactoryCocoa.h */,
 				410AED862FDC32840090C073 /* LibWebRTCVideoFrameUtilities.cpp */,
 				9A7EB29E2EC20AE400A10F7E /* LibWebRTCVideoFrameUtilities.h */,
 				41EB797B27C3E45D001C3E3E /* VideoFrameLibWebRTC.cpp */,
