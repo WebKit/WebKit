@@ -1,0 +1,3 @@
+
+PASS Pausing the only playing media element while microphone capture is active must not deactivate AudioSession
+
