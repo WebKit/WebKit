@@ -43,6 +43,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderElementInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGGeometryElement.h"
 #include "SVGPathFromElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
@@ -137,6 +138,16 @@ bool LegacyRenderSVGShape::strokeContains(const FloatPoint& point, bool requires
         return false;
 
     return shapeDependentStrokeContains(point);
+}
+
+void LegacyRenderSVGShape::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    LegacyRenderSVGModelObject::styleDidChange(diff, oldStyle);
+
+    if (styleChangeMovesPath(diff, oldStyle, protect(style()))) {
+        if (RefPtr geometryElement = dynamicDowncast<SVGGeometryElement>(graphicsElement()))
+            geometryElement->invalidatePathDependenciesForStyleChange();
+    }
 }
 
 void LegacyRenderSVGShape::layout()

@@ -39,6 +39,7 @@
 #include "SVGRectElement.h"
 #include "SVGUseElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleDifference.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -238,6 +239,34 @@ Path pathFromGraphicsElement(const SVGElement& element)
     }
 
     return { };
+}
+
+bool styleChangeMovesPath(Style::Difference diff, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle)
+{
+    // The shape starts being rendered: the rect, circle and ellipse paths above need a renderer.
+    if (!oldStyle)
+        return true;
+
+    // With a layer, a transform change is not a layout difference.
+    if (diff.contextSensitiveProperties.contains(Style::DifferenceContextSensitiveProperty::Transform))
+        return true;
+
+    // A geometry change is always a layout difference, but stroke and marker changes are too.
+    if (diff < Style::DifferenceResult::Layout)
+        return false;
+
+    // Adding or removing a transform is a layout difference without the Transform flag.
+    return oldStyle->transform() != newStyle.transform()
+        || oldStyle->x() != newStyle.x()
+        || oldStyle->y() != newStyle.y()
+        || oldStyle->width() != newStyle.width()
+        || oldStyle->height() != newStyle.height()
+        || oldStyle->rx() != newStyle.rx()
+        || oldStyle->ry() != newStyle.ry()
+        || oldStyle->cx() != newStyle.cx()
+        || oldStyle->cy() != newStyle.cy()
+        || oldStyle->r() != newStyle.r()
+        || oldStyle->d() != newStyle.d();
 }
 
 } // namespace WebCore

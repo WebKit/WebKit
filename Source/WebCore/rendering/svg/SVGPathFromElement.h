@@ -24,6 +24,14 @@ namespace WebCore {
 class SVGElement;
 class Path;
 
+namespace Style {
+class ComputedStyle;
+struct Difference;
+}
+
 Path pathFromGraphicsElement(const SVGElement&);
+
+// Whether a style change on a shape can move its path, or the transform applied to it.
+bool styleChangeMovesPath(Style::Difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);
 
 } // namespace WebCore
