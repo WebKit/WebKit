@@ -22,7 +22,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 crypto/gcrypt/CryptoAlgorithmAESCBCGCrypt.cpp
-crypto/gcrypt/CryptoAlgorithmAESCFBGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmAESCTRGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmAESGCMGCrypt.cpp
 crypto/gcrypt/CryptoAlgorithmAESKWGCrypt.cpp

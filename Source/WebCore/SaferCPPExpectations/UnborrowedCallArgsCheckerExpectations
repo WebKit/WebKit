@@ -32,7 +32,6 @@ contentextensions/URLFilterParser.cpp
 crypto/CryptoAlgorithm.cpp
 crypto/SubtleCrypto.cpp
 crypto/cocoa/CryptoAlgorithmAESCBCCocoa.cpp
-crypto/cocoa/CryptoAlgorithmAESCFBCocoa.cpp
 crypto/cocoa/CryptoAlgorithmAESCTRCocoa.cpp
 crypto/cocoa/CryptoAlgorithmPBKDF2Cocoa.cpp
 crypto/cocoa/CryptoAlgorithmRSASSA_PKCS1_v1_5Cocoa.cpp

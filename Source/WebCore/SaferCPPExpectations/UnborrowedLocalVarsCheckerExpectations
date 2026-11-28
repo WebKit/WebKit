@@ -55,7 +55,6 @@ contentextensions/NFAToDFA.cpp
 contentextensions/SerializedNFA.cpp
 contentextensions/Term.h
 crypto/cocoa/CryptoAlgorithmAESCBCCocoa.cpp
-crypto/cocoa/CryptoAlgorithmAESCFBCocoa.cpp
 crypto/cocoa/CryptoKeyRSACocoa.cpp
 crypto/cocoa/CryptoUtilitiesCocoa.cpp
 crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm

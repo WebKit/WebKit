@@ -2461,7 +2461,6 @@
 		5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 570440591E53936200356601 /* JSAesCbcCfbParams.h */; };
 		5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */; };
 		57093D1324C97C8F0086C52D /* FetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 413015D61C7B570400091C6E /* FetchResponse.h */; };
-		571252691E524EB1008FF369 /* CryptoAlgorithmAESCFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 571252681E524EB1008FF369 /* CryptoAlgorithmAESCFB.h */; };
 		57152B5A21CB3E88000C37CA /* ApduCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5821CB2E3B000C37CA /* ApduCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5621CB2E3A000C37CA /* ApduResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B6E21CD995D000C37CA /* U2fCommandConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13311,14 +13310,11 @@
 		565E7E6449095E4933B5F978 /* Volume2.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Volume2.svg; sourceTree = "<group>"; };
 		568AF20D2FEB4DE600AF8D54 /* IsInitiatedByWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsInitiatedByWorker.h; sourceTree = "<group>"; };
 		56FFE14C3114000000000000 /* StyleLocalPropertyRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleLocalPropertyRegistry.cpp; sourceTree = "<group>"; };
-		570440571E53851600356601 /* CryptoAlgorithmAESCFBCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAESCFBCocoa.cpp; sourceTree = "<group>"; };
 		570440591E53936200356601 /* JSAesCbcCfbParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAesCbcCfbParams.h; sourceTree = "<group>"; };
 		5704405B1E53937900356601 /* JSAesCbcCfbParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAesCbcCfbParams.cpp; sourceTree = "<group>"; };
 		5706A6941DDE5BF800A03B14 /* RsaOaepParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RsaOaepParams.idl; sourceTree = "<group>"; };
 		5706A6971DDE5E4600A03B14 /* JSRsaOaepParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRsaOaepParams.h; sourceTree = "<group>"; };
 		5706A6991DDE5E8500A03B14 /* JSRsaOaepParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRsaOaepParams.cpp; sourceTree = "<group>"; };
-		571252681E524EB1008FF369 /* CryptoAlgorithmAESCFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAESCFB.h; sourceTree = "<group>"; };
-		5712526A1E52527C008FF369 /* CryptoAlgorithmAESCFB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAESCFB.cpp; sourceTree = "<group>"; };
 		57152B5521CB2E3A000C37CA /* ApduResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApduResponse.cpp; path = Modules/webauthn/apdu/ApduResponse.cpp; sourceTree = SOURCE_ROOT; };
 		57152B5621CB2E3A000C37CA /* ApduResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApduResponse.h; path = Modules/webauthn/apdu/ApduResponse.h; sourceTree = SOURCE_ROOT; };
 		57152B5721CB2E3A000C37CA /* ApduCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ApduCommand.cpp; path = Modules/webauthn/apdu/ApduCommand.cpp; sourceTree = SOURCE_ROOT; };
@@ -41131,7 +41127,6 @@
 				57EEAA571EA0AFBB00701124 /* CommonCryptoDERUtilities.cpp */,
 				57E664FB1E73703300765536 /* CommonCryptoDERUtilities.h */,
 				E125F843182425C900D84CD9 /* CryptoAlgorithmAESCBCCocoa.cpp */,
-				570440571E53851600356601 /* CryptoAlgorithmAESCFBCocoa.cpp */,
 				57E1E5AF1E8DD3A100EE37C9 /* CryptoAlgorithmAESCTRCocoa.cpp */,
 				94F575B42B598CBE003DF3F8 /* CryptoAlgorithmAESGCMCocoa.cpp */,
 				E1FE137C184D270200892F13 /* CryptoAlgorithmAESKWCocoa.cpp */,
@@ -41163,8 +41158,6 @@
 			children = (
 				E125F83F1824253A00D84CD9 /* CryptoAlgorithmAESCBC.cpp */,
 				E125F8401824253A00D84CD9 /* CryptoAlgorithmAESCBC.h */,
-				5712526A1E52527C008FF369 /* CryptoAlgorithmAESCFB.cpp */,
-				571252681E524EB1008FF369 /* CryptoAlgorithmAESCFB.h */,
 				57E1E5A01E8C91B500EE37C9 /* CryptoAlgorithmAESCTR.cpp */,
 				57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAESCTR.h */,
 				57B5F7F61E5BE84000F34F90 /* CryptoAlgorithmAESGCM.cpp */,
@@ -45341,7 +45334,6 @@
 				E125F8421824253A00D84CD9 /* CryptoAlgorithmAESCBC.h in Headers */,
 				BCEC09972F2EE479009A3938 /* CryptoAlgorithmAesCbcCfbParams.h in Headers */,
 				BCEC09912F2EE479009A3938 /* CryptoAlgorithmAesCbcCfbParamsInit.h in Headers */,
-				571252691E524EB1008FF369 /* CryptoAlgorithmAESCFB.h in Headers */,
 				57E1E5A31E8C91B500EE37C9 /* CryptoAlgorithmAESCTR.h in Headers */,
 				BCEC09A42F2EE479009A3938 /* CryptoAlgorithmAesCtrParams.h in Headers */,
 				BCEC098F2F2EE479009A3938 /* CryptoAlgorithmAesCtrParamsInit.h in Headers */,

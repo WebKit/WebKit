@@ -158,7 +158,6 @@ bridge/objc/objc_runtime.mm @nonARC @no-unify-when(bundle<=8) @cost:5
 bridge/objc/objc_utility.mm @nonARC @no-unify-when(bundle<=8) @cost:5
 crypto/cocoa/CommonCryptoDERUtilities.cpp
 crypto/cocoa/CryptoAlgorithmAESCBCCocoa.cpp
-crypto/cocoa/CryptoAlgorithmAESCFBCocoa.cpp
 crypto/cocoa/CryptoAlgorithmAESCTRCocoa.cpp
 crypto/cocoa/CryptoAlgorithmAESGCMCocoa.cpp
 crypto/cocoa/CryptoAlgorithmAESKWCocoa.cpp

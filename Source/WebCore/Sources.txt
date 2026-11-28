@@ -914,7 +914,6 @@ crypto/CryptoKey.cpp
 crypto/SerializedCryptoKeyWrap.cpp
 crypto/SubtleCrypto.cpp
 crypto/algorithms/CryptoAlgorithmAESCBC.cpp
-crypto/algorithms/CryptoAlgorithmAESCFB.cpp
 crypto/algorithms/CryptoAlgorithmAESCTR.cpp
 crypto/algorithms/CryptoAlgorithmAESGCM.cpp
 crypto/algorithms/CryptoAlgorithmAESKW.cpp

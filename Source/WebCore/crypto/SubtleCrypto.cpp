@@ -141,6 +141,8 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         return Exception { ExceptionCode::ExistingExceptionError };
     if (equalIgnoringASCIICase(params.returnValue().name, "RSAES-PKCS1-v1_5"_s))
         return Exception { ExceptionCode::NotSupportedError, RSAESPKCS1Deprecation };
+    if (equalIgnoringASCIICase(params.returnValue().name, "AES-CFB-8"_s))
+        return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
 
     auto identifier = CryptoAlgorithmRegistry::singleton().identifier(params.returnValue().name);
     if (!identifier) [[unlikely]]

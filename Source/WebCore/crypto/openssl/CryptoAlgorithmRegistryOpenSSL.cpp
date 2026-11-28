@@ -27,7 +27,6 @@
 #include "CryptoAlgorithmRegistry.h"
 
 #include "CryptoAlgorithmAESCBC.h"
-#include "CryptoAlgorithmAESCFB.h"
 #include "CryptoAlgorithmAESCTR.h"
 #include "CryptoAlgorithmAESGCM.h"
 #include "CryptoAlgorithmAESKW.h"
@@ -54,7 +53,6 @@ namespace WebCore {
 void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
     registerAlgorithm<CryptoAlgorithmAESCBC>();
-    registerAlgorithm<CryptoAlgorithmAESCFB>();
     registerAlgorithm<CryptoAlgorithmAESCTR>();
     registerAlgorithm<CryptoAlgorithmAESGCM>();
     registerAlgorithm<CryptoAlgorithmAESKW>();

@@ -1,6 +1,5 @@
 list(APPEND WebCore_SOURCES
     crypto/openssl/CryptoAlgorithmAESCBCOpenSSL.cpp
-    crypto/openssl/CryptoAlgorithmAESCFBOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmAESCTROpenSSL.cpp
     crypto/openssl/CryptoAlgorithmAESGCMOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmAESKWOpenSSL.cpp
