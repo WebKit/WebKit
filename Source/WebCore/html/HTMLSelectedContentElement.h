@@ -51,6 +51,8 @@ private:
     void removingSteps(RemovalType, ContainerNode&) final;
     void movingSteps(MovingType, ContainerNode&) final;
 
+    bool allowsUpdatingMultipleOptions() const;
+
     RefPtr<HTMLSelectElement> recalculateDisabledness();
 
     bool m_isDisabled { false };

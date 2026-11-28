@@ -1,0 +1,12 @@
+
+
+
+
+PASS All option elements are cloned, including the element itself
+PASS When an option is selected, the clone is also selected
+PASS Clones are not options of the select
+PASS The clone has the same id as the option, and the clone appears before the option, so getElementById() finds the clone
+PASS Cloning works when a select element is dynamically created in JavaScript
+PASS Cloning works when selectedcontent appears after the options
+PASS Two selectedcontent in the same select element gets their own un-shared clone
+

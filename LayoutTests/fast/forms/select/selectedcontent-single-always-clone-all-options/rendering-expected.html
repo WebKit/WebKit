@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+span {
+  overflow: clip;
+  text-overflow: inherit;
+  min-inline-size: 0;
+  flex: 1;
+}
+datalist {
+  display: contents;
+}
+</style>
+
+<select>
+  <button><span><datalist><option>One</option></datalist></span></button>
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>

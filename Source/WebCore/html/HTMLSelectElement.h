@@ -245,6 +245,8 @@ public:
     void focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible = std::nullopt, OptionScrollMode = OptionScrollMode::Nearest);
     int typeAheadMatchIndex(KeyboardEvent&);
 
+    NODELETE bool shouldCloneAllOptionsToSelectedContent() const;
+
 protected:
     HTMLSelectElement(const QualifiedName&, Document&);
 
