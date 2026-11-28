@@ -39,6 +39,7 @@
 #include "CallLinkStatus.h"
 #include "CallVariantInlines.h"
 #include "CheckPrivateBrandStatus.h"
+#include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CodeBlockInlines.h"
 #include "CodeBlockWithJITType.h"
@@ -1360,12 +1361,22 @@ private:
         return getArrayMode(*profile, action);
     }
 
-    ArrayMode getArrayMode(ArrayProfile& liveProfile, Array::Action action)
+    ArrayMode getArrayMode(ArrayProfile& liveProfile, Array::Action action, ArrayModes filter = ALL_ARRAY_MODES)
     {
         liveProfile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
         ArrayProfile profile = liveProfile;
+        profile.filterObservedArrayModes(filter);
         return ArrayMode::fromObserved(profile, action, profile.outOfBounds());
     }
+
+    struct ArrayIteratorNextSpeculation {
+        ArrayMode arrayMode;
+        ArrayMode elementArrayMode;
+        SpeculatedType iteratedObjectPrediction;
+        // Non-null when the length is read from this structure's "length" data property.
+        Structure* lengthStructure { nullptr };
+    };
+    std::optional<ArrayIteratorNextSpeculation> speculateArrayIteratorNext(JSGlobalObject*);
 
     bool profiledArrayMayBeRegExpMatchesArray()
     {
@@ -4963,6 +4974,177 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* result = addToGraph(MapIterationEntryValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(storage));
             setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case JSArrayIteratorNextIntrinsic: {
+            // A BadType exit at this site already makes the call take the slow path, so it is not checked here.
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, ExoticObjectMode))
+                return CallOptimizationResult::DidNothing;
+
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+
+            Structure* iteratorResultStructure = globalObject->iteratorResultObjectStructureConcurrently();
+            if (!iteratorResultStructure)
+                return CallOptimizationResult::DidNothing;
+
+            auto iteration = speculateArrayIteratorNext(globalObject);
+            if (!iteration)
+                return CallOptimizationResult::DidNothing;
+            ArrayMode arrayMode = iteration->arrayMode;
+
+            // Pass true so endSpecialCase skips emitArgumentPhantoms; we emit our own
+            // intra-continuation-block Phantoms below.
+            insertChecks(true);
+
+            VirtualRegister iteratorOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);
+
+            // Nothing below depends on the iterator's realm, so its type is enough.
+            Node* iterator = get(iteratorOperand);
+            addToGraph(CheckJSCast, OpInfo(JSArrayIterator::info()), iterator);
+
+            Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
+            Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(iteration->iteratedObjectPrediction), iterator);
+
+            Node* length = nullptr;
+            if (Structure* lengthStructure = iteration->lengthStructure) {
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(lengthStructure)), iteratedObject);
+                length = handleGetByOffset(SpecInt32Only, iteratedObject, m_graph.identifiers().ensure(m_vm->propertyNames->length.impl()), clonedArgumentsLengthPropertyOffset);
+            } else
+                length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iteratedObject));
+            // GetArrayLength is pessimized prior to fixup.
+            emitExitOK();
+
+            // Successor blocks read these through phi merges rather than cross-block edges, which would violate the CPS validator.
+            auto nextTmps = allocatePrivateTmps(4);
+            Operand tmpIndex = nextTmps.operandAt(0);
+            Operand tmpIteratedObject = nextTmps.operandAt(1);
+            Operand tmpValue = nextTmps.operandAt(2);
+            Operand tmpNextIndex = nextTmps.operandAt(3);
+
+            set(tmpIndex, index, ImmediateNakedSet);
+            flush(tmpIndex);
+            set(tmpIteratedObject, iteratedObject, ImmediateNakedSet);
+            flush(tmpIteratedObject);
+            emitExitOK();
+
+            Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
+            Node* isExhausted = addToGraph(CompareStrictEq, index, doneIndex);
+            Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
+            Node* isDone = addToGraph(ArithBitOr, isExhausted, isOutOfBounds);
+            emitExitOK();
+
+            BasicBlock* doneBlock = allocateUntargetableBlock();
+            BasicBlock* notDoneBlock = allocateUntargetableBlock();
+            BasicBlock* keysBlock = allocateUntargetableBlock();
+            BasicBlock* valuesBlock = allocateUntargetableBlock();
+            BasicBlock* entriesBlock = allocateUntargetableBlock();
+            BasicBlock* continuation = allocateUntargetableBlock();
+
+            {
+                BranchData* branchData = m_graph.m_branchData.add();
+                branchData->taken = BranchTarget(doneBlock);
+                branchData->notTaken = BranchTarget(notDoneBlock);
+                addToGraph(Branch, OpInfo(branchData), isDone);
+                flushForTerminal();
+            }
+
+            auto startBlock = [&](BasicBlock* block) {
+                m_currentBlock = block;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(m_currentInstruction, m_currentIndex.checkpoint());
+                emitExitOK();
+            };
+
+            {
+                startBlock(doneBlock);
+                // next() throws on a detached or out-of-bounds typed array, which has a length of 0 and so always lands here.
+                if (arrayMode.isSomeTypedArrayView())
+                    addToGraph(CheckDetached, get(tmpIteratedObject));
+                // Create the constants while exiting is still valid: fixup may hoist a type check on one above its definition otherwise.
+                Node* undefinedValue = jsConstant(jsUndefined());
+                Node* exhaustedIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
+                set(tmpValue, undefinedValue, ImmediateNakedSet);
+                set(tmpNextIndex, exhaustedIndex, ImmediateNakedSet);
+                emitExitOK();
+                addToGraph(Jump, OpInfo(continuation));
+            }
+
+            {
+                startBlock(notDoneBlock);
+                Node* kind = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Kind)), OpInfo(SpecInt32Only), get(iteratorOperand));
+                SwitchData& data = *m_graph.m_switchData.add();
+                data.kind = SwitchImm;
+                data.fallThrough = BranchTarget(entriesBlock);
+                data.cases.append(SwitchCase(LazyJSValue(m_graph.freeze(jsNumber(static_cast<int32_t>(IterationKind::Keys)))), keysBlock));
+                data.cases.append(SwitchCase(LazyJSValue(m_graph.freeze(jsNumber(static_cast<int32_t>(IterationKind::Values)))), valuesBlock));
+                data.cases.append(SwitchCase(LazyJSValue(m_graph.freeze(jsNumber(static_cast<int32_t>(IterationKind::Entries)))), entriesBlock));
+                addToGraph(Switch, OpInfo(&data), kind);
+                flushForTerminal();
+            }
+
+            auto loadElement = [&](Node* index) {
+                addVarArgChild(get(tmpIteratedObject));
+                addVarArgChild(index);
+                addVarArgChild(nullptr); // Leave room for property storage.
+                Node* element = addToGraph(Node::VarArg, GetByVal, OpInfo(iteration->elementArrayMode.asWord()), OpInfo(SpecBytecodeTop));
+                emitExitOK();
+                return element;
+            };
+
+            auto finishStep = [&](Node* index, Node* value) {
+                Node* nextIndex = addToGraph(ArithAdd, OpInfo(Arith::Unchecked), OpInfo(SpecInt32Only), Edge(index, Int32Use), Edge(jsConstant(jsNumber(1)), Int32Use));
+                set(tmpValue, value, ImmediateNakedSet);
+                set(tmpNextIndex, nextIndex, ImmediateNakedSet);
+                emitExitOK();
+                addToGraph(Jump, OpInfo(continuation));
+            };
+
+            {
+                startBlock(keysBlock);
+                Node* keyIndex = get(tmpIndex);
+                finishStep(keyIndex, keyIndex);
+            }
+
+            {
+                startBlock(valuesBlock);
+                Node* valueIndex = get(tmpIndex);
+                finishStep(valueIndex, loadElement(valueIndex));
+            }
+
+            {
+                startBlock(entriesBlock);
+                Node* entryIndex = get(tmpIndex);
+                Node* element = loadElement(entryIndex);
+                addVarArgChild(entryIndex);
+                addVarArgChild(element);
+                unsigned vectorHint = 2;
+                Node* entry = addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithContiguous), OpInfo(vectorHint));
+                finishStep(entryIndex, entry);
+            }
+
+            {
+                startBlock(continuation);
+
+                Node* finalValue = get(tmpValue);
+                Node* nextIndex = get(tmpNextIndex);
+                Node* finalDone = addToGraph(CompareStrictEq, Edge(nextIndex, Int32Use), Edge(jsConstant(jsNumber(JSArrayIterator::doneIndex)), Int32Use));
+
+                // Mirror endSpecialCase's emitArgumentPhantoms via get() so the edges
+                // stay intra-block; Phantom(callTargetNode) is omitted for the same
+                // cross-block reason.
+                for (int i = 0; i < argumentCountIncludingThis; ++i)
+                    addToGraph(Phantom, get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
+
+                Node* resultObject = addToGraph(NewObject, OpInfo(m_graph.registerStructure(iteratorResultStructure)));
+                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->value.impl()), iteratorResultObjectValuePropertyOffset, finalValue);
+                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->done.impl()), iteratorResultObjectDonePropertyOffset, finalDone);
+
+                // Advance the iterator only after every node that can OSR exit, so an exit re-runs next() from the original index.
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(iteratorOperand), nextIndex);
+
+                setResult(resultObject);
+            }
             return CallOptimizationResult::Inlined;
         }
 
@@ -12106,6 +12288,98 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
     set(VirtualRegister(bytecode.m_dst), addToGraph(createOp, callee));
 }
 
+auto ByteCodeParser::speculateArrayIteratorNext(JSGlobalObject* globalObject) -> std::optional<ArrayIteratorNextSpeculation>
+{
+    constexpr SpeculatedType argumentsSpeculations = SpecDirectArguments | SpecScopedArguments;
+
+    ArrayProfile profile = globalObject->arrayIteratorNextArrayProfile();
+    SpeculatedType argumentsSpeculation = globalObject->arrayIteratorNextIteratedObjectSpeculation() & argumentsSpeculations;
+
+    // A for-of site profiles its iterable, which is usually what the iterator walks. Prefer that over the
+    // profile shared by every caller of next().
+    if (m_currentInstruction->is<OpIteratorNext>()) {
+        ArrayProfile& liveProfile = m_currentInstruction->as<OpIteratorNext>().metadata(m_inlineStackTop->m_codeBlock).m_iterableProfile;
+        SpeculatedType lastSeenSpeculation = SpecNone;
+        if (StructureID structureID = liveProfile.lastSeenStructureID())
+            lastSeenSpeculation = speculationFromStructure(structureID.decode());
+        liveProfile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
+        ArrayProfile siteProfile = liveProfile;
+        // JSArrays here normally come from the fast iteration modes, which do not call next().
+        siteProfile.filterObservedArrayModes(~ALL_ARRAY_ARRAY_MODES);
+        if (lastSeenSpeculation & argumentsSpeculations) {
+            profile = siteProfile;
+            argumentsSpeculation = lastSeenSpeculation;
+        } else {
+            // A NonArray iterable without indexed storage is most likely an iterator, which says nothing about what it walks.
+            siteProfile.filterObservedArrayModes(~asArrayModesIgnoringTypedArrays(NonArray));
+            if (siteProfile.observedArrayModes())
+                profile = siteProfile;
+        }
+    }
+
+    ArrayModes modes = profile.observedArrayModes();
+    if (!modes)
+        return std::nullopt;
+
+    auto& exitProfile = m_inlineStackTop->m_exitProfile;
+    bool makeSafe = profile.outOfBounds() || exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
+
+    // A profile that saw only one typed array type so far may still be polymorphic. A typed array with
+    // the original structure is checked by structure, which exits with BadCache.
+    bool sawOtherTypedArrayType = exitProfile.hasExitSite(m_currentIndex, BadCache) || exitProfile.hasExitSite(m_currentIndex, BadIndexingType);
+
+    if (!(modes & ~ALL_TYPED_ARRAY_MODES)) {
+        if (profile.mayBeResizableOrGrowableSharedTypedArray())
+            return std::nullopt;
+        if (hasOneBitSet(modes) && !sawOtherTypedArrayType) {
+            ArrayMode arrayMode = ArrayMode::fromObserved(profile, Array::Read, false);
+            if (!arrayMode.isSomeTypedArrayView())
+                return std::nullopt;
+            return ArrayIteratorNextSpeculation { arrayMode, arrayMode, speculationFromTypedArrayType(arrayMode.typedArrayType()) };
+        }
+        // Several typed array types: any of them has an inline length, and the element load goes through the generic by-val path.
+        return ArrayIteratorNextSpeculation { ArrayMode(Array::AnyTypedArray, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read), ArrayMode(Array::Generic, Array::Read), SpecTypedArrayView };
+    }
+
+    if (!(modes & ~ALL_ARRAY_ARRAY_MODES)) {
+        ArrayMode arrayMode = ArrayMode::fromObserved(profile, Array::Read, makeSafe);
+        if (!arrayMode.isJSArray())
+            return std::nullopt;
+        switch (arrayMode.type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            return ArrayIteratorNextSpeculation { arrayMode, arrayMode, SpecArray };
+        default:
+            return std::nullopt;
+        }
+    }
+
+    if (modes == asArrayModesIgnoringTypedArrays(NonArray)) {
+        // Every index below the length is in bounds. Holes and an overridden length make the access exotic, which exits.
+        if (argumentsSpeculation == SpecDirectArguments) {
+            ArrayMode arrayMode(Array::DirectArguments, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read);
+            return ArrayIteratorNextSpeculation { arrayMode, arrayMode, SpecDirectArguments };
+        }
+        if (argumentsSpeculation == SpecScopedArguments) {
+            ArrayMode arrayMode(Array::ScopedArguments, Array::NonArray, Array::InBounds, Array::AsIs, Array::Read);
+            return ArrayIteratorNextSpeculation { arrayMode, arrayMode, SpecScopedArguments };
+        }
+        return std::nullopt;
+    }
+
+    // Strict mode arguments objects. Their length is an ordinary data property, so it is read through the structure.
+    if (modes == asArrayModesIgnoringTypedArrays(NonArrayWithContiguous) && !exitProfile.hasExitSite(m_currentIndex, BadCache)) {
+        Structure* structure = globalObject->clonedArgumentsStructure();
+        ArrayMode arrayMode(Array::Contiguous, Array::NonArray, makeSafe ? Array::OutOfBounds : Array::InBounds, Array::AsIs, Array::Read);
+        return ArrayIteratorNextSpeculation { arrayMode, arrayMode, speculationFromStructure(structure), structure };
+    }
+
+    return std::nullopt;
+}
+
 void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction, BytecodeIndex osrExitIndex)
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
@@ -12844,7 +13118,8 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         BasicBlock* isDoneBlock = allocateUntargetableBlock();
         BasicBlock* doLoadBlock = allocateUntargetableBlock();
 
-        ArrayMode arrayMode = getArrayMode(metadata.m_iterableProfile, Array::Read);
+        // The generic path also records here what it iterates, which can be anything.
+        ArrayMode arrayMode = getArrayMode(metadata.m_iterableProfile, Array::Read, ALL_ARRAY_ARRAY_MODES);
         auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
         {

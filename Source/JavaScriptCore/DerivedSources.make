@@ -110,7 +110,6 @@ BUILTINS_GENERATOR_SCRIPTS = \
 
 JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ArrayConstructor.js \
-    $(JavaScriptCore)/builtins/ArrayIteratorPrototype.js \
     $(JavaScriptCore)/builtins/ArrayPrototype.js \
     $(JavaScriptCore)/builtins/AsyncDisposableStackPrototype.js \
     $(JavaScriptCore)/builtins/AsyncIteratorPrototype.js \

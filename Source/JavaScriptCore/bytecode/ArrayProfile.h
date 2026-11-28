@@ -33,6 +33,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 class CodeBlock;
+class JSGlobalObject;
 class LLIntOffsetsExtractor;
 class UnlinkedArrayProfile;
 
@@ -243,12 +244,15 @@ public:
     void setMayStoreHole() { m_arrayProfileFlags.add(ArrayProfileFlag::MayStoreHole); }
 
     void observeStructureID(StructureID structureID) { m_lastSeenStructureID = structureID; }
+    StructureID lastSeenStructureID() const { return m_lastSeenStructureID; }
     void observeStructure(Structure* structure) { m_lastSeenStructureID = structure->id(); }
 
     NODELETE void computeUpdatedPrediction(CodeBlock*);
     void computeUpdatedPrediction(CodeBlock*, Structure* lastSeenStructure);
+    void computeUpdatedPrediction(JSGlobalObject*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
+    void filterObservedArrayModes(ArrayModes modes) { m_observedArrayModes &= modes; }
     NODELETE void observeIndexedRead(JSCell*, unsigned index);
 
     ArrayModes observedArrayModes() const { return m_observedArrayModes; }

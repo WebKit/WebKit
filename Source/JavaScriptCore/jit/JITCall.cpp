@@ -643,6 +643,12 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), scratch1GPR);
     or32(TrustedImm32(static_cast<uint16_t>(IterationMode::Generic)), scratch1GPR);
     store16ToMetadata(scratch1GPR, bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes());
+    if (shouldEmitProfiling()) {
+        emitGetVirtualRegister(bytecode.m_iterable, scratch1GPR);
+        Jump iterableIsNotCell = branchIfNotCell(scratch1GPR);
+        emitArrayProfilingSiteWithCell(bytecode, OpIteratorNext::Metadata::offsetOfIterableProfile() + ArrayProfile::offsetOfLastSeenStructureID(), scratch1GPR, scratch2GPR);
+        iterableIsNotCell.link(this);
+    }
     compileOpCall<OpIteratorNext>(instruction);
     advanceToNextCheckpoint();
 

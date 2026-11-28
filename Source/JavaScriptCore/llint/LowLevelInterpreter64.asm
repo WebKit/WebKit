@@ -3510,6 +3510,11 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
     loadh OpIteratorNext::Metadata::m_iterationMetadata + IterationModeMetadata::seenModes[t5], t0
     ori constexpr IterationMode::Generic, t0
     storeh t0, OpIteratorNext::Metadata::m_iterationMetadata + IterationModeMetadata::seenModes[t5]
+    loadVariable(get, m_iterable, t0)
+    btqnz t0, notCellMask, .iteratorNextGenericArrayProfileDone
+    loadi JSCell::m_structureID[t0], t3
+    storei t3, OpIteratorNext::Metadata::m_iterableProfile.m_lastSeenStructureID[t5]
+.iteratorNextGenericArrayProfileDone:
     callHelper(op_iterator_next, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getDoneStart:
