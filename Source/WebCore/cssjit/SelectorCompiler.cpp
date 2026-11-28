@@ -1907,9 +1907,15 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
 {
     switch (m_functionType) {
     case FunctionType::SimpleSelectorChecker:
-    case FunctionType::SelectorCheckerWithCheckingContext:
+    case FunctionType::SelectorCheckerWithCheckingContext: {
+        computeBacktrackingMemoryRequirements(m_selectorFragments);
+        // We do not want unbounded stack allocation for backtracking. Going down 8 entry points would already be incredibly inefficient.
+        constexpr unsigned maximumBacktrackingAllocations = 8;
+        if (m_selectorFragments.stackRequirements > maximumBacktrackingAllocations)
+            return SelectorCompilationStatus::CannotCompile;
         generateSelectorChecker();
         break;
+    }
     case FunctionType::CannotMatchAnything:
         if (!JSC::Options::useJITCage())
             m_assembler.tagReturnAddress();
@@ -2427,19 +2433,9 @@ void SelectorCodeGenerator::generateSelectorChecker()
             m_assembler.store32(Assembler::TrustedImm32(specificity), Assembler::Address(JSC::GPRInfo::argumentGPR1));
     }
 
-    computeBacktrackingMemoryRequirements(m_selectorFragments);
     unsigned availableRegisterCount = m_registerAllocator.reserveCallerSavedRegisters(m_selectorFragments.registerRequirements);
 
     dataLogFIf(shouldDumpCSSJITDisassembly(), "Compiling with minimum required register count %u, minimum stack space %u\n", m_selectorFragments.registerRequirements, m_selectorFragments.stackRequirements);
-
-    // We do not want unbounded stack allocation for backtracking. Going down 8 enry points would already be incredibly inefficient.
-    unsigned maximumBacktrackingAllocations = 8;
-    if (m_selectorFragments.stackRequirements > maximumBacktrackingAllocations) {
-        m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
-        popMacroAssemblerRegisters(m_stackAllocator);
-        generateReturn();
-        return;
-    }
 
     bool needsEpilogue = generatePrologue();
 
