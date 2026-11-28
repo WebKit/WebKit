@@ -310,6 +310,11 @@ bool WebDriverBidiProcessor::eventIsEnabled(const String& eventName, const HashS
     return m_sessionAgent->eventIsEnabled(eventName, contexts);
 }
 
+bool WebDriverBidiProcessor::hasSubscriptionToEvent(const String& eventName) const
+{
+    return m_sessionAgent->hasSubscriptionToEvent(eventName);
+}
+
 void WebDriverBidiProcessor::emitEventIfEnabled(const String& eventName, const HashSet<String>& browsingContexts, NOESCAPE const Function<void()>& callback)
 {
     if (m_sessionAgent->eventIsEnabled(eventName, browsingContexts)) [[unlikely]]

@@ -3444,90 +3444,11 @@ void Session::dispatchBidiMessage(RefPtr<JSON::Object>&& message)
             return;
         }
 
-        auto bidiMethod = bidiMessage->getString("method"_s);
-
-        if (bidiMethod == "log.entryAdded"_s)
-            bidiMessage = processLogEntryAdded(WTF::move(bidiMessage));
-
-        if (bidiMessage)
-            server->sendMessage(this->id(), bidiMessage->toJSONString());
+        server->sendMessage(this->id(), bidiMessage->toJSONString());
         return;
     }
 
     server->sendMessage(this->id(), bidiMessage->toJSONString());
-}
-
-RefPtr<JSON::Object> Session::processLogEntryAdded(RefPtr<JSON::Object>&& message)
-{
-    // https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
-    auto params = message->getObject("params"_s);
-    if (!params) {
-        RELEASE_LOG(WebDriverBiDi, "Log event without parameter information, ignoring.");
-        return nullptr;
-    }
-
-    auto method = params->getString("method"_s);
-
-    String level;
-    if (method == "error"_s || method == "assert"_s)
-        level = "error"_s;
-    else if (method == "debug"_s || method == "trace"_s)
-        level = "debug"_s;
-    else if (method == "warn"_s)
-        level = "warn"_s;
-    else
-        level = "info"_s;
-
-    // WebDriver uses the ECMA time format, which is the number of milliseconds since the Unix epoch.
-    // https://tc39.es/ecma262/#sec-time-values-and-time-range
-    RefPtr<JSON::Value> timestampValue = JSON::Value::create(params->getDouble("timestamp"_s).value_or(0));
-    auto messageText = params->getString("text"_s);
-
-    // TODO Get the source from the current realm record
-    // https://bugs.webkit.org/show_bug.cgi?id=282978
-
-    // TODO Get the current stacktrace for assert, error, trace, and warn messages
-    // https://bugs.webkit.org/show_bug.cgi?id=282979
-
-    auto messageType = params->getString("type"_s);
-
-    auto entry = JSON::Object::create();
-    entry->setString("type"_s, messageType);
-    entry->setString("level"_s, level);
-    entry->setString("text"_s, messageText);
-    entry->setValue("timestamp"_s, *timestampValue);
-
-    if (messageType == "console"_s) {
-        // TODO Support formatter string and multiple arguments
-        // This will require changes either on `Automation.json::doLogEntryAdded`, adding the arguments,
-        // or moving the actual event processing to the browser, so we just relay it back to the client.
-        // https://bugs.webkit.org/show_bug.cgi?id=282976
-        // TODO Implement the full serialization algorithm
-        // https://bugs.webkit.org/show_bug.cgi?id=282977
-        auto args = JSON::Array::create();
-        auto arg = JSON::Object::create();
-        arg->setString("type"_s, "string"_s);
-        arg->setString("value"_s, messageText);
-        args->pushObject(WTF::move(arg));
-
-        entry->setString("method"_s, method);
-        entry->setArray("args"_s, args);
-    } else if (messageType == "javascript"_s) {
-        // Despite not having the stack information, the spec requires this
-        // field for JavaScript messages.
-        entry->setString("stackTrace"_s, emptyString());
-    }
-
-    auto body = JSON::Object::create();
-    body->setObject("params"_s, WTF::move(entry));
-    body->setString("type"_s, "event"_s);
-    body->setString("method"_s, "log.entryAdded"_s);
-
-
-    // TODO Implement event buffering, to save the log entries for later emission when the user subscribes to it
-    // https://bugs.webkit.org/show_bug.cgi?id=282980
-
-    return body;
 }
 
 void Session::relayBidiCommand(const String& message, unsigned commandId, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)

@@ -178,6 +178,17 @@
             ]
         },
         {
+            "id": "Source",
+            "description": "The realm, and its browsing context if it has one, in which a script related event occurred.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-Source",
+            "type": "object",
+            "properties": [
+                { "name": "realm", "$ref": "BidiScript.Realm" },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true }
+            ]
+        },
+        {
             "id": "StackFrame",
             "description": "Represents a single call frame within a <code>BidiScript.StackTrace</code>.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-StackFrame",

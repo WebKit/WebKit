@@ -1146,8 +1146,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     setMediaAccessibilityPreferences(process);
 #endif
 
-    if (m_automationSession)
-        process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
+    if (RefPtr automationSession = m_automationSession) {
+        process.send(Messages::WebProcess::EnsureAutomationSessionProxy(automationSession->sessionIdentifier()), 0);
+        automationSession->didEnsureAutomationSessionProxy(process);
+    }
 
     ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 

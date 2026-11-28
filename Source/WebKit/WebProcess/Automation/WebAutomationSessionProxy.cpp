@@ -88,6 +88,7 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/WindowProxy.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -99,8 +100,11 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/MarkedVector.h>
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>
 #endif
@@ -1915,9 +1919,76 @@ void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID,
     completionHandler(WTF::move(realmIdentifier));
 }
 
-void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier frameID, const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
+std::optional<String> WebAutomationSessionProxy::serializeConsoleArguments(WebFrame& frame, Inspector::ScriptArguments& arguments)
 {
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(frameID, source, level, messageText, type, timestamp), 0);
+    if (RefPtr coreLocalFrame = frame.coreLocalFrame(); coreLocalFrame && !coreLocalFrame->isMainFrame())
+        ensureObserverForFrame(frame);
+
+    JSObjectRef scriptObject = scriptObjectForFrame(frame);
+    JSGlobalContextRef context = frame.jsContext();
+    JSC::JSGlobalObject* globalObject = toJS(context);
+
+    const Vector<JSValueRef, 8> argumentValues(arguments.argumentCount(), [&](size_t i) {
+        return toRef(globalObject, arguments.argumentAt(i));
+    });
+
+    JSValueRef exception = nullptr;
+    JSValueRef argumentArray = JSObjectMakeArray(context, argumentValues.size(), argumentValues.span().data(), &exception);
+    if (exception)
+        return std::nullopt;
+
+    // Page getters run during serialization, and the console methods they call would be reported in the middle
+    // of this message, or recursively. They're side effects of automation, not page behavior, so drop them.
+    SetForScope isSerializingConsoleArguments(m_isSerializingConsoleArguments, true);
+    JSValueRef functionArguments[] = { argumentArray };
+    JSValueRef result = callPropertyFunction(context, scriptObject, "serializeConsoleArgumentsForBidi"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception || !JSValueIsString(context, result))
+        return std::nullopt;
+
+    return adoptRef(JSValueToStringCopy(context, result, nullptr))->string();
+}
+
+void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier frameID, const Inspector::ConsoleMessage& message)
+{
+    if (!m_logEntriesEnabled || m_isSerializingConsoleArguments)
+        return;
+
+    // The console spec's Printer, and with it BiDi's console steps, doesn't run for these.
+    if (message.type() == JSC::MessageType::Clear || message.type() == JSC::MessageType::EndGroup)
+        return;
+
+    // The UI process looks up the realm by the frame's browsing context. A frame that never had a realm can only
+    // report messages that don't come from script, such as failed loads.
+    // FIXME: Report those too, without creating a JS global object in the middle of reporting a message.
+    if (!realmIdentifierForFrame(frameID))
+        return;
+
+    std::optional<String> serializedConsoleArguments;
+    if (RefPtr arguments = message.arguments()) {
+        RefPtr frame = WebProcess::singleton().webFrame(frameID);
+        RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
+        auto* jsWindowProxy = coreLocalFrame ? protect(coreLocalFrame->windowProxy())->existingJSWindowProxy(mainThreadNormalWorldSingleton()) : nullptr;
+        // Only the frame's current window in the normal world has a BiDi realm. Isolated worlds, such as the ones
+        // of user scripts, don't, and neither does a window that the frame has navigated away from.
+        // FIXME: Report console calls in sandboxes, once script.evaluate and script.callFunction support them.
+        if (!jsWindowProxy || jsWindowProxy->window() != arguments->globalObject())
+            return;
+
+        serializedConsoleArguments = serializeConsoleArguments(*frame, *arguments);
+        if (!serializedConsoleArguments)
+            return;
+    }
+
+    Vector<Inspector::InitiatorCallFrame> stackFrames;
+    if (RefPtr callStack = message.callStack()) {
+        for (size_t i = 0; i < callStack->size(); ++i) {
+            auto& callFrame = callStack->at(i);
+            if (!callFrame.isNative())
+                stackFrames.append({ callFrame.functionName(), callFrame.sourceURL(), 0, callFrame.lineNumber(), callFrame.columnNumber() });
+        }
+    }
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(frameID, message.source(), message.level(), message.type(), message.message(), message.timestamp(), WTF::move(serializedConsoleArguments), WTF::move(stackFrames)), 0);
 }
 
 void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier frameID, const WebCore::SecurityOriginData& origin)

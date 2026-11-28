@@ -251,6 +251,8 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
         ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, lexicalGlobalObject, WTF::move(arguments));
 }
 
+// FIXME: WebDriver BiDi's log.entryAdded should report count(), countReset(), time(), timeLog() and timeEnd() too. Their
+// counters and timers only exist in Web Inspector's console agent, which only runs when developer extras are enabled.
 void FrameConsoleClient::count(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
     Ref frame = m_frame.get();

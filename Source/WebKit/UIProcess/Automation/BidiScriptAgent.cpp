@@ -30,6 +30,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "AutomationProtocolObjects.h"
+#include "BidiBrowserAgent.h"
 #include "BidiEventNames.h"
 #include "FrameTreeNodeData.h"
 #include "PageLoadState.h"
@@ -1275,6 +1276,39 @@ std::optional<RealmIdentifier> BidiScriptAgent::realmIdentifierForBrowsingContex
     if (it == m_browsingContextToRealmId.end())
         return std::nullopt;
     return it->value;
+}
+
+RefPtr<Inspector::Protocol::BidiScript::Source> BidiScriptAgent::sourceForFrame(const WebFrameProxy& frame) const
+{
+    RefPtr session = m_session;
+    RefPtr page = frame.page();
+    if (!session || !page)
+        return nullptr;
+
+    auto browsingContext = session->effectiveHandleForWebFrameProxy(frame);
+    auto realmIdentifier = realmIdentifierForBrowsingContext(browsingContext);
+    if (!realmIdentifier)
+        return nullptr;
+
+    auto source = Inspector::Protocol::BidiScript::Source::create()
+        .setRealm(protocolRealmIdentifierString(*realmIdentifier))
+        .release();
+    source->setContext(browsingContext);
+    source->setUserContext(session->bidiProcessor().browserAgent().userContextForPage(*page));
+    return source;
+}
+
+Ref<Inspector::Protocol::BidiScript::RemoteValue> BidiScriptAgent::remoteValueFromSerializedValue(JSON::Value& serializedValue) const
+{
+    RefPtr session = m_session;
+    if (!session) {
+        return Inspector::Protocol::BidiScript::RemoteValue::create()
+            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Undefined)
+            .release();
+    }
+
+    resolveWindowContexts(serializedValue, *session);
+    return deserializeRemoteValue(&serializedValue).releaseNonNull();
 }
 
 void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFilter)

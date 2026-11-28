@@ -81,6 +81,7 @@ public:
     void incrementCount() { ++m_repeatCount; }
 
     ScriptArguments* arguments() const { return m_arguments.get(); }
+    ScriptCallStack* callStack() const { return m_callStack.get(); }
     NODELETE unsigned argumentCount() const;
 
     void setMessageIsFirstArgument(bool value) { m_messageIsFirstArgument = value; }

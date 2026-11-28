@@ -68,9 +68,11 @@ public:
     void unsubscribe(RefPtr<JSON::Array>&& subscriptions, RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&&) override;
 
     bool eventIsEnabled(const String& eventName, const HashSet<String>& browsingContexts);
+    bool hasSubscriptionToEvent(const String& eventName) const { return m_eventSubscriptionCounts.contains(AtomString { eventName }); }
 
 private:
     void unsubscribeByEventName(RefPtr<JSON::Array>&& events, Inspector::CommandCallback<void>&&);
+    void subscriptionsDidChange();
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiSessionBackendDispatcher> m_sessionDomainDispatcher;

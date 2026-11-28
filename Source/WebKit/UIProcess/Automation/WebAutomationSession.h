@@ -69,6 +69,7 @@ class Navigation;
 namespace Inspector {
 class BackendDispatcher;
 class FrontendRouter;
+struct InitiatorCallFrame;
 }
 
 namespace WebCore {
@@ -100,6 +101,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPageInspectorController;
 class WebProcessPool;
+class WebProcessProxy;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class InspectorPassthroughChannel;
@@ -197,8 +199,11 @@ public:
     void keyboardEventsFlushedForPage(const WebPageProxy&);
     void mouseEventsFlushedForPage(const WebPageProxy&);
     void wheelEventsFlushedForPage(const WebPageProxy&);
+    // The WebProcess has just been told to create its WebAutomationSessionProxy.
+    void didEnsureAutomationSessionProxy(WebProcessProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
     void didCreatePage(WebPageProxy&);
+    void bidiSubscriptionsDidChange();
     // browsingContext.navigate: loads `url` in the page, or in `frameHandle`'s frame when it is not empty, and resolves with the
     // requested URL and the navigation id. Unlike the classic command, a navigation that fails or whose context closes is an error.
     void navigateBrowsingContextForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& url, Inspector::Protocol::Automation::PageLoadStrategy, Seconds pageLoadTimeout, Inspector::CommandCallbackOf<String, String>&&);
@@ -454,10 +459,10 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Called by WebAutomationSession messages.
-    void logEntryAdded(IPC::Connection&, WebCore::FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String& messageText, const JSC::MessageType&, const WallTime&);
     void addKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle);
     void isKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle, CompletionHandler<void(bool)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
+    void logEntryAdded(IPC::Connection&, WebCore::FrameIdentifier, JSC::MessageSource, JSC::MessageLevel, JSC::MessageType, const String& messageText, WallTime, std::optional<String>&& serializedConsoleArguments, Vector<Inspector::InitiatorCallFrame>&& stackFrames);
     void scriptRealmCreated(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptRealmDestroyed(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier);
     void scriptDedicatedWorkerRealmCreated(IPC::Connection&, const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
@@ -529,6 +534,11 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+
+    // Whether WebProcesses report console messages, which they do while a subscription includes log.entryAdded.
+    // FIXME: <https://webkit.org/b/282980> The spec buffers log entries until a session subscribes, so that needs them
+    // reported while any BiDi session is active.
+    bool m_logEntriesEnabled { false };
 
     // A browsingContext.navigate or reload in flight: the id to report, filled in from the API::Navigation for a main frame or
     // from WebCore's first navigationStarted/fragmentNavigated report for a child frame, and whether WebCore reported

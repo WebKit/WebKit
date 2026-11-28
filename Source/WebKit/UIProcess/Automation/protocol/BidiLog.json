@@ -5,6 +5,15 @@
     "description": "The log module contains commands and events relating to logging.",
     "spec": "https://w3c.github.io/webdriver-bidi/#module-log",
     "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/log",
+    "types": [
+        {
+            "id": "Level",
+            "description": "The severity of a log entry.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#types-log-logentry",
+            "type": "string",
+            "enum": ["debug", "info", "warn", "error"]
+        }
+    ],
     "events": [
         {
             "name": "entryAdded",
@@ -12,12 +21,14 @@
             "spec": "https://w3c.github.io/webdriver-bidi/#event-log-entryAdded",
             "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/log/entry_added",
             "parameters": [
-                { "name": "level", "type": "string", "description": "The log entry level." },
-                { "name": "source", "type": "string", "description": "The source script information" },
+                { "name": "type", "type": "string", "description": "The log entry type: <code>console</code> for console method calls and <code>javascript</code> for uncaught exceptions." },
+                { "name": "level", "$ref": "BidiLog.Level", "description": "The log entry level." },
+                { "name": "source", "$ref": "BidiScript.Source", "description": "The realm, and its browsing context, that the log entry came from." },
                 { "name": "text", "type": "string", "description": "The log entry text message." },
-                { "name": "timestamp", "type": "number", "description": "The timestamp of the log entry." },
-                { "name": "type", "type": "string", "description": "The log entry type." },
-                { "name": "method", "type": "string", "optional": true, "description": "The log entry console method."}
+                { "name": "timestamp", "type": "number", "description": "The time the log entry was added, in milliseconds since the Unix epoch." },
+                { "name": "stackTrace", "$ref": "BidiScript.StackTrace", "optional": true, "description": "The JavaScript stack when the log entry was added." },
+                { "name": "method", "type": "string", "optional": true, "description": "The console method that added a <code>console</code> log entry." },
+                { "name": "args", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "optional": true, "description": "The arguments of the console method that added a <code>console</code> log entry." }
             ]
         }
     ]

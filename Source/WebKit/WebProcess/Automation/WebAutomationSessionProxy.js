@@ -881,6 +881,65 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
+
+    // Returns a JSON string { args, text } for the log.entryAdded event of a console method that was called with |args|.
+    // https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
+    serializeConsoleArgumentsForBidi(args)
+    {
+        let serializedArgs = [];
+        let text = "";
+        for (let i = 0; i < args.length; ++i) {
+            let value = args[i];
+            let serializedValue;
+            try {
+                // Default serialization options, and a new serialization internal map for each argument.
+                serializedValue = this.serializeBidiRemoteValue(value);
+            } catch {
+                // Page script can make serialization fail, for example with a getter that throws.
+                serializedValue = { type: bidiRemoteValueType(value) ?? "object" };
+            }
+            serializedArgs.push(serializedValue);
+
+            if (i)
+                text += " ";
+            text += this._consoleTextForBidiRemoteValue(serializedValue, value);
+        }
+        return jsonStringify({ args: serializedArgs, text });
+    }
+
+    // The spec converts primitives with ToString, and leaves the text for objects to the implementation. This is
+    // the text that Chromium uses, which doesn't run page script. FIXME: <https://webkit.org/b/282976> Apply format
+    // specifiers in the first argument.
+    _consoleTextForBidiRemoteValue(remoteValue, value)
+    {
+        switch (remoteValue.type) {
+        case "undefined":
+        case "null":
+        case "string":
+        case "number":
+        case "boolean":
+        case "bigint":
+        case "symbol":
+            // Unlike ToString, String() converts a symbol to its description.
+            return convertToString(value);
+        case "array":
+            return `Array(${remoteValue.value?.length ?? ""})`;
+        case "object":
+            return `Object(${remoteValue.value?.length ?? ""})`;
+        case "map":
+            return `Map(${remoteValue.value?.length ?? ""})`;
+        case "set":
+            return `Set(${remoteValue.value?.length ?? ""})`;
+        case "regexp":
+            // Serialization can have failed, leaving only the type.
+            return remoteValue.value ? `/${remoteValue.value.pattern}/${remoteValue.value.flags}` : remoteValue.type;
+        case "date":
+            return remoteValue.value ?? remoteValue.type;
+        default:
+            return remoteValue.type;
+        }
+    }
+
     serializeBidiRemoteValue(value, maxObjectDepth = null, maxDomDepth = 0, includeShadowTree = "none", serializationInternalMap = new Map)
     {
         // Handle primitives, without isNaN(), Object.is() or toString(), which page script can replace.

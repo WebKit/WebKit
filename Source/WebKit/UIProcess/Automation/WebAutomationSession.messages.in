@@ -26,11 +26,10 @@
     ExceptionForEnabledBy
 ]
 messages -> WebAutomationSession {
-    LogEntryAdded(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
-
     AddKnownNodeReference(WebCore::FrameIdentifier frameID, String nodeHandle)
     IsKnownNodeReference(WebCore::FrameIdentifier frameID, String nodeHandle) -> (bool isKnown) Synchronous
 #if ENABLE(WEBDRIVER_BIDI)
+    LogEntryAdded(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, enum:uint8_t JSC::MessageType messageType, String messageText, WallTime timestamp, std::optional<String> serializedConsoleArguments, Vector<Inspector::InitiatorCallFrame> stackFrames)
     ScriptRealmCreated(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
     ScriptRealmDestroyed(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier)
     ScriptDedicatedWorkerRealmCreated(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebKit::RealmIdentifier realmIdentifier, WebKit::RealmIdentifier ownerRealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
