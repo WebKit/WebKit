@@ -551,28 +551,38 @@ class YoctoCrossBuilder():
             #    remove any compiler flag that is not machine related (-m*) or is '-E' (for cpp) or is for the sysroot/target.
             # 3. Do not override CC/CXX with the cross-compiled GCC compiler if the user wants to use Clang, instead
             #    set CC/CXX pointing to the cross-compiled Clang (assuming the support was built in the toolchain).
+            # 4. SDKs built with meta-swift export SWIFT_CLANGCC/SWIFT_CLANGCXX/SWIFT_CLANGCPP, the clang that swiftc
+            #    embeds. Swift and C++ must agree on the compiler, so use it as CC/CXX/CPP, whatever the user asked for.
             patched_setup_env_path = original_setup_env_path + "-no-opt-flags"
             flags_regex = re.compile(r'export\s+(C|CXX|LD|CPP)FLAGS=')
             gcc_compiler_regex = re.compile(r'export\s+C(C|XX|PP)=')
             clang_compiler_regex = re.compile(r'export\s+CLANGC(C|XX|PP)=')
+            swift_clang_compiler_regex = re.compile(r'export\s+SWIFT_CLANGC(C|XX|PP)=')
             gcc_lines = []
             clang_lines = []
+            swift_clang_lines = []
             with open(original_setup_env_path, 'r') as fr:
                 with open(patched_setup_env_path, 'w') as fw:
                     for line in fr.readlines():
                         if not flags_regex.match(line):
-                            if gcc_compiler_regex.match(line) or clang_compiler_regex.match(line):
+                            if gcc_compiler_regex.match(line) or clang_compiler_regex.match(line) or swift_clang_compiler_regex.match(line):
                                 newline = ""
                                 for word in line.strip().split():
                                     if word.startswith('-'):
-                                        if word == '-E' or any(word.startswith(p) for p in ['-m', '--sysroot=', '--target=']):
+                                        # -target and -idirafter take their value as the next word, which is kept below.
+                                        if word in ('-E', '-target', '-idirafter', '-Qunused-arguments') or any(word.startswith(p) for p in ['-m', '--sysroot=', '--target=', '--dyld-prefix=']):
                                             newline += " " + word
                                     else:
                                         newline += " " + word
                                 if '="' in newline and not newline.endswith('"'):
                                     newline += '"'
                                 newline = newline.strip() + '\n'
-                                (clang_lines if clang_compiler_regex.match(line) else gcc_lines).append(newline)
+                                if swift_clang_compiler_regex.match(line):
+                                    # Keep the SWIFT_CLANG* variables themselves, too.
+                                    fw.write(line)
+                                    swift_clang_lines.append(newline)
+                                else:
+                                    (clang_lines if clang_compiler_regex.match(line) else gcc_lines).append(newline)
                             else:
                                 fw.write(line)
                     # The script should check the CC/CXX env var from the user, if is set to clang then export
@@ -592,6 +602,16 @@ class YoctoCrossBuilder():
                     else:
                         for line in gcc_lines:
                             fw.write(line)
+                    if swift_clang_lines:
+                        fw.write('\n# meta-swift: compile C and C++ with the clang that swiftc embeds.\n')
+                        for line in swift_clang_lines:
+                            # Remove the SWIFT_CLANG prefix, so for example SWIFT_CLANGCXX becomes CXX
+                            fw.write(re.sub(r'(export\s+)SWIFT_CLANG(CC|CXX|CPP)(=)', r'\1\2\3', line))
+                    # SDKs built with meta-swift export SWIFT_TARGET and SWIFTFLAGS, which CMake ignores, so pass them on as cache entries.
+                    fw.write('\nif [ -n "${SWIFT_TARGET:-}" ] && [ -n "${BUILD_WEBKIT_ARGS:-}" ]; then\n'
+                             '    BUILD_WEBKIT_ARGS="${BUILD_WEBKIT_ARGS} --cmakeargs=\\"-DCMAKE_Swift_COMPILER_TARGET=${SWIFT_TARGET} -DCMAKE_Swift_FLAGS_INIT=\'${SWIFTFLAGS}\'\\""\n'
+                             '    export BUILD_WEBKIT_ARGS\n'
+                             'fi\n')
 
             # Put the patched setup-environ file in place of the other
             # and save a copy of the original just for debugging purposes
