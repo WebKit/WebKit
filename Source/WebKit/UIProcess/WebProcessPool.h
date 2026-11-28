@@ -388,6 +388,9 @@ public:
     void sendMemoryPressureEvent(bool isCritical);
 #endif
     void textCheckerStateChanged();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void spellCheckingLanguagesChanged();
+#endif
     static void notifyProcessPoolsTextCheckerStateChanged();
 
 #if ENABLE(GPU_PROCESS)

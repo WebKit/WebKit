@@ -1782,6 +1782,14 @@ void WebProcess::setTextCheckerState(OptionSet<TextCheckerState> textCheckerStat
     }
 }
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+void WebProcess::spellCheckingLanguagesChanged()
+{
+    for (auto& page : m_pageMap.values())
+        page->recheckSpellingAndGrammar();
+}
+#endif
+
 void WebProcess::fetchWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, CompletionHandler<void(WebsiteData&&)>&& completionHandler)
 {
     WebsiteData websiteData;

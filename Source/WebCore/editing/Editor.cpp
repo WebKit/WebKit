@@ -46,6 +46,7 @@
 #include "ChromeClient.h"
 #include "ClipboardEvent.h"
 #include "CommonAtomStrings.h"
+#include "ComposedTreeIterator.h"
 #include "CompositionEvent.h"
 #include "CompositionHighlight.h"
 #include "ContainerNodeInlines.h"
@@ -91,6 +92,7 @@
 #include "HTMLQuoteElement.h"
 #include "HTMLSpanElement.h"
 #include "HTMLTextAreaElement.h"
+#include "HTMLTextFormControlElement.h"
 #include "HTMLUListElement.h"
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
@@ -141,6 +143,7 @@
 #include "Text.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
+#include "TextControlInnerElements.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
@@ -3075,6 +3078,39 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
     markMisspellingsAndBadGrammar(movingSelection, isContinuousSpellCheckingEnabled() && isGrammarCheckingEnabled(), movingSelection);
 }
 
+void Editor::recheckSpellingAndGrammar()
+{
+    Ref document = this->document();
+
+    if (CheckedPtr markers = document->markersIfExists())
+        markers->removeMarkers({ DocumentMarkerType::Spelling, DocumentMarkerType::Grammar });
+
+    if (!isContinuousSpellCheckingEnabled())
+        return;
+
+    Vector<Ref<Element>> elementsToCheck;
+    auto descendants = composedTreeDescendants(document.get());
+    for (auto it = descendants.begin(), end = descendants.end(); it != end;) {
+        if (RefPtr control = dynamicDowncast<HTMLTextFormControlElement>(*it)) {
+            if (control->hasCachedSelection()) {
+                if (RefPtr innerText = control->innerTextElement())
+                    elementsToCheck.append(innerText.releaseNonNull());
+            }
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        if (RefPtr element = dynamicDowncast<Element>(*it); element && element->isRootEditableElement()) {
+            elementsToCheck.append(element.releaseNonNull());
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        it.traverseNext();
+    }
+
+    for (Ref element : elementsToCheck)
+        markMisspellingsAndBadGrammar(VisibleSelection { makeRangeSelectingNodeContents(element) });
+}
+
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart, const VisibleSelection& selectionAfterTyping, AllowTextReplacement allowTextReplacement)
 {
     Ref document = this->document();
@@ -3237,7 +3273,7 @@ std::optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSel
     if (!editableNode->hasEditableStyle())
         return std::nullopt;
 
-    if (!isSpellCheckingEnabledFor(editableNode.ptr()))
+    if (editableNode.ptr() == &searchRange->endContainer() && !isSpellCheckingEnabledFor(editableNode.ptr()))
         return std::nullopt;
 
     // Get the spell checker if it is available
@@ -3314,7 +3350,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
     if (!editableNode->hasEditableStyle())
         return;
 
-    if (!isSpellCheckingEnabledFor(editableNode.ptr()))
+    if (editableNode.ptr() == &spellingRange->endContainer() && !isSpellCheckingEnabledFor(editableNode.ptr()))
         return;
 
     auto& rangeToCheck = shouldMarkGrammar ? *grammarRange : *spellingRange;
@@ -3466,7 +3502,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             && resultLocation >= paragraph.checkingStart() && resultEndLocation <= spellingRangeEndOffset && !resultEndsAtAmbiguousBoundary) {
             ASSERT(resultLength > 0);
             auto misspellingRange = paragraph.subrange({ resultLocation, resultLength });
-            if (!m_alternativeTextController->isSpellingMarkerAllowed(misspellingRange))
+            if (!isSpellCheckingEnabledFor(misspellingRange.start.container.ptr()) || !m_alternativeTextController->isSpellingMarkerAllowed(misspellingRange))
                 continue;
             addMarker(misspellingRange, DocumentMarkerType::Spelling, replacement);
         } else if (shouldMarkGrammar && resultType == TextCheckingType::Grammar && paragraph.checkingRangeCovers({ resultLocation, resultLength })) {
@@ -3475,6 +3511,8 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                 ASSERT(detail.range.length > 0);
                 if (paragraph.checkingRangeCovers({ resultLocation + detail.range.location, detail.range.length })) {
                     auto badGrammarRange = paragraph.subrange({ resultLocation + detail.range.location, detail.range.length });
+                    if (!isSpellCheckingEnabledFor(badGrammarRange.start.container.ptr()))
+                        continue;
                     addMarker(badGrammarRange, DocumentMarkerType::Grammar, DocumentMarker::GrammarData { detail.userDescription, detail.uuid });
                     previousGrammarRanges.append(CharacterRange(resultLocation + detail.range.location, detail.range.length));
                 }

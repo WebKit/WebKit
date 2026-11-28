@@ -77,6 +77,9 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     void StopMemorySampler();
 
     SetTextCheckerState(OptionSet<WebKit::TextCheckerState> textCheckerState)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SpellCheckingLanguagesChanged()
+#endif
 
     SetEnhancedAccessibility(bool flag)
     SetAccessibilityMode(enum:uint8_t WebCore::AccessibilityMode mode)
