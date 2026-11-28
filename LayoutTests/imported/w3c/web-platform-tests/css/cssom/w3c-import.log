@@ -300,6 +300,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-clone.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-remove-after-cssom-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-stray-braces.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-update-across-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-background-position-longhands.html
