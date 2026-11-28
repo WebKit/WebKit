@@ -1,0 +1,7 @@
+2d.path.ellipse.angle.large.clockwise
+
+ellipse() draws a full ellipse when clockwise and end - start is very large
+
+
+PASS ellipse() draws a full ellipse when clockwise and end - start is very large
+

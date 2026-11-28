@@ -1,0 +1,7 @@
+2d.path.arc.negative.large
+
+arc() with a large finite negative radius throws INDEX_SIZE_ERR
+
+
+PASS arc() with a large finite negative radius throws INDEX_SIZE_ERR
+

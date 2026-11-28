@@ -1170,6 +1170,13 @@
     var path = new Path2D();
     @assert throws INDEX_SIZE_ERR path.arc(10, 10, -5, 0, 1, false);
 
+- name: 2d.path.arc.negative.large
+  desc: arc() with a large finite negative radius throws INDEX_SIZE_ERR
+  code: |
+    @assert throws INDEX_SIZE_ERR ctx.arc(0, 0, -1e300, 0, 0, true);
+    var path = new Path2D();
+    @assert throws INDEX_SIZE_ERR path.arc(10, 10, -1e300, 0, 1, false);
+
 - name: 2d.path.arc.zeroradius
   desc: arc() with zero radius draws a line to the start point
   code: |
@@ -2492,6 +2499,46 @@
     @assert throws INDEX_SIZE_ERR ctx.ellipse(10, 10, 0, -1.5, 0, 0, 1, false);
     @assert throws INDEX_SIZE_ERR ctx.ellipse(10, 10, -2, -5, 0, 0, 1, false);
     ctx.ellipse(80, 0, 10, 4294967277, Math.PI / -84, -Math.PI / 2147483436, false);
+
+- name: 2d.path.ellipse.angle.large.clockwise
+  desc: ellipse() draws a full ellipse when clockwise and end - start is very large
+  code: |
+    ctx.fillStyle = '#f00';
+    ctx.fillRect(0, 0, 100, 50);
+    ctx.fillStyle = '#0f0';
+    ctx.beginPath();
+    ctx.moveTo(50, 25);
+    ctx.ellipse(50, 25, 60, 60, 0, 0, 1e300, false);
+    ctx.fill();
+    @assert pixel 1,1 == 0,255,0,255;
+    @assert pixel 98,1 == 0,255,0,255;
+    @assert pixel 1,48 == 0,255,0,255;
+    @assert pixel 98,48 == 0,255,0,255;
+  expected: green
+
+- name: 2d.path.ellipse.angle.large.anticlockwise
+  desc: ellipse() draws a full ellipse when anticlockwise and start - end is very large
+  code: |
+    ctx.fillStyle = '#f00';
+    ctx.fillRect(0, 0, 100, 50);
+    ctx.fillStyle = '#0f0';
+    ctx.beginPath();
+    ctx.moveTo(50, 25);
+    ctx.ellipse(50, 25, 60, 60, 0, 1e300, 0, true);
+    ctx.fill();
+    @assert pixel 1,1 == 0,255,0,255;
+    @assert pixel 98,1 == 0,255,0,255;
+    @assert pixel 1,48 == 0,255,0,255;
+    @assert pixel 98,48 == 0,255,0,255;
+  expected: green
+
+- name: 2d.path.ellipse.negative.large
+  desc: ellipse() with a large finite negative radius throws INDEX_SIZE_ERR
+  code: |
+    @assert throws INDEX_SIZE_ERR ctx.ellipse(10, 10, -1e300, 5, 0, 0, 1, false);
+    @assert throws INDEX_SIZE_ERR ctx.ellipse(10, 10, 10, -1e300, 0, 0, 1, false);
+    var path = new Path2D();
+    @assert throws INDEX_SIZE_ERR path.ellipse(10, 10, -1e300, 5, 0, 0, 1, false);
 
 - name: 2d.path.fill.overlap
   code: |
