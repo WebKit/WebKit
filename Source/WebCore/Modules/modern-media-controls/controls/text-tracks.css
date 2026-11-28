@@ -79,6 +79,26 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 ::cue(u) { text-decoration: underline; }
 ::cue(rt) { white-space: nowrap; }
 
+/* https://w3c.github.io/webvtt/#default-text-color */
+::cue(.white) { color: rgba(255, 255, 255, 1); }
+::cue(.lime) { color: rgba(0, 255, 0, 1); }
+::cue(.cyan) { color: rgba(0, 255, 255, 1); }
+::cue(.red) { color: rgba(255, 0, 0, 1); }
+::cue(.yellow) { color: rgba(255, 255, 0, 1); }
+::cue(.magenta) { color: rgba(255, 0, 255, 1); }
+::cue(.blue) { color: rgba(0, 0, 255, 1); }
+::cue(.black) { color: rgba(0, 0, 0, 1); }
+
+/* https://w3c.github.io/webvtt/#default-text-background */
+::cue(.bg_white) { background-color: rgba(255, 255, 255, 1); }
+::cue(.bg_lime) { background-color: rgba(0, 255, 0, 1); }
+::cue(.bg_cyan) { background-color: rgba(0, 255, 255, 1); }
+::cue(.bg_red) { background-color: rgba(255, 0, 0, 1); }
+::cue(.bg_yellow) { background-color: rgba(255, 255, 0, 1); }
+::cue(.bg_magenta) { background-color: rgba(255, 0, 255, 1); }
+::cue(.bg_blue) { background-color: rgba(0, 0, 255, 1); }
+::cue(.bg_black) { background-color: rgba(0, 0, 0, 1); }
+
 ::-webkit-media-text-track-display-backdrop {
     display: inline-block;
     width: stretch;

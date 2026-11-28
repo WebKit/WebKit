@@ -1,0 +1,6 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+<c.white>white</c> <c.lime>lime</c> <c.cyan>cyan</c> <c.red>red</c> <c.yellow>yellow</c> <c.magenta>magenta</c> <c.blue>blue</c> <c.black>black</c>
+<c.bg_white>bg_white</c> <c.bg_lime>bg_lime</c> <c.bg_cyan>bg_cyan</c> <c.bg_red>bg_red</c> <c.bg_yellow>bg_yellow</c> <c.bg_magenta>bg_magenta</c> <c.bg_blue>bg_blue</c> <c.bg_black>bg_black</c>
+<c.yellow.bg_blue>yellow on blue</c>

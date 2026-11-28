@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <title>WebVTT default text and background color classes are applied</title>
+        <script src=../../resources/js-test-pre.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-file.js></script>
+        <script>
+            const colors = [
+                ['white', 'rgb(255, 255, 255)'],
+                ['lime', 'rgb(0, 255, 0)'],
+                ['cyan', 'rgb(0, 255, 255)'],
+                ['red', 'rgb(255, 0, 0)'],
+                ['yellow', 'rgb(255, 255, 0)'],
+                ['magenta', 'rgb(255, 0, 255)'],
+                ['blue', 'rgb(0, 0, 255)'],
+                ['black', 'rgb(0, 0, 0)'],
+            ];
+
+            async function runTest()
+            {
+                video = document.getElementById('video');
+                video.src = findMediaFile('video', '../content/test');
+                await waitFor(video, 'canplay');
+                let track = document.createElement('track');
+                track.src = 'captions-webvtt/default-color-classes.vtt';
+                video.appendChild(track)
+
+                await waitFor(video.textTracks, 'addtrack');
+                testExpected("video.textTracks.length", 1);
+                run("video.textTracks[0].mode = 'showing'");
+
+                run("video.currentTime = 1");
+                await waitFor(video, 'seeked');
+
+                window.internals.ensureUserAgentShadowRoot(video);
+                await testExpectedEventually("window.internals.shadowRoot(video).querySelectorAll('c').length", 17, "==", 1000);
+                c = window.internals.shadowRoot(video).querySelectorAll('c');
+
+                colors.forEach(([, value], i) => {
+                    testExpected(`getComputedStyle(c[${i}]).color`, value);
+                    testExpected(`getComputedStyle(c[${i + colors.length}]).backgroundColor`, value);
+                });
+
+                testExpected("getComputedStyle(c[16]).color", "rgb(255, 255, 0)");
+                testExpected("getComputedStyle(c[16]).backgroundColor", "rgb(0, 0, 255)");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video id="video" width="320px" height="240px" paused></video>
+    </body>
+</html>
