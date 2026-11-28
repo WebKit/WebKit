@@ -1,0 +1,16 @@
+root
+    link uid=… url=example.com/home
+        image src=green-256x256.png alt='Home page'
+    uid=…
+        image src=green-256x256.png alt='ID card icon'
+        'Change member information'
+    button uid=… 'Delete'
+        image src=green-256x256.png alt='Trash can'
+    uid=… role=button 'Favorites'
+        image uid=… src=green-256x256.png alt=Star
+    link uid=… url=example.com/settings
+        image uid=… src=green-256x256.png alt=Gear
+    uid=…
+        image uid=… src=green-256x256.png alt=Banner
+        'Spring sale'
+    image uid=… src=green-256x256.png alt=Logo

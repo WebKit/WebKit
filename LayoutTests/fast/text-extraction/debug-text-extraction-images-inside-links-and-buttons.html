@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+img {
+    width: 20px;
+    height: 20px;
+}
+
+.row {
+    display: block;
+    margin: 8px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<a class="row" href="https://example.com/home"><img alt="Home page" src="../../fast/images/resources/green-256x256.png"></a>
+<a class="row title-link"><img alt="ID card icon" src="../../fast/images/resources/green-256x256.png"><span>Change member information</span></a>
+<button class="row"><img alt="Trash can" src="../../fast/images/resources/green-256x256.png"> Delete</button>
+<div class="row" role="button"><img alt="Star" src="../../fast/images/resources/green-256x256.png"> Favorites</div>
+<a class="row" href="https://example.com/settings"><img id="own-listener" alt="Gear" src="../../fast/images/resources/green-256x256.png"> Settings</a>
+<div class="row clickable-card"><img alt="Banner" src="../../fast/images/resources/green-256x256.png"><span>Spring sale</span></div>
+<div class="row"><img alt="Logo" src="../../fast/images/resources/green-256x256.png"></div>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const noop = () => { };
+    document.querySelector(".title-link").addEventListener("click", noop);
+    document.getElementById("own-listener").addEventListener("click", noop);
+    document.querySelector(".clickable-card").addEventListener("click", noop);
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeURLs: true,
+        shortenURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+        eventListenerCategories: ["click"],
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

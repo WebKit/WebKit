@@ -1879,6 +1879,32 @@ static void elideClickableWrapperIdentifiersRecursive(Item& item, std::optional<
         item.nodeIdentifier = std::nullopt;
 }
 
+static bool isIdentifiedLinkOrButton(const Item& item)
+{
+    if (!item.nodeIdentifier)
+        return false;
+
+    if (item.hasData<LinkItemData>() || item.dataAs<ContainerType>() == ContainerType::Button)
+        return true;
+
+    return equalLettersIgnoringASCIICase(item.nodeName, "a"_s);
+}
+
+static void elideImageIdentifiersInsideLinksOrButtonsRecursive(Item& item, bool closestIdentifiedAncestorIsLinkOrButton, std::optional<NodeIdentifier> contextMenuTargetNodeIdentifier)
+{
+    if (closestIdentifiedAncestorIsLinkOrButton
+        && item.hasData<ImageItemData>()
+        && item.nodeIdentifier != contextMenuTargetNodeIdentifier
+        && !item.eventListeners.contains(EventListenerCategory::Click))
+        item.nodeIdentifier = std::nullopt;
+
+    if (item.nodeIdentifier)
+        closestIdentifiedAncestorIsLinkOrButton = isIdentifiedLinkOrButton(item);
+
+    for (auto& child : item.children)
+        elideImageIdentifiersInsideLinksOrButtonsRecursive(child, closestIdentifiedAncestorIsLinkOrButton, contextMenuTargetNodeIdentifier);
+}
+
 static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
@@ -2108,8 +2134,10 @@ Result extractItem(Request&& request, LocalFrame& frame)
     pruneWhitespaceRecursive(root);
     pruneEmptyContainersRecursive(root);
     collapseRedundantFormWrappersRecursive(root);
-    if (request.nodeIdentifierInclusion == NodeIdentifierInclusion::Interactive)
+    if (request.nodeIdentifierInclusion == NodeIdentifierInclusion::Interactive) {
         elideClickableWrapperIdentifiersRecursive(root, request.contextMenuTargetNodeIdentifier);
+        elideImageIdentifiersInsideLinksOrButtonsRecursive(root, false, request.contextMenuTargetNodeIdentifier);
+    }
 
     return { WTF::move(root), visibleTextLength };
 }

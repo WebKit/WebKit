@@ -93,6 +93,12 @@ private func extractionConfigurationWithTextRecognitionFilteringDisabled() -> _W
     return configuration
 }
 
+private func extractionConfigurationIdentifyingAllContainers() -> _WKTextExtractionConfiguration {
+    let configuration = extractionConfigurationWithTextRecognitionFilteringDisabled()
+    configuration.nodeIdentifierInclusion = .allContainers
+    return configuration
+}
+
 private func extractNodeIdentifier(_ debugText: String, _ searchText: String) -> String? {
     let nodeIdentifier = /uid=((?:\d+_)*\d+)/
 
@@ -470,6 +476,7 @@ struct TextExtractionTests {
         try await webView.load(testPageNamed: "debug-text-extraction")
 
         let debugText = try await webView.debugText(extractionConfigurationWithTextRecognitionFilteringDisabled())
+        let allContainersDebugText = try await webView.debugText(extractionConfigurationIdentifyingAllContainers())
         let testButtonID = extractNodeIdentifier(debugText, "Test")
         let emailID = extractNodeIdentifier(debugText, "email")
         let composeID = extractNodeIdentifier(debugText, "Compose")
@@ -552,17 +559,17 @@ struct TextExtractionTests {
         do {
             let interaction = _WKTextExtractionInteraction(action: .click)
 
-            interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Open menu")
+            interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Open menu")
             var expected = "Click on img labeled “Open menu” under link with href “/menu” with id “menu-link”"
             #expect(try await interaction.debugDescription(in: webView) == expected)
 
-            interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Checkmark icon")
+            interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Checkmark icon")
             expected = "Click on img labeled “Checkmark icon” under button labeled “Submit form” with id “submit-with-icon”"
             #expect(try await interaction.debugDescription(in: webView) == expected)
         }
         do {
             let interaction = _WKTextExtractionInteraction(action: .click)
-            interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Open menu")
+            interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Open menu")
 
             try await webView.callJavaScript {
                 "document.getElementById('menu-link').setAttribute('href', '/search?q=webkit&lang=en')"
@@ -790,7 +797,8 @@ struct TextExtractionTests {
         expected = "Click on textarea labeled “Notes” with id “notes-field”"
         #expect(try await interaction.debugDescription(in: webView) == expected)
 
-        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Icon")
+        let allContainersDebugText = try await webView.debugText(extractionConfigurationIdentifyingAllContainers())
+        interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Icon")
         expected = "Click on img labeled “Icon” under button labeled “Save changes” with id “save-button”"
         #expect(try await interaction.debugDescription(in: webView) == expected)
     }
@@ -840,13 +848,17 @@ struct TextExtractionTests {
         )
 
         let debugText = try await webView.debugText()
+        #expect(extractNodeIdentifier(debugText, "Home page") == nil)
+        #expect(extractNodeIdentifier(debugText, "Avatar menu") == nil)
+
+        let allContainersDebugText = try await webView.debugText(extractionConfigurationIdentifyingAllContainers())
         let interaction = _WKTextExtractionInteraction(action: .click)
 
-        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Home page")
+        interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Home page")
         var expected = "Click on img labeled “Home page” under link with href “/home” with id “home-link”"
         #expect(try await interaction.debugDescription(in: webView) == expected)
 
-        interaction.nodeIdentifier = extractNodeIdentifier(debugText, "Avatar menu")
+        interaction.nodeIdentifier = extractNodeIdentifier(allContainersDebugText, "Avatar menu")
         expected = "Click on img labeled “Avatar menu” under button with class “avatar-menu”"
         #expect(try await interaction.debugDescription(in: webView) == expected)
 

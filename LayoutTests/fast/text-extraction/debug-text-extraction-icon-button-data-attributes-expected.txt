@@ -11,10 +11,10 @@ root
         button uid=… title=Search
     label='Svg with title'
         button uid=…
-            image uid=… alt='Delete account'
+            image alt='Delete account'
     label='Image with alt text'
         button uid=…
-            image uid=… alt=Profile
+            image alt=Profile
     label='Recognized class'
         button uid=… class=settings-button
     label='Text and icon'
