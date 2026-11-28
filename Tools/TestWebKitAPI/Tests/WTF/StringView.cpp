@@ -62,6 +62,12 @@ TEST(WTF, StringViewASCII)
     EXPECT_STREQ("caf?", stringViewFromUTF8(backingStore, "caf\xE6\xBC\xA2").ascii().data());
     String withTab("a\tb"_s);
     EXPECT_STREQ("a?b", StringView(withTab).ascii().data());
+
+    // So does the null character, which would otherwise end the C string.
+    std::array<Latin1Character, 3> withNull { 'a', 0, 'b' };
+    EXPECT_STREQ("a?b", StringView(std::span<const Latin1Character> { withNull }).ascii().data());
+    std::array<char16_t, 3> withNull16 { u'a', 0, u'b' };
+    EXPECT_STREQ("a?b", StringView(std::span<const char16_t> { withNull16 }).ascii().data());
 }
 
 TEST(WTF, StringViewStartsWithEmptyVsNull)

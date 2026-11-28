@@ -108,15 +108,14 @@ bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
 
 template<typename CharacterType> static ASCIICString asciiForCharacters(std::span<const CharacterType> characters)
 {
-    // Printable ASCII characters 32..127 and the null character are
-    // preserved, characters outside of this range are converted to '?'.
+    // Characters 32..127 are preserved, characters outside of this range are converted to '?'.
 
     std::span<char> characterBuffer;
     auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
 
     size_t characterBufferIndex = 0;
     for (auto character : characters)
-        characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : static_cast<char>(character);
+        characterBuffer[characterBufferIndex++] = character < 0x20 || character > 0x7f ? '?' : static_cast<char>(character);
 
     return result;
 }
