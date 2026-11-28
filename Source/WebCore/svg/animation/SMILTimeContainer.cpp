@@ -175,7 +175,8 @@ void SMILTimeContainer::resume()
 
 void SMILTimeContainer::setElapsed(SMILTime time)
 {
-    ASSERT(Page::nonUtilityPageCount());
+    // SVG images reset their timelines when their documents go away (see CachedImage::allClientsRemoved()), and a
+    // document can outlive every page in its process. Without a page, there's nothing to update.
     if (!Page::nonUtilityPageCount())
         return;
 
