@@ -2277,7 +2277,8 @@ static void webkitWebViewBaseTouchDragBegin(WebKitWebViewBase* webViewBase, gdou
     auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
     auto* event = gtk_gesture_get_last_event(gesture, sequence);
 
-    webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, 0, 0, startX, startY, WheelEventPhase::Began, WheelEventPhase::NoPhase, true);
+    // The scrolling tree drops zero-delta scrolls that begin, but takes this to stop kinetic scrolling, as fingers touching a trackpad do.
+    webkitWebViewBaseSynthesizeWheelEvent(webViewBase, event, 0, 0, startX, startY, WheelEventPhase::MayBegin, WheelEventPhase::NoPhase, true);
 }
 
 static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, double offsetX, double offsetY, GtkGesture* gesture)

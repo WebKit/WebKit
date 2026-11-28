@@ -223,6 +223,20 @@ ViewLegacy::ViewLegacy(struct wpe_view_backend* backend, const API::PageConfigur
 
             Ref touchEvent = WebKit::NativeWebTouchEvent::create(event, page.deviceScaleFactor());
 
+#if WPE_CHECK_VERSION(1, 5, 0)
+            // Stop kinetic scrolling, as fingers touching a trackpad do. Only the first finger, so that another one doesn't interrupt a drag.
+            if (touchEvent->type() == WebKit::WebEventType::TouchStart && touchEvent->touchPoints().size() == 1) {
+                auto* touchPoint = touchEvent->nativeFallbackTouchPoint();
+                struct wpe_input_axis_2d_event axisEvent = { };
+                axisEvent.base = {
+                    static_cast<enum wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth),
+                    touchPoint->time, touchPoint->x, touchPoint->y,
+                    0, 0, 0
+                };
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent::create(&axisEvent.base, page.deviceScaleFactor(), WebWheelEvent::Phase::MayBegin, WebWheelEvent::Phase::None));
+            }
+#endif
+
             // If already gesturing axis events, short-cut directly to the controller,
             // avoiding the usual roundtrip.
             auto& touchGestureController = *view.m_touchGestureController;

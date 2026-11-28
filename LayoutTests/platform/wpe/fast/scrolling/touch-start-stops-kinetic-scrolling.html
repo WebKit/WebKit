@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    height: 200000px;
+}
+</style>
+</head>
+<body>
+<script>
+description("Tests that touching the screen stops the kinetic scrolling that a touch drag starts.");
+window.jsTestIsAsync = true;
+
+async function waitForFrames(count)
+{
+    for (let i = 0; i < count; ++i)
+        await UIHelper.animationFrame();
+}
+
+let scrollBeforeWait;
+let scrollAfterWait;
+
+window.addEventListener("load", async () => {
+    if (!window.eventSender) {
+        debug("This test requires WebKitTestRunner.");
+        finishJSTest();
+        return;
+    }
+
+    await UIHelper.renderingComplete();
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 500);
+    await eventSender.asyncTouchStart();
+    for (let i = 1; i <= 6; ++i) {
+        eventSender.updateTouchPoint(0, 100, 500 - 40 * i);
+        await eventSender.asyncTouchMove();
+    }
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+
+    // The drag itself scrolls 240px, and a kinetic scroll goes much further.
+    await UIHelper.waitForCondition(() => window.scrollY > 1000, 600);
+    debug("The touch drag starts kinetic scrolling:");
+    shouldBeTrue("window.scrollY > 1000");
+
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(100, 100);
+    await eventSender.asyncTouchStart();
+    await UIHelper.renderingComplete();
+
+    // Without the touch, the kinetic scroll would go on for about two seconds.
+    scrollBeforeWait = window.scrollY;
+    await waitForFrames(20);
+    await UIHelper.renderingComplete();
+    scrollAfterWait = window.scrollY;
+    debug("");
+    debug("A touch stops it:");
+    shouldBe("scrollAfterWait", "scrollBeforeWait");
+
+    eventSender.releaseTouchPoint(0);
+    await eventSender.asyncTouchEnd();
+    finishJSTest();
+});
+</script>
+</body>
+</html>
