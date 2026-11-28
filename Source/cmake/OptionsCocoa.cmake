@@ -96,9 +96,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PRIVATE OFF)
 
-# Features whose values is controlled by <wtf/Platform.h>. In general, new
-# features should go here unless their value needs to be resolved by CMake at
-# configure time.
+# Features whose value <wtf/Platform.h> decides. CMake code can read them (see
+# WEBKIT_PROBE_PLATFORM_H) but not set them. New features should go here.
 WEBKIT_OPTION_OWNED_BY_PLATFORM_H(
     ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM
     ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS
@@ -735,6 +734,9 @@ if (CMAKE_OSX_SYSROOT)
     # -F rather than -Fsystem for SDK frameworks, cf. rdar://problem/30939744
     add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-F${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
 endif ()
+
+# After the options and the SDK search paths, which decide what Platform.h says.
+WEBKIT_PROBE_PLATFORM_H()
 
 # WebKit.xcodeproj and its lldbinit, on request: `ninja xcode-project`. Xcode
 # is only a debugger frontend here, so generating it from a configure or from
