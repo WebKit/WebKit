@@ -138,46 +138,6 @@ static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContaine
     }
 }
 
-static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& placedFloats, auto blockLogicalTopLeft)
-{
-    auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(blockRenderer);
-    if (!renderBlockFlow)
-        return;
-
-    if (!renderBlockFlow->containsFloats() || renderBlockFlow->createsNewFormattingContext())
-        return;
-
-    for (auto& floatingObject : *renderBlockFlow->floatingObjectSet()) {
-        if (!floatingObject->renderer())
-            continue;
-        if (!floatingObject->isDescendant())
-            continue;
-
-        auto floatRect = floatingObject->frameRect();
-
-        auto borderBoxSize = floatingObject->renderer()->borderBoxSize();
-        auto marginOffset = floatingObject->marginOffset();
-        auto borderBoxTopLeft = floatRect.location() + marginOffset;
-
-        auto boxGeometry = Layout::BoxGeometry { };
-        boxGeometry.setTopLeft(blockLogicalTopLeft + borderBoxTopLeft);
-        boxGeometry.setContentBoxWidth(borderBoxSize.width());
-        boxGeometry.setContentBoxHeight(borderBoxSize.height());
-        boxGeometry.setBorder({ });
-        boxGeometry.setPadding({ });
-        boxGeometry.setHorizontalMargin({ marginOffset.width(), floatRect.width() - marginOffset.width() - borderBoxSize.width() });
-        boxGeometry.setVerticalMargin({ marginOffset.height(), floatRect.height() - marginOffset.height() - borderBoxSize.height() });
-
-        CheckedPtr floatRenderer = floatingObject->renderer();
-        CheckedRef floatBox = floatRenderer->layoutBox();
-        auto usedPosition = floatRenderer->usedStyle().floating() == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
-        // Inline layout may lay out the block more than once (InlineContentConstrainer lays out the lines to measure them first),
-        // and each time the block places its floats again.
-        placedFloats.remove(floatBox);
-        placedFloats.add({ floatBox, usedPosition, boxGeometry, borderBoxTopLeft, { } });
-    }
-}
-
 NODELETE static inline size_t remainingLinesForLineClamp(auto& inlineLayoutState)
 {
     // The lines we have already put on the parent's own lines (and in its earlier nested blocks) are part of the clamp's
@@ -282,8 +242,6 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 
         updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState);
-        // Floats are positioned relative to their containing block's border box, which sits at borderBoxTop within the line (see setTopLeft above) and not at the line's top left.
-        populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft + LayoutSize { blockGeometry.marginStart(), borderBoxTop });
         auto marginState = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
         // This box's clearance sits above its margin before, so that margin is behind the position the content after
         // the box starts at, even though the box keeps it for that content (CSS 2.2 8.3.1, 9.5.2). A negative margin

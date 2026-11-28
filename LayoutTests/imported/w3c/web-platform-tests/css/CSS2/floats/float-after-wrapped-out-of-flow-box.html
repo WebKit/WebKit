@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<title>CSS Test: A float that goes to the next line with an out-of-flow box the line before wrapped is placed at the start of that line</title>
+<link rel="help" href="https://drafts.csswg.org/css2/#float-position">
+<link rel="match" href="float-after-wrapped-out-of-flow-box-ref.html">
+<meta name="assert" content="The first line overflows, so the absolutely positioned box at its end wraps to the next line, and the float after it goes there too. No other left float is beside it, so it goes as far left as it can, to the containing block's left edge (rules 1 and 9).">
+<style>
+#container {
+  width: 100px;
+  font-size: 0;
+}
+
+#wide {
+  display: inline-block;
+  width: 200px;
+  height: 10px;
+  vertical-align: top;
+}
+
+#float {
+  float: left;
+  width: 30px;
+  height: 10px;
+  background-color: green;
+}
+</style>
+<div id="container"><span><span id="wide"></span></span> <span style="position: absolute"></span> <span id="float"></span></div>
