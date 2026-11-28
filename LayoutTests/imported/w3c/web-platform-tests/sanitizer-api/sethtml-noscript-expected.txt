@@ -1,0 +1,8 @@
+
+PASS setHTMLUnsafe() parses noscript as raw text (no options)
+PASS setHTMLUnsafe() parses noscript as raw text (empty options)
+PASS setHTMLUnsafe() parses noscript as raw text (sanitizer: undefined)
+PASS setHTMLUnsafe() parses noscript as raw text (empty sanitizer config)
+PASS setHTML() parses noscript as raw text when noscript is allowed
+PASS setHTML() removes noscript with its raw text content by default
+

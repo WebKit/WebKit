@@ -1,8 +1,8 @@
 
-FAIL ShadowRoot.referenceTarget defaults to null when shadow is created declaratively assert_equals: expected (object) null but got (string) ""
+PASS ShadowRoot.referenceTarget defaults to null when shadow is created declaratively
 PASS Empty shadowrootreferencetarget attribute is reflected as empty string
 PASS <template> shadowrootreferencetarget sets referenceTarget on shadow root
-FAIL ShadowRoot.referenceTarget defaults to null when shadow is created imperatively assert_equals: expected (object) null but got (string) ""
+PASS ShadowRoot.referenceTarget defaults to null when shadow is created imperatively
 PASS Passing empty string referencetarget in ShadowRootInit is reflected as empty string
 PASS ShadowRootInitDict can be used to set referenceTarget on shadow root
 

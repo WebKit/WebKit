@@ -6,6 +6,7 @@ PASS Script source set via Node.textContent drops trustworthiness.
 PASS Script source set via TrustedHTML sink Element.innerHTML drops trustworthiness.
 PASS Script source set via TrustedHTML sink Element.outerHTML drops trustworthiness.
 PASS Script source set via TrustedHTML sink Element.setHTMLUnsafe() drops trustworthiness.
+PASS Script source cannot be set via Element.setHTML().
 PASS Splitting script source via Text.splitText() keeps trustworthiness.
 PASS Normalizing script source via Element.normalize() keeps trustworthiness.
 PASS Script source set via Node.nodeValue drops trustworthiness.

@@ -1,0 +1,9 @@
+
+PASS Document.parseHTMLUnsafe: createParserOptions can inject a sanitizer config
+PASS Document.parseHTMLUnsafe: passing TrustedHTMLParserOptions directly works
+PASS Document.parseHTMLUnsafe: createParserOptions returning null fails
+PASS Document.parseHTMLUnsafe: createParserOptions returning undefined fails
+PASS Document.parseHTMLUnsafe: createParserOptions returning 0 fails
+PASS Document.parseHTMLUnsafe: createParserOptions returning 123 fails
+PASS Document.parseHTMLUnsafe: createParserOptions returning "foo" fails
+

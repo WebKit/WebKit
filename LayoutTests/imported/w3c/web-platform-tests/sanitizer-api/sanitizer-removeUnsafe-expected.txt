@@ -1,0 +1,10 @@
+
+PASS removeUnsafe removes the right elements and attributes
+PASS removeUnsafe with default config
+PASS removeUnsafe sets javascriptURLs to false
+PASS Baseline remove list is namespace specific #0: {"name":"script","namespace":"http://www.w3.org/1999/xhtml"}
+PASS Baseline remove list is namespace specific #1: {"name":"script","namespace":"http://www.w3.org/2000/svg"}
+PASS Baseline remove list is namespace specific #2: {"name":"use","namespace":"http://www.w3.org/2000/svg"}
+PASS Baseline remove list is namespace specific #3: {"name":"use","namespace":"http://www.w3.org/1999/xhtml"}
+PASS Baseline remove list is namespace specific #4: {"name":"script","namespace":"http://www.w3.org/1998/Math/MathML"}
+

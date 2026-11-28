@@ -29,6 +29,7 @@
 #include "HTMLInputStream.h"
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLTokenizer.h"
+#include "ParserSanitizerConfiguration.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
 #include <wtf/CheckedRef.h>
@@ -66,7 +67,7 @@ public:
 
     HTMLDocumentParser* asHTMLDocumentParser() final { return this; }
 
-    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
+    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
 
     // For HTMLParserScheduler.
     void resumeParsingAfterYield();
@@ -88,8 +89,8 @@ protected:
     HTMLTreeBuilder& treeBuilder() LIFETIME_BOUND { return m_treeBuilder; }
 
 private:
-    HTMLDocumentParser(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry*);
-    static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry* = nullptr);
+    HTMLDocumentParser(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry*, RefPtr<ParserSanitizerConfiguration>&&);
+    static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, CustomElementRegistry* = nullptr, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
 
     // DocumentParser
     void detach() final;

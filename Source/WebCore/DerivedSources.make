@@ -1168,6 +1168,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
     $(WebCore)/dom/CreateHTMLCallback.idl \
+    $(WebCore)/dom/CreateParserOptionsCallback.idl \
     $(WebCore)/dom/CreateScriptCallback.idl \
     $(WebCore)/dom/CreateScriptURLCallback.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
@@ -1287,6 +1288,16 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ReducerCallback.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
     $(WebCore)/dom/Scheduler.idl \
+    $(WebCore)/dom/ParseHTMLUnsafeOptions.idl \
+    $(WebCore)/dom/Sanitizer.idl \
+    $(WebCore)/dom/SanitizerAttributeNamespace.idl \
+    $(WebCore)/dom/SanitizerConfig.idl \
+    $(WebCore)/dom/SanitizerElementNamespace.idl \
+    $(WebCore)/dom/SanitizerElementNamespaceWithAttributes.idl \
+    $(WebCore)/dom/SanitizerPresets.idl \
+    $(WebCore)/dom/SanitizerProcessingInstruction.idl \
+    $(WebCore)/dom/SetHTMLOptions.idl \
+    $(WebCore)/dom/SetHTMLUnsafeOptions.idl \
     $(WebCore)/dom/SchedulerPostTaskCallback.idl \
     $(WebCore)/dom/SchedulerPostTaskOptions.idl \
     $(WebCore)/dom/SecurityPolicyViolationEvent.idl \
@@ -1316,6 +1327,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ToggleEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/TrustedHTML.idl \
+    $(WebCore)/dom/TrustedHTMLParserOptions.idl \
     $(WebCore)/dom/TrustedScript.idl \
     $(WebCore)/dom/TrustedScriptURL.idl \
     $(WebCore)/dom/TrustedTypePolicy.idl \

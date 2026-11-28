@@ -56,8 +56,8 @@ struct CustomElementConstructionData {
 class HTMLTreeBuilder {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTreeBuilder);
 public:
-    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, OptionSet<ParserContentPolicy>, const HTMLParserOptions&);
-    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, const HTMLParserOptions&, CustomElementRegistry*);
+    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, OptionSet<ParserContentPolicy>, const HTMLParserOptions&, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
+    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, const HTMLParserOptions&, CustomElementRegistry*, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
     void setShouldSkipLeadingNewline(bool);
 
     ~HTMLTreeBuilder();

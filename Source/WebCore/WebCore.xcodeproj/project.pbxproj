@@ -1656,6 +1656,32 @@
 		446DC64824A29DAB0061F390 /* PlaybackTargetClientContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447B137E2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */; };
+		73FDDAFCBE83F1CDA894E522 /* Sanitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBA8A660055274460BE3134 /* Sanitizer.h */; };
+		A76AE663D7A9AF51999766EA /* SanitizerAttributeNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 225E149405DC5629B4C60BAD /* SanitizerAttributeNamespace.h */; };
+		CECDF3DE761AD2FF9071374C /* SanitizerConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FEFA3A4B24E1C2B26089104 /* SanitizerConfig.h */; };
+		25654F6EF14DC22973399B52 /* SetHTMLOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A07DF8C9A3AE7A08354739 /* SetHTMLOptions.h */; };
+		7D067A37C387E2FFBF1CFEAE /* JSSetHTMLOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F4F19E14C73C59DB33C6E2 /* JSSetHTMLOptions.h */; };
+		2D126FA0BA6C3C2AF651713F /* SetHTMLUnsafeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 96689C7D5083A986BE316EE2 /* SetHTMLUnsafeOptions.h */; };
+		31844EBB3C474D94F38219D3 /* CreateParserOptionsCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CA2048E55A16E03D83285DD /* CreateParserOptionsCallback.h */; };
+		5078788272B2871E441B53A7 /* TrustedHTMLParserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F35B2FE59BEAB3C2559C657 /* TrustedHTMLParserOptions.h */; };
+		058CAB763A57A066715F51D1 /* UnsafeHTMLParserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 91AF1834C2CBED6DF97BE1E4 /* UnsafeHTMLParserOptions.h */; };
+		2D61DC03BECD8E81E0725837 /* JSCreateParserOptionsCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BF75276C4D577094C54C8F5 /* JSCreateParserOptionsCallback.h */; };
+		8EFB4C0D0CBA184F0A33C877 /* JSTrustedHTMLParserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 08039A983B12F7FFE04279CE /* JSTrustedHTMLParserOptions.h */; };
+		DC5788F4ADC1773ACCF403F3 /* JSSetHTMLUnsafeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9774FD74F26448509CB0AB98 /* JSSetHTMLUnsafeOptions.h */; };
+		B9E54AD14EFB9398BA57C660 /* ParseHTMLUnsafeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = EE9783C24898A4E1EC47F027 /* ParseHTMLUnsafeOptions.h */; };
+		BEE17FAC10CEAC8CF359D30D /* JSParseHTMLUnsafeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DA34D35758E743EBCFA22DE6 /* JSParseHTMLUnsafeOptions.h */; };
+		3EE0DBBA4725AA057F9801E0 /* ParserSanitizerConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5623BB1CDD6CA6DCEC2CDC /* ParserSanitizerConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		81F7199E7CB537527B34F11F /* SanitizerElementNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DC299766B2479FDAC405EB2 /* SanitizerElementNamespace.h */; };
+		7361F802ECBDD64B475702A9 /* SanitizerElementNamespaceWithAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7157CF11D33A05D1A2B0F9CB /* SanitizerElementNamespaceWithAttributes.h */; };
+		CB52A57BA0F01E6F4BBA458F /* SanitizerPresets.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAD4ED8C012373A1D5CF7E2 /* SanitizerPresets.h */; };
+		AE425D49DDAD9EE22653D9FF /* SanitizerProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = C522915D27C523619F6AB4F2 /* SanitizerProcessingInstruction.h */; };
+		93B6C71D2F513CBA22AC29D9 /* JSSanitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = C5DB8889D8D92748A37D0E47 /* JSSanitizer.h */; };
+		470FEE02C173CC918ABC4809 /* JSSanitizerAttributeNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F01D72B63A8D273835812AF /* JSSanitizerAttributeNamespace.h */; };
+		FE73569C640DB4D7F9D3D1D7 /* JSSanitizerConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FA98EE3C41F32B611965CB /* JSSanitizerConfig.h */; };
+		7792C6AEA214840D3152ECA3 /* JSSanitizerElementNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 285AADF01AA62D3C07429EB7 /* JSSanitizerElementNamespace.h */; };
+		AE33F8C45468D1D230E28460 /* JSSanitizerElementNamespaceWithAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 01507890C37BF3B629377601 /* JSSanitizerElementNamespaceWithAttributes.h */; };
+		82265914DEA624A08971BCBE /* JSSanitizerPresets.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCE1809B32DA420E27D2BDD /* JSSanitizerPresets.h */; };
+		68B09DFF00F643ED2AD26074 /* JSSanitizerProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = B09359C86688244BC45A00D1 /* JSSanitizerProcessingInstruction.h */; };
 		4480E06B2A67D86A0081EAE8 /* ContentVisibilityAutoStateChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4480E06A2A67D8690081EAE8 /* ContentVisibilityAutoStateChangeEvent.h */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		448C95942AC4417700161D5A /* RenderSVGResourceClipperInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 448C95932AC4417600161D5A /* RenderSVGResourceClipperInlines.h */; };
@@ -11788,6 +11814,58 @@
 		447958031643B47B001E0A7F /* ParsedContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsedContentType.h; sourceTree = "<group>"; };
 		447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSCaretPositionFromPointOptions.h; sourceTree = "<group>"; };
 		447B137D2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSCaretPositionFromPointOptions.cpp; sourceTree = "<group>"; };
+		E430DBC988251A1AF4D3CB3F /* Sanitizer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Sanitizer.idl; sourceTree = "<group>"; };
+		08EC8272F1B05A086E4C3B0C /* SanitizerAttributeNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerAttributeNamespace.idl; sourceTree = "<group>"; };
+		141DAFAB3876204D360DECA3 /* SanitizerConfig.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerConfig.idl; sourceTree = "<group>"; };
+		D4B7BCF2D887556A45C57358 /* SanitizerElementNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerElementNamespace.idl; sourceTree = "<group>"; };
+		F9992C329B46E1B5A6E65F99 /* SanitizerElementNamespaceWithAttributes.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerElementNamespaceWithAttributes.idl; sourceTree = "<group>"; };
+		45BDC247C1FB7C5D80988090 /* SanitizerPresets.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerPresets.idl; sourceTree = "<group>"; };
+		0B087EE386876F2973780A7A /* SanitizerProcessingInstruction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SanitizerProcessingInstruction.idl; sourceTree = "<group>"; };
+		1EBA8A660055274460BE3134 /* Sanitizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sanitizer.h; sourceTree = "<group>"; };
+		225E149405DC5629B4C60BAD /* SanitizerAttributeNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerAttributeNamespace.h; sourceTree = "<group>"; };
+		9FEFA3A4B24E1C2B26089104 /* SanitizerConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerConfig.h; sourceTree = "<group>"; };
+		DEA2BDA31D272C9DF65D29CA /* SetHTMLOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SetHTMLOptions.idl; sourceTree = "<group>"; };
+		E4A07DF8C9A3AE7A08354739 /* SetHTMLOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetHTMLOptions.h; sourceTree = "<group>"; };
+		0EFBA7BF97D0978898685433 /* JSSetHTMLOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSetHTMLOptions.cpp; sourceTree = "<group>"; };
+		49F4F19E14C73C59DB33C6E2 /* JSSetHTMLOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSetHTMLOptions.h; sourceTree = "<group>"; };
+		ACF28877F8B9A016EE4EB4E4 /* SetHTMLUnsafeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SetHTMLUnsafeOptions.idl; sourceTree = "<group>"; };
+		96689C7D5083A986BE316EE2 /* SetHTMLUnsafeOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetHTMLUnsafeOptions.h; sourceTree = "<group>"; };
+		4CA2048E55A16E03D83285DD /* CreateParserOptionsCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateParserOptionsCallback.h; sourceTree = "<group>"; };
+		C36F7179622B7C7CE5B5C996 /* CreateParserOptionsCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateParserOptionsCallback.idl; sourceTree = "<group>"; };
+		514F8B71A9628D3B842AD2D5 /* TrustedHTMLParserOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrustedHTMLParserOptions.cpp; sourceTree = "<group>"; };
+		7F35B2FE59BEAB3C2559C657 /* TrustedHTMLParserOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrustedHTMLParserOptions.h; sourceTree = "<group>"; };
+		94FA41B275201BDE9F1CE686 /* TrustedHTMLParserOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrustedHTMLParserOptions.idl; sourceTree = "<group>"; };
+		91AF1834C2CBED6DF97BE1E4 /* UnsafeHTMLParserOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnsafeHTMLParserOptions.h; sourceTree = "<group>"; };
+		588E033E5104A9A9768AE605 /* JSCreateParserOptionsCallback.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSCreateParserOptionsCallback.cpp; sourceTree = "<group>"; };
+		3BF75276C4D577094C54C8F5 /* JSCreateParserOptionsCallback.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSCreateParserOptionsCallback.h; sourceTree = "<group>"; };
+		B439BDCE95CDFE47F9B6354F /* JSTrustedHTMLParserOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSTrustedHTMLParserOptions.cpp; sourceTree = "<group>"; };
+		08039A983B12F7FFE04279CE /* JSTrustedHTMLParserOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSTrustedHTMLParserOptions.h; sourceTree = "<group>"; };
+		2C03F8C5A3F52DA6F7740D3C /* JSSetHTMLUnsafeOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSetHTMLUnsafeOptions.cpp; sourceTree = "<group>"; };
+		9774FD74F26448509CB0AB98 /* JSSetHTMLUnsafeOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSetHTMLUnsafeOptions.h; sourceTree = "<group>"; };
+		6ED04E43DBB80A492306ACA7 /* ParseHTMLUnsafeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ParseHTMLUnsafeOptions.idl; sourceTree = "<group>"; };
+		EE9783C24898A4E1EC47F027 /* ParseHTMLUnsafeOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParseHTMLUnsafeOptions.h; sourceTree = "<group>"; };
+		28245FE7AB7BA920F20361E5 /* JSParseHTMLUnsafeOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSParseHTMLUnsafeOptions.cpp; sourceTree = "<group>"; };
+		DA34D35758E743EBCFA22DE6 /* JSParseHTMLUnsafeOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSParseHTMLUnsafeOptions.h; sourceTree = "<group>"; };
+		5B5623BB1CDD6CA6DCEC2CDC /* ParserSanitizerConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserSanitizerConfiguration.h; sourceTree = "<group>"; };
+		7DC299766B2479FDAC405EB2 /* SanitizerElementNamespace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerElementNamespace.h; sourceTree = "<group>"; };
+		7157CF11D33A05D1A2B0F9CB /* SanitizerElementNamespaceWithAttributes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerElementNamespaceWithAttributes.h; sourceTree = "<group>"; };
+		1FAD4ED8C012373A1D5CF7E2 /* SanitizerPresets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerPresets.h; sourceTree = "<group>"; };
+		C522915D27C523619F6AB4F2 /* SanitizerProcessingInstruction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SanitizerProcessingInstruction.h; sourceTree = "<group>"; };
+		DAD0033DE3B28DE169D9DFE5 /* Sanitizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sanitizer.cpp; sourceTree = "<group>"; };
+		5478A41DD36BFBD8B195B4F4 /* JSSanitizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizer.cpp; sourceTree = "<group>"; };
+		C5DB8889D8D92748A37D0E47 /* JSSanitizer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizer.h; sourceTree = "<group>"; };
+		A0C755D626B6E5E9362943C8 /* JSSanitizerAttributeNamespace.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerAttributeNamespace.cpp; sourceTree = "<group>"; };
+		1F01D72B63A8D273835812AF /* JSSanitizerAttributeNamespace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerAttributeNamespace.h; sourceTree = "<group>"; };
+		EF0446F6B453713853A18F96 /* JSSanitizerConfig.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerConfig.cpp; sourceTree = "<group>"; };
+		C5FA98EE3C41F32B611965CB /* JSSanitizerConfig.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerConfig.h; sourceTree = "<group>"; };
+		32D17608338BBA2E9E8A4939 /* JSSanitizerElementNamespace.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerElementNamespace.cpp; sourceTree = "<group>"; };
+		285AADF01AA62D3C07429EB7 /* JSSanitizerElementNamespace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerElementNamespace.h; sourceTree = "<group>"; };
+		37559FFB6D8E27F64B274FA0 /* JSSanitizerElementNamespaceWithAttributes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerElementNamespaceWithAttributes.cpp; sourceTree = "<group>"; };
+		01507890C37BF3B629377601 /* JSSanitizerElementNamespaceWithAttributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerElementNamespaceWithAttributes.h; sourceTree = "<group>"; };
+		83B8FCA15F7D7AD3A2BC5C62 /* JSSanitizerPresets.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerPresets.cpp; sourceTree = "<group>"; };
+		FFCE1809B32DA420E27D2BDD /* JSSanitizerPresets.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerPresets.h; sourceTree = "<group>"; };
+		413C2F1CEFED0B06B3D6ABBB /* JSSanitizerProcessingInstruction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = JSSanitizerProcessingInstruction.cpp; sourceTree = "<group>"; };
+		B09359C86688244BC45A00D1 /* JSSanitizerProcessingInstruction.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSSanitizerProcessingInstruction.h; sourceTree = "<group>"; };
 		4480E06A2A67D8690081EAE8 /* ContentVisibilityAutoStateChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentVisibilityAutoStateChangeEvent.h; sourceTree = "<group>"; };
 		4480E06C2A67D8840081EAE8 /* ContentVisibilityAutoStateChangeEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ContentVisibilityAutoStateChangeEvent.cpp; sourceTree = "<group>"; };
 		4480E06D2A67D8920081EAE8 /* ContentVisibilityAutoStateChangeEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContentVisibilityAutoStateChangeEvent.idl; sourceTree = "<group>"; };
@@ -35868,6 +35946,30 @@
 				44D286ED2CAEB9BA00E02E84 /* JSCaretPosition.h */,
 				447B137D2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.cpp */,
 				447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */,
+				5478A41DD36BFBD8B195B4F4 /* JSSanitizer.cpp */,
+				C5DB8889D8D92748A37D0E47 /* JSSanitizer.h */,
+				A0C755D626B6E5E9362943C8 /* JSSanitizerAttributeNamespace.cpp */,
+				1F01D72B63A8D273835812AF /* JSSanitizerAttributeNamespace.h */,
+				EF0446F6B453713853A18F96 /* JSSanitizerConfig.cpp */,
+				C5FA98EE3C41F32B611965CB /* JSSanitizerConfig.h */,
+				0EFBA7BF97D0978898685433 /* JSSetHTMLOptions.cpp */,
+				49F4F19E14C73C59DB33C6E2 /* JSSetHTMLOptions.h */,
+				2C03F8C5A3F52DA6F7740D3C /* JSSetHTMLUnsafeOptions.cpp */,
+				9774FD74F26448509CB0AB98 /* JSSetHTMLUnsafeOptions.h */,
+				588E033E5104A9A9768AE605 /* JSCreateParserOptionsCallback.cpp */,
+				3BF75276C4D577094C54C8F5 /* JSCreateParserOptionsCallback.h */,
+				B439BDCE95CDFE47F9B6354F /* JSTrustedHTMLParserOptions.cpp */,
+				08039A983B12F7FFE04279CE /* JSTrustedHTMLParserOptions.h */,
+				28245FE7AB7BA920F20361E5 /* JSParseHTMLUnsafeOptions.cpp */,
+				DA34D35758E743EBCFA22DE6 /* JSParseHTMLUnsafeOptions.h */,
+				32D17608338BBA2E9E8A4939 /* JSSanitizerElementNamespace.cpp */,
+				285AADF01AA62D3C07429EB7 /* JSSanitizerElementNamespace.h */,
+				37559FFB6D8E27F64B274FA0 /* JSSanitizerElementNamespaceWithAttributes.cpp */,
+				01507890C37BF3B629377601 /* JSSanitizerElementNamespaceWithAttributes.h */,
+				83B8FCA15F7D7AD3A2BC5C62 /* JSSanitizerPresets.cpp */,
+				FFCE1809B32DA420E27D2BDD /* JSSanitizerPresets.h */,
+				413C2F1CEFED0B06B3D6ABBB /* JSSanitizerProcessingInstruction.cpp */,
+				B09359C86688244BC45A00D1 /* JSSanitizerProcessingInstruction.h */,
 				93F9B79E0BA6032600854064 /* JSCDATASection.cpp */,
 				93F9B79F0BA6032600854064 /* JSCDATASection.h */,
 				65DF31DF09D1CC60000BE325 /* JSCharacterData.cpp */,
@@ -42983,6 +43085,34 @@
 				44A678422CAE88A3003757E5 /* CaretPosition.idl */,
 				444DCC652CB69E9E0012022D /* CaretPositionFromPointOptions.h */,
 				444DCC642CB69E8A0012022D /* CaretPositionFromPointOptions.idl */,
+				E430DBC988251A1AF4D3CB3F /* Sanitizer.idl */,
+				08EC8272F1B05A086E4C3B0C /* SanitizerAttributeNamespace.idl */,
+				141DAFAB3876204D360DECA3 /* SanitizerConfig.idl */,
+				DEA2BDA31D272C9DF65D29CA /* SetHTMLOptions.idl */,
+				ACF28877F8B9A016EE4EB4E4 /* SetHTMLUnsafeOptions.idl */,
+				6ED04E43DBB80A492306ACA7 /* ParseHTMLUnsafeOptions.idl */,
+				D4B7BCF2D887556A45C57358 /* SanitizerElementNamespace.idl */,
+				F9992C329B46E1B5A6E65F99 /* SanitizerElementNamespaceWithAttributes.idl */,
+				45BDC247C1FB7C5D80988090 /* SanitizerPresets.idl */,
+				0B087EE386876F2973780A7A /* SanitizerProcessingInstruction.idl */,
+				1EBA8A660055274460BE3134 /* Sanitizer.h */,
+				225E149405DC5629B4C60BAD /* SanitizerAttributeNamespace.h */,
+				9FEFA3A4B24E1C2B26089104 /* SanitizerConfig.h */,
+				E4A07DF8C9A3AE7A08354739 /* SetHTMLOptions.h */,
+				96689C7D5083A986BE316EE2 /* SetHTMLUnsafeOptions.h */,
+				4CA2048E55A16E03D83285DD /* CreateParserOptionsCallback.h */,
+				C36F7179622B7C7CE5B5C996 /* CreateParserOptionsCallback.idl */,
+				514F8B71A9628D3B842AD2D5 /* TrustedHTMLParserOptions.cpp */,
+				7F35B2FE59BEAB3C2559C657 /* TrustedHTMLParserOptions.h */,
+				94FA41B275201BDE9F1CE686 /* TrustedHTMLParserOptions.idl */,
+				91AF1834C2CBED6DF97BE1E4 /* UnsafeHTMLParserOptions.h */,
+				EE9783C24898A4E1EC47F027 /* ParseHTMLUnsafeOptions.h */,
+				5B5623BB1CDD6CA6DCEC2CDC /* ParserSanitizerConfiguration.h */,
+				7DC299766B2479FDAC405EB2 /* SanitizerElementNamespace.h */,
+				7157CF11D33A05D1A2B0F9CB /* SanitizerElementNamespaceWithAttributes.h */,
+				1FAD4ED8C012373A1D5CF7E2 /* SanitizerPresets.h */,
+				C522915D27C523619F6AB4F2 /* SanitizerProcessingInstruction.h */,
+				DAD0033DE3B28DE169D9DFE5 /* Sanitizer.cpp */,
 				6550B693099DF0270090D781 /* CDATASection.cpp */,
 				6550B694099DF0270090D781 /* CDATASection.h */,
 				85089CC90A98C2AB00A275AA /* CDATASection.idl */,
@@ -45085,6 +45215,32 @@
 				0742C4FD2926C73C00D26990 /* CaretAnimator.h in Headers */,
 				44A678412CAE887B003757E5 /* CaretPosition.h in Headers */,
 				444DCC662CB69E9E0012022D /* CaretPositionFromPointOptions.h in Headers */,
+				73FDDAFCBE83F1CDA894E522 /* Sanitizer.h in Headers */,
+				A76AE663D7A9AF51999766EA /* SanitizerAttributeNamespace.h in Headers */,
+				CECDF3DE761AD2FF9071374C /* SanitizerConfig.h in Headers */,
+				25654F6EF14DC22973399B52 /* SetHTMLOptions.h in Headers */,
+				2D126FA0BA6C3C2AF651713F /* SetHTMLUnsafeOptions.h in Headers */,
+				31844EBB3C474D94F38219D3 /* CreateParserOptionsCallback.h in Headers */,
+				5078788272B2871E441B53A7 /* TrustedHTMLParserOptions.h in Headers */,
+				058CAB763A57A066715F51D1 /* UnsafeHTMLParserOptions.h in Headers */,
+				2D61DC03BECD8E81E0725837 /* JSCreateParserOptionsCallback.h in Headers */,
+				8EFB4C0D0CBA184F0A33C877 /* JSTrustedHTMLParserOptions.h in Headers */,
+				B9E54AD14EFB9398BA57C660 /* ParseHTMLUnsafeOptions.h in Headers */,
+				3EE0DBBA4725AA057F9801E0 /* ParserSanitizerConfiguration.h in Headers */,
+				81F7199E7CB537527B34F11F /* SanitizerElementNamespace.h in Headers */,
+				7361F802ECBDD64B475702A9 /* SanitizerElementNamespaceWithAttributes.h in Headers */,
+				CB52A57BA0F01E6F4BBA458F /* SanitizerPresets.h in Headers */,
+				AE425D49DDAD9EE22653D9FF /* SanitizerProcessingInstruction.h in Headers */,
+				93B6C71D2F513CBA22AC29D9 /* JSSanitizer.h in Headers */,
+				470FEE02C173CC918ABC4809 /* JSSanitizerAttributeNamespace.h in Headers */,
+				FE73569C640DB4D7F9D3D1D7 /* JSSanitizerConfig.h in Headers */,
+				7D067A37C387E2FFBF1CFEAE /* JSSetHTMLOptions.h in Headers */,
+				DC5788F4ADC1773ACCF403F3 /* JSSetHTMLUnsafeOptions.h in Headers */,
+				BEE17FAC10CEAC8CF359D30D /* JSParseHTMLUnsafeOptions.h in Headers */,
+				7792C6AEA214840D3152ECA3 /* JSSanitizerElementNamespace.h in Headers */,
+				AE33F8C45468D1D230E28460 /* JSSanitizerElementNamespaceWithAttributes.h in Headers */,
+				82265914DEA624A08971BCBE /* JSSanitizerPresets.h in Headers */,
+				68B09DFF00F643ED2AD26074 /* JSSanitizerProcessingInstruction.h in Headers */,
 				E4F0BE3125712F6E009E7431 /* CaretRectComputation.h in Headers */,
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
 				57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */,

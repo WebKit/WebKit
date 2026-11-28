@@ -76,9 +76,13 @@ class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
 class TreeScope;
+class TrustedHTML;
 class WebCoreOpaqueRoot;
 
 struct SerializedNode;
+struct SetHTMLOptions;
+struct SetHTMLUnsafeOptions;
+class TrustedHTMLParserOptions;
 
 enum class TextDirection : bool;
 
@@ -210,6 +214,15 @@ public:
     ExceptionOr<void> after(FixedVector<NodeOrString>&&);
     ExceptionOr<void> replaceWith(FixedVector<NodeOrString>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
+
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#html-insertion-methods
+    ExceptionOr<void> beforeHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> afterHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> replaceWithHTML(String&&, SetHTMLOptions&&);
+    ExceptionOr<void> beforeHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> afterHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<void> replaceWithHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&&);
+    ExceptionOr<RefPtr<ContainerNode>> parentForHTMLInsertion();
 
     // Other methods (not part of DOM)
 

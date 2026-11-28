@@ -1,0 +1,41 @@
+
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Element.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Element.appendHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Element.prependHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Node.afterHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true is reported and allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is reported and allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty sanitizer config is not reported
+PASS Document.parseHTMLUnsafe: string with a sanitizer config is reported twice and allowed
+

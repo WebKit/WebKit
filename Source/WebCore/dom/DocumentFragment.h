@@ -25,6 +25,7 @@
 
 #include <WebCore/ContainerNode.h>
 #include <WebCore/ParserContentPolicy.h>
+#include <WebCore/ParserSanitizerConfiguration.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
     static Ref<DocumentFragment> createForInnerOuterHTML(Document&);
 
-    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
+    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
     WEBCORE_EXPORT bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     bool canContainRangeEndPoint() const final { return true; }

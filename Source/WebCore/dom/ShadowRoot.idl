@@ -37,7 +37,7 @@
     // FIXME: `host` should not be nullable.
     readonly attribute Element? host;
     readonly attribute CustomElementRegistry? customElementRegistry;
-    [EnabledBySetting=ShadowRootReferenceTargetEnabled] attribute [AtomString] DOMString referenceTarget;
+    [EnabledBySetting=ShadowRootReferenceTargetEnabled] attribute [AtomString] DOMString? referenceTarget;
     attribute EventHandler onslotchange;
 };
 

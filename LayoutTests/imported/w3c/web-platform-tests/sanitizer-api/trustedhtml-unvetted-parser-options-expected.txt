@@ -1,0 +1,143 @@
+
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.setHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.setHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Element.setHTMLUnsafe: string with a sanitizer config throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.appendHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Element.appendHTMLUnsafe: string with a sanitizer config throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Element.prependHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Element.prependHTMLUnsafe: string with a sanitizer config throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with no options is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with no options is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with no options is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.beforeHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.afterHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Node.afterHTMLUnsafe: string with a sanitizer config throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with a Sanitizer throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts true is allowed, as runScripts is not an option
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config is allowed, as runScripts is not an option
+PASS Document.parseHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts false is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed
+PASS Document.parseHTMLUnsafe: string with a sanitizer config throws
+PASS Range.createContextualFragment: TrustedHTML is allowed, as its runScripts is not author-supplied
+PASS Element.innerHTML: TrustedHTML is allowed
+

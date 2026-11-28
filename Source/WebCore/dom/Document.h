@@ -47,6 +47,7 @@
 #include <WebCore/MutationObserverOptions.h>
 #include <WebCore/OriginKeyed.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ParserSanitizerConfiguration.h>
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PseudoElementIdentifier.h>
 #include <WebCore/QualifiedName.h>
@@ -318,6 +319,9 @@ struct ElementCreationOptions;
 struct FocusOptions;
 struct ImportNodeOptions;
 struct IntersectionObserverData;
+struct ParseHTMLUnsafeOptions;
+class TrustedHTMLParserOptions;
+struct SetHTMLOptions;
 struct OwnerPermissionsPolicyData;
 struct QuerySelectorResults;
 struct SecurityPolicyViolationEventInit;
@@ -546,8 +550,11 @@ public:
     bool shouldNotFireMutationEvents() const { return m_shouldNotFireMutationEvents; }
     void setShouldNotFireMutationEvents(bool fire) { m_shouldNotFireMutationEvents = fire; }
 
-    void setMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>);
-    static ExceptionOr<Ref<Document>> parseHTMLUnsafe(Document&, Variant<Ref<TrustedHTML>, String>&&);
+    void setMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
+    static ExceptionOr<Ref<Document>> parseHTMLUnsafe(Document&, Variant<Ref<TrustedHTML>, String>&&, Variant<Ref<TrustedHTMLParserOptions>, ParseHTMLUnsafeOptions>&&);
+    static ExceptionOr<Ref<Document>> parseHTML(Document&, String&&, SetHTMLOptions&&);
+
+    RefPtr<ParserSanitizerConfiguration> takeParserSanitizerConfiguration();
 
     Element* elementForAccessKey(const String& key);
     inline void invalidateAccessKeyCache(); // Defined in DocumentInlines.h
@@ -2995,6 +3002,8 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 
     const RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
+
+    RefPtr<ParserSanitizerConfiguration> m_parserSanitizerConfiguration;
 
     const std::optional<FrameIdentifier> m_frameIdentifier;
     std::optional<bool> m_cachedCookiesEnabled;

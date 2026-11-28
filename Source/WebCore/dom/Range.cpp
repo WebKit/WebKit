@@ -33,6 +33,7 @@
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
 #include "DocumentQuirks.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentType.h"
 #include "ElementInlines.h"
 #include "Event.h"
@@ -51,6 +52,7 @@
 #include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "TrustedType.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include "WebCoreOpaqueRootInlines.h"
@@ -760,10 +762,11 @@ String Range::toString() const
 ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<TrustedHTML>, String>&& markup)
 {
     Ref node = startContainer();
-    auto stringValueHolder = trustedTypeCompliantString(protect(node->document().contextDocument()), WTF::move(markup), "Range createContextualFragment"_s);
-
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
+    String compliantMarkup;
+    auto resolved = resolveUnsafeHTMLInput(protect(node->document()), WTF::move(markup), SetHTMLUnsafeOptions { { }, true }, "Range createContextualFragment"_s, compliantMarkup, false, !node->document().isXMLDocument());
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
     RefPtr<Element> element;
     if (isAnyOf<Document, DocumentFragment>(node))
@@ -774,7 +777,10 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<T
         element = node->parentElement();
     if (!element || (element->document().isHTMLDocument() && is<HTMLHtmlElement>(*element)))
         element = HTMLBodyElement::create(protect(node->document()));
-    return WebCore::createContextualFragment(*element, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+    OptionSet<ParserContentPolicy> policy { ParserContentPolicy::AllowScriptingContent };
+    if (resolvedOptions.runScripts || !node->document().settingsValues().sanitizerAPIEnabled)
+        policy.add(ParserContentPolicy::DoNotMarkAlreadyStarted);
+    return WebCore::createContextualFragment(*element, compliantMarkup, policy, WTF::move(resolvedOptions.sanitizer));
 }
 
 ExceptionOr<RefPtr<Node>> Range::checkNodeOffsetPair(Node& node, unsigned offset)

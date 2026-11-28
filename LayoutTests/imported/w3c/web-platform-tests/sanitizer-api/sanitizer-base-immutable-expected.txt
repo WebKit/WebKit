@@ -1,0 +1,29 @@
+
+PASS Modifying a Sanitizer instance does not change subsequent new Sanitizer() instances
+PASS allowElement() on new Sanitizer() does not affect subsequent instances
+PASS removeElement() on new Sanitizer() does not affect subsequent instances
+PASS replaceElementWithChildren() on new Sanitizer() does not affect subsequent instances
+PASS allowAttribute() on new Sanitizer() does not affect subsequent instances
+PASS removeAttribute() on new Sanitizer() does not affect subsequent instances
+PASS allowProcessingInstruction() on new Sanitizer() does not affect subsequent instances
+PASS removeProcessingInstruction() on new Sanitizer() does not affect subsequent instances
+PASS setComments() on new Sanitizer() does not affect subsequent instances
+PASS setDataAttributes() on new Sanitizer() does not affect subsequent instances
+PASS removeUnsafe() on new Sanitizer() does not affect subsequent instances
+PASS Mutating the object returned by sanitizer.get() does not affect the Sanitizer or default configuration
+PASS Repeated calls to sanitizer.get() return distinct object copies
+PASS Modifying a Sanitizer after removeUnsafe() does not change the built-in safe baseline configuration
+PASS Mutating config returned from baseline sanitizer does not affect subsequent removeUnsafe() calls
+PASS Modifying input configuration dictionary after new Sanitizer(config) does not affect the Sanitizer
+PASS Sanitization with Element.prototype.setHTML() does not change default base configuration
+PASS Sanitization with Document.parseHTML() does not change default base configuration
+PASS A modified Sanitizer used in setHTML() does not affect default configuration or other Sanitizers
+PASS s.get() is unchanged after Element.prototype.setHTML() when Sanitizer has unsafe allowlist entries
+PASS s.get() is unchanged after Element.prototype.setHTML() when Sanitizer has unsafe remove-list configuration
+PASS s.get() is unchanged after Document.parseHTML() when Sanitizer has unsafe entries
+PASS Sanitization with appendHTML() does not change default base configuration or mutate passed Sanitizer
+PASS Sanitization with prependHTML() does not change default base configuration or mutate passed Sanitizer
+PASS Sanitization with beforeHTML() does not change default base configuration or mutate passed Sanitizer
+PASS Sanitization with afterHTML() does not change default base configuration or mutate passed Sanitizer
+PASS Sanitization with replaceWithHTML() does not change default base configuration or mutate passed Sanitizer
+

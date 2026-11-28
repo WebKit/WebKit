@@ -426,6 +426,7 @@ namespace WebCore {
     macro(SQLResultSet) \
     macro(SQLResultSetRowList) \
     macro(SQLTransaction) \
+    macro(Sanitizer) \
     macro(Scheduler) \
     macro(ScreenLuminance) \
     macro(ScreenOrientation) \
@@ -464,6 +465,7 @@ namespace WebCore {
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
     macro(TrustedHTML) \
+    macro(TrustedHTMLParserOptions) \
     macro(TrustedScript) \
     macro(TrustedScriptURL) \
     macro(TrustedTypePolicy) \

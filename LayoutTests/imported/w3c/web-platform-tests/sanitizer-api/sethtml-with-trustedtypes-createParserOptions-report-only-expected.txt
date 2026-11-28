@@ -1,0 +1,136 @@
+
+PASS Element.setHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Element.appendHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Element.prependHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS ShadowRoot.setHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS ShadowRoot.appendHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS ShadowRoot.prependHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Node.beforeHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Node.afterHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Node.replaceWithHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Element.innerHTML: without default policy, report-only does not throw and reports violation
+PASS Document.parseHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Initialize default policy
+PASS Element.setHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Element.setHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Element.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Element.appendHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Element.appendHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Element.appendHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Element.prependHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Element.prependHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Element.prependHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS ShadowRoot.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS ShadowRoot.appendHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS ShadowRoot.appendHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS ShadowRoot.appendHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS ShadowRoot.prependHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS ShadowRoot.prependHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS ShadowRoot.prependHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Node.beforeHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Node.beforeHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Node.beforeHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Node.afterHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Node.afterHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Node.afterHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Node.replaceWithHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Node.replaceWithHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+PASS Node.replaceWithHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation
+PASS Element.innerHTML: default policy createParserOptions with sanitizer does not report violation
+PASS Document.parseHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation
+PASS Element.setHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Element.setHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.appendHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Element.appendHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.prependHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Element.prependHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.afterHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Node.afterHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.innerHTML: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Document.parseHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.setHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Element.appendHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Element.prependHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Node.afterHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Element.innerHTML: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Document.parseHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode
+PASS Element.setHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Element.appendHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Element.prependHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Node.afterHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Element.innerHTML: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Document.parseHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode
+PASS Element.setHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Element.setHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.appendHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Element.appendHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.prependHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Element.prependHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.afterHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Node.afterHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.innerHTML: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Document.parseHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation
+PASS Element.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Element.appendHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Element.prependHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Node.afterHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Element.innerHTML: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Document.parseHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode
+PASS Element.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Element.appendHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Element.prependHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.appendHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS ShadowRoot.prependHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Node.beforeHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Node.afterHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Node.replaceWithHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Element.innerHTML: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Document.parseHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode
+PASS Element.setHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS Element.appendHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS Element.prependHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS ShadowRoot.setHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS ShadowRoot.appendHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS ShadowRoot.prependHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS Node.beforeHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS Node.afterHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+PASS Node.replaceWithHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode
+

@@ -1,0 +1,62 @@
+
+PASS Sanitizer Adoption Agency Algorithm testcases
+PASS Testcase #0, "<b><i onclick="alert(1)"><div></b>x", config: "undefined".
+PASS Testcase #1, "<b><div>Text</b></div>", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #2, "<b><i><div>Text</b></div>", config: "{ "replaceWithChildrenElements": ["i"] }".
+PASS Testcase #3, "<b><div>Text</b>", config: "{ "removeElements": ["div"] }".
+PASS Testcase #4, "<b><div><b>x", config: "{ "removeElements": ["div"] }".
+PASS Testcase #5, "<b>1<p>foo</b>bar", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #6, "<b><div>Text</b>", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #7, "<a href="https://web-platform.test/1"><div><a href="https://web-platform.test/2">Click</a></div></a>", config: "{ "removeElements": ["div"] }".
+PASS Testcase #8, "<b><i><p>foo</b>bar</i>", config: "{ "removeElements": ["p"] }".
+PASS Testcase #9, "<b><i><p>foo</b>bar</i>", config: "{ "removeElements": ["i"] }".
+PASS Testcase #10, "<b><i><div>Text</b></i>", config: "{ "removeElements": ["div"], "replaceWithChildrenElements": ["i"] }".
+PASS Testcase #11, "<b><i onclick="alert(1)"><u onclick="alert(2)"><div></b>x", config: "undefined".
+PASS Testcase #12, "<b><em><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #13, "<b><em><s><div>Text</b>after</div>more", config: "{ "replaceWithChildrenElements": ["div", "s"] }".
+PASS Testcase #14, "<b><em><u><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #15, "<b><u><em><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["div", "em"] }".
+PASS Testcase #16, "<b><em><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["div"], "removeElements": ["em"] }".
+PASS Testcase #17, "<b><em><div><p>Text</b>after", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #18, "<b><div><section>Text</b>after", config: "{ "replaceWithChildrenElements": ["div", "section"] }".
+PASS Testcase #19, "<b><div><span>Text</b>after", config: "{ "replaceWithChildrenElements": ["span"] }".
+PASS Testcase #20, "<b><em><div>Text</b>after</div>more", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #21, "<b><div><div><div><div><div><div><div><div><section>Text</b>after", config: "{ "replaceWithChildrenElements": ["section"] }".
+PASS Testcase #22, "<b><div><div><div><div><div><div><div><div><section>Text</b>after", config: "{ "replaceWithChildrenElements": ["section", "b"] }".
+PASS Testcase #23, "<b><div><div><div><div><div><div><div><div><section><span>Text</b>after", config: "{ "replaceWithChildrenElements": ["section", "span"] }".
+PASS Testcase #24, "<b><div><div><div><div><div><div><div><div><section><i><span>Text</b>after", config: "{ "replaceWithChildrenElements": ["section", "span"] }".
+PASS Testcase #25, "<table><b><div>x</b>y", config: "undefined".
+PASS Testcase #26, "<table><b><div>x</b>y", config: "{ "removeElements": ["table"] }".
+PASS Testcase #27, "<table><b><div>x</b>y", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #28, "<table><tbody><b><div>x</b>y", config: "{ "replaceWithChildrenElements": ["tbody"] }".
+PASS Testcase #29, "<table><b><div>x</b>y", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #30, "<b><div>Text</b>after", config: "{ "removeElements": ["b"] }".
+PASS Testcase #31, "<p><b>x</p>y", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #32, "<p><b>x</p>y", config: "{ "removeElements": ["b"] }".
+PASS Testcase #33, "<p><i onclick="1">x</p>y", config: "undefined".
+PASS Testcase #34, "<p><b a="1"><b a="2"><b a="3"><b a="4"></p>x", config: "{ "removeAttributes": ["a"] }".
+PASS Testcase #35, "<b><i><u><p>foo</b>bar", config: "{ "removeElements": ["i"] }".
+PASS Testcase #36, "<b><div><p>Text</b>after", config: "{ "removeElements": ["p"] }".
+PASS Testcase #37, "<b><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["b", "div"] }".
+PASS Testcase #38, "<a href="1">x<div>y<a href="2">z", config: "{ "replaceWithChildrenElements": ["a"] }".
+PASS Testcase #39, "<a href="1">x<div>y<a href="2">z", config: "{ "removeElements": ["a"] }".
+PASS Testcase #40, "<b><span><div>x</b>y", config: "{ "removeElements": ["span"] }".
+PASS Testcase #41, "<b><div><table></b>x", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #42, "<b><i><div>Text</b>after", config: "{ "removeElements": ["div"] }".
+PASS Testcase #43, "<b><i><div>Text</b>after", config: "{ "replaceWithChildrenElements": ["i", "div"] }".
+PASS Testcase #44, "<div><b><p>x</b>y", config: "{ "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #45, "<div><b><p>x</b>y", config: "{ "removeElements": ["div"] }".
+PASS Testcase #46, "<b><u><em><div>Text</b>after</div>more", config: "{ "replaceWithChildrenElements": ["div", "em"] }".
+PASS Testcase #47, "<b><u><em><div>Text</b>after</div>more", config: "{ "replaceWithChildrenElements": ["div", "em"], "removeElements": ["u"] }".
+PASS Testcase #48, "<table><b><div>x</b><input type="hidden">", config: "{ "replaceWithChildrenElements": ["div"] }".
+FAIL Testcase #49, "<article><b><i><section><div><div><div><div><div><div><div><div>x</b>y</article>z", config: "undefined". assert_true: [object HTMLElement].isEqual([object HTMLElement]) fails. Path: <DIV> / <B>. expected true got false
+FAIL Testcase #50, "<article><b><i><section><div><div><div><div><div><div><div><div>x</b>y</article>z", config: "{ "replaceWithChildrenElements": ["section"] }". assert_true: [object HTMLElement].isEqual([object HTMLElement]) fails. Path: <DIV> / <B>. expected true got false
+PASS Testcase #51, "<b><div><div><div><div><div><div><div><div>x</b>y", config: "undefined".
+PASS Testcase #52, "<b><div><div><div><div><div><div><div><div>x</b>y", config: "{ "replaceWithChildrenElements": ["b"] }".
+PASS Testcase #53, "<b><u>1<p>foo</b><i>bar</i>baz", config: "{ "replaceWithChildrenElements": ["u"] }".
+PASS Testcase #54, "<table><b><i><div>x</b>y", config: "{ "removeElements": ["i"], "replaceWithChildrenElements": ["div"] }".
+PASS Testcase #55, "<table><b><i><div>x</b>y</div><span>z</span>", config: "{ "replaceWithChildrenElements": ["i", "div"] }".
+PASS Testcase #56, "<table><b><i><em><div>x</b>y</em><span>z</span></i>", config: "{ "removeElements": ["em"], "replaceWithChildrenElements": ["i", "div"] }".
+PASS Testcase #57, "<table><b><em><div>x</b>y</div><span>z</span>", config: "{ "replaceWithChildrenElements": ["em"] }".
+PASS Testcase #58, "<table><b><div>x</b>y", config: "{ "removeElements": ["b"], "replaceWithChildrenElements": ["div"] }".
+

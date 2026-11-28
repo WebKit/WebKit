@@ -1,0 +1,10 @@
+
+PASS Testcase #0 with xmlDoc.setHTML("Hello!")
+FAIL Testcase #0, shadow inside xmlDoc, shadowroot.setHTML("Hello!") The operation is not supported.
+PASS Testcase #1 with xmlDoc.setHTML("<br>")
+FAIL Testcase #1, shadow inside xmlDoc, shadowroot.setHTML("<br>") The operation is not supported.
+PASS Testcase #2 with xmlDoc.setHTML("<p>Hi</p>")
+FAIL Testcase #2, shadow inside xmlDoc, shadowroot.setHTML("<p>Hi</p>") The operation is not supported.
+PASS Testcase #3 with xmlDoc.setHTML("<iframe></iframe><p>text</p>")
+FAIL Testcase #3, shadow inside xmlDoc, shadowroot.setHTML("<iframe></iframe><p>text</p>") The operation is not supported.
+

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class TrustedHTML;
+class TrustedHTMLParserOptions;
 class TrustedScript;
 class TrustedScriptURL;
 class WebCoreOpaqueRoot;
@@ -56,6 +57,8 @@ public:
     ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScript>> createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    ExceptionOr<Ref<TrustedHTMLParserOptions>> createParserOptions(SetHTMLUnsafeOptions&&, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    const TrustedTypePolicyOptions& options() const { return m_options; }
     ExceptionOr<String> getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
     const String& name() const { return m_name; }
 

@@ -233,6 +233,7 @@
 #include "PageSwapEvent.h"
 #include "PageTransitionEvent.h"
 #include "PaintWorkletGlobalScope.h"
+#include "ParseHTMLUnsafeOptions.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
 #include "PingLoader.h"
@@ -284,6 +285,7 @@
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "SWClientConnection.h"
+#include "Sanitizer.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
@@ -307,6 +309,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerProvider.h"
+#include "SetHTMLOptions.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "Site.h"
@@ -351,6 +354,7 @@
 #include "TreeScopeInlines.h"
 #include "TreeWalker.h"
 #include "TrustedType.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
@@ -1297,12 +1301,13 @@ ReportingScope& Document::ensureReportingScope()
     return *m_reportingScope;
 }
 
-void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
 {
     ASSERT(!hasChildNodes());
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
-    if (this->contentType() == textHTMLContentTypeAtom()) {
+    m_parserSanitizerConfiguration = WTF::move(sanitizer);
+    if (!m_parserSanitizerConfiguration && this->contentType() == textHTMLContentTypeAtom()) {
         Ref html = HTMLHtmlElement::create(*this);
         Ref body = HTMLBodyElement::create(*this);
         html->appendChild(body);
@@ -1320,14 +1325,41 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
     close();
 }
 
-ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, ParseHTMLUnsafeOptions>&& options)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(context.contextDocument()), WTF::move(html), "Document parseHTMLUnsafe"_s);
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
+    UnsafeHTMLParserOptions unsafeOptions = WTF::switchOn(WTF::move(options),
+        [](Ref<TrustedHTMLParserOptions>&& trustedOptions) -> UnsafeHTMLParserOptions {
+            return WTF::move(trustedOptions);
+        },
+        [](ParseHTMLUnsafeOptions&& dictionary) -> UnsafeHTMLParserOptions {
+            return SetHTMLUnsafeOptions { WTF::move(dictionary.sanitizer), false };
+        });
+
+    String markup;
+    auto resolved = resolveUnsafeHTMLInput(context, WTF::move(html), WTF::move(unsafeOptions), "Document parseHTMLUnsafe"_s, markup);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
     Ref document = HTMLDocument::create(protect(context.contextDocument()), URL { }, context.securityOriginPolicy());
-    document->setMarkupUnsafe(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots });
+    document->setMarkupUnsafe(markup, { ParserContentPolicy::AllowDeclarativeShadowRoots }, WTF::move(resolvedOptions.sanitizer));
+    return { document };
+}
+
+RefPtr<ParserSanitizerConfiguration> Document::takeParserSanitizerConfiguration()
+{
+    return std::exchange(m_parserSanitizerConfiguration, nullptr);
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-parsehtml
+ExceptionOr<Ref<Document>> Document::parseHTML(Document& context, String&& html, SetHTMLOptions&& options)
+{
+    auto sanitizerOrException = Sanitizer::parserConfigurationFromOptions(WTF::move(options.sanitizer), true);
+    if (sanitizerOrException.hasException())
+        return sanitizerOrException.releaseException();
+
+    Ref document = HTMLDocument::create(protect(context.contextDocument()), URL { }, context.securityOriginPolicy());
+    document->setMarkupUnsafe(html, { ParserContentPolicy::AllowDeclarativeShadowRoots }, sanitizerOrException.releaseReturnValue());
     return { document };
 }
 

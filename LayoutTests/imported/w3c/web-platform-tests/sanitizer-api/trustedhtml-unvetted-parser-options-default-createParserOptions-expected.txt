@@ -1,0 +1,21 @@
+
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted
+

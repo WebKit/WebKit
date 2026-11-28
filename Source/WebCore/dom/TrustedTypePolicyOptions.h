@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CreateHTMLCallback.h"
+#include "CreateParserOptionsCallback.h"
 #include "CreateScriptCallback.h"
 #include "CreateScriptURLCallback.h"
 
@@ -35,6 +36,7 @@ struct TrustedTypePolicyOptions {
     const RefPtr<CreateHTMLCallback> createHTML;
     const RefPtr<CreateScriptCallback> createScript;
     const RefPtr<CreateScriptURLCallback> createScriptURL;
+    const RefPtr<CreateParserOptionsCallback> createParserOptions;
 };
 
 } // namespace WebCore

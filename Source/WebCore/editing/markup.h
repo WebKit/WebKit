@@ -32,6 +32,7 @@
 #include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/ParserContentPolicy.h>
+#include <WebCore/ParserSanitizerConfiguration.h>
 #include <WebCore/ShadowRoot.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -53,6 +54,8 @@ class QualifiedName;
 class VisibleSelection;
 
 struct PresentationSize;
+struct SetHTMLOptions;
+struct SetHTMLUnsafeOptions;
 struct SimpleRange;
 
 template<typename> class ExceptionOr;
@@ -86,10 +89,17 @@ private:
 
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const String& text);
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
-ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, OptionSet<ParserContentPolicy>, CustomElementRegistry*, Element::CustomElementRegistryKind = Element::CustomElementRegistryKind::Window);
+ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, OptionSet<ParserContentPolicy>, CustomElementRegistry*, Element::CustomElementRegistryKind = Element::CustomElementRegistryKind::Window, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, String&& sourceString, const String& sourceMIMEType);
 Ref<DocumentFragment> createFragmentForImageAndURL(Document&, const String&, PresentationSize preferredSize);
-ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, OptionSet<ParserContentPolicy>);
+ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, OptionSet<ParserContentPolicy>, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#filter-and-pre-insert-html
+ExceptionOr<void> filterAndPreInsertHTML(ContainerNode& parent, Node* refChild, const String& markup, SetHTMLOptions&&);
+ExceptionOr<void> filterAndPreInsertHTMLUnsafe(ContainerNode& parent, Node* refChild, const String& markup, RefPtr<ParserSanitizerConfiguration>&&, bool runScripts);
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#filter-and-replace-with-html
+ExceptionOr<void> filterAndReplaceWithHTML(ContainerNode& parent, Node&, const String& markup, SetHTMLOptions&&);
+ExceptionOr<void> filterAndReplaceWithHTMLUnsafe(ContainerNode& parent, Node&, const String& markup, RefPtr<ParserSanitizerConfiguration>&&, bool runScripts);
 
 bool isPlainTextMarkup(Node*);
 

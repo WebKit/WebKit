@@ -1492,6 +1492,7 @@ $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
 $(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
 $(PROJECT_DIR)/dom/CreateHTMLCallback.idl
+$(PROJECT_DIR)/dom/CreateParserOptionsCallback.idl
 $(PROJECT_DIR)/dom/CreateScriptCallback.idl
 $(PROJECT_DIR)/dom/CreateScriptURLCallback.idl
 $(PROJECT_DIR)/dom/CustomElementRegistry.idl
@@ -1617,6 +1618,16 @@ $(PROJECT_DIR)/dom/Range.idl
 $(PROJECT_DIR)/dom/ReducerCallback.idl
 $(PROJECT_DIR)/dom/RequestAnimationFrameCallback.idl
 $(PROJECT_DIR)/dom/Scheduler.idl
+$(PROJECT_DIR)/dom/ParseHTMLUnsafeOptions.idl
+$(PROJECT_DIR)/dom/Sanitizer.idl
+$(PROJECT_DIR)/dom/SanitizerAttributeNamespace.idl
+$(PROJECT_DIR)/dom/SanitizerConfig.idl
+$(PROJECT_DIR)/dom/SanitizerElementNamespace.idl
+$(PROJECT_DIR)/dom/SanitizerElementNamespaceWithAttributes.idl
+$(PROJECT_DIR)/dom/SanitizerPresets.idl
+$(PROJECT_DIR)/dom/SanitizerProcessingInstruction.idl
+$(PROJECT_DIR)/dom/SetHTMLOptions.idl
+$(PROJECT_DIR)/dom/SetHTMLUnsafeOptions.idl
 $(PROJECT_DIR)/dom/SchedulerPostTaskCallback.idl
 $(PROJECT_DIR)/dom/SchedulerPostTaskOptions.idl
 $(PROJECT_DIR)/dom/SecurityPolicyViolationEvent.idl
@@ -1652,6 +1663,7 @@ $(PROJECT_DIR)/dom/TouchList.idl
 $(PROJECT_DIR)/dom/TransitionEvent.idl
 $(PROJECT_DIR)/dom/TreeWalker.idl
 $(PROJECT_DIR)/dom/TrustedHTML.idl
+$(PROJECT_DIR)/dom/TrustedHTMLParserOptions.idl
 $(PROJECT_DIR)/dom/TrustedScript.idl
 $(PROJECT_DIR)/dom/TrustedScriptURL.idl
 $(PROJECT_DIR)/dom/TrustedTypePolicy.idl

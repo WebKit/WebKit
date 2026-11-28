@@ -75,7 +75,7 @@ FAIL element.streamHTML: sanitizer takes effect after adoption agency (2) promis
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -178,7 +178,7 @@ FAIL element.streamHTMLUnsafe: sanitizer takes effect after adoption agency (2) 
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -281,7 +281,7 @@ FAIL element.streamAppendHTML: sanitizer takes effect after adoption agency (2) 
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamAppendHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamAppendHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamAppendHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamAppendHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -384,7 +384,7 @@ FAIL element.streamAppendHTMLUnsafe: sanitizer takes effect after adoption agenc
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamAppendHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamAppendHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamAppendHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamAppendHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -487,7 +487,7 @@ FAIL element.streamPrependHTML: sanitizer takes effect after adoption agency (2)
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamPrependHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamPrependHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamPrependHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamPrependHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -590,7 +590,7 @@ FAIL element.streamPrependHTMLUnsafe: sanitizer takes effect after adoption agen
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamPrependHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamPrependHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamPrependHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamPrependHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -693,7 +693,7 @@ FAIL element.streamBeforeHTML: sanitizer takes effect after adoption agency (2) 
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamBeforeHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamBeforeHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamBeforeHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamBeforeHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -796,7 +796,7 @@ FAIL element.streamBeforeHTMLUnsafe: sanitizer takes effect after adoption agenc
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamBeforeHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamBeforeHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamBeforeHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamBeforeHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -899,7 +899,7 @@ FAIL element.streamAfterHTML: sanitizer takes effect after adoption agency (2) p
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamAfterHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamAfterHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamAfterHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamAfterHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -1002,7 +1002,7 @@ FAIL element.streamAfterHTMLUnsafe: sanitizer takes effect after adoption agency
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamAfterHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamAfterHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamAfterHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamAfterHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -1105,7 +1105,7 @@ FAIL element.streamReplaceWithHTML: sanitizer takes effect after adoption agency
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamReplaceWithHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamReplaceWithHTML: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamReplaceWithHTML: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamReplaceWithHTML: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {
@@ -1208,7 +1208,7 @@ FAIL element.streamReplaceWithHTMLUnsafe: sanitizer takes effect after adoption 
             removeElements: ["b"],
           },
         })', 'placeholder[method]' is undefined)"
-FAIL element.streamReplaceWithHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Sanitizer"
+FAIL element.streamReplaceWithHTMLUnsafe: mutating the sanitizer while streaming does not effect the originally given sanitizer promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({ sanitizer })', 'placeholder[method]' is undefined)"
 PASS element.streamReplaceWithHTMLUnsafe: passing an invalid sanitizer config should not create the stream or mutate the DOM
 FAIL element.streamReplaceWithHTMLUnsafe: Noah's Ark clause compares attributes before sanitization promise_test: Unhandled rejection with value: object "TypeError: placeholder[method] is not a function. (In 'placeholder[method]({
           sanitizer: {

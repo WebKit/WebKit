@@ -31,6 +31,7 @@
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include "ParserContentPolicy.h"
+#include "ParserSanitizerConfiguration.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Noncopyable.h>
@@ -58,6 +59,7 @@ struct HTMLConstructionSiteTask {
         Insert,
         InsertAlreadyParsedChild,
         Reparent,
+        TakeAllChildren,
         TakeAllChildrenAndReparent,
     };
 
@@ -102,8 +104,8 @@ struct CustomElementConstructionData;
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
-    HTMLConstructionSite(Document&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth);
-    HTMLConstructionSite(DocumentFragment&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth, CustomElementRegistry*);
+    HTMLConstructionSite(Document&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
+    HTMLConstructionSite(DocumentFragment&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth, CustomElementRegistry*, RefPtr<ParserSanitizerConfiguration>&& = nullptr);
     ~HTMLConstructionSite();
 
     void executeQueuedTasks();
@@ -141,6 +143,12 @@ public:
     // this function doesn't call beginParsingChildren / finishParsingChildren.
     void insertAlreadyParsedChild(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& child);
     void takeAllChildrenAndReparent(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& oldParent);
+    void adoptionAgencyReparentNewElement(HTMLStackItem& newItem, HTMLElementStack::ElementRecord& furthestBlock);
+
+    const ParserSanitizerConfiguration* sanitizer() const { return m_sanitizer.get(); }
+    void setSanitizerRedirect(Element& replaced, ContainerNode& target);
+    void setSanitizerRedirectToInsertionLocation(Element& replaced, HTMLStackItem& target);
+    bool hasSanitizerRedirect(Element&) const;
 
     HTMLStackItem createElementFromSavedToken(const HTMLStackItem&);
 
@@ -163,7 +171,6 @@ public:
     ContainerNode& currentNode() const { return m_openElements.topNode(); }
     ElementName currentElementName() const { return m_openElements.topElementName(); }
     HTMLStackItem& currentStackItem() const LIFETIME_BOUND { return m_openElements.topStackItem(); }
-    TreeScope& treeScopeForCurrentNode();
     ContainerNode& containerForCurrentNode();
     Document& ownerDocumentForCurrentNode();
     HTMLElementStack& openElements() const LIFETIME_BOUND { return m_openElements; }
@@ -208,6 +215,10 @@ private:
 
     void attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& child, bool selfClosing = false);
 
+    bool sanitizerRejectsChild(HTMLConstructionSiteTask&, bool selfClosing);
+    Ref<ContainerNode> sanitizerAdjustedParent(Ref<ContainerNode>&&) const;
+    void applySanitizerRedirect(HTMLConstructionSiteTask&) const;
+
     void recordFosterSite(HTMLConstructionSiteTask&);
 
     std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&);
@@ -251,6 +262,13 @@ private:
 
     std::unique_ptr<StringBuilder> m_textNodeBuffer;
     RefPtr<Text> m_currentTextNode;
+
+    // https://html.spec.whatwg.org/multipage/parsing.html#parser-sanitizer-configuration
+    const RefPtr<ParserSanitizerConfiguration> m_sanitizer;
+    // Maps elements dropped by "replace with children" to the insertion location where
+    // their children belong.
+    // https://html.spec.whatwg.org/multipage/parsing.html#insertion-target-redirection-map
+    HashMap<Ref<ContainerNode>, std::pair<Ref<ContainerNode>, RefPtr<Node>>> m_sanitizerRedirects;
 };
 
 } // namespace WebCore

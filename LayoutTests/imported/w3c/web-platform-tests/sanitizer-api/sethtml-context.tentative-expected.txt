@@ -1,0 +1,12 @@
+
+PASS setHTML with benign context.
+PASS setHTMLUnsafe with benign context.
+PASS setHTML with script context.
+PASS setHTMLUnsafe with script context.
+PASS setHTML with svg:script context.
+PASS setHTMLUnsafe with svg:script context.
+PASS setHTML with script with prefix context.
+PASS setHTMLUnsafe with script with prefix context.
+PASS setHTML with svg:script with prefix context.
+PASS setHTMLUnsafe with svg:script with prefix context.
+

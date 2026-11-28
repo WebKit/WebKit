@@ -5565,6 +5565,14 @@ SampledPageTopColorMinHeight:
   status: embedder
   defaultValue: 0
 
+SanitizerAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Sanitizer API"
+  humanReadableDescription: "Enable the HTML Sanitizer API"
+  defaultValue: false
+
 SansSerifFontFamily:
   type: String
   status: embedder

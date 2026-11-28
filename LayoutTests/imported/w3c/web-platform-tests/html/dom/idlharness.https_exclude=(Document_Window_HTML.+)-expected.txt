@@ -139,36 +139,36 @@ PASS DOMStringList interface: location.ancestorOrigins must inherit property "it
 PASS DOMStringList interface: calling item(unsigned long) on location.ancestorOrigins with too few arguments must throw TypeError
 PASS DOMStringList interface: location.ancestorOrigins must inherit property "contains(DOMString)" with the proper type
 PASS DOMStringList interface: calling contains(DOMString) on location.ancestorOrigins with too few arguments must throw TypeError
-FAIL Element interface: document.createElement("noscript") must inherit property "setHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "setHTML" not found in prototype chain
-FAIL Element interface: calling setHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "setHTML" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "appendHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "appendHTML" not found in prototype chain
-FAIL Element interface: calling appendHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "appendHTML" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "prependHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "prependHTML" not found in prototype chain
-FAIL Element interface: calling prependHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "prependHTML" not found in prototype chain
+PASS Element interface: document.createElement("noscript") must inherit property "setHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling setHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "appendHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling appendHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "prependHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling prependHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("noscript") must inherit property "setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
 PASS Element interface: calling setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
-FAIL Element interface: document.createElement("noscript") must inherit property "appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "appendHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "appendHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "prependHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "prependHTMLUnsafe" not found in prototype chain
+PASS Element interface: document.createElement("noscript") must inherit property "appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("noscript") must inherit property "getHTML(optional GetHTMLOptions)" with the proper type
 PASS Element interface: calling getHTML(optional GetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("noscript") must inherit property "innerHTML" with the proper type
 PASS Element interface: document.createElement("noscript") must inherit property "outerHTML" with the proper type
 PASS Element interface: document.createElement("noscript") must inherit property "insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))" with the proper type
 PASS Element interface: calling insertAdjacentHTML(DOMString, (TrustedHTML or DOMString)) on document.createElement("noscript") with too few arguments must throw TypeError
-FAIL Element interface: document.createElement("noscript") must inherit property "beforeHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "beforeHTML" not found in prototype chain
-FAIL Element interface: calling beforeHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "beforeHTML" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "afterHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "afterHTML" not found in prototype chain
-FAIL Element interface: calling afterHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "afterHTML" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "replaceWithHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "replaceWithHTML" not found in prototype chain
-FAIL Element interface: calling replaceWithHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "replaceWithHTML" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "beforeHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "beforeHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "afterHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "afterHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("noscript") must inherit property "replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "replaceWithHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError assert_inherits: property "replaceWithHTMLUnsafe" not found in prototype chain
+PASS Element interface: document.createElement("noscript") must inherit property "beforeHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling beforeHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "afterHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling afterHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "replaceWithHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling replaceWithHTML(DOMString, optional SetHTMLOptions) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("noscript") must inherit property "replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS DOMStringMap interface: existence and properties of interface object
 PASS DOMStringMap interface object length
 PASS DOMStringMap interface object name
@@ -1198,48 +1198,48 @@ PASS XMLSerializer must be primary interface of new XMLSerializer()
 PASS Stringification of new XMLSerializer()
 PASS XMLSerializer interface: new XMLSerializer() must inherit property "serializeToString(Node)" with the proper type
 PASS XMLSerializer interface: calling serializeToString(Node) on new XMLSerializer() with too few arguments must throw TypeError
-FAIL Sanitizer interface: existence and properties of interface object assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface object length assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface object name assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation get() assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation allowElement(SanitizerElementWithAttributes) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation removeElement(SanitizerElement) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation replaceElementWithChildren(SanitizerElement) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation allowProcessingInstruction(SanitizerPI) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation removeProcessingInstruction(SanitizerPI) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation allowAttribute(SanitizerAttribute) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation removeAttribute(SanitizerAttribute) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation setComments(boolean) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation setDataAttributes(boolean) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation setJavascriptURLs(boolean) assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer interface: operation removeUnsafe() assert_own_property: self does not have own property "Sanitizer" expected property "Sanitizer" missing
-FAIL Sanitizer must be primary interface of new Sanitizer({}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Stringification of new Sanitizer({}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "get()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "allowElement(SanitizerElementWithAttributes)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling allowElement(SanitizerElementWithAttributes) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "removeElement(SanitizerElement)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling removeElement(SanitizerElement) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "replaceElementWithChildren(SanitizerElement)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling replaceElementWithChildren(SanitizerElement) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "allowProcessingInstruction(SanitizerPI)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling allowProcessingInstruction(SanitizerPI) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "removeProcessingInstruction(SanitizerPI)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling removeProcessingInstruction(SanitizerPI) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "allowAttribute(SanitizerAttribute)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling allowAttribute(SanitizerAttribute) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "removeAttribute(SanitizerAttribute)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling removeAttribute(SanitizerAttribute) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "setComments(boolean)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling setComments(boolean) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "setDataAttributes(boolean)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling setDataAttributes(boolean) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "setJavascriptURLs(boolean)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: calling setJavascriptURLs(boolean) on new Sanitizer({}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
-FAIL Sanitizer interface: new Sanitizer({}) must inherit property "removeUnsafe()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Sanitizer"
+PASS Sanitizer interface: existence and properties of interface object
+PASS Sanitizer interface object length
+PASS Sanitizer interface object name
+PASS Sanitizer interface: existence and properties of interface prototype object
+PASS Sanitizer interface: existence and properties of interface prototype object's "constructor" property
+PASS Sanitizer interface: existence and properties of interface prototype object's @@unscopables property
+PASS Sanitizer interface: operation get()
+PASS Sanitizer interface: operation allowElement(SanitizerElementWithAttributes)
+PASS Sanitizer interface: operation removeElement(SanitizerElement)
+PASS Sanitizer interface: operation replaceElementWithChildren(SanitizerElement)
+PASS Sanitizer interface: operation allowProcessingInstruction(SanitizerPI)
+PASS Sanitizer interface: operation removeProcessingInstruction(SanitizerPI)
+PASS Sanitizer interface: operation allowAttribute(SanitizerAttribute)
+PASS Sanitizer interface: operation removeAttribute(SanitizerAttribute)
+PASS Sanitizer interface: operation setComments(boolean)
+PASS Sanitizer interface: operation setDataAttributes(boolean)
+PASS Sanitizer interface: operation setJavascriptURLs(boolean)
+PASS Sanitizer interface: operation removeUnsafe()
+PASS Sanitizer must be primary interface of new Sanitizer({})
+PASS Stringification of new Sanitizer({})
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "get()" with the proper type
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "allowElement(SanitizerElementWithAttributes)" with the proper type
+PASS Sanitizer interface: calling allowElement(SanitizerElementWithAttributes) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "removeElement(SanitizerElement)" with the proper type
+PASS Sanitizer interface: calling removeElement(SanitizerElement) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "replaceElementWithChildren(SanitizerElement)" with the proper type
+PASS Sanitizer interface: calling replaceElementWithChildren(SanitizerElement) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "allowProcessingInstruction(SanitizerPI)" with the proper type
+PASS Sanitizer interface: calling allowProcessingInstruction(SanitizerPI) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "removeProcessingInstruction(SanitizerPI)" with the proper type
+PASS Sanitizer interface: calling removeProcessingInstruction(SanitizerPI) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "allowAttribute(SanitizerAttribute)" with the proper type
+PASS Sanitizer interface: calling allowAttribute(SanitizerAttribute) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "removeAttribute(SanitizerAttribute)" with the proper type
+PASS Sanitizer interface: calling removeAttribute(SanitizerAttribute) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "setComments(boolean)" with the proper type
+PASS Sanitizer interface: calling setComments(boolean) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "setDataAttributes(boolean)" with the proper type
+PASS Sanitizer interface: calling setDataAttributes(boolean) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "setJavascriptURLs(boolean)" with the proper type
+PASS Sanitizer interface: calling setJavascriptURLs(boolean) on new Sanitizer({}) with too few arguments must throw TypeError
+PASS Sanitizer interface: new Sanitizer({}) must inherit property "removeUnsafe()" with the proper type
 PASS Navigator interface: existence and properties of interface object
 PASS Navigator interface object length
 PASS Navigator interface object name
@@ -1755,67 +1755,67 @@ PASS MathMLAnchorElement interface: attribute search
 PASS MathMLAnchorElement interface: attribute hash
 PASS MathMLAnchorElement interface: attribute hreflang
 PASS MathMLAnchorElement interface: attribute type
-FAIL ShadowRoot interface: operation setHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "setHTML" missing
-FAIL ShadowRoot interface: operation appendHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "appendHTML" missing
-FAIL ShadowRoot interface: operation prependHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "prependHTML" missing
+PASS ShadowRoot interface: operation setHTML(DOMString, optional SetHTMLOptions)
+PASS ShadowRoot interface: operation appendHTML(DOMString, optional SetHTMLOptions)
+PASS ShadowRoot interface: operation prependHTML(DOMString, optional SetHTMLOptions)
 PASS ShadowRoot interface: operation setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
-FAIL ShadowRoot interface: operation appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "appendHTMLUnsafe" missing
-FAIL ShadowRoot interface: operation prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "prependHTMLUnsafe" missing
+PASS ShadowRoot interface: operation appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS ShadowRoot interface: operation prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
 PASS ShadowRoot interface: operation getHTML(optional GetHTMLOptions)
 PASS ShadowRoot interface: attribute innerHTML
 PASS ShadowRoot interface: attribute activeElement
-FAIL Element interface: operation setHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "setHTML" missing
-FAIL Element interface: operation appendHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "appendHTML" missing
-FAIL Element interface: operation prependHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "prependHTML" missing
+PASS Element interface: operation setHTML(DOMString, optional SetHTMLOptions)
+PASS Element interface: operation appendHTML(DOMString, optional SetHTMLOptions)
+PASS Element interface: operation prependHTML(DOMString, optional SetHTMLOptions)
 PASS Element interface: operation setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
-FAIL Element interface: operation appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "appendHTMLUnsafe" missing
-FAIL Element interface: operation prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "prependHTMLUnsafe" missing
+PASS Element interface: operation appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS Element interface: operation prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
 PASS Element interface: operation getHTML(optional GetHTMLOptions)
 PASS Element interface: attribute innerHTML
 PASS Element interface: attribute outerHTML
 PASS Element interface: operation insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))
-FAIL Element interface: operation beforeHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "beforeHTML" missing
-FAIL Element interface: operation afterHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "afterHTML" missing
-FAIL Element interface: operation replaceWithHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "replaceWithHTML" missing
-FAIL Element interface: operation beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "beforeHTMLUnsafe" missing
-FAIL Element interface: operation afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "afterHTMLUnsafe" missing
-FAIL Element interface: operation replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "replaceWithHTMLUnsafe" missing
-FAIL Element interface: document.createElement("div") must inherit property "setHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "setHTML" not found in prototype chain
-FAIL Element interface: calling setHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "setHTML" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "appendHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "appendHTML" not found in prototype chain
-FAIL Element interface: calling appendHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "appendHTML" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "prependHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "prependHTML" not found in prototype chain
-FAIL Element interface: calling prependHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "prependHTML" not found in prototype chain
+PASS Element interface: operation beforeHTML(DOMString, optional SetHTMLOptions)
+PASS Element interface: operation afterHTML(DOMString, optional SetHTMLOptions)
+PASS Element interface: operation replaceWithHTML(DOMString, optional SetHTMLOptions)
+PASS Element interface: operation beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS Element interface: operation afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS Element interface: operation replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS Element interface: document.createElement("div") must inherit property "setHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling setHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "appendHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling appendHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "prependHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling prependHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("div") must inherit property "setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
 PASS Element interface: calling setHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
-FAIL Element interface: document.createElement("div") must inherit property "appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "appendHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "appendHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "prependHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "prependHTMLUnsafe" not found in prototype chain
+PASS Element interface: document.createElement("div") must inherit property "appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling appendHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling prependHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("div") must inherit property "getHTML(optional GetHTMLOptions)" with the proper type
 PASS Element interface: calling getHTML(optional GetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
 PASS Element interface: document.createElement("div") must inherit property "innerHTML" with the proper type
 PASS Element interface: document.createElement("div") must inherit property "outerHTML" with the proper type
 PASS Element interface: document.createElement("div") must inherit property "insertAdjacentHTML(DOMString, (TrustedHTML or DOMString))" with the proper type
 PASS Element interface: calling insertAdjacentHTML(DOMString, (TrustedHTML or DOMString)) on document.createElement("div") with too few arguments must throw TypeError
-FAIL Element interface: document.createElement("div") must inherit property "beforeHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "beforeHTML" not found in prototype chain
-FAIL Element interface: calling beforeHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "beforeHTML" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "afterHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "afterHTML" not found in prototype chain
-FAIL Element interface: calling afterHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "afterHTML" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "replaceWithHTML(DOMString, optional SetHTMLOptions)" with the proper type assert_inherits: property "replaceWithHTML" not found in prototype chain
-FAIL Element interface: calling replaceWithHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "replaceWithHTML" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "beforeHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "beforeHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "afterHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "afterHTMLUnsafe" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type assert_inherits: property "replaceWithHTMLUnsafe" not found in prototype chain
-FAIL Element interface: calling replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "replaceWithHTMLUnsafe" not found in prototype chain
-FAIL CharacterData interface: operation beforeHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "beforeHTML" missing
-FAIL CharacterData interface: operation afterHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "afterHTML" missing
-FAIL CharacterData interface: operation replaceWithHTML(DOMString, optional SetHTMLOptions) assert_own_property: interface prototype object missing non-static operation expected property "replaceWithHTML" missing
-FAIL CharacterData interface: operation beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "beforeHTMLUnsafe" missing
-FAIL CharacterData interface: operation afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "afterHTMLUnsafe" missing
-FAIL CharacterData interface: operation replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) assert_own_property: interface prototype object missing non-static operation expected property "replaceWithHTMLUnsafe" missing
+PASS Element interface: document.createElement("div") must inherit property "beforeHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling beforeHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "afterHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling afterHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "replaceWithHTML(DOMString, optional SetHTMLOptions)" with the proper type
+PASS Element interface: calling replaceWithHTML(DOMString, optional SetHTMLOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))" with the proper type
+PASS Element interface: calling replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions)) on document.createElement("div") with too few arguments must throw TypeError
+PASS CharacterData interface: operation beforeHTML(DOMString, optional SetHTMLOptions)
+PASS CharacterData interface: operation afterHTML(DOMString, optional SetHTMLOptions)
+PASS CharacterData interface: operation replaceWithHTML(DOMString, optional SetHTMLOptions)
+PASS CharacterData interface: operation beforeHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS CharacterData interface: operation afterHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
+PASS CharacterData interface: operation replaceWithHTMLUnsafe((TrustedHTML or DOMString), optional (SetHTMLUnsafeOptions or TrustedHTMLParserOptions))
 PASS Range interface: operation createContextualFragment((TrustedHTML or DOMString))
 PASS Range interface: new Range() must inherit property "createContextualFragment((TrustedHTML or DOMString))" with the proper type
 PASS Range interface: calling createContextualFragment((TrustedHTML or DOMString)) on new Range() with too few arguments must throw TypeError

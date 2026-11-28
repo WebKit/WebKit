@@ -1,0 +1,46 @@
+hello
+hello
+hello
+hello
+a
+bc
+
+a
+
+b
+hello
+hello
+
+PASS The is= attribute is removed by the default sanitizer config.
+PASS The is= attribute is removed by the global removeAttributes
+PASS The is= attribute is removed by the local removeAttributes
+PASS The is= attribute is removed by the local missing attributes
+FAIL The is= attribute is kept when allowed with an empty config. assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+FAIL The is= attribute is kept when allowed by global attributes. assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+FAIL The is= attribute is kept when allowed by global removeAttributes. assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+FAIL The is= attribute is kept when allowed by local attributes. assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+PASS parseHTML removes html is= attribute with the default sanitizer config.
+PASS parseHTML removes html is= attribute with global removeAttributes
+PASS parseHTML removes html is= attribute with local removeAttributes
+PASS parseHTML removes html is= attribute with local allow attributes
+PASS parseHTML removes body is= attribute with the default sanitizer config.
+PASS parseHTML removes body is= attribute with global removeAttributes
+PASS parseHTML removes body is= attribute with local removeAttributes
+PASS parseHTML removes body is= attribute with local allow attributes
+PASS parseHTML removes div is= attribute with the default sanitizer config.
+PASS parseHTML removes div is= attribute with global removeAttributes
+PASS parseHTML removes div is= attribute with local removeAttributes
+PASS parseHTML removes div is= attribute with local allow attributes
+PASS Formatting elements created by adoption agency don't get a removed is= attribute
+FAIL Formatting elements created by adoption agency keep an allowed is= attribute assert_true: expected true got false
+PASS Formatting elements created by reconstructing don't get a removed is= attribute
+FAIL Formatting elements created by reconstructing keep an allowed is= attribute assert_true: expected true got false
+PASS parseHTML doesn't merge a removed is= attribute from <body>hello<body is="foo-bar">
+PASS parseHTML merges an allowed is= attribute from <body>hello<body is="foo-bar">
+PASS parseHTML doesn't merge a removed is= attribute from <body>hello<html is="foo-bar">
+PASS parseHTML merges an allowed is= attribute from <body>hello<html is="foo-bar">
+PASS ShadowRoot setHTML removes the is= attribute with global removeAttributes
+PASS parseHTMLUnsafe removes the is= attribute with global removeAttributes
+FAIL The is= attribute is kept when its value is in removeElements assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+FAIL The is= attribute is kept when its value is in replaceWithChildrenElements assert_equals: expected "<div is=\"foo-bar\">hello</div>" but got "<div>hello</div>"
+

@@ -1,0 +1,31 @@
+
+PASS Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Element.setHTMLUnsafe: string with a sanitizer config is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Element.appendHTMLUnsafe: string with a sanitizer config is allowed
+PASS Element.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Element.prependHTMLUnsafe: string with a sanitizer config is allowed
+PASS Element.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS ShadowRoot.setHTMLUnsafe: string with a sanitizer config is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS ShadowRoot.appendHTMLUnsafe: string with a sanitizer config is allowed
+PASS ShadowRoot.appendHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS ShadowRoot.prependHTMLUnsafe: string with a sanitizer config is allowed
+PASS ShadowRoot.prependHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Node.beforeHTMLUnsafe: string with a sanitizer config is allowed
+PASS Node.beforeHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Node.afterHTMLUnsafe: string with a sanitizer config is allowed
+PASS Node.afterHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Node.replaceWithHTMLUnsafe: string with a sanitizer config is allowed
+PASS Node.replaceWithHTMLUnsafe: TrustedHTML with runScripts true is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is allowed
+PASS Document.parseHTMLUnsafe: string with a sanitizer config is allowed
+

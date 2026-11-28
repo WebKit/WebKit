@@ -51,6 +51,7 @@
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentQuirks.h"
+#include "DocumentSettingsValues.h"
 #include "DocumentSharedObjectPool.h"
 #include "DocumentView.h"
 #include "EditingInlines.h"
@@ -142,7 +143,9 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "SVGScriptElement.h"
+#include "Sanitizer.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptElement.h"
 #include "ScrollIntoViewOptions.h"
 #include "ScrollLatchingController.h"
 #include "ScrollSnapOffsetsInfo.h"
@@ -150,6 +153,8 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "SelectorQuery.h"
 #include "SerializedNode.h"
+#include "SetHTMLOptions.h"
+#include "SetHTMLUnsafeOptions.h"
 #include "Settings.h"
 #include "ShadowRootInit.h"
 #include "SimulatedClick.h"
@@ -166,6 +171,7 @@
 #include "TextIterator.h"
 #include "TouchAction.h"
 #include "TrustedType.h"
+#include "UnsafeHTMLParserOptions.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibilityAdjustment.h"
 #include "VoidCallback.h"
@@ -4635,7 +4641,7 @@ void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventIn
     });
 }
 
-ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy, RefPtr<ParserSanitizerConfiguration>&& sanitizer)
 {
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
 
@@ -4653,7 +4659,7 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, protect(CustomElementRegistry::registryForNodeOrTreeScope(container, container->treeScope())), container->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window);
+    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, protect(CustomElementRegistry::registryForNodeOrTreeScope(container, container->treeScope())), container->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window, WTF::move(sanitizer));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -4664,14 +4670,88 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
     return result;
 }
 
-ExceptionOr<void> Element::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html)
+ExceptionOr<void> Element::setHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element setHTMLUnsafe"_s);
+    String markup;
+    auto resolved = resolveUnsafeHTMLInput(protect(document()), WTF::move(html), WTF::move(options), "Element setHTMLUnsafe"_s, markup);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
+    OptionSet<ParserContentPolicy> policy { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML };
+    if (resolvedOptions.runScripts)
+        policy.add(ParserContentPolicy::DoNotMarkAlreadyStarted);
+    return replaceChildrenWithMarkup(markup, policy, WTF::move(resolvedOptions.sanitizer));
+}
 
-    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#target-for-html-insertion
+ContainerNode& Element::targetForHTMLInsertion()
+{
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
+        return templateElement->content();
+    return *this;
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-appendhtml
+ExceptionOr<void> Element::appendHTML(String&& html, SetHTMLOptions&& options)
+{
+    Ref target = targetForHTMLInsertion();
+    return filterAndPreInsertHTML(target, nullptr, html, WTF::move(options));
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-prependhtml
+ExceptionOr<void> Element::prependHTML(String&& html, SetHTMLOptions&& options)
+{
+    Ref target = targetForHTMLInsertion();
+    return filterAndPreInsertHTML(target, protect(target->firstChild()).get(), html, WTF::move(options));
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-appendhtmlunsafe
+ExceptionOr<void> Element::appendHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document().contextDocument()), WTF::move(html), WTF::move(options), "Element appendHTMLUnsafe"_s);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    Ref target = targetForHTMLInsertion();
+    if (is<HTMLHtmlElement>(target))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    auto resolved = resolveUnsafeParserOptions(WTF::move(compliantInput.options), document().settingsValues().sanitizerAPIEnabled);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
+    return filterAndPreInsertHTMLUnsafe(target, nullptr, compliantInput.html, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-prependhtmlunsafe
+ExceptionOr<void> Element::prependHTMLUnsafe(Variant<Ref<TrustedHTML>, String>&& html, Variant<Ref<TrustedHTMLParserOptions>, SetHTMLUnsafeOptions>&& options)
+{
+    auto inputHolder = trustedTypeCompliantInput(protect(document().contextDocument()), WTF::move(html), WTF::move(options), "Element prependHTMLUnsafe"_s);
+    if (inputHolder.hasException())
+        return inputHolder.releaseException();
+    auto compliantInput = inputHolder.releaseReturnValue();
+    Ref target = targetForHTMLInsertion();
+    if (is<HTMLHtmlElement>(target))
+        return Exception { ExceptionCode::HierarchyRequestError };
+    auto resolved = resolveUnsafeParserOptions(WTF::move(compliantInput.options), document().settingsValues().sanitizerAPIEnabled);
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
+    return filterAndPreInsertHTMLUnsafe(target, protect(target->firstChild()).get(), compliantInput.html, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
+}
+
+// https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-sethtml
+ExceptionOr<void> Element::setHTML(String&& html, SetHTMLOptions&& options)
+{
+    // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#parse-html-for-insertion
+    if (isScriptElement(*this))
+        return { };
+
+    auto sanitizerOrException = Sanitizer::parserConfigurationFromOptions(WTF::move(options.sanitizer), true);
+    if (sanitizerOrException.hasException())
+        return sanitizerOrException.releaseException();
+
+    return replaceChildrenWithMarkup(html, { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML }, sanitizerOrException.releaseReturnValue());
 }
 
 String Element::getHTML(GetHTMLOptions&& options) const
@@ -4700,10 +4780,11 @@ String Element::outerHTML() const
 
 ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element outerHTML"_s);
-
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
+    String markup;
+    auto resolved = resolveUnsafeHTMLInput(protect(document()), WTF::move(html), SetHTMLUnsafeOptions { }, "Element outerHTML"_s, markup, false, !document().isXMLDocument());
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
     // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-element-outerhtml
     RefPtr parent = parentNode();
@@ -4719,7 +4800,10 @@ ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html
     RefPtr previous = previousSibling();
     RefPtr next = nextSibling();
 
-    auto fragment = createFragmentForInnerOuterHTML(*contextElement, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent }, protect(CustomElementRegistry::registryForElement(*contextElement)), contextElement->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window);
+    OptionSet<ParserContentPolicy> policy { ParserContentPolicy::AllowScriptingContent };
+    if (resolvedOptions.runScripts)
+        policy.add(ParserContentPolicy::DoNotMarkAlreadyStarted);
+    auto fragment = createFragmentForInnerOuterHTML(*contextElement, markup, policy, protect(CustomElementRegistry::registryForElement(*contextElement)), contextElement->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window, WTF::move(resolvedOptions.sanitizer));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -4743,12 +4827,16 @@ ExceptionOr<void> Element::setOuterHTML(Variant<Ref<TrustedHTML>, String>&& html
 
 ExceptionOr<void> Element::setInnerHTML(Variant<Ref<TrustedHTML>, String>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(html), "Element innerHTML"_s);
+    String markup;
+    auto resolved = resolveUnsafeHTMLInput(protect(document()), WTF::move(html), SetHTMLUnsafeOptions { }, "Element innerHTML"_s, markup, false, !document().isXMLDocument());
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
-
-    return replaceChildrenWithMarkup(stringValueHolder.releaseReturnValue(), { });
+    OptionSet<ParserContentPolicy> policy;
+    if (resolvedOptions.runScripts)
+        policy.add(ParserContentPolicy::DoNotMarkAlreadyStarted);
+    return replaceChildrenWithMarkup(markup, policy, WTF::move(resolvedOptions.sanitizer));
 }
 
 String Element::innerText()
@@ -6456,7 +6544,7 @@ static ExceptionOr<Ref<Element>> contextElementForInsertion(const String& where,
 }
 
 // https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, NodeVector* addedNodes)
+ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String& markup, NodeVector* addedNodes, RefPtr<ParserSanitizerConfiguration>&& sanitizer, bool runScripts)
 {
     // Steps 1 and 2.
     auto contextElement = contextElementForInsertion(where, *this);
@@ -6465,7 +6553,10 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     // Step 3.
     RefPtr registry = CustomElementRegistry::registryForElement(contextElement.returnValue());
     auto registryKind = contextElement.returnValue()->usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window;
-    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent }, registry.get(), registryKind);
+    OptionSet<ParserContentPolicy> policy { ParserContentPolicy::AllowScriptingContent };
+    if (runScripts)
+        policy.add(ParserContentPolicy::DoNotMarkAlreadyStarted);
+    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, policy, registry.get(), registryKind, WTF::move(sanitizer));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -6482,14 +6573,15 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     return { };
 }
 
-ExceptionOr<void> Element::insertAdjacentHTML(const String& where, Variant<Ref<TrustedHTML>, String>&& markup)
+ExceptionOr<void> Element::insertAdjacentHTML(const String& where, Variant<Ref<TrustedHTML>, String>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protect(document().contextDocument()), WTF::move(markup), "Element insertAdjacentHTML"_s);
+    String markup;
+    auto resolved = resolveUnsafeHTMLInput(protect(document()), WTF::move(html), SetHTMLUnsafeOptions { }, "Element insertAdjacentHTML"_s, markup, false, !document().isXMLDocument());
+    if (resolved.hasException())
+        return resolved.releaseException();
+    auto resolvedOptions = resolved.releaseReturnValue();
 
-    if (stringValueHolder.hasException())
-        return stringValueHolder.releaseException();
-
-    return insertAdjacentHTML(where, stringValueHolder.releaseReturnValue(), nullptr);
+    return insertAdjacentHTML(where, markup, nullptr, WTF::move(resolvedOptions.sanitizer), resolvedOptions.runScripts);
 }
 
 ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text)
