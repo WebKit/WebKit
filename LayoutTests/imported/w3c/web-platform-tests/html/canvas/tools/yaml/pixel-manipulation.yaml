@@ -633,7 +633,7 @@
     @assert throws INDEX_SIZE_ERR new ImageData(0, 10);
     @assert throws INDEX_SIZE_ERR new ImageData(10, 0);
     @assert throws INDEX_SIZE_ERR new ImageData('width', 'height');
-    @assert throws INDEX_SIZE_ERR new ImageData(1 << 31, 1 << 31);
+    @assert throws RangeError new ImageData(1 << 31, 1 << 31);
     @assert throws TypeError new ImageData(new Uint8ClampedArray(0));
     @assert throws INDEX_SIZE_ERR new ImageData(new Uint8Array(100), 25);
     @assert throws INVALID_STATE_ERR new ImageData(new Uint8ClampedArray(27), 2);

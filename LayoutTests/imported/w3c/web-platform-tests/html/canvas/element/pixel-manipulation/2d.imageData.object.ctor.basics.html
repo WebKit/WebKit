@@ -69,7 +69,7 @@ _addTest(function(canvas, ctx) {
   assert_throws_dom("INDEX_SIZE_ERR", function() { new ImageData(0, 10); });
   assert_throws_dom("INDEX_SIZE_ERR", function() { new ImageData(10, 0); });
   assert_throws_dom("INDEX_SIZE_ERR", function() { new ImageData('width', 'height'); });
-  assert_throws_dom("INDEX_SIZE_ERR", function() { new ImageData(1 << 31, 1 << 31); });
+  assert_throws_js(RangeError, function() { new ImageData(1 << 31, 1 << 31); });
   assert_throws_js(TypeError, function() { new ImageData(new Uint8ClampedArray(0)); });
   assert_throws_dom("INDEX_SIZE_ERR", function() { new ImageData(new Uint8Array(100), 25); });
   assert_throws_dom("INVALID_STATE_ERR", function() { new ImageData(new Uint8ClampedArray(27), 2); });
