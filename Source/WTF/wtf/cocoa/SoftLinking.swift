@@ -34,7 +34,7 @@ public import Foundation
 @_transparent
 @_alwaysEmitIntoClient
 @unsafe
-public func softLinkedClass<T: NSObject>(named name: String, as type: T.Type) -> T.Type? {
+public func softLinkedClass<T: NSObject>(named name: Swift.String, as type: T.Type) -> T.Type? {
     guard let cls = NSClassFromString(name) else {
         return nil
     }

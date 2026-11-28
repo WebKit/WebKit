@@ -24,6 +24,7 @@
 private import CryptoKit
 import Foundation
 public import pal.Core.crypto.CryptoTypes
+import wtf
 
 private enum LocalErrors: Error {
     case invalidArgument

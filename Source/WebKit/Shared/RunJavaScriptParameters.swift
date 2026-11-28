@@ -24,6 +24,7 @@
 #if compiler(>=6.4) && HAVE_NEW_CODABLE
 
 import WebKit_Internal
+import wtf
 
 extension WebKit.RunJavaScriptParameters {
     struct JavaScriptArgument: ~Copyable {

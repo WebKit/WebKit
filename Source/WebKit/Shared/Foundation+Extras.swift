@@ -40,16 +40,6 @@ struct UncheckedSendableKeyPathBox<Root, Value>: @unchecked Sendable {
     let keyPath: KeyPath<Root, Value>
 }
 
-extension Comparable {
-    /// Returns this comparable value clamped to the given limiting range.
-    ///
-    /// - Parameter limits: The range to clamp the bounds of this value.
-    /// - Returns: A value guaranteed to be in the range `[limits.lowerBound, limits.upperBound]`
-    func clamped(to limits: ClosedRange<Self>) -> Self {
-        min(max(self, limits.lowerBound), limits.upperBound)
-    }
-}
-
 /// A type that can be used to uniquely own an instance of `Value` while being copyable.
 final class CopyableBox<Value: ~Copyable> {
     /// The value contained in this copyable box.

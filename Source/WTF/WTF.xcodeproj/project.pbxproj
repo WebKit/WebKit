@@ -12,6 +12,9 @@
 		07C913F32F820E86003A09D8 /* OptionCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C913F22F820E86003A09D8 /* OptionCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D49BE82F41B5DC00263E9A /* wtf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D49BE72F41B5DC00263E9A /* wtf.swift */; };
 		07E5C1A22F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */; };
+		07E5C1B22F43000100A1B2C3 /* StdLibExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E5C1B12F43000100A1B2C3 /* StdLibExtras.swift */; };
+		07E5C1B42F43000100A1B2C3 /* WTFEscapableByteSpan+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E5C1B32F43000100A1B2C3 /* WTFEscapableByteSpan+Extras.swift */; };
+		07E5C1B82F43000100A1B2C3 /* WTFString+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E5C1B72F43000100A1B2C3 /* WTFString+Extras.swift */; };
 		07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */ = {isa = PBXBuildFile; fileRef = DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */ = {isa = PBXBuildFile; fileRef = 077FEABB2EE007FF0071F92D /* library-modules-verifier.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1160,6 +1163,9 @@
 		07C913F22F820E86003A09D8 /* OptionCountedSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionCountedSet.h; sourceTree = "<group>"; };
 		07D49BE72F41B5DC00263E9A /* wtf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wtf.swift; sourceTree = "<group>"; };
 		07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFCompletionHandler+Extras.swift"; sourceTree = "<group>"; };
+		07E5C1B12F43000100A1B2C3 /* StdLibExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StdLibExtras.swift; sourceTree = "<group>"; };
+		07E5C1B32F43000100A1B2C3 /* WTFEscapableByteSpan+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFEscapableByteSpan+Extras.swift"; sourceTree = "<group>"; };
+		07E5C1B72F43000100A1B2C3 /* WTFString+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFString+Extras.swift"; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
@@ -2831,6 +2837,7 @@
 				7C595FFC252A96E000E42168 /* StdFilesystem.h */,
 				FE97F6A8245CE5DD00C63FC6 /* StdIntExtras.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
+				07E5C1B12F43000100A1B2C3 /* StdLibExtras.swift */,
 				FF0A436588954F3CB07DBECA /* StdList.h */,
 				391BD6BA4D164FD294F9A93D /* StdMap.h */,
 				2B70468C2C6BC5F600318C0A /* StdMultimap.h */,
@@ -2946,9 +2953,11 @@
 				07E5C1A12F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift */,
 				FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */,
 				FE032AD12463E43B0012D7C7 /* WTFConfig.h */,
+				07E5C1B32F43000100A1B2C3 /* WTFEscapableByteSpan+Extras.swift */,
 				E36BA9DC29E275DB00300057 /* WTFProcess.cpp */,
 				E36BA9DD29E275DB00300057 /* WTFProcess.h */,
 				A36E16F7216FF828008DD87E /* WTFSemaphore.h */,
+				07E5C1B72F43000100A1B2C3 /* WTFString+Extras.swift */,
 				145DE2872CE95CE700F9F1D2 /* ZippedRange.h */,
 				7A3E0A012E9F000100C0FFEE /* Zmij.cpp */,
 			);
@@ -4707,6 +4716,7 @@
 				FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */,
+				07E5C1B22F43000100A1B2C3 /* StdLibExtras.swift in Sources */,
 				0F95B63720CB5EFD00479635 /* StringBuffer.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */,
@@ -4767,7 +4777,9 @@
 				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
 				07E5C1A22F43000100A1B2C3 /* WTFCompletionHandler+Extras.swift in Sources */,
 				FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */,
+				07E5C1B42F43000100A1B2C3 /* WTFEscapableByteSpan+Extras.swift in Sources */,
 				E36BA9DE29E275DB00300057 /* WTFProcess.cpp in Sources */,
+				07E5C1B82F43000100A1B2C3 /* WTFString+Extras.swift in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,
 				7A3E0A022E9F000100C0FFEE /* Zmij.cpp in Sources */,
 			);

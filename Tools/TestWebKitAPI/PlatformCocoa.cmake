@@ -767,7 +767,6 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Recap+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SafeBrowsingTestUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SiteIsolationTestUtilities.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/StdLibExtras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/SwiftUI+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestCocoaImageUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/TestContextMenuDriver.swift

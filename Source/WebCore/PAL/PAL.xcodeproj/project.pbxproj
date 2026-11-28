@@ -115,7 +115,6 @@
 		7B47F2A428587B9700E793C8 /* CoreGraphicsSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B47F2A228587B9700E793C8 /* CoreGraphicsSoftLink.cpp */; };
 		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
 		94F4AA022B730D2C006DFFDE /* CryptoKitShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */; };
-		BB0000000000000000000010 /* WTFExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000011 /* WTFExtras.swift */; };
 		A1038D332AB12BF100F57BA4 /* WebAVContentKeyGrouping.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D322AB12BF100F57BA4 /* WebAVContentKeyGrouping.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1038D4F2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D4D2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
@@ -744,7 +743,6 @@
 		93E5909C1F93BF1E0067F8CF /* UnencodableHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnencodableHandling.h; sourceTree = "<group>"; };
 		94C759022B990D31000CC511 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CryptoKitShim.swift; path = pal/crypto/CryptoKitShim.swift; sourceTree = SOURCE_ROOT; };
-		BB0000000000000000000011 /* WTFExtras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WTFExtras.swift; path = pal/crypto/WTFExtras.swift; sourceTree = SOURCE_ROOT; };
 		A10265881F56747A00B4C844 /* HIToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIToolboxSPI.h; sourceTree = "<group>"; };
 		A102658D1F567E9D00B4C844 /* HIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSPI.h; sourceTree = "<group>"; };
 		A1038D322AB12BF100F57BA4 /* WebAVContentKeyGrouping.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAVContentKeyGrouping.h; sourceTree = "<group>"; };
@@ -1168,7 +1166,6 @@
 				07C9C8DB2EDAAABD007B579A /* CryptoTypes.h */,
 				078D1F412F74FB5D00B6BFA9 /* PlatformECKey.cpp */,
 				078D1F3C2F74D8D000B6BFA9 /* PlatformECKey.h */,
-				BB0000000000000000000011 /* WTFExtras.swift */,
 			);
 			path = crypto;
 			sourceTree = "<group>";
@@ -1992,7 +1989,6 @@
 				A10826FA1F576292004772AC /* WebPanel.mm in Sources */,
 				F499BAAD2947FDBA001241D6 /* WebPrivacySoftLink.mm in Sources */,
 				44047A0F2C220D45004EF28D /* WritingToolsUISoftLink.mm in Sources */,
-				BB0000000000000000000010 /* WTFExtras.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

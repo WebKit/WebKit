@@ -31,4 +31,8 @@
 // add them to JavaScriptCore's TBD.
 import wtf
 
+// Swift 6.4's `-embed-tbd-for-module` leaves out the members of WTF's extensions on a C++ type unless this module
+// refers to that type.
+private func referenceCxxTypesThatWTFExtends(_: WTF.String, _: borrowing WTF.EscapableByteSpan) {}
+
 #endif

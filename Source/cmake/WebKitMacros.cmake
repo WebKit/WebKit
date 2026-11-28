@@ -1777,6 +1777,14 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             list(APPEND _swift_options "-import-underlying-module")
             # Don't fire the module's own cross-import overlay while compiling it.
             list(APPEND _swift_options "-Xfrontend -disable-cross-import-overlays")
+        else ()
+            # libstdc++ gates coroutine support in <bits/version.h> behind
+            # __glibcxx_want_coroutine.  Swift's Clang 21 compiles <bits/version.h>
+            # as a PCM before that flag is set, so __cpp_lib_coroutine stays
+            # undefined and std::coroutine_handle is not available.  Pre-defining
+            # the flag ensures the PCM gets the right feature-test value.
+            # rdar://175928621
+            list(APPEND _swift_options "-Xcc -D__glibcxx_want_coroutine=1")
         endif ()
         if (${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY)
             list(APPEND _swift_options "-I${_interop_module_path}")
