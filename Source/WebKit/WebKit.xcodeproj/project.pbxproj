@@ -1689,6 +1689,7 @@
 		63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */; };
 		6736FC1C09C562C35389E3A5 /* GeneratedSerializersModelProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F9B70B6A87C73A8BE7A3 /* GeneratedSerializersModelProcess.mm */; };
 		692693C7A1078ED75489C9D8 /* BidiInputAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */; };
+		9C1CEEB44DB296ADA0A864E6 /* BidiNetworkAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = ED9058824424D24DC123130C /* BidiNetworkAgent.h */; };
 		6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BC94707C9319F43B957AF30 /* WKImmersiveEnvironmentDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 860A5EA0FD5FBC32B5398AC3 /* WKImmersiveEnvironmentDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */; };
@@ -2379,6 +2380,7 @@
 		BE6818000000000000000001 /* WKContentWorld.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6818000000000000000002 /* WKContentWorld.swift */; };
 		BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C08D230F423262D7A726C259 /* BidiInputAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */; };
+		CC1E4B4D91E56EDDAB65E707 /* BidiNetworkAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DCC6ACD18385935980AF04 /* BidiNetworkAgent.cpp */; };
 		C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C09AE5E8125257C20025825D /* WKNativeEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */; };
 		C0CE72A11A47E71D00BC0EC4 /* WebPageTestingMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = C0CE729F1347E71D00BC0EC4 /* WebPageTestingMessages.h */; };
@@ -5416,6 +5418,7 @@
 		31099971146C759B0029DEB9 /* WebNotificationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationClient.cpp; sourceTree = "<group>"; };
 		3110ED6220127CB300350B20 /* WebPreferencesDefaultValues.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesDefaultValues.cpp; sourceTree = "<group>"; };
 		311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiInputAgent.cpp; sourceTree = "<group>"; };
+		37DCC6ACD18385935980AF04 /* BidiNetworkAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiNetworkAgent.cpp; sourceTree = "<group>"; };
 		312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNotificationProvider.h; sourceTree = "<group>"; };
 		31312619148FF82B00BA2A39 /* NotificationPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationPermissionRequestManager.cpp; sourceTree = "<group>"; };
 		3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationPermissionRequestManager.h; sourceTree = "<group>"; };
@@ -6450,6 +6453,7 @@
 		523ADC8A2AFC2C2000B352C3 /* AuthenticationServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationServicesSoftLink.h; sourceTree = "<group>"; };
 		523ADC8C2AFC2D0400B352C3 /* AuthenticationServicesSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationServicesSoftLink.mm; sourceTree = "<group>"; };
 		52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiInputAgent.h; sourceTree = "<group>"; };
+		ED9058824424D24DC123130C /* BidiNetworkAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiNetworkAgent.h; sourceTree = "<group>"; };
 		5252A51727E048740094BEB9 /* VirtualHidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualHidConnection.h; sourceTree = "<group>"; };
 		5252A51827E048740094BEB9 /* VirtualHidConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualHidConnection.cpp; sourceTree = "<group>"; };
 		52597BBA2DC4138600CAAF01 /* ModelProcessModelPlayerTransformState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelProcessModelPlayerTransformState.h; sourceTree = "<group>"; };
@@ -7790,6 +7794,7 @@
 		996D00412D7AA0CD0049C7D8 /* BidiBrowsingContext.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiBrowsingContext.json; sourceTree = "<group>"; };
 		06A86D0784E96FC47DA56794 /* BidiEmulation.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiEmulation.json; sourceTree = "<group>"; };
 		996D00422D7AA0CD0049C7D8 /* BidiLog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiLog.json; sourceTree = "<group>"; };
+		B7DDF2E2455E05D266E083D8 /* BidiNetwork.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiNetwork.json; sourceTree = "<group>"; };
 		996D00432D7AA0CD0049C7D8 /* BidiScript.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiScript.json; sourceTree = "<group>"; };
 		996D00452D7AA0FD0049C7D8 /* CombinedWebDriverBidiDomains.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = CombinedWebDriverBidiDomains.json; path = DerivedSources/WebKit/CombinedWebDriverBidiDomains.json; sourceTree = BUILT_PRODUCTS_DIR; };
 		99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionConfiguration.h; sourceTree = "<group>"; };
@@ -15841,6 +15846,8 @@
 				5EEC72532DC1B32400D012DD /* BidiEventNames.h */,
 				311B2F261342A4DC39DFE25B /* BidiInputAgent.cpp */,
 				52407FDF0FC94F6863F2D0D1 /* BidiInputAgent.h */,
+				37DCC6ACD18385935980AF04 /* BidiNetworkAgent.cpp */,
+				ED9058824424D24DC123130C /* BidiNetworkAgent.h */,
 				997EB9D92E5544FC002CFED7 /* BidiPermissionsAgent.cpp */,
 				997EB9D82E5544FC002CFED7 /* BidiPermissionsAgent.h */,
 				F3272B7F2DB997C6007B3A9A /* BidiScriptAgent.cpp */,
@@ -15871,6 +15878,7 @@
 				996D00412D7AA0CD0049C7D8 /* BidiBrowsingContext.json */,
 				06A86D0784E96FC47DA56794 /* BidiEmulation.json */,
 				996D00422D7AA0CD0049C7D8 /* BidiLog.json */,
+				B7DDF2E2455E05D266E083D8 /* BidiNetwork.json */,
 				997EB9DC2E554524002CFED7 /* BidiPermissions.json */,
 				996D00432D7AA0CD0049C7D8 /* BidiScript.json */,
 				99965A552DA096EF0039DFF5 /* BidiSession.json */,
@@ -18592,6 +18600,7 @@
 				997E196C1D875AF1E800E220 /* BidiEmulationAgent.h in Headers */,
 				5EEC72542DC1B32500D012DD /* BidiEventNames.h in Headers */,
 				692693C7A1078ED75489C9D8 /* BidiInputAgent.h in Headers */,
+				9C1CEEB44DB296ADA0A864E6 /* BidiNetworkAgent.h in Headers */,
 				997EB9DA2E5544FC002CFED7 /* BidiPermissionsAgent.h in Headers */,
 				F3272B832DB997C6007B3A9A /* BidiScriptAgent.h in Headers */,
 				5EEC72522DC1B32300D012DD /* BidiSessionAgent.h in Headers */,
@@ -22481,6 +22490,7 @@
 				2790DB2B37644A61AA0AD21E /* BidiDigitalCredentialsAgent.cpp in Sources */,
 				77D3C227CB6CAE6AE2A4FC21 /* BidiEmulationAgent.cpp in Sources */,
 				C08D230F423262D7A726C259 /* BidiInputAgent.cpp in Sources */,
+				CC1E4B4D91E56EDDAB65E707 /* BidiNetworkAgent.cpp in Sources */,
 				997EB9DB2E5544FC002CFED7 /* BidiPermissionsAgent.cpp in Sources */,
 				F3272B812DB997C6007B3A9A /* BidiScriptAgent.cpp in Sources */,
 				5EEC72502DC1B32100D012DD /* BidiSessionAgent.cpp in Sources */,

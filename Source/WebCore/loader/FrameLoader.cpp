@@ -3122,7 +3122,7 @@ NODELETE FrameLoadType FrameLoader::loadType() const
 CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
 {
     if (auto* page = m_frame->page()) {
-        if (page->isResourceCachingDisabledByWebInspector())
+        if (page->isResourceCachingDisabledByDeveloperTools())
             return CachePolicy::Reload;
     }
 
@@ -3784,8 +3784,8 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         request.setIsTopSite(isMainFrameMainResource);
 
     bool hasSpecificCachePolicy = request.cachePolicy() != ResourceRequestCachePolicy::UseProtocolCachePolicy;
-    bool cachingDisabledByWebInspector = page && page->isResourceCachingDisabledByWebInspector();
-    if (cachingDisabledByWebInspector) {
+    bool cachingDisabledByDeveloperTools = page && page->isResourceCachingDisabledByDeveloperTools();
+    if (cachingDisabledByDeveloperTools) {
         request.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         loadType = FrameLoadType::ReloadFromOrigin;
     } else if (!hasSpecificCachePolicy)
@@ -3797,7 +3797,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
 
     if (!hasSpecificCachePolicy && request.cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData) {
         auto overrideHeaderIfNeeded = [&] (HTTPHeaderName name, const String& value) {
-            if (cachingDisabledByWebInspector)
+            if (cachingDisabledByDeveloperTools)
                 request.addHTTPHeaderFieldIfNotPresent(name, value);
             else
                 request.setHTTPHeaderField(name, value);

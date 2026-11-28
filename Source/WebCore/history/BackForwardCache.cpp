@@ -246,7 +246,7 @@ static bool canCachePage(Page& page, LoadWillContinueInAnotherProcess loadWillCo
     if (!canCacheFrame(*mainFrame, diagnosticLoggingClient, indentLevel))
         isCacheable = false;
 
-    if (!page.settings().usesBackForwardCache() || page.isResourceCachingDisabledByWebInspector()) {
+    if (!page.settings().usesBackForwardCache() || page.isResourceCachingDisabledByDeveloperTools()) {
         PCLOG("   -Page settings says b/f cache disabled"_s);
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isDisabledKey());
         isCacheable = false;
@@ -624,7 +624,7 @@ std::unique_ptr<CachedPage> BackForwardCache::take(BackForwardFrameItemIdentifie
 
     RELEASE_LOG(BackForwardCache, "BackForwardCache::take frameItemID: %s, size: %u / %u", makeUTF8CString(identifier.toString()), pageCount(), maxSize());
 
-    if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
+    if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByDeveloperTools())) {
         LOG(BackForwardCache, "Not restoring page from back/forward cache because cache entry has expired");
         logBackForwardCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         return nullptr;
@@ -705,7 +705,7 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
     }, [&](UniqueRef<CachedPage>& cachedPage) -> CachedPage* {
         if (page && &cachedPage->page() != page)
             return nullptr;
-        if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
+        if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByDeveloperTools())) {
             LOG(BackForwardCache, "Not restoring page for %s from back/forward cache because cache entry has expired", makeUTF8CString(item.url().string()));
             logBackForwardCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
             remove(item);

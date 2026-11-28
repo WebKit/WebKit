@@ -33,9 +33,6 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProcessor.h"
 #include "WebPageProxy.h"
-#include "WebProcessPool.h"
-#include "WebProcessProxy.h"
-#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -52,22 +49,6 @@ BidiEmulationAgent::BidiEmulationAgent(WebAutomationSession& session, BackendDis
 }
 
 BidiEmulationAgent::~BidiEmulationAgent() = default;
-
-static Vector<Ref<WebPageProxy>> pagesControlledByAutomation(const WebAutomationSession& session)
-{
-    Vector<Ref<WebPageProxy>> pages;
-    RefPtr processPool = session.processPool();
-    if (!processPool)
-        return pages;
-
-    for (Ref process : borrow(processPool->processes()).get()) {
-        for (Ref page : process->mainPages()) {
-            if (page->isControlledByAutomation())
-                pages.append(WTF::move(page));
-        }
-    }
-    return pages;
-}
 
 void BidiEmulationAgent::didCreatePage(WebPageProxy& page)
 {
@@ -110,25 +91,11 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
     SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalContexts && optionalUserContexts, InvalidParameter, "The parameters 'contexts' and 'userContexts' cannot both be given."_s);
 
     if (optionalContexts) {
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!optionalContexts->length(), InvalidParameter, "The parameter 'contexts' cannot be empty."_s);
+        auto pages = session->pagesForTopLevelBrowsingContexts(*optionalContexts);
+        if (!pages)
+            return makeUnexpected(pages.error().toProtocolString());
 
-        Vector<Ref<WebPageProxy>> pages;
-        for (const auto& contextValue : *optionalContexts) {
-            auto context = contextValue->asString();
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(context.isNull(), InvalidParameter, "The parameter 'contexts' must contain strings."_s);
-
-            auto handles = session->extractBrowsingContextHandles(context);
-            if (!handles)
-                return makeUnexpected(handles.error().toProtocolString());
-            auto& [pageHandle, frameHandle] = handles.value();
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!frameHandle.isEmpty(), InvalidParameter, "The parameter 'contexts' must contain top-level browsing contexts."_s);
-
-            RefPtr page = session->webPageProxyForHandle(pageHandle);
-            SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, FrameNotFound);
-            pages.append(page.releaseNonNull());
-        }
-
-        for (Ref page : pages) {
+        for (Ref page : *pages) {
             if (scrollbarType)
                 m_scrollbarTypeOverridesForBrowsingContexts.set(page.get(), *scrollbarType);
             else
@@ -157,7 +124,7 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
         }
 
         auto& browserAgent = session->bidiProcessor().browserAgent();
-        for (Ref page : pagesControlledByAutomation(*session)) {
+        for (Ref page : session->pagesControlledByAutomation()) {
             if (userContexts.contains(browserAgent.userContextForPage(page)))
                 page->setScrollbarStyleOverride(scrollbarTypeOverrideForPage(page));
         }
@@ -165,7 +132,7 @@ CommandResult<void> BidiEmulationAgent::setScrollbarTypeOverride(Ref<JSON::Value
     }
 
     m_scrollbarTypeOverride = scrollbarType;
-    for (Ref page : pagesControlledByAutomation(*session))
+    for (Ref page : session->pagesControlledByAutomation())
         page->setScrollbarStyleOverride(scrollbarTypeOverrideForPage(page));
     return { };
 }

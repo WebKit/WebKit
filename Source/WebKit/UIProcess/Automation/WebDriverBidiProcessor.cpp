@@ -37,6 +37,7 @@
 #include "BidiDigitalCredentialsAgent.h"
 #include "BidiEmulationAgent.h"
 #include "BidiInputAgent.h"
+#include "BidiNetworkAgent.h"
 #include "BidiPermissionsAgent.h"
 #include "BidiScriptAgent.h"
 #include "BidiSessionAgent.h"
@@ -66,6 +67,7 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     , m_digitalCredentialsAgent(makeUniqueRef<BidiDigitalCredentialsAgent>(session, m_backendDispatcher))
     , m_emulationAgent(makeUniqueRef<BidiEmulationAgent>(session, m_backendDispatcher))
     , m_inputAgent(makeUniqueRef<BidiInputAgent>(session, m_backendDispatcher))
+    , m_networkAgent(makeUniqueRef<BidiNetworkAgent>(session, m_backendDispatcher))
     , m_permissionsAgent(makeUniqueRef<BidiPermissionsAgent>(session, m_backendDispatcher))
     , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))
     , m_sessionAgent(makeUniqueRef<BidiSessionAgent>(session, m_backendDispatcher))
@@ -81,6 +83,12 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
 WebDriverBidiProcessor::~WebDriverBidiProcessor()
 {
     m_frontendRouter->disconnectFrontend(*this);
+}
+
+void WebDriverBidiProcessor::sessionWillEnd()
+{
+    // https://w3c.github.io/webdriver-bidi/#cleanup-the-session
+    m_networkAgent->sessionWillEnd();
 }
 
 void WebDriverBidiProcessor::processBidiMessage(const String& message)

@@ -1819,6 +1819,7 @@ public:
     NODELETE void setControlledByAutomation(bool);
     void setNetworkInterception(Inspector::NetworkInterception&&, CompletionHandler<void()>&&);
     void resolveNetworkInterception(WebCore::ResourceLoaderIdentifier, Inspector::NetworkInterceptOwner, Inspector::NetworkInterceptionPhase, Inspector::NetworkInterceptionResolution&&);
+    void setResourceCachingDisabledByAutomation(bool);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();

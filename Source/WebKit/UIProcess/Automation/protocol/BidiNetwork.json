@@ -1,0 +1,27 @@
+{
+    "domain": "BidiNetwork",
+    "exposedAs": "network",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The network module contains commands and events that relate to network requests.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-network",
+    "types": [
+        {
+            "id": "CacheBehavior",
+            "type": "string",
+            "description": "Whether network requests use resource caches as usual, or bypass them.",
+            "enum": ["default", "bypass"]
+        }
+    ],
+    "commands": [
+        {
+            "name": "setCacheBehavior",
+            "description": "Makes network requests bypass resource caches, or use them as usual, in the given top-level browsing contexts, or everywhere.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-network-setCacheBehavior",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/network/set_cache_behavior",
+            "parameters": [
+                { "name": "cacheBehavior", "$ref": "CacheBehavior", "description": "The cache behavior to use." },
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.BrowsingContext" }, "optional": true, "description": "Top-level browsing contexts to set the cache behavior for." }
+            ]
+        }
+    ]
+}

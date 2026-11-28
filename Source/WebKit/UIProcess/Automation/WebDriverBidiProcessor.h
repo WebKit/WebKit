@@ -43,6 +43,7 @@ class BidiBrowsingContextAgent;
 class BidiDigitalCredentialsAgent;
 class BidiEmulationAgent;
 class BidiInputAgent;
+class BidiNetworkAgent;
 class BidiPermissionsAgent;
 class BidiScriptAgent;
 class BidiSessionAgent;
@@ -64,10 +65,13 @@ public:
     void processBidiMessage(const String&);
     void sendBidiMessage(const String&);
 
+    void sessionWillEnd();
+
     BidiBrowserAgent& browserAgent() const LIFETIME_BOUND { return m_browserAgent; }
     BidiDigitalCredentialsAgent& digitalCredentialsAgent() const LIFETIME_BOUND { return m_digitalCredentialsAgent; }
     BidiEmulationAgent& emulationAgent() const LIFETIME_BOUND { return m_emulationAgent; }
     BidiInputAgent& inputAgent() const LIFETIME_BOUND { return m_inputAgent; }
+    BidiNetworkAgent& networkAgent() const LIFETIME_BOUND { return m_networkAgent; }
     BidiScriptAgent& scriptAgent() const LIFETIME_BOUND { return m_scriptAgent; }
 
     // Inspector::FrontendChannel methods. Domain events sent via WebDriverBidi domain notifiers are packaged up
@@ -100,6 +104,7 @@ private:
     const UniqueRef<BidiDigitalCredentialsAgent> m_digitalCredentialsAgent;
     const UniqueRef<BidiEmulationAgent> m_emulationAgent;
     const UniqueRef<BidiInputAgent> m_inputAgent;
+    const UniqueRef<BidiNetworkAgent> m_networkAgent;
     const UniqueRef<BidiPermissionsAgent> m_permissionsAgent;
     const UniqueRef<BidiScriptAgent> m_scriptAgent;
     const UniqueRef<BidiSessionAgent> m_sessionAgent;
