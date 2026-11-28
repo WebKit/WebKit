@@ -488,7 +488,9 @@ String CSSRegisteredCounterStyle::initialRepresentation(int value, WritingMode w
     case CSSCounterStyleDescriptors::System::KoreanHanjaFormal:
         return counterForSystemKoreanHanjaFormal(absoluteValue);
     case CSSCounterStyleDescriptors::System::EthiopicNumeric:
-        return counterForSystemEthiopicNumeric(value);
+        if (!absoluteValue)
+            return { };
+        return counterForSystemEthiopicNumeric(absoluteValue);
     case CSSCounterStyleDescriptors::System::Extends:
         // CounterStyle with extends system should have been promoted to another system at this point
         ASSERT_NOT_REACHED();
@@ -543,12 +545,12 @@ bool CSSRegisteredCounterStyle::shouldApplyNegativeSymbols(int value) const
     case CSSCounterStyleDescriptors::System::KoreanHangulFormal:
     case CSSCounterStyleDescriptors::System::KoreanHanjaInformal:
     case CSSCounterStyleDescriptors::System::KoreanHanjaFormal:
+    case CSSCounterStyleDescriptors::System::EthiopicNumeric:
         return true;
     case CSSCounterStyleDescriptors::System::Cyclic:
     case CSSCounterStyleDescriptors::System::Fixed:
     case CSSCounterStyleDescriptors::System::DisclosureClosed:
     case CSSCounterStyleDescriptors::System::DisclosureOpen:
-    case CSSCounterStyleDescriptors::System::EthiopicNumeric:
     case CSSCounterStyleDescriptors::System::Extends:
         return false;
     }
