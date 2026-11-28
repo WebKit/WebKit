@@ -44,6 +44,7 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationUtils.h"
 #include "LayoutRepainter.h"
 #include "LineClampUpdater.h"
 #include "LineSelection.h"
@@ -2869,13 +2870,14 @@ void RenderBlockFlow::clipOutFloatingBoxes(RenderBlock& rootBlock, const PaintIn
     if (!m_floatingObjects)
         return;
 
-    for (auto& floatingObject : m_floatingObjects->set()) {
-        if (!floatingObject->renderer())
-            continue;
-        LayoutRect floatBox(offsetFromRootBlock.width(), offsetFromRootBlock.height(), floatingObject->renderer()->borderBoxWidth(), floatingObject->renderer()->borderBoxHeight());
-        floatBox.move(floatingObject->locationOffsetOfBorderBox());
+    for (auto& floatItem : m_floatingObjects->placedFloats().list()) {
+        CheckedRef floatRenderer = downcast<RenderBox>(*protect(floatItem.layoutBox())->rendererForIntegration());
+        auto floatBox = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), borderBoxSize(), writingMode()).second;
+        // Pagination may lay the float out again after it is placed, and the float paints with the size it has now.
+        floatBox.setSize(floatRenderer->borderBoxSize());
+        floatBox.move(offsetFromRootBlock);
         rootBlock.blockStartRelativeToPhysical(floatBox);
-        floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
+        floatBox.moveBy(rootBlockPhysicalPosition);
         paintInfo->context().clipOut(snappedIntRect(floatBox));
     }
 }
