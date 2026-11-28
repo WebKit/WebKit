@@ -2596,6 +2596,13 @@
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288339"}}
     },
+    "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/frame_ids.py": {
+        "subtests": {
+            "test_failed_navigation_keeps_ids[cross_origin]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/333359"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/get_tree/frames.py": {
         "subtests": {
             "test_multiple_frames": {
@@ -4567,6 +4574,13 @@
             }
         }
     },
+    "imported/w3c/webdriver/tests/bidi/script/call_function/user_activation.py": {
+        "subtests": {
+            "test_userActivation[False]": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/333358"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/bidi/script/disown/handles.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/328254"}}
     },
@@ -4743,6 +4757,13 @@
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+    },
+    "imported/w3c/webdriver/tests/bidi/script/evaluate/window_proxy.py": {
+        "subtests": {
+            "test_popup_window": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/333358"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/get_realms.py": {
         "subtests": {
@@ -5062,7 +5083,7 @@
             },
             "test_subscribe_to_closed_tab": {"expected": {"all": {"status": ["PASS"]}}},
             "test_subscribe_to_closed_user_context": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "User contexts aren't implemented on Mac"},  "all": { "status": ["PASS"], "bug": "webkit.org/b/327240"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/333090"}}
             }
         }
     },
@@ -5965,6 +5986,12 @@
 
     "imported/w3c/webdriver/tests/bidi/input/perform_actions/wheel_events.py": {
         "subtests": {
+            "test_scroll_and_pause_on_not_scrollable_element": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
+            },
+            "test_scroll_twice_on_not_scrollable_element": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/331460"}}
+            },
             "test_scroll_emits_scrollend_event": {
                 "expected": {"glib": {"status": ["FAIL"], "bug": "webkit.org/b/331463"}}
             },
@@ -6258,7 +6285,7 @@
     "imported/w3c/webdriver/tests/classic/element_click/single_tick.py": {
         "subtests": {
             "test_element_click_dispatches_actions_in_a_single_tick": {
-                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}}
+                "expected": {"mac": {"status": ["FAIL"], "note": "Simulated input fails on Mac"}, "glib": {"status": ["FAIL"], "bug": "webkit.org/b/333360"}}
             }
         }
     },

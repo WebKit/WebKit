@@ -344,6 +344,7 @@ webkit.org/b/327438 fast/frames/detached-frame-pending-async-script-collected.ht
 
 webkit.org/b/327440 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash ]
 webkit.org/b/327441 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-starting-point.html [ Crash Failure ]
+imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-starting-point.tentative.html [ Failure ]
 webkit.org/b/327443 webgl/webgl-resize-non-composited.html [ Crash ]
 
 # The legacy API has no AcceleratedBackingStore in the UI process, so nothing receives the DMA-BUF messages.
@@ -361,6 +362,8 @@ webkit.org/b/332963 imported/w3c/web-platform-tests/pointerevents/pointerlock/po
 webkit.org/b/332963 imported/w3c/web-platform-tests/pointerlock/movementX_Y_basic.html [ Failure ]
 webkit.org/b/332963 pointer-lock/mouse-event-delivery.html [ Failure ]
 webkit.org/b/332963 pointer-lock/pointermove-movement-delta.html [ Timeout ]
+
+fast/hidpi/hidpi-form-controls-drawing-size.html [ Pass ImageOnlyFailure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
