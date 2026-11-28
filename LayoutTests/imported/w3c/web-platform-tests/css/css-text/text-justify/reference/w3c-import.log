@@ -19,4 +19,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/reference/text-justify-and-trailing-spaces-alt-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/reference/text-justify-and-trailing-spaces-alt-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/reference/text-justify-and-trailing-spaces-alt-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/reference/text-justify-emoji-zwj-sequence-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-justify/reference/text-justify-ref-001.html

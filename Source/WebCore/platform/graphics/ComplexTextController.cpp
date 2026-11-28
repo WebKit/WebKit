@@ -777,6 +777,13 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     bool runForbidsLeftExpansion = m_run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid;
     bool runForbidsRightExpansion = m_run.expansionBehavior().right == ExpansionBehavior::Behavior::Forbid;
 
+    std::optional<unsigned> lastGraphemeClusterStart;
+    if (m_expansion && !m_run.spacingDisabled() && m_run.length() > 1 && m_run[m_run.length() - 1] >= 0x0300) {
+        NonSharedCharacterBreakIterator clusterIterator { m_run.text() };
+        if (int32_t start = ubrk_preceding(clusterIterator, m_run.length()); start != UBRK_DONE)
+            lastGraphemeClusterStart = start;
+    }
+
     TextSpacing::CharacterClass previousCharacterClass = m_textSpacingState.lastCharacterClassFromPreviousRun;
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
@@ -895,8 +902,13 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
                 unsigned characterIndexInRun = characterIndex + complexTextRun->stringLocation();
                 bool isFirstCharacter = !(characterIndex + complexTextRun->stringLocation());
+                char32_t codePoint = character;
+                if (U16_IS_LEAD(character) && characterIndex + 1 < charactersSpan.size() && U16_IS_TRAIL(charactersSpan[characterIndex + 1]))
+                    codePoint = U16_GET_SUPPLEMENTARY(character, charactersSpan[characterIndex + 1]);
+                bool ideograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(codePoint);
                 bool isLastCharacter = characterIndexInRun + 1 == m_run.length()
-                    || (U16_IS_LEAD(character) && characterIndexInRun + 2 == m_run.length() && characterIndex + 2 == charactersSpan.size() && U16_IS_TRAIL(charactersSpan[characterIndex + 1]));
+                    || (U16_IS_LEAD(character) && characterIndexInRun + 2 == m_run.length() && characterIndex + 2 == charactersSpan.size() && U16_IS_TRAIL(charactersSpan[characterIndex + 1]))
+                    || (ideograph && lastGraphemeClusterStart && characterIndexInRun == *lastGraphemeClusterStart);
 
                 bool forceLeftExpansion = false; // On the left, regardless of m_run.ltr()
                 bool forceRightExpansion = false; // On the right, regardless of m_run.ltr()
@@ -911,7 +923,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (runForbidsRightExpansion)
                     forbidRightExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
                 // Handle justification and word-spacing.
-                bool ideograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(character);
                 if (treatAsSpace || ideograph || forceLeftExpansion || forceRightExpansion) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {
