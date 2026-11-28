@@ -228,6 +228,9 @@ GraphicsContextGLCocoa::~GraphicsContextGLCocoa()
 {
     if (makeContextCurrent())
         freeDrawingBuffers();
+    destroyContext();
+    if (m_displayObj)
+        releaseDisplay(std::exchange(m_displayObj, nullptr), m_displayKey);
 }
 
 IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
@@ -235,10 +238,14 @@ IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
     return displayBuffer().surface();
 }
 
+void GraphicsContextGLCocoa::platformDidLoseDisplay()
+{
+    didLoseDisplay(m_displayKey);
+}
+
 bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
-    m_isForWebGL2 = attributes.isWebGL2;
     if (!platformSupportsMetal())
         return false;
 
@@ -254,72 +261,16 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
             displayContextCounts().add(m_displayObj);
         }
 
-        EGLint configAttributes[] = {
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL_RED_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_BLUE_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_DEPTH_SIZE, 0,
-            EGL_STENCIL_SIZE, 0,
-            EGL_NONE
-        };
-        EGLint numberConfigsReturned = 0;
-        EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
-        if (numberConfigsReturned != 1) {
-            LOG(WebGL, "EGLConfig Initialization failed.");
-            return EGL_BAD_CONFIG;
-        }
-        LOG(WebGL, "Got EGLConfig");
-
-        EGL_BindAPI(EGL_OPENGL_ES_API);
-        if (EGLint error = EGL_GetError(); error != EGL_SUCCESS) {
-            LOG(WebGL, "Unable to bind to OPENGL_ES_API");
-            return error;
-        }
-
-        Vector<EGLint> eglContextAttributes;
-        if (m_isForWebGL2) {
-            eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
-            eglContextAttributes.append(3);
-        } else {
-            eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
-            eglContextAttributes.append(2);
-            // ANGLE will upgrade the context to ES3 automatically unless this is specified.
-            eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
-            eglContextAttributes.append(EGL_FALSE);
-        }
-        eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
-        eglContextAttributes.append(EGL_TRUE);
-
-        // WebGL requires that all resources are cleared at creation.
-        eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
-        eglContextAttributes.append(EGL_TRUE);
-
-        // Report GPU resets, so that the context can be lost when the GPU resets.
-        eglContextAttributes.append(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT);
-        eglContextAttributes.append(EGL_LOSE_CONTEXT_ON_RESET_EXT);
-
-        // WebGL doesn't allow client arrays.
-        eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
-        eglContextAttributes.append(EGL_FALSE);
-        // WebGL doesn't allow implicit creation of objects on bind.
-        eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
-        eglContextAttributes.append(EGL_FALSE);
-
+        Vector<EGLint> platformContextAttributes;
 #if HAVE(TASK_IDENTITY_TOKEN)
         auto displayExtensions = unsafeSpan(EGL_QueryString(m_displayObj, EGL_EXTENSIONS));
         bool supportsOwnershipIdentity = WTF::contains(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity"_span);
         if (m_resourceOwner && supportsOwnershipIdentity) {
-            eglContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
-            eglContextAttributes.append(m_resourceOwner.taskIdToken());
+            platformContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
+            platformContextAttributes.append(m_resourceOwner.taskIdToken());
         }
 #endif
-
-        eglContextAttributes.append(EGL_NONE);
-
-        m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.span().data());
-        return m_contextObj == EGL_NO_CONTEXT ? EGL_GetError() : EGL_SUCCESS;
+        return initializeConfigAndContext(platformContextAttributes.span());
     };
 
     EGLint error = createDisplayAndContext();
@@ -373,18 +324,20 @@ bool GraphicsContextGLCocoa::platformInitialize()
     return true;
 }
 
-GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
+void GraphicsContextGLANGLE::destroyContext()
 {
     if (makeContextCurrent()) {
         // A context that is destroyed before it noticed a GPU reset must not leave the lost display to the new contexts.
         if (GL_GetGraphicsResetStatusEXT() != GL_NO_ERROR)
-            didLoseDisplay(m_displayKey);
+            platformDidLoseDisplay();
         GL_Disable(DEBUG_OUTPUT);
         if (m_texture)
             GL_DeleteTextures(1, &m_texture);
         if (m_fbo)
             GL_DeleteFramebuffers(1, &m_fbo);
     }
+    m_texture = 0;
+    m_fbo = 0;
     if (m_contextObj) {
         for (auto* image : m_eglImages.values()) {
             bool result = EGL_DestroyImageKHR(m_displayObj, image);
@@ -395,11 +348,11 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             ASSERT_UNUSED(result, !!result);
         }
         makeCurrent(m_displayObj, EGL_NO_CONTEXT);
-        EGL_DestroyContext(m_displayObj, m_contextObj);
+        EGL_DestroyContext(m_displayObj, std::exchange(m_contextObj, nullptr));
     }
+    m_eglImages.clear();
+    m_eglSyncs.clear();
     ASSERT(currentContext != this);
-    if (m_displayObj)
-        releaseDisplay(m_displayObj, m_displayKey);
 }
 
 bool GraphicsContextGLCocoa::isDisplayInitializedForTesting(GCGLDisplay display)
@@ -426,7 +379,7 @@ void GraphicsContextGLANGLE::checkGPUStatus()
     if (GL_GetGraphicsResetStatusEXT() == GL_NO_ERROR)
         return;
     RELEASE_LOG(WebGL, "GPU has reset (%p). Lose the context.", this);
-    didLoseDisplay(m_displayKey);
+    platformDidLoseDisplay();
     forceContextLost();
     makeCurrent(m_displayObj, EGL_NO_CONTEXT);
 }

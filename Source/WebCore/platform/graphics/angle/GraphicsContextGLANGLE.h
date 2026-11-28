@@ -399,6 +399,10 @@ protected:
     NODELETE void prepareTexture();
 #if PLATFORM(COCOA)
     static bool makeCurrent(GCGLDisplay, GCGLContext);
+
+    void destroyContext();
+    virtual void platformDidLoseDisplay();
+    GCGLint initializeConfigAndContext(std::span<const GCGLint> platformContextAttributes);
 #endif
     virtual bool reshapeDrawingBuffer() = 0;
 
@@ -424,7 +428,7 @@ protected:
     GCGLuint m_texture { 0 };
     GCGLuint m_fbo { 0 };
     GCGLErrorCodeSet m_errors;
-    bool m_isForWebGL2 { false };
+    const bool m_isForWebGL2;
     bool m_failNextStatusCheck { false };
     bool m_failNextDrawingBufferAllocation { false };
     bool m_failNextRenderbufferAllocation { false };

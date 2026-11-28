@@ -22,6 +22,8 @@ function runTest() {
             type = "Metal";
         if (src.search(/^void main()/m) >= 0)
             type = "OpenGL";
+        if (src.search(/@fragment/) >= 0)
+            type = "WGSL";
         testPassed(`${subcase.contextType}: Detected shader implementation language: ${type}`);
     }
 }

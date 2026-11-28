@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true WebGLOnWebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test that WebGL on WebGPU clears and reads back the default framebuffer</title>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that a context on the WebGPU backend clears the default framebuffer and reads it back, and that it translates the shaders to WGSL.");
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var canvas;
+var gl;
+
+function checkShaderLanguage()
+{
+    var extension = gl.getExtension("WEBGL_debug_shaders");
+    if (!extension) {
+        testFailed("WEBGL_debug_shaders is not supported");
+        return;
+    }
+    var shader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(shader, "void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }");
+    gl.compileShader(shader);
+    var source = extension.getTranslatedShaderSource(shader);
+    if (source.search(/@fragment/) >= 0)
+        testPassed("The shaders are translated to WGSL");
+    else
+        testFailed("The shaders are not translated to WGSL: " + source);
+    gl.deleteShader(shader);
+}
+
+function runCase(contextType, attributes)
+{
+    debug("");
+    debug("Testing " + contextType + " with " + JSON.stringify(attributes));
+    canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    document.body.appendChild(canvas);
+    gl = canvas.getContext(contextType, attributes);
+    if (!gl)
+        testFailed("The context does not exist");
+    else {
+        checkShaderLanguage();
+        gl.clearColor(0.25, 0.5, 0.75, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        wtu.checkCanvasRect(gl, 0, 0, 16, 16, [64, 128, 191, 255], "the color should be the clear color", 1);
+        wtu.checkCanvasRect(gl, 8, 8, 1, 1, [64, 128, 191, 255], "the center should be the clear color", 1);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no errors");
+    }
+    canvas.remove();
+    canvas = null;
+    gl = null;
+    if (window.gc)
+        window.gc();
+}
+
+for (var contextType of ["webgl", "webgl2"]) {
+    for (var alpha of [true, false]) {
+        for (var premultipliedAlpha of [true, false]) {
+            for (var antialias of [false, true]) {
+                for (var preserveDrawingBuffer of [false, true])
+                    runCase(contextType, { alpha, premultipliedAlpha, antialias, preserveDrawingBuffer });
+            }
+        }
+    }
+}
+
+debug("");
+</script>
+</body>
+</html>

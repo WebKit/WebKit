@@ -66,46 +66,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLEGL);
 
-GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
-{
-    if (!makeContextCurrent())
-        return;
-
-    GL_Disable(DEBUG_OUTPUT);
-
-    if (m_texture)
-        GL_DeleteTextures(1, &m_texture);
-
-    GL_DeleteFramebuffers(1, &m_fbo);
-
-    if (m_contextObj) {
-        for (auto* image : m_eglImages.values()) {
-            bool result = EGL_DestroyImageKHR(m_displayObj, image);
-            ASSERT_UNUSED(result, !!result);
-        }
-        for (auto* sync : m_eglSyncs.values()) {
-            bool result = EGL_DestroySync(m_displayObj, sync);
-            ASSERT_UNUSED(result, !!result);
-        }
-#if PLATFORM(WIN)
-        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#endif
-        EGL_DestroyContext(m_displayObj, m_contextObj);
-    }
-
-#if !PLATFORM(WIN)
-    if (m_angleSharingContextObj)
-        EGL_DestroyContext(m_displayObj, m_angleSharingContextObj);
-
-    // Ideally this should go before the m_contextObj destruction, but there are platforms where it breaks
-    // the destruction m_contextObj. Putting it here works for all the platforms that I've tested.
-    EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#endif
-
-    if (m_surfaceObj)
-        EGL_DestroySurface(m_displayObj, m_surfaceObj);
-}
-
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
     auto* texmapContext = static_cast<GraphicsContextGLEGL*>(this);
@@ -192,13 +152,57 @@ GraphicsContextGLEGL::GraphicsContextGLEGL(GraphicsContextGLAttributes&& attribu
 
 GraphicsContextGLEGL::~GraphicsContextGLEGL()
 {
+    // A context that cannot be made current is not destroyed.
+    if (makeContextCurrent()) {
 #if !USE(COORDINATED_GRAPHICS)
-    if (m_compositorTexture) {
-        if (!makeContextCurrent())
-            return;
-        GL_DeleteTextures(1, &m_compositorTexture);
-    }
+        if (m_compositorTexture)
+            GL_DeleteTextures(1, &m_compositorTexture);
 #endif
+
+        GL_Disable(DEBUG_OUTPUT);
+
+        if (m_texture)
+            GL_DeleteTextures(1, &m_texture);
+
+        GL_DeleteFramebuffers(1, &m_fbo);
+
+        if (m_contextObj) {
+            for (auto* image : m_eglImages.values()) {
+                bool result = EGL_DestroyImageKHR(m_displayObj, image);
+                ASSERT_UNUSED(result, !!result);
+            }
+            for (auto* sync : m_eglSyncs.values()) {
+                bool result = EGL_DestroySync(m_displayObj, sync);
+                ASSERT_UNUSED(result, !!result);
+            }
+#if PLATFORM(WIN)
+            EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#endif
+            EGL_DestroyContext(m_displayObj, m_contextObj);
+        }
+
+#if !PLATFORM(WIN)
+        if (m_angleSharingContextObj)
+            EGL_DestroyContext(m_displayObj, m_angleSharingContextObj);
+
+        // Ideally this should go before the m_contextObj destruction, but there are platforms where it breaks
+        // the destruction m_contextObj. Putting it here works for all the platforms that I've tested.
+        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#endif
+
+        if (m_surfaceObj)
+            EGL_DestroySurface(m_displayObj, m_surfaceObj);
+    }
+
+    m_texture = 0;
+    m_fbo = 0;
+    m_eglImages.clear();
+    m_eglSyncs.clear();
+    m_contextObj = nullptr;
+    m_angleSharingContextObj = nullptr;
+    m_surfaceObj = nullptr;
+    // The display belongs to the PlatformDisplay.
+    m_displayObj = nullptr;
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLEGL::layerContentsDisplayDelegate()
@@ -235,8 +239,6 @@ RefPtr<VideoFrame> GraphicsContextGLEGL::surfaceBufferToVideoFrame(SurfaceBuffer
 
 bool GraphicsContextGLEGL::platformInitializeContext()
 {
-    m_isForWebGL2 = contextAttributes().isWebGL2;
-
     auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     m_displayObj = sharedDisplay.angleEGLDisplay();
     if (m_displayObj == EGL_NO_DISPLAY)
