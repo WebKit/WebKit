@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
@@ -51,7 +50,7 @@ static const unsigned dialogsBeforeUnloadConfirmPanel = dialogsExpected - 1;
 static const unsigned dialogsExpected = 3;
 #endif
 
-static void sawDialog()
+static void sawDialog(bool& isDone)
 {
     ++dialogsSeen;
 
@@ -71,7 +70,10 @@ static void sawDialog()
 @interface ModalAlertsUIDelegate : NSObject <WKUIDelegate>
 @end
 
-@implementation ModalAlertsUIDelegate
+@implementation ModalAlertsUIDelegate {
+@package
+    bool _isDone;
+}
 
 - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
@@ -88,7 +90,7 @@ static void sawDialog()
     EXPECT_EQ([[frame securityOrigin] port], 0);
 
     completionHandler();
-    sawDialog();
+    sawDialog(_isDone);
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
@@ -99,7 +101,7 @@ static void sawDialog()
     EXPECT_EQ([[frame securityOrigin] port], 0);
 
     completionHandler(YES);
-    sawDialog();
+    sawDialog(_isDone);
 }
 
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *result))completionHandler
@@ -110,7 +112,7 @@ static void sawDialog()
     EXPECT_EQ([[frame securityOrigin] port], 0);
 
     completionHandler(@"");
-    sawDialog();
+    sawDialog(_isDone);
 }
 
 // FIXME: Remove this guard once we fix <https://bugs.webkit.org/show_bug.cgi?id=172614>.
@@ -123,7 +125,7 @@ static void sawDialog()
     EXPECT_EQ([[frame securityOrigin] port], 0);
 
     completionHandler(NO);
-    sawDialog();
+    sawDialog(_isDone);
 }
 #endif
 
@@ -131,6 +133,8 @@ static void sawDialog()
 
 TEST(WebKit, ModalAlerts)
 {
+    dialogsSeen = 0;
+
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     modalAlertsUIDelegate = adoptNS([[ModalAlertsUIDelegate alloc] init]);
@@ -141,7 +145,7 @@ TEST(WebKit, ModalAlerts)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"modal-alerts-in-new-about-blank-window" withExtension:@"html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&isDone);
+    TestWebKitAPI::Util::run(&modalAlertsUIDelegate->_isDone);
 }
 
 #if PLATFORM(MAC)
@@ -183,6 +187,7 @@ TEST(WebKit, SlowBeforeUnloadPromptReject)
     [webView waitForPendingMouseEvents];
 
     shouldRejectClosingViaPrompt = true;
+    didRespondToPrompt = false;
     [webView _tryClose];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -206,6 +211,7 @@ TEST(WebKit, SlowBeforeUnloadPromptAllow)
     [webView waitForPendingMouseEvents];
 
     shouldRejectClosingViaPrompt = false;
+    didRespondToPrompt = false;
     [webView _tryClose];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -229,6 +235,7 @@ TEST(WebKit, BeforeUnloadPromptRejectOnReload)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     shouldRejectClosingViaPrompt = true;
+    didRespondToPrompt = false;
     [webView reload];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -254,6 +261,7 @@ TEST(WebKit, BeforeUnloadPromptAllowOnReload)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     shouldRejectClosingViaPrompt = false;
+    didRespondToPrompt = false;
     [webView reload];
 
     TestWebKitAPI::Util::run(&didRespondToPrompt);
@@ -287,6 +295,9 @@ static unsigned viewDidCloseCallCount = 0;
 
 TEST(WebKit, SlowBeforeUnloadHandlerSingleClosePageCall)
 {
+    webViewDidCloseCalled = false;
+    viewDidCloseCallCount = 0;
+
     RetainPtr slowBeforeUnloadHandlerUIDelegate = adoptNS([[SlowBeforeUnloadHandlerUIDelegate alloc] init]);
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView setUIDelegate:slowBeforeUnloadHandlerUIDelegate.get()];
