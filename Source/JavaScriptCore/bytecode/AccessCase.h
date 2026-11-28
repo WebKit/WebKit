@@ -164,6 +164,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat16Store) \
     macro(IndexedResizableTypedArrayFloat32Store) \
     macro(IndexedResizableTypedArrayFloat64Store) \
+    macro(IndexedInt32Delete) \
+    macro(IndexedDoubleDelete) \
+    macro(IndexedContiguousDelete) \
     macro(IndexedInt32InHit) \
     macro(IndexedDoubleInHit) \
     macro(IndexedContiguousInHit) \

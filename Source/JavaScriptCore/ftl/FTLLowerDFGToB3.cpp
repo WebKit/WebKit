@@ -7995,16 +7995,6 @@ IGNORE_CLANG_WARNINGS_END
         Node* node = m_node;
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         UseKind child1UseKind = node->child1().useKind();
-        UseKind child2UseKind = UntypedUse;
-        switch (kind) {
-        case DelByKind::ByIdStrict:
-        case DelByKind::ByIdSloppy:
-            break;
-        case DelByKind::ByValStrict:
-        case DelByKind::ByValSloppy:
-            child2UseKind = node->child2().useKind();
-            break;
-        }
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 JIT_COMMENT(jit, "DelBy");
@@ -8039,11 +8029,8 @@ IGNORE_CLANG_WARNINGS_END
                 const auto subscript = [&] {
                     if constexpr (kind == DelByKind::ByIdStrict || kind == DelByKind::ByIdSloppy)
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
-                    else {
-                        if (child2UseKind == UntypedUse)
-                            slowCases.append(jit.branchIfNotCell(params[2].gpr()));
+                    else
                         return params[2].gpr();
-                    }
                 }();
 
                 const auto generator = [&] {

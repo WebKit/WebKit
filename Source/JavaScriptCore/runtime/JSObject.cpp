@@ -2445,6 +2445,10 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
     return true;
 }
 
+// The DeleteByVal IC inlines this for FinalObjectType and ArrayType. A subclass of JSArray that overrides it must use DerivedArrayType.
+static_assert(JSFinalObject::deletePropertyByIndex == JSObject::deletePropertyByIndex);
+static_assert(JSArray::deletePropertyByIndex == JSObject::deletePropertyByIndex);
+
 bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned i)
 {
     VM& vm = globalObject->vm();

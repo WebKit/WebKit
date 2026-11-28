@@ -1513,6 +1513,21 @@ void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
     }
 }
 
+NODELETE inline CodePtr<CFunctionPtrTag> appropriateDeleteByGaveUpFunction(DelByKind kind)
+{
+    switch (kind) {
+    case DelByKind::ByIdStrict:
+        return operationDeleteByIdStrictGaveUp;
+    case DelByKind::ByIdSloppy:
+        return operationDeleteByIdSloppyGaveUp;
+    case DelByKind::ByValStrict:
+        return operationDeleteByValStrictGaveUp;
+    case DelByKind::ByValSloppy:
+        return operationDeleteByValSloppyGaveUp;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, PropertyInlineCache& propertyCache, DelByKind, ECMAMode ecmaMode)
 {
     VM& vm = globalObject->vm();
@@ -1586,21 +1601,58 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
 
     if (tryCacheDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, propertyCache, kind, ecmaMode) == GiveUpOnCache) {
         LOG_IC((ICEvent::DelByReplaceWithGeneric, baseValue.classInfoOrNull()));
-        switch (kind) {
-        case DelByKind::ByIdStrict:
-            repatchSlowPathCall(codeBlock, propertyCache, operationDeleteByIdStrictGaveUp);
-            break;
-        case DelByKind::ByIdSloppy:
-            repatchSlowPathCall(codeBlock, propertyCache, operationDeleteByIdSloppyGaveUp);
-            break;
-        case DelByKind::ByValStrict:
-            repatchSlowPathCall(codeBlock, propertyCache, operationDeleteByValStrictGaveUp);
-            break;
-        case DelByKind::ByValSloppy:
-            repatchSlowPathCall(codeBlock, propertyCache, operationDeleteByValSloppyGaveUp);
-            break;
-        }
+        repatchSlowPathCall(codeBlock, propertyCache, appropriateDeleteByGaveUpFunction(kind));
     }
+}
+
+static InlineCacheAction tryCacheArrayDeleteByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, PropertyInlineCache& propertyCache, ECMAMode ecmaMode)
+{
+    ASSERT(baseValue.isCell());
+
+    if (forceICFailure(globalObject))
+        return GiveUpOnCache;
+
+    if (!index.isInt32())
+        return RetryCacheLater;
+
+    VM& vm = globalObject->vm();
+    AccessGenerationResult result;
+
+    {
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
+
+        JSCell* base = baseValue.asCell();
+        if (base->type() != FinalObjectType && base->type() != ArrayType)
+            return RetryCacheLater;
+        ASSERT(base->methodTable()->deletePropertyByIndex == JSObject::deletePropertyByIndex);
+
+        AccessCase::AccessType accessType;
+        switch (base->indexingMode()) {
+        case ALL_WRITABLE_INT32_INDEXING_TYPES:
+            accessType = AccessCase::IndexedInt32Delete;
+            break;
+        case ALL_WRITABLE_DOUBLE_INDEXING_TYPES:
+            ASSERT(Options::allowDoubleShape());
+            accessType = AccessCase::IndexedDoubleDelete;
+            break;
+        case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
+            accessType = AccessCase::IndexedContiguousDelete;
+            break;
+        default:
+            return RetryCacheLater;
+        }
+
+        result = propertyCache.addAccessCase(locker, globalObject, codeBlock, ecmaMode, nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+    }
+
+    fireWatchpointsAndClearStubIfNeeded(vm, propertyCache, codeBlock, result);
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchArrayDeleteByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, PropertyInlineCache& propertyCache, DelByKind kind, ECMAMode ecmaMode)
+{
+    if (tryCacheArrayDeleteByVal(globalObject, codeBlock, base, index, propertyCache, ecmaMode) == GiveUpOnCache)
+        repatchSlowPathCall(codeBlock, propertyCache, appropriateDeleteByGaveUpFunction(kind));
 }
 
 NODELETE inline CodePtr<CFunctionPtrTag> appropriateInByOptimizeFunction(InByKind kind)

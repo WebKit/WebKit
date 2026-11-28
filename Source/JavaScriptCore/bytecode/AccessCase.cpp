@@ -140,6 +140,9 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -418,6 +421,9 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -604,6 +610,9 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -752,6 +761,9 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -927,6 +939,9 @@ void AccessCase::forEachDependentCell(VM&, NOESCAPE const Functor& functor) cons
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -1079,6 +1094,9 @@ bool AccessCase::doesCalls(VM&) const
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -1231,6 +1249,9 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -1512,6 +1533,9 @@ inline void AccessCase::runWithDowncast(NOESCAPE const Func& func)
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:
@@ -1716,6 +1740,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case IndexedDoubleStore:
     case IndexedContiguousStore:
     case IndexedArrayStorageStore:
+    case IndexedInt32Delete:
+    case IndexedDoubleDelete:
+    case IndexedContiguousDelete:
     case IndexedTypedArrayInt8Store:
     case IndexedTypedArrayUint8Store:
     case IndexedTypedArrayUint8ClampedStore:

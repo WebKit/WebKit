@@ -4247,6 +4247,12 @@ static ALWAYS_INLINE size_t deleteByValOptimize(JSGlobalObject* globalObject, VM
     DeletePropertySlot slot;
     Structure* oldStructure = baseValue.structureOrNull();
 
+    if (baseValue.isObject() && !isCopyOnWrite(asObject(baseValue)->indexingMode()) && subscript.isInt32()) {
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        if (propertyCache->considerRepatchingCacheGeneric(vm, codeBlock, oldStructure))
+            repatchArrayDeleteByVal(globalObject, codeBlock, baseValue, subscript, *propertyCache, ecmaMode.isStrict() ? DelByKind::ByValStrict : DelByKind::ByValSloppy, ecmaMode);
+    }
+
     bool result = deleteByVal(globalObject, vm, slot, baseValue, subscript, ecmaMode);
     RETURN_IF_EXCEPTION(scope, { });
 

@@ -7363,8 +7363,6 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
             codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, node->ecmaMode().isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy, usedRegisters,
             BaselineJITRegisters::DelByVal::baseGPR, BaselineJITRegisters::DelByVal::propertyGPR, resultGPR, BaselineJITRegisters::DelByVal::propertyCacheGPR);
         JumpList slowCases;
-        if (needsTypeCheck(node->child2(), SpecCell))
-            slowCases.append(branchIfNotCell(BaselineJITRegisters::DelByVal::propertyGPR));
 
         auto* operation = node->ecmaMode().isStrict() ? operationDeleteByValStrictOptimize : operationDeleteByValSloppyOptimize;
 

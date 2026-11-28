@@ -314,6 +314,9 @@ NODELETE static bool needsScratchFPR(AccessCase::AccessType type)
     case AccessCase::IndexedInt32Store:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -436,6 +439,9 @@ NODELETE static bool forInBy(AccessCase::AccessType type)
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -621,6 +627,9 @@ NODELETE static bool isStateless(AccessCase::AccessType type)
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -773,6 +782,9 @@ NODELETE bool doesJSCalls(AccessCase::AccessType type)
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -926,6 +938,9 @@ NODELETE static bool isMegamorphic(AccessCase::AccessType type)
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -1073,6 +1088,9 @@ bool canBeViaGlobalProxy(AccessCase::AccessType type)
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
@@ -2524,6 +2542,61 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         return;
     }
 
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete: {
+        ASSERT(!accessCase.viaGlobalProxy());
+        GPRReg propertyGPR = m_propertyCache.propertyGPR();
+
+        IndexingType expectedShape;
+        int64_t hole = JSValue::encode(JSValue());
+        switch (accessCase.m_type) {
+        case AccessCase::IndexedInt32Delete:
+            expectedShape = Int32Shape;
+            break;
+        case AccessCase::IndexedDoubleDelete:
+            ASSERT(Options::allowDoubleShape());
+            expectedShape = DoubleShape;
+            hole = std::bit_cast<int64_t>(PNaN);
+            break;
+        case AccessCase::IndexedContiguousDelete:
+            expectedShape = ContiguousShape;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
+        auto isFinalObject = jit.branch32(CCallHelpers::Equal, scratchGPR, CCallHelpers::TrustedImm32(FinalObjectType));
+        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ArrayType)));
+        isFinalObject.link(&jit);
+
+        jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
+        jit.and32(CCallHelpers::TrustedImm32(IndexingShapeAndWritabilityMask), scratchGPR);
+        fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(expectedShape)));
+
+        auto allocator = makeDefaultScratchAllocator(scratchGPR);
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        auto preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
+        auto isOutOfBounds = jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, CCallHelpers::Address(scratchGPR, Butterfly::offsetOfVectorLength()));
+        jit.zeroExtend32ToWord(propertyGPR, scratch2GPR);
+        jit.store64(CCallHelpers::TrustedImm64(hole), CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight));
+
+        auto deleted = jit.label();
+        jit.move(CCallHelpers::TrustedImm32(true), valueGPR);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
+
+        isOutOfBounds.link(&jit);
+        jit.branch32(CCallHelpers::GreaterThanOrEqual, propertyGPR, CCallHelpers::TrustedImm32(0)).linkTo(deleted, &jit);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        m_failAndIgnore.append(jit.jump());
+        return;
+    }
+
     case AccessCase::IndexedInt32Store:
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
@@ -3955,6 +4028,9 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore:
+    case AccessCase::IndexedInt32Delete:
+    case AccessCase::IndexedDoubleDelete:
+    case AccessCase::IndexedContiguousDelete:
     case AccessCase::IndexedTypedArrayInt8Store:
     case AccessCase::IndexedTypedArrayUint8Store:
     case AccessCase::IndexedTypedArrayUint8ClampedStore:
