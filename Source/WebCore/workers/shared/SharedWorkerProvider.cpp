@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedWorkerProvider.h"
 
+#include "SharedWorkerObjectConnection.h"
+
 namespace WebCore {
 
 static SharedWorkerProvider* sharedWorkerSharedProvider;
@@ -33,7 +35,7 @@ static SharedWorkerProvider* sharedWorkerSharedProvider;
 // For WebKitLegacy.
 class DummySharedWorkerProvider final : public SharedWorkerProvider {
 public:
-    SharedWorkerObjectConnection* sharedWorkerConnection() final { return nullptr; }
+    RefPtr<SharedWorkerObjectConnection> sharedWorkerConnection() final { return nullptr; }
 };
 
 SharedWorkerProvider& SharedWorkerProvider::singleton()

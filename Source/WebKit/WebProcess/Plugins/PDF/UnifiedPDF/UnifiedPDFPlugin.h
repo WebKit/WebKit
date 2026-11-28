@@ -101,7 +101,7 @@ public:
     RepaintRequirements startAnnotationTracking(RetainPtr<PDFAnnotation>&&, WebCore::PlatformEventType, std::expected<WebCore::MouseButton, WebCore::MouseButtonState>);
     RepaintRequirements finishAnnotationTracking(PDFAnnotation* annotationUnderMouse, WebCore::PlatformEventType, std::expected<WebCore::MouseButton, WebCore::MouseButtonState>);
 
-    PDFAnnotation *trackedAnnotation() const { return m_trackedAnnotation.get(); }
+    PDFAnnotation *trackedAnnotation() const LIFETIME_BOUND { return m_trackedAnnotation.get(); }
     NODELETE bool isBeingHovered() const;
 
 private:
@@ -253,7 +253,7 @@ private:
     bool isUnifiedPDFPlugin() const override { return true; }
 
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const override { return WebCore::PluginLayerHostingStrategy::GraphicsLayer; }
-    WebCore::GraphicsLayer* graphicsLayer() const override { return m_rootLayer.get(); }
+    WebCore::GraphicsLayer* graphicsLayer() const LIFETIME_BOUND override { return m_rootLayer.get(); }
 
     void teardown() override;
 
@@ -267,7 +267,7 @@ private:
     void enableDataDetection();
     void didInvalidateDataDetectorHighlightOverlayRects();
 
-    PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
+    PDFDataDetectorOverlayController& dataDetectorOverlayController() LIFETIME_BOUND { return *m_dataDetectorOverlayController; }
 #endif
 
     const PDFDocumentLayout& documentLayout() const LIFETIME_BOUND { return m_documentLayout; }

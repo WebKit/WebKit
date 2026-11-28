@@ -236,10 +236,10 @@ public:
         m_supplements.add(T::supplementName(), const_cast<std::unique_ptr<WebProcessSupplement>&&>(makeUniqueWithoutRefCountedCheck<T, WebProcessSupplement>(*this)));
     }
 
-    WebNotificationManager& notificationManager();
-    WebGeolocationManager& geolocationManager();
+    WebNotificationManager& notificationManager() LIFETIME_BOUND;
+    WebGeolocationManager& geolocationManager() LIFETIME_BOUND;
 #if ENABLE(MEDIA_STREAM)
-    UserMediaCaptureManager& userMediaCaptureManager();
+    UserMediaCaptureManager& userMediaCaptureManager() LIFETIME_BOUND;
 #endif
 
     // ref() & deref() do nothing since WebProcess is a singleton object.
@@ -255,7 +255,7 @@ public:
     bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }
     bool isBroadcastChannelEnabled() const { return m_isBroadcastChannelEnabled; }
 
-    InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
+    InjectedBundle* injectedBundle() const LIFETIME_BOUND { return m_injectedBundle.get(); }
     
     PAL::SessionID sessionID() const { ASSERT(m_sessionID); return *m_sessionID; }
 
@@ -297,12 +297,12 @@ public:
 
     EventDispatcher& eventDispatcher() LIFETIME_BOUND { return m_eventDispatcher; }
 
-    NetworkProcessConnection& ensureNetworkProcessConnection();
+    NetworkProcessConnection& ensureNetworkProcessConnection() LIFETIME_BOUND;
 
     void networkProcessConnectionClosed(NetworkProcessConnection*);
-    NetworkProcessConnection* existingNetworkProcessConnection() { return m_networkProcessConnection.get(); }
+    NetworkProcessConnection* existingNetworkProcessConnection() LIFETIME_BOUND { return m_networkProcessConnection.get(); }
     NODELETE WebLoaderStrategy& webLoaderStrategy() LIFETIME_BOUND;
-    WebFileSystemStorageConnection& fileSystemStorageConnection();
+    WebFileSystemStorageConnection& fileSystemStorageConnection() LIFETIME_BOUND;
 
     RefPtr<WebTransportSession> webTransportSession(WebTransportSessionIdentifier);
     void addWebTransportSession(WebTransportSessionIdentifier, WebTransportSession&);
@@ -317,7 +317,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    GPUProcessConnection& ensureGPUProcessConnection();
+    GPUProcessConnection& ensureGPUProcessConnection() LIFETIME_BOUND;
     // Resolves a frame of a snapshot that will not be recorded, so that the snapshot does not wait for it.
     void abandonSnapshotFrame(RemoteSnapshotIdentifier, WebCore::FrameIdentifier);
     // Fails a snapshot whose root will not be recorded, so that nothing waits for it.
@@ -332,28 +332,28 @@ public:
     void gpuProcessConnectionDidBecomeUnresponsive();
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    LibWebRTCCodecs& libWebRTCCodecs();
+    LibWebRTCCodecs& libWebRTCCodecs() LIFETIME_BOUND;
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    AudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
+    AudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager() LIFETIME_BOUND;
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RemoteLegacyCDMFactory& legacyCDMFactory();
+    RemoteLegacyCDMFactory& legacyCDMFactory() LIFETIME_BOUND;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
-    RemoteCDMFactory& cdmFactory();
+    RemoteCDMFactory& cdmFactory() LIFETIME_BOUND;
 #endif
-    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
+    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory() LIFETIME_BOUND;
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)
-    ModelProcessConnection& ensureModelProcessConnection();
+    ModelProcessConnection& ensureModelProcessConnection() LIFETIME_BOUND;
     void modelProcessConnectionClosed(ModelProcessConnection&);
-    ModelProcessConnection* existingModelProcessConnection() { return m_modelProcessConnection.get(); }
+    ModelProcessConnection* existingModelProcessConnection() LIFETIME_BOUND { return m_modelProcessConnection.get(); }
 #endif // ENABLE(MODEL_PROCESS)
 
 #if USE(LIBWEBRTC)
-    LibWebRTCNetwork& libWebRTCNetwork();
+    LibWebRTCNetwork& libWebRTCNetwork() LIFETIME_BOUND;
 #endif
 
     void setCacheModel(CacheModel);
@@ -416,18 +416,18 @@ public:
 
     WebAutomationSessionProxy* automationSessionProxy() LIFETIME_BOUND { return m_automationSessionProxy.get(); }
 #if ENABLE(MODEL_PROCESS)
-    ModelProcessModelPlayerManager& modelProcessModelPlayerManager() { return m_modelProcessModelPlayerManager.get(); }
+    ModelProcessModelPlayerManager& modelProcessModelPlayerManager() LIFETIME_BOUND { return m_modelProcessModelPlayerManager.get(); }
 #endif
-    WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
-    WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
+    WebCacheStorageProvider& cacheStorageProvider() LIFETIME_BOUND { return m_cacheStorageProvider.get(); }
+    WebBadgeClient& badgeClient() LIFETIME_BOUND { return m_badgeClient.get(); }
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
-    RemoteMediaPlayerManager& remoteMediaPlayerManager() { return m_remoteMediaPlayerManager.get(); }
+    RemoteMediaPlayerManager& remoteMediaPlayerManager() LIFETIME_BOUND { return m_remoteMediaPlayerManager.get(); }
 #endif
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
-    RemoteImageDecoderAVFManager& remoteImageDecoderAVFManager() { return m_remoteImageDecoderAVFManager.get(); }
+    RemoteImageDecoderAVFManager& remoteImageDecoderAVFManager() LIFETIME_BOUND { return m_remoteImageDecoderAVFManager.get(); }
 #endif
-    WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
-    WebCookieJar& cookieJar() { return m_cookieJar.get(); }
+    WebBroadcastChannelRegistry& broadcastChannelRegistry() LIFETIME_BOUND { return m_broadcastChannelRegistry.get(); }
+    WebCookieJar& cookieJar() LIFETIME_BOUND { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() LIFETIME_BOUND { return m_webSocketChannelManager; }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -518,7 +518,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
+    SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager() LIFETIME_BOUND;
 #endif
 
     bool requiresScriptTrackingPrivacyProtections(const URL&, const WebCore::SecurityOrigin& topOrigin) const;

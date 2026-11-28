@@ -52,8 +52,8 @@ public:
     void copyExternalImageToTexture(const WebCore::WebGPUExternalImageSource&, const WebCore::WebGPUImageCopyTextureTagged& destination, const ::WebGPU::Extent3D& copySize);
     RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&);
 
-    RemoteAdapterProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteAdapterProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUQueueIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Device> device() const final { return m_device.get(); }

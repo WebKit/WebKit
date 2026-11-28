@@ -74,8 +74,8 @@ public:
     JSValue *error();
     void setError(JSContextRef, JSValueRef);
 
-    WebExtensionAPIEvent& onMessage();
-    WebExtensionAPIEvent& onDisconnect();
+    WebExtensionAPIEvent& onMessage() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onDisconnect() LIFETIME_BOUND;
 
     virtual ~WebExtensionAPIPort()
     {

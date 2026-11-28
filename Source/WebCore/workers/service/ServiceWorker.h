@@ -87,7 +87,7 @@ private:
     // ActiveDOMObject.
     void stop() final;
 
-    SWClientConnection& swConnection();
+    Ref<SWClientConnection> swConnection();
 
     ServiceWorkerData m_data;
     bool m_isStopped { false };

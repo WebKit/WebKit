@@ -64,7 +64,7 @@ public:
     void setPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void openPopup(WebPageProxyIdentifier, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    WebExtensionAPIEvent& onClicked();
+    WebExtensionAPIEvent& onClicked() LIFETIME_BOUND;
 
 private:
     friend class WebExtensionAPIMenus;

@@ -43,7 +43,7 @@ public:
     static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
     virtual ~InjectedBundleCSSStyleDeclarationHandle();
 
-    WebCore::CSSStyleDeclaration& coreCSSStyleDeclaration() { return m_styleDeclaration; }
+    WebCore::CSSStyleDeclaration& coreCSSStyleDeclaration() LIFETIME_BOUND { return m_styleDeclaration; }
 
 private:
     InjectedBundleCSSStyleDeclarationHandle(WebCore::CSSStyleDeclaration&);

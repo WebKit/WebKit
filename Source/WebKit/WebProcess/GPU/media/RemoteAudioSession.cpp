@@ -71,7 +71,7 @@ void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& conn
     connection.messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
 }
 
-IPC::Connection& RemoteAudioSession::ensureConnection()
+Ref<IPC::Connection> RemoteAudioSession::ensureConnection()
 {
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
@@ -80,7 +80,7 @@ IPC::Connection& RemoteAudioSession::ensureConnection()
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 
-        auto sendResult = protect(ensureConnection())->sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), { });
+        auto sendResult = ensureConnection()->sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), { });
         std::tie(m_configuration) = sendResult.takeReplyOr(RemoteAudioSessionConfiguration { });
     }
     return gpuProcessConnection->connection();
@@ -111,7 +111,7 @@ void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingP
     m_routeSharingPolicy = policy;
     m_isPlayingToBluetoothOverrideChanged = false;
 
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetCategory(type, mode, policy), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::SetCategory(type, mode, policy), { });
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(policy);
@@ -121,7 +121,7 @@ void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingP
 void RemoteAudioSession::setPreferredBufferSize(size_t size)
 {
     configuration().preferredBufferSize = size;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
 
 Ref<AudioSession::SetActivePromise> RemoteAudioSession::tryToSetActiveInternal(bool active)
@@ -184,14 +184,14 @@ void RemoteAudioSession::sendNextActivationIPC()
 
     bool useAsyncIPC = WebProcess::singleton().sharedPreferencesForWebProcessValue().asyncAudioSessionActivationEnabled;
     if (useAsyncIPC) {
-        protect(ensureConnection())->sendWithPromisedReply(
+        ensureConnection()->sendWithPromisedReply(
             Messages::RemoteAudioSessionProxy::TryToSetActive(active)
         )->whenSettled(RunLoop::mainSingleton(),
             [processResult = WTF::move(processResult)](auto&& result) mutable {
                 processResult(result.has_value() && *result);
             });
     } else {
-        auto sendResult = protect(ensureConnection())->sendSync(Messages::RemoteAudioSessionProxy::TryToSetActiveSync(active), { });
+        auto sendResult = ensureConnection()->sendSync(Messages::RemoteAudioSessionProxy::TryToSetActiveSync(active), { });
         auto [succeeded] = sendResult.takeReplyOr(false);
         processResult(succeeded);
     }
@@ -210,7 +210,7 @@ void RemoteAudioSession::removeConfigurationChangeObserver(AudioSessionConfigura
 void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 {
     m_isPlayingToBluetoothOverrideChanged = true;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride(value), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride(value), { });
 }
 
 AudioSession::CategoryType RemoteAudioSession::category() const
@@ -281,17 +281,17 @@ void RemoteAudioSession::endInterruptionRemote(MayResume mayResume)
 
 void RemoteAudioSession::beginAudioSessionInterruption()
 {
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::BeginInterruptionRemote(), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::BeginInterruptionRemote(), { });
 }
 
 void RemoteAudioSession::endAudioSessionInterruption(MayResume mayResume)
 {
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::EndInterruptionRemote(mayResume), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::EndInterruptionRemote(mayResume), { });
 }
 
 Ref<AudioSession::CategoryPromise> RemoteAudioSession::systemCategoryForTesting()
 {
-    return protect(ensureConnection())->sendWithPromisedReply(Messages::RemoteAudioSessionProxy::SystemCategoryForTesting())->whenSettled(RunLoop::mainSingleton(),
+    return ensureConnection()->sendWithPromisedReply(Messages::RemoteAudioSessionProxy::SystemCategoryForTesting())->whenSettled(RunLoop::mainSingleton(),
         [](auto&& result) -> Ref<CategoryPromise> {
             if (!result)
                 return CategoryPromise::createAndReject();
@@ -301,7 +301,7 @@ Ref<AudioSession::CategoryPromise> RemoteAudioSession::systemCategoryForTesting(
 
 Ref<AudioSession::ActivationCountPromise> RemoteAudioSession::systemActivationCountForTesting()
 {
-    return protect(ensureConnection())->sendWithPromisedReply(Messages::RemoteAudioSessionProxy::SystemActivationCountForTesting())->whenSettled(RunLoop::mainSingleton(),
+    return ensureConnection()->sendWithPromisedReply(Messages::RemoteAudioSessionProxy::SystemActivationCountForTesting())->whenSettled(RunLoop::mainSingleton(),
         [](auto&& result) {
             if (!result)
                 return ActivationCountPromise::createAndReject();
@@ -312,7 +312,7 @@ Ref<AudioSession::ActivationCountPromise> RemoteAudioSession::systemActivationCo
 void RemoteAudioSession::beginInterruptionForTesting()
 {
     m_isInterruptedForTesting = true;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::TriggerBeginInterruptionForTesting(), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::TriggerBeginInterruptionForTesting(), { });
 }
 
 void RemoteAudioSession::endInterruptionForTesting()
@@ -321,19 +321,19 @@ void RemoteAudioSession::endInterruptionForTesting()
         return;
 
     m_isInterruptedForTesting = false;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::TriggerEndInterruptionForTesting(), { });
 }
 
 void RemoteAudioSession::setSceneIdentifier(const String& sceneIdentifier)
 {
     configuration().sceneIdentifier = sceneIdentifier;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetSceneIdentifier(sceneIdentifier), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::SetSceneIdentifier(sceneIdentifier), { });
 }
 
 void RemoteAudioSession::setSoundStageSize(AudioSession::SoundStageSize size)
 {
     configuration().soundStageSize = size;
-    protect(ensureConnection())->send(Messages::RemoteAudioSessionProxy::SetSoundStageSize(size), { });
+    ensureConnection()->send(Messages::RemoteAudioSessionProxy::SetSoundStageSize(size), { });
 }
 
 }

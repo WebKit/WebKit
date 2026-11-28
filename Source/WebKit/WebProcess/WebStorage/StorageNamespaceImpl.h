@@ -56,7 +56,7 @@ public:
     WebCore::StorageType storageType() const { return m_storageType; }
     std::optional<Identifier> storageNamespaceID() const { return m_storageNamespaceID; }
     WebCore::PageIdentifier sessionStoragePageID() const;
-    const WebCore::SecurityOrigin* topLevelOrigin() const final { return m_topLevelOrigin.get(); }
+    const WebCore::SecurityOrigin* topLevelOrigin() const LIFETIME_BOUND final { return m_topLevelOrigin.get(); }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
     PAL::SessionID sessionID() const override;
 

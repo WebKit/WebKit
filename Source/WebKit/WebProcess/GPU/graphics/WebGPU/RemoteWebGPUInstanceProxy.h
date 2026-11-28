@@ -45,8 +45,8 @@ public:
 
     virtual ~RemoteWebGPUInstanceProxy();
 
-    RemoteGPUProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
 
     ::WebGPU::DispatchEventsResult dispatchEvents(Seconds timeout) final;
     void requestAdapter(const ::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<::WebGPU::Adapter>&&)>&&) final;

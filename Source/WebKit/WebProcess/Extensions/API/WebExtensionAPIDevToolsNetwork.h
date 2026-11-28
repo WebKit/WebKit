@@ -38,7 +38,7 @@ class WebExtensionAPIDevToolsNetwork : public WebExtensionAPIObject, public JSWe
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIEvent& onNavigated();
+    WebExtensionAPIEvent& onNavigated() LIFETIME_BOUND;
 #endif
 
 private:

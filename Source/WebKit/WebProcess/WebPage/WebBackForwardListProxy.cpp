@@ -135,7 +135,7 @@ bool WebBackForwardListProxy::containsItem(const WebCore::HistoryItem& item) con
     return contains;
 }
 
-const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecessary() const
+const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecessary() const LIFETIME_BOUND
 {
     if (!m_cachedBackForwardListCounts) {
         WebBackForwardListCounts backForwardListCounts;

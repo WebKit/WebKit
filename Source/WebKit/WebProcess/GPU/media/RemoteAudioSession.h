@@ -59,7 +59,7 @@ public:
 
 private:
     RemoteAudioSession(WebProcess&);
-    IPC::Connection& ensureConnection();
+    Ref<IPC::Connection> ensureConnection();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

@@ -47,14 +47,14 @@ public:
     explicit LibWebRTCNetwork(WebProcess&);
     ~LibWebRTCNetwork();
 
-    IPC::Connection* connection() { return m_connection.get(); }
+    IPC::Connection* connection() LIFETIME_BOUND { return m_connection.get(); }
     void setConnection(RefPtr<IPC::Connection>&&);
 
     void networkProcessCrashed() final;
     void setAsActive() final;
 
     WebRTCMonitor& monitor() LIFETIME_BOUND { return m_webNetworkMonitor; }
-    LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
+    LibWebRTCSocketFactory& socketFactory() LIFETIME_BOUND { return m_socketFactory; }
 
     void disableNonLocalhostConnections() { socketFactory().disableNonLocalhostConnections(); }
 

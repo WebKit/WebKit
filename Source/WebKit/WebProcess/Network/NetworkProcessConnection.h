@@ -74,15 +74,15 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    IPC::Connection& connection() { return m_connection.get(); }
+    IPC::Connection& connection() LIFETIME_BOUND { return m_connection.get(); }
 
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
-    WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
-    WebIDBConnectionToServer& idbConnectionToServer();
+    WebIDBConnectionToServer* existingIDBConnectionToServer() const LIFETIME_BOUND { return m_webIDBConnection.get(); };
+    WebIDBConnectionToServer& idbConnectionToServer() LIFETIME_BOUND;
 
-    WebSWClientConnection& serviceWorkerConnection();
-    WebSharedWorkerObjectConnection& sharedWorkerConnection();
+    WebSWClientConnection& serviceWorkerConnection() LIFETIME_BOUND;
+    WebSharedWorkerObjectConnection& sharedWorkerConnection() LIFETIME_BOUND;
 
 #if HAVE(AUDIT_TOKEN)
     void setNetworkProcessAuditToken(std::optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }

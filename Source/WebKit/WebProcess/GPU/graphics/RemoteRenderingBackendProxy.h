@@ -108,7 +108,7 @@ public:
     ~RemoteRenderingBackendProxy();
 
 
-    RemoteResourceCacheProxy& remoteResourceCacheProxy() const { return m_remoteResourceCacheProxy; }
+    RemoteResourceCacheProxy& remoteResourceCacheProxy() const LIFETIME_BOUND { return m_remoteResourceCacheProxy; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);

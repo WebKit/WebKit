@@ -164,7 +164,7 @@ private:
 
     typedef std::tuple<Ref<WebCore::PlaybackSessionModelMediaElement>, Ref<PlaybackSessionInterfaceContext>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(WebCore::HTMLMediaElementIdentifier);
-    const ModelInterfaceTuple& ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier);
+    const ModelInterfaceTuple& ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier) LIFETIME_BOUND;
     Ref<WebCore::PlaybackSessionModelMediaElement> ensureModel(WebCore::MediaPlayerClientIdentifier);
     Ref<PlaybackSessionInterfaceContext> ensureInterface(WebCore::MediaPlayerClientIdentifier);
     void removeContext(WebCore::MediaPlayerClientIdentifier);
@@ -239,11 +239,11 @@ private:
     void forEachModel(NOESCAPE const Function<void(WebCore::PlaybackSessionModel&)>&);
 
 #if ENABLE(IMAGE_ANALYSIS)
-    TextRecognitionRequest& textRecognitionRequest() { return m_textRecognitionRequest.get(); }
+    TextRecognitionRequest& textRecognitionRequest() LIFETIME_BOUND { return m_textRecognitionRequest.get(); }
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManager"_s; }
     NODELETE WTFLogChannel& logChannel() const;

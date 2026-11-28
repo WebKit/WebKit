@@ -109,7 +109,7 @@ public:
     void prepareToDisplay(const WebCore::Region& dirtyRegion, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, bool drawingRequiresClearedPixels);
 #endif
 
-    NODELETE WebCore::GraphicsContext& context();
+    NODELETE WebCore::GraphicsContext& context() LIFETIME_BOUND;
     bool hasContext() const { return !!m_context; }
 
     RemoteGraphicsContextIdentifier contextIdentifier() const { return m_contextIdentifier; }

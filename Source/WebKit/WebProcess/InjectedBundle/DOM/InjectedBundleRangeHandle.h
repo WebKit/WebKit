@@ -57,7 +57,7 @@ public:
     RefPtr<WebImage> renderedImage(SnapshotOptions);
     String text() const;
 
-    WebCore::Range& coreRange() const { return m_range; }
+    WebCore::Range& coreRange() const LIFETIME_BOUND { return m_range; }
 
 private:
     InjectedBundleRangeHandle(WebCore::Range&);

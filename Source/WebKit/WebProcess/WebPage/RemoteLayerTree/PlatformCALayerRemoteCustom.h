@@ -53,7 +53,7 @@ public:
 
     virtual ~PlatformCALayerRemoteCustom();
 
-    PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
+    PlatformLayer* platformLayer() const LIFETIME_BOUND override { return m_platformLayer.get(); }
 
     uint32_t hostingContextID() override;
 

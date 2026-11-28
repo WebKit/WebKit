@@ -52,8 +52,8 @@ public:
 
     virtual ~RemotePresentationContextProxy();
 
-    RemoteGPUProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteGPUProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUPresentationContextIdentifier backing() const { return m_backing; }
 
     void configure(const ::WebGPU::CanvasConfiguration&) final;

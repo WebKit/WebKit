@@ -66,7 +66,7 @@ public:
 
     virtual ~RemoteMeshProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     static bool supportsTransform(const WebCore::TransformationMatrix&);
 
 private:

@@ -78,7 +78,7 @@ NSString *WebExtensionAPIDevToolsPanels::themeName()
     }
 }
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged()
+WebExtensionAPIEvent& WebExtensionAPIDevToolsPanels::onThemeChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels/onThemeChanged
 

@@ -75,8 +75,8 @@ private:
     void stopRenderingThread();
     void renderAudio(unsigned frameCount);
 
-    IPC::Connection* connection();
-    IPC::Connection* existingConnection();
+    RefPtr<IPC::Connection> connection();
+    RefPtr<IPC::Connection> existingConnection();
 
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

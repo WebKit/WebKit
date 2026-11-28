@@ -629,7 +629,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 
     RefPtr frame = m_frame.get();
     auto origin = (!frame->isMainFrame() && frame->document() && !hasUnpartitionedStorageAccess(url)) ? protect(frame->document())->topOrigin().data() : SecurityOriginData::fromURL(url);
-    if (!protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->mayHaveServiceWorkerRegisteredForOrigin(origin)) {
+    if (!ServiceWorkerProvider::singleton().serviceWorkerConnection()->mayHaveServiceWorkerRegisteredForOrigin(origin)) {
         callback(std::nullopt);
         return;
     }
@@ -1421,7 +1421,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             }
 
             if (m_frame->document()->activeServiceWorker() || document->url().protocolIsInHTTPFamily() || LegacySchemeRegistry::shouldTreatURLSchemeAsAllowingServiceWorkerClients(document->url().protocol()) || (document->page() && document->page()->isServiceWorkerPage()) || (document->parentDocument() && shouldUseActiveServiceWorkerFromParent(document, *protect(document->parentDocument()))))
-                document->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
+                document->setServiceWorkerConnection(ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
             if (m_resultingClientId) {
                 if (*m_resultingClientId != document->identifier())

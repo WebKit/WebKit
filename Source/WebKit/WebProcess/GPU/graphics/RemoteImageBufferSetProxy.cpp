@@ -328,7 +328,7 @@ void RemoteImageBufferSetProxy::disconnect()
     m_context = std::nullopt;
 }
 
-GraphicsContext& RemoteImageBufferSetProxy::context()
+GraphicsContext& RemoteImageBufferSetProxy::context() LIFETIME_BOUND
 {
     RELEASE_ASSERT(m_context);
     return *m_context;

@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated()
+WebExtensionAPIEvent& WebExtensionAPIDevToolsNetwork::onNavigated() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network/onNavigated
 

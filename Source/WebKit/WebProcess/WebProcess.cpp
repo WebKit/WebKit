@@ -346,18 +346,18 @@ WebProcess& WebProcess::singleton()
     return process.get().get();
 }
 
-WebNotificationManager& WebProcess::notificationManager()
+WebNotificationManager& WebProcess::notificationManager() LIFETIME_BOUND
 {
     return *supplement<WebNotificationManager>();
 }
 
-WebGeolocationManager& WebProcess::geolocationManager()
+WebGeolocationManager& WebProcess::geolocationManager() LIFETIME_BOUND
 {
     return *supplement<WebGeolocationManager>();
 }
 
 #if ENABLE(MEDIA_STREAM)
-UserMediaCaptureManager& WebProcess::userMediaCaptureManager()
+UserMediaCaptureManager& WebProcess::userMediaCaptureManager() LIFETIME_BOUND
 {
     return *supplement<UserMediaCaptureManager>();
 }
@@ -1468,7 +1468,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
     return connectionInfo;
 }
 
-NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
+NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection() LIFETIME_BOUND
 {
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(m_sessionID);
@@ -1582,7 +1582,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     }
 }
 
-WebFileSystemStorageConnection& WebProcess::fileSystemStorageConnection()
+WebFileSystemStorageConnection& WebProcess::fileSystemStorageConnection() LIFETIME_BOUND
 {
     if (!m_fileSystemStorageConnection)
         m_fileSystemStorageConnection = WebFileSystemStorageConnection::create(Ref { ensureNetworkProcessConnection().connection() });
@@ -1597,7 +1597,7 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
-GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
+GPUProcessConnection& WebProcess::ensureGPUProcessConnection() LIFETIME_BOUND
 {
     RELEASE_ASSERT(RunLoop::isMain());
     assertIsMainRunLoop();
@@ -1676,7 +1676,7 @@ void WebProcess::gpuProcessConnectionDidBecomeUnresponsive()
 }
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
+LibWebRTCCodecs& WebProcess::libWebRTCCodecs() LIFETIME_BOUND
 {
     if (!m_libWebRTCCodecs)
         lazyInitialize(m_libWebRTCCodecs, LibWebRTCCodecs::create());
@@ -1685,7 +1685,7 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTrackRendererInternalUnitManager()
+AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTrackRendererInternalUnitManager() LIFETIME_BOUND
 {
     if (!m_audioMediaStreamTrackRendererInternalUnitManager)
         lazyInitialize(m_audioMediaStreamTrackRendererInternalUnitManager, makeUnique<AudioMediaStreamTrackRendererInternalUnitManager>());
@@ -1697,7 +1697,7 @@ AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTr
 
 #if ENABLE(MODEL_PROCESS)
 
-ModelProcessConnection& WebProcess::ensureModelProcessConnection()
+ModelProcessConnection& WebProcess::ensureModelProcessConnection() LIFETIME_BOUND
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -2372,7 +2372,7 @@ void WebProcess::clearCachedPage(BackForwardFrameItemIdentifier backForwardFrame
 }
 
 #if USE(LIBWEBRTC)
-LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
+LibWebRTCNetwork& WebProcess::libWebRTCNetwork() LIFETIME_BOUND
 {
     if (!m_libWebRTCNetwork)
         lazyInitialize(m_libWebRTCNetwork, makeUniqueWithoutRefCountedCheck<LibWebRTCNetwork>(*this));
@@ -2827,7 +2827,7 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MEDIA_STREAM)
-SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager()
+SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager() LIFETIME_BOUND
 {
     if (!m_speechRecognitionRealtimeMediaSourceManager)
         lazyInitialize(m_speechRecognitionRealtimeMediaSourceManager, makeUniqueWithoutRefCountedCheck<SpeechRecognitionRealtimeMediaSourceManager>(*this));
@@ -2837,21 +2837,21 @@ SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognition
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory()
+RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory() LIFETIME_BOUND
 {
     return *supplement<RemoteLegacyCDMFactory>();
 }
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
-RemoteCDMFactory& WebProcess::cdmFactory()
+RemoteCDMFactory& WebProcess::cdmFactory() LIFETIME_BOUND
 {
     return *supplement<RemoteCDMFactory>();
 }
 #endif
 
 #if ENABLE(GPU_PROCESS)
-RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFactory()
+RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFactory() LIFETIME_BOUND
 {
     return *supplement<RemoteMediaEngineConfigurationFactory>();
 }

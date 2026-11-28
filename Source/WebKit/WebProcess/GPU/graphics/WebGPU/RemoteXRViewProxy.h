@@ -46,8 +46,8 @@ public:
 
     virtual ~RemoteXRViewProxy();
 
-    RemoteDeviceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() const { return m_parent->root(); }
+    RemoteDeviceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_parent->root(); }
     WebGPUXRViewIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final { }

@@ -225,7 +225,7 @@ void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioM
 #endif
 
 #if ENABLE(VIDEO)
-RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy()
+RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy() LIFETIME_BOUND
 {
     if (!m_videoFrameObjectHeapProxy)
         lazyInitialize(m_videoFrameObjectHeapProxy, RemoteVideoFrameObjectHeapProxy::create(*this));
@@ -239,7 +239,7 @@ RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
-RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManager()
+RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManager() LIFETIME_BOUND
 {
     if (!m_audioSourceProviderManager)
         lazyInitialize(m_audioSourceProviderManager, RemoteAudioSourceProviderManager::create(m_connection));

@@ -36,7 +36,7 @@ public:
     static Ref<WebUndoStep> create(Ref<WebCore::UndoStep>&&);
     ~WebUndoStep();
 
-    WebCore::UndoStep& step() const { return m_step.get(); }
+    WebCore::UndoStep& step() const LIFETIME_BOUND { return m_step.get(); }
     WebUndoStepID stepID() const { return m_stepID; }
 
     void didRemoveFromUndoManager() { m_step->didRemoveFromUndoManager(); }

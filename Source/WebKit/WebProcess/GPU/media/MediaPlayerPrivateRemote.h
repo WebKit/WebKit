@@ -223,7 +223,7 @@ private:
         void pause();
         void setTime(const MediaTimeUpdateData&);
         void setRate(double);
-        Lock& lock() const { return m_lock; };
+        Lock& lock() const LIFETIME_BOUND { return m_lock; };
         MediaTime currentTimeWithLockHeld() const;
         NODELETE MediaTime cachedTimeWithLockHeld() const;
         void forceUseOfCachedTimeUntilNextSetTime();
@@ -240,7 +240,7 @@ private:
     TimeProgressEstimator m_currentTimeEstimator;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final { return m_logger; }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
@@ -483,7 +483,7 @@ private:
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(IPC::Connection&, WebCore::VideoFrameMetadata&&, RemoteVideoFrameReference, RemoteVideoFrameProxy::Properties&&);
 #endif
-    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
+    Ref<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
 
     Ref<RemoteMediaPlayerManager> manager() const;
 

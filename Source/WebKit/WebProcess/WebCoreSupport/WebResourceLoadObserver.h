@@ -69,7 +69,7 @@ public:
     bool hasCrossPageStorageAccess(const SubFrameDomain&, const TopFrameDomain&) const final;
 
 private:
-    WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&);
+    WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&) LIFETIME_BOUND;
     void scheduleNotificationIfNeeded();
 
     Vector<WebCore::ResourceLoadStatistics> takeStatistics();

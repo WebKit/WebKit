@@ -45,7 +45,7 @@ public:
     void clear(const String& name, Ref<WebExtensionCallbackHandler>&&);
     void clearAll(Ref<WebExtensionCallbackHandler>&&);
 
-    WebExtensionAPIEvent& onAlarm();
+    WebExtensionAPIEvent& onAlarm() LIFETIME_BOUND;
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onAlarm;

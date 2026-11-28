@@ -50,7 +50,7 @@ bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName,
     return extensionContext().isStorageAllowedInUntrustedContexts(toWebExtensionDataType(propertyName));
 }
 
-WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::local() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/local
 
@@ -60,7 +60,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()
     return *m_local;
 }
 
-WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::session() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/session
 
@@ -70,7 +70,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::session()
     return *m_session;
 }
 
-WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
 
@@ -80,7 +80,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::sync()
     return *m_sync;
 }
 
-WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtensionDataType storageType)
+WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtensionDataType storageType) LIFETIME_BOUND
 {
     switch (storageType) {
     case WebExtensionDataType::Local:
@@ -95,7 +95,7 @@ WebExtensionAPIStorageArea& WebExtensionAPIStorage::storageAreaForType(WebExtens
     return local();
 }
 
-WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
+WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/onChanged
 

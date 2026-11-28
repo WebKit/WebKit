@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-WebExtensionAPIDevToolsInspectedWindow& WebExtensionAPIDevTools::inspectedWindow()
+WebExtensionAPIDevToolsInspectedWindow& WebExtensionAPIDevTools::inspectedWindow() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/inspectedWindow
 
@@ -51,7 +51,7 @@ WebExtensionAPIDevToolsInspectedWindow& WebExtensionAPIDevTools::inspectedWindow
     return *m_inspectedWindow;
 }
 
-WebExtensionAPIDevToolsNetwork& WebExtensionAPIDevTools::network()
+WebExtensionAPIDevToolsNetwork& WebExtensionAPIDevTools::network() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/network
 
@@ -61,7 +61,7 @@ WebExtensionAPIDevToolsNetwork& WebExtensionAPIDevTools::network()
     return *m_network;
 }
 
-WebExtensionAPIDevToolsPanels& WebExtensionAPIDevTools::panels()
+WebExtensionAPIDevToolsPanels& WebExtensionAPIDevTools::panels() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/devtools/panels
 

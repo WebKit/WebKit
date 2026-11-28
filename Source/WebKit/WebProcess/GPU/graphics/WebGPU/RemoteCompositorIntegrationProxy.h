@@ -50,8 +50,8 @@ public:
 
     virtual ~RemoteCompositorIntegrationProxy();
 
-    RemoteGPUProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() const { return m_parent; }
+    RemoteGPUProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_parent; }
     WebGPUCompositorIntegrationIdentifier backing() const { return m_backing; }
 
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;

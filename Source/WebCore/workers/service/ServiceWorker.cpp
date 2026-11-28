@@ -97,7 +97,7 @@ void ServiceWorker::updateState(State state)
     updatePendingActivityForEventDispatch();
 }
 
-SWClientConnection& ServiceWorker::swConnection()
+Ref<SWClientConnection> ServiceWorker::swConnection()
 {
     ASSERT(scriptExecutionContext());
     if (RefPtr worker = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext()))
@@ -129,7 +129,7 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
     }();
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
-    protect(swConnection())->postMessageToServiceWorker(identifier(), WTF::move(message), sourceIdentifier);
+    swConnection()->postMessageToServiceWorker(identifier(), WTF::move(message), sourceIdentifier);
     return { };
 }
 

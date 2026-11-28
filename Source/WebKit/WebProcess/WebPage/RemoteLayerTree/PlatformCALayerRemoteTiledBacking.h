@@ -38,7 +38,7 @@ public:
 private:
     PlatformCALayerRemoteTiledBacking(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
-    WebCore::TiledBacking* tiledBacking() final { return m_tileController.ptr(); }
+    WebCore::TiledBacking* tiledBacking() LIFETIME_BOUND final { return m_tileController.ptr(); }
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;

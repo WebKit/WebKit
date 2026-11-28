@@ -182,7 +182,7 @@ public:
 #endif
 
     void sendMessageToBackend(const String&) override;
-    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
+    WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() LIFETIME_BOUND final { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;
         
     void pagePaused() override;

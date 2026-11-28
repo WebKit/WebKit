@@ -312,7 +312,7 @@ void WebInspectorBackendClient::hideHighlightForFrame(LocalFrame& frame)
 #endif
 }
 
-auto WebInspectorBackendClient::ensurePaintRectOverlayForFrame(LocalFrame& frame) -> PaintRectOverlayForFrame&
+auto WebInspectorBackendClient::ensurePaintRectOverlayForFrame(LocalFrame& frame) LIFETIME_BOUND -> PaintRectOverlayForFrame&
 {
     RefPtr page = m_page.get();
     ASSERT(page && page->corePage());

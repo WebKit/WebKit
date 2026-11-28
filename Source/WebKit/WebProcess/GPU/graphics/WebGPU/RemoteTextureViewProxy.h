@@ -44,7 +44,7 @@ public:
 
     virtual ~RemoteTextureViewProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     WebGPUTextureViewIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;

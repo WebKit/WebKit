@@ -49,9 +49,9 @@ public:
     void getPermissionLevel(Ref<WebExtensionCallbackHandler>&&);
 #endif
 
-    WebExtensionAPIEvent& onClicked();
-    WebExtensionAPIEvent& onButtonClicked();
-    WebExtensionAPIEvent& onClosed();
+    WebExtensionAPIEvent& onClicked() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onButtonClicked() LIFETIME_BOUND;
+    WebExtensionAPIEvent& onClosed() LIFETIME_BOUND;
 
 private:
     const RefPtr<WebExtensionAPIEvent> m_onClicked;

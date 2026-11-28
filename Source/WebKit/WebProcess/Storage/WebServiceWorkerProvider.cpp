@@ -49,12 +49,12 @@ WebServiceWorkerProvider& WebServiceWorkerProvider::singleton()
 
 WebServiceWorkerProvider::WebServiceWorkerProvider() = default;
 
-WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
+Ref<WebCore::SWClientConnection> WebServiceWorkerProvider::serviceWorkerConnection()
 {
     return protect(WebProcess::singleton().ensureNetworkProcessConnection())->serviceWorkerConnection();
 }
 
-WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
+RefPtr<WebCore::SWClientConnection> WebServiceWorkerProvider::existingServiceWorkerConnection()
 {
     RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)

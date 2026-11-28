@@ -59,7 +59,7 @@ private:
     WTF::LoggerHelper& loggerHelper() final { return *this; }
 
     // WTF::LoggerHelper
-    const Logger& logger() const final { return m_logger.get(); }
+    const Logger& logger() const LIFETIME_BOUND final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RemoteAudioSourceProvider"_s; }
     WTFLogChannel& logChannel() const final;

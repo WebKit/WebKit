@@ -59,7 +59,7 @@ private:
     unsigned forwardListCount() const override;
     bool containsItem(const WebCore::HistoryItem&) const final;
     bool isWebBackForwardListProxy() const final { return true; }
-    const WebBackForwardListCounts& cacheListCountsIfNecessary() const;
+    const WebBackForwardListCounts& cacheListCountsIfNecessary() const LIFETIME_BOUND;
 
     void close() override;
 

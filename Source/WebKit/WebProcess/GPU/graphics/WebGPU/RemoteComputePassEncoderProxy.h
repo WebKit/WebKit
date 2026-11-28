@@ -44,7 +44,7 @@ public:
 
     virtual ~RemoteComputePassEncoderProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     WebGPUComputePassEncoderIdentifier backing() const { return m_backing; }
 
     void setPipeline(const ::WebGPU::ComputePipeline&) final;

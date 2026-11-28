@@ -217,7 +217,7 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
     m_onDisconnect->removeAllListeners();
 }
 
-WebExtensionAPIEvent& WebExtensionAPIPort::onMessage()
+WebExtensionAPIEvent& WebExtensionAPIPort::onMessage() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#onmessage
 
@@ -227,7 +227,7 @@ WebExtensionAPIEvent& WebExtensionAPIPort::onMessage()
     return *m_onMessage;
 }
 
-WebExtensionAPIEvent& WebExtensionAPIPort::onDisconnect()
+WebExtensionAPIEvent& WebExtensionAPIPort::onDisconnect() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/Port#ondisconnect
 

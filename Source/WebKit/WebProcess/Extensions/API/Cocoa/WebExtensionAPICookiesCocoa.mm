@@ -373,7 +373,7 @@ void WebExtensionAPICookies::getAllCookieStores(Ref<WebExtensionCallbackHandler>
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPICookies::onChanged()
+WebExtensionAPIEvent& WebExtensionAPICookies::onChanged() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/onChanged
 

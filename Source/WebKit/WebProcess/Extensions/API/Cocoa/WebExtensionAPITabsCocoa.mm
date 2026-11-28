@@ -1155,7 +1155,7 @@ void WebExtensionAPITabs::removeCSS(WebPageProxyIdentifier webPageProxyIdentifie
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()
+WebExtensionAPIEvent& WebExtensionAPITabs::onActivated() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onActivated
 
@@ -1165,7 +1165,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onActivated()
     return *m_onActivated;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onAttached()
+WebExtensionAPIEvent& WebExtensionAPITabs::onAttached() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onAttached
 
@@ -1175,7 +1175,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onAttached()
     return *m_onAttached;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onCreated()
+WebExtensionAPIEvent& WebExtensionAPITabs::onCreated() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
 
@@ -1185,7 +1185,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onCreated()
     return *m_onCreated;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onDetached()
+WebExtensionAPIEvent& WebExtensionAPITabs::onDetached() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onDetached
 
@@ -1195,7 +1195,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onDetached()
     return *m_onDetached;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onHighlighted()
+WebExtensionAPIEvent& WebExtensionAPITabs::onHighlighted() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onHighlighted
 
@@ -1205,7 +1205,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onHighlighted()
     return *m_onHighlighted;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onMoved()
+WebExtensionAPIEvent& WebExtensionAPITabs::onMoved() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onMoved
 
@@ -1215,7 +1215,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onMoved()
     return *m_onMoved;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onRemoved()
+WebExtensionAPIEvent& WebExtensionAPITabs::onRemoved() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
 
@@ -1225,7 +1225,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onRemoved()
     return *m_onRemoved;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onReplaced()
+WebExtensionAPIEvent& WebExtensionAPITabs::onReplaced() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onReplaced
 
@@ -1235,7 +1235,7 @@ WebExtensionAPIEvent& WebExtensionAPITabs::onReplaced()
     return *m_onReplaced;
 }
 
-WebExtensionAPIEvent& WebExtensionAPITabs::onUpdated()
+WebExtensionAPIEvent& WebExtensionAPITabs::onUpdated() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onUpdated
 

@@ -44,8 +44,8 @@ public:
 
     virtual ~RemoteBindGroupLayoutProxy();
 
-    RemoteGPUProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() const { return m_parent; }
+    RemoteGPUProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_parent; }
     WebGPUBindGroupLayoutIdentifier backing() const { return m_backing; }
 
     void setLabel(String&&) final;

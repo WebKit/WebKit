@@ -76,7 +76,7 @@ public:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
+    const WebCore::SecurityOrigin& securityOrigin() const LIFETIME_BOUND { return m_securityOrigin.get(); }
 
     void connect();
     void disconnect();
@@ -96,7 +96,7 @@ private:
 
     void syncOneItem(const String& key, const String& value);
     void syncItems(HashMap<String, String>&&);
-    WebCore::StorageMap& ensureMap();
+    WebCore::StorageMap& ensureMap() LIFETIME_BOUND;
     WebCore::StorageType computeStorageType() const;
     WebCore::ClientOrigin clientOrigin() const;
 

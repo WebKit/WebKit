@@ -172,7 +172,7 @@ void WebCookieCache::pruneCacheIfNecessary()
 }
 
 #if !PLATFORM(COCOA) && !USE(SOUP)
-NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
+NetworkStorageSession& WebCookieCache::inMemoryStorageSession() LIFETIME_BOUND
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return *m_inMemoryStorageSession;

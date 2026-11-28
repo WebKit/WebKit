@@ -44,7 +44,7 @@ public:
 
     virtual ~RemoteCommandEncoderProxy();
 
-    RemoteGPUProxy& root() const { return m_root; }
+    RemoteGPUProxy& root() const LIFETIME_BOUND { return m_root; }
     WebGPUCommandEncoderIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::RenderPassEncoder> beginRenderPass(const ::WebGPU::RenderPassDescriptor&) final;

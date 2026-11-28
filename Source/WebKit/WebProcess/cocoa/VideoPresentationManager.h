@@ -184,7 +184,7 @@ protected:
 
     typedef std::tuple<Ref<WebCore::VideoPresentationModelVideoElement>, Ref<VideoPresentationInterfaceContext>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(WebCore::MediaPlayerClientIdentifier, bool createLayerHostingContext);
-    const ModelInterfaceTuple& ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier, bool createLayerHostingContext = true);
+    const ModelInterfaceTuple& ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier, bool createLayerHostingContext = true) LIFETIME_BOUND;
     Ref<WebCore::VideoPresentationModelVideoElement> ensureModel(WebCore::MediaPlayerClientIdentifier);
     Ref<VideoPresentationInterfaceContext> ensureInterface(WebCore::MediaPlayerClientIdentifier);
     void removeContext(WebCore::MediaPlayerClientIdentifier);

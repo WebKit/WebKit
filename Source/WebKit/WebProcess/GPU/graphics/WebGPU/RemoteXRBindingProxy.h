@@ -46,8 +46,8 @@ public:
 
     virtual ~RemoteXRBindingProxy();
 
-    RemoteDeviceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteDeviceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUXRBindingIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::XRProjectionLayer> createProjectionLayer(const ::WebGPU::XRProjectionLayerDescriptor&) final;

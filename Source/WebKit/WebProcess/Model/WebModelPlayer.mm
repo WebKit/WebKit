@@ -188,7 +188,7 @@ void WebModelPlayer::ensureOnMainThreadWithProtectedThis(Function<void(Ref<WebMo
     });
 }
 
-WebModelPlayer::HostedModel& WebModelPlayer::ensureHostedModel(WebCore::NodeIdentifier nodeID)
+WebModelPlayer::HostedModel& WebModelPlayer::ensureHostedModel(WebCore::NodeIdentifier nodeID) LIFETIME_BOUND
 {
     return m_hostedModels.ensure(nodeID, [] {
         return makeUniqueRef<HostedModel>();

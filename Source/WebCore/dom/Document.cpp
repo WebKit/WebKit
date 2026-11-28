@@ -8038,7 +8038,7 @@ void Document::resume(ReasonForSuspension reason)
     m_isSuspended = false;
 
     if (settings().serviceWorkersEnabled() && reason == ReasonForSuspension::BackForwardCache)
-        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
+        setServiceWorkerConnection(ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (reason == ReasonForSuspension::BackForwardCache) {

@@ -84,7 +84,7 @@ private:
         std::optional<Seconds> pendingCurrentTime;
         std::optional<MonotonicTime> clockTimestampOfLastCurrentTimeSet;
     };
-    NodeAnimationState& ensureAnimationState(WebCore::NodeIdentifier);
+    NodeAnimationState& ensureAnimationState(WebCore::NodeIdentifier) LIFETIME_BOUND;
     NodeAnimationState* animationStateIfExists(WebCore::NodeIdentifier);
     const NodeAnimationState* animationStateIfExists(WebCore::NodeIdentifier) const;
 

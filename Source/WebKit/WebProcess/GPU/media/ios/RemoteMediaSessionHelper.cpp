@@ -43,7 +43,7 @@ using namespace WebCore;
 
 RemoteMediaSessionHelper::RemoteMediaSessionHelper() = default;
 
-IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
+Ref<IPC::Connection> RemoteMediaSessionHelper::ensureConnection()
 {
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
@@ -64,12 +64,12 @@ void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection
 
 void RemoteMediaSessionHelper::startMonitoringWirelessRoutesInternal()
 {
-    protect(ensureConnection())->send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
+    ensureConnection()->send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
 }
 
 void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
 {
-    protect(ensureConnection())->send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
+    ensureConnection()->send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

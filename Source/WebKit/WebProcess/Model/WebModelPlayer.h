@@ -128,7 +128,7 @@ private:
 #endif
     };
 
-    HostedModel& ensureHostedModel(WebCore::NodeIdentifier);
+    HostedModel& ensureHostedModel(WebCore::NodeIdentifier) LIFETIME_BOUND;
     HostedModel* hostedModel(WebCore::NodeIdentifier);
     const HostedModel* hostedModel(WebCore::NodeIdentifier) const;
     bool ensureModelBacking(WebCore::LayoutSize);

@@ -79,14 +79,14 @@ bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelI
     return iterator.isNewEntry;
 }
 
-WebCore::RTCDataChannelRemoteHandlerConnection& RTCDataChannelRemoteManager::remoteHandlerConnection()
+WebCore::RTCDataChannelRemoteHandlerConnection& RTCDataChannelRemoteManager::remoteHandlerConnection() LIFETIME_BOUND
 {
     if (!m_remoteHandlerConnection)
         lazyInitialize(m_remoteHandlerConnection, RemoteHandlerConnection::create(m_queue.copyRef()));
     return *m_remoteHandlerConnection;
 }
 
-WebCore::RTCDataChannelRemoteSourceConnection& RTCDataChannelRemoteManager::remoteSourceConnection()
+WebCore::RTCDataChannelRemoteSourceConnection& RTCDataChannelRemoteManager::remoteSourceConnection() LIFETIME_BOUND
 {
     if (!m_remoteSourceConnection)
         lazyInitialize(m_remoteSourceConnection, RemoteSourceConnection::create());

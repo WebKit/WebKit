@@ -138,7 +138,7 @@ void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtens
     }, extensionContext().identifier());
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigate()
+WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigate() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onBeforeNavigate
 
@@ -148,7 +148,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onBeforeNavigat
     return *m_onBeforeNavigateEvent;
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted()
+WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCommitted
 
@@ -158,7 +158,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCommitted()
     return *m_onCommittedEvent;
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoaded()
+WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoaded() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onDOMContentLoaded
 
@@ -168,7 +168,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onDOMContentLoa
     return *m_onDOMContentLoadedEvent;
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted()
+WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onCompleted
 
@@ -178,7 +178,7 @@ WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onCompleted()
     return *m_onCompletedEvent;
 }
 
-WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred()
+WebExtensionAPIWebNavigationEvent& WebExtensionAPIWebNavigation::onErrorOccurred() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webNavigation/onErrorOccurred
 

@@ -790,7 +790,7 @@ void ScriptExecutionContext::registerServiceWorker(ServiceWorker& serviceWorker)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     ensureOnMainThread([identifier = serviceWorker.identifier()] {
-        protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->registerServiceWorkerInServer(identifier);
+        ServiceWorkerProvider::singleton().serviceWorkerConnection()->registerServiceWorkerInServer(identifier);
     });
 }
 
@@ -799,7 +799,7 @@ void ScriptExecutionContext::unregisterServiceWorker(ServiceWorker& serviceWorke
     m_serviceWorkers.remove(serviceWorker.identifier());
 
     ensureOnMainThread([identifier = serviceWorker.identifier()] {
-        protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->unregisterServiceWorkerInServer(identifier);
+        ServiceWorkerProvider::singleton().serviceWorkerConnection()->unregisterServiceWorkerInServer(identifier);
     });
 }
 

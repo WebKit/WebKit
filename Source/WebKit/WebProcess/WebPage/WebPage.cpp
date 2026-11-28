@@ -1938,7 +1938,7 @@ bool WebPage::isThrottleable() const
     return m_isAppNapEnabled && !isActive && isVisuallyIdle;
 }
 
-NetworkInterceptionSink& WebPage::networkInterceptionSink()
+NetworkInterceptionSink& WebPage::networkInterceptionSink() LIFETIME_BOUND
 {
     if (!m_networkInterceptionSink)
         m_networkInterceptionSink = makeUnique<NetworkInterceptionSink>(*this);
@@ -4178,7 +4178,7 @@ void WebPage::setHasActiveAnimatedScrolls(bool hasActiveAnimatedScrolls)
 }
 
 #if ENABLE(CONTEXT_MENUS)
-WebContextMenu& WebPage::contextMenu()
+WebContextMenu& WebPage::contextMenu() LIFETIME_BOUND
 {
     if (!m_contextMenu)
         m_contextMenu = WebContextMenu::create(*this);
@@ -6135,14 +6135,14 @@ void WebPage::inspectorFrontendCountChanged(unsigned count)
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-PlaybackSessionManager& WebPage::playbackSessionManager()
+PlaybackSessionManager& WebPage::playbackSessionManager() LIFETIME_BOUND
 {
     if (!m_playbackSessionManager)
         lazyInitialize(m_playbackSessionManager, PlaybackSessionManager::create(*this));
     return *m_playbackSessionManager;
 }
 
-VideoPresentationManager& WebPage::videoPresentationManager()
+VideoPresentationManager& WebPage::videoPresentationManager() LIFETIME_BOUND
 {
     if (!m_videoPresentationManager)
         lazyInitialize(m_videoPresentationManager, VideoPresentationManager::create(*this, protect(playbackSessionManager())));
@@ -6247,7 +6247,7 @@ void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-WebFullScreenManager& WebPage::fullScreenManager()
+WebFullScreenManager& WebPage::fullScreenManager() LIFETIME_BOUND
 {
     if (!m_fullScreenManager)
         m_fullScreenManager = WebFullScreenManager::create(*this);
@@ -9929,7 +9929,7 @@ void WebPage::clearLoadedSubresourceDomains()
     m_internals->loadedSubresourceDomains.clear();
 }
 
-const HashSet<WebCore::RegistrableDomain>& WebPage::loadedSubresourceDomains() const
+const HashSet<WebCore::RegistrableDomain>& WebPage::loadedSubresourceDomains() const LIFETIME_BOUND
 {
     return m_internals->loadedSubresourceDomains;
 }
@@ -10877,7 +10877,7 @@ void WebPage::notifyPageOfAppBoundBehavior()
 #endif
 
 #if ENABLE(GPU_PROCESS)
-RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
+RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy() LIFETIME_BOUND
 {
     if (!m_remoteRenderingBackendProxy)
         lazyInitialize(m_remoteRenderingBackendProxy, RemoteRenderingBackendProxy::create(*this));

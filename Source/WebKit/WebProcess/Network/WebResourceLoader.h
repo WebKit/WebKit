@@ -76,7 +76,7 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
+    WebCore::ResourceLoader* resourceLoader() const LIFETIME_BOUND { return m_coreLoader.get(); }
 
     void detachFromCoreLoader();
 

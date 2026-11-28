@@ -72,7 +72,7 @@ SharedWorker* SharedWorker::fromIdentifier(SharedWorkerObjectIdentifier identifi
     return allSharedWorkers().get(identifier);
 }
 
-static inline SharedWorkerObjectConnection* sharedWorkerMainThreadConnection()
+static inline RefPtr<SharedWorkerObjectConnection> sharedWorkerMainThreadConnection()
 {
     return SharedWorkerProvider::singleton().sharedWorkerConnection();
 }
@@ -120,7 +120,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
         return sharedWorker;
     }
 
-    protect(sharedWorkerMainThreadConnection())->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
+    sharedWorkerMainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
     return sharedWorker;
 }
 
@@ -175,13 +175,13 @@ void SharedWorker::stop()
 {
     SHARED_WORKER_RELEASE_LOG("stop:");
     m_isActive = false;
-    protect(sharedWorkerMainThreadConnection())->sharedWorkerObjectIsGoingAway(m_key, identifier());
+    sharedWorkerMainThreadConnection()->sharedWorkerObjectIsGoingAway(m_key, identifier());
 }
 
 void SharedWorker::suspend(ReasonForSuspension reason)
 {
     if (reason == ReasonForSuspension::BackForwardCache) {
-        protect(sharedWorkerMainThreadConnection())->suspendForBackForwardCache(m_key, identifier());
+        sharedWorkerMainThreadConnection()->suspendForBackForwardCache(m_key, identifier());
         m_isSuspendedForBackForwardCache = true;
     }
 }
@@ -189,7 +189,7 @@ void SharedWorker::suspend(ReasonForSuspension reason)
 void SharedWorker::resume()
 {
     if (m_isSuspendedForBackForwardCache) {
-        protect(sharedWorkerMainThreadConnection())->resumeForBackForwardCache(m_key, identifier());
+        sharedWorkerMainThreadConnection()->resumeForBackForwardCache(m_key, identifier());
         m_isSuspendedForBackForwardCache = false;
     }
 }

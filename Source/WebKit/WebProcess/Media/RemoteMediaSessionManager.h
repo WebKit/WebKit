@@ -88,7 +88,7 @@ protected:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
-    RemoteMediaSessionState& currentSessionState(const WebCore::PlatformMediaSessionInterface&);
+    RemoteMediaSessionState& currentSessionState(const WebCore::PlatformMediaSessionInterface&) LIFETIME_BOUND;
     RemoteMediaSessionState fullSessionState(const WebCore::PlatformMediaSessionInterface&);
     void updateCachedSessionState(const WebCore::PlatformMediaSessionInterface&, RemoteMediaSessionState&);
 

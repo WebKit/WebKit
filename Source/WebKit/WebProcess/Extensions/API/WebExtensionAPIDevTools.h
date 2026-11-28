@@ -40,9 +40,9 @@ class WebExtensionAPIDevTools : public WebExtensionAPIObject, public JSWebExtens
 
 public:
 #if PLATFORM(COCOA)
-    WebExtensionAPIDevToolsInspectedWindow& inspectedWindow();
-    WebExtensionAPIDevToolsNetwork& network();
-    WebExtensionAPIDevToolsPanels& panels();
+    WebExtensionAPIDevToolsInspectedWindow& inspectedWindow() LIFETIME_BOUND;
+    WebExtensionAPIDevToolsNetwork& network() LIFETIME_BOUND;
+    WebExtensionAPIDevToolsPanels& panels() LIFETIME_BOUND;
 #endif
 
 private:

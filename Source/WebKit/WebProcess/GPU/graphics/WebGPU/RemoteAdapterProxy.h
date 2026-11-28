@@ -48,8 +48,8 @@ public:
 
     virtual ~RemoteAdapterProxy();
 
-    RemoteWebGPUInstanceProxy& parent() const { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent->root(); }
+    RemoteWebGPUInstanceProxy& parent() const LIFETIME_BOUND { return m_parent; }
+    RemoteGPUProxy& root() LIFETIME_BOUND { return m_parent->root(); }
     WebGPUAdapterIdentifier backing() const { return m_backing; }
 
     RefPtr<::WebGPU::Instance> instance() const final { return m_parent.ptr(); }

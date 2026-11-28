@@ -85,7 +85,7 @@ private:
     void didScrollFrame(WebCore::PageOverlay&, WebCore::LocalFrame&) final { }
 
     // DataDetectorHighlightClient
-    WebCore::DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorItemWithHighlight.second.get(); }
+    WebCore::DataDetectorHighlight* activeHighlight() const LIFETIME_BOUND final { return m_activeDataDetectorItemWithHighlight.second.get(); }
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep>) final;
     float deviceScaleFactor() const final;
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&) final;

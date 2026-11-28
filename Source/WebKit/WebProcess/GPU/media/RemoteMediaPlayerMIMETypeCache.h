@@ -51,7 +51,7 @@ class RemoteMediaPlayerMIMETypeCache final : public CanMakeThreadSafeCheckedPtr<
 public:
     RemoteMediaPlayerMIMETypeCache(RemoteMediaPlayerManager&, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
-    HashSet<String>& supportedTypes();
+    HashSet<String>& supportedTypes() LIFETIME_BOUND;
     WebCore::MediaPlayerEnums::SupportsType supportsTypeAndCodecs(const WebCore::MediaEngineSupportParameters&);
     void addSupportedTypes(const Vector<String>&);
     NODELETE bool isEmpty() const;

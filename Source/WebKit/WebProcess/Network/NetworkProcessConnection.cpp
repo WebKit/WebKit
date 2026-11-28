@@ -293,7 +293,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 }
 #endif
 
-WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
+WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer() LIFETIME_BOUND
 {
     if (!m_webIDBConnection)
         m_webIDBConnection = WebIDBConnectionToServer::create(WebProcess::singleton().sessionID());
@@ -301,14 +301,14 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
     return *m_webIDBConnection;
 }
 
-WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
+WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection() LIFETIME_BOUND
 {
     if (!m_swConnection)
         m_swConnection = WebSWClientConnection::create();
     return *m_swConnection;
 }
 
-WebSharedWorkerObjectConnection& NetworkProcessConnection::sharedWorkerConnection()
+WebSharedWorkerObjectConnection& NetworkProcessConnection::sharedWorkerConnection() LIFETIME_BOUND
 {
     if (!m_sharedWorkerConnection)
         lazyInitialize(m_sharedWorkerConnection, WebSharedWorkerObjectConnection::create());

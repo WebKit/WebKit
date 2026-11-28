@@ -190,7 +190,7 @@ void WebExtensionAPINotifications::getPermissionLevel(Ref<WebExtensionCallbackHa
 
 #endif
 
-WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
+WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClicked
 
@@ -200,7 +200,7 @@ WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
     return *m_onClicked;
 }
 
-WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked()
+WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onButtonClicked
 
@@ -210,7 +210,7 @@ WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked()
     return *m_onButtonClicked;
 }
 
-WebExtensionAPIEvent& WebExtensionAPINotifications::onClosed()
+WebExtensionAPIEvent& WebExtensionAPINotifications::onClosed() LIFETIME_BOUND
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClosed
 

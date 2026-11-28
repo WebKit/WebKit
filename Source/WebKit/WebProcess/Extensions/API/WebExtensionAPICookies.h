@@ -52,7 +52,7 @@ public:
 
     NODELETE NSDictionary *sameSiteStatus();
 
-    WebExtensionAPIEvent& onChanged();
+    WebExtensionAPIEvent& onChanged() LIFETIME_BOUND;
 
 private:
     using ParsedDetails = std::tuple<std::optional<PAL::SessionID>, String, URL>;

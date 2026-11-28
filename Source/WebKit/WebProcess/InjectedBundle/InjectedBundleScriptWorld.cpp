@@ -110,12 +110,12 @@ InjectedBundleScriptWorld::~InjectedBundleScriptWorld()
     allWorlds().remove(m_world.get());
 }
 
-const DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld() const
+const DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld() const LIFETIME_BOUND
 {
     return m_world;
 }
 
-DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld()
+DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld() LIFETIME_BOUND
 {
     return m_world;
 }
