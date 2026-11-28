@@ -1,4 +1,4 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Initially, stuck query does not match and ::before/::after do not apply
+PASS ::before/::after depending on stuck query
 

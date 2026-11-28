@@ -90,6 +90,7 @@ public:
     NODELETE std::pair<const RenderBox&, const RenderLayer*> enclosingClippingBoxForStickyPosition() const;
     void computeStickyPositionConstraints(StickyPositionViewportConstraints&, const FloatRect& constrainingRect) const;
     LayoutSize stickyPositionOffset() const;
+    RectEdges<bool> stuckEdgesForStickyPosition() const;
 
     LayoutSize offsetForInFlowPosition() const;
 
