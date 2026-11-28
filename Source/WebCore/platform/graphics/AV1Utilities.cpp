@@ -492,7 +492,7 @@ bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord& record)
         break;
     case AV1ConfigurationProfile::Professional:
         if (record.bitDepth == 8 || record.bitDepth == 10) {
-            if (chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_444)
+            if (!record.monochrome && chromaSubsampling != AV1ConfigurationChromaSubsampling::Subsampling_422)
                 return false;
         } else if (record.bitDepth != 12)
             return false;

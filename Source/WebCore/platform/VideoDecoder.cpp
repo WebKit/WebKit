@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VideoDecoder.h"
 
+#include "AV1Utilities.h"
+
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include "LibWebRTCVPXVideoDecoder.h"
 #include "WebRTCProvider.h"
@@ -55,6 +57,18 @@ bool VideoDecoder::isVPXSupported()
     return true;
 #else
     return false;
+#endif
+}
+
+bool VideoDecoder::isAV1Supported(const AV1CodecConfigurationRecord& record)
+{
+    if (!validateAV1ConfigurationRecord(record))
+        return false;
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    // libwebrtc has no buffer type for 12-bit samples.
+    return record.bitDepth <= 10;
+#else
+    return true;
 #endif
 }
 

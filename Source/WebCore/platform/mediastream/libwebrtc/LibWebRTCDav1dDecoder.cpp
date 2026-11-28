@@ -31,6 +31,7 @@
 #include "Dav1dSPI.h"
 #include "LibWebRTCMacros.h"
 #include "Logging.h"
+#include "PlanarImageConverter.h"
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -40,29 +41,17 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/api/scoped_refptr.h>
 #include <webrtc/api/video/encoded_image.h>
+#include <webrtc/api/video/i010_buffer.h>
+#include <webrtc/api/video/i210_buffer.h>
+#include <webrtc/api/video/i410_buffer.h>
 #include <webrtc/api/video/i420_buffer.h>
+#include <webrtc/api/video/i422_buffer.h>
+#include <webrtc/api/video/i444_buffer.h>
 #include <webrtc/common_video/include/video_frame_buffer_pool.h>
 #include <webrtc/modules/video_coding/include/video_error_codes.h>
 #include <webrtc/rtc_base/logging.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-
-namespace libyuv {
-extern "C" int I420Copy(const uint8_t* src_y,
-             int src_stride_y,
-             const uint8_t* src_u,
-             int src_stride_u,
-             const uint8_t* src_v,
-             int src_stride_v,
-             uint8_t* dst_y,
-             int dst_stride_y,
-             uint8_t* dst_u,
-             int dst_stride_u,
-             uint8_t* dst_v,
-             int dst_stride_v,
-             int width,
-             int height);
-}
 
 namespace WebCore {
 
@@ -158,6 +147,65 @@ const char* Dav1dDecoder::ImplementationName() const
     return kDav1dName;
 }
 
+template<typename Sample>
+static std::optional<PlanarImageConverter::DestinationPlane> bufferPlane(Sample* data, int stride, int width, int height, PlanarImageConverter::SampleFormat format)
+{
+    return PlanarImageConverter::makePlane(unsafeMakeSpan(data, (height - 1) * stride + width), 0, stride, width, height, format);
+}
+
+static std::optional<PlanarImageConverter::SourcePlane> picturePlane(const Dav1dPicture& picture, size_t index, int width, int height, PlanarImageConverter::SampleFormat format)
+{
+    // dav1d strides count bytes, and both chroma planes share the second one.
+    size_t stride = std::span { picture.stride }[index ? 1 : 0];
+    auto* data = static_cast<const uint8_t*>(std::span { picture.data }[index]);
+    return PlanarImageConverter::makePlane(unsafeMakeSpan(data, (height - 1) * stride + width * format.sampleSize()), 0, stride, width, height, format);
+}
+
+static void fillPlane(const PlanarImageConverter::DestinationPlane& plane, uint16_t value)
+{
+    for (size_t y = 0; y < plane.height; ++y) {
+        auto row = plane.row(y);
+        if (plane.format.sampleSize() == 1)
+            memsetSpan(row, static_cast<uint8_t>(value));
+        else
+            std::ranges::fill(spanReinterpretCast<uint16_t>(row), value);
+    }
+}
+
+template<typename Buffer>
+static webrtc::scoped_refptr<webrtc::VideoFrameBuffer> copyPicture(webrtc::scoped_refptr<Buffer>&& buffer, const Dav1dPicture& picture, PlanarImageConverter::SampleFormat format)
+{
+    if (!buffer)
+        return nullptr;
+
+    int width = buffer->width();
+    int height = buffer->height();
+    int chromaWidth = buffer->ChromaWidth();
+    int chromaHeight = buffer->ChromaHeight();
+    auto yPlane = bufferPlane(buffer->MutableDataY(), buffer->StrideY(), width, height, format);
+    auto uPlane = bufferPlane(buffer->MutableDataU(), buffer->StrideU(), chromaWidth, chromaHeight, format);
+    auto vPlane = bufferPlane(buffer->MutableDataV(), buffer->StrideV(), chromaWidth, chromaHeight, format);
+    auto sourceY = picturePlane(picture, 0, width, height, format);
+    if (!yPlane || !uPlane || !vPlane || !sourceY || !PlanarImageConverter::copyPlane(*sourceY, *yPlane))
+        return nullptr;
+
+    // Monochrome pictures have no chroma planes.
+    if (picture.p.layout == DAV1D_PIXEL_LAYOUT_I400) {
+        uint16_t neutral = 1 << (format.bitDepth - 1);
+        fillPlane(*uPlane, neutral);
+        fillPlane(*vPlane, neutral);
+        return buffer;
+    }
+
+    auto sourceU = picturePlane(picture, 1, chromaWidth, chromaHeight, format);
+    auto sourceV = picturePlane(picture, 2, chromaWidth, chromaHeight, format);
+    if (!sourceU || !sourceV
+        || !PlanarImageConverter::copyPlane(*sourceU, *uPlane, PlanarImageConverter::RangeConversion::None, PlanarImageConverter::Component::Chroma)
+        || !PlanarImageConverter::copyPlane(*sourceV, *vPlane, PlanarImageConverter::RangeConversion::None, PlanarImageConverter::Component::Chroma))
+        return nullptr;
+    return buffer;
+}
+
 int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*missingFrames*/, int64_t /*renderTimeMs*/)
 {
     if (!m_context || m_decodeCompleteCallback == nullptr)
@@ -204,31 +252,38 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    // Only accept I420 pixel format and 8 bit depth.
-    if (dav1dPicture.p.layout != DAV1D_PIXEL_LAYOUT_I420 || dav1dPicture.p.bpc != 8)
-        return WEBRTC_VIDEO_CODEC_ERROR;
-
-    auto buffer = m_bufferPool.CreateI420Buffer(dav1dPicture.p.w, dav1dPicture.p.h);
-    if (!buffer.get()) {
-        RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode failed to get frame from the buffer pool");
+    // libwebrtc has no buffer type for 12-bit samples.
+    if (dav1dPicture.p.bpc != 8 && dav1dPicture.p.bpc != 10) {
+        RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode unsupported bit depth %d", dav1dPicture.p.bpc);
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    auto pictureData = std::span { dav1dPicture.data };
-    auto* yData = static_cast<uint8_t*>(pictureData[0]);
-    auto* uData = static_cast<uint8_t*>(pictureData[1]);
-    auto* vData = static_cast<uint8_t*>(pictureData[2]);
-    auto pictureStride = std::span { dav1dPicture.stride };
-    int yStride = pictureStride[0];
-    int uvStride = pictureStride[1];
-    libyuv::I420Copy(yData, yStride,
-        uData, uvStride,
-        vData, uvStride,
-        buffer->MutableDataY(), buffer->StrideY(),
-        buffer->MutableDataU(), buffer->StrideU(),
-        buffer->MutableDataV(), buffer->StrideV(),
-        dav1dPicture.p.w,
-        dav1dPicture.p.h);
+    bool isTenBit = dav1dPicture.p.bpc == 10;
+    auto format = isTenBit ? PlanarImageConverter::tenBitLSB : PlanarImageConverter::eightBit;
+    int width = dav1dPicture.p.w;
+    int height = dav1dPicture.p.h;
+    auto buffer = [&] -> webrtc::scoped_refptr<webrtc::VideoFrameBuffer> {
+        switch (dav1dPicture.p.layout) {
+        case DAV1D_PIXEL_LAYOUT_I400:
+        case DAV1D_PIXEL_LAYOUT_I420:
+            if (isTenBit)
+                return copyPicture(m_bufferPool.CreateI010Buffer(width, height), dav1dPicture, format);
+            return copyPicture(m_bufferPool.CreateI420Buffer(width, height), dav1dPicture, format);
+        case DAV1D_PIXEL_LAYOUT_I422:
+            if (isTenBit)
+                return copyPicture(m_bufferPool.CreateI210Buffer(width, height), dav1dPicture, format);
+            return copyPicture(m_bufferPool.CreateI422Buffer(width, height), dav1dPicture, format);
+        case DAV1D_PIXEL_LAYOUT_I444:
+            if (isTenBit)
+                return copyPicture(m_bufferPool.CreateI410Buffer(width, height), dav1dPicture, format);
+            return copyPicture(m_bufferPool.CreateI444Buffer(width, height), dav1dPicture, format);
+        }
+        return nullptr;
+    }();
+    if (!buffer) {
+        RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode failed to copy the decoded picture");
+        return WEBRTC_VIDEO_CODEC_ERROR;
+    }
 
     webrtc::VideoFrame decodedFrame = webrtc::VideoFrame::Builder()
         .set_video_frame_buffer(buffer)
