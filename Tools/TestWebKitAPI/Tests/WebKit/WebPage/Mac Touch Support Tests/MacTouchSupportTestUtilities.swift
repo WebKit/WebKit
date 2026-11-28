@@ -138,6 +138,7 @@ final class TestWindowHost {
             : NonKeyWindow(size: size, rootView: rootView)
         self.window.setFrameOrigin(.zero)
 
+        NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
 
         if shouldBecomeKey {

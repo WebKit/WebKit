@@ -47,6 +47,9 @@ extension NSApplication {
     /// - Note: This must be called prior to any test that depends on having a "real" NSApplication.
     @MainActor
     public func waitForActivation() async {
+        setActivationPolicy(.regular)
+        activate(ignoringOtherApps: true)
+
         // Activation is processed asynchronously by the AppKit event loop, so wait for it to take
         // effect before synthesizing events.
         var attempts = 0
