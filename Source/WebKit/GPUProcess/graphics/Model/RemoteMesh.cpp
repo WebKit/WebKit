@@ -34,7 +34,9 @@
 #include "ModelObjectHeap.h"
 #include "ModelTypes.h"
 #include "RemoteMeshMessages.h"
+#include "RemoteSharedResourceCache.h"
 #include "StreamServerConnection.h"
+#include <WebCore/NativeImage.h>
 #include <limits>
 #include <tuple>
 #include <wtf/CheckedArithmetic.h>
@@ -483,11 +485,13 @@ void RemoteMesh::processRemovals(Vector<WebModel::TypedResourceId>&& meshRemoval
     });
 }
 
-void RemoteMesh::paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
+void RemoteMesh::copyNativeImage(uint32_t bufferIndex, RemoteNativeImageReference nativeImageReference)
 {
-    if (RefPtr nativeImage { m_backing->getCurrentFrameAsNativeImage(bufferIndex) })
-        m_gpu->paintNativeImageToImageBuffer(*nativeImage, imageBufferIdentifier);
-    completionHandler();
+    RefPtr image = m_backing->copyNativeImage(bufferIndex);
+    // FIXME: Handle OOM.
+    MESSAGE_CHECK(image);
+    bool success = protect(m_gpu.get())->sharedResourceCache()->addNativeImage(nativeImageReference, image.releaseNonNull());
+    MESSAGE_CHECK(success);
 }
 
 } // namespace WebKit

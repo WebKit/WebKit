@@ -9,7 +9,6 @@ let device = null;
 let htmlCanvasContext = null;
 let offscreenCanvas = null;
 let offscreenCanvasContext = null;
-let expectedOffscreenCanvasContent = null;
 
 async function render(context, clearValue) {
     let commandEncoder = device.createCommandEncoder();
@@ -34,16 +33,6 @@ async function configureHTMLCanvas() {
     await render(htmlCanvasContext, {r: 1, g: 0, b: 0, a: 1});
 }
 
-function expectedHTMLCanvasContent() {
-    let canvas = document.createElement("canvas");
-    canvas.width = 4;
-    canvas.height = 4;
-    let context = canvas.getContext("2d");
-    context.fillStyle = "red";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL();
-}
-
 async function useOffscreenCanvasOnly() {
     htmlCanvasContext.unconfigure();
 
@@ -54,13 +43,6 @@ async function useOffscreenCanvasOnly() {
         format: navigator.gpu.getPreferredCanvasFormat(),
     });
     await render(offscreenCanvasContext, {r: 0, g: 1, b: 0, a: 1});
-
-    let blob = await offscreenCanvas.convertToBlob();
-    expectedOffscreenCanvasContent = await new Promise((resolve) => {
-        let reader = new FileReader;
-        reader.addEventListener("load", () => { resolve(reader.result); });
-        reader.readAsDataURL(blob);
-    });
     TestPage.dispatchEventToFrontend("OffscreenCanvasReady");
 }
 
@@ -90,16 +72,35 @@ function test() {
     let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
     InspectorTest.assert(canvas, "There should be a WebGPU Canvas.");
 
+    // Describes the content as its size and its distinct pixel values.
+    async function describeContent(dataURL) {
+        let image = new Image;
+        image.src = dataURL;
+        await image.decode();
+        let imageCanvas = document.createElement("canvas");
+        imageCanvas.width = image.width;
+        imageCanvas.height = image.height;
+        let context = imageCanvas.getContext("2d");
+        context.drawImage(image, 0, 0);
+        let data = context.getImageData(0, 0, image.width, image.height).data;
+        let pixels = new Set;
+        for (let i = 0; i < data.length; i += 4)
+            pixels.add(`${data[i]},${data[i + 1]},${data[i + 2]},${data[i + 3]}`);
+        return `${image.width}x${image.height} ${Array.from(pixels).join(" ")}`;
+    }
+
+    const expectedRedContent = "4x4 255,0,0,255";
+    const expectedGreenContent = "4x4 0,255,0,255";
+
     suite.addTestCase({
         name: "Canvas.requestContent.WebGPU.HTMLCanvasElement",
         description: "Check that requestContent returns the presented content of an HTML canvas configured with the GPUDevice.",
         async test() {
             let content = await canvas.requestContent();
-            let expectedContent = await InspectorTest.evaluateInPage(`expectedHTMLCanvasContent()`);
-            InspectorTest.expectEqual(content, expectedContent, "Content should match the presented HTML canvas.");
+            InspectorTest.expectEqual(await describeContent(content), expectedRedContent, "Content should match the presented HTML canvas.");
 
             content = await canvas.requestContent();
-            InspectorTest.expectEqual(content, expectedContent, "Repeated content should match the same presented HTML canvas.");
+            InspectorTest.expectEqual(await describeContent(content), expectedRedContent, "Repeated content should match the same presented HTML canvas.");
         },
     });
 
@@ -112,8 +113,7 @@ function test() {
             await readyPromise;
 
             let content = await canvas.requestContent();
-            let expectedContent = await InspectorTest.evaluateInPage(`expectedOffscreenCanvasContent`);
-            InspectorTest.expectEqual(content, expectedContent, "Content should match the presented OffscreenCanvas.");
+            InspectorTest.expectEqual(await describeContent(content), expectedGreenContent, "Content should match the presented OffscreenCanvas.");
         },
     });
 

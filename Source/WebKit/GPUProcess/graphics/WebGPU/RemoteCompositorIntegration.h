@@ -28,10 +28,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPU.h"
+#include "RemoteNativeImageIdentifier.h"
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+#include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxy.h"
+#endif
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/AlphaPremultiplication.h>
-#include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -46,7 +50,6 @@
 
 namespace WebCore {
 class ColorSpace;
-class ImageBuffer;
 class WebGPUCompositorIntegration;
 }
 
@@ -91,7 +94,10 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
-    void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, uint32_t, CompletionHandler<void()>&&);
+    void copyNativeImage(uint32_t bufferIndex, RemoteNativeImageReference);
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    void copyVideoFrame(uint32_t bufferIndex, RemoteVideoFrameReference, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&)>&&);
+#endif
 
 #if PLATFORM(COCOA)
     void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, ::WebGPU::TextureFormat, WebKit::WebGPUDeviceIdentifier, CompletionHandler<void(uint32_t)>&&);

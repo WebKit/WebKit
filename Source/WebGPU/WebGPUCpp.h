@@ -75,7 +75,6 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 
-typedef struct CGImage* CGImageRef;
 typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __IOSurface* IOSurfaceRef;
 #endif
@@ -1646,9 +1645,10 @@ public:
     // The time the last present waited for an in-flight frame to finish.
     virtual Seconds lastFramePresentStall() const = 0;
 #if PLATFORM(COCOA)
-    // The contents of a render buffer. isIOSurfaceSupportedFormat is false when its format cannot be
-    // read back that way.
-    virtual RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
+    // Copies the contents of a render buffer to an IOSurface of its size. The destination has the
+    // pixel format of the render buffer, or a BGRA pixel format, to which the contents are converted.
+    // Returns false when the render buffer cannot be copied.
+    virtual bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination) = 0;
 #endif
     virtual void setLabel(String&&) = 0;
     virtual bool isValid() const = 0;

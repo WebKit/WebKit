@@ -40,6 +40,7 @@
 #include "RemotePresentationContextProxy.h"
 #include "RemoteQueueProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteWebGPUInstanceProxy.h"
 #include "WebGPUDescriptorSerializers.h"
 #include "WebPage.h"
@@ -102,6 +103,7 @@ void RemoteGPUProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConn
         gpuProcessConnection->createGPU(m_backing, m_renderingBackend->renderingBackendIdentifier(), WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
         lazyInitialize(m_gpuProcessIPCConnection, Ref { gpuProcessConnection->connection() });
+        lazyInitialize(m_sharedResourceCache, gpuProcessConnection->sharedResourceCache());
         didCreateGPU = true;
     });
     if (!didCreateGPU)
@@ -244,7 +246,7 @@ RefPtr<WebKit::Mesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned
 
     UNUSED_PARAM(sendResult);
 
-    auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier);
+    auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier, WebCore::IntSize(static_cast<int>(width), static_cast<int>(height)), standardDynamicRange);
     result->setLabel("Placeholder model label"_s);
     return result;
 #else

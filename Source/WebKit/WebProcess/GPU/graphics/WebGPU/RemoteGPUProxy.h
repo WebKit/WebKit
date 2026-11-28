@@ -51,6 +51,7 @@ namespace WebKit {
 class Mesh;
 class ModelConvertToBackingContext;
 class RemoteRenderingBackendProxy;
+class RemoteSharedResourceCacheProxy;
 class WebPage;
 
 namespace WebGPU {
@@ -72,6 +73,10 @@ public:
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
     // The connection of the GPU process connection that streamClientConnection() was created on.
     IPC::Connection& gpuProcessIPCConnection() const { return *m_gpuProcessIPCConnection; }
+    RemoteRenderingBackendProxy& renderingBackend() const { return m_renderingBackend; }
+    RemoteSharedResourceCacheProxy* sharedResourceCache() const { return m_sharedResourceCache.get(); }
+    // Used on the main run loop.
+    RefPtr<GPUProcessConnection> gpuProcessConnection() const { return m_gpuProcessConnection.get(); }
 
     void ref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCounted<RemoteGPUProxy>::deref(); }
@@ -159,6 +164,7 @@ private:
     const RefPtr<IPC::StreamClientConnection> m_streamConnection;
     const RefPtr<IPC::Connection> m_gpuProcessIPCConnection;
     const Ref<RemoteRenderingBackendProxy> m_renderingBackend;
+    const RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
     // Weak, because the instance holds a reference to this. The adapters hold the instance.
     ThreadSafeWeakPtr<WebGPU::RemoteWebGPUInstanceProxy> m_instance;
     RemoteGPUIdentifier m_backing { RemoteGPUIdentifier::generate() };

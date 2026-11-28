@@ -64,6 +64,7 @@ class ImageBitmap;
 class ImageBitmapRenderingContext;
 class ImageData;
 class OffscreenCanvasRenderingContext2D;
+class VideoFrame;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class WebGLRenderingContextBase;
@@ -159,6 +160,10 @@ public:
     ExceptionOr<std::optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     ExceptionOr<Ref<ImageBitmap>> transferToImageBitmap();
     void convertToBlob(ImageEncodeOptions&&, Ref<DeferredPromise>&&);
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    // Returns the context drawing buffer as a VideoFrame.
+    RefPtr<VideoFrame> toVideoFrame();
+#endif
 
     void willUpdateContents(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
 

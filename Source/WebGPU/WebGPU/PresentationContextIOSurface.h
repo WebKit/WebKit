@@ -68,7 +68,7 @@ private:
     void replaceRenderBuffer(uint32_t index, IOSurface *);
     void setOwnershipIdentity(IOSurface *);
     void onSubmittedWorkScheduled(Function<void()>&&);
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
+    bool copyRenderBuffer(uint32_t bufferIndex, IOSurfaceRef destination) final;
     void copyTextureToTexture(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer>);
     id<MTLComputePipelineState> resizeComputePipelineState();
 

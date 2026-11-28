@@ -29,6 +29,7 @@
 
 #include "Mesh.h"
 #include "WebKitMesh.h"
+#include <WebCore/IntSize.h>
 #include <WebCore/Model.h>
 #include <WebCore/WebGPUPredefinedColorSpace.h>
 #include <wtf/TZoneMalloc.h>
@@ -42,9 +43,9 @@ namespace WebKit {
 class MeshImpl final : public Mesh {
     WTF_MAKE_TZONE_ALLOCATED(MeshImpl);
 public:
-    static Ref<MeshImpl> create(Ref<WebMesh>&& mesh, Vector<UniqueRef<WebCore::IOSurface>>&& renderBuffers)
+    static Ref<MeshImpl> create(Ref<WebMesh>&& mesh, Vector<UniqueRef<WebCore::IOSurface>>&& renderBuffers, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange)
     {
-        return adoptRef(*new MeshImpl(WTF::move(mesh), WTF::move(renderBuffers)));
+        return adoptRef(*new MeshImpl(WTF::move(mesh), WTF::move(renderBuffers), renderBufferSize, standardDynamicRange));
     }
 
     virtual ~MeshImpl();
@@ -52,13 +53,13 @@ public:
 #if PLATFORM(COCOA)
     Vector<MachSendRight> ioSurfaceHandles() final;
     void updateRenderBuffers(WebModel::ResizeMeshDescriptor&&) final;
-    RefPtr<WebCore::NativeImage> getCurrentFrameAsNativeImage(uint32_t bufferIndex) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(uint32_t bufferIndex) final;
 #endif
 
 private:
     friend class ModelDowncastConvertToBackingContext;
 
-    MeshImpl(Ref<WebMesh>&&, Vector<UniqueRef<WebCore::IOSurface>>&&);
+    MeshImpl(Ref<WebMesh>&&, Vector<UniqueRef<WebCore::IOSurface>>&&, const WebCore::IntSize& renderBufferSize, bool standardDynamicRange);
 
     MeshImpl(const MeshImpl&) = delete;
     MeshImpl(MeshImpl&&) = delete;
@@ -100,6 +101,12 @@ private:
     const Ref<WebMesh> m_backing;
 #if PLATFORM(COCOA)
     Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
+#endif
+    // The size of the render buffers, which the Web Process knows, even if they could not be created.
+    WebCore::IntSize m_renderBufferSize;
+    const bool m_standardDynamicRange { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    std::optional<float> m_contentsHeadroom;
 #endif
 };
 

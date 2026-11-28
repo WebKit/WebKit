@@ -63,7 +63,6 @@ namespace WebCore {
 class IOSurface;
 class ImageBuffer;
 class MediaPlayer;
-class NativeImage;
 class ProcessIdentity;
 class VideoFrame;
 }
@@ -80,6 +79,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteRenderingBackend;
+class RemoteSharedResourceCache;
 
 namespace WebGPU {
 class ObjectHeap;
@@ -102,7 +102,7 @@ public:
 
     void stopListeningForIPC();
 
-    void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
+    Ref<RemoteSharedResourceCache> sharedResourceCache();
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
     // The root, which has the commands that take WebCore sources.
     RefPtr<WebCore::WebGPUIntegration> backing();
