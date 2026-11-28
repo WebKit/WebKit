@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: line-clamp does not apply to flex and grid containers</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#max-lines">
+<link rel="match" href="reference/line-clamp-053-ref.html">
+<meta name="assert" content="max-lines applies to block containers, which flex and grid containers are not, so line-clamp on them does not clamp the lines of their items.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+.container {
+  line-clamp: 2;
+  font: 20px/1 Ahem;
+  width: 200px;
+  margin-bottom: 20px;
+  background: yellow;
+}
+</style>
+<div class="container" style="display: flex"><div>AAA<br>BBB<br>CCC</div></div>
+<div><span class="container" style="display: inline-flex"><span>AAA<br>BBB<br>CCC</span></span></div>
+<div class="container" style="display: grid"><div>AAA<br>BBB<br>CCC</div></div>

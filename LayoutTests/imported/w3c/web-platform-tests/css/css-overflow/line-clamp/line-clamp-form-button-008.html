@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: line-clamp on an input button with display: flex does not clamp its value</title>
+<link rel="author" title="Christian Biesinger" href="mailto:cbiesinger@igalia.com">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#max-lines">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#the-input-element-as-a-button">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/rendering.html#button-layout">
+<link rel="match" href="reference/line-clamp-form-button-008-ref.html">
+<meta name="assert" content="An input button uses button layout, so with display: flex it behaves as a flex container, which is not a block container, and line-clamp on it does not clamp the lines of its value.">
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+body {
+  font: 25px/1 Ahem;
+}
+input {
+  font: inherit;
+  width: 150px;
+  white-space: normal;
+}
+.clamp {
+  line-clamp: 2;
+}
+</style>
+
+<div>
+  <input class="clamp" type="button" style="display: flex" value="XX XX XX XX XX XX XX XX">
+</div>
