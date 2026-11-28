@@ -14973,6 +14973,21 @@
             }
         },
         "@page": {
+            "page-orientation": {
+                "values": [
+                    "upright",
+                    "rotate-left",
+                    "rotate-right"
+                ],
+                "codegen-properties": {
+                    "parser-grammar": "<<values>>",
+                    "settings-flag": "cssPageOrientationEnabled"
+                },
+                "specification": {
+                    "category": "css-page",
+                    "url": "https://www.w3.org/TR/css-page-3/#page-orientation-prop"
+                }
+            },
             "page-size": {
                 "codegen-properties": {
                     "parser-grammar": "<length [0,inf]>{1,2}@(type=CSSValuePair) | auto | [ <page-size> || [ portrait | landscape ] ]@(type=CSSValuePair)"

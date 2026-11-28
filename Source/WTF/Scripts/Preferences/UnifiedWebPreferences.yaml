@@ -1167,6 +1167,14 @@ CSSOverflowClipMarginEnabled:
   humanReadableDescription: "Enable CSS overflow-clip-margin"
   defaultValue: false
 
+CSSPageOrientationEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS @page page-orientation"
+  humanReadableDescription: "Enable the CSS page-orientation descriptor in @page"
+  defaultValue: false
+
 CSSPaintingAPIEnabled:
   type: bool
   status: testable

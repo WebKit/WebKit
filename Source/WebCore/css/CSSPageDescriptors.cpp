@@ -113,4 +113,14 @@ ExceptionOr<void> CSSPageDescriptors::setSize(const String& value)
     return setPropertyInternal(CSSPropertyID::PageSize, value, IsImportant::No);
 }
 
+String CSSPageDescriptors::pageOrientation() const
+{
+    return getPropertyValueInternal(CSSPropertyID::PageOrientation);
+}
+
+ExceptionOr<void> CSSPageDescriptors::setPageOrientation(const String& value)
+{
+    return setPropertyInternal(CSSPropertyID::PageOrientation, value, IsImportant::No);
+}
+
 } // namespace WebCore
