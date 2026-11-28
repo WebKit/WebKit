@@ -272,37 +272,34 @@ CSSSelectorList CSSParser::parsePageSelector(CSSParserTokenRange range, StyleShe
 {
     // We only support a small subset of the css-page spec.
     range.consumeWhitespace();
-    AtomString typeSelector;
-    if (range.peek().type() == IdentToken)
-        typeSelector = range.consume().value().toAtomString();
 
-    StringView pseudo;
-    if (range.peek().type() == ColonToken) {
+    // https://drafts.csswg.org/css-page/#syntax-page-selector
+    // <page-selector> = [ <ident-token>? <pseudo-page>* ]!, with no whitespace between components.
+    std::unique_ptr<MutableCSSSelector> selector;
+    if (range.peek().type() == IdentToken) {
+        auto& defaultNamespace = styleSheet ? styleSheet->defaultNamespace() : starAtom();
+        selector = makeUnique<MutableCSSSelector>(QualifiedName(nullAtom(), range.consume().value().toAtomString(), defaultNamespace));
+    }
+
+    while (range.peek().type() == ColonToken) {
         range.consume();
         if (range.peek().type() != IdentToken)
             return { };
-        pseudo = range.consume().value();
+        auto pseudo = MutableCSSSelector::parsePagePseudoSelector(range.consume().value());
+        if (!pseudo)
+            return { };
+        if (selector)
+            selector->prependInComplexSelector(CSSSelector::Relation::Subselector, WTF::move(pseudo));
+        else
+            selector = WTF::move(pseudo);
     }
 
     range.consumeWhitespace();
     if (!range.atEnd())
         return { }; // Parse error; extra tokens in @page selector
 
-    auto& defaultNamespace = styleSheet ? styleSheet->defaultNamespace() : starAtom();
-
-    std::unique_ptr<MutableCSSSelector> selector;
-    if (!typeSelector.isNull() && pseudo.isNull())
-        selector = makeUnique<MutableCSSSelector>(QualifiedName(nullAtom(), typeSelector, defaultNamespace));
-    else {
+    if (!selector)
         selector = makeUnique<MutableCSSSelector>();
-        if (!pseudo.isNull()) {
-            selector = std::unique_ptr<MutableCSSSelector>(MutableCSSSelector::parsePagePseudoSelector(pseudo));
-            if (!selector || selector->match() != CSSSelector::Match::PagePseudoClass)
-                return { };
-        }
-        if (!typeSelector.isNull())
-            selector->appendTagInComplexSelector(QualifiedName(nullAtom(), typeSelector, defaultNamespace));
-    }
 
     selector->setForPage();
     return CSSSelectorList { MutableCSSSelectorList::from(WTF::move(selector)) };
