@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+}
+
+#description {
+    margin-top: 320px;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 300px;
+    visibility: hidden;
+}
+
+iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that an iframe whose document has an overflow scroller, inside a container that starts out with visibility: hidden, can be scrolled both inside and outside the overflow scroller after the container becomes visible. To manually run the test, load the page and scroll the box, both in its top part and in its bottom part.");
+
+var iframe;
+var scroller;
+
+function hasFrameHostingNode() {
+    return internals.scrollingStateTreeAsText().includes("Frame hosting node");
+}
+
+addEventListener("load", async () => {
+    const container = document.querySelector(".container");
+    iframe = document.querySelector("iframe");
+    scroller = iframe.contentDocument.getElementById("scroller");
+
+    if (!window.testRunner) {
+        container.style.visibility = "visible";
+        return;
+    }
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("hasFrameHostingNode()", "false");
+
+    container.style.visibility = "visible";
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("hasFrameHostingNode()", "true");
+
+    // The overflow scroller covers the top 200px of the iframe.
+    await UIHelper.immediateScrollElementAtContentPointToOffset(150, 100, 0, 100);
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("scroller.scrollTop", "100");
+    shouldBe("iframe.contentWindow.scrollY", "0");
+    shouldBe("window.scrollY", "0");
+
+    await UIHelper.immediateScrollElementAtContentPointToOffset(150, 250, 0, 200);
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("iframe.contentWindow.scrollY", "200");
+    shouldBe("window.scrollY", "0");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <iframe srcdoc="<body style='margin: 0;'><div id='scroller' style='height: 200px; overflow: scroll;'><div style='height: 1000px; background-image: linear-gradient(orange, purple);'></div></div><div style='height: 2000px; background-image: linear-gradient(green, blue);'></div></body>"></iframe>
+    </div>
+</body>
+</html>

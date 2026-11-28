@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+#description {
+    margin-top: 220px;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    visibility: hidden;
+}
+
+iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that an iframe whose document has composited content gets composited after its container changes from visibility: hidden to visible.");
+
+var childContentWasComposited;
+var iframeWasCompositedWhileHidden;
+var iframeIsCompositedAfterBecomingVisible;
+
+function isComposited(element) {
+    try {
+        internals.layerIDForElement(element);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+addEventListener("load", async () => {
+    if (!window.internals) {
+        finishJSTest();
+        return;
+    }
+
+    const container = document.querySelector(".container");
+    const iframe = document.querySelector("iframe");
+    const childContent = iframe.contentDocument.getElementById("composited");
+
+    // Don't log anything until the end: changing the main document could trigger a compositing update that hides the bug.
+    childContentWasComposited = await UIHelper.waitForCondition(() => isComposited(childContent), 20);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    iframeWasCompositedWhileHidden = isComposited(iframe);
+
+    container.style.visibility = "visible";
+    iframeIsCompositedAfterBecomingVisible = await UIHelper.waitForCondition(() => isComposited(iframe), 20);
+
+    shouldBeTrue("childContentWasComposited");
+    shouldBeFalse("iframeWasCompositedWhileHidden");
+    shouldBeTrue("iframeIsCompositedAfterBecomingVisible");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <iframe srcdoc="<div id='composited' style='will-change: transform; width: 100px; height: 100px; background-color: green;'></div>"></iframe>
+    </div>
+</body>
+</html>

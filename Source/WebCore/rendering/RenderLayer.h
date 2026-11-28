@@ -345,6 +345,7 @@ private:
     }
 
     NODELETE void setAncestorsHaveCompositingDirtyFlag(Compositing);
+    NODELETE void propagateCompositingDirtyFlagsToAncestors();
 
 public:
     bool hasDescendantNeedingCompositingRequirementsTraversal() const { return m_compositingDirtyBits.contains(Compositing::HasDescendantNeedingRequirementsTraversal); }

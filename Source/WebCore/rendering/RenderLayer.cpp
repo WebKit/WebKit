@@ -484,11 +484,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     if (compositor().hasContentCompositingLayers())
         setDescendantsNeedCompositingRequirementsTraversal();
 
-    if (child.hasDescendantNeedingCompositingRequirementsTraversal() || child.needsCompositingRequirementsTraversal())
-        child.setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingRequirementsTraversal);
-
-    if (child.hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || child.needsUpdateBackingOrHierarchyTraversal())
-        child.setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
+    child.propagateCompositingDirtyFlagsToAncestors();
 
     if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
         updateAncestorChainHasBlendingDescendants(); // Why not just dirty?
@@ -956,6 +952,8 @@ void RenderLayer::setWasIncludedInZOrderTree()
 
     m_wasOmittedFromZOrderTree = false;
     setSelfAndDescendantsNeedPositionUpdate();
+
+    propagateCompositingDirtyFlagsToAncestors();
 }
 
 void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
@@ -1029,6 +1027,15 @@ void RenderLayer::setAncestorsHaveCompositingDirtyFlag(Compositing flag)
             break;
         layer->m_compositingDirtyBits.add(flag);
     }
+}
+
+void RenderLayer::propagateCompositingDirtyFlagsToAncestors()
+{
+    if (hasDescendantNeedingCompositingRequirementsTraversal() || needsCompositingRequirementsTraversal())
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingRequirementsTraversal);
+
+    if (hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || needsUpdateBackingOrHierarchyTraversal())
+        setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
 }
 
 void RenderLayer::updateLayerListsIfNeeded()
