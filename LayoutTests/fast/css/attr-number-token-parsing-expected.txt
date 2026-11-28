@@ -1,0 +1,51 @@
+
+PASS "5" -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS "-5" -> --number: -5; --length: -5px; --percentage: -5%; z-index: -5
+PASS "+5" -> --number: +5; --length: 5px; --percentage: +5%; z-index: 5
+PASS "+05" -> --number: +05; --length: 5px; --percentage: +05%; z-index: 5
+PASS "-0" -> --number: -0; --length: 0px; --percentage: -0%; z-index: 0
+PASS "5." -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5.5" -> --number: 5.5; --length: 5.5px; --percentage: 5.5%; z-index: auto
+PASS ".5" -> --number: .5; --length: 0.5px; --percentage: .5%; z-index: auto
+PASS "-.5" -> --number: -.5; --length: -0.5px; --percentage: -.5%; z-index: auto
+PASS "1e3" -> --number: 1e3; --length: 1000px; --percentage: 1e3%; z-index: auto
+PASS "1E3" -> --number: 1E3; --length: 1000px; --percentage: 1E3%; z-index: auto
+PASS "1e+3" -> --number: 1e+3; --length: 1000px; --percentage: 1e+3%; z-index: auto
+PASS "1e-3" -> --number: 1e-3; --length: 0.001px; --percentage: 1e-3%; z-index: auto
+PASS "1e" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "1.e3" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "1e3.5" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5e+" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5px" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5%" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5x" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5e" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5 5" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5 junk" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5-" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "--5" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS " 5" -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS "5 " -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS " \t\n\r\f5 \t\n\r\f" -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS "\u000b5" -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS "5\u000b" -> --number: 5; --length: 5px; --percentage: 5%; z-index: 5
+PASS " 5" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "\\35" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5\\" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5é" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5Ā" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "5\u0000" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "calc(5)" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "-" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "+" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "." -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS " " -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "1e39" -> --number: 1e39; --length: 1e+39px; --percentage: 1e39%; z-index: auto
+PASS "1e400" -> --number: 1e400; --length: Infinitypx; --percentage: 1e400%; z-index: auto
+PASS "-1e400" -> --number: -1e400; --length: -Infinitypx; --percentage: -1e400%; z-index: auto
+PASS "1e-400" -> --number: 1e-400; --length: 0px; --percentage: 1e-400%; z-index: auto
+PASS "123456789012" -> --number: 123456789012; --length: 123456789012px; --percentage: 123456789012%; z-index: 2147483647
+PASS "Infinity" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+PASS "NaN" -> --number: fallback; --length: fallback; --percentage: fallback; z-index: auto
+

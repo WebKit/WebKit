@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<title>SVGAngle parsing of edge case strings</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg xmlns="http://www.w3.org/2000/svg"><marker id="marker"/></svg>
+<script>
+// [ value, result of setAttribute("orient", value), result of baseVal.valueAsString = value ]
+const expectations = [
+    ["5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["-5", "orient 2 type 1 specified -5 string -5", "ok 1 -5 -5"],
+    ["+5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5.5", "orient 2 type 1 specified 5.5 string 5.5", "ok 1 5.5 5.5"],
+    [".5", "orient 2 type 1 specified 0.5 string 0.5", "ok 1 0.5 0.5"],
+    ["-.5", "orient 2 type 1 specified -0.5 string -0.5", "ok 1 -0.5 -0.5"],
+    ["5.", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5.deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1.e3", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3", "orient 2 type 1 specified 1000 string 1000", "ok 1 1000 1000"],
+    ["1E3", "orient 2 type 1 specified 1000 string 1000", "ok 1 1000 1000"],
+    ["1e+3", "orient 2 type 1 specified 1000 string 1000", "ok 1 1000 1000"],
+    ["1e-3", "orient 2 type 1 specified 0.0010000000474974513 string 0.001", "ok 1 0.0010000000474974513 0.001"],
+    ["1e", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3deg", "orient 2 type 2 specified 1000 string 1000deg", "ok 2 1000 1000deg"],
+    ["1e3%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5DEG", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5Deg", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5rad", "orient 2 type 3 specified 5 string 5rad", "ok 3 5 5rad"],
+    ["5grad", "orient 2 type 4 specified 5 string 5grad", "ok 4 5 5grad"],
+    ["5turn", "orient 2 type 0 specified 5 string 5turn", "ok 0 5 5turn"],
+    ["5TURN", "orient 2 type 0 specified 5 string 5turn", "ok 0 5 5turn"],
+    ["-5deg", "orient 2 type 2 specified -5 string -5deg", "ok 2 -5 -5deg"],
+    ["+5rad", "orient 2 type 3 specified 5 string 5rad", "ok 3 5 5rad"],
+    ["5 deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5 %", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5px", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5em", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5x", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["0", "orient 2 type 1 specified 0 string 0", "ok 1 0 0"],
+    ["-0", "orient 2 type 1 specified 0 string 0", "ok 1 0 0"],
+    ["0deg", "orient 2 type 2 specified 0 string 0deg", "ok 2 0 0deg"],
+    ["0turn", "orient 2 type 0 specified 0 string 0turn", "ok 0 0 0turn"],
+    [" 5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5 ", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    [" 5 ", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["\t5deg", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["\n5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["\f5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["\r5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["\u000b5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5\u000b", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["\u00a05", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5\u00a0", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["", "orient 2 type 1 specified 0 string 0", "ok 1 77 77"],
+    [" ", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    [".", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["-", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["+", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["--5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["+-5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5-", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["0x10", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1,5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["Infinity", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["NaN", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e39", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["-1e39", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e39deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["-1e39deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e400", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e400deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e-400", "orient 2 type 1 specified 0 string 0", "ok 1 0 0"],
+    ["3.4028235e38", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["3.4028236e38", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["3.4028235e38deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e-50deg", "orient 2 type 2 specified 0 string 0deg", "ok 2 0 0deg"],
+    ["0.1", "orient 2 type 1 specified 0.10000000149011612 string 0.1", "ok 1 0.10000000149011612 0.1"],
+    ["0.1deg", "orient 2 type 2 specified 0.10000000149011612 string 0.1deg", "ok 2 0.10000000149011612 0.1deg"],
+    ["0.30000000000000004", "orient 2 type 1 specified 0.30000001192092896 string 0.3", "ok 1 0.30000001192092896 0.3"],
+    ["123456789.123456789deg", "orient 2 type 2 specified 123456792 string 123456792deg", "ok 2 123456792 123456792deg"],
+    ["16777217", "orient 2 type 1 specified 16777216 string 16777216", "ok 1 16777216 16777216"],
+    ["00005", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5.000", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5e0", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5e", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5e+", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5.5.5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5%%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5degdeg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5\u0000", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(5deg)", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(5)", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5/**/", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["/**/5", "orient 2 type 1 specified 5 string 5", "ok 1 5 5"],
+    ["5/**/deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3.5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["1.5e3rad", "orient 2 type 3 specified 1500 string 1500rad", "ok 3 1500 1500rad"],
+    ["-1.5E-3grad", "orient 2 type 4 specified -0.001500000013038516 string -0.0015grad", "ok 4 -0.001500000013038516 -0.0015grad"],
+    ["5d", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5de", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5degr", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["+5deg", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5.%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    [".deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["-deg", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["+%", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg auto", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5 5", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg,", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg;", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5\\64 eg", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5\\64\\65g", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5d\\65g", "orient 2 type 2 specified 5 string 5deg", "ok 2 5 5deg"],
+    ["5\u00e9", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5deg\u00e9", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["-5e-2rad", "orient 2 type 3 specified -0.05000000074505806 string -0.05rad", "ok 3 -0.05000000074505806 -0.05rad"],
+    ["+.5e+1turn", "orient 2 type 0 specified 5 string 5turn", "ok 0 5 5turn"],
+    ["5e-324", "orient 2 type 1 specified 0 string 0", "ok 1 0 0"],
+    ["5Q", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5vw", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5ms", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5s", "orient 2 type 1 specified 0 string 0", "SyntaxError"],
+    ["5dpi", "orient 2 type 1 specified 0 string 0", "SyntaxError"]
+];
+
+const marker = document.getElementById("marker");
+
+function parseViaAttribute(value)
+{
+    marker.setAttribute("orient", "77");
+    marker.setAttribute("orient", value);
+    const angle = marker.orientAngle.baseVal;
+    return `orient ${marker.orientType.baseVal} type ${angle.unitType} specified ${angle.valueInSpecifiedUnits} string ${angle.valueAsString}`;
+}
+
+function parseViaValueAsString(value)
+{
+    marker.setAttribute("orient", "77");
+    const angle = marker.orientAngle.baseVal;
+    try {
+        angle.valueAsString = value;
+    } catch (e) {
+        return e.name;
+    }
+    return `ok ${angle.unitType} ${angle.valueInSpecifiedUnits} ${angle.valueAsString}`;
+}
+
+function make16Bit(value)
+{
+    return (value + "\u0100").slice(0, -1);
+}
+
+for (const [value, expectedAttribute, expectedValueAsString] of expectations) {
+    test(() => {
+        assert_equals(parseViaAttribute(make16Bit(value)), parseViaAttribute(value), "attribute");
+        assert_equals(parseViaValueAsString(make16Bit(value)), parseViaValueAsString(value), "valueAsString");
+    }, `${JSON.stringify(value)} parses the same as a 16-bit string`);
+
+    // The empty string is not parsed.
+    if (value.length) {
+        // A leading comment forces full tokenization without changing the tokens.
+        test(() => {
+            assert_equals(parseViaAttribute("/**/" + value), parseViaAttribute(value), "attribute");
+            assert_equals(parseViaValueAsString("/**/" + value), parseViaValueAsString(value), "valueAsString");
+        }, `${JSON.stringify(value)} parses the same after a leading comment`);
+    }
+
+    test(() => {
+        assert_equals(parseViaAttribute(value), expectedAttribute);
+    }, `setAttribute("orient", ${JSON.stringify(value)})`);
+
+    test(() => {
+        assert_equals(parseViaValueAsString(value), expectedValueAsString);
+    }, `baseVal.valueAsString = ${JSON.stringify(value)}`);
+}
+</script>

@@ -38,6 +38,7 @@
 #include <wtf/SIMDHelpers.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -580,51 +581,84 @@ CSSParserToken CSSTokenizer::nextToken()
     return CSSParserToken(DelimiterToken, cc);
 }
 
-// This method merges the following spec sections for efficiency
-// http://www.w3.org/TR/css3-syntax/#consume-a-number
-// http://www.w3.org/TR/css3-syntax/#convert-a-string-to-a-number
+namespace {
+
+struct ScannedNumber {
+    size_t length;
+    NumericValueType valueType;
+    NumericSign sign;
+    double value;
+};
+
+}
+
+// Scans the number at the start of the characters, or returns std::nullopt if they don't start with one.
+// https://drafts.csswg.org/css-syntax/#starts-with-a-number
+// https://drafts.csswg.org/css-syntax/#consume-a-number
+// https://drafts.csswg.org/css-syntax/#convert-a-string-to-a-number
+template<typename CharacterType>
+static std::optional<ScannedNumber> scanNumber(std::span<const CharacterType> characters)
+{
+    auto length = characters.size();
+
+    auto peek = [&](size_t offset) -> CharacterType {
+        return offset < length ? characters[offset] : CharacterType { };
+    };
+    auto skipDigits = [&](size_t offset) {
+        while (offset < length && isASCIIDigit(characters[offset]))
+            ++offset;
+        return offset;
+    };
+
+    size_t numberLength = 0;
+    auto sign = NoSign;
+    if (peek(0) == '+') {
+        ++numberLength;
+        sign = PlusSign;
+    } else if (peek(0) == '-') {
+        ++numberLength;
+        sign = MinusSign;
+    }
+    if (!isASCIIDigit(peek(numberLength)) && !(peek(numberLength) == '.' && isASCIIDigit(peek(numberLength + 1))))
+        return std::nullopt;
+
+    auto valueType = IntegerValueType;
+
+    numberLength = skipDigits(numberLength);
+    if (peek(numberLength) == '.' && isASCIIDigit(peek(numberLength + 1))) {
+        valueType = NumberValueType;
+        numberLength = skipDigits(numberLength + 2);
+    }
+
+    if (peek(numberLength) == 'E' || peek(numberLength) == 'e') {
+        auto next = peek(numberLength + 1);
+        if (isASCIIDigit(next)) {
+            valueType = NumberValueType;
+            numberLength = skipDigits(numberLength + 1);
+        } else if ((next == '+' || next == '-') && isASCIIDigit(peek(numberLength + 2))) {
+            valueType = NumberValueType;
+            numberLength = skipDigits(numberLength + 3);
+        }
+    }
+
+    bool isValueOK = false;
+    double value = charactersToDouble(characters.first(numberLength), &isValueOK);
+    if (!isValueOK)
+        value = 0;
+
+    return ScannedNumber { numberLength, valueType, sign, value };
+}
+
 CSSParserToken CSSTokenizer::consumeNumber()
 {
     ASSERT(nextCharsAreNumber());
 
     auto startOffset = m_input.offset();
+    auto number = m_input.is8Bit() ? scanNumber(m_input.remainingSpan8(0)) : scanNumber(m_input.remainingSpan16(0));
+    ASSERT(number);
+    m_input.advance(number->length);
 
-    NumericValueType type = IntegerValueType;
-    NumericSign sign = NoSign;
-    unsigned numberLength = 0;
-
-    char16_t next = m_input.peek(0);
-    if (next == '+') {
-        ++numberLength;
-        sign = PlusSign;
-    } else if (next == '-') {
-        ++numberLength;
-        sign = MinusSign;
-    }
-
-    numberLength = m_input.skipWhilePredicate<isASCIIDigit>(numberLength);
-    next = m_input.peek(numberLength);
-    if (next == '.' && isASCIIDigit(m_input.peek(numberLength + 1))) {
-        type = NumberValueType;
-        numberLength = m_input.skipWhilePredicate<isASCIIDigit>(numberLength + 2);
-        next = m_input.peek(numberLength);
-    }
-
-    if (next == 'E' || next == 'e') {
-        next = m_input.peek(numberLength + 1);
-        if (isASCIIDigit(next)) {
-            type = NumberValueType;
-            numberLength = m_input.skipWhilePredicate<isASCIIDigit>(numberLength + 1);
-        } else if ((next == '+' || next == '-') && isASCIIDigit(m_input.peek(numberLength + 2))) {
-            type = NumberValueType;
-            numberLength = m_input.skipWhilePredicate<isASCIIDigit>(numberLength + 3);
-        }
-    }
-
-    double value = m_input.getDouble(0, numberLength);
-    m_input.advance(numberLength);
-
-    return CSSParserToken(value, type, sign, m_input.rangeAt(startOffset, m_input.offset() - startOffset));
+    return CSSParserToken(number->value, number->valueType, number->sign, m_input.rangeAt(startOffset, number->length));
 }
 
 // http://www.w3.org/TR/css3-syntax/#consume-a-numeric-token
@@ -636,6 +670,63 @@ CSSParserToken CSSTokenizer::consumeNumericToken()
     else if (consumeIfNext('%'))
         token.convertToPercentage();
     return token;
+}
+
+template<typename CharacterType>
+static std::optional<LexedNumericToken> lexNumericTokenImpl(std::span<const CharacterType> characters)
+{
+    auto number = scanNumber(characters);
+    if (!number)
+        return std::nullopt;
+
+    auto length = characters.size();
+    auto numberLength = number->length;
+
+    // https://drafts.csswg.org/css-syntax/#consume-a-numeric-token
+    if (numberLength == length)
+        return LexedNumericToken { NumberToken, number->valueType, number->sign, CSSUnitType::Number, number->value };
+
+    if (characters[numberLength] == '%') {
+        if (numberLength + 1 != length)
+            return std::nullopt;
+        return LexedNumericToken { PercentageToken, number->valueType, number->sign, CSSUnitType::Percentage, number->value };
+    }
+
+    // https://drafts.csswg.org/css-syntax/#would-start-an-identifier
+    auto unit = characters.subspan(numberLength);
+
+    auto isASCIINameStartCodePoint = [](CharacterType character) {
+        return isASCII(character) && isNameStartCodePoint(character);
+    };
+    if (unit[0] == '-') {
+        if (unit.size() < 2 || !(isASCIINameStartCodePoint(unit[1]) || unit[1] == '-'))
+            return std::nullopt;
+    } else if (!isASCIINameStartCodePoint(unit[0]))
+        return std::nullopt;
+
+    for (auto character : unit) {
+        if (!isASCII(character) || !isNameCodePoint(character))
+            return std::nullopt;
+    }
+
+    return LexedNumericToken { DimensionToken, number->valueType, number->sign, CSSParserToken::stringToUnitType(StringView { unit }), number->value };
+}
+
+std::optional<LexedNumericToken> lexNumericToken(std::span<const Latin1Character> characters)
+{
+    return lexNumericTokenImpl(characters);
+}
+
+std::optional<LexedNumericToken> lexNumericToken(std::span<const char16_t> characters)
+{
+    return lexNumericTokenImpl(characters);
+}
+
+std::optional<LexedNumericToken> lexNumericToken(StringView string)
+{
+    if (string.is8Bit())
+        return lexNumericTokenImpl(string.span8());
+    return lexNumericTokenImpl(string.span16());
 }
 
 // http://dev.w3.org/csswg/css-syntax/#consume-ident-like-token

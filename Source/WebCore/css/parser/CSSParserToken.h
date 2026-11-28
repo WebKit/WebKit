@@ -194,4 +194,20 @@ inline void CSSParserToken::updateCharacters(std::span<const CharacterType> char
     m_valueDataCharRaw = characters.data();
 }
 
+// A <number-token>, <percentage-token> or <dimension-token> lexed directly from a string
+// by `lexNumericToken()`, exposing the subset of `CSSParserToken` the numeric consumers read.
+struct LexedNumericToken {
+    CSSParserTokenType tokenType;
+    NumericValueType valueType;
+    NumericSign sign;
+    CSSUnitType unit;
+    double value;
+
+    CSSParserTokenType type() const { return tokenType; }
+    NumericValueType numericValueType() const { return valueType; }
+    NumericSign numericSign() const { return sign; }
+    CSSUnitType unitType() const { return unit; }
+    double numericValue() const { return value; }
+};
+
 } // namespace WebCore

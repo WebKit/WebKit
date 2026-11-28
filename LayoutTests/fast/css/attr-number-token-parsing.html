@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<title>attr() number, unit and percentage parsing of attribute values</title>
+<!-- https://drafts.csswg.org/css-values-5/#attr-notation -->
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+#target {
+    position: relative;
+    --number: attr(data-value number, fallback);
+    --length: attr(data-value px, fallback);
+    --percentage: attr(data-value %, fallback);
+    z-index: attr(data-value number);
+}
+</style>
+<div id="target"></div>
+<script>
+const values = [
+    "5", "-5", "+5", "+05", "-0", "5.", "5.5", ".5", "-.5", "1e3", "1E3", "1e+3", "1e-3", "1e", "1.e3", "1e3.5", "5e+",
+    "5px", "5%", "5x", "5e", "5 5", "5 junk", "5-", "--5",
+    " 5", "5 ", " \t\n\r\f5 \t\n\r\f", "\v5", "5\v", "\u00a05",
+    "\\35", "5\\", "5\u00e9", "5\u0100", "5\u0000",
+    "calc(5)", "-", "+", ".", "", " ",
+    "1e39", "1e400", "-1e400", "1e-400", "123456789012", "Infinity", "NaN",
+];
+
+const target = document.getElementById("target");
+
+function describe(attributeValue)
+{
+    target.setAttribute("data-value", attributeValue);
+    const style = getComputedStyle(target);
+    return ["--number", "--length", "--percentage", "z-index"].map(name => `${name}: ${style.getPropertyValue(name)}`).join("; ");
+}
+
+// Puts a comment after any leading whitespace, which forces full tokenization without changing the tokens.
+function withComment(value)
+{
+    return value.replace(/^[\t\n\f\r \v]*/, whitespace => whitespace + "/**/");
+}
+
+function make16Bit(value)
+{
+    return (value + "\u0100").slice(0, -1);
+}
+
+for (const value of values) {
+    test(() => {
+        assert_equals(describe(make16Bit(value)), describe(value), "16-bit");
+        assert_equals(describe(withComment(value)), describe(value), "after a comment");
+    }, `${JSON.stringify(value)} -> ${describe(value)}`);
+}
+</script>

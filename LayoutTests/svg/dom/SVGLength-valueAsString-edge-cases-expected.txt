@@ -1,0 +1,983 @@
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="/**/-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-.5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-.5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="/**/-.5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-.5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1.e3"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1.e3"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1.e3"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1.e3"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1.e3"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5 px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 %"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 %"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5 %"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 %"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 %"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="/**/-5%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Â 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Â 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/Â 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Â 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Â 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="."
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="--5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="--5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/--5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="--5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="--5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+-5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+-5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/+-5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+-5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+-5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="0x10"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="0x10"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/0x10"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="0x10"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="0x10"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1_000"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1_000"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1_000"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1_000"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1_000"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1,5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1,5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1,5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1,5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1,5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/-Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-Infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="infinity"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="inf"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="inf"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/inf"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="inf"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="inf"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="NaN"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="NaN"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/NaN"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="NaN"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="NaN"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="nan"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="nan"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/nan"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="nan"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="nan"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e400"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e400px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e400px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5e+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5px5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5%%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5%%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5%%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5%%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5%%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxpx"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxpx"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5pxpx"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxpx"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxpx"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="ï¼•"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="ï¼•"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ï¼•"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="ï¼•"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="ï¼•"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/calc(5px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/calc(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5%)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5%)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/calc(5%)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5%)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(5%)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(1e39)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(1e39)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/calc(1e39)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(1e39)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(1e39)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="min(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="min(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/min(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="min(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="min(5)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5/**/px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e3.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e3.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e3.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e3.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e3.5"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1.5E-3%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1.5E-3%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="/**/-1.5E-3%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1.5E-3%"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1.5E-3%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5p"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5p"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5p"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5p"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5p"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5P%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5P%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5P%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5P%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5P%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5x%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5x%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5.%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5.%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/.px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/-px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/+%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="+%"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1--x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1--"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1--"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e5e5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e5e5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5e5e5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e5e5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e+3e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e+3e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e+3e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e+3e"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5e-"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e-"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5e-2em"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5e-2em"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="/**/-5e-2em"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-5e-2em"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5_"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5_"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5_"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5_"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5-x"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5é"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5é"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5é"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5é"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxé"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxé"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5pxé"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5pxé"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5Ā"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5Ā"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5Ā"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5Ā"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5px\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px\"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5px("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px("
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5;"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5;"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5;"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5;"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5!"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5!"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5!"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5!"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e1.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e1.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5e1.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5e1.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/.5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=".5.5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/5 "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="5 "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="- 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="- 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/- 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="- 5"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="
+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="
+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/
+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="
+"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" % "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" % "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/ % "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width=" % "
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/-1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="-1e309"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="/**/1e309px"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="1e309px"
+
+PASS "5" parses the same as a 16-bit string
+PASS "5" parses the same after a leading comment
+PASS setAttribute("width", "5")
+PASS baseVal.valueAsString = "5"
+PASS "-5" parses the same as a 16-bit string
+PASS "-5" parses the same after a leading comment
+PASS setAttribute("width", "-5")
+PASS baseVal.valueAsString = "-5"
+PASS "+5" parses the same as a 16-bit string
+PASS "+5" parses the same after a leading comment
+PASS setAttribute("width", "+5")
+PASS baseVal.valueAsString = "+5"
+PASS "5.5" parses the same as a 16-bit string
+PASS "5.5" parses the same after a leading comment
+PASS setAttribute("width", "5.5")
+PASS baseVal.valueAsString = "5.5"
+PASS ".5" parses the same as a 16-bit string
+PASS ".5" parses the same after a leading comment
+PASS setAttribute("width", ".5")
+PASS baseVal.valueAsString = ".5"
+PASS "-.5" parses the same as a 16-bit string
+PASS "-.5" parses the same after a leading comment
+PASS setAttribute("width", "-.5")
+PASS baseVal.valueAsString = "-.5"
+PASS "+.5" parses the same as a 16-bit string
+PASS "+.5" parses the same after a leading comment
+PASS setAttribute("width", "+.5")
+PASS baseVal.valueAsString = "+.5"
+PASS "5." parses the same as a 16-bit string
+PASS "5." parses the same after a leading comment
+PASS setAttribute("width", "5.")
+PASS baseVal.valueAsString = "5."
+PASS "5.px" parses the same as a 16-bit string
+PASS "5.px" parses the same after a leading comment
+PASS setAttribute("width", "5.px")
+PASS baseVal.valueAsString = "5.px"
+PASS "1.e3" parses the same as a 16-bit string
+PASS "1.e3" parses the same after a leading comment
+PASS setAttribute("width", "1.e3")
+PASS baseVal.valueAsString = "1.e3"
+PASS "1e3" parses the same as a 16-bit string
+PASS "1e3" parses the same after a leading comment
+PASS setAttribute("width", "1e3")
+PASS baseVal.valueAsString = "1e3"
+PASS "1E3" parses the same as a 16-bit string
+PASS "1E3" parses the same after a leading comment
+PASS setAttribute("width", "1E3")
+PASS baseVal.valueAsString = "1E3"
+PASS "1e+3" parses the same as a 16-bit string
+PASS "1e+3" parses the same after a leading comment
+PASS setAttribute("width", "1e+3")
+PASS baseVal.valueAsString = "1e+3"
+PASS "1e-3" parses the same as a 16-bit string
+PASS "1e-3" parses the same after a leading comment
+PASS setAttribute("width", "1e-3")
+PASS baseVal.valueAsString = "1e-3"
+PASS "1e" parses the same as a 16-bit string
+PASS "1e" parses the same after a leading comment
+PASS setAttribute("width", "1e")
+PASS baseVal.valueAsString = "1e"
+PASS "1e3px" parses the same as a 16-bit string
+PASS "1e3px" parses the same after a leading comment
+PASS setAttribute("width", "1e3px")
+PASS baseVal.valueAsString = "1e3px"
+PASS "1e3%" parses the same as a 16-bit string
+PASS "1e3%" parses the same after a leading comment
+PASS setAttribute("width", "1e3%")
+PASS baseVal.valueAsString = "1e3%"
+PASS "5px" parses the same as a 16-bit string
+PASS "5px" parses the same after a leading comment
+PASS setAttribute("width", "5px")
+PASS baseVal.valueAsString = "5px"
+PASS "5PX" parses the same as a 16-bit string
+PASS "5PX" parses the same after a leading comment
+PASS setAttribute("width", "5PX")
+PASS baseVal.valueAsString = "5PX"
+PASS "5Px" parses the same as a 16-bit string
+PASS "5Px" parses the same after a leading comment
+PASS setAttribute("width", "5Px")
+PASS baseVal.valueAsString = "5Px"
+PASS "5 px" parses the same as a 16-bit string
+PASS "5 px" parses the same after a leading comment
+PASS setAttribute("width", "5 px")
+PASS baseVal.valueAsString = "5 px"
+PASS "5%" parses the same as a 16-bit string
+PASS "5%" parses the same after a leading comment
+PASS setAttribute("width", "5%")
+PASS baseVal.valueAsString = "5%"
+PASS "5 %" parses the same as a 16-bit string
+PASS "5 %" parses the same after a leading comment
+PASS setAttribute("width", "5 %")
+PASS baseVal.valueAsString = "5 %"
+PASS "-5%" parses the same as a 16-bit string
+PASS "-5%" parses the same after a leading comment
+PASS setAttribute("width", "-5%")
+PASS baseVal.valueAsString = "-5%"
+PASS "0" parses the same as a 16-bit string
+PASS "0" parses the same after a leading comment
+PASS setAttribute("width", "0")
+PASS baseVal.valueAsString = "0"
+PASS "-0" parses the same as a 16-bit string
+PASS "-0" parses the same after a leading comment
+PASS setAttribute("width", "-0")
+PASS baseVal.valueAsString = "-0"
+PASS "0px" parses the same as a 16-bit string
+PASS "0px" parses the same after a leading comment
+PASS setAttribute("width", "0px")
+PASS baseVal.valueAsString = "0px"
+PASS "0%" parses the same as a 16-bit string
+PASS "0%" parses the same after a leading comment
+PASS setAttribute("width", "0%")
+PASS baseVal.valueAsString = "0%"
+PASS " 5" parses the same as a 16-bit string
+PASS " 5" parses the same after a leading comment
+PASS setAttribute("width", " 5")
+PASS baseVal.valueAsString = " 5"
+PASS "5 " parses the same as a 16-bit string
+PASS "5 " parses the same after a leading comment
+PASS setAttribute("width", "5 ")
+PASS baseVal.valueAsString = "5 "
+PASS " 5 " parses the same as a 16-bit string
+PASS " 5 " parses the same after a leading comment
+PASS setAttribute("width", " 5 ")
+PASS baseVal.valueAsString = " 5 "
+PASS "\t5" parses the same as a 16-bit string
+PASS "\t5" parses the same after a leading comment
+PASS setAttribute("width", "\t5")
+PASS baseVal.valueAsString = "\t5"
+PASS "\n5" parses the same as a 16-bit string
+PASS "\n5" parses the same after a leading comment
+PASS setAttribute("width", "\n5")
+PASS baseVal.valueAsString = "\n5"
+PASS "\f5" parses the same as a 16-bit string
+PASS "\f5" parses the same after a leading comment
+PASS setAttribute("width", "\f5")
+PASS baseVal.valueAsString = "\f5"
+PASS "\r5" parses the same as a 16-bit string
+PASS "\r5" parses the same after a leading comment
+PASS setAttribute("width", "\r5")
+PASS baseVal.valueAsString = "\r5"
+PASS "\u000b5" parses the same as a 16-bit string
+PASS "\u000b5" parses the same after a leading comment
+PASS setAttribute("width", "\u000b5")
+PASS baseVal.valueAsString = "\u000b5"
+PASS "5\u000b" parses the same as a 16-bit string
+PASS "5\u000b" parses the same after a leading comment
+PASS setAttribute("width", "5\u000b")
+PASS baseVal.valueAsString = "5\u000b"
+PASS "Â 5" parses the same as a 16-bit string
+PASS "Â 5" parses the same after a leading comment
+PASS setAttribute("width", "Â 5")
+PASS baseVal.valueAsString = "Â 5"
+PASS "5em" parses the same as a 16-bit string
+PASS "5em" parses the same after a leading comment
+PASS setAttribute("width", "5em")
+PASS baseVal.valueAsString = "5em"
+PASS "5ex" parses the same as a 16-bit string
+PASS "5ex" parses the same after a leading comment
+PASS setAttribute("width", "5ex")
+PASS baseVal.valueAsString = "5ex"
+PASS "5pt" parses the same as a 16-bit string
+PASS "5pt" parses the same after a leading comment
+PASS setAttribute("width", "5pt")
+PASS baseVal.valueAsString = "5pt"
+PASS "5x" parses the same as a 16-bit string
+PASS "5x" parses the same after a leading comment
+PASS setAttribute("width", "5x")
+PASS baseVal.valueAsString = "5x"
+PASS "px" parses the same as a 16-bit string
+PASS "px" parses the same after a leading comment
+PASS setAttribute("width", "px")
+PASS baseVal.valueAsString = "px"
+PASS "%" parses the same as a 16-bit string
+PASS "%" parses the same after a leading comment
+PASS setAttribute("width", "%")
+PASS baseVal.valueAsString = "%"
+PASS "" parses the same as a 16-bit string
+PASS setAttribute("width", "")
+PASS baseVal.valueAsString = ""
+PASS " " parses the same as a 16-bit string
+PASS " " parses the same after a leading comment
+PASS setAttribute("width", " ")
+PASS baseVal.valueAsString = " "
+PASS "." parses the same as a 16-bit string
+PASS "." parses the same after a leading comment
+PASS setAttribute("width", ".")
+PASS baseVal.valueAsString = "."
+PASS "-" parses the same as a 16-bit string
+PASS "-" parses the same after a leading comment
+PASS setAttribute("width", "-")
+PASS baseVal.valueAsString = "-"
+PASS "+" parses the same as a 16-bit string
+PASS "+" parses the same after a leading comment
+PASS setAttribute("width", "+")
+PASS baseVal.valueAsString = "+"
+PASS "--5" parses the same as a 16-bit string
+PASS "--5" parses the same after a leading comment
+PASS setAttribute("width", "--5")
+PASS baseVal.valueAsString = "--5"
+PASS "+-5" parses the same as a 16-bit string
+PASS "+-5" parses the same after a leading comment
+PASS setAttribute("width", "+-5")
+PASS baseVal.valueAsString = "+-5"
+PASS "5-" parses the same as a 16-bit string
+PASS "5-" parses the same after a leading comment
+PASS setAttribute("width", "5-")
+PASS baseVal.valueAsString = "5-"
+PASS "0x10" parses the same as a 16-bit string
+PASS "0x10" parses the same after a leading comment
+PASS setAttribute("width", "0x10")
+PASS baseVal.valueAsString = "0x10"
+PASS "1_000" parses the same as a 16-bit string
+PASS "1_000" parses the same after a leading comment
+PASS setAttribute("width", "1_000")
+PASS baseVal.valueAsString = "1_000"
+PASS "1,5" parses the same as a 16-bit string
+PASS "1,5" parses the same after a leading comment
+PASS setAttribute("width", "1,5")
+PASS baseVal.valueAsString = "1,5"
+PASS "Infinity" parses the same as a 16-bit string
+PASS "Infinity" parses the same after a leading comment
+PASS setAttribute("width", "Infinity")
+PASS baseVal.valueAsString = "Infinity"
+PASS "-Infinity" parses the same as a 16-bit string
+PASS "-Infinity" parses the same after a leading comment
+PASS setAttribute("width", "-Infinity")
+PASS baseVal.valueAsString = "-Infinity"
+PASS "infinity" parses the same as a 16-bit string
+PASS "infinity" parses the same after a leading comment
+PASS setAttribute("width", "infinity")
+PASS baseVal.valueAsString = "infinity"
+PASS "inf" parses the same as a 16-bit string
+PASS "inf" parses the same after a leading comment
+PASS setAttribute("width", "inf")
+PASS baseVal.valueAsString = "inf"
+PASS "NaN" parses the same as a 16-bit string
+PASS "NaN" parses the same after a leading comment
+PASS setAttribute("width", "NaN")
+PASS baseVal.valueAsString = "NaN"
+PASS "nan" parses the same as a 16-bit string
+PASS "nan" parses the same after a leading comment
+PASS setAttribute("width", "nan")
+PASS baseVal.valueAsString = "nan"
+PASS "1e39" parses the same as a 16-bit string
+PASS "1e39" parses the same after a leading comment
+PASS setAttribute("width", "1e39")
+PASS baseVal.valueAsString = "1e39"
+PASS "-1e39" parses the same as a 16-bit string
+PASS "-1e39" parses the same after a leading comment
+PASS setAttribute("width", "-1e39")
+PASS baseVal.valueAsString = "-1e39"
+PASS "1e39px" parses the same as a 16-bit string
+PASS "1e39px" parses the same after a leading comment
+PASS setAttribute("width", "1e39px")
+PASS baseVal.valueAsString = "1e39px"
+PASS "1e39%" parses the same as a 16-bit string
+PASS "1e39%" parses the same after a leading comment
+PASS setAttribute("width", "1e39%")
+PASS baseVal.valueAsString = "1e39%"
+PASS "1e400" parses the same as a 16-bit string
+PASS "1e400" parses the same after a leading comment
+PASS setAttribute("width", "1e400")
+PASS baseVal.valueAsString = "1e400"
+PASS "1e400px" parses the same as a 16-bit string
+PASS "1e400px" parses the same after a leading comment
+PASS setAttribute("width", "1e400px")
+PASS baseVal.valueAsString = "1e400px"
+PASS "1e-400" parses the same as a 16-bit string
+PASS "1e-400" parses the same after a leading comment
+PASS setAttribute("width", "1e-400")
+PASS baseVal.valueAsString = "1e-400"
+PASS "4e38" parses the same as a 16-bit string
+PASS "4e38" parses the same after a leading comment
+PASS setAttribute("width", "4e38")
+PASS baseVal.valueAsString = "4e38"
+PASS "3.5e38" parses the same as a 16-bit string
+PASS "3.5e38" parses the same after a leading comment
+PASS setAttribute("width", "3.5e38")
+PASS baseVal.valueAsString = "3.5e38"
+PASS "3.4028235e38" parses the same as a 16-bit string
+PASS "3.4028235e38" parses the same after a leading comment
+PASS setAttribute("width", "3.4028235e38")
+PASS baseVal.valueAsString = "3.4028235e38"
+PASS "3.4028236e38" parses the same as a 16-bit string
+PASS "3.4028236e38" parses the same after a leading comment
+PASS setAttribute("width", "3.4028236e38")
+PASS baseVal.valueAsString = "3.4028236e38"
+PASS "1e-50" parses the same as a 16-bit string
+PASS "1e-50" parses the same after a leading comment
+PASS setAttribute("width", "1e-50")
+PASS baseVal.valueAsString = "1e-50"
+PASS "1e-50px" parses the same as a 16-bit string
+PASS "1e-50px" parses the same after a leading comment
+PASS setAttribute("width", "1e-50px")
+PASS baseVal.valueAsString = "1e-50px"
+PASS "0.1" parses the same as a 16-bit string
+PASS "0.1" parses the same after a leading comment
+PASS setAttribute("width", "0.1")
+PASS baseVal.valueAsString = "0.1"
+PASS "0.1px" parses the same as a 16-bit string
+PASS "0.1px" parses the same after a leading comment
+PASS setAttribute("width", "0.1px")
+PASS baseVal.valueAsString = "0.1px"
+PASS "0.30000000000000004" parses the same as a 16-bit string
+PASS "0.30000000000000004" parses the same after a leading comment
+PASS setAttribute("width", "0.30000000000000004")
+PASS baseVal.valueAsString = "0.30000000000000004"
+PASS "123456789.123456789" parses the same as a 16-bit string
+PASS "123456789.123456789" parses the same after a leading comment
+PASS setAttribute("width", "123456789.123456789")
+PASS baseVal.valueAsString = "123456789.123456789"
+PASS "123456789.123456789px" parses the same as a 16-bit string
+PASS "123456789.123456789px" parses the same after a leading comment
+PASS setAttribute("width", "123456789.123456789px")
+PASS baseVal.valueAsString = "123456789.123456789px"
+PASS "16777217" parses the same as a 16-bit string
+PASS "16777217" parses the same after a leading comment
+PASS setAttribute("width", "16777217")
+PASS baseVal.valueAsString = "16777217"
+PASS "16777217px" parses the same as a 16-bit string
+PASS "16777217px" parses the same after a leading comment
+PASS setAttribute("width", "16777217px")
+PASS baseVal.valueAsString = "16777217px"
+PASS "00005" parses the same as a 16-bit string
+PASS "00005" parses the same after a leading comment
+PASS setAttribute("width", "00005")
+PASS baseVal.valueAsString = "00005"
+PASS "5.000" parses the same as a 16-bit string
+PASS "5.000" parses the same after a leading comment
+PASS setAttribute("width", "5.000")
+PASS baseVal.valueAsString = "5.000"
+PASS "5e0" parses the same as a 16-bit string
+PASS "5e0" parses the same after a leading comment
+PASS setAttribute("width", "5e0")
+PASS baseVal.valueAsString = "5e0"
+PASS "5e" parses the same as a 16-bit string
+PASS "5e" parses the same after a leading comment
+PASS setAttribute("width", "5e")
+PASS baseVal.valueAsString = "5e"
+PASS "5e+" parses the same as a 16-bit string
+PASS "5e+" parses the same after a leading comment
+PASS setAttribute("width", "5e+")
+PASS baseVal.valueAsString = "5e+"
+PASS "5.5.5" parses the same as a 16-bit string
+PASS "5.5.5" parses the same after a leading comment
+PASS setAttribute("width", "5.5.5")
+PASS baseVal.valueAsString = "5.5.5"
+PASS "5px5" parses the same as a 16-bit string
+PASS "5px5" parses the same after a leading comment
+PASS setAttribute("width", "5px5")
+PASS baseVal.valueAsString = "5px5"
+PASS "5%%" parses the same as a 16-bit string
+PASS "5%%" parses the same after a leading comment
+PASS setAttribute("width", "5%%")
+PASS baseVal.valueAsString = "5%%"
+PASS "5pxpx" parses the same as a 16-bit string
+PASS "5pxpx" parses the same after a leading comment
+PASS setAttribute("width", "5pxpx")
+PASS baseVal.valueAsString = "5pxpx"
+PASS "ï¼•" parses the same as a 16-bit string
+PASS "ï¼•" parses the same after a leading comment
+PASS setAttribute("width", "ï¼•")
+PASS baseVal.valueAsString = "ï¼•"
+PASS "5\u0000" parses the same as a 16-bit string
+PASS "5\u0000" parses the same after a leading comment
+PASS setAttribute("width", "5\u0000")
+PASS baseVal.valueAsString = "5\u0000"
+PASS "calc(5px)" parses the same as a 16-bit string
+PASS "calc(5px)" parses the same after a leading comment
+PASS setAttribute("width", "calc(5px)")
+PASS baseVal.valueAsString = "calc(5px)"
+PASS "calc(5)" parses the same as a 16-bit string
+PASS "calc(5)" parses the same after a leading comment
+PASS setAttribute("width", "calc(5)")
+PASS baseVal.valueAsString = "calc(5)"
+PASS "calc(5%)" parses the same as a 16-bit string
+PASS "calc(5%)" parses the same after a leading comment
+PASS setAttribute("width", "calc(5%)")
+PASS baseVal.valueAsString = "calc(5%)"
+PASS "calc(1e39)" parses the same as a 16-bit string
+PASS "calc(1e39)" parses the same after a leading comment
+PASS setAttribute("width", "calc(1e39)")
+PASS baseVal.valueAsString = "calc(1e39)"
+PASS "min(5)" parses the same as a 16-bit string
+PASS "min(5)" parses the same after a leading comment
+PASS setAttribute("width", "min(5)")
+PASS baseVal.valueAsString = "min(5)"
+PASS "5/**/" parses the same as a 16-bit string
+PASS "5/**/" parses the same after a leading comment
+PASS setAttribute("width", "5/**/")
+PASS baseVal.valueAsString = "5/**/"
+PASS "/**/5" parses the same as a 16-bit string
+PASS "/**/5" parses the same after a leading comment
+PASS setAttribute("width", "/**/5")
+PASS baseVal.valueAsString = "/**/5"
+PASS "5/**/px" parses the same as a 16-bit string
+PASS "5/**/px" parses the same after a leading comment
+PASS setAttribute("width", "5/**/px")
+PASS baseVal.valueAsString = "5/**/px"
+PASS "1e3.5" parses the same as a 16-bit string
+PASS "1e3.5" parses the same after a leading comment
+PASS setAttribute("width", "1e3.5")
+PASS baseVal.valueAsString = "1e3.5"
+PASS "1.5e3" parses the same as a 16-bit string
+PASS "1.5e3" parses the same after a leading comment
+PASS setAttribute("width", "1.5e3")
+PASS baseVal.valueAsString = "1.5e3"
+PASS "-1.5E-3%" parses the same as a 16-bit string
+PASS "-1.5E-3%" parses the same after a leading comment
+PASS setAttribute("width", "-1.5E-3%")
+PASS baseVal.valueAsString = "-1.5E-3%"
+PASS "5p" parses the same as a 16-bit string
+PASS "5p" parses the same after a leading comment
+PASS setAttribute("width", "5p")
+PASS baseVal.valueAsString = "5p"
+PASS "5P%" parses the same as a 16-bit string
+PASS "5P%" parses the same after a leading comment
+PASS setAttribute("width", "5P%")
+PASS baseVal.valueAsString = "5P%"
+PASS "5x%" parses the same as a 16-bit string
+PASS "5x%" parses the same after a leading comment
+PASS setAttribute("width", "5x%")
+PASS baseVal.valueAsString = "5x%"
+PASS "+5px" parses the same as a 16-bit string
+PASS "+5px" parses the same after a leading comment
+PASS setAttribute("width", "+5px")
+PASS baseVal.valueAsString = "+5px"
+PASS "+.5%" parses the same as a 16-bit string
+PASS "+.5%" parses the same after a leading comment
+PASS setAttribute("width", "+.5%")
+PASS baseVal.valueAsString = "+.5%"
+PASS "5.%" parses the same as a 16-bit string
+PASS "5.%" parses the same after a leading comment
+PASS setAttribute("width", "5.%")
+PASS baseVal.valueAsString = "5.%"
+PASS ".px" parses the same as a 16-bit string
+PASS ".px" parses the same after a leading comment
+PASS setAttribute("width", ".px")
+PASS baseVal.valueAsString = ".px"
+PASS "-px" parses the same as a 16-bit string
+PASS "-px" parses the same after a leading comment
+PASS setAttribute("width", "-px")
+PASS baseVal.valueAsString = "-px"
+PASS "+%" parses the same as a 16-bit string
+PASS "+%" parses the same after a leading comment
+PASS setAttribute("width", "+%")
+PASS baseVal.valueAsString = "+%"
+PASS "1e-x" parses the same as a 16-bit string
+PASS "1e-x" parses the same after a leading comment
+PASS "1--x" parses the same as a 16-bit string
+PASS "1--x" parses the same after a leading comment
+PASS "1-x" parses the same as a 16-bit string
+PASS "1-x" parses the same after a leading comment
+PASS "1-" parses the same as a 16-bit string
+PASS "1-" parses the same after a leading comment
+PASS "1--" parses the same as a 16-bit string
+PASS "1--" parses the same after a leading comment
+PASS "5e5e5" parses the same as a 16-bit string
+PASS "5e5e5" parses the same after a leading comment
+PASS "1E+3PX" parses the same as a 16-bit string
+PASS "1E+3PX" parses the same after a leading comment
+PASS "1e+3e" parses the same as a 16-bit string
+PASS "1e+3e" parses the same after a leading comment
+PASS "5\\70x" parses the same as a 16-bit string
+PASS "5\\70x" parses the same after a leading comment
+PASS "5\\70 x" parses the same as a 16-bit string
+PASS "5\\70 x" parses the same after a leading comment
+PASS "5p\\78" parses the same as a 16-bit string
+PASS "5p\\78" parses the same after a leading comment
+PASS "5px/**/" parses the same as a 16-bit string
+PASS "5px/**/" parses the same after a leading comment
+PASS "5Q" parses the same as a 16-bit string
+PASS "5Q" parses the same after a leading comment
+PASS "5vw" parses the same as a 16-bit string
+PASS "5vw" parses the same after a leading comment
+PASS "5cqw" parses the same as a 16-bit string
+PASS "5cqw" parses the same after a leading comment
+PASS "5e-" parses the same as a 16-bit string
+PASS "5e-" parses the same after a leading comment
+PASS "5e-2em" parses the same as a 16-bit string
+PASS "5e-2em" parses the same after a leading comment
+PASS "-5e-2em" parses the same as a 16-bit string
+PASS "-5e-2em" parses the same after a leading comment
+PASS "5_" parses the same as a 16-bit string
+PASS "5_" parses the same after a leading comment
+PASS "5-x" parses the same as a 16-bit string
+PASS "5-x" parses the same after a leading comment
+PASS "5é" parses the same as a 16-bit string
+PASS "5é" parses the same after a leading comment
+PASS "5pxé" parses the same as a 16-bit string
+PASS "5pxé" parses the same after a leading comment
+PASS "5Ā" parses the same as a 16-bit string
+PASS "5Ā" parses the same after a leading comment
+PASS "5px " parses the same as a 16-bit string
+PASS "5px " parses the same after a leading comment
+PASS "5% " parses the same as a 16-bit string
+PASS "5% " parses the same after a leading comment
+PASS "5\\" parses the same as a 16-bit string
+PASS "5\\" parses the same after a leading comment
+PASS "5px\\" parses the same as a 16-bit string
+PASS "5px\\" parses the same after a leading comment
+PASS "5(" parses the same as a 16-bit string
+PASS "5(" parses the same after a leading comment
+PASS "5px(" parses the same as a 16-bit string
+PASS "5px(" parses the same after a leading comment
+PASS "5;" parses the same as a 16-bit string
+PASS "5;" parses the same after a leading comment
+PASS "5!" parses the same as a 16-bit string
+PASS "5!" parses the same after a leading comment
+PASS "5e1.5" parses the same as a 16-bit string
+PASS "5e1.5" parses the same after a leading comment
+PASS ".5.5" parses the same as a 16-bit string
+PASS ".5.5" parses the same after a leading comment
+PASS "+.5e+1px" parses the same as a 16-bit string
+PASS "+.5e+1px" parses the same after a leading comment
+PASS "5\n" parses the same as a 16-bit string
+PASS "5\n" parses the same after a leading comment
+PASS "5\u0000px" parses the same as a 16-bit string
+PASS "5\u0000px" parses the same after a leading comment
+PASS "\r5\f" parses the same as a 16-bit string
+PASS "\r5\f" parses the same after a leading comment
+PASS " 5px \n" parses the same as a 16-bit string
+PASS " 5px \n" parses the same after a leading comment
+PASS "\t\t5%\r\n" parses the same as a 16-bit string
+PASS "\t\t5%\r\n" parses the same after a leading comment
+PASS "\u000b5px" parses the same as a 16-bit string
+PASS "\u000b5px" parses the same after a leading comment
+PASS "5px\u000b" parses the same as a 16-bit string
+PASS "5px\u000b" parses the same after a leading comment
+PASS " \u000b5" parses the same as a 16-bit string
+PASS " \u000b5" parses the same after a leading comment
+PASS "5 " parses the same as a 16-bit string
+PASS "5 " parses the same after a leading comment
+PASS " 5" parses the same as a 16-bit string
+PASS " 5" parses the same after a leading comment
+PASS "- 5" parses the same as a 16-bit string
+PASS "- 5" parses the same after a leading comment
+PASS "\n" parses the same as a 16-bit string
+PASS "\n" parses the same after a leading comment
+PASS " px" parses the same as a 16-bit string
+PASS " px" parses the same after a leading comment
+PASS " % " parses the same as a 16-bit string
+PASS " % " parses the same after a leading comment
+PASS "00" parses the same as a 16-bit string
+PASS "00" parses the same after a leading comment
+PASS "-00.00e-00" parses the same as a 16-bit string
+PASS "-00.00e-00" parses the same after a leading comment
+PASS "1e309" parses the same as a 16-bit string
+PASS "1e309" parses the same after a leading comment
+PASS "-1e309" parses the same as a 16-bit string
+PASS "-1e309" parses the same after a leading comment
+PASS "1e309px" parses the same as a 16-bit string
+PASS "1e309px" parses the same after a leading comment
+PASS "5e-324" parses the same as a 16-bit string
+PASS "5e-324" parses the same after a leading comment
+PASS "0.000000000000000000000000000000000000000000001px" parses the same as a 16-bit string
+PASS "0.000000000000000000000000000000000000000000001px" parses the same after a leading comment
+

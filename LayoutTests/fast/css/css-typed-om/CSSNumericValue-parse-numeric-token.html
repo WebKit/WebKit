@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<title>CSSNumericValue.parse() of strings that are a single numeric token</title>
+<!-- https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse -->
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+const values = [
+    "5", "-5", "+5", "+05", "5.", "5.5", ".5", "-.5", "1e3", "1E3", "1e+3", "1e-3", "1e", "1.e3", "1e3.5", "5e+",
+    "5px", "5PX", "-5.5e-1px", "5%", "-5%", "5deg", "5s", "5dppx", "5x", "5e", "5ex", "5e2ex", "5-x", "5--",
+    "5 px", "5 %", "5px junk", "5px)", "5.5.5",
+    " 5px", "5px ", " \t\n\r\f5px \t\n\r\f", "\v5px", "5px\v", "\u00a05px",
+    "5\\70x", "5p\\78", "5px\\", "5\u00e9", "5px\u0100", "5\u0000",
+    "calc(5px)", "min(5px)", "-", "+", ".", "px", "%", "", " ",
+    "1e39", "1e400", "1e400px", "-1e400%", "1e-400", "Infinity", "NaN",
+];
+
+function describe(text)
+{
+    try {
+        const value = CSSNumericValue.parse(text);
+        return `${value.constructor.name} ${value}`;
+    } catch (e) {
+        return e.name;
+    }
+}
+
+// Puts a comment after any leading whitespace, which forces full tokenization without changing the tokens.
+function withComment(value)
+{
+    return value.replace(/^[\t\n\f\r \v]*/, whitespace => whitespace + "/**/");
+}
+
+function make16Bit(value)
+{
+    return (value + "\u0100").slice(0, -1);
+}
+
+for (const value of values) {
+    test(() => {
+        assert_equals(describe(make16Bit(value)), describe(value), "16-bit");
+        assert_equals(describe(withComment(value)), describe(value), "after a comment");
+    }, `${JSON.stringify(value)} -> ${describe(value)}`);
+}
+</script>

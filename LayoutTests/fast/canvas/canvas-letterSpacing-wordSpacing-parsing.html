@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<title>Canvas letterSpacing and wordSpacing parsing</title>
+<!-- https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-letterspacing -->
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// [ value, serialization after setting, or null if the value is ignored ]
+const values = [
+    ["5px", "5px"],
+    ["5PX", "5px"],
+    ["-5px", "-5px"],
+    ["1e1px", "10px"],
+    ["5em", "5em"],
+    [" 5px", "5px"],
+    ["5px ", "5px"],
+    [" \t\n\r\f5px \t\n\r\f", "5px"],
+    ["/**/5px", "5px"],
+    ["5px/**/", "5px"],
+    ["5\\70x", "5px"],
+    ["5px junk", null],
+    ["5px)", null],
+    ["5px;", null],
+    ["5px,", null],
+    ["5px 6px", null],
+    ["5px/**/6px", null],
+    ["5pxx", null],
+    ["5 px", null],
+    ["5", null],
+    ["5%", null],
+    ["\v5px", null],
+    ["5px\v", null],
+    ["", null],
+    [" ", null],
+];
+
+const contexts = [
+    ["HTMLCanvasElement", () => document.createElement("canvas").getContext("2d")],
+    ["OffscreenCanvas", () => new OffscreenCanvas(10, 10).getContext("2d")],
+];
+
+for (const [contextName, createContext] of contexts) {
+    for (const attribute of ["letterSpacing", "wordSpacing"]) {
+        for (const [value, expected] of values) {
+            test(() => {
+                const context = createContext();
+                context[attribute] = "1px";
+                context[attribute] = value;
+                assert_equals(context[attribute], expected ?? "1px");
+            }, `${contextName} ${attribute} = ${JSON.stringify(value)}`);
+        }
+    }
+}
+</script>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<title>SVGLength parsing of edge case strings</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg xmlns="http://www.w3.org/2000/svg"><rect id="rect"/></svg>
+<script>
+// [ value, result of setAttribute("width", value), result of baseVal.valueAsString = value ]
+const expectations = [
+    ["5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["-5", "type 1 specified 0 string 0", "ok 1 0"],
+    ["+5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5.5", "type 1 specified 5.5 string 5.5", "ok 1 5.5"],
+    [".5", "type 1 specified 0.5 string 0.5", "ok 1 0.5"],
+    ["-.5", "type 1 specified 0 string 0", "ok 1 0"],
+    ["+.5", "type 1 specified 0.5 string 0.5", "ok 1 0.5"],
+    ["5.", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5.px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1.e3", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3", "type 1 specified 1000 string 1000", "ok 1 1000"],
+    ["1E3", "type 1 specified 1000 string 1000", "ok 1 1000"],
+    ["1e+3", "type 1 specified 1000 string 1000", "ok 1 1000"],
+    ["1e-3", "type 1 specified 0.0010000000474974513 string 0.001", "ok 1 0.0010000000474974513"],
+    ["1e", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3px", "type 5 specified 1000 string 1000px", "ok 5 1000"],
+    ["1e3%", "type 2 specified 1000 string 1000%", "ok 2 1000"],
+    ["5px", "type 5 specified 5 string 5px", "ok 5 5"],
+    ["5PX", "type 5 specified 5 string 5px", "ok 5 5"],
+    ["5Px", "type 5 specified 5 string 5px", "ok 5 5"],
+    ["5 px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5%", "type 2 specified 5 string 5%", "ok 2 5"],
+    ["5 %", "type 1 specified 0 string 0", "SyntaxError"],
+    ["-5%", "type 1 specified 0 string 0", "ok 1 0"],
+    ["0", "type 1 specified 0 string 0", "ok 1 0"],
+    ["-0", "type 1 specified 0 string 0", "ok 1 0"],
+    ["0px", "type 5 specified 0 string 0px", "ok 5 0"],
+    ["0%", "type 2 specified 0 string 0%", "ok 2 0"],
+    [" 5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5 ", "type 1 specified 5 string 5", "ok 1 5"],
+    [" 5 ", "type 1 specified 5 string 5", "ok 1 5"],
+    ["\t5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["\n5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["\f5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["\r5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["\u000b5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5\u000b", "type 1 specified 0 string 0", "SyntaxError"],
+    ["\u00c2\u00a05", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5em", "type 3 specified 5 string 5em", "ok 3 5"],
+    ["5ex", "type 4 specified 5 string 5ex", "ok 4 5"],
+    ["5pt", "type 9 specified 5 string 5pt", "ok 9 5"],
+    ["5x", "type 1 specified 0 string 0", "SyntaxError"],
+    ["px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["%", "type 1 specified 0 string 0", "SyntaxError"],
+    ["", "type 1 specified 0 string 0", "SyntaxError"],
+    [" ", "type 1 specified 0 string 0", "SyntaxError"],
+    [".", "type 1 specified 0 string 0", "SyntaxError"],
+    ["-", "type 1 specified 0 string 0", "SyntaxError"],
+    ["+", "type 1 specified 0 string 0", "SyntaxError"],
+    ["--5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["+-5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5-", "type 1 specified 0 string 0", "SyntaxError"],
+    ["0x10", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1_000", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1,5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["Infinity", "type 1 specified 0 string 0", "SyntaxError"],
+    ["-Infinity", "type 1 specified 0 string 0", "SyntaxError"],
+    ["infinity", "type 1 specified 0 string 0", "SyntaxError"],
+    ["inf", "type 1 specified 0 string 0", "SyntaxError"],
+    ["NaN", "type 1 specified 0 string 0", "SyntaxError"],
+    ["nan", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e39", "type 1 specified 0 string 0", "ok 1 0"],
+    ["-1e39", "type 1 specified 0 string 0", "ok 1 0"],
+    ["1e39px", "type 5 specified 3.4028234663852886e+38 string 340282346638528859811704183484516925440px", "ok 5 3.4028234663852886e+38"],
+    ["1e39%", "type 2 specified 3.4028234663852886e+38 string 340282346638528859811704183484516925440%", "ok 2 3.4028234663852886e+38"],
+    ["1e400", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e400px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e-400", "type 1 specified 0 string 0", "ok 1 0"],
+    ["4e38", "type 1 specified 0 string 0", "ok 1 0"],
+    ["3.5e38", "type 1 specified 0 string 0", "ok 1 0"],
+    ["3.4028235e38", "type 1 specified 0 string 0", "ok 1 0"],
+    ["3.4028236e38", "type 1 specified 0 string 0", "ok 1 0"],
+    ["1e-50", "type 1 specified 0 string 0", "ok 1 0"],
+    ["1e-50px", "type 5 specified 0 string 0px", "ok 5 0"],
+    ["0.1", "type 1 specified 0.10000000149011612 string 0.1", "ok 1 0.10000000149011612"],
+    ["0.1px", "type 5 specified 0.10000000149011612 string 0.1px", "ok 5 0.10000000149011612"],
+    ["0.30000000000000004", "type 1 specified 0.30000001192092896 string 0.3", "ok 1 0.30000001192092896"],
+    ["123456789.123456789", "type 1 specified 123456792 string 123456792", "ok 1 123456792"],
+    ["123456789.123456789px", "type 5 specified 123456792 string 123456792px", "ok 5 123456792"],
+    ["16777217", "type 1 specified 16777216 string 16777216", "ok 1 16777216"],
+    ["16777217px", "type 5 specified 16777216 string 16777216px", "ok 5 16777216"],
+    ["00005", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5.000", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5e0", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5e", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5e+", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5.5.5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5px5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5%%", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5pxpx", "type 1 specified 0 string 0", "SyntaxError"],
+    ["\u00ef\u00bc\u2022", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5\u0000", "type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(5px)", "type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(5)", "type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(5%)", "type 1 specified 0 string 0", "SyntaxError"],
+    ["calc(1e39)", "type 1 specified 0 string 0", "SyntaxError"],
+    ["min(5)", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5/**/", "type 1 specified 5 string 5", "ok 1 5"],
+    ["/**/5", "type 1 specified 5 string 5", "ok 1 5"],
+    ["5/**/px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1e3.5", "type 1 specified 0 string 0", "SyntaxError"],
+    ["1.5e3", "type 1 specified 1500 string 1500", "ok 1 1500"],
+    ["-1.5E-3%", "type 1 specified 0 string 0", "ok 1 0"],
+    ["5p", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5P%", "type 1 specified 0 string 0", "SyntaxError"],
+    ["5x%", "type 1 specified 0 string 0", "SyntaxError"],
+    ["+5px", "type 5 specified 5 string 5px", "ok 5 5"],
+    ["+.5%", "type 2 specified 0.5 string 0.5%", "ok 2 0.5"],
+    ["5.%", "type 1 specified 0 string 0", "SyntaxError"],
+    [".px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["-px", "type 1 specified 0 string 0", "SyntaxError"],
+    ["+%", "type 1 specified 0 string 0", "SyntaxError"]
+];
+
+// Checked only for parsing the same with and without a leading comment, and as 8-bit and 16-bit strings.
+const additionalValues = [
+    "1e-x", "1--x", "1-x", "1-", "1--", "5e5e5", "1E+3PX", "1e+3e", "5\\70x", "5\\70 x", "5p\\78", "5px/**/", "5Q", "5vw", "5cqw", "5e-", "5e-2em", "-5e-2em",
+    "5_", "5-x", "5\u00e9", "5px\u00e9", "5\u0100", "5px ", "5% ", "5\\", "5px\\", "5(", "5px(", "5;", "5!", "5e1.5", ".5.5", "+.5e+1px", "5\n", "5\u0000px",
+    "\r5\f", " 5px \n", "\t\t5%\r\n", "\v5px", "5px\v", " \v5", "5\u00a0", "\u00a05", "- 5", "\n", " px", " % ",
+    "00", "-00.00e-00", "1e309", "-1e309", "1e309px", "5e-324", "0.000000000000000000000000000000000000000000001px",
+];
+
+const rect = document.getElementById("rect");
+
+function parseViaAttribute(value)
+{
+    rect.setAttribute("width", "77");
+    rect.setAttribute("width", value);
+    const length = rect.width.baseVal;
+    return `type ${length.unitType} specified ${length.valueInSpecifiedUnits} string ${length.valueAsString}`;
+}
+
+function parseViaValueAsString(value)
+{
+    rect.setAttribute("width", "77");
+    const length = rect.width.baseVal;
+    try {
+        length.valueAsString = value;
+    } catch (e) {
+        return e.name;
+    }
+    return `ok ${length.unitType} ${length.valueInSpecifiedUnits}`;
+}
+
+function make16Bit(value)
+{
+    return (value + "\u0100").slice(0, -1);
+}
+
+function testEquivalentForms(value)
+{
+    test(() => {
+        assert_equals(parseViaAttribute(make16Bit(value)), parseViaAttribute(value), "attribute");
+        assert_equals(parseViaValueAsString(make16Bit(value)), parseViaValueAsString(value), "valueAsString");
+    }, `${JSON.stringify(value)} parses the same as a 16-bit string`);
+
+    // The empty string is not parsed.
+    if (!value.length)
+        return;
+
+    // A leading comment forces full tokenization without changing the tokens.
+    test(() => {
+        assert_equals(parseViaAttribute("/**/" + value), parseViaAttribute(value), "attribute");
+        assert_equals(parseViaValueAsString("/**/" + value), parseViaValueAsString(value), "valueAsString");
+    }, `${JSON.stringify(value)} parses the same after a leading comment`);
+}
+
+for (const [value, expectedAttribute, expectedValueAsString] of expectations) {
+    testEquivalentForms(value);
+
+    test(() => {
+        assert_equals(parseViaAttribute(value), expectedAttribute);
+    }, `setAttribute("width", ${JSON.stringify(value)})`);
+
+    test(() => {
+        assert_equals(parseViaValueAsString(value), expectedValueAsString);
+    }, `baseVal.valueAsString = ${JSON.stringify(value)}`);
+}
+
+for (const value of additionalValues)
+    testEquivalentForms(value);
+</script>
