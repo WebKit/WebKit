@@ -854,6 +854,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/SiteIsolationNavigationTests.swift
     Tests/WebKit/WKWebView/SiteIsolationPolicyDecisionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationPositionInformationTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationPostMessageTests.swift
     Tests/WebKit/WKWebView/SiteIsolationProvisionalPageTests.swift
     Tests/WebKit/WKWebView/SiteIsolationSafeAreaInsetsTests.swift
     Tests/WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift
