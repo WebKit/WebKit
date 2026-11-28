@@ -29,8 +29,6 @@
 
 #include <WebCore/ParentalControlsURLFilter.h>
 
-OBJC_CLASS BEWebContentFilter;
-
 namespace WebKit {
 
 class WebParentalControlsURLFilter final : public WebCore::ParentalControlsURLFilter {
@@ -43,16 +41,11 @@ private:
     WebParentalControlsURLFilter();
 
     // WebCore::ParentalControlsURLFilter
-    bool isEnabledImpl() const final;
     void isURLAllowedImpl(WebCore::IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&) final;
     void allowURL(const URL&, CompletionHandler<void(bool)>&&) final;
 #if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
     void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&, CocoaView* presentingView = nullptr) final;
 #endif
-
-    BEWebContentFilter* ensureWebContentFilter();
-
-    const RetainPtr<BEWebContentFilter> m_webContentFilter WTF_GUARDED_BY_CAPABILITY(workQueueSingleton());
 };
 
 } // namespace WebKit

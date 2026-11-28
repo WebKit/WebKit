@@ -56,20 +56,6 @@ WebParentalControlsURLFilter::WebParentalControlsURLFilter() = default;
 
 WebParentalControlsURLFilter::~WebParentalControlsURLFilter() = default;
 
-BEWebContentFilter* WebParentalControlsURLFilter::ensureWebContentFilter()
-{
-    assertIsCurrent(workQueueSingleton());
-    if (!m_webContentFilter)
-        lazyInitialize(m_webContentFilter, adoptNS([[BEWebContentFilter alloc] init]));
-
-    return m_webContentFilter;
-}
-
-bool WebParentalControlsURLFilter::isEnabledImpl() const
-{
-    return [BEWebContentFilter shouldEvaluateURLs];
-}
-
 void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
     // mainDocumentURL acts as a root for Parental Controls policies. Accordingly, mainDocumentURL and url are required to match on mainframe navigations.
