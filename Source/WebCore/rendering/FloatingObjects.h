@@ -64,13 +64,10 @@ public:
     bool hasRenderer() const { return !!m_renderer; }
 #endif
 
-    bool isPlaced() const { return m_isPlaced; }
-    void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
-
-    LayoutUnit x() const { ASSERT(isPlaced()); return m_frameRect.x(); }
-    LayoutUnit maxX() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
-    LayoutUnit y() const { ASSERT(isPlaced()); return m_frameRect.y(); }
-    LayoutUnit maxY() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
+    LayoutUnit x() const { return m_frameRect.x(); }
+    LayoutUnit maxX() const { return m_frameRect.maxX(); }
+    LayoutUnit y() const { return m_frameRect.y(); }
+    LayoutUnit maxY() const { return m_frameRect.maxY(); }
     LayoutUnit width() const { return m_frameRect.width(); }
     LayoutUnit height() const { return m_frameRect.height(); }
 
@@ -81,7 +78,7 @@ public:
 
     void setMarginOffset(LayoutSize offset) { m_marginOffset = offset; }
 
-    const LayoutRect& frameRect() const LIFETIME_BOUND { ASSERT(isPlaced()); return m_frameRect; }
+    const LayoutRect& frameRect() const LIFETIME_BOUND { return m_frameRect; }
     void setFrameRect(const LayoutRect& frameRect) { m_frameRect = frameRect; }
 
     bool isDescendant() const { return m_isDescendant; }
@@ -89,10 +86,9 @@ public:
 
     LayoutSize locationOffsetOfBorderBox() const
     {
-        ASSERT(isPlaced());
         return LayoutSize(m_frameRect.location().x() + m_marginOffset.width(), m_frameRect.location().y() + m_marginOffset.height());
     }
-    LayoutSize marginOffset() const { ASSERT(isPlaced()); return m_marginOffset; }
+    LayoutSize marginOffset() const { return m_marginOffset; }
 
 private:
     friend FloatingObjects;
@@ -102,7 +98,6 @@ private:
     LayoutSize m_marginOffset;
     unsigned m_type : 2; // Type (left or right aligned)
     unsigned m_isDescendant : 1 { false };
-    unsigned m_isPlaced : 1 { false };
 };
 
 // FIXME: This could be simplified if we made it inherit from PtrHash<std::unique_ptr<FloatingObject>> and
@@ -147,10 +142,8 @@ public:
     void clear();
     FloatingObject* add(std::unique_ptr<FloatingObject>);
     void remove(FloatingObject*);
-    void addPlacedObject(FloatingObject*);
-    void removePlacedObject(FloatingObject*);
     // For a float inline layout placed, which put it in placedFloats() already.
-    void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
+    void place(RenderBox&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
@@ -173,6 +166,8 @@ public:
 
 private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }
+    void addPlacedObject(FloatingObject*);
+    void removePlacedObject(FloatingObject*);
     NODELETE void increaseObjectsCount(FloatingObjectType);
     NODELETE void decreaseObjectsCount(FloatingObjectType);
 

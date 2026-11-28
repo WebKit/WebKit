@@ -262,7 +262,7 @@ public:
     std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
     void adjustOutOfFlowBlock(RenderBox& child, const MarginInfo&);
-    void adjustFloatingBlock(const MarginInfo&);
+    void adjustFloatingBlock(const MarginInfo&, std::unique_ptr<FloatingObject>);
 
     void adjustBlockEndChildrenForMarginTrim();
 
@@ -312,9 +312,8 @@ public:
 
     inline const FloatingObjectSet* floatingObjectSet() const LIFETIME_BOUND; // Defined in RenderBlockFlowInlines.h
 
-    FloatingObject& insertFloatingBox(RenderBox&);
     // For a float inline layout placed, which put it in placedFloats() already.
-    void placeFloatingBox(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
+    void placeFloatingBox(RenderBox&, const LayoutRect& frameRect, LayoutSize marginOffset);
     Layout::PlacedFloats& placedFloats();
 
     inline LayoutUnit logicalTopForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
@@ -468,13 +467,11 @@ private:
 
     void clipOutFloatingBoxes(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 
-    void insertFloatingBoxAndMarkForLayout(RenderBox&);
+    void insertFloatingBoxAndMarkForLayout(RenderBox&, const MarginInfo&);
     void removeFloatingBox(RenderBox&);
     void computeLogicalLocationForFloat(FloatingObject&, LayoutUnit& logicalTopOffset);
 
-    // Called from lineWidth, to position the floats added in the last line.
-    // Returns true if and only if it has positioned any floats.
-    bool positionNewFloats();
+    void positionNewFloat(std::unique_ptr<FloatingObject>);
 
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;

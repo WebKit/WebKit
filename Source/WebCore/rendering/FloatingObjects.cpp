@@ -72,7 +72,6 @@ FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect&
     , m_marginOffset(marginOffset)
     , m_type(type)
     , m_isDescendant(isDescendant)
-    , m_isPlaced(true)
 {
 }
 
@@ -92,9 +91,7 @@ std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize of
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
     ASSERT(renderer());
-    auto cloneObject = makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_isDescendant);
-    cloneObject->m_isPlaced = m_isPlaced;
-    return cloneObject;
+    return makeUnique<FloatingObject>(*renderer(), type(), m_frameRect, m_marginOffset, m_isDescendant);
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -104,11 +101,7 @@ TextStream& operator<<(TextStream& stream, const FloatingObject& object)
     stream << "(" << &object << ") renderer (";
     object.hasRenderer() ? stream  << object.renderer() << ")" : stream << "destroyed)";
 
-    if (object.isPlaced())
-        stream << " " << object.frameRect();
-    else
-        stream << " (not placed yet)";
-    return stream << " isDescendant " << object.isDescendant();
+    return stream << " " << object.frameRect() << " isDescendant " << object.isDescendant();
 }
 
 #endif
@@ -184,7 +177,6 @@ void FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
 
 void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
 {
-    floatingObject->setIsPlaced(true);
     if (m_placedFloats && floatingObject->renderer()) {
         m_placedFloats->add(placedFloatItem(renderer(), *floatingObject));
         // FloatingContext::constraints() skips the floats it found ending above its last position, and a float inserted among them would be skipped too.
@@ -195,20 +187,22 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
 
 void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
 {
-    ASSERT(floatingObject->isPlaced());
-
     if (m_placedFloats && floatingObject->renderer()) {
         m_placedFloats->remove(floatingObject->renderer()->layoutBox());
         m_floatingContext = nullptr;
     }
-    floatingObject->setIsPlaced(false);
 }
 
-void FloatingObjects::place(FloatingObject& floatingObject, const LayoutRect& frameRect, LayoutSize marginOffset)
+void FloatingObjects::place(RenderBox& floatBox, const LayoutRect& frameRect, LayoutSize marginOffset)
 {
-    floatingObject.setFrameRect(frameRect);
-    floatingObject.setMarginOffset(marginOffset);
-    floatingObject.setIsPlaced(true);
+    auto it = m_set.find<FloatingObjectHashTranslator>(floatBox);
+    if (it == m_set.end()) {
+        auto floatingObject = FloatingObject::create(floatBox);
+        increaseObjectsCount(floatingObject->type());
+        it = m_set.add(WTF::move(floatingObject)).iterator;
+    }
+    (*it)->setFrameRect(frameRect);
+    (*it)->setMarginOffset(marginOffset);
     // Inline layout may have put the float anywhere in the list (see PlacedFloats::add()), where FloatingContext::constraints() may skip it.
     m_floatingContext = nullptr;
 }
@@ -216,8 +210,7 @@ void FloatingObjects::place(FloatingObject& floatingObject, const LayoutRect& fr
 FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)
 {
     increaseObjectsCount(floatingObject->type());
-    if (floatingObject->isPlaced())
-        addPlacedObject(floatingObject.get());
+    addPlacedObject(floatingObject.get());
     return m_set.add(WTF::move(floatingObject)).iterator->get();
 }
 
@@ -225,8 +218,7 @@ void FloatingObjects::remove(FloatingObject* floatingObject)
 {
     ASSERT((m_set.contains(floatingObject)));
     decreaseObjectsCount(floatingObject->type());
-    if (floatingObject->isPlaced())
-        removePlacedObject(floatingObject);
+    removePlacedObject(floatingObject);
     m_set.remove(floatingObject);
 }
 
@@ -234,7 +226,7 @@ std::unique_ptr<Layout::PlacedFloats> FloatingObjects::makePlacedFloats() const
 {
     auto placedFloats = makeUnique<Layout::PlacedFloats>(renderer().layoutBox());
     for (auto& floatingObject : m_set) {
-        if (floatingObject->isPlaced() && floatingObject->renderer())
+        if (floatingObject->renderer())
             placedFloats->add(placedFloatItem(renderer(), *floatingObject));
     }
     return placedFloats;
@@ -305,17 +297,14 @@ void FloatingObjects::shiftFloatsBy(LayoutUnit blockShift)
         if (!floatBox->renderer())
             continue;
 
-        auto isPlaced = floatBox->isPlaced();
-        if (isPlaced)
-            removePlacedObject(floatBox.get());
+        removePlacedObject(floatBox.get());
 
         floatBox->m_frameRect.move(shiftX, shiftY);
         // Only a float this container lays out moves with this container's content. Anything else in the list is a copy of an entry in another box's list.
         if (floatBox->renderer()->containingBlock() == &renderer())
             floatBox->renderer()->move(shiftX, shiftY);
 
-        if (isPlaced)
-            addPlacedObject(floatBox.get());
+        addPlacedObject(floatBox.get());
     }
 }
 

@@ -127,14 +127,14 @@ static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContaine
         // A float with another containing block was placed by another block (it is inherited, or inside a block in the inline content).
         if (&Layout::containingBlock(layoutBox) != &rootBlockContainer.layoutBox())
             continue;
-        auto& floatingObject = rootBlockContainer.insertFloatingBox(protect(downcast<RenderBox>(*layoutBox->rendererForIntegration())));
-        if (floatingObject.isPlaced()) {
+        CheckedRef floatBox = downcast<RenderBox>(*layoutBox->rendererForIntegration());
+        if (rootBlockContainer.containsFloat(floatBox)) {
             // We have already inserted this float when laying out a previous middle-block.
             continue;
         }
 
         auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), rootBlockContainer.borderBoxSize(), blockFormattingContextRootWritingMode);
-        rootBlockContainer.placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
+        rootBlockContainer.placeFloatingBox(floatBox, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
     }
 }
 
