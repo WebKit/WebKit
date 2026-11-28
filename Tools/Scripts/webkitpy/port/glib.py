@@ -119,6 +119,8 @@ class GLibPort(Port):
         environment['WEBKIT_TOP_LEVEL'] = self.path_from_webkit_base()
         environment['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), environment.get('LD_LIBRARY_PATH', ''))
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
+        # The tests already run one process per CPU, so don't let llvmpipe also start one thread per CPU in each.
+        environment['LP_NUM_THREADS'] = os.environ.get('LP_NUM_THREADS', '4')
         self._copy_value_from_environ_if_set(environment, 'AT_SPI_BUS_ADDRESS')
 
         # Copy all GStreamer related env vars
