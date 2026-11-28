@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="timeout" content="long">
+        <title>A remote video track keeps its colors, received and sent on through another connection, whatever its codec</title>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video1" autoplay playsInline width="320" height="240"></video>
+        <video id="video2" autoplay playsInline width="320" height="240"></video>
+        <script src ="../../../webrtc/routines.js"></script>
+        <script>
+if (window.internals)
+    window.internals.setWebRTCVP9Support(true, false);
+
+function codecs(mimeType)
+{
+    return RTCRtpSender.getCapabilities("video").codecs.filter(codec => codec.mimeType === mimeType);
+}
+
+function connect(track, stream, codecPreferences)
+{
+    return new Promise((resolve, reject) => {
+        const connections = createConnections((firstConnection) => {
+            const transceiver = firstConnection.addTransceiver(track, { direction: "sendonly", streams: [stream] });
+            if (codecPreferences)
+                transceiver.setCodecPreferences(codecPreferences);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => resolve({ connections, stream: trackEvent.streams[0] });
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}
+
+async function presentFrames(video, stream, what)
+{
+    video.srcObject = stream;
+    await video.play();
+    const presented = new Promise(resolve => {
+        let count = 0;
+        const next = () => {
+            if (++count === 10)
+                resolve();
+            else
+                video.requestVideoFrameCallback(next);
+        };
+        video.requestVideoFrameCallback(next);
+    });
+    await Promise.race([presented, waitFor(5000).then(() => assert_unreached(`no ${what} frames presented`))]);
+}
+
+function greenCanvasStream(test)
+{
+    const canvas = Object.assign(document.createElement("canvas"), { width: 320, height: 240 });
+    const context = canvas.getContext("2d");
+    let frame;
+    const draw = () => {
+        context.fillStyle = "rgb(0, 255, 0)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        frame = requestAnimationFrame(draw);
+    };
+    draw();
+    test.add_cleanup(() => cancelAnimationFrame(frame));
+    return canvas.captureStream();
+}
+
+// The sender converts the canvas with BT.709 and says so in the RTP header extension; a decoder that guessed the
+// colors from the picture size (BT.601 below 577 lines) would shift the green, once a hop.
+function assertGreen(video, what)
+{
+    const canvas = Object.assign(document.createElement("canvas"), { width: video.videoWidth, height: video.videoHeight });
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0);
+    const [red, green, blue] = context.getImageData(canvas.width / 2, canvas.height / 2, 1, 1).data;
+    assert_less_than(red, 12, `the ${what} picture's red`);
+    assert_greater_than(green, 243, `the ${what} picture's green`);
+    assert_less_than(blue, 12, `the ${what} picture's blue`);
+}
+
+for (const mimeType of ["video/VP8", "video/VP9", "video/H264"]) {
+    promise_test(async (test) => {
+        const preferred = codecs(mimeType);
+        assert_greater_than(preferred.length, 0, `${mimeType} codecs`);
+
+        const stream = greenCanvasStream(test);
+        const call = await connect(stream.getVideoTracks()[0], stream, preferred);
+        test.add_cleanup(() => call.connections.forEach(connection => connection.close()));
+        await presentFrames(video1, call.stream, `received ${mimeType}`);
+        assertGreen(video1, `received ${mimeType}`);
+
+        const relay = await connect(call.stream.getVideoTracks()[0], call.stream);
+        test.add_cleanup(() => relay.connections.forEach(connection => connection.close()));
+        await presentFrames(video2, relay.stream, `relayed ${mimeType}`);
+        assertGreen(video2, `relayed ${mimeType}`);
+    }, `A remote ${mimeType} track keeps its colors, received and sent on through another connection`);
+}
+        </script>
+    </body>
+</html>
