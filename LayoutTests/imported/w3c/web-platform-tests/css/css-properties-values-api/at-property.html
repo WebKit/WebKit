@@ -136,6 +136,14 @@ test_descriptor('syntax', '"<length> <percentage>"', null, {'initial-value': '42
 // syntax: leading bar
 test_descriptor('syntax', '"|<length>"', null, {'initial-value': '42px'});
 
+// syntax: trailing characters after multiplier
+test_descriptor('syntax', '"foo+bar"', null, {'initial-value': 'foo'});
+test_descriptor('syntax', '"foo#bar"', null, {'initial-value': 'foo'});
+test_descriptor('syntax', '"foo+ bar"', null, {'initial-value': 'foo'});
+test_descriptor('syntax', '"foo+bar | <length>"', null, {'initial-value': 'foo'});
+test_descriptor('syntax', '"foo++"', null, {'initial-value': 'foo'});
+test_descriptor('syntax', '"foo+#"', null, {'initial-value': 'foo'});
+
 // initial-value
 test_descriptor('initial-value', '10px');
 test_descriptor('initial-value', 'rgb(1, 2, 3)');

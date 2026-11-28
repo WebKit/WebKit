@@ -184,6 +184,12 @@ assert_invalid("foo bar", "foo bar");
 assert_invalid("foo foo foo", "foo foo foo");
 assert_invalid("foo § bar", "foo § bar");
 assert_invalid("foo \\1F914 bar", "foo \\1F914 bar");
+assert_invalid("foo+bar", "foo");
+assert_invalid("foo#bar", "foo");
+assert_invalid("foo+ bar", "foo");
+assert_invalid("foo+bar | <length>", "foo");
+assert_invalid("foo++", "foo");
+assert_invalid("foo+#", "foo");
 assert_invalid("<length> <number>", "0px 0");
 assert_invalid("<length> <length> <length>", "0px 0px 0px");
 

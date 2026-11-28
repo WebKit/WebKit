@@ -99,6 +99,10 @@ auto CSSCustomPropertySyntax::parseComponent(std::span<const CharacterType> span
 
     auto multiplier = consumeMultiplier();
 
+    skipWhile<isCSSSpace>(buffer);
+    if (!buffer.atEnd())
+        return { };
+
     return Component { Type::Ident, multiplier, ident };
 }
 
