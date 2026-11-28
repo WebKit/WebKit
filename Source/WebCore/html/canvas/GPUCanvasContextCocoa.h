@@ -70,6 +70,9 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) override;
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
+#endif
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     // GPUCanvasContext methods:
@@ -93,6 +96,9 @@ private:
     explicit GPUCanvasContextCocoa(CanvasBase&, Ref<WebGPUIntegration>&&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&, Document*);
 
     void willUpdateDisplayBufferContents();
+    // Returns the index of the display buffer that has the contents to read, presenting the
+    // current frame first when needed.
+    uint32_t displayBufferIndexForReading(SurfaceBuffer);
 
     bool isConfigured() const
     {

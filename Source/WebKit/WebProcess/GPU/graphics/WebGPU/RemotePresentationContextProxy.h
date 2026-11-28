@@ -64,7 +64,7 @@ public:
     Seconds lastFrameGPUCost() const final;
     Seconds lastFramePresentStall() const final;
 #if PLATFORM(COCOA)
-    RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
+    bool copyRenderBuffer(uint32_t, IOSurfaceRef) final;
 #endif
     void setLabel(String&&) final { }
     bool isValid() const final;

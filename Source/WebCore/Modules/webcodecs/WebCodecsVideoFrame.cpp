@@ -222,14 +222,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return Exception { ExceptionCode::TypeError, "timestamp is not provided"_s };
 
     // 2. Let resource be a new media resource containing a copy of image's bitmap data.
-    RefPtr resource = image->makeRenderingResultsAvailable();
+    RefPtr resource = image->toVideoFrame();
     if (!resource)
-        return Exception { ExceptionCode::InvalidStateError, "Input canvas has no image buffer"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Canvas has no frame"_s };
 
     // 3. Let width be image.width and height be image.height.
     // 4. Run the Initialize Frame With Resource algorithm with init, frame, resource, width,
     //    height, 0, false, width, and height.
-    return create(context, *resource, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTF::move(init));
+    return initializeFrameFromOtherFrame(context, resource.releaseNonNull(), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
 #endif
 

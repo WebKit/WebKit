@@ -32,12 +32,18 @@
 #include "Logging.h"
 #include "RemoteCompositorIntegrationMessages.h"
 #include "RemoteGPU.h"
+#include "RemoteSharedResourceCache.h"
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+#include "RemoteVideoFrameObjectHeap.h"
+#include <WebCore/VideoFrame.h>
+#endif
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUCompositorIntegration.h>
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_streamConnection, completion)
 
 namespace WebKit {
@@ -61,15 +67,28 @@ void RemoteCompositorIntegration::destruct()
     protect(m_objectHeap)->removeObject(m_identifier);
 }
 
-void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
+void RemoteCompositorIntegration::copyNativeImage(uint32_t bufferIndex, RemoteNativeImageReference nativeImageReference)
 {
-    UNUSED_PARAM(imageBufferIdentifier);
-    protect(m_backing)->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTF::move(completionHandler)] (WebCore::NativeImage* image) mutable {
-        if (image && gpu.ptr())
-            gpu->paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
-        completionHandler();
-    });
+    RefPtr image = protect(m_backing)->copyNativeImage(bufferIndex);
+    // FIXME: Handle OOM.
+    MESSAGE_CHECK(image);
+    bool success = protect(m_gpu.get())->sharedResourceCache()->addNativeImage(nativeImageReference, image.releaseNonNull());
+    MESSAGE_CHECK(success);
 }
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+void RemoteCompositorIntegration::copyVideoFrame(uint32_t bufferIndex, RemoteVideoFrameReference reference, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+{
+    std::optional<RemoteVideoFrameProxy::Properties> result;
+    if (RefPtr gpuConnectionToWebProcess = protect(m_gpu.get())->gpuConnectionToWebProcess()) {
+        if (RefPtr videoFrame = protect(m_backing)->copyVideoFrame(bufferIndex)) {
+            result = RemoteVideoFrameProxy::properties(*videoFrame);
+            protect(gpuConnectionToWebProcess->videoFrameObjectHeap())->add(reference, videoFrame.releaseNonNull());
+        }
+    }
+    completionHandler(WTF::move(result));
+}
+#endif
 
 void RemoteCompositorIntegration::stopListeningForIPC()
 {
@@ -100,6 +119,7 @@ void RemoteCompositorIntegration::updateContentsHeadroom(float headroom)
 
 } // namespace WebKit
 
+#undef MESSAGE_CHECK
 #undef MESSAGE_CHECK_COMPLETION
 
 #endif // ENABLE(GPU_PROCESS)
