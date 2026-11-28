@@ -200,11 +200,6 @@ template<typename LeafType> static bool contains(const Child& root)
     return found;
 }
 
-bool containsSize(const Tree& tree)
-{
-    return contains<Size>(tree.root);
-}
-
 bool containsPercentage(const Tree& tree)
 {
     return contains<Percentage>(tree.root);

@@ -64,11 +64,6 @@ inline void ComputedStyle::resetBorderTop()
     setBorderTop(BorderValue { });
 }
 
-inline void ComputedStyle::resetMargin()
-{
-    setMarginBox(MarginBox { 0_css_px });
-}
-
 inline void ComputedStyle::resetPadding()
 {
     setPaddingBox(PaddingBox { 0_css_px });

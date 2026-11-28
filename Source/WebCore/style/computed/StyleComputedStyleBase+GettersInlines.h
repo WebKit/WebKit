@@ -91,11 +91,6 @@ inline bool ComputedStyleBase::NonInheritedFlags::hasPseudoStyle(PseudoElementTy
     return EnumSet<PseudoElementType>::fromRaw(pseudoBits).contains(pseudo);
 }
 
-inline bool ComputedStyleBase::NonInheritedFlags::hasAnyPublicPseudoStyles() const
-{
-    return !!pseudoBits;
-}
-
 // MARK: - Non-property getters
 
 inline bool ComputedStyleBase::usesViewportUnits() const
@@ -331,11 +326,6 @@ inline PseudoElementBoxGeneration ComputedStyleBase::pseudoElementBoxGeneration(
     return static_cast<PseudoElementBoxGeneration>(m_nonInheritedFlags.pseudoElementBoxGeneration);
 }
 
-inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
-{
-    return m_nonInheritedFlags.hasAnyPublicPseudoStyles();
-}
-
 // MARK: - Custom properties
 
 inline const CustomPropertyData& ComputedStyleBase::inheritedCustomProperties() const
@@ -526,11 +516,6 @@ inline const BorderValue& ComputedStyleBase::borderRight() const
 inline const BorderValue& ComputedStyleBase::borderTop() const
 {
     return border().top();
-}
-
-inline const BorderValue& ComputedStyleBase::columnRule() const
-{
-    return m_nonInheritedData->miscData->multiCol->columnRule;
 }
 
 inline bool ComputedStyleBase::hasLegacyLineClamp() const

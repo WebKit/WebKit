@@ -165,11 +165,6 @@ inline decltype(auto) effectiveBorderWidths(const ComputedStyle& style)
 
 // MARK: - Other Predicates
 
-inline bool ComputedStyle::breakOnlyAfterWhiteSpace() const
-{
-    return whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve || whiteSpaceCollapse() == WhiteSpaceCollapse::PreserveBreaks || whiteSpaceCollapse() == WhiteSpaceCollapse::BreakSpaces || lineBreak() == LineBreak::AfterWhiteSpace;
-}
-
 inline bool ComputedStyle::breakWords() const
 {
     return wordBreak() == WordBreak::BreakWord || overflowWrap() == OverflowWrap::BreakWord || overflowWrap() == OverflowWrap::Anywhere;
@@ -340,12 +335,6 @@ inline bool ComputedStyle::isRowFlexDirection() const
 inline bool ComputedStyle::isReverseFlexDirection() const
 {
     return flexDirection() == FlexDirection::RowReverse || flexDirection() == FlexDirection::ColumnReverse;
-}
-
-inline FlowMode ComputedStyle::flexFlowMode() const
-{
-    return { writingMode(), isRowFlexDirection() ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block,
-        { toAxisDirection(flexDirection()), toAxisDirection(flexWrap()) } };
 }
 
 inline bool ComputedStyle::isFixedTableLayout() const
