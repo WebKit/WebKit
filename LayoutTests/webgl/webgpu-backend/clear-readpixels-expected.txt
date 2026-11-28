@@ -1,0 +1,154 @@
+Test that a context on the WebGPU backend clears the default framebuffer and reads it back, and that it translates the shaders to WGSL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":true,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl with {"alpha":false,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The shaders are not translated to WGSL:
+PASS the color should be the clear color
+PASS the center should be the clear color
+PASS getError was expected value: NO_ERROR : no errors
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":true,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":true,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":true,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":false,"antialias":false,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":false}
+FAIL The context does not exist
+
+Testing webgl2 with {"alpha":false,"premultipliedAlpha":false,"antialias":true,"preserveDrawingBuffer":true}
+FAIL The context does not exist
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

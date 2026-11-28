@@ -800,6 +800,8 @@
 		1CFAE3CD2A4D8A140004AE37 /* WebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE2C92A4D79D10004AE37 /* WebGPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CFAE3D02A4D8A140004AE37 /* WebGPUShaderModuleCompilationHint.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE2B92A4D79CB0004AE37 /* WebGPUShaderModuleCompilationHint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CFAE3D42A4D8A140004AE37 /* WebGPUCompositorIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE2992A4D79BF0004AE37 /* WebGPUCompositorIntegration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9323B008A44CE6B1A0B6D130 /* GraphicsContextGLANGLEWebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 38A02AE300A726C223849E80 /* GraphicsContextGLANGLEWebGPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC3DD34388D2523C90ACCA50 /* GraphicsContextGLANGLEWebGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15FEA5876E62C66CB1603A0A /* GraphicsContextGLANGLEWebGPU.cpp */; };
 		1CFAE3D92A4D8A140004AE37 /* WebGPUOutOfMemoryError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE2A42A4D79C30004AE37 /* WebGPUOutOfMemoryError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CFAE3DC2A4D8A140004AE37 /* WebGPUValidationError.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE26F2A4D79B00004AE37 /* WebGPUValidationError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CFAE3E02A4D8A140004AE37 /* WebGPUDeviceLostInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFAE2512A4D79A60004AE37 /* WebGPUDeviceLostInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10019,6 +10021,8 @@
 		72B881B87CB910EED0F54578 /* WebGPUCppAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCppAPI.h; sourceTree = "<group>"; };
 		1CFAE2972A4D79BE0004AE37 /* WebGPUVertexState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUVertexState.h; sourceTree = "<group>"; };
 		1CFAE2992A4D79BF0004AE37 /* WebGPUCompositorIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCompositorIntegration.h; sourceTree = "<group>"; };
+		38A02AE300A726C223849E80 /* GraphicsContextGLANGLEWebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextGLANGLEWebGPU.h; sourceTree = "<group>"; };
+		15FEA5876E62C66CB1603A0A /* GraphicsContextGLANGLEWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextGLANGLEWebGPU.cpp; sourceTree = "<group>"; };
 		1CFAE29C2A4D79C00004AE37 /* WebGPURenderPassLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassLayout.h; sourceTree = "<group>"; };
 		1CFAE29D2A4D79C10004AE37 /* WebGPUDepthStencilState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDepthStencilState.h; sourceTree = "<group>"; };
 		1CFAE29E2A4D79C10004AE37 /* WebGPUShaderModuleDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleDescriptor.h; sourceTree = "<group>"; };
@@ -26428,6 +26432,8 @@
 				1C66A7172A4F781F0086DB6F /* GPUVertexState.idl */,
 				1C66A7EF2A4F78640086DB6F /* GPUVertexStepMode.h */,
 				1C66A71C2A4F78200086DB6F /* GPUVertexStepMode.idl */,
+				15FEA5876E62C66CB1603A0A /* GraphicsContextGLANGLEWebGPU.cpp */,
+				38A02AE300A726C223849E80 /* GraphicsContextGLANGLEWebGPU.h */,
 				1C66A7AC2A4F78510086DB6F /* NavigatorGPU.idl */,
 				1CFAE2C92A4D79D10004AE37 /* WebGPU.h */,
 				F491A6732AA26FF400F96146 /* WebGPU.serialization.in */,
@@ -46371,6 +46377,7 @@
 				313DE87023A96973008FC47B /* GraphicsContextGL.h in Headers */,
 				3ABD156C297A340100AF9D76 /* GraphicsContextGLActiveInfo.h in Headers */,
 				7B95CFED2754FF7C000060CE /* GraphicsContextGLANGLE.h in Headers */,
+				9323B008A44CE6B1A0B6D130 /* GraphicsContextGLANGLEWebGPU.h in Headers */,
 				7C330A021DF8FAC600D3395C /* GraphicsContextGLAttributes.h in Headers */,
 				7BDDA31F274FA0210038659E /* GraphicsContextGLCocoa.h in Headers */,
 				3ABD156A297A289300AF9D76 /* GraphicsContextGLEnums.h in Headers */,
@@ -51547,6 +51554,7 @@
 				51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */,
 				837964CF1F8DB69D00218EA0 /* GeolocationPositionDataCocoa.mm in Sources */,
 				6E72F54E229DCD1000B3E151 /* GraphicsContextGLANGLE.cpp in Sources */,
+				CC3DD34388D2523C90ACCA50 /* GraphicsContextGLANGLEWebGPU.cpp in Sources */,
 				7BE37F7A27BB86AB007A6CD3 /* GraphicsContextGLCocoa.mm in Sources */,
 				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
 				A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */,
