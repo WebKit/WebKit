@@ -84,6 +84,18 @@ void* mallocWithBackgroundPrefault(size_t size, CompactAllocationMode mode)
     return result;
 }
 
+void requestBackgroundPrefault(void* allocation, size_t allocationSize, size_t offset, size_t length)
+{
+#if BUSE(LIBPAS)
+    bmalloc_prefault_supply_request_fault_in_range(allocation, allocationSize, offset, length);
+#else
+    BUNUSED(allocation);
+    BUNUSED(allocationSize);
+    BUNUSED(offset);
+    BUNUSED(length);
+#endif
+}
+
 void freeOutOfLine(void* object, HeapKind kind)
 {
 #if BUSE(LIBPAS)

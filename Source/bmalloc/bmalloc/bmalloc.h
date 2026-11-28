@@ -214,6 +214,9 @@ BEXPORT void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind 
 // large result in ahead of the writes (see bmalloc_prefault_supply.h).
 BEXPORT void* tryMallocWithBackgroundPrefault(size_t, CompactAllocationMode);
 BEXPORT void* mallocWithBackgroundPrefault(size_t, CompactAllocationMode);
+// For memory from malloc of allocationSize bytes that the caller writes from start to end in steps:
+// faults [offset, offset + length) in ahead of the writes, along with whatever was asked for before.
+BEXPORT void requestBackgroundPrefault(void* allocation, size_t allocationSize, size_t offset, size_t length);
 
 // Returns null on failure.
 BINLINE void* tryMemalign(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary)

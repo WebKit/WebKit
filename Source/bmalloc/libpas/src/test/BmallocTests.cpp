@@ -634,6 +634,48 @@ void testFaultInOfPGMAllocationIsCancelled()
 #endif
 }
 
+void testFaultInRangeMergesWithEarlierRange()
+{
+    size_t size = 8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+    char* memory = static_cast<char*>(bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size));
+    CHECK(memory);
+    for (unsigned iteration = 0; iteration < 32; ++iteration) {
+        size_t offset = (iteration % 8) * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE;
+        bmalloc_prefault_supply_request_fault_in_range(memory, size, offset, 2 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE);
+        CHECK_LESS_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 1u);
+    }
+    memory[size - 1] = 'x';
+    // One cancellation withdraws every range asked for.
+    bmalloc_deallocate(memory);
+    CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+    waitForFaultInRequestsToBeServed();
+}
+
+void testLargeReallocateShrinksInPlace(size_t size, size_t newSize)
+{
+    uint8_t* memory = static_cast<uint8_t*>(bmalloc_try_allocate_auxiliary_with_background_prefault(&bmalloc_compact_primitive_heap_ref, size));
+    CHECK(memory);
+    for (size_t index = 0; index < newSize; ++index)
+        memory[index] = static_cast<uint8_t>(index * 13 + 1);
+    uint8_t* newMemory = static_cast<uint8_t*>(bmalloc_try_reallocate_auxiliary(memory, &bmalloc_compact_primitive_heap_ref, newSize, pas_reallocate_free_if_successful));
+    CHECK_EQUAL(newMemory, memory);
+    CHECK_EQUAL(bmalloc_prefault_supply_queued_fault_in_count(), 0u);
+    CHECK_GREATER_EQUAL(bmalloc_get_allocation_size(newMemory), newSize);
+    CHECK_LESS(bmalloc_get_allocation_size(newMemory), size);
+    for (size_t index = 0; index < newSize; ++index)
+        CHECK_EQUAL(newMemory[index], static_cast<uint8_t>(index * 13 + 1));
+
+    // The tail went back to the heap, which can hand it out while the shrunk object is still live.
+    void* other = bmalloc_try_allocate_auxiliary(&bmalloc_compact_primitive_heap_ref, size / 4);
+    CHECK(other);
+    memset(other, 0xaa, size / 4);
+    for (size_t index = 0; index < newSize; ++index)
+        CHECK_EQUAL(newMemory[index], static_cast<uint8_t>(index * 13 + 1));
+    bmalloc_deallocate(other);
+    bmalloc_deallocate(newMemory);
+    waitForFaultInRequestsToBeServed();
+}
+
 void testFaultInQueueOverflow()
 {
     constexpr unsigned numAllocations = 40;
@@ -796,6 +838,12 @@ void addBmallocTests()
     ADD_TEST(testFaultInCancellationOfNothingLeavesCountAlone());
     ADD_TEST(testFaultInIsCancelledByFree());
     ADD_TEST(testFaultInIsCancelledByReallocate());
+    ADD_TEST(testFaultInRangeMergesWithEarlierRange());
+    ADD_TEST(testLargeReallocateShrinksInPlace(8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE, 7 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE + 3));
+    ADD_TEST(testLargeReallocateShrinksInPlace(8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE, 4 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE + 3));
+    ADD_TEST(testLargeReallocateShrinksInPlace(8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE, 8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE / PAS_MAX_IN_PLACE_REALLOC_SHRINKAGE));
+    // Too small for the shrinkage limit, but still too large for any heap except the large heap.
+    ADD_TEST(testLargeReallocateShrinksInPlace(64 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE, 8 * BMALLOC_PREFAULT_SUPPLY_MIN_FAULT_IN_SIZE + 3));
     ADD_TEST(testFaultInOfPGMAllocationIsCancelled());
     ADD_TEST(testFaultInQueueOverflow());
     ADD_TEST(testFaultInConcurrentCancellation());

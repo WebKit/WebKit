@@ -181,6 +181,10 @@ WTF_EXPORT_PRIVATE void fastFreeCallback(void*);
 // start to end: a helper thread faults a large result in ahead of the writes.
 WTF_EXPORT_PRIVATE PRESERVE_MOST void* fastMallocWithBackgroundPrefault(size_t, bmalloc::CompactAllocationMode) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE PRESERVE_MOST TryMallocReturnValue tryFastMallocWithBackgroundPrefault(size_t, bmalloc::CompactAllocationMode);
+// For memory that fastMalloc, its compact counterpart, or StringImplMalloc returned for a request of
+// allocationSize bytes, which the caller writes from start to end in steps: a helper thread faults
+// [offset, offset + length) in ahead of the writes, along with whatever was asked for before.
+WTF_EXPORT_PRIVATE void fastRequestBackgroundPrefault(void* allocation, size_t allocationSize, size_t offset, size_t length);
 
 WTF_EXPORT_PRIVATE PRESERVE_MOST void* fastAlignedMalloc(size_t alignment, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE PRESERVE_MOST void* tryFastAlignedMalloc(size_t alignment, size_t);

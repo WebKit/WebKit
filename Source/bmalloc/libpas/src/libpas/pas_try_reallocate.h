@@ -26,13 +26,16 @@
 #ifndef PAS_TRY_REALLOCATE_H
 #define PAS_TRY_REALLOCATE_H
 
+#include "bmalloc_prefault_supply.h"
 #include "pas_bitfit_directory.h"
 #include "pas_deallocate.h"
+#include "pas_large_heap.h"
 #include "pas_large_map.h"
 #include "pas_malloc_stack_logging.h"
 #include "pas_mte.h"
 #include "pas_reallocate_free_mode.h"
 #include "pas_reallocate_heap_teleport_rule.h"
+#include "pas_scavenger.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
 #include "pas_try_allocate_intrinsic.h"
@@ -59,6 +62,26 @@ pas_try_reallocate_size_fits_in_place(
     if (source_heap != target_heap)
         return false;
     return true;
+}
+
+/* Whether no heap but the large heap serves objects of this size. */
+static PAS_ALWAYS_INLINE bool
+pas_try_reallocate_size_is_only_served_by_large_heap(size_t size, pas_heap_config config)
+{
+    size_t max_object_size;
+
+    max_object_size = 0;
+    if (config.small_segregated_config.base.is_enabled)
+        max_object_size = PAS_MAX(max_object_size, config.small_segregated_config.base.max_object_size);
+    if (config.medium_segregated_config.base.is_enabled)
+        max_object_size = PAS_MAX(max_object_size, config.medium_segregated_config.base.max_object_size);
+    if (config.small_bitfit_config.base.is_enabled)
+        max_object_size = PAS_MAX(max_object_size, config.small_bitfit_config.base.max_object_size);
+    if (config.medium_bitfit_config.base.is_enabled)
+        max_object_size = PAS_MAX(max_object_size, config.medium_bitfit_config.base.max_object_size);
+    if (config.marge_bitfit_config.base.is_enabled)
+        max_object_size = PAS_MAX(max_object_size, config.marge_bitfit_config.base.max_object_size);
+    return size > max_object_size;
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
@@ -366,6 +389,30 @@ pas_try_reallocate(void* old_ptr,
             pas_reallocation_did_fail(
                 "Source object belongs to a different heap config",
                 source_heap, heap, old_ptr, old_size, new_size);
+        }
+
+        /* Giving the tail back to the large heap avoids copying an object that is getting smaller,
+           which for a large object means touching every one of its pages again. However much it
+           shrinks, the object stays where a new allocation of its size would have gone anyway if
+           only the large heap serves that size. */
+        if (!source_is_pgm && !entry.delegated_to_system_malloc
+            && (pas_try_reallocate_size_fits_in_place(old_size, new_size, source_heap, heap)
+                || (new_size && new_size <= old_size && source_heap == heap
+                    && pas_try_reallocate_size_is_only_served_by_large_heap(new_size, config)))) {
+            uintptr_t in_place_begin;
+            bool did_shrink;
+#if PAS_ENABLE_BMALLOC
+            /* The helper thread may still be reading pages of the tail. */
+            bmalloc_prefault_supply_cancel_fault_in(old_ptr);
+#endif
+            pas_heap_lock_lock();
+            did_shrink = pas_large_heap_try_shrink(begin, new_size, config.config_ptr);
+            pas_heap_lock_unlock();
+            PAS_ASSERT(did_shrink);
+            pas_scavenger_notify_eligibility_if_needed();
+            in_place_begin = begin;
+            PAS_MTE_HANDLE(REALLOCATE_IN_PLACE, in_place_begin);
+            return pas_allocation_result_create_success(in_place_begin);
         }
 
         result = pas_try_allocate_for_reallocate_and_copy(
