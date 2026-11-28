@@ -572,7 +572,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (elementUpdate.style->pseudoElementBoxGeneration() == PseudoElementBoxGeneration::NoGeneratedContent && boxRequiresGeneratedContent(pseudoElementIdentifier.type, *elementUpdate.style) && !element.hasKeyframeEffects(pseudoElementIdentifier))
         return { };
 
-    if ((pseudoElementIdentifier.type == PseudoElementType::FirstLine || pseudoElementIdentifier.type == PseudoElementType::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
+    if ((pseudoElementIdentifier.type == PseudoElementType::FirstLine || pseudoElementIdentifier.type == PseudoElementType::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(&element, *elementUpdate.style))
         return { };
 
     auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
@@ -669,6 +669,10 @@ NODELETE static bool isChildInBlockFormattingContext(const Style::ComputedStyle&
 
 std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement(Element& element, const ElementUpdate& elementUpdate)
 {
+    // https://w3c.github.io/mathml-core/#css-styling
+    if (isDisplayMath(&element, *elementUpdate.style))
+        return { };
+
     if (elementUpdate.style->display() == DisplayType::InlineFlow) {
         auto* parent = boxGeneratingParent();
         if (!parent)
@@ -695,7 +699,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
         for (auto& parent : m_parentStack | std::views::reverse) {
             if (parent.style.display() == DisplayType::Contents)
                 continue;
-            if (!supportsFirstLineAndLetterPseudoElement(parent.style))
+            if (!supportsFirstLineAndLetterPseudoElement(parent.element, parent.style))
                 return nullptr;
             if (parent.style.hasPseudoStyle(PseudoElementType::FirstLine))
                 return parent.element;
@@ -719,11 +723,15 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
 std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLetterPseudoElement(Element& element, const ElementUpdate& elementUpdate, ResolutionContext& resolutionContext)
 {
     auto findFirstLetterElement = [&]() -> Element* {
-        if (elementUpdate.style->hasPseudoStyle(PseudoElementType::FirstLetter) && supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
+        if (elementUpdate.style->hasPseudoStyle(PseudoElementType::FirstLetter) && supportsFirstLineAndLetterPseudoElement(&element, *elementUpdate.style))
             return &element;
 
         // ::first-letter is only propagated to the first box.
         if (parent().resolvedFirstLineAndLetterChild)
+            return nullptr;
+
+        // https://w3c.github.io/mathml-core/#css-styling
+        if (isDisplayMath(&element, *elementUpdate.style))
             return nullptr;
 
         bool skipInlines = elementUpdate.style->display() == DisplayType::InlineFlow;
@@ -733,11 +741,11 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLetterPseudoEleme
         for (auto& parent : m_parentStack | std::views::reverse) {
             if (parent.style.display() == DisplayType::Contents)
                 continue;
-            if (skipInlines && parent.style.display() == DisplayType::InlineFlow)
+            if (skipInlines && parent.style.display() == DisplayType::InlineFlow && !isDisplayMath(parent.element, parent.style))
                 continue;
             skipInlines = false;
 
-            if (!supportsFirstLineAndLetterPseudoElement(parent.style))
+            if (!supportsFirstLineAndLetterPseudoElement(parent.element, parent.style))
                 return nullptr;
             if (parent.style.hasPseudoStyle(PseudoElementType::FirstLetter))
                 return parent.element;
@@ -1515,7 +1523,7 @@ void TreeResolver::resolveComposedTree()
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document->styleScope(), element.get(), !shouldIterateChildren);
 
-        if (!parent.resolvedFirstLineAndLetterChild && style && style->display().doesGenerateBox() && supportsFirstLineAndLetterPseudoElement(*style))
+        if (!parent.resolvedFirstLineAndLetterChild && style && style->display().doesGenerateBox() && supportsFirstLineAndLetterPseudoElement(element.ptr(), *style))
             parent.resolvedFirstLineAndLetterChild = true;
 
         if (!shouldIterateChildren) {
