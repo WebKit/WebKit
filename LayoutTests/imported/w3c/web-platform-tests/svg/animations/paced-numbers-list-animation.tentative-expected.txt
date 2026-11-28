@@ -1,0 +1,3 @@
+
+PASS calcMode=paced on a number list spaces segments by distance, not uniformly
+
